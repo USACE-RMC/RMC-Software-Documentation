@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import addBaseUrl from "@docusaurus/useBaseUrl";
 
 const Figure = ({ parentDocId, figKey, src, alt, caption }) => {
   const [figInfo, setFigInfo] = useState(null);
@@ -6,8 +7,10 @@ const Figure = ({ parentDocId, figKey, src, alt, caption }) => {
   useEffect(() => {
     const loadCounters = async () => {
       try {
-        // Construct the path to fetch the JSON data using the parentDocId (no need to split figKey)
-        const jsonPath = `/counters/${parentDocId.replace(/\//g, "-")}.json`; // Ensure parentDocId is correct
+        // Construct the path to fetch the JSON data using the parentDocId
+        const jsonPath = addBaseUrl(
+          `/counters/${parentDocId.replace(/\//g, "-")}.json`
+        ); // Ensure parentDocId is correct
 
         const response = await fetch(jsonPath);
         if (!response.ok) throw new Error(`Failed to load ${jsonPath}`);
@@ -39,7 +42,7 @@ const Figure = ({ parentDocId, figKey, src, alt, caption }) => {
 
   return (
     <figure className="figure-container">
-      <img src={src} alt={alt} className="figure-image" />
+      <img src={addBaseUrl(src)} alt={alt} className="figure-image" />
       <figcaption className="figure-caption">
         Figure {figInfo.figNumber}: {caption}
       </figcaption>
