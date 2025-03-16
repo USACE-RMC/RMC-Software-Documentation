@@ -10,7 +10,7 @@ const Figure = ({ parentDocId, figKey, src, alt, caption }) => {
       try {
         // Construct the path to fetch the JSON data using the parentDocId
         const jsonPath = addBaseUrl(
-          `/counters/${parentDocId.replace(/\//g, "-")}.json`
+          `counters/${parentDocId.replace(/\//g, "-")}.json`
         ); // Ensure parentDocId is correct
         console.log("Fetching JSON from:", jsonPath);
 
