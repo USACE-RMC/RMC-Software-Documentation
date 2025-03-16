@@ -11,6 +11,7 @@ const Figure = ({ parentDocId, figKey, src, alt, caption }) => {
         const jsonPath = addBaseUrl(
           `/counters/${parentDocId.replace(/\//g, "-")}.json`
         ); // Ensure parentDocId is correct
+        console.log("Fetching JSON from:", jsonPath);
 
         const response = await fetch(jsonPath);
         if (!response.ok) throw new Error(`Failed to load ${jsonPath}`);
