@@ -68,9 +68,7 @@ export default function Home() {
     },
     {
       icon: "img/Toolbox.png",
-      doc_location: addBaseUrl(
-        "/RMC-Software-Documentation/internal-erosion-suite"
-      ), // Use addBaseUrl
+      doc_location: addBaseUrl("/internal-erosion-suite"),
       doc_name: "Internal Erosion Suite",
       active: true,
     },
