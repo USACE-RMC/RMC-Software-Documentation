@@ -3,6 +3,7 @@ import addBaseUrl from "@docusaurus/useBaseUrl";
 
 const Figure = ({ parentDocId, figKey, src, alt, caption }) => {
   const [figInfo, setFigInfo] = useState(null);
+  console.log("Attempting to fetch figure");
 
   useEffect(() => {
     const loadCounters = async () => {
