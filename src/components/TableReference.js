@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import addBaseUrl from "@docusaurus/useBaseUrl";
 
 const TableReference = ({ parentDocId, tableKey }) => {
   const [tableInfo, setTableInfo] = useState(null);
@@ -7,7 +8,9 @@ const TableReference = ({ parentDocId, tableKey }) => {
     const loadCounters = async () => {
       try {
         // Assuming the tableKey will help determine the correct JSON file path
-        const jsonPath = `/counters/${parentDocId.replace(/\//g, "-")}.json`;
+        const jsonPath = addBaseUrl(
+          `/counters/${parentDocId.replace(/\//g, "-")}.json`
+        ); // Ensure parentDocId is correct
         const response = await fetch(jsonPath);
         if (!response.ok) throw new Error(`Failed to load ${jsonPath}`);
 
