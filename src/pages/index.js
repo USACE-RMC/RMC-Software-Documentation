@@ -68,7 +68,7 @@ export default function Home() {
     },
     {
       icon: "img/Toolbox.png",
-      doc_location: addBaseUrl("/internal-erosion-suite"),
+      doc_location: addBaseUrl("internal-erosion-suite"),
       doc_name: "Internal Erosion Suite",
       active: true,
     },

@@ -3,198 +3,198 @@ import ComponentCreator from '@docusaurus/ComponentCreator';
 
 export default [
   {
-    path: '/internal-erosion-suite',
-    component: ComponentCreator('/internal-erosion-suite', '60b'),
+    path: '/RMC-Software-Documentation/internal-erosion-suite',
+    component: ComponentCreator('/RMC-Software-Documentation/internal-erosion-suite', 'bb5'),
     exact: true
   },
   {
-    path: '/internal-erosion-suite%20copy',
-    component: ComponentCreator('/internal-erosion-suite%20copy', 'f7c'),
+    path: '/RMC-Software-Documentation/internal-erosion-suite%20copy',
+    component: ComponentCreator('/RMC-Software-Documentation/internal-erosion-suite%20copy', 'b90'),
     exact: true
   },
   {
-    path: '/docs',
-    component: ComponentCreator('/docs', '1c2'),
+    path: '/RMC-Software-Documentation/docs',
+    component: ComponentCreator('/RMC-Software-Documentation/docs', 'ed3'),
     routes: [
       {
-        path: '/docs',
-        component: ComponentCreator('/docs', '346'),
+        path: '/RMC-Software-Documentation/docs',
+        component: ComponentCreator('/RMC-Software-Documentation/docs', '88e'),
         routes: [
           {
-            path: '/docs',
-            component: ComponentCreator('/docs', '258'),
+            path: '/RMC-Software-Documentation/docs',
+            component: ComponentCreator('/RMC-Software-Documentation/docs', '3d9'),
             routes: [
               {
-                path: '/docs/lifesim/users-guide/',
-                component: ComponentCreator('/docs/lifesim/users-guide/', '553'),
+                path: '/RMC-Software-Documentation/docs/lifesim/users-guide/',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/lifesim/users-guide/', '09c'),
                 exact: true,
                 sidebar: "sidebar"
               },
               {
-                path: '/docs/rmc-bestfit/users-guide/',
-                component: ComponentCreator('/docs/rmc-bestfit/users-guide/', '6e6'),
+                path: '/RMC-Software-Documentation/docs/rmc-bestfit/users-guide/',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/rmc-bestfit/users-guide/', 'e7e'),
                 exact: true,
                 sidebar: "sidebar"
               },
               {
-                path: '/docs/rmc-rfa/users-guide/',
-                component: ComponentCreator('/docs/rmc-rfa/users-guide/', '9ef'),
+                path: '/RMC-Software-Documentation/docs/rmc-rfa/users-guide/',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/rmc-rfa/users-guide/', 'd13'),
                 exact: true,
                 sidebar: "sidebar"
               },
               {
-                path: '/docs/rmc-totalrisk/applications-guide/',
-                component: ComponentCreator('/docs/rmc-totalrisk/applications-guide/', '174'),
+                path: '/RMC-Software-Documentation/docs/rmc-totalrisk/applications-guide/',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/rmc-totalrisk/applications-guide/', 'c5f'),
                 exact: true,
                 sidebar: "sidebar"
               },
               {
-                path: '/docs/rmc-totalrisk/users-guide/',
-                component: ComponentCreator('/docs/rmc-totalrisk/users-guide/', '5c0'),
+                path: '/RMC-Software-Documentation/docs/rmc-totalrisk/users-guide/',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/rmc-totalrisk/users-guide/', 'b2c'),
                 exact: true,
                 sidebar: "sidebar"
               },
               {
-                path: '/docs/rmc-totalrisk/verification-report/',
-                component: ComponentCreator('/docs/rmc-totalrisk/verification-report/', '0f6'),
+                path: '/RMC-Software-Documentation/docs/rmc-totalrisk/verification-report/',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/rmc-totalrisk/verification-report/', '1bf'),
                 exact: true,
                 sidebar: "sidebar"
               },
               {
-                path: '/docs/toolbox-technical-manuals/backward-erosion-piping-initiation/introduction',
-                component: ComponentCreator('/docs/toolbox-technical-manuals/backward-erosion-piping-initiation/introduction', '208'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-initiation/introduction',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-initiation/introduction', '164'),
                 exact: true,
                 sidebar: "bepInitiationSidebar"
               },
               {
-                path: '/docs/toolbox-technical-manuals/backward-erosion-piping-progression/introduction',
-                component: ComponentCreator('/docs/toolbox-technical-manuals/backward-erosion-piping-progression/introduction', '4d2'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/introduction',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/introduction', 'b48'),
                 exact: true,
                 sidebar: "bepProgressionSidebar"
               },
               {
-                path: '/docs/toolbox-technical-manuals/breach/introduction',
-                component: ComponentCreator('/docs/toolbox-technical-manuals/breach/introduction', '407'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/breach/introduction',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/breach/introduction', 'f40'),
                 exact: true,
                 sidebar: "breachSidebar"
               },
               {
-                path: '/docs/toolbox-technical-manuals/concentrated-leak-erosion-cracking/introduction',
-                component: ComponentCreator('/docs/toolbox-technical-manuals/concentrated-leak-erosion-cracking/introduction', 'c8b'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/concentrated-leak-erosion-cracking/introduction',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/concentrated-leak-erosion-cracking/introduction', 'bec'),
                 exact: true,
                 sidebar: "cleCrackingSidebar"
               },
               {
-                path: '/docs/toolbox-technical-manuals/concentrated-leak-erosion-initiation/introduction',
-                component: ComponentCreator('/docs/toolbox-technical-manuals/concentrated-leak-erosion-initiation/introduction', 'dec'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/concentrated-leak-erosion-initiation/introduction',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/concentrated-leak-erosion-initiation/introduction', 'eef'),
                 exact: true,
                 sidebar: "cleInitiationSidebar"
               },
               {
-                path: '/docs/toolbox-technical-manuals/erodibility-parameters/introduction',
-                component: ComponentCreator('/docs/toolbox-technical-manuals/erodibility-parameters/introduction', 'a36'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/erodibility-parameters/introduction',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/erodibility-parameters/introduction', 'ecb'),
                 exact: true,
                 sidebar: "erodibilityParametersSidebar"
               },
               {
-                path: '/docs/toolbox-technical-manuals/filter-evaluation-continuation/appendix-acronyms',
-                component: ComponentCreator('/docs/toolbox-technical-manuals/filter-evaluation-continuation/appendix-acronyms', '034'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/appendix-acronyms',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/appendix-acronyms', 'f6d'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/docs/toolbox-technical-manuals/filter-evaluation-continuation/background',
-                component: ComponentCreator('/docs/toolbox-technical-manuals/filter-evaluation-continuation/background', '56a'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/background',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/background', 'e2d'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/docs/toolbox-technical-manuals/filter-evaluation-continuation/base-gradation',
-                component: ComponentCreator('/docs/toolbox-technical-manuals/filter-evaluation-continuation/base-gradation', 'f2e'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/base-gradation',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/base-gradation', '618'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/docs/toolbox-technical-manuals/filter-evaluation-continuation/constricted-exit',
-                component: ComponentCreator('/docs/toolbox-technical-manuals/filter-evaluation-continuation/constricted-exit', '7d1'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/constricted-exit',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/constricted-exit', 'c63'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/docs/toolbox-technical-manuals/filter-evaluation-continuation/design-for-particle-retention',
-                component: ComponentCreator('/docs/toolbox-technical-manuals/filter-evaluation-continuation/design-for-particle-retention', 'd82'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/design-for-particle-retention',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/design-for-particle-retention', 'aba'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/docs/toolbox-technical-manuals/filter-evaluation-continuation/filter-gradation',
-                component: ComponentCreator('/docs/toolbox-technical-manuals/filter-evaluation-continuation/filter-gradation', '6b9'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/filter-gradation',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/filter-gradation', '927'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/docs/toolbox-technical-manuals/filter-evaluation-continuation/foster-and-fell',
-                component: ComponentCreator('/docs/toolbox-technical-manuals/filter-evaluation-continuation/foster-and-fell', '284'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/foster-and-fell',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/foster-and-fell', 'ad1'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/docs/toolbox-technical-manuals/filter-evaluation-continuation/general-overview',
-                component: ComponentCreator('/docs/toolbox-technical-manuals/filter-evaluation-continuation/general-overview', '7e6'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/general-overview',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/general-overview', '6c2'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/docs/toolbox-technical-manuals/filter-evaluation-continuation/introduction',
-                component: ComponentCreator('/docs/toolbox-technical-manuals/filter-evaluation-continuation/introduction', '390'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/introduction',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/introduction', '5cc'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/docs/toolbox-technical-manuals/filter-evaluation-continuation/permeability',
-                component: ComponentCreator('/docs/toolbox-technical-manuals/filter-evaluation-continuation/permeability', '7f5'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/permeability',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/permeability', '714'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/docs/toolbox-technical-manuals/filter-evaluation-continuation/references',
-                component: ComponentCreator('/docs/toolbox-technical-manuals/filter-evaluation-continuation/references', 'f52'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/references',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/references', '14f'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/docs/toolbox-technical-manuals/filter-evaluation-continuation/summary-plot',
-                component: ComponentCreator('/docs/toolbox-technical-manuals/filter-evaluation-continuation/summary-plot', '1e5'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/summary-plot',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/summary-plot', '5b7'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/docs/toolbox-technical-manuals/filter-evaluation-continuation/terms-and-conditions-for-use',
-                component: ComponentCreator('/docs/toolbox-technical-manuals/filter-evaluation-continuation/terms-and-conditions-for-use', '3a6'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/terms-and-conditions-for-use',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/terms-and-conditions-for-use', '04c'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/docs/toolbox-technical-manuals/internal-instability/introduction',
-                component: ComponentCreator('/docs/toolbox-technical-manuals/internal-instability/introduction', 'bb4'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-instability/introduction',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-instability/introduction', '517'),
                 exact: true,
                 sidebar: "internalInstabilitySidebar"
               },
               {
-                path: '/docs/toolbox-technical-manuals/pipe-service-life/introduction',
-                component: ComponentCreator('/docs/toolbox-technical-manuals/pipe-service-life/introduction', '998'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/pipe-service-life/introduction',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/pipe-service-life/introduction', 'eca'),
                 exact: true,
                 sidebar: "pipeServiceLifeSidebar"
               },
               {
-                path: '/docs/toolbox-technical-manuals/soil-classification/introduction',
-                component: ComponentCreator('/docs/toolbox-technical-manuals/soil-classification/introduction', '536'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/soil-classification/introduction',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/soil-classification/introduction', 'fb4'),
                 exact: true,
                 sidebar: "soilClassificationSidebar"
               },
               {
-                path: '/docs/toolbox-technical-manuals/soil-contact-erosion-initiation/introduction',
-                component: ComponentCreator('/docs/toolbox-technical-manuals/soil-contact-erosion-initiation/introduction', 'c21'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/soil-contact-erosion-initiation/introduction',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/soil-contact-erosion-initiation/introduction', 'ee1'),
                 exact: true,
                 sidebar: "soilContactErosionInitiationSidebar"
               }
@@ -205,8 +205,8 @@ export default [
     ]
   },
   {
-    path: '/',
-    component: ComponentCreator('/', '2e1'),
+    path: '/RMC-Software-Documentation/',
+    component: ComponentCreator('/RMC-Software-Documentation/', '1be'),
     exact: true
   },
   {
