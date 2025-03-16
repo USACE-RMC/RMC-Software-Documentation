@@ -9,7 +9,7 @@ export default function InternalErosionSuite() {
     {
       icon: "img/Toolbox.png",
       doc_location: addBaseUrl(
-        "/docs/toolbox-technical-manuals/backward-erosion-piping-initiation/introduction"
+        "docs/toolbox-technical-manuals/backward-erosion-piping-initiation/introduction"
       ),
       doc_name: "Backward Erosion Piping (Initiation) Toolbox Technical Manual",
       active: false,
@@ -17,7 +17,7 @@ export default function InternalErosionSuite() {
     {
       icon: "img/Toolbox.png",
       doc_location: addBaseUrl(
-        "/docs/toolbox-technical-manuals/backward-erosion-piping-progression/introduction"
+        "docs/toolbox-technical-manuals/backward-erosion-piping-progression/introduction"
       ),
       doc_name:
         "Backward Erosion Piping (Progression) Toolbox Technical Manual",
@@ -26,7 +26,7 @@ export default function InternalErosionSuite() {
     {
       icon: "img/Toolbox.png",
       doc_location: addBaseUrl(
-        "/docs/toolbox-technical-manuals/breach/introduction"
+        "docs/toolbox-technical-manuals/breach/introduction"
       ),
       doc_name: "Breach Toolbox Technical Manual",
       active: false,
@@ -34,7 +34,7 @@ export default function InternalErosionSuite() {
     {
       icon: "img/Toolbox.png",
       doc_location: addBaseUrl(
-        "/docs/toolbox-technical-manuals/concentrated-leak-erosion-cracking/introduction"
+        "docs/toolbox-technical-manuals/concentrated-leak-erosion-cracking/introduction"
       ),
       doc_name: "Concentrated Leak Erosion (Cracking) Toolbox Technical Manual",
       active: false,
@@ -42,7 +42,7 @@ export default function InternalErosionSuite() {
     {
       icon: "img/Toolbox.png",
       doc_location: addBaseUrl(
-        "/docs/toolbox-technical-manuals/concentrated-leak-erosion-initiation/introduction"
+        "docs/toolbox-technical-manuals/concentrated-leak-erosion-initiation/introduction"
       ),
       doc_name:
         "Concentrated Leak Erosion (Initiation) Toolbox Technical Manual",
@@ -51,7 +51,7 @@ export default function InternalErosionSuite() {
     {
       icon: "img/Toolbox.png",
       doc_location: addBaseUrl(
-        "/docs/toolbox-technical-manuals/erodibility-parameters/introduction"
+        "docs/toolbox-technical-manuals/erodibility-parameters/introduction"
       ),
       doc_name: "Erodibility Parameters Toolbox Technical Manual",
       active: false,
@@ -59,7 +59,7 @@ export default function InternalErosionSuite() {
     {
       icon: "img/Toolbox.png",
       doc_location: addBaseUrl(
-        "/docs/toolbox-technical-manuals/filter-evaluation-continuation/introduction"
+        "docs/toolbox-technical-manuals/filter-evaluation-continuation/introduction"
       ),
       doc_name: "Filter Evaluation (Continuation) Toolbox Technical Manual",
       active: true,
@@ -67,7 +67,7 @@ export default function InternalErosionSuite() {
     {
       icon: "img/Toolbox.png",
       doc_location: addBaseUrl(
-        "/docs/toolbox-technical-manuals/internal-instability/introduction"
+        "docs/toolbox-technical-manuals/internal-instability/introduction"
       ),
       doc_name: "Internal Instability Toolbox Technical Manual",
       active: false,
@@ -75,7 +75,7 @@ export default function InternalErosionSuite() {
     {
       icon: "img/Toolbox.png",
       doc_location: addBaseUrl(
-        "/docs/toolbox-technical-manuals/pipe-service-life/introduction"
+        "docs/toolbox-technical-manuals/pipe-service-life/introduction"
       ),
       doc_name: "Pipe Service Life (Flaw) Toolbox Technical Manual",
       active: false,
@@ -83,7 +83,7 @@ export default function InternalErosionSuite() {
     {
       icon: "img/Toolbox.png",
       doc_location: addBaseUrl(
-        "/docs/toolbox-technical-manuals/soil-classification/introduction"
+        "docs/toolbox-technical-manuals/soil-classification/introduction"
       ),
       doc_name: "Soil Classification Toolbox Technical Manual",
       active: false,
@@ -91,7 +91,7 @@ export default function InternalErosionSuite() {
     {
       icon: "img/Toolbox.png",
       doc_location: addBaseUrl(
-        "/docs/toolbox-technical-manuals/soil-contact-erosion-initiation/introduction"
+        "docs/toolbox-technical-manuals/soil-contact-erosion-initiation/introduction"
       ),
       doc_name: "Soil Contact Erosion (Initiation) Toolbox Technical Manual",
       active: false,
