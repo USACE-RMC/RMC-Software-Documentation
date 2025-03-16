@@ -7,19 +7,19 @@ import addBaseUrl from "@docusaurus/useBaseUrl"; // Correct import
 export default function Home() {
   const totalRiskData = [
     {
-      icon: "/img/TotalRisk.png",
+      icon: "img/TotalRisk.png",
       doc_location: addBaseUrl("docs/rmc-totalrisk/user-guide"), // Use addBaseUrl
       doc_name: "RMC-TotalRisk User's Guide",
       active: true,
     },
     {
-      icon: "/img/TotalRisk.png",
+      icon: "img/TotalRisk.png",
       doc_location: addBaseUrl("docs/rmc-totalrisk/applications-guide"), // Use addBaseUrl
       doc_name: "RMC-TotalRisk Applications Guide",
       active: true,
     },
     {
-      icon: "/img/TotalRisk.png",
+      icon: "img/TotalRisk.png",
       doc_location: addBaseUrl("docs/rmc-totalrisk/verification-report"), // Use addBaseUrl
       doc_name: "RMC-TotalRisk Verification Report",
       active: true,
