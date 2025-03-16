@@ -7,7 +7,7 @@ import addBaseUrl from "@docusaurus/useBaseUrl"; // Correct import
 export default function InternalErosionSuite() {
   const internalErosionSuite = [
     {
-      icon: "img/Toolbox.png",
+      icon: addBaseUrl("img/Toolbox.png"),
       doc_location: addBaseUrl(
         "docs/toolbox-technical-manuals/backward-erosion-piping-initiation/introduction"
       ),
@@ -15,7 +15,7 @@ export default function InternalErosionSuite() {
       active: false,
     },
     {
-      icon: "img/Toolbox.png",
+      icon: addBaseUrl("img/Toolbox.png"),
       doc_location: addBaseUrl(
         "docs/toolbox-technical-manuals/backward-erosion-piping-progression/introduction"
       ),
@@ -24,7 +24,7 @@ export default function InternalErosionSuite() {
       active: false,
     },
     {
-      icon: "img/Toolbox.png",
+      icon: addBaseUrl("img/Toolbox.png"),
       doc_location: addBaseUrl(
         "docs/toolbox-technical-manuals/breach/introduction"
       ),
@@ -32,7 +32,7 @@ export default function InternalErosionSuite() {
       active: false,
     },
     {
-      icon: "img/Toolbox.png",
+      icon: addBaseUrl("img/Toolbox.png"),
       doc_location: addBaseUrl(
         "docs/toolbox-technical-manuals/concentrated-leak-erosion-cracking/introduction"
       ),
@@ -40,7 +40,7 @@ export default function InternalErosionSuite() {
       active: false,
     },
     {
-      icon: "img/Toolbox.png",
+      icon: addBaseUrl("img/Toolbox.png"),
       doc_location: addBaseUrl(
         "docs/toolbox-technical-manuals/concentrated-leak-erosion-initiation/introduction"
       ),
@@ -49,7 +49,7 @@ export default function InternalErosionSuite() {
       active: false,
     },
     {
-      icon: "img/Toolbox.png",
+      icon: addBaseUrl("img/Toolbox.png"),
       doc_location: addBaseUrl(
         "docs/toolbox-technical-manuals/erodibility-parameters/introduction"
       ),
@@ -57,7 +57,7 @@ export default function InternalErosionSuite() {
       active: false,
     },
     {
-      icon: "img/Toolbox.png",
+      icon: addBaseUrl("img/Toolbox.png"),
       doc_location: addBaseUrl(
         "docs/toolbox-technical-manuals/filter-evaluation-continuation/introduction"
       ),
@@ -65,7 +65,7 @@ export default function InternalErosionSuite() {
       active: true,
     },
     {
-      icon: "img/Toolbox.png",
+      icon: addBaseUrl("img/Toolbox.png"),
       doc_location: addBaseUrl(
         "docs/toolbox-technical-manuals/internal-instability/introduction"
       ),
@@ -73,7 +73,7 @@ export default function InternalErosionSuite() {
       active: false,
     },
     {
-      icon: "img/Toolbox.png",
+      icon: addBaseUrl("img/Toolbox.png"),
       doc_location: addBaseUrl(
         "docs/toolbox-technical-manuals/pipe-service-life/introduction"
       ),
@@ -81,7 +81,7 @@ export default function InternalErosionSuite() {
       active: false,
     },
     {
-      icon: "img/Toolbox.png",
+      icon: addBaseUrl("img/Toolbox.png"),
       doc_location: addBaseUrl(
         "docs/toolbox-technical-manuals/soil-classification/introduction"
       ),
@@ -89,7 +89,7 @@ export default function InternalErosionSuite() {
       active: false,
     },
     {
-      icon: "img/Toolbox.png",
+      icon: addBaseUrl("img/Toolbox.png"),
       doc_location: addBaseUrl(
         "docs/toolbox-technical-manuals/soil-contact-erosion-initiation/introduction"
       ),
