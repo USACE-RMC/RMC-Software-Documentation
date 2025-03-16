@@ -17,7 +17,7 @@ const TableHorizontal = ({
       try {
         // Construct the path to fetch the JSON data using the parentDocId
         const jsonPath = addBaseUrl(
-          `/counters/${parentDocId.replace(/\//g, "-")}.json`
+          `counters/${parentDocId.replace(/\//g, "-")}.json`
         ); // Ensure parentDocId is correct
 
         const response = await fetch(jsonPath);

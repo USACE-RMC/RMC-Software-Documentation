@@ -16,7 +16,7 @@ const TableVertical = ({
     const loadCounters = async () => {
       try {
         const jsonPath = addBaseUrl(
-          `/counters/${parentDocId.replace(/\//g, "-")}.json`
+          `counters/${parentDocId.replace(/\//g, "-")}.json`
         ); // Ensure parentDocId is correct
         const response = await fetch(jsonPath);
         if (!response.ok) throw new Error(`Failed to load ${jsonPath}`);

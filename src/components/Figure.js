@@ -3,11 +3,6 @@ import addBaseUrl from "@docusaurus/useBaseUrl";
 
 const Figure = ({ parentDocId, figKey, src, alt, caption }) => {
   const [figInfo, setFigInfo] = useState(null);
-  console.log("Attempting to fetch figure");
-  const jsonPath = addBaseUrl(
-    `counters/${parentDocId.replace(/\//g, "-")}.json`
-  ); // Ensure parentDocId is correct
-  console.log("Fetching JSON from:", jsonPath);
 
   useEffect(() => {
     const loadCounters = async () => {
