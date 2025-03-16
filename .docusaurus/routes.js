@@ -3,6 +3,11 @@ import ComponentCreator from '@docusaurus/ComponentCreator';
 
 export default [
   {
+    path: '/RMC-Software-Documentation/index%20copy',
+    component: ComponentCreator('/RMC-Software-Documentation/index%20copy', '04f'),
+    exact: true
+  },
+  {
     path: '/RMC-Software-Documentation/internal-erosion-suite',
     component: ComponentCreator('/RMC-Software-Documentation/internal-erosion-suite', 'bb5'),
     exact: true
