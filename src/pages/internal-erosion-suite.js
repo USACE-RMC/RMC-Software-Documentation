@@ -2,7 +2,7 @@ import React from "react";
 import Layout from "@theme/Layout";
 import "../css/index.css";
 import ContentBox from "../components/ContentBox";
-import { addBaseUrl } from "@docusaurus/useBaseUrl"; // Correct import
+import addBaseUrl from "@docusaurus/useBaseUrl"; // Correct import
 
 export default function InternalErosionSuite() {
   const internalErosionSuite = [

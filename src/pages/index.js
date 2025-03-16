@@ -2,7 +2,7 @@ import React from "react";
 import Layout from "@theme/Layout";
 import "../css/index.css";
 import ContentBox from "../components/ContentBox";
-import { addBaseUrl } from "@docusaurus/useBaseUrl"; // Correct import
+import addBaseUrl from "@docusaurus/useBaseUrl"; // Correct import
 
 export default function Home() {
   const totalRiskData = [
@@ -68,7 +68,9 @@ export default function Home() {
     },
     {
       icon: "img/Toolbox.png",
-      doc_location: addBaseUrl("/internal-erosion-suite"), // Use addBaseUrl
+      doc_location: addBaseUrl(
+        "/RMC-Software-Documentation/internal-erosion-suite"
+      ), // Use addBaseUrl
       doc_name: "Internal Erosion Suite",
       active: true,
     },
