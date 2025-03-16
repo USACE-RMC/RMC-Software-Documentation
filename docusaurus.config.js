@@ -4,10 +4,10 @@ import rehypeKatex from "rehype-katex";
 export default {
   title: "RMC Software Documentation",
   tagline: "Documentation for RMC Software Packages",
-  url: "https://Adam-Gohs.github.io", // Replace with your site's URL
+  url: "https://AdamGohs.github.io", // Replace with your site's URL
   baseUrl: "/RMC-Software-Documentation",
   favicon: "img/USACE.png",
-  organizationName: "your-org-name", // Your GitHub organization or username
+  organizationName: "AdamGohs", // Your GitHub organization or username
   projectName: "RMC-Software-Documentation", // Your project name, make sure this matches your GitHub repo name
 
   presets: [
