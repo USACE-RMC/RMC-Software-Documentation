@@ -10,9 +10,6 @@ const Figure = ({ parentDocId, figKey, src, alt, caption }) => {
   );
   const imgSrc = useBaseUrl(src);
 
-  console.log("Resolved JSON Path:", jsonPath);
-  console.log("Resolved Image Source:", imgSrc);
-
   useEffect(() => {
     const loadCounters = async () => {
       try {

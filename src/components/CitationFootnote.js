@@ -25,7 +25,6 @@ const CitationFootnote = () => {
     };
   }, [location.pathname]); // Re-fetch when document changes
 
-  console.log("# of citations: ", citations.length);
   if (citations.length === 0) return null;
 
   const formatAuthors = (authors) => {
