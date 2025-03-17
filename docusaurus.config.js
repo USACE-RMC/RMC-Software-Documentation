@@ -75,4 +75,12 @@ export default {
       ],
     },
   },
+
+  plugins: [
+    "@docusaurus/plugin-google-gtag",
+    {
+      trackingID: "G-LB2BWWGDTB",
+      anonymizeIP: true, // Optional: anonymizes IPs for privacy
+    },
+  ],
 };
