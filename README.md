@@ -18,6 +18,9 @@ This command starts a local development server and opens up a browser window. Mo
 
 ### Build
 
+    "start": "npm run convert:pdf && node scripts/counters.js && docusaurus start",
+    "build": "npm run convert:pdf && node scripts/counters.js && docusaurus build",
+
 ```
 npm run build
 ```
