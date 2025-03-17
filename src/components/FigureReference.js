@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
-import addBaseUrl from "@docusaurus/useBaseUrl";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 
 const FigReference = ({ parentDocId, figKey }) => {
   const [figInfo, setFigInfo] = useState(null);
+  // Assuming the figKey will help determine the correct JSON file path
+  const jsonPath = useBaseUrl(
+    `counters/${parentDocId.replace(/\//g, "-")}.json`
+  );
 
   useEffect(() => {
     const loadCounters = async () => {
       try {
-        // Assuming the figKey will help determine the correct JSON file path
-        const jsonPath = addBaseUrl(
-          `counters/${parentDocId.replace(/\//g, "-")}.json`
-        ); // Ensure parentDocId is correct
         const response = await fetch(jsonPath);
         if (!response.ok) throw new Error(`Failed to load ${jsonPath}`);
 

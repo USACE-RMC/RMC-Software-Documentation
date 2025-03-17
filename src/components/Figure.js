@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
-import addBaseUrl from "@docusaurus/useBaseUrl";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 
 const Figure = ({ parentDocId, figKey, src, alt, caption }) => {
   const [figInfo, setFigInfo] = useState(null);
+  // Construct the path to fetch the JSON data using the parentDocId
+
+  const jsonPath = useBaseUrl(
+    `counters/${parentDocId.replace(/\//g, "-")}.json`
+  );
+  const imagesrc = useBaseUrl(src);
 
   useEffect(() => {
     const loadCounters = async () => {
       try {
-        // Construct the path to fetch the JSON data using the parentDocId
-        const jsonPath = addBaseUrl(
-          `counters/${parentDocId.replace(/\//g, "-")}.json`
-        ); // Ensure parentDocId is correct
-        console.log("Fetching JSON from:", jsonPath);
-
         const response = await fetch(jsonPath);
         if (!response.ok) throw new Error(`Failed to load ${jsonPath}`);
 
@@ -43,7 +43,7 @@ const Figure = ({ parentDocId, figKey, src, alt, caption }) => {
 
   return (
     <figure className="figure-container">
-      <img src={addBaseUrl(src)} alt={alt} className="figure-image" />
+      <img src={imagesrc} alt={alt} className="figure-image" />
       <figcaption className="figure-caption">
         Figure {figInfo.figNumber}: {caption}
       </figcaption>
