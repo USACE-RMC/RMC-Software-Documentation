@@ -8,7 +8,10 @@ const Figure = ({ parentDocId, figKey, src, alt, caption }) => {
   const jsonPath = useBaseUrl(
     `counters/${parentDocId.replace(/\//g, "-")}.json`
   );
-  const imagesrc = useBaseUrl(src);
+  const imgSrc = useBaseUrl(src);
+
+  console.log("Resolved JSON Path:", jsonPath);
+  console.log("Resolved Image Source:", imgSrc);
 
   useEffect(() => {
     const loadCounters = async () => {
@@ -43,7 +46,7 @@ const Figure = ({ parentDocId, figKey, src, alt, caption }) => {
 
   return (
     <figure className="figure-container">
-      <img src={imagesrc} alt={alt} className="figure-image" />
+      <img src={imgSrc} alt={alt} className="figure-image" />
       <figcaption className="figure-caption">
         Figure {figInfo.figNumber}: {caption}
       </figcaption>
