@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import addBaseUrl from "@docusaurus/useBaseUrl";
 import "../css/custom.css";
 
 const Bibliography = ({ bibFile }) => {
@@ -7,7 +8,7 @@ const Bibliography = ({ bibFile }) => {
   useEffect(() => {
     const fetchBibData = async () => {
       try {
-        const response = await fetch(bibFile);
+        const response = await fetch(addBaseUrl(bibFile));
         const data = await response.json();
 
         // Sort citations by author(s)

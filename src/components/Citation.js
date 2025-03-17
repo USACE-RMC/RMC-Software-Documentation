@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import addBaseUrl from "@docusaurus/useBaseUrl";
 import { useLocation } from "@docusaurus/router"; // Track current document
 
 // Store citations per document (not globally)
@@ -11,7 +12,7 @@ const Citation = ({ citationKey, bibFile }) => {
   useEffect(() => {
     const fetchBibData = async () => {
       try {
-        const response = await fetch(bibFile);
+        const response = await fetch(addBaseUrl(bibFile));
         const data = await response.json();
 
         const sortedCitations = data.sort((a, b) => {
@@ -48,7 +49,7 @@ const Citation = ({ citationKey, bibFile }) => {
     };
 
     fetchBibData();
-  }, [citationKey, bibFile, location.pathname]); // Re-run if location changes
+  }, [citationKey, addBaseUrl(bibFile), location.pathname]); // Re-run if location changes
 
   return (
     <span className="citation-reference">
