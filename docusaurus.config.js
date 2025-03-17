@@ -23,6 +23,10 @@ export default {
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
         },
+        googleAnalytics: {
+          trackingID: "G-LB2BWWGDTB",
+          anonymizeIP: true, // Optional: anonymizes IPs for privacy
+        },
       },
     ],
   ],
@@ -75,12 +79,4 @@ export default {
       ],
     },
   },
-
-  plugins: [
-    "@docusaurus/plugin-google-gtag",
-    {
-      trackingID: "G-LB2BWWGDTB",
-      anonymizeIP: true, // Optional: anonymizes IPs for privacy
-    },
-  ],
 };
