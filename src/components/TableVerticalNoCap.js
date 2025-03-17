@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import addBaseUrl from "@docusaurus/useBaseUrl";
 import "../css/custom.css";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 
 const TableVerticalNoCap = ({ parentDocId, tableKey, headers, columns }) => {
   const [tableInfo, setTableInfo] = useState(null);
+  const jsonPath = useBaseUrl(
+    `counters/${parentDocId.replace(/\//g, "-")}.json`
+  );
 
   useEffect(() => {
     const loadCounters = async () => {
       try {
-        const jsonPath = addBaseUrl(
-          `counters/${parentDocId.replace(/\//g, "-")}.json`
-        ); // Ensure parentDocId is correct
         const response = await fetch(jsonPath);
         if (!response.ok) throw new Error(`Failed to load ${jsonPath}`);
 

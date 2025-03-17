@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import addBaseUrl from "@docusaurus/useBaseUrl";
 import { useLocation } from "@docusaurus/router"; // Track current document
+import useBaseUrl from "@docusaurus/useBaseUrl";
 
 // Store citations per document (not globally)
 const usedCitations = new Map();
@@ -8,11 +8,12 @@ const usedCitations = new Map();
 const Citation = ({ citationKey, bibFile }) => {
   const [citationNumber, setCitationNumber] = useState("?");
   const location = useLocation(); // Get the current .mdx file's pathname
+  const bibFilePath = useBaseUrl(bibFile);
 
   useEffect(() => {
     const fetchBibData = async () => {
       try {
-        const response = await fetch(addBaseUrl(bibFile));
+        const response = await fetch(bibFilePath);
         const data = await response.json();
 
         const sortedCitations = data.sort((a, b) => {
@@ -49,7 +50,7 @@ const Citation = ({ citationKey, bibFile }) => {
     };
 
     fetchBibData();
-  }, [citationKey, addBaseUrl(bibFile), location.pathname]); // Re-run if location changes
+  }, [citationKey, bibFilePath, location.pathname]); // Re-run if location changes
 
   return (
     <span className="citation-reference">

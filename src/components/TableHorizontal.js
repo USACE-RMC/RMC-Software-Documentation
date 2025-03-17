@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import addBaseUrl from "@docusaurus/useBaseUrl";
 import "../css/custom.css";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 
 const TableHorizontal = ({
   parentDocId,
@@ -11,15 +12,13 @@ const TableHorizontal = ({
   caption,
 }) => {
   const [tableInfo, setTableInfo] = useState(null);
+  const jsonPath = useBaseUrl(
+    `counters/${parentDocId.replace(/\//g, "-")}.json`
+  );
 
   useEffect(() => {
     const loadCounters = async () => {
       try {
-        // Construct the path to fetch the JSON data using the parentDocId
-        const jsonPath = addBaseUrl(
-          `counters/${parentDocId.replace(/\//g, "-")}.json`
-        ); // Ensure parentDocId is correct
-
         const response = await fetch(jsonPath);
         if (!response.ok) throw new Error(`Failed to load ${jsonPath}`);
 
