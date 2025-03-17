@@ -8,11 +8,6 @@ export default [
     exact: true
   },
   {
-    path: '/RMC-Software-Documentation/internal-erosion-suite%20copy',
-    component: ComponentCreator('/RMC-Software-Documentation/internal-erosion-suite%20copy', 'b90'),
-    exact: true
-  },
-  {
     path: '/RMC-Software-Documentation/docs',
     component: ComponentCreator('/RMC-Software-Documentation/docs', 'd03'),
     routes: [

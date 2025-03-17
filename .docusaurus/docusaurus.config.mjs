@@ -27,6 +27,10 @@ export default {
         },
         "theme": {
           "customCss": "C:\\Users\\USACE\\OneDrive\\Documents\\GitHub\\RMC-Software-Documentation\\src\\css\\custom.css"
+        },
+        "googleAnalytics": {
+          "trackingID": "G-LB2BWWGDTB",
+          "anonymizeIP": true
         }
       }
     ]
