@@ -14,32 +14,37 @@ const Figure = ({ parentDocId, figKey, src, alt, caption }) => {
   console.log("Resolved Image Source:", imgSrc);
 
   useEffect(() => {
-    const loadCounters = async () => {
-      try {
-        const response = await fetch(jsonPath);
-        if (!response.ok) throw new Error(`Failed to load ${jsonPath}`);
+    try {
+      console.log("Attempting to fetch:", jsonPath);
+      const loadCounters = async () => {
+        try {
+          const response = await fetch(jsonPath);
+          if (!response.ok) throw new Error(`Failed to load ${jsonPath}`);
 
-        const data = await response.json();
+          const data = await response.json();
 
-        // Now, find the figure using the figKey in the JSON data
-        let foundFig = null;
-        Object.keys(data).forEach((docId) => {
-          if (data[docId]?.figures?.[figKey]) {
-            foundFig = data[docId].figures[figKey];
+          // Now, find the figure using the figKey in the JSON data
+          let foundFig = null;
+          Object.keys(data).forEach((docId) => {
+            if (data[docId]?.figures?.[figKey]) {
+              foundFig = data[docId].figures[figKey];
+            }
+          });
+
+          if (foundFig) {
+            setFigInfo(foundFig);
+          } else {
+            console.warn(`Figure key "${figKey}" not found`);
           }
-        });
-
-        if (foundFig) {
-          setFigInfo(foundFig);
-        } else {
-          console.warn(`Figure key "${figKey}" not found`);
+        } catch (error) {
+          console.error("Error loading counters:", error);
         }
-      } catch (error) {
-        console.error("Error loading counters:", error);
-      }
-    };
+      };
 
-    loadCounters();
+      loadCounters();
+    } catch (error) {
+      console.error("Critical error in useEffect:", error);
+    }
   }, [parentDocId, figKey]); // Depend on both parentDocId and figKey
 
   if (!figInfo) return <span>Loading...</span>;
