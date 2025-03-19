@@ -10,6 +10,7 @@ const reportIDs = {
   "rmc-totalrisk/applications-guide": 105,
   "rmc-totalrisk/verification-report": 106,
   "toolbox-technical-manuals/filter-evaluation-continuation": 107,
+  "toolbox-technical-manuals/backward-erosion-piping-progression": 108,
 };
 
 // Base paths
