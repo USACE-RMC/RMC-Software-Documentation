@@ -9,6 +9,21 @@ module.exports = {
     "RMC Backward Erosion Piping (Progression) Toolbox": [
       "toolbox-technical-manuals/backward-erosion-piping-progression/introduction",
     ],
+    "RMC Backward Erosion Piping (Progression) Toolbox": [
+      "toolbox-technical-manuals/backward-erosion-piping-progression/terms-and-conditions-for-use",
+    ],
+    "RMC Backward Erosion Piping (Progression) Toolbox": [
+      "toolbox-technical-manuals/backward-erosion-piping-progression/general-overview",
+    ],
+    "RMC Backward Erosion Piping (Progression) Toolbox": [
+      "toolbox-technical-manuals/backward-erosion-piping-progression/background",
+    ],
+    "RMC Backward Erosion Piping (Progression) Toolbox": [
+      "toolbox-technical-manuals/backward-erosion-piping-progression/schmertmann",
+    ],
+    "RMC Backward Erosion Piping (Progression) Toolbox": [
+      "toolbox-technical-manuals/backward-erosion-piping-progression/references",
+    ],
   },
 
   breachSidebar: {

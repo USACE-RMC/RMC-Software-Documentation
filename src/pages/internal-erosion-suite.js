@@ -21,7 +21,7 @@ export default function InternalErosionSuite() {
       ),
       doc_name:
         "Backward Erosion Piping (Progression) Toolbox Technical Manual",
-      active: false,
+      active: true,
     },
     {
       icon: addBaseUrl("img/Toolbox.png"),
