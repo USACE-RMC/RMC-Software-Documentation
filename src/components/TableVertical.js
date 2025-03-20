@@ -49,24 +49,20 @@ const TableVertical = ({
 
   return (
     <div className="table-container">
-      <tablecaption className="table-caption">
-        Table {tableInfo.tableNumber}: {caption}
-      </tablecaption>
       <table alt={alt} className="static-table-vertical">
-        {/* Table header */}
+        <caption className="table-caption">
+          Table {tableInfo.tableNumber}: {caption}
+        </caption>
         <thead>
           <tr>
             {headers.map((header, index) => (
-              <th key={index}>{header}</th> // Each header in its own column
+              <th key={index}>{header}</th>
             ))}
           </tr>
         </thead>
-
-        {/* Table body */}
         <tbody>
           {Array.from({ length: rowCount }).map((_, rowIndex) => (
             <tr key={rowIndex}>
-              {/* Iterate over each column and place data in the correct cells */}
               {columns.map((col, colIndex) => (
                 <td key={colIndex}>{col[rowIndex] || ""}</td>
               ))}
