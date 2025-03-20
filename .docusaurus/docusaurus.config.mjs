@@ -6,10 +6,10 @@
 export default {
   "title": "RMC Software Documentation",
   "tagline": "Documentation for RMC Software Packages",
-  "url": "https://AdamGohs.github.io",
+  "url": "https://USACE-RMC.github.io",
   "baseUrl": "/RMC-Software-Documentation/",
   "favicon": "img/USACE.png",
-  "organizationName": "AdamGohs",
+  "organizationName": "USACE-RMC",
   "projectName": "RMC-Software-Documentation",
   "presets": [
     [
