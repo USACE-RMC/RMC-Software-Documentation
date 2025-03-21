@@ -44,15 +44,15 @@ export default [
   },
   {
     path: '/RMC-Software-Documentation/docs',
-    component: ComponentCreator('/RMC-Software-Documentation/docs', '076'),
+    component: ComponentCreator('/RMC-Software-Documentation/docs', 'd99'),
     routes: [
       {
         path: '/RMC-Software-Documentation/docs',
-        component: ComponentCreator('/RMC-Software-Documentation/docs', 'a1f'),
+        component: ComponentCreator('/RMC-Software-Documentation/docs', '6db'),
         routes: [
           {
             path: '/RMC-Software-Documentation/docs',
-            component: ComponentCreator('/RMC-Software-Documentation/docs', 'a99'),
+            component: ComponentCreator('/RMC-Software-Documentation/docs', 'a04'),
             routes: [
               {
                 path: '/RMC-Software-Documentation/docs/lifesim/users-guide/',
@@ -125,6 +125,11 @@ export default [
                 component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/schmertmann', 'bb7'),
                 exact: true,
                 sidebar: "bepProgressionSidebar"
+              },
+              {
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/sellmeijer',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/sellmeijer', '201'),
+                exact: true
               },
               {
                 path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/terms-and-conditions-for-use',

@@ -34,6 +34,11 @@ module.exports = {
       },
       {
         type: "doc",
+        id: "toolbox-technical-manuals/backward-erosion-piping-progression/sellmeijer",
+        label: "Sellmeijer",
+      },
+      {
+        type: "doc",
         id: "toolbox-technical-manuals/backward-erosion-piping-progression/references",
         label: "References",
       },
