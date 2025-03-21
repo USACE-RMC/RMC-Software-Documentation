@@ -12,7 +12,6 @@ const Figure = ({ parentDocId, figKey, src, alt, caption }) => {
 
   useEffect(() => {
     try {
-      console.log("Attempting to fetch:", jsonPath);
       const loadCounters = async () => {
         try {
           const response = await fetch(jsonPath);
