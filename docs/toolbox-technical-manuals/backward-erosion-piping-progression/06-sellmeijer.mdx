@@ -123,4 +123,134 @@ If using @RISK to perform probabilistic analysis, delete unnecessary calculation
 which this is time consuming. If cycling through iterations using @RISK, the displayed results are no longer mean values of the random variables; they are the
 selected iteration.
 
+## Piping Layer Characterization
+
+The selections in step 1 affect the input for step 3, and cells that do not apply have a gray background. These cells are not used in subsequent calculations
+even if data is present. Step 3 characterizes the piping layer. The input includes the horizontal permeability (_k<sub>h,f</sub>_) and thickness (_D<sub>f</sub>_)
+of the fine sand (piping) layer, seepage water temperature (_T_), and seepage path length (_L_). A lookup table is used to obtain the dynamic viscosity of water
+(_μ_) as a function of seepage water temperature.
+
+The intrinsic permeability of the fine sand (piping) layer is calculated using Equation 16.
+
+$$
+K_{f} = k_{h,f} \frac{μ}{γ_w} \tag{16}
+$$
+
+where:
+
+> _k<sub>h</sub>_ = permeability of the fine sand (piping) layer in the horizontal direction (m/s)
+> _μ_ = dynamic viscosity of water (N·s/m<sup>2</sup>)
+
+Use the drop-down list to indicate the presence of a multi-layer foundation (fine sand layer over coarse sand layer). Cells that do not apply have a gray
+background. Van Beek et al. <Citation citationKey="vanBeek2013" bibFile="/bibliographies/108-bib.json"/> conducted piping experiments on multi-layer sand
+samples to validate Sellmeijer’s model, and the calculation rule was extended for multi-layer aquifers. A coarse layer beneath the piping layer increases the
+flow toward the pipe and decreases the critical head (and critical gradient). If a multi-layer foundation exists, the input also includes the horizontal
+permeability (_k<sub>h,c</sub>_) and thickness (_D<sub>c</sub>_) of the underlying coarse sand layer.
+
+For a multi-layer aquifer, when flow toward the pipe is predominantly horizontal (for elongated aquifers), the increase of flow toward the pipe is reflected by
+the average horizontal permeability of a multilayer aquifer. A layer-weighted average of horizontal permeability (_k<sub>h,avg</sub>_) is used in lieu of the
+horizontal permeability of the fine sand (piping) layer, shown in <FigReference parentDocId="108" figKey="sellmeijer-multi-layer-fndn"/>, using Equation 17.
+
+<Figure 
+parentDocId="108" 
+figKey="sellmeijer-multi-layer-fndn" 
+src="figures/toolbox-technical-manuals/backward-erosion-piping-progression/figure40.png" 
+alt="Step 3 of Sellmeijer worksheet: Multi-layer foundation input." 
+caption="Step 3 of Sellmeijer worksheet: Multi-layer foundation input." ></Figure>
+
+$$
+k_{h,avg} = \frac{k_{h,f}D_f + k_{h,c}D_{c}}{D} \tag{17}
+$$
+
+where:
+
+> _k<sub>h,f</sub>_ = permeability of the fine (piping) layer in the horizontal direction (cemtimeter/second)
+> _D<sub>f</sub>_ = thickness of the fine (piping) layer
+> _k<sub>h,c</sub>_ = permeability of the coarse underlayer in the horizontal direction (centimeter/second)
+> _D<sub>c</sub>_ = thickness of coarse underlayer (feet)
+> _D_ = total aquifer thickness (feet)
+
+When the contrast of permeability is large and the aquifer thickness is relatively large compared to the seepage path length, assuming predominant horizontal
+flow is no longer valid. Hence, the extension of Sellmeijer’s calculation rule for multi-layer foundations can be applied to elongated aquifers (_D∕L_ < 0.3)
+with low contrasts of permeability (*k<sub>h,c</sub>*∕*k<sub>h,f</sub>* < 10). _D∕L_ and *k<sub>h,c</sub>*∕*k<sub>h,f</sub>* values outside of these ranges
+have an orange background.
+
+The average intrinsic permeability is calculated using Equation 18.
+
+$$
+k_{avg} = k_{h,avg} \frac{μ}{γ_w} \tag{18}
+$$
+
+For deterministic analysis of single-layer aquifer, input only the most likely value for the fine sand (piping) layer. The mean value used for subsequent
+calculations is the most likely (or mode) value. <FigReference parentDocId="108" figKey="sellmeijer-single-layer-deterministic"/> illustrates the deterministic
+input for single-layer aquifer.
+
+<Figure 
+parentDocId="108" 
+figKey="sellmeijer-single-layer-deterministic" 
+src="figures/toolbox-technical-manuals/backward-erosion-piping-progression/figure41.png" 
+alt="Step 3 of Sellmeijer worksheet: Deterministic input for single-layer aquifer." 
+caption="Step 3 of Sellmeijer worksheet: Deterministic input for single-layer aquifer." ></Figure>
+
+For deterministic analysis of multi-layer aquifer, input the most likely values for the fine sand (piping) layer and underlying coarse sand layer. The mean
+values used for subsequent calculations are the most likely (or mode) values. <FigReference parentDocId="108" figKey="sellmeijer-multi-layer-deterministic"/>
+illustrates the deterministic input for multi-layer aquifer.
+
+<Figure 
+parentDocId="108" 
+figKey="sellmeijer-multi-layer-deterministic" 
+src="figures/toolbox-technical-manuals/backward-erosion-piping-progression/figure42.png" 
+alt="Step 3 of Sellmeijer worksheet: Deterministic input for multi-layer aquifer." 
+caption="Step 3 of Sellmeijer worksheet: Deterministic input for multi-layer aquifer." ></Figure>
+
+For probabilistic analysis of single-layer aquifer without using @RISK, input the minimum and maximum values in addition to the most likely value, and a
+triangular distribution represents the random variable for the fine sand (piping) layer. The mean value used in subsequent calculations is the average of
+the minimum, most likely, and maximum values. <FigReference parentDocId="108" figKey="sellmeijer-single-layer-probabilistic-no-risk"/> illustrates the probabilistic
+input for single-layer aquifer without using @RISK.
+
+<Figure 
+parentDocId="108" 
+figKey="sellmeijer-single-layer-probabilistic-no-risk" 
+src="figures/toolbox-technical-manuals/backward-erosion-piping-progression/figure43.png" 
+alt="Step 3 of Sellmeijer worksheet: Probabilistic input for single-layer aquifer without using @RISK." 
+caption="Step 3 of Sellmeijer worksheet: Probabilistic input for single-layer aquifer without using @RISK."></Figure>
+
+For probabilistic analysis of multi-layer aquifer without using @RISK, input the most likely values for the fine sand (piping) layer and underlying coarse
+sand layer. The mean values used for subsequent calculations are the average of the minimum, most likely, and maximum values.
+
+<FigReference parentDocId="108" figKey="sellmeijer-multi-layer-probabilistic-no-risk"/> illustrates the probabilistic input for multi-layer aquifer without using @RISK.
+
+<Figure 
+parentDocId="108" 
+figKey="sellmeijer-multi-layer-probabilistic-no-risk" 
+src="figures/toolbox-technical-manuals/backward-erosion-piping-progression/figure44.png" 
+alt="Step 3 of Sellmeijer worksheet: Probabilistic input for multi-layer aquifer without using @RISK." 
+caption="Step 3 of Sellmeijer worksheet: Probabilistic input for single-layer aquifer without using @RISK."></Figure>
+
+For probabilistic analysis of single-layer aquifer using @RISK, input the minimum, most likely, and maximum values for the fine sand (piping) layer, and
+use an @RISK formula for a triangular distribution in the third column as a default. Alternatively, input a valid @RISK distribution in lieu of this
+default formula, and the user-specified input displays in the fourth column. The mean value used for subsequent calculations is the mean for the @RISK
+distribution entered in the third column. <FigReference parentDocId="108" figKey="sellmeijer-single-layer-probabilistic-risk"/> illustrates the
+probabilistic input for single-layer aquifer using @RISK.
+
+<Figure 
+parentDocId="108" 
+figKey="sellmeijer-single-layer-probabilistic-risk" 
+src="figures/toolbox-technical-manuals/backward-erosion-piping-progression/figure45.png" 
+alt="Step 3 of Sellmeijer worksheet: Probabilistic input for single-layer aquifer using @RISK." 
+caption="Step 3 of Sellmeijer worksheet: Probabilistic input for single-layer aquifer using @RISK."></Figure>
+
+For probabilistic analysis of multi-layer aquifer using @RISK, input the minimum, most likely, and maximum values for the fine sand (piping) layer and
+underlying coarse sand layer, and use an @RISK formula for a triangular distribution in the third column as a default. Alternatively, input a valid @RISK
+distribution in lieu of this default formula, and the user-specified input displays in the fourth column. The mean values used for subsequent calculations
+are the mean for the @RISK distribution entered in the third column. <FigReference parentDocId="108" figKey="sellmeijer-multi-layer-probabilistic-risk"/>
+the probabilistic input for multi-layer aquifer using @RISK.
+
+<Figure 
+parentDocId="108" 
+figKey="sellmeijer-multi-layer-probabilistic-risk" 
+src="figures/toolbox-technical-manuals/backward-erosion-piping-progression/figure46.png" 
+alt="Step 3 of Sellmeijer worksheet: Probabilistic input for multi-layer aquifer using @RISK." 
+caption="Step 3 of Sellmeijer worksheet: Probabilistic input for single-layer aquifer using @RISK."></Figure>
+
 <CitationFootnote />
