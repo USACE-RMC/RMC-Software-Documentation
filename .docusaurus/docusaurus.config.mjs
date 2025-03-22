@@ -19,6 +19,7 @@ export default {
           "sidebarPath": "C:\\Users\\USACE\\OneDrive\\Documents\\GitHub\\RMC-Software-Documentation\\sidebars.js",
           "showLastUpdateTime": true,
           "remarkPlugins": [
+            null,
             null
           ],
           "rehypePlugins": [

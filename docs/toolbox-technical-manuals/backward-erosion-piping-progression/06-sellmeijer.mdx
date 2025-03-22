@@ -138,7 +138,7 @@ $$
 
 where:
 
-> _k<sub>h</sub>_ = permeability of the fine sand (piping) layer in the horizontal direction (m/s)
+> _k<sub>h</sub>_ = permeability of the fine sand (piping) layer in the horizontal direction (m/s)  
 > _μ_ = dynamic viscosity of water (N·s/m<sup>2</sup>)
 
 Use the drop-down list to indicate the presence of a multi-layer foundation (fine sand layer over coarse sand layer). Cells that do not apply have a gray
@@ -164,10 +164,10 @@ $$
 
 where:
 
-> _k<sub>h,f</sub>_ = permeability of the fine (piping) layer in the horizontal direction (cemtimeter/second)
-> _D<sub>f</sub>_ = thickness of the fine (piping) layer
-> _k<sub>h,c</sub>_ = permeability of the coarse underlayer in the horizontal direction (centimeter/second)
-> _D<sub>c</sub>_ = thickness of coarse underlayer (feet)
+> _k<sub>h,f</sub>_ = permeability of the fine (piping) layer in the horizontal direction (cemtimeter/second)  
+> _D<sub>f</sub>_ = thickness of the fine (piping) layer  
+> _k<sub>h,c</sub>_ = permeability of the coarse underlayer in the horizontal direction (centimeter/second)  
+> _D<sub>c</sub>_ = thickness of coarse underlayer (feet)  
 > _D_ = total aquifer thickness (feet)
 
 When the contrast of permeability is large and the aquifer thickness is relatively large compared to the seepage path length, assuming predominant horizontal
@@ -178,7 +178,7 @@ have an orange background.
 The average intrinsic permeability is calculated using Equation 18.
 
 $$
-k_{avg} = k_{h,avg} \frac{μ}{γ_w} \tag{18}
+k_{avg} = k_{h,avg} \left(\frac{μ}{γ_w}\right) \tag{18}
 $$
 
 For deterministic analysis of single-layer aquifer, input only the most likely value for the fine sand (piping) layer. The mean value used for subsequent
@@ -252,5 +252,120 @@ figKey="sellmeijer-multi-layer-probabilistic-risk"
 src="figures/toolbox-technical-manuals/backward-erosion-piping-progression/figure46.png" 
 alt="Step 3 of Sellmeijer worksheet: Probabilistic input for multi-layer aquifer using @RISK." 
 caption="Step 3 of Sellmeijer worksheet: Probabilistic input for single-layer aquifer using @RISK."></Figure>
+
+## Field Critical Horizontal Gradient for BEP Progression
+
+Step 4 calculates the field critical horizontal gradient for BEP progression as illustrated in <FigReference parentDocId="108" figKey="sellmeijer-critical-gradient-terms"/>.
+Equation 19, for the critical horizontal gradient for BEP progression (_i<sub>ch</sub>_), is composed of three terms: a resistance factor that accounts
+for the strength of the layer subject to BEP; a scale factor that relates pore size and seepage size; and a geometrical shape factor.
+
+$$
+i_{ch} = \left(F_R\right) \left(F_S\right) \left(F_G\right) \tag{19}
+$$
+
+where:
+
+> _F<sub>R</sub>_ = resistance factor (strength of the layer subject to BEP)  
+> _F<sub>S</sub>_ = scale factor (relating pore size and seepage size)  
+> _F<sub>G</sub>_ = geometrical shape factor
+
+The resistance factor is a function of White's constant (_η_), bedding angle (_θ_), relative density (_RD_), roundness of the particles (_KAS_), and
+coefficient of uniformity (_U_) and is calculated using Equation 20.
+
+$$
+F_R = η \left(\frac{γ'_p}{γ_w}\right) \tanθ \left(\frac{RD}{72.5}\right)^{0.35} \left(\frac{U}{1.81}\right)^{0.13} \left(\frac{KAS}{49.2}\right)^{-0.02} \tag{20}
+$$
+
+where:
+
+> _KAS_ = roundness of the particles (percent)  
+> _RD_ = relative density (percent)  
+> _U_ = coefficient of uniformity  
+> _γ'<sub>p</sub>_ = submerged unit weight of soil particles (N/m<sup>3</sup>)  
+> _γ<sub>w</sub>_ = unit weight of water (N/m<sup>3</sup>)  
+> _θ_ = bedding angle (degrees)  
+> _η_ = White's constant
+
+Since it is easier to estimate the specific gravity of soil particles than the submerged unit weight of soil particles, the substitution in Equation 21
+is made to the equation for _F<sub>R</sub>_.
+
+$$
+\frac{γ'_p}{γ_w} = G_s - 1 \tag{21}
+$$
+
+The bedding angle and White’s constant have been set to 37 degrees and 0.25, respectively, due to model calibration and are not changed in Dutch practice.
+Since the values were fixed in the multi-variate regression, any influence they had is accounted for in related variables. It is, therefore, not
+appropriate to vary these parameters.
+
+Van Beek et al. <Citation citationKey="vanBeek2010" bibFile="/bibliographies/108-bib.json"/> indicate that _KAS_ and _U_ appear less important than other
+sand characteristics, and the results of multivariate regression analysis show that they have a weak influence on critical gradient. Therefore, _U_ and
+_KAS_ terms in equation for _F<sub>R</sub>_ are sometimes ignored in practice. The toolbox provides an option to neglect the expressions containing these
+terms from the equation for FR as illustrated in <FigReference parentDocId="108" figKey="sellmeijer-critical-gradient-terms-no-u-kas"/>.
+
+The scale factor is a function of the particle size for which 70 percent is finer (by weight) (_d<sub>70</sub>_), the horizontal seepage path length (_L_),
+and the intrinsic permeability of the piping layer (_κ_) and is calculated using Equation 22.
+
+$$
+F_S = \left(\frac{d_{70}}{κL}\right)^{\frac{1}{3}} \left(\frac{0.000208}{d_{70}}\right)^{0.6} \tag{22}
+$$
+
+where:
+
+> _d<sub>70</sub>_ = particle size (m) for which 70 percent is finer (by weight)  
+> _κ_ = intrinsic permeability (m<sup>2</sup>) of the piping layer
+
+The intrinsic permeability of the piping layer in Equation 20 is either _κ<sub>f</sub>_ for a single-layer aquifer or _k<sub>h,avg</sub>_ for a multi-layer
+aquifer.
+
+The value of the horizontal permeability used to calculate the intrinsic permeability depends on the selection in step 3. For single-layer aquifers, it is
+the value for the fine sand (piping) layer. For multi-layer aquifers, it is the layer-weighted average.
+
+The geometrical factor is a function of the ratio of the depth of the piping layer to the horizontal seepage path length (D/L) and is calculated using
+Equation 23.
+
+$$
+F_G = 0.91 \left(\frac{D}{L}\right)^{\frac{0.28}{\left(\frac{D}{L}\right)^{2.8} - 1} + 0.04} \tag{23}
+$$
+
+where:
+
+> _D_ = thickness of the piping layer (m) where _D_ = _D<sub>f</sub>_ for a single-layer aquifer  
+> _L_ = seepage path length (m) through the piping layer (measured horizontally)
+
+<Figure 
+parentDocId="108" 
+figKey="sellmeijer-critical-gradient-terms" 
+src="figures/toolbox-technical-manuals/backward-erosion-piping-progression/figure47.png" 
+alt="Step 4 of Sellmeijer worksheet: Critical gradient terms with U and KAS." 
+caption="Step 4 of Sellmeijer worksheet: Critical gradient terms with U and KAS."></Figure>
+
+<Figure 
+parentDocId="108" 
+figKey="sellmeijer-critical-gradient-terms-no-u-kas" 
+src="figures/toolbox-technical-manuals/backward-erosion-piping-progression/figure48.png" 
+alt="Step 4 of Sellmeijer worksheet: Critical gradient terms without U and KAS." 
+caption="Step 4 of Sellmeijer worksheet: Critical gradient terms without U and KAS."></Figure>
+
+Sellmeijer’s model applies to 2D seepage with plane or ditch exits parallel to the embankment centerline for fine to medium sands within the limits of
+the model test parameters. Van Beek et al. <Citation citationKey="vanBeek2015" bibFile="/bibliographies/108-bib.json"/> found that 3D configurations
+with flow toward a single point (such as a hole in a confining layer) resulted in significantly smaller critical gradients than predicted by the adjusted
+calculation model. In both the small and medium-scale experiments, the model overestimated the critical gradient by a factor of approximately two. If
+the field horizontal critical gradient is further adjusted for 3D flow, input a user-specified GRF. Cells that do not apply have a gray background. The
+two scenarios are illustrated in <FigReference parentDocId="108" figKey="sellmeijer-field-gradient-reduction"/>
+and <FigReference parentDocId="108" figKey="sellmeijer-field-gradient-no-reduction"/>.
+
+<Figure 
+parentDocId="108" 
+figKey="sellmeijer-field-gradient-reduction" 
+src="figures/toolbox-technical-manuals/backward-erosion-piping-progression/figure49.png" 
+alt="Step 4 of Sellmeijer worksheet: Field critical gradient with gradient reduction factor." 
+caption="Step 4 of Sellmeijer worksheet: Field critical gradient with gradient reduction factor."></Figure>
+
+<Figure 
+parentDocId="108" 
+figKey="sellmeijer-field-gradient-no-reduction" 
+src="figures/toolbox-technical-manuals/backward-erosion-piping-progression/figure50.png" 
+alt="Step 4 of Sellmeijer worksheet: Field critical gradient without gradient reduction factor." 
+caption="Step 4 of Sellmeijer worksheet: Field critical gradient without gradient reduction factor."></Figure>
 
 <CitationFootnote />
