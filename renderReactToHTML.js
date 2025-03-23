@@ -1,76 +1,93 @@
+require("@babel/register")({
+  extensions: [".js", ".jsx"],
+});
+
 const React = require("react");
 const ReactDOMServer = require("react-dom/server");
 const fs = require("fs");
 const path = require("path");
-const { execSync } = require("child_process");
-const mdx = require("@mdx-js/mdx"); // This library will help parse the MDX files
 
-// Assuming you have a method to get your MDX files, parse them, and extract the components and their props
-const parseMDX = (filePath) => {
-  const mdxContent = fs.readFileSync(filePath, "utf-8");
-
-  // Use the mdx library to parse the content (this can be extended with custom logic)
-  // This is just a basic example; you can extend it to specifically find component names and props
-  const parsed = mdx.sync(mdxContent);
-
-  // Return the parsed content. You can add logic here to extract the components and their props.
-  return parsed;
+// List of React components to be rendered
+const components = {
+  Bibliography: require("./src/components/Bibliography").default,
+  Citation: require("./src/components/Citation").default,
+  CitationFootnote: require("./src/components/CitationFootnote").default,
+  Figure: require("./src/components/Figure").default,
+  FigReference: require("./src/components/FigureReference").default,
+  TableHorizontal: require("./src/components/TableHorizontal").default,
+  TableReference: require("./src/components/TableReference").default,
+  TableVertical: require("./src/components/TableVertical").default,
+  TableVerticalNoCap: require("./src/components/TableVerticalNoCap").default,
 };
 
-// Load React components dynamically
-const loadComponents = () => {
-  const componentsPath = path.join(__dirname, "src", "components");
-  const components = fs.readdirSync(componentsPath).map((file) => {
-    if (file.endsWith(".jsx") || file.endsWith(".js")) {
-      const componentName = path.basename(file, path.extname(file));
-      const Component = require(path.join(componentsPath, file));
-      return { name: componentName, component: Component };
+// Directory containing MDX files
+const inputDir = path.join(__dirname, "docs");
+const outputDir = path.join(__dirname, "temp-mdx"); // Store modified MDX files here
+
+// Ensure output directory exists
+if (!fs.existsSync(outputDir)) {
+  fs.mkdirSync(outputDir, { recursive: true });
+}
+
+// Function to read all MDX files
+const getAllMdxFiles = (dir) => {
+  let files = [];
+  fs.readdirSync(dir).forEach((file) => {
+    const fullPath = path.join(dir, file);
+    if (fs.statSync(fullPath).isDirectory()) {
+      files = files.concat(getAllMdxFiles(fullPath));
+    } else if (file.endsWith(".mdx")) {
+      files.push(fullPath);
     }
   });
-
-  return components.filter(Boolean);
+  return files;
 };
 
-// Function to render React components to static HTML
-const renderToHTML = () => {
-  const components = loadComponents(); // Load all components dynamically
-  const mdxFiles = fs
-    .readdirSync(path.join(__dirname, "docs"))
-    .filter((file) => file.endsWith(".mdx"));
+// Function to replace React components with their rendered HTML
+const processMdxFile = (filePath) => {
+  let content = fs.readFileSync(filePath, "utf-8");
 
-  mdxFiles.forEach((mdxFile) => {
-    const mdxFilePath = path.join(__dirname, "docs", mdxFile);
-    const parsedContent = parseMDX(mdxFilePath); // Parse the MDX content
+  // Replace each React component instance with its rendered HTML
+  Object.entries(components).forEach(([componentName, Component]) => {
+    const regex = new RegExp(`<${componentName}(.*?)\/>`, "g");
 
-    // Assuming parsedContent contains a list of components used in the MDX file
-    parsedContent.forEach(({ componentName, props }) => {
-      // Dynamically find the component based on its name
-      const component = components.find((comp) => comp.name === componentName);
+    content = content.replace(regex, (match, propsString) => {
+      try {
+        // Parse props if any are provided (basic key-value handling)
+        const props = {};
+        propsString
+          .trim()
+          .split(/\s+/)
+          .forEach((pair) => {
+            const [key, value] = pair.split("=");
+            if (key && value) {
+              props[key] = value.replace(/['"]/g, ""); // Remove quotes
+            }
+          });
 
-      if (component) {
-        // Render the component with the extracted props
-        const htmlContent = ReactDOMServer.renderToStaticMarkup(
-          React.createElement(component.component, props)
+        // Render React component to static HTML
+        const html = ReactDOMServer.renderToStaticMarkup(
+          React.createElement(Component, props)
         );
-
-        // Write the HTML content to a file
-        const outputDir = path.join(__dirname, "output", "html");
-        if (!fs.existsSync(outputDir)) {
-          fs.mkdirSync(outputDir, { recursive: true });
-        }
-
-        const outputFilePath = path.join(
-          outputDir,
-          `${componentName}-${mdxFile}.html`
-        );
-        fs.writeFileSync(outputFilePath, htmlContent);
-        console.log(
-          `Rendered ${componentName} from ${mdxFile} to ${outputFilePath}`
-        );
+        return html;
+      } catch (error) {
+        console.error(`Error rendering component ${componentName}:`, error);
+        return match; // Keep original if error occurs
       }
     });
   });
+
+  // Write the modified content to a new file
+  const relativePath = path.relative(inputDir, filePath);
+  const outputFilePath = path.join(outputDir, relativePath);
+  fs.mkdirSync(path.dirname(outputFilePath), { recursive: true });
+  fs.writeFileSync(outputFilePath, content);
+
+  console.log(`✅ Processed: ${filePath}`);
 };
 
-// Run the function
-renderToHTML();
+// Process all `.mdx` files
+const mdxFiles = getAllMdxFiles(inputDir);
+mdxFiles.forEach(processMdxFile);
+
+console.log("✅ All MDX files processed. Modified files are in:", outputDir);

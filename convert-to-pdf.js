@@ -3,9 +3,24 @@ const fs = require("fs");
 const path = require("path");
 
 // Define input and output directories
-const inputDir = path.join(__dirname, "docs");
+const tempMdxDir = path.join(__dirname, "temp-mdx");
 const outputDir = path.join(__dirname, "static", "pdfs");
 const templatePath = path.join(__dirname, "pdf-template.tex");
+
+// Ensure temp-mdx directory exists
+if (!fs.existsSync(tempMdxDir)) {
+  fs.mkdirSync(tempMdxDir, { recursive: true });
+}
+
+// Step 1: Run renderReactToHTML.js to generate temp-mdx files
+console.log("🛠️ Running renderReactToHTML.js to process React components...");
+try {
+  execSync("node renderReactToHTML.js", { stdio: "inherit", shell: true });
+  console.log("✅ Finished processing React components.");
+} catch (error) {
+  console.error("❌ Failed to process React components:", error.message);
+  process.exit(1); // Stop execution if preprocessing fails
+}
 
 // Ensure output directory exists
 if (!fs.existsSync(outputDir)) {
@@ -39,8 +54,7 @@ const deleteExistingPdfs = () => {
 
 // Convert MDX to PDF
 const convertToPDF = (inputFilePath) => {
-  // Generate relative output path by removing the docs directory
-  const relativePath = path.relative(inputDir, inputFilePath);
+  const relativePath = path.relative(tempMdxDir, inputFilePath);
   const outputFilePath = path.join(
     outputDir,
     relativePath.replace(".mdx", ".pdf")
@@ -54,7 +68,6 @@ const convertToPDF = (inputFilePath) => {
 
   console.log(`📄 Converting ${inputFilePath} to PDF...`);
 
-  // Define the relative path for static resources
   const resourcePath = path.join(__dirname, "static");
 
   try {
@@ -75,13 +88,27 @@ const convertToPDF = (inputFilePath) => {
   }
 };
 
-// Delete existing PDFs before generating new ones
+// Step 2: Delete existing PDFs before generating new ones
 deleteExistingPdfs();
 
-// Read all '.mdx' files and convert them
-const mdxFiles = getAllMdxFiles(inputDir);
+// Step 3: Convert processed .mdx files to PDF
+const mdxFiles = getAllMdxFiles(tempMdxDir);
 if (mdxFiles.length === 0) {
-  console.log("⚠️ No .mdx files found in /docs or its subdirectories.");
+  console.log(
+    "⚠️ No .mdx files found in temp-mdx/. Ensure preprocessing is complete."
+  );
+  process.exit(1); // Stop execution if no files are found
 } else {
   mdxFiles.forEach(convertToPDF);
 }
+
+// Step 4: Clean up the temp-mdx files after conversion
+const cleanupTempMdx = () => {
+  console.log("🧹 Cleaning up temp-mdx files...");
+  fs.rmdirSync(tempMdxDir, { recursive: true });
+  console.log("✅ temp-mdx files deleted.");
+};
+
+cleanupTempMdx();
+
+console.log("🎉 PDF conversion complete!");
