@@ -44,15 +44,15 @@ export default [
   },
   {
     path: '/RMC-Software-Documentation/docs',
-    component: ComponentCreator('/RMC-Software-Documentation/docs', '7d5'),
+    component: ComponentCreator('/RMC-Software-Documentation/docs', '8b4'),
     routes: [
       {
         path: '/RMC-Software-Documentation/docs',
-        component: ComponentCreator('/RMC-Software-Documentation/docs', '391'),
+        component: ComponentCreator('/RMC-Software-Documentation/docs', 'ba2'),
         routes: [
           {
             path: '/RMC-Software-Documentation/docs',
-            component: ComponentCreator('/RMC-Software-Documentation/docs', '58a'),
+            component: ComponentCreator('/RMC-Software-Documentation/docs', '16e'),
             routes: [
               {
                 path: '/RMC-Software-Documentation/docs/lifesim/users-guide/',
@@ -97,8 +97,20 @@ export default [
                 sidebar: "bepInitiationSidebar"
               },
               {
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/appendix-acronyms',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/appendix-acronyms', '2e1'),
+                exact: true,
+                sidebar: "bepProgressionSidebar"
+              },
+              {
                 path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/background',
                 component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/background', '77d'),
+                exact: true,
+                sidebar: "bepProgressionSidebar"
+              },
+              {
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/creep-ratios',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/creep-ratios', 'c31'),
                 exact: true,
                 sidebar: "bepProgressionSidebar"
               },
@@ -129,6 +141,12 @@ export default [
               {
                 path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/sellmeijer',
                 component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/sellmeijer', '937'),
+                exact: true,
+                sidebar: "bepProgressionSidebar"
+              },
+              {
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/summary',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/summary', 'b3f'),
                 exact: true,
                 sidebar: "bepProgressionSidebar"
               },

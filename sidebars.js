@@ -44,8 +44,18 @@ module.exports = {
       },
       {
         type: "doc",
+        id: "toolbox-technical-manuals/backward-erosion-piping-progression/summary",
+        label: "Summary",
+      },
+      {
+        type: "doc",
         id: "toolbox-technical-manuals/backward-erosion-piping-progression/references",
         label: "References",
+      },
+      {
+        type: "doc",
+        id: "toolbox-technical-manuals/backward-erosion-piping-progression/appendix-acronyms",
+        label: "Appendix A - Acronyms",
       },
     ],
   },

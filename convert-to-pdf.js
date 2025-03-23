@@ -54,11 +54,15 @@ const convertToPDF = (inputFilePath) => {
 
   console.log(`📄 Converting ${inputFilePath} to PDF...`);
 
+  // Define the relative path for static resources
+  const resourcePath = path.join(__dirname, "static");
+
   try {
     execSync(
       `pandoc "${inputFilePath}" -o "${outputFilePath}" \
       --template="${templatePath}" \
       --pdf-engine=xelatex \
+      --resource-path="${resourcePath}" \
       --toc \
       --metadata title="RMC Report" \
       --metadata author="Risk Management Center" \
