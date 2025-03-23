@@ -39,6 +39,11 @@ module.exports = {
       },
       {
         type: "doc",
+        id: "toolbox-technical-manuals/backward-erosion-piping-progression/creep-ratios",
+        label: "Creep Ratios",
+      },
+      {
+        type: "doc",
         id: "toolbox-technical-manuals/backward-erosion-piping-progression/references",
         label: "References",
       },

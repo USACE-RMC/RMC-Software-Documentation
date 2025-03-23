@@ -5,7 +5,6 @@ const path = require("path");
 // Define input and output directories
 const inputDir = path.join(__dirname, "docs");
 const outputDir = path.join(__dirname, "static", "pdfs");
-const templatePath = path.join(__dirname, "pdf-template.tex");
 
 // Ensure output directory exists
 if (!fs.existsSync(outputDir)) {
@@ -31,8 +30,8 @@ const deleteExistingPdfs = () => {
   fs.readdirSync(outputDir).forEach((file) => {
     const filePath = path.join(outputDir, file);
     if (filePath.endsWith(".pdf")) {
-      fs.unlinkSync(filePath);
-      console.log(`🗑️ Deleted existing PDF: ${filePath}`);
+      fs.unlinkSync(filePath); // Delete the file
+      console.log(`Deleted existing PDF: ${filePath}`);
     }
   });
 };
@@ -41,29 +40,28 @@ const deleteExistingPdfs = () => {
 const convertToPDF = (inputFilePath) => {
   // Generate relative output path by removing the docs directory
   const relativePath = path.relative(inputDir, inputFilePath);
+
+  // Debugging output to see the paths
+  console.log(`Input File Path: ${inputFilePath}`);
+  console.log(`Relative Path: ${relativePath}`);
+
   const outputFilePath = path.join(
     outputDir,
     relativePath.replace(".mdx", ".pdf")
   );
-  const outputSubDir = path.dirname(outputFilePath);
 
   // Ensure subdirectories exist in outputDir
+  const outputSubDir = path.dirname(outputFilePath);
   if (!fs.existsSync(outputSubDir)) {
     fs.mkdirSync(outputSubDir, { recursive: true });
   }
 
-  console.log(`📄 Converting ${inputFilePath} to PDF...`);
+  console.log(`Converting ${inputFilePath} to PDF...`);
 
   try {
     execSync(
-      `pandoc "${inputFilePath}" -o "${outputFilePath}" \
-      --template="${templatePath}" \
-      --pdf-engine=xelatex \
-      --toc \
-      --metadata title="RMC Report" \
-      --metadata author="Risk Management Center" \
-      --metadata date="$(date +%Y-%m-%d)"`,
-      { stdio: "inherit", shell: true }
+      `pandoc "${inputFilePath}" -o "${outputFilePath}" -f markdown --pdf-engine=xelatex`,
+      { stdio: "inherit" }
     );
     console.log(`✅ Successfully created: ${outputFilePath}`);
   } catch (error) {
