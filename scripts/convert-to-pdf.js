@@ -3,13 +3,19 @@ const fs = require("fs");
 const path = require("path");
 
 // Define input and output directories
-const tempMdxDir = path.join(__dirname, "temp-mdx");
-const outputDir = path.join(__dirname, "static", "pdfs");
+const tempMdxDir = path.join(__dirname, "../temp-mdx");
+const outputDir = path.join(__dirname, "../static", "pdfs");
 const templatePath = path.join(__dirname, "pdf-template.tex");
 
 // Ensure temp-mdx directory exists
 if (!fs.existsSync(tempMdxDir)) {
   fs.mkdirSync(tempMdxDir, { recursive: true });
+  console.log("✅ temp-mdx directory created.");
+}
+
+// Ensure output directory exists
+if (!fs.existsSync(outputDir)) {
+  fs.mkdirSync(outputDir, { recursive: true });
 }
 
 // Step 1: Run renderReactToHTML.js to generate temp-mdx files
@@ -25,11 +31,6 @@ try {
   process.exit(1); // Stop execution if preprocessing fails
 }
 
-// Ensure output directory exists
-if (!fs.existsSync(outputDir)) {
-  fs.mkdirSync(outputDir, { recursive: true });
-}
-
 // Function to recursively find all .mdx files
 const getAllMdxFiles = (dir) => {
   let files = [];
@@ -42,6 +43,24 @@ const getAllMdxFiles = (dir) => {
     }
   });
   return files;
+};
+
+// Function to wait for the .mdx files to appear
+const waitForMdxFiles = (dir, timeout = 60000) => {
+  const startTime = Date.now();
+  return new Promise((resolve, reject) => {
+    const checkFiles = () => {
+      const files = getAllMdxFiles(dir);
+      if (files.length > 0) {
+        resolve(files);
+      } else if (Date.now() - startTime >= timeout) {
+        reject("Timeout reached while waiting for .mdx files.");
+      } else {
+        setTimeout(checkFiles, 500); // Check again after 500ms
+      }
+    };
+    checkFiles();
+  });
 };
 
 // Function to delete all existing PDFs
@@ -72,6 +91,7 @@ const convertToPDF = (inputFilePath) => {
   console.log(`📄 Converting ${inputFilePath} to PDF...`);
 
   const resourcePath = path.join(__dirname, "static");
+  const currentDate = new Date().toISOString().split("T")[0];
 
   try {
     execSync(
@@ -82,7 +102,10 @@ const convertToPDF = (inputFilePath) => {
       --toc \
       --metadata title="RMC Report" \
       --metadata author="Risk Management Center" \
-      --metadata date="$(date +%Y-%m-%d)"`,
+      --metadata date="${currentDate}",
+      --include-in-header="\\usepackage{amsmath}",
+      --include-in-header="\\newcommand{\\tightlist}{}",
+      --katex`,
       { stdio: "inherit", shell: true }
     );
     console.log(`✅ Successfully created: ${outputFilePath}`);
@@ -94,24 +117,38 @@ const convertToPDF = (inputFilePath) => {
 // Step 2: Delete existing PDFs before generating new ones
 deleteExistingPdfs();
 
-// Step 3: Convert processed .mdx files to PDF
-const mdxFiles = getAllMdxFiles(tempMdxDir);
-if (mdxFiles.length === 0) {
-  console.log(
-    "⚠️ No .mdx files found in temp-mdx/. Ensure preprocessing is complete."
-  );
-  process.exit(1); // Stop execution if no files are found
-} else {
-  mdxFiles.forEach(convertToPDF);
-}
+// Step 3: Wait for the .mdx files to be ready and convert them to PDF
+waitForMdxFiles(tempMdxDir)
+  .then((mdxFiles) => {
+    // First, convert the .mdx files to PDFs
+    mdxFiles.forEach(convertToPDF);
+    console.log("🎉 PDF conversion complete!");
+
+    // After all PDF conversion is done, clean up the temp-mdx files
+    //cleanupTempMdx();
+  })
+  .catch((error) => {
+    console.error(error);
+    process.exit(1); // Stop execution if no files are found or timeout occurs
+  });
 
 // Step 4: Clean up the temp-mdx files after conversion
 const cleanupTempMdx = () => {
   console.log("🧹 Cleaning up temp-mdx files...");
-  fs.rmdirSync(tempMdxDir, { recursive: true });
+
+  // Delete all files and folders inside temp-mdx but leave the temp-mdx folder itself intact
+  fs.readdirSync(tempMdxDir).forEach((file) => {
+    const filePath = path.join(tempMdxDir, file);
+    if (fs.statSync(filePath).isDirectory()) {
+      // Recursively remove subdirectories
+      fs.rmdirSync(filePath, { recursive: true });
+      console.log(`🗑️ Deleted directory: ${filePath}`);
+    } else {
+      // Remove individual files
+      fs.unlinkSync(filePath);
+      console.log(`🗑️ Deleted file: ${filePath}`);
+    }
+  });
+
   console.log("✅ temp-mdx files deleted.");
 };
-
-cleanupTempMdx();
-
-console.log("🎉 PDF conversion complete!");

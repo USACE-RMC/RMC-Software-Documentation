@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import useBaseUrl from "@docusaurus/useBaseUrl";
 
 const Figure = ({ parentDocId, figKey, src, alt, caption }) => {
   const [figInfo, setFigInfo] = useState(null);
   // Construct the path to fetch the JSON data using the parentDocId
 
-  const jsonPath = useBaseUrl(
-    `counters/${parentDocId.replace(/\//g, "-")}.json`
-  );
-  const imgSrc = useBaseUrl(src);
+  const jsonPath = `/RMC-Software-Documentation/counters/${parentDocId.replace(
+    /\//g,
+    "-"
+  )}.json`;
+  const imgSrc = `/RMC-Software-Documentation/${src}`;
 
   useEffect(() => {
     try {

@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "../css/custom.css";
-import useBaseUrl from "@docusaurus/useBaseUrl";
 
 const Bibliography = ({ bibFile }) => {
   const [citations, setCitations] = useState([]);
-  const bibFilePath = useBaseUrl(bibFile);
+  const bibFilePath = `/RMC-Software-Documentation/${bibFile}`;
 
   useEffect(() => {
     const fetchBibData = async () => {

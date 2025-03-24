@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import useBaseUrl from "@docusaurus/useBaseUrl";
 
 const FigReference = ({ parentDocId, figKey }) => {
   const [figInfo, setFigInfo] = useState(null);
   // Assuming the figKey will help determine the correct JSON file path
-  const jsonPath = useBaseUrl(
-    `counters/${parentDocId.replace(/\//g, "-")}.json`
-  );
+  const jsonPath = `/RMC-Software-Documentation/counters/${parentDocId.replace(
+    /\//g,
+    "-"
+  )}.json`;
 
   useEffect(() => {
     const loadCounters = async () => {

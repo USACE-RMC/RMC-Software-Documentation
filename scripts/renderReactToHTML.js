@@ -1,8 +1,6 @@
-const { useBaseUrl } = require("@docusaurus/useBaseUrl");
-const { DocusaurusContext } = require("@docusaurus/core");
-
 require("@babel/register")({
   extensions: [".js", ".jsx"],
+  ignore: [/(node_modules)/, /\.css$/], // Ignore CSS files
 });
 
 const React = require("react");
@@ -10,24 +8,20 @@ const ReactDOMServer = require("react-dom/server");
 const fs = require("fs");
 const path = require("path");
 
-// This will set up a mock context o useBaseUrl works
-const mockContext = {
-  siteConfig: {
-    baseUrl: "/RMC-Software-Documentation/",
-  },
-};
+// Manually mock CSS imports (to avoid import errors)
+require("ignore-styles");
 
 // List of React components to be rendered
 const components = {
   Bibliography: require("../src/components/Bibliography").default,
-  Citation: require("../src/components/Citation").default,
-  CitationFootnote: require("../src/components/CitationFootnote").default,
+  //Citation: require("../src/components/Citation").default,
+  //CitationFootnote: require("../src/components/CitationFootnote").default,
   Figure: require("../src/components/Figure").default,
   FigReference: require("../src/components/FigureReference").default,
-  TableHorizontal: require("../src/components/TableHorizontal").default,
-  TableReference: require("../src/components/TableReference").default,
-  TableVertical: require("../src/components/TableVertical").default,
-  TableVerticalNoCap: require("../src/components/TableVerticalNoCap").default,
+  //TableHorizontal: require("../src/components/TableHorizontal").default,
+  //TableReference: require("../src/components/TableReference").default,
+  //TableVertical: require("../src/components/TableVertical").default,
+  //TableVerticalNoCap: require("../src/components/TableVerticalNoCap").default,
 };
 
 // Directory containing MDX files
@@ -62,6 +56,8 @@ const processMdxFile = (filePath) => {
     const regex = new RegExp(`<${componentName}(.*?)\/>`, "g");
 
     content = content.replace(regex, (match, propsString) => {
+      console.log(`🔄 Rendering component: ${componentName}`);
+
       try {
         // Parse props if any are provided (basic key-value handling)
         const props = {};
@@ -77,15 +73,13 @@ const processMdxFile = (filePath) => {
 
         // Render React component to static HTML
         const html = ReactDOMServer.renderToStaticMarkup(
-          React.createElement(
-            DocusaurusContext.Provider,
-            { value: mockContext },
-            React.createElement(Component, props)
-          )
+          React.createElement(Component, props)
         );
+
+        console.log(`✅ Successfully rendered: ${componentName}`);
         return html;
       } catch (error) {
-        console.error(`Error rendering component ${componentName}:`, error);
+        console.error(`❌ Error rendering component ${componentName}:`, error);
         return match; // Keep original if error occurs
       }
     });
