@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import addBaseUrl from "@docusaurus/useBaseUrl";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 
 const TableReference = ({ parentDocId, tableKey }) => {
