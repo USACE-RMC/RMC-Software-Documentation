@@ -82,6 +82,12 @@ export default {
         }
       ]
     },
+    "googleFonts": {
+      "families": [
+        "Roboto:400,500,700",
+        "sans-serif"
+      ]
+    },
     "colorMode": {
       "defaultMode": "light",
       "disableSwitch": false,

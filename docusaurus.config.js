@@ -79,5 +79,8 @@ export default {
         },
       ],
     },
+    googleFonts: {
+      families: ["Roboto:400,500,700", "sans-serif"],
+    },
   },
 };

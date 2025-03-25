@@ -131,6 +131,12 @@ export default function Home() {
         <div className="header-container">
           <h1>RMC Software Documentation</h1>
         </div>
+        <p className="welcome-text">
+          Welcome to the Risk Management Center software documentation portal.
+          <br />
+          Your hub for comprehensive guides, resources, and support to navigate
+          our powerful tools.
+        </p>
         <ContentBox title="LifeSim Documentation" contentData={lifeSimData} />
         <ContentBox
           title="RMC-BestFit Documentation"
