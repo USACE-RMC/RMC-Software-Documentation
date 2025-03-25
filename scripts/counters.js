@@ -3,12 +3,12 @@ const path = require("path");
 
 // Unique numeric ID mapping for each report
 const reportIDs = {
-  "lifesim/users-guide": 101,
-  "rmc-bestfit/users-guide": 102,
-  "rmc-rfa/users-guide": 103,
-  "rmc-totalrisk/users-guide": 104,
-  "rmc-totalrisk/applications-guide": 105,
-  "rmc-totalrisk/verification-report": 106,
+  "desktop-applications/lifesim/users-guide": 101,
+  "desktop-applications/rmc-bestfit/users-guide": 102,
+  "desktop-applications/rmc-rfa/users-guide": 103,
+  "desktop-applications/rmc-totalrisk/users-guide": 104,
+  "desktop-applications/rmc-totalrisk/applications-guide": 105,
+  "desktop-applications/rmc-totalrisk/verification-report": 106,
   "toolbox-technical-manuals/filter-evaluation-continuation": 107,
   "toolbox-technical-manuals/backward-erosion-piping-progression": 108,
 };
@@ -39,6 +39,7 @@ function processReport(reportPath) {
   let counters = {};
   let figureCount = 1;
   let tableCount = 1;
+  let equationCount = 1;
 
   // Check if the folder exists
   if (!fs.existsSync(folder)) {
@@ -53,9 +54,9 @@ function processReport(reportPath) {
     const filePath = path.join(folder, file);
     const content = fs.readFileSync(filePath, "utf-8");
 
-    counters[file] = { figures: {}, tables: {} };
+    counters[file] = { figures: {}, tables: {}, equations: {} };
 
-    // Improved regex patterns for <Figure>
+    // Regex patterns for <Figure>
     const figureMatches = [
       ...content.matchAll(/<Figure\s+[^>]*figKey="([^"]+)"/g),
     ];
@@ -70,7 +71,7 @@ function processReport(reportPath) {
       figureCount++;
     });
 
-    // Improved regex patterns for <Table>
+    // Regex patterns for <Table>
     const tableMatches = [
       ...content.matchAll(
         /<(TableHorizontal|TableVertical|TableVerticalNoCap)\s+[^>]*tableKey="([^"]+)"/g
@@ -87,8 +88,23 @@ function processReport(reportPath) {
       tableCount++;
     });
 
+    // Regex patterns for <Equation>
+    const equationMatches = [
+      ...content.matchAll(/<Equation\s+[^>]*equationKey="([^"]+)"/g),
+    ];
+    equationMatches.forEach((match) => {
+      const equationKey = match[1];
+      counters[file].equations[equationKey] = {
+        equationNumber: equationCount,
+        parentDocId: reportId, // Store numeric ID instead of path
+        parentDocPath: reportPath, // Keep the original path for reference
+        docId: file,
+      };
+      equationCount++;
+    });
+
     console.log(
-      `Processed ${file}: ${figureMatches.length} figures, ${tableMatches.length} tables`
+      `Processed ${file}: ${figureMatches.length} figures, ${tableMatches.length} tables, ${equationMatches.length} equations`
     );
   });
 

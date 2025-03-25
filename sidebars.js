@@ -176,30 +176,13 @@ module.exports = {
     ],
   },
 
-  sidebar: [
-    {
-      type: "category",
-      label: "RMC-TotalRisk",
-      items: [
-        "rmc-totalrisk/users-guide/users-guide",
-        "rmc-totalrisk/applications-guide/applications-guide",
-        "rmc-totalrisk/verification-report/verification-report",
-      ],
-    },
-    {
-      type: "category",
-      label: "RMC-RFA",
-      items: ["rmc-rfa/users-guide/users-guide"],
-    },
-    {
-      type: "category",
-      label: "RMC-BestFit",
-      items: ["rmc-bestfit/users-guide/users-guide"],
-    },
-    {
-      type: "category",
-      label: "LifeSim",
-      items: ["lifesim/users-guide/users-guide"],
-    },
-  ],
+  totalRiskUsersGuideSidebar: {
+    "RMC TotalRisk Users Guide": [
+      {
+        type: "doc",
+        id: "desktop-applications/rmc-totalrisk/users-guide/users-guide",
+        label: "Code Block Example",
+      },
+    ],
+  },
 };

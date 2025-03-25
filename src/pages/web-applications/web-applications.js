@@ -8,21 +8,21 @@ export default function WebApps() {
   const webAppData = [
     {
       icon: "../img/WebApp.png",
-      doc_location: addBaseUrl("RRFT"),
-      doc_name: "RRFT",
-      active: false,
+      doc_location: addBaseUrl("web-applications/rrft"),
+      doc_name: "Rainfall Runoff Frequency Tool",
+      active: true,
     },
     {
       icon: "../img/WebApp.png",
-      doc_location: addBaseUrl("lst"),
+      doc_location: addBaseUrl("web-applications/lst"),
       doc_name: "Levee Screening Tool",
-      active: false,
+      active: true,
     },
     {
       icon: "../img/WebApp.png",
-      doc_location: addBaseUrl("dst"),
+      doc_location: addBaseUrl("web-applications/dst"),
       doc_name: "Dam Screening Tool",
-      active: false,
+      active: true,
     },
   ];
 

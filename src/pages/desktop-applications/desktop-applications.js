@@ -8,27 +8,27 @@ export default function DesktopApps() {
   const desktopAppData = [
     {
       icon: "../img/TotalRisk.png",
-      doc_location: addBaseUrl("totalrisk"),
+      doc_location: addBaseUrl("desktop-applications/rmc-totalrisk"),
       doc_name: "RMC TotalRisk",
-      active: false,
+      active: true,
     },
     {
       icon: "../img/BestFit.png",
-      doc_location: addBaseUrl("best-fit"),
+      doc_location: addBaseUrl("desktop-applications/rmc-bestfit"),
       doc_name: "RMC BestFit",
-      active: false,
+      active: true,
     },
     {
       icon: "../img/RFA.png",
-      doc_location: addBaseUrl("rfa"),
+      doc_location: addBaseUrl("desktop-applications/rmc-rfa"),
       doc_name: "RMC RFA",
-      active: false,
+      active: true,
     },
     {
       icon: "../img/LifeSim.png",
-      doc_location: addBaseUrl("lifesim"),
+      doc_location: addBaseUrl("desktop-applications/lifesim"),
       doc_name: "LifeSim",
-      active: false,
+      active: true,
     },
   ];
 
