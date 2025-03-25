@@ -29,9 +29,17 @@ const CitationFootnote = () => {
 
   const formatAuthors = (authors) => {
     if (!Array.isArray(authors)) return authors;
-    return authors.length > 1
-      ? authors.slice(0, -1).join(", ") + " & " + authors[authors.length - 1]
-      : authors[0];
+    return authors
+      .map((author) => {
+        const nameParts = author.split(" ");
+        const initials = nameParts
+          .slice(0, -1)
+          .map((name) => name[0] + ".")
+          .join(" ");
+        const lastName = nameParts[nameParts.length - 1];
+        return `${initials} ${lastName}`;
+      })
+      .join(", ");
   };
 
   const formatCitation = (citation) => {
@@ -53,6 +61,7 @@ const CitationFootnote = () => {
       url,
       publisher,
     } = citation;
+
     return (
       <>
         {formatAuthors(author)} ({year}). <em>{title}</em>.
@@ -92,8 +101,8 @@ const CitationFootnote = () => {
   };
 
   return (
-    <div className="citation-footnote">
-      <ol>
+    <div className="citation-footnote" style={{ marginLeft: "20px" }}>
+      <ol style={{ listStyleType: "none", paddingLeft: "0" }}>
         {citations
           .sort((a, b) => a.number - b.number)
           .map((citation) => (
@@ -101,8 +110,18 @@ const CitationFootnote = () => {
               value={citation.number}
               key={citation.citationKey}
               id={`footnote-${citation.citationKey}`}
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                marginBottom: "10px",
+              }}
             >
-              {formatCitation(citation)}
+              <span style={{ minWidth: "40px", flexShrink: 0 }}>
+                [{citation.number}]
+              </span>{" "}
+              <span style={{ display: "block" }}>
+                {formatCitation(citation)}
+              </span>
             </li>
           ))}
       </ol>

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import "../css/custom.css";
 
 const Bibliography = ({ bibFile }) => {
   const [citations, setCitations] = useState([]);
@@ -11,7 +10,7 @@ const Bibliography = ({ bibFile }) => {
         const response = await fetch(bibFilePath);
         const data = await response.json();
 
-        // Sort citations by author(s)
+        // Sort citations alphabetically by author(s)
         const sortedCitations = data.sort((a, b) => {
           const authorA = Array.isArray(a.author) ? a.author[0] : a.author;
           const authorB = Array.isArray(b.author) ? b.author[0] : b.author;
@@ -29,12 +28,15 @@ const Bibliography = ({ bibFile }) => {
 
   const formatAuthors = (authors) => {
     if (!Array.isArray(authors)) return authors;
-    return authors.length > 1
-      ? authors.slice(0, -1).join(", ") + " & " + authors[authors.length - 1]
-      : authors[0];
+    if (authors.length > 6) {
+      return `${authors[0]}, et al.`;
+    }
+    return authors.length === 2
+      ? `${authors[0]} and ${authors[1]}`
+      : authors.join(", ");
   };
 
-  const formatCitation = (citation) => {
+  const formatCitation = (citation, index) => {
     const {
       author,
       year,
@@ -53,52 +55,68 @@ const Bibliography = ({ bibFile }) => {
       url,
       publisher,
     } = citation;
+
     return (
-      <>
-        {formatAuthors(author)} ({year}). <em>{title}</em>.
-        {journal && ` ${journal}`}
-        {booktitle && ` In ${booktitle}`}
-        {organization && ` (${organization})`}
-        {location && `, ${location}`}
-        {volume && `, Vol. ${volume}`}
-        {edition && `(${edition})`}
-        {pages && `, pp. ${pages}`}
-        {publisher && ` ${publisher}`}
-        {institution && ` ${institution}`}
-        {report && ` ${report}`}
-        {manual && ` ${manual}`}
-        {doi && (
-          <>
-            {" "}
-            <a
-              href={`https://doi.org/${doi}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              https://doi.org/{doi}
-            </a>
-          </>
-        )}
-        {url && (
-          <>
-            {" "}
-            <a href={url} target="_blank" rel="noopener noreferrer">
-              {url}
-            </a>
-          </>
-        )}
-      </>
+      <li
+        key={citation.citationKey}
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          marginBottom: "10px",
+        }}
+      >
+        <span style={{ minWidth: "40px", flexShrink: 0 }}> [{index + 1}] </span>
+        <span style={{ display: "block" }}>
+          {formatAuthors(author)}, <q>{title},</q>
+          {journal && <em> {journal},</em>}
+          {booktitle && ` in ${booktitle},`}
+          {organization && ` ${organization},`}
+          {location && ` ${location},`}
+          {volume && ` vol. ${volume},`}
+          {edition && ` no. ${edition},`}
+          {pages && ` pp. ${pages},`}
+          {publisher && ` ${publisher},`}
+          {institution && ` ${institution},`}
+          {report && ` ${report},`}
+          {manual && ` ${manual},`}
+          {year}.
+          {doi && (
+            <>
+              {" "}
+              doi:{" "}
+              <a
+                href={`https://doi.org/${doi}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: "none" }}
+              >
+                {doi}
+              </a>
+            </>
+          )}
+          {url && (
+            <>
+              {" "}
+              Available:{" "}
+              <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: "none" }}
+              >
+                {url}
+              </a>
+            </>
+          )}
+        </span>
+      </li>
     );
   };
 
   return (
     <div>
-      <ol>
-        {citations.map((citation) => (
-          <li key={citation.citationKey} className="citation">
-            {formatCitation(citation)}
-          </li>
-        ))}
+      <ol style={{ paddingLeft: "0", listStyleType: "none" }}>
+        {citations.map((citation, index) => formatCitation(citation, index))}
       </ol>
     </div>
   );

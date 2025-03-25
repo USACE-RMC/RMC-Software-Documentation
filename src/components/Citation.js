@@ -54,7 +54,9 @@ const Citation = ({ citationKey, bibFile }) => {
 
   return (
     <span className="citation-reference">
-      <sup>[{citationNumber}]</sup>
+      <a href={`#footnote-${citationKey}`} style={{ textDecorartion: "none" }}>
+        [{citationNumber}]
+      </a>
     </span>
   );
 };
