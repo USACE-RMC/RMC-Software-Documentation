@@ -108,7 +108,7 @@ export default function InternalErosionSuite() {
           <h1>RMC Software Documentation</h1>
         </div>
         <div className="title-container">
-          <img src="../img/ToolboxFilled.png"></img>
+          <img src={addBaseUrl("img/ToolboxFilled.png")}></img>
           <div className="text-container">
             <p className="text-title">Internal Erosion Suite</p>
             <p className="text-description">RMC Toolboxes</p>

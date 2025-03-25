@@ -20,7 +20,7 @@ export default function TotalRisk() {
         "docs/desktop-applications/rmc-totalrisk/applications-guide/applications-guide"
       ),
       doc_name: "RMC TotalRisk Applications Guide",
-      active: true,
+      active: false,
     },
     {
       icon: addBaseUrl("img/TotalRisk.png"),
@@ -28,7 +28,7 @@ export default function TotalRisk() {
         "docs/desktop-applications/rmc-totalrisk/vertification-report/verification-report"
       ),
       doc_name: "RMC TotalRisk Verification Report",
-      active: true,
+      active: false,
     },
   ];
 
@@ -42,7 +42,7 @@ export default function TotalRisk() {
           <h1>RMC Software Documentation</h1>
         </div>
         <div className="title-container">
-          <img src="../img/TotalRisk.png"></img>
+          <img src={addBaseUrl("img/TotalRisk.png")}></img>
           <div className="text-container">
             <p className="text-title">RMC TotalRisk</p>
             <p className="text-description">RMC TotalRisk</p>

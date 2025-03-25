@@ -12,7 +12,7 @@ export default function RRFT() {
         "docs/web-applications/rrft/users-guide/users-guide"
       ),
       doc_name: "RRFT Users Guide",
-      active: true,
+      active: false,
     },
   ];
 
@@ -26,7 +26,7 @@ export default function RRFT() {
           <h1>RMC Software Documentation</h1>
         </div>
         <div className="title-container">
-          <img src="../img/WebAppFilled.png"></img>
+          <img src={addBaseUrl("img/WebAppFilled.png")}></img>
           <div className="text-container">
             <p className="text-title">Rainfall Runoff Frequency Tool</p>
             <p className="text-description">Rainfall Runoff Frequency Tool</p>

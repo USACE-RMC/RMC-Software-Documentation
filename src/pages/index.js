@@ -7,62 +7,62 @@ import addBaseUrl from "@docusaurus/useBaseUrl";
 export default function Home() {
   const desktopAppCardData = [
     {
-      icon: "img/TotalRisk.png",
+      icon: addBaseUrl("img/TotalRisk.png"),
       title: "RMC-TotalRisk",
     },
     {
-      icon: "img/RFA.png",
+      icon: addBaseUrl("img/RFA.png"),
       title: "RMC-RFA",
     },
     {
-      icon: "img/BestFit.png",
+      icon: addBaseUrl("img/BestFit.png"),
       title: "RMC-BestFit",
     },
     {
-      icon: "img/LifeSim.png",
+      icon: addBaseUrl("img/LifeSim.png"),
       title: "LifeSim",
     },
   ];
 
   const toolboxCardData = [
     {
-      icon: "img/Toolbox.png",
+      icon: addBaseUrl("img/Toolbox.png"),
       title: "RMC Toolboxes",
     },
   ];
 
   const webAppCardData = [
     {
-      icon: "img/WebApp.png",
+      icon: addBaseUrl("img/WebApp.png"),
       title: "RRFT",
     },
     {
-      icon: "img/WebApp.png",
+      icon: addBaseUrl("img/WebApp.png"),
       title: "Levee Screening Tool",
     },
     {
-      icon: "img/WebApp.png",
+      icon: addBaseUrl("img/WebApp.png"),
       title: "Dam Screening Tool",
     },
   ];
 
   const homepageData = [
     {
-      icon: "img/DesktopApp.png",
+      icon: addBaseUrl("img/DesktopApp.png"),
       doc_location: addBaseUrl("desktop-applications/desktop-applications"),
       doc_name: "Desktop Applications",
       contentCardData: desktopAppCardData,
       active: true,
     },
     {
-      icon: "img/ToolboxFilled.png",
+      icon: addBaseUrl("img/ToolboxFilled.png"),
       doc_location: addBaseUrl("toolboxes/toolboxes"),
       doc_name: "Toolboxes",
       contentCardData: toolboxCardData,
       active: true,
     },
     {
-      icon: "img/WebAppFilled.png",
+      icon: addBaseUrl("img/WebAppFilled.png"),
       doc_location: addBaseUrl("/web-applications/web-applications"),
       doc_name: "Web Applications",
       contentCardData: webAppCardData,

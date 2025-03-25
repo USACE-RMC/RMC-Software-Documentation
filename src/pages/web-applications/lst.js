@@ -12,7 +12,7 @@ export default function LST() {
         "docs/web-applications/lst/users-guide/users-guide"
       ),
       doc_name: "Levee Screening Tool Users Guide",
-      active: true,
+      active: false,
     },
   ];
 
@@ -26,7 +26,7 @@ export default function LST() {
           <h1>RMC Software Documentation</h1>
         </div>
         <div className="title-container">
-          <img src="../img/WebAppFilled.png"></img>
+          <img src={addBaseUrl("img/WebAppFilled.png")}></img>
           <div className="text-container">
             <p className="text-title">Levee Screening Tool</p>
             <p className="text-description">Levee Screening Tool</p>
