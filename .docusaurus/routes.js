@@ -38,8 +38,28 @@ export default [
     exact: true
   },
   {
-    path: '/RMC-Software-Documentation/internal-erosion-suite',
-    component: ComponentCreator('/RMC-Software-Documentation/internal-erosion-suite', 'bb5'),
+    path: '/RMC-Software-Documentation/desktop-applications/desktop-applications',
+    component: ComponentCreator('/RMC-Software-Documentation/desktop-applications/desktop-applications', 'a9d'),
+    exact: true
+  },
+  {
+    path: '/RMC-Software-Documentation/index2',
+    component: ComponentCreator('/RMC-Software-Documentation/index2', '138'),
+    exact: true
+  },
+  {
+    path: '/RMC-Software-Documentation/toolboxes/internal-erosion-suite',
+    component: ComponentCreator('/RMC-Software-Documentation/toolboxes/internal-erosion-suite', '13e'),
+    exact: true
+  },
+  {
+    path: '/RMC-Software-Documentation/toolboxes/toolboxes',
+    component: ComponentCreator('/RMC-Software-Documentation/toolboxes/toolboxes', '25e'),
+    exact: true
+  },
+  {
+    path: '/RMC-Software-Documentation/web-applications/web-applications',
+    component: ComponentCreator('/RMC-Software-Documentation/web-applications/web-applications', 'cd8'),
     exact: true
   },
   {
