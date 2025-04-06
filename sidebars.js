@@ -146,6 +146,11 @@ module.exports = {
       },
       {
         type: "doc",
+        id: "toolbox-technical-manuals/filter-evaluation-continuation/report-documentation",
+        label: "Report Documentation",
+      },
+      {
+        type: "doc",
         id: "toolbox-technical-manuals/filter-evaluation-continuation/appendix-acronyms",
         label: "Appendix A - Acronyms",
       },
