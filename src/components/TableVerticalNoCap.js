@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import "../css/custom.css";
 import useBaseUrl from "@docusaurus/useBaseUrl";
+import "../css/custom.css";
+import "../css/table-vertical-no-cap.css";
 
 const TableVerticalNoCap = ({ parentDocId, tableKey, headers, columns }) => {
   const [tableInfo, setTableInfo] = useState(null);
@@ -41,7 +42,7 @@ const TableVerticalNoCap = ({ parentDocId, tableKey, headers, columns }) => {
 
   return (
     <div className="table-container">
-      <table className="static-table-vertical">
+      <table className="static-table-vertical-no-cap">
         {/* Table header */}
         <thead>
           <tr>

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { getUsedCitations } from "./Citation";
 import { useLocation } from "@docusaurus/router";
+import "../css/custom.css";
+import "../css/citation-footnote.css";
 
 const CitationFootnote = () => {
   const [citations, setCitations] = useState([]);

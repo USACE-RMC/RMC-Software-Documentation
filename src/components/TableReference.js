@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import useBaseUrl from "@docusaurus/useBaseUrl";
+import "../css/custom.css";
+import "../css/table-reference.css";
 
 const TableReference = ({ parentDocId, tableKey }) => {
   const [tableInfo, setTableInfo] = useState(null);

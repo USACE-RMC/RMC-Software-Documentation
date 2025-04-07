@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import "../css/custom.css";
 import useBaseUrl from "@docusaurus/useBaseUrl";
+import "../css/custom.css";
+import "../css/table-vertical.css";
 
 const TableVertical = ({
   parentDocId,

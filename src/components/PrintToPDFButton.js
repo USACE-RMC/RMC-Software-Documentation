@@ -1,6 +1,7 @@
 import React from "react";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import "../css/custom.css";
+import "../css/print-to-PDF-button.css";
 
 const PrintToPDFButton = ({ reportName, pdfFilename }) => {
   // Construct the URL to the PDF based on the reportName and filename

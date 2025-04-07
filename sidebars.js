@@ -8,6 +8,24 @@ module.exports = {
   bepProgressionSidebar: {
     "RMC Filter Evaluation (Continuation) Toolbox": [
       {
+        type: "category",
+        label: "Document Information",
+        collapsible: true,
+        collapsed: true,
+        items: [
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/backward-erosion-piping-progression/document-info",
+            label: "Document Info",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/backward-erosion-piping-progression/version-history",
+            label: "Version History",
+          },
+        ],
+      },
+      {
         type: "doc",
         id: "toolbox-technical-manuals/backward-erosion-piping-progression/introduction",
         label: "Introduction",
@@ -85,6 +103,24 @@ module.exports = {
   filterEvaluationSidebar: {
     "RMC Filter Evaluation (Continuation) Toolbox": [
       {
+        type: "category",
+        label: "Document Information",
+        collapsible: true,
+        collapsed: true,
+        items: [
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/filter-evaluation-continuation/document-info",
+            label: "Document Info",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/filter-evaluation-continuation/version-history",
+            label: "Version History",
+          },
+        ],
+      },
+      {
         type: "doc",
         id: "toolbox-technical-manuals/filter-evaluation-continuation/introduction",
         label: "Introduction",
@@ -143,11 +179,6 @@ module.exports = {
         type: "doc",
         id: "toolbox-technical-manuals/filter-evaluation-continuation/references",
         label: "References",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/filter-evaluation-continuation/report-documentation",
-        label: "Report Documentation",
       },
       {
         type: "doc",

@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import "../css/custom.css";
+import "../css/equation-reference.css";
 
 const EquationReference = ({ parentDocId, equationKey }) => {
   const [equationNumber, setEquationNumber] = useState(null);

@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import "../css/custom.css";
+import "../css/figure.css";
 
 const Figure = ({ parentDocId, figKey, src, alt, caption }) => {
   const [figInfo, setFigInfo] = useState(null);

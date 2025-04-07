@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "@docusaurus/router"; // Track current document
 import useBaseUrl from "@docusaurus/useBaseUrl";
+import "../css/custom.css";
+import "../css/citation.css";
 
 // Store citations per document (not globally)
 const usedCitations = new Map();

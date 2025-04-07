@@ -3,6 +3,7 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 import PrintToPDFButton from "./PrintToPDFButton";
 import Link from "@docusaurus/Link";
 import "../css/custom.css";
+import "../css/nav-and-print.css";
 
 const NavAndPrint = ({ link, linkTitle, print, reportName, pdfFilename }) => {
   const isNoLink = String(link).toLowerCase() === "none";

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "katex/dist/katex.min.css";
 import { BlockMath, InlineMath } from "react-katex";
+import "../css/custom.css";
+import "../css/equation.css";
 
 const Equation = ({ parentDocId, equationKey, equation, inline = false }) => {
   const [equationNumber, setEquationNumber] = useState(null);

@@ -94,15 +94,15 @@ export default [
   },
   {
     path: '/RMC-Software-Documentation/docs',
-    component: ComponentCreator('/RMC-Software-Documentation/docs', '996'),
+    component: ComponentCreator('/RMC-Software-Documentation/docs', 'd44'),
     routes: [
       {
         path: '/RMC-Software-Documentation/docs',
-        component: ComponentCreator('/RMC-Software-Documentation/docs', 'cd7'),
+        component: ComponentCreator('/RMC-Software-Documentation/docs', 'd51'),
         routes: [
           {
             path: '/RMC-Software-Documentation/docs',
-            component: ComponentCreator('/RMC-Software-Documentation/docs', '0c2'),
+            component: ComponentCreator('/RMC-Software-Documentation/docs', '422'),
             routes: [
               {
                 path: '/RMC-Software-Documentation/docs/desktop-applications/lifesim/users-guide/',
@@ -160,6 +160,12 @@ export default [
                 sidebar: "bepProgressionSidebar"
               },
               {
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/document-info',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/document-info', 'a2e'),
+                exact: true,
+                sidebar: "bepProgressionSidebar"
+              },
+              {
                 path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/general-overview',
                 component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/general-overview', 'f27'),
                 exact: true,
@@ -202,6 +208,12 @@ export default [
                 sidebar: "bepProgressionSidebar"
               },
               {
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/version-history',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/version-history', 'ca8'),
+                exact: true,
+                sidebar: "bepProgressionSidebar"
+              },
+              {
                 path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/breach/introduction',
                 component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/breach/introduction', '86d'),
                 exact: true,
@@ -227,7 +239,7 @@ export default [
               },
               {
                 path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/appendix-acronyms',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/appendix-acronyms', '088'),
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/appendix-acronyms', '5d2'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
@@ -252,6 +264,12 @@ export default [
               {
                 path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/design-for-particle-retention',
                 component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/design-for-particle-retention', '30c'),
+                exact: true,
+                sidebar: "filterEvaluationSidebar"
+              },
+              {
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/document-info',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/document-info', '5e3'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
@@ -292,12 +310,6 @@ export default [
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/report-documentation',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/report-documentation', '651'),
-                exact: true,
-                sidebar: "filterEvaluationSidebar"
-              },
-              {
                 path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/summary-plot',
                 component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/summary-plot', 'f42'),
                 exact: true,
@@ -306,6 +318,12 @@ export default [
               {
                 path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/terms-and-conditions-for-use',
                 component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/terms-and-conditions-for-use', 'f33'),
+                exact: true,
+                sidebar: "filterEvaluationSidebar"
+              },
+              {
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/version-history',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/version-history', 'aec'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
