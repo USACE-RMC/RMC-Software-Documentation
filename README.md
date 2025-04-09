@@ -42,10 +42,16 @@ This guide will help you set up and use Docusaurus, a modern static website gene
 - [Building for Production](#building-for-production)
 - [Deployment](#deployment)
 - [Project Structure](#project-structure)
+  - [Docs](#docs)
+  - [Scripts](#scripts)
+  - [Src](#src)
+  - [Static](#static)
+  - [Sidebars](#sidebarsjs)
+  - [Other](#other)
+    - [Docusaurus Configuration](#docusaurusconfigjs)
+    - [License](#license)
+    - [Dependencies](#project-dependencies)
 - [Creating and Editing Pages](#creating-and-editing-pages)
-- [Adding Features](#adding-features)
-- [Customization](#customization)
-- [Advanced Configuration](#advanced-configuration)
 - [React Components](#react-components)
   - [Bibliography](#bibliography)
   - [Citation](#citation)
@@ -158,7 +164,7 @@ RMC-SOFTWARE-DOCUMENTATION/
     node_modules/                   # Installed dependencies
     scripts/                        # Custom scripts
         counters.js                 # Script for handling counters in the documentation
-        versions.js
+        versions.js                 # Script to aid in version control
     src/                            # Source code for custom components and pages
         components/                 # Custom React components
         css/                        # Custom CSS files
@@ -179,29 +185,46 @@ RMC-SOFTWARE-DOCUMENTATION/
     sidebars.js                     # Sidebar configuration for navigation
 ```
 
-### `docs/`: Contains .mdx report files
+### `docs/`
+
+- Contains .mdx report files
 
 - `desktop-applications/`: Documentation for desktop applications (such as RMC-TotalRisk, RMC-RFA, LifeSim, etc.)
+
 - `toolbox-technical-manuals/`: RMC toolbox technical manuals
+
 - `web-applications/`: Documentation for web applications (such as LST, DST, RRFT, etc.)
+
 - Each document should follow a similar format and naming convention of report##-document-title.mdx
+
   - The first chapter is always `00-document-info.mdx` and uses the `DocumentMetadata` React component to provide document information
+
   - The second chapter is always `00-version-history.mdx` and uses the `TableVersionHistory` React component to provide a table of versions, descriptions of changes, and the individuals who modified, reviewed, and approved the versions
+
   - Each successive chapter should increase in number (01, 02, 03, etc.)
+
 - The file path for each report should follow the same standard:
+
   - For desktop applications: `docs/desktop-applications/{software-name}/{report-title}/{version-number}/{document-name}`
+
   - For toolbox technical manuals: `docs/toolbox-technical-manuals/{toolbox-suite}/{toolbox-name}/{version-number}/{document-name}`
+
   - For web applications: `docs/web-applications/{web-app-name}/{report-title}/{version-number}/{document-name}`
 
-### `scripts/`: Custom scripts
+### `scripts/`
 
 - `counters.js`: JavaScript file for automatically populating figure, table, and equation numbers
 
   - Prior to running the project locally or building for production, all files and their corresponding `reportIDs` should be added to the `counters.js` file
+
   - Upon project start or build, this script searches through each .mdx file within the specified `reportIDs` to count the number of times the `Figure`, `TableHorizontal`, `TableVertical`, and `Equation` React components are used
+
   - Each instance of the specified React components is logged in a newly created JSON file with a title of "reportID.json" inside the `/static/counters` folder
+
   - Figures, tables, and equations are logged separately using the file format below
+
   - Counters JSON files are used by `FigureReference`, `TableReference`, and `EquationReference` React components to automatically assign figure, table, and equation numbers to captions and text references
+
     - React components and JSON files are tied together through `figKey`, `tableKey`, and `equationKey` properties
 
   ```
@@ -246,12 +269,20 @@ RMC-SOFTWARE-DOCUMENTATION/
     },
   ```
 
-- `versions.js`: JaveScript file for creating static JSON files used for version control
+- `versions.js`
+
+  - JavaScript file for creating static JSON files used for version control
+
   - This script recursively searches through the `docs` folder and looks for folders that follow `v#.#.#` format
+
   - Two static JSON files are created in the `static/versions`folder:
+
     - `latestVersions.json`
+
       - This file contains the latest version number for each document in the `docs` folder
+
       - The version numbers in this file are used by the `VersionSelector` React component to automatically default the version dropdown menu on the webpage to the latest version
+
       ```
       {
         "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation": "v1.0.0",
@@ -259,9 +290,13 @@ RMC-SOFTWARE-DOCUMENTATION/
         "toolbox-technical-manuals/internal-erosion-suite/breach": "v1.0.0",
       }
       ```
+
     - `versionList.json`
+
       - This file contains all available version numbers for each document in the `docs` folder
+
       - The version numbers in this file are used by the `VersionSelector` React component to populate the version dropdown menu with all available document versions
+
       ```
       {
         "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression": [
@@ -271,37 +306,69 @@ RMC-SOFTWARE-DOCUMENTATION/
       }
       ```
 
-### `src/`: React components, styles, pages, and theme files
+### `src/`
+
+- React components, styles, pages, and theme files
 
 - `components/`: React components used throughout the project
+
 - `css/`: Custom CSS files for styling
+
   - `custom.css` contains styles that apply to every page or multiple React components
+
   - Other CSS files are specific to the React component they are named after
+
 - `pages/`: Custom web pages such as website home page, hubs, sub-hubs, and index pages
+
   - `index.js`: Home page for the RMC Software Documentation website
+
 - `theme/`: Custom theme-related files
 
-### `static/`: Static files like bibliographies, counters, figure images, and fonts
+### `static/`
+
+- Static files like bibliographies, counters, figure images, and fonts
 
 - `bibliographies/`: JSON files used by Bibliography React component to create reference lists
+
   - References should be formatted using IEEE style guide
+
 - `counters/`: JSON files created by the counters.js script as described above
+
   - Each reportID should have its own counters JSON file
+
 - `figures/`: Repository of figure images used within the reports in the Documentation website
+
   - The naming convention for items within the figures/ folder should follow that of the `docs/` folder:
+
     - desktop-applications
+
     - toolbox-technical-manuals
+
       - internal-erosion-suite
+
         - backward-erosion-piping-progression
+
           - figure1
+
           - figure2
+
           - figure3
+
     - web-applications
+
   - File names for figure images can be assigned arbitrarily but will need to be referenced by Figure components in `.mdx` files, so an intuitive naming convention is recommended
+
 - `fonts/`: Contains downloaded font files for use with custom CSS
+
 - `img/`: Contains static images used within website pages
 
-### sidebars.js
+- `versions/`: Contains two JSON files produced by the `verions.js` script
+
+  - `latestVersions.json`: Contains a list of the latest versions for each report in the `docs` folder
+
+  - `versionList.json`: Contains lists of all versions of each report in the `docs` folder
+
+### `sidebars.js`
 
 - Creates a custom sidebar for each report in the `docs/` folder
 - Sidebars contain an export key, version number, and the items to be included in the sidebar
@@ -436,3 +503,22 @@ bepProgressionSidebar_v1_0_0: {
   ],
 },
 ```
+
+### Other
+
+#### `docusaurus.config.js`
+
+- Configuration file for the RMC Software Documentation website
+
+#### `LICENSE`
+
+- This project is licenses under the MIT License © 2025 Risk Management Center
+
+#### Project Dependencies
+
+- `package.json`
+  - This file lists the project's dependencies, scripts, and metadata. It defines the required vesions of packages needed to run or build the documentation site, and it includes custom scripts like `counters`, `versions`, `run`, `build`, and `deploy` for Docusaurus.
+- `package-lock.json`
+  - This file locks the exact versions of every package (and sub-package) installed at the time of `npm install`. It ensures that everyone working on the project uses the same dependency versions, which improves consistency across environments.
+
+## Creating and Editing Pages

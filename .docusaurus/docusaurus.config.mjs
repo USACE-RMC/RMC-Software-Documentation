@@ -37,6 +37,9 @@ export default {
       }
     ]
   ],
+  "themes": [
+    "@docusaurus/theme-live-codeblock"
+  ],
   "stylesheets": [
     {
       "href": "https://cdn.jsdelivr.net/npm/katex@0.13.24/dist/katex.min.css",
@@ -252,6 +255,9 @@ export default {
     "tableOfContents": {
       "minHeadingLevel": 2,
       "maxHeadingLevel": 3
+    },
+    "liveCodeBlock": {
+      "playgroundPosition": "bottom"
     }
   },
   "baseUrlIssueBanner": true,
@@ -287,7 +293,6 @@ export default {
   ],
   "customFields": {},
   "plugins": [],
-  "themes": [],
   "scripts": [],
   "headTags": [],
   "clientModules": [],
