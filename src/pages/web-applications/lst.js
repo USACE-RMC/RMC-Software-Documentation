@@ -1,15 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "@theme/Layout";
 import "../../css/index.css";
 import ContentBox from "../../components/ContentBox";
 import addBaseUrl from "@docusaurus/useBaseUrl"; // Correct import
 
 export default function LST() {
+  const [latestVersions, setLatestVersions] = useState({});
+
+  useEffect(() => {
+    // Fetch the latestVersions JSON file
+    fetch("/RMC-Software-Documentation/versions/latestVersions.json")
+      .then((response) => response.json())
+      .then((data) => setLatestVersions(data))
+      .catch((error) => console.error("Error loading latest versions:", error));
+  }, []);
+
+  // Create the list of documents dynamically
   const lstData = [
     {
       icon: addBaseUrl("img/WebApp.png"),
       doc_location: addBaseUrl(
-        "docs/web-applications/lst/users-guide/users-guide"
+        `docs/web-applications/lst/users-guide/${latestVersions["web-applications/lst/users-guide"]}/users-guide`
       ),
       doc_name: "Levee Screening Tool Users Guide",
       active: false,

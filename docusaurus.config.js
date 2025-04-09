@@ -83,7 +83,7 @@ export default {
     docs: {
       sidebar: {
         hideable: false,
-        autoCollapseCategories: true,
+        autoCollapseCategories: false,
       },
     },
     googleFonts: {

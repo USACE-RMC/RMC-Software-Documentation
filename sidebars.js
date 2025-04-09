@@ -1,11 +1,11 @@
 module.exports = {
   bepInitiationSidebar: {
     "RMC Backward Erosion Piping (Initiation) Toolbox": [
-      "toolbox-technical-manuals/backward-erosion-piping-initiation/introduction",
+      "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation/v1.0.0/introduction",
     ],
   },
 
-  bepProgressionSidebar: {
+  bepProgressionSidebar_v1_0_0: {
     "RMC Backward Erosion Piping (Progression) Toolbox": [
       {
         type: "category",
@@ -15,88 +15,195 @@ module.exports = {
         items: [
           {
             type: "doc",
-            id: "toolbox-technical-manuals/backward-erosion-piping-progression/document-info",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/document-info",
             label: "Document Info",
           },
           {
             type: "doc",
-            id: "toolbox-technical-manuals/backward-erosion-piping-progression/version-history",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/version-history",
             label: "Version History",
           },
         ],
       },
       {
-        type: "doc",
-        id: "toolbox-technical-manuals/backward-erosion-piping-progression/introduction",
-        label: "Introduction",
+        type: "category",
+        label: "Main Report",
+        collapsible: true,
+        collapsed: false,
+        items: [
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/introduction",
+            label: "Introduction",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/terms-and-conditions-for-use",
+            label: "Terms and Conditions for Use",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/general-overview",
+            label: "General Overview",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/background",
+            label: "Background",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/schmertmann",
+            label: "Schmertmann",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/sellmeijer",
+            label: "Sellmeijer",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/creep-ratios",
+            label: "Creep Ratios",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/summary",
+            label: "Summary",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/references",
+            label: "References",
+          },
+        ],
       },
       {
-        type: "doc",
-        id: "toolbox-technical-manuals/backward-erosion-piping-progression/terms-and-conditions-for-use",
-        label: "Terms and Conditions for Use",
+        type: "category",
+        label: "Appendices",
+        collapsible: true,
+        collapsed: true,
+        items: [
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/appendix-acronyms",
+            label: "Appendix A - Acronyms",
+          },
+        ],
+      },
+    ],
+  },
+
+  bepProgressionSidebar_v1_1_0: {
+    "RMC Backward Erosion Piping (Progression) Toolbox": [
+      {
+        type: "category",
+        label: "Document Information",
+        collapsible: true,
+        collapsed: true,
+        items: [
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/document-info",
+            label: "Document Info",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/version-history",
+            label: "Version History",
+          },
+        ],
       },
       {
-        type: "doc",
-        id: "toolbox-technical-manuals/backward-erosion-piping-progression/general-overview",
-        label: "General Overview",
+        type: "category",
+        label: "Main Report",
+        collapsible: true,
+        collapsed: false,
+        items: [
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/introduction",
+            label: "Introduction",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/terms-and-conditions-for-use",
+            label: "Terms and Conditions for Use",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/general-overview",
+            label: "General Overview",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/background",
+            label: "Background",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/schmertmann",
+            label: "Schmertmann",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/sellmeijer",
+            label: "Sellmeijer",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/creep-ratios",
+            label: "Creep Ratios",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/summary",
+            label: "Summary",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/references",
+            label: "References",
+          },
+        ],
       },
       {
-        type: "doc",
-        id: "toolbox-technical-manuals/backward-erosion-piping-progression/background",
-        label: "Background",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/backward-erosion-piping-progression/schmertmann",
-        label: "Schmertmann",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/backward-erosion-piping-progression/sellmeijer",
-        label: "Sellmeijer",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/backward-erosion-piping-progression/creep-ratios",
-        label: "Creep Ratios",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/backward-erosion-piping-progression/summary",
-        label: "Summary",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/backward-erosion-piping-progression/references",
-        label: "References",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/backward-erosion-piping-progression/appendix-acronyms",
-        label: "Appendix A - Acronyms",
+        type: "category",
+        label: "Appendices",
+        collapsible: true,
+        collapsed: true,
+        items: [
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/appendix-acronyms",
+            label: "Appendix A - Acronyms",
+          },
+        ],
       },
     ],
   },
 
   breachSidebar: {
-    "RMC Breach Toolbox": ["toolbox-technical-manuals/breach/introduction"],
+    "RMC Breach Toolbox": [
+      "toolbox-technical-manuals/internal-erosion-suite/breach/v1.0.0/introduction",
+    ],
   },
 
   cleCrackingSidebar: {
     "RMC Contentrated Leak Erosion (Cracking) Toolbox": [
-      "toolbox-technical-manuals/concentrated-leak-erosion-cracking/introduction",
+      "toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-cracking/v1.0.0/introduction",
     ],
   },
 
   cleInitiationSidebar: {
     "RMC Contentrated Leak Erosion (Initiation) Toolbox": [
-      "toolbox-technical-manuals/concentrated-leak-erosion-initiation/introduction",
+      "toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0.0/introduction",
     ],
   },
 
   erodibilityParametersSidebar: {
     "RMC Erodibility Parameters Toolbox": [
-      "toolbox-technical-manuals/erodibility-parameters/introduction",
+      "toolbox-technical-manuals/internal-erosion-suite/erodibility-parameters/v1.0.0/introduction",
     ],
   },
 
@@ -110,105 +217,121 @@ module.exports = {
         items: [
           {
             type: "doc",
-            id: "toolbox-technical-manuals/filter-evaluation-continuation/document-info",
+            id: "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/document-info",
             label: "Document Info",
           },
           {
             type: "doc",
-            id: "toolbox-technical-manuals/filter-evaluation-continuation/version-history",
+            id: "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/version-history",
             label: "Version History",
           },
         ],
       },
       {
-        type: "doc",
-        id: "toolbox-technical-manuals/filter-evaluation-continuation/introduction",
-        label: "Introduction",
+        type: "category",
+        label: "Main Report",
+        collapsible: true,
+        collapsed: false,
+        items: [
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/introduction",
+            label: "Introduction",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/terms-and-conditions-for-use",
+            label: "Terms and Conditions for Use",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/general-overview",
+            label: "General Overview",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/background",
+            label: "Background",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/filter-gradation",
+            label: "Filter Gradation",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/base-gradation",
+            label: "Base Gradation",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/design-for-particle-retention",
+            label: "Design for Particle Retention",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/foster-and-fell",
+            label: "Foster and Fell",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/summary-plot",
+            label: "Summary Plot",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/constricted-exit",
+            label: "Constricted Exit",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/permeability",
+            label: "Permeability",
+          },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/references",
+            label: "References",
+          },
+        ],
       },
       {
-        type: "doc",
-        id: "toolbox-technical-manuals/filter-evaluation-continuation/terms-and-conditions-for-use",
-        label: "Terms and Conditions for Use",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/filter-evaluation-continuation/general-overview",
-        label: "General Overview",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/filter-evaluation-continuation/background",
-        label: "Background",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/filter-evaluation-continuation/filter-gradation",
-        label: "Filter Gradation",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/filter-evaluation-continuation/base-gradation",
-        label: "Base Gradation",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/filter-evaluation-continuation/design-for-particle-retention",
-        label: "Design for Particle Retention",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/filter-evaluation-continuation/foster-and-fell",
-        label: "Foster and Fell",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/filter-evaluation-continuation/summary-plot",
-        label: "Summary Plot",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/filter-evaluation-continuation/constricted-exit",
-        label: "Constricted Exit",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/filter-evaluation-continuation/permeability",
-        label: "Permeability",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/filter-evaluation-continuation/references",
-        label: "References",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/filter-evaluation-continuation/appendix-acronyms",
-        label: "Appendix A - Acronyms",
+        type: "category",
+        label: "Appendices",
+        collapsible: true,
+        collapsed: true,
+        items: [
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/appendix-acronyms",
+            label: "Appendix A - Acronyms",
+          },
+        ],
       },
     ],
   },
 
   internalInstabilitySidebar: {
     "RMC Internal Instability Toolbox": [
-      "toolbox-technical-manuals/internal-instability/introduction",
+      "toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0.0/introduction",
     ],
   },
 
   pipeServiceLifeSidebar: {
     "RMC Pipe Service Life (Flaw) Toolbox": [
-      "toolbox-technical-manuals/pipe-service-life/introduction",
+      "toolbox-technical-manuals/internal-erosion-suite/pipe-service-life/v1.0.0/introduction",
     ],
   },
 
   soilClassificationSidebar: {
     "RMC Soil Classification Toolbox": [
-      "toolbox-technical-manuals/soil-classification/introduction",
+      "toolbox-technical-manuals/internal-erosion-suite/soil-classification/v1.0.0/introduction",
     ],
   },
 
   soilContactErosionInitiationSidebar: {
     "RMC Soil Contact Erosion (Initiation) Toolbox": [
-      "toolbox-technical-manuals/soil-contact-erosion-initiation/introduction",
+      "toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0.0/introduction",
     ],
   },
 
@@ -216,7 +339,7 @@ module.exports = {
     "RMC TotalRisk Users Guide": [
       {
         type: "doc",
-        id: "desktop-applications/rmc-totalrisk/users-guide/users-guide",
+        id: "desktop-applications/rmc-totalrisk/users-guide/v1.0.0/users-guide",
         label: "Code Block Example",
       },
     ],

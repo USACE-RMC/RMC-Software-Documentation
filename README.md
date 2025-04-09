@@ -158,6 +158,7 @@ RMC-SOFTWARE-DOCUMENTATION/
     node_modules/                   # Installed dependencies
     scripts/                        # Custom scripts
         counters.js                 # Script for handling counters in the documentation
+        versions.js
     src/                            # Source code for custom components and pages
         components/                 # Custom React components
         css/                        # Custom CSS files
@@ -169,6 +170,7 @@ RMC-SOFTWARE-DOCUMENTATION/
         figures/                    # Figures for the documentation
         fonts/                      # Custom fonts
         img/                        # Images for the website
+        versions/                   # JSON files for version control
     docusaurus.config.js            # Main configuration file for Docusaurus
     LICENSE                         # License file
     package-lock.json               # Lock file for npm dependencies
@@ -186,10 +188,15 @@ RMC-SOFTWARE-DOCUMENTATION/
   - The first chapter is always `00-document-info.mdx` and uses the `DocumentMetadata` React component to provide document information
   - The second chapter is always `00-version-history.mdx` and uses the `TableVersionHistory` React component to provide a table of versions, descriptions of changes, and the individuals who modified, reviewed, and approved the versions
   - Each successive chapter should increase in number (01, 02, 03, etc.)
+- The file path for each report should follow the same standard:
+  - For desktop applications: `docs/desktop-applications/{software-name}/{report-title}/{version-number}/{document-name}`
+  - For toolbox technical manuals: `docs/toolbox-technical-manuals/{toolbox-suite}/{toolbox-name}/{version-number}/{document-name}`
+  - For web applications: `docs/web-applications/{web-app-name}/{report-title}/{version-number}/{document-name}`
 
 ### `scripts/`: Custom scripts
 
 - `counters.js`: JavaScript file for automatically populating figure, table, and equation numbers
+
   - Prior to running the project locally or building for production, all files and their corresponding `reportIDs` should be added to the `counters.js` file
   - Upon project start or build, this script searches through each .mdx file within the specified `reportIDs` to count the number of times the `Figure`, `TableHorizontal`, `TableVertical`, and `Equation` React components are used
   - Each instance of the specified React components is logged in a newly created JSON file with a title of "reportID.json" inside the `/static/counters` folder
@@ -197,47 +204,72 @@ RMC-SOFTWARE-DOCUMENTATION/
   - Counters JSON files are used by `FigureReference`, `TableReference`, and `EquationReference` React components to automatically assign figure, table, and equation numbers to captions and text references
     - React components and JSON files are tied together through `figKey`, `tableKey`, and `equationKey` properties
 
-```
-"01-chapter-title.mdx": {
-    "figures": {
-      "{figKey}": {                         # figKey is a user-defined property passed to the Figure component
-        "figNumber": 1,                     # Figure numbers are automatically assigned in sequential order
-                                              for all .mdx files within a single report
-        "parentDocId": {reportID},          # parentDocId is a property passed to the Figure component and aligns
-                                              with the reportID from counters.js
-        "parentDocPath": {parentDocPath},   # parentDocPath is automatically assigned during script execution
-        "docId": "01-chapter-title.mdx"     # docId is automatically assigned during script execution
+  ```
+  "01-chapter-title.mdx": {
+      "figures": {
+        "{figKey}": {                         # figKey is a user-defined property passed to the Figure component
+          "figNumber": 1,                     # Figure numbers are automatically assigned in sequential order
+                                                for all .mdx files within a single report
+          "parentDocId": {reportID},          # parentDocId is a property passed to the Figure component and aligns
+                                                with the reportID from counters.js
+          "parentDocPath": {parentDocPath},   # parentDocPath is automatically assigned during script execution
+          "docId": "01-chapter-title.mdx"     # docId is automatically assigned during script execution
+        },
+        "{figKey}": {                         # figKey is a property passed to the Figure component
+          "figNumber": 2,                     # Figure numbers are automatically assigned in sequential order
+          "parentDocId": {reportID},          # parentDocId is a property passed to the Figure component and aligns
+                                                with the reportID from counters.js
+          "parentDocPath": {parentDocPath},   # parentDocPath is automatically assigned during script execution
+          "docId": "01-chapter-title.mdx"     # docId is automatically assigned during script execution
+        },
       },
-      "{figKey}": {                         # figKey is a property passed to the Figure component
-        "figNumber": 2,                     # Figure numbers are automatically assigned in sequential order
-        "parentDocId": {reportID},          # parentDocId is a property passed to the Figure component and aligns
-                                              with the reportID from counters.js
-        "parentDocPath": {parentDocPath},   # parentDocPath is automatically assigned during script execution
-        "docId": "01-chapter-title.mdx"     # docId is automatically assigned during script execution
+      "tables": {
+        "{tableKey}": {                       # tableKey is a user-defined property passed to the Table component
+          "tableNumber": 1,                   # Table numbers are automatically assigned in sequential order
+                                                for all .mdx files within a single report
+          "parentDocId": {reportID},          # parentDocId is a property passed to the Figure component and aligns
+                                                with the reportID from counters.js
+          "parentDocPath": {parentDocPath},   # parentDocPath is automatically assigned during script execution
+          "docId": "01-chapter-title.mdx"     # docId is automatically assigned during script execution
+        }
       },
-    },
-    "tables": {
-      "{tableKey}": {                       # tableKey is a user-defined property passed to the Table component
-        "tableNumber": 1,                   # Table numbers are automatically assigned in sequential order
-                                              for all .mdx files within a single report
-        "parentDocId": {reportID},          # parentDocId is a property passed to the Figure component and aligns
-                                              with the reportID from counters.js
-        "parentDocPath": {parentDocPath},   # parentDocPath is automatically assigned during script execution
-        "docId": "01-chapter-title.mdx"     # docId is automatically assigned during script execution
+      "equations": {
+        "{equationKey}": {                    # equationKey is a user-defined property passed to the Table component
+          "equationNumber": 1,                # Equation numbers are automatically assigned in sequential order
+                                                for all .mdx files within a single report
+          "parentDocId": {reportID},          # parentDocId is a property passed to the Figure component and aligns
+                                                with the reportID from counters.js
+          "parentDocPath": {parentDocPath},   # parentDocPath is automatically assigned during script execution
+          "docId": "01-chapter-title.mdx"     # docId is automatically assigned during script execution
+        }
       }
     },
-    "equations": {
-      "{equationKey}": {                    # equationKey is a user-defined property passed to the Table component
-        "equationNumber": 1,                # Equation numbers are automatically assigned in sequential order
-                                              for all .mdx files within a single report
-        "parentDocId": {reportID},          # parentDocId is a property passed to the Figure component and aligns
-                                              with the reportID from counters.js
-        "parentDocPath": {parentDocPath},   # parentDocPath is automatically assigned during script execution
-        "docId": "01-chapter-title.mdx"     # docId is automatically assigned during script execution
+  ```
+
+- `versions.js`: JaveScript file for creating static JSON files used for version control
+  - This script recursively searches through the `docs` folder and looks for folders that follow `v#.#.#` format
+  - Two static JSON files are created in the `static/versions`folder:
+    - `latestVersions.json`
+      - This file contains the latest version number for each document in the `docs` folder
+      - The version numbers in this file are used by the `VersionSelector` React component to automatically default the version dropdown menu on the webpage to the latest version
+      ```
+      {
+        "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation": "v1.0.0",
+        "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression": "v1.1.0",
+        "toolbox-technical-manuals/internal-erosion-suite/breach": "v1.0.0",
       }
-    }
-  },
-```
+      ```
+    - `versionList.json`
+      - This file contains all available version numbers for each document in the `docs` folder
+      - The version numbers in this file are used by the `VersionSelector` React component to populate the version dropdown menu with all available document versions
+      ```
+      {
+        "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression": [
+          "v1.0.0",
+          "v1.1.0"
+        ],
+      }
+      ```
 
 ### `src/`: React components, styles, pages, and theme files
 
@@ -271,17 +303,26 @@ RMC-SOFTWARE-DOCUMENTATION/
 
 ### sidebars.js
 
-- Creates a custom sidebar for each document/report in the `docs/` directory
-- Each export key (e.g., `totalRiskUsersGuideSidebar`) defines a separate sidebar
-- Items are listed in the order they should appear in the sidebar
-- Each item is either:
-
-  - A single doc:
-
-    `{ type: 'doc', id: 'path/to/doc', label: 'Custom Label' }`
-
-  - Or a collapsible category:
-    ```
+- Creates a custom sidebar for each report in the `docs/` folder
+- Sidebars contain an export key, version number, and the items to be included in the sidebar
+  - Export keys should be intuitively named
+    - For example `bepProgressionSidebar` for the Backward Erosion Piping (Progression) Toolbox Technical Manual
+  - Version numbers should be appended to the export keys to reflect the version that the sidebar is defining
+    - A unique sidebar is required for each version of a document
+    - For example, version 1.0.0 of the BEP (Progression) sidebar would be appended to the export key as `bepProgressionSidebar_v_1_0_0`
+      - Version 1.1.0 would be appended to the export key as `bepProgressionSidebar_v_1_1_0`
+  - Items are listed in the order they should appear in the sidebar
+    - Items can take the form of single docs or collapsible categories
+      - Single doc:
+      ```
+      {
+        type: 'doc',
+        id: 'path/to/doc',
+        label: 'Custom Label'
+      }
+      ```
+      - Collapsible category:
+        ```
         {
           type: 'category',
           label: 'Category Title',
@@ -289,85 +330,109 @@ RMC-SOFTWARE-DOCUMENTATION/
           collapsed: true,
           items: [/* array of doc items */],
         }
-    ```
-
-- `id` corresponds to the relative file path from `docs/` without the `.mdx` extension
-- `label` is the text shown in the sidebar navigation
-- The order of items in each array controls the order they appear in the sidebar
-- No front matter (`sidebar_label`, `sidebar_position`) is needed in the `.mdx` files
-- The following is a typical example of a sidebar for a document:
+        ```
+      - `id` corresponds to the relative file path from `docs/` without the `.mdx` extension
+      - `label` is the text shown in the sidebar navigation
+      - No front matter (`sidebar_label`, `sidebar_position`) is needed in the `.mdx` files
+    - All sidebars should follow a consistent layout:
+      - Document Information (category, collapsed: true)
+        - Document Info (single doc)
+        - Version History (single doc)
+      - Main Report (category, collapsed: false)
+        - Introduction (single doc)
+        - Report Chapters
+      - Appendices (category, collapsed: true)
+        - Appendix A - {title} (single doc)
+        - Appendix B - {title} (single doc)
+- The following is an example sidebar for Version 1.0.0 of the Backward Erosion Piping (Progression) Toolbox Technical Manual:
 
 ```
-bepProgressionSidebar: {
-    "RMC Filter Evaluation (Continuation) Toolbox": [
-      {
-        type: "category",
-        label: "Document Information",
-        collapsible: true,
-        collapsed: true,
-        items: [
-          {
-            type: "doc",
-            id: "toolbox-technical-manuals/backward-erosion-piping-progression/document-info",
-            label: "Document Info",
-          },
-          {
-            type: "doc",
-            id: "toolbox-technical-manuals/backward-erosion-piping-progression/version-history",
-            label: "Version History",
-          },
-        ],
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/backward-erosion-piping-progression/introduction",
-        label: "Introduction",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/backward-erosion-piping-progression/terms-and-conditions-for-use",
-        label: "Terms and Conditions for Use",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/backward-erosion-piping-progression/general-overview",
-        label: "General Overview",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/backward-erosion-piping-progression/background",
-        label: "Background",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/backward-erosion-piping-progression/schmertmann",
-        label: "Schmertmann",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/backward-erosion-piping-progression/sellmeijer",
-        label: "Sellmeijer",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/backward-erosion-piping-progression/creep-ratios",
-        label: "Creep Ratios",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/backward-erosion-piping-progression/summary",
-        label: "Summary",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/backward-erosion-piping-progression/references",
-        label: "References",
-      },
-      {
-        type: "doc",
-        id: "toolbox-technical-manuals/backward-erosion-piping-progression/appendix-acronyms",
-        label: "Appendix A - Acronyms",
-      },
-    ],
-  },
+bepProgressionSidebar_v1_0_0: {
+  "RMC Backward Erosion Piping (Progression) Toolbox": [
+    {
+      type: "category",
+      label: "Document Information",
+      collapsible: true,
+      collapsed: true,
+      items: [
+        {
+          type: "doc",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/document-info",
+          label: "Document Info",
+        },
+        {
+          type: "doc",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/version-history",
+          label: "Version History",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Main Report",
+      collapsible: true,
+      collapsed: false,
+      items: [
+        {
+          type: "doc",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/introduction",
+          label: "Introduction",
+        },
+        {
+          type: "doc",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/terms-and-conditions-for-use",
+          label: "Terms and Conditions for Use",
+        },
+        {
+          type: "doc",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/general-overview",
+          label: "General Overview",
+        },
+        {
+          type: "doc",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/background",
+          label: "Background",
+        },
+        {
+          type: "doc",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/schmertmann",
+          label: "Schmertmann",
+        },
+        {
+          type: "doc",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/sellmeijer",
+          label: "Sellmeijer",
+        },
+        {
+          type: "doc",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/creep-ratios",
+          label: "Creep Ratios",
+        },
+        {
+          type: "doc",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/summary",
+          label: "Summary",
+        },
+        {
+          type: "doc",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/references",
+          label: "References",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Appendices",
+      collapsible: true,
+      collapsed: true,
+      items: [
+        {
+          type: "doc",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/appendix-acronyms",
+          label: "Appendix A - Acronyms",
+        },
+      ],
+    },
+  ],
+},
 ```

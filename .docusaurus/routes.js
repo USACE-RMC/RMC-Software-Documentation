@@ -94,276 +94,348 @@ export default [
   },
   {
     path: '/RMC-Software-Documentation/docs',
-    component: ComponentCreator('/RMC-Software-Documentation/docs', 'd44'),
+    component: ComponentCreator('/RMC-Software-Documentation/docs', '945'),
     routes: [
       {
         path: '/RMC-Software-Documentation/docs',
-        component: ComponentCreator('/RMC-Software-Documentation/docs', 'd51'),
+        component: ComponentCreator('/RMC-Software-Documentation/docs', 'b8b'),
         routes: [
           {
             path: '/RMC-Software-Documentation/docs',
-            component: ComponentCreator('/RMC-Software-Documentation/docs', '422'),
+            component: ComponentCreator('/RMC-Software-Documentation/docs', '290'),
             routes: [
               {
-                path: '/RMC-Software-Documentation/docs/desktop-applications/lifesim/users-guide/',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/lifesim/users-guide/', '072'),
+                path: '/RMC-Software-Documentation/docs/desktop-applications/lifesim/users-guide/v1.0.0/users-guide',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/lifesim/users-guide/v1.0.0/users-guide', 'a81'),
                 exact: true
               },
               {
-                path: '/RMC-Software-Documentation/docs/desktop-applications/rmc-bestfit/users-guide/',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/rmc-bestfit/users-guide/', '7db'),
+                path: '/RMC-Software-Documentation/docs/desktop-applications/rmc-bestfit/users-guide/v1.0.0/users-guide',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/rmc-bestfit/users-guide/v1.0.0/users-guide', '962'),
                 exact: true
               },
               {
-                path: '/RMC-Software-Documentation/docs/desktop-applications/rmc-rfa/users-guide/',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/rmc-rfa/users-guide/', '553'),
+                path: '/RMC-Software-Documentation/docs/desktop-applications/rmc-rfa/users-guide/v1.0.0/users-guide',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/rmc-rfa/users-guide/v1.0.0/users-guide', 'b2f'),
                 exact: true
               },
               {
-                path: '/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/', '699'),
+                path: '/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0.0/applications-guide',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0.0/applications-guide', 'ff6'),
                 exact: true
               },
               {
-                path: '/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/users-guide/',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/users-guide/', '8f3'),
+                path: '/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/users-guide/v1.0.0/users-guide',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/users-guide/v1.0.0/users-guide', '0ea'),
                 exact: true,
                 sidebar: "totalRiskUsersGuideSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/verification-report/',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/verification-report/', '1ba'),
+                path: '/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/verification-report/v1.0.0/verification-report',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/verification-report/v1.0.0/verification-report', 'a47'),
                 exact: true
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-initiation/introduction',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-initiation/introduction', 'eae'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation/v1.0.0/introduction',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation/v1.0.0/introduction', '26e'),
                 exact: true,
                 sidebar: "bepInitiationSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/appendix-acronyms',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/appendix-acronyms', '2e1'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/appendix-acronyms',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/appendix-acronyms', '235'),
                 exact: true,
-                sidebar: "bepProgressionSidebar"
+                sidebar: "bepProgressionSidebar_v1_0_0"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/background',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/background', '77d'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/background',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/background', 'f4b'),
                 exact: true,
-                sidebar: "bepProgressionSidebar"
+                sidebar: "bepProgressionSidebar_v1_0_0"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/creep-ratios',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/creep-ratios', 'c31'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/creep-ratios',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/creep-ratios', '346'),
                 exact: true,
-                sidebar: "bepProgressionSidebar"
+                sidebar: "bepProgressionSidebar_v1_0_0"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/document-info',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/document-info', 'a2e'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/document-info',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/document-info', '5e5'),
                 exact: true,
-                sidebar: "bepProgressionSidebar"
+                sidebar: "bepProgressionSidebar_v1_0_0"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/general-overview',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/general-overview', 'f27'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/general-overview',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/general-overview', '41d'),
                 exact: true,
-                sidebar: "bepProgressionSidebar"
+                sidebar: "bepProgressionSidebar_v1_0_0"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/introduction',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/introduction', '168'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/introduction',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/introduction', 'f30'),
                 exact: true,
-                sidebar: "bepProgressionSidebar"
+                sidebar: "bepProgressionSidebar_v1_0_0"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/references',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/references', '378'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/references',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/references', 'b5e'),
                 exact: true,
-                sidebar: "bepProgressionSidebar"
+                sidebar: "bepProgressionSidebar_v1_0_0"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/schmertmann',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/schmertmann', 'bb7'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/schmertmann',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/schmertmann', 'db5'),
                 exact: true,
-                sidebar: "bepProgressionSidebar"
+                sidebar: "bepProgressionSidebar_v1_0_0"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/sellmeijer',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/sellmeijer', '937'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/sellmeijer',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/sellmeijer', 'b38'),
                 exact: true,
-                sidebar: "bepProgressionSidebar"
+                sidebar: "bepProgressionSidebar_v1_0_0"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/summary',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/summary', 'b3f'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/summary',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/summary', '2cb'),
                 exact: true,
-                sidebar: "bepProgressionSidebar"
+                sidebar: "bepProgressionSidebar_v1_0_0"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/terms-and-conditions-for-use',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/terms-and-conditions-for-use', '926'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/terms-and-conditions-for-use',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/terms-and-conditions-for-use', '942'),
                 exact: true,
-                sidebar: "bepProgressionSidebar"
+                sidebar: "bepProgressionSidebar_v1_0_0"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/version-history',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/backward-erosion-piping-progression/version-history', 'ca8'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/version-history',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/version-history', '2d2'),
                 exact: true,
-                sidebar: "bepProgressionSidebar"
+                sidebar: "bepProgressionSidebar_v1_0_0"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/breach/introduction',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/breach/introduction', '86d'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/appendix-acronyms',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/appendix-acronyms', '8e1'),
+                exact: true,
+                sidebar: "bepProgressionSidebar_v1_1_0"
+              },
+              {
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/background',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/background', '0e5'),
+                exact: true,
+                sidebar: "bepProgressionSidebar_v1_1_0"
+              },
+              {
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/creep-ratios',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/creep-ratios', '3ca'),
+                exact: true,
+                sidebar: "bepProgressionSidebar_v1_1_0"
+              },
+              {
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/document-info',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/document-info', '2e2'),
+                exact: true,
+                sidebar: "bepProgressionSidebar_v1_1_0"
+              },
+              {
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/general-overview',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/general-overview', '1e4'),
+                exact: true,
+                sidebar: "bepProgressionSidebar_v1_1_0"
+              },
+              {
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/introduction',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/introduction', '1c6'),
+                exact: true,
+                sidebar: "bepProgressionSidebar_v1_1_0"
+              },
+              {
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/references',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/references', 'f85'),
+                exact: true,
+                sidebar: "bepProgressionSidebar_v1_1_0"
+              },
+              {
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/schmertmann',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/schmertmann', 'dbb'),
+                exact: true,
+                sidebar: "bepProgressionSidebar_v1_1_0"
+              },
+              {
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/sellmeijer',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/sellmeijer', '21f'),
+                exact: true,
+                sidebar: "bepProgressionSidebar_v1_1_0"
+              },
+              {
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/summary',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/summary', '0c5'),
+                exact: true,
+                sidebar: "bepProgressionSidebar_v1_1_0"
+              },
+              {
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/terms-and-conditions-for-use',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/terms-and-conditions-for-use', '100'),
+                exact: true,
+                sidebar: "bepProgressionSidebar_v1_1_0"
+              },
+              {
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/version-history',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0/version-history', '1a3'),
+                exact: true,
+                sidebar: "bepProgressionSidebar_v1_1_0"
+              },
+              {
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/breach/v1.0.0/introduction',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/breach/v1.0.0/introduction', '299'),
                 exact: true,
                 sidebar: "breachSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/concentrated-leak-erosion-cracking/introduction',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/concentrated-leak-erosion-cracking/introduction', 'd7b'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-cracking/v1.0.0/introduction',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-cracking/v1.0.0/introduction', '4db'),
                 exact: true,
                 sidebar: "cleCrackingSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/concentrated-leak-erosion-initiation/introduction',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/concentrated-leak-erosion-initiation/introduction', '5ed'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0.0/introduction',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0.0/introduction', '184'),
                 exact: true,
                 sidebar: "cleInitiationSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/erodibility-parameters/introduction',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/erodibility-parameters/introduction', 'b9a'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/erodibility-parameters/v1.0.0/introduction',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/erodibility-parameters/v1.0.0/introduction', 'cb8'),
                 exact: true,
                 sidebar: "erodibilityParametersSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/appendix-acronyms',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/appendix-acronyms', '5d2'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/appendix-acronyms',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/appendix-acronyms', '3f7'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/background',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/background', '2d1'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/background',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/background', '61d'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/base-gradation',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/base-gradation', '8c5'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/base-gradation',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/base-gradation', '9b3'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/constricted-exit',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/constricted-exit', '78c'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/constricted-exit',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/constricted-exit', 'fda'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/design-for-particle-retention',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/design-for-particle-retention', '30c'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/design-for-particle-retention',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/design-for-particle-retention', '3ff'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/document-info',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/document-info', '5e3'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/document-info',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/document-info', '0ee'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/filter-gradation',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/filter-gradation', '188'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/filter-gradation',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/filter-gradation', '0cb'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/foster-and-fell',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/foster-and-fell', '05f'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/foster-and-fell',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/foster-and-fell', '7b6'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/general-overview',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/general-overview', '70b'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/general-overview',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/general-overview', 'b4d'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/introduction',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/introduction', '0be'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/introduction',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/introduction', '45c'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/permeability',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/permeability', '602'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/permeability',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/permeability', 'a39'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/references',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/references', '9e0'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/references',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/references', '6ef'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/summary-plot',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/summary-plot', 'f42'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/summary-plot',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/summary-plot', '2b7'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/terms-and-conditions-for-use',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/terms-and-conditions-for-use', 'f33'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/terms-and-conditions-for-use',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/terms-and-conditions-for-use', '57a'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/version-history',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/filter-evaluation-continuation/version-history', 'aec'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/version-history',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0/version-history', '7f5'),
                 exact: true,
                 sidebar: "filterEvaluationSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-instability/introduction',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-instability/introduction', '6e8'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0.0/introduction',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0.0/introduction', '75d'),
                 exact: true,
                 sidebar: "internalInstabilitySidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/pipe-service-life/introduction',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/pipe-service-life/introduction', '6d3'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/pipe-service-life/v1.0.0/introduction',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/pipe-service-life/v1.0.0/introduction', 'aa4'),
                 exact: true,
                 sidebar: "pipeServiceLifeSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/soil-classification/introduction',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/soil-classification/introduction', 'c96'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/soil-classification/v1.0.0/introduction',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/soil-classification/v1.0.0/introduction', '850'),
                 exact: true,
                 sidebar: "soilClassificationSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/soil-contact-erosion-initiation/introduction',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/soil-contact-erosion-initiation/introduction', '95e'),
+                path: '/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0.0/introduction',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0.0/introduction', 'e69'),
                 exact: true,
                 sidebar: "soilContactErosionInitiationSidebar"
               },
               {
-                path: '/RMC-Software-Documentation/docs/web-applications/dst/users-guide/',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/web-applications/dst/users-guide/', '3db'),
+                path: '/RMC-Software-Documentation/docs/web-applications/dst/users-guide/v1.0.0/users-guide',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/web-applications/dst/users-guide/v1.0.0/users-guide', '885'),
                 exact: true
               },
               {
-                path: '/RMC-Software-Documentation/docs/web-applications/lst/users-guide/',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/web-applications/lst/users-guide/', 'f0c'),
+                path: '/RMC-Software-Documentation/docs/web-applications/lst/users-guide/v1.0.0/users-guide',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/web-applications/lst/users-guide/v1.0.0/users-guide', '923'),
                 exact: true
               },
               {
-                path: '/RMC-Software-Documentation/docs/web-applications/rrft/users-guide/',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/web-applications/rrft/users-guide/', '4af'),
+                path: '/RMC-Software-Documentation/docs/web-applications/rrft/users-guide/v1.0.0/users-guide',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/web-applications/rrft/users-guide/v1.0.0/users-guide', '165'),
                 exact: true
               }
             ]

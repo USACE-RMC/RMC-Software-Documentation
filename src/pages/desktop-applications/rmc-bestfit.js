@@ -1,15 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "@theme/Layout";
 import "../../css/index.css";
 import ContentBox from "../../components/ContentBox";
 import addBaseUrl from "@docusaurus/useBaseUrl"; // Correct import
 
 export default function BestFit() {
+  const [latestVersions, setLatestVersions] = useState({});
+
+  useEffect(() => {
+    // Fetch the latestVersions JSON file
+    fetch("/RMC-Software-Documentation/versions/latestVersions.json")
+      .then((response) => response.json())
+      .then((data) => setLatestVersions(data))
+      .catch((error) => console.error("Error loading latest versions:", error));
+  }, []);
+
+  // Create the list of documents dynamically
   const bestFitData = [
     {
       icon: addBaseUrl("img/BestFit.png"),
       doc_location: addBaseUrl(
-        "docs/desktop-applications/rmc-bestfit/users-guide/users-guide"
+        `docs/desktop-applications/rmc-bestfit/users-guide/${latestVersions["desktop-applications/rmc-bestfit/users-guide"]}users-guide`
       ),
       doc_name: "RMC BestFit Users Guide",
       active: false,
