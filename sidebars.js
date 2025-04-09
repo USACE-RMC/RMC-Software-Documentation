@@ -6,7 +6,7 @@ module.exports = {
   },
 
   bepProgressionSidebar: {
-    "RMC Filter Evaluation (Continuation) Toolbox": [
+    "RMC Backward Erosion Piping (Progression) Toolbox": [
       {
         type: "category",
         label: "Document Information",

@@ -24,7 +24,8 @@ export default {
           ],
           "rehypePlugins": [
             null
-          ]
+          ],
+          "breadcrumbs": true
         },
         "theme": {
           "customCss": "C:\\Users\\USACE\\OneDrive\\Documents\\GitHub\\RMC-Software-Documentation\\src\\css\\custom.css"
@@ -82,6 +83,13 @@ export default {
         }
       ]
     },
+    "docs": {
+      "sidebar": {
+        "hideable": false,
+        "autoCollapseCategories": true
+      },
+      "versionPersistence": "localStorage"
+    },
     "googleFonts": {
       "families": [
         "Roboto:400,500,700",
@@ -92,13 +100,6 @@ export default {
       "defaultMode": "light",
       "disableSwitch": false,
       "respectPrefersColorScheme": false
-    },
-    "docs": {
-      "versionPersistence": "localStorage",
-      "sidebar": {
-        "hideable": false,
-        "autoCollapseCategories": false
-      }
     },
     "blog": {
       "sidebar": {

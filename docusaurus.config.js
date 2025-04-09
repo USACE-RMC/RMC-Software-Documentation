@@ -20,6 +20,7 @@ export default {
           showLastUpdateTime: true,
           remarkPlugins: [remarkMath, remarkGfm],
           rehypePlugins: [rehypeKatex],
+          breadcrumbs: true,
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
@@ -78,6 +79,12 @@ export default {
           to: "https://www.rmc.usace.army.mil/Library/",
         },
       ],
+    },
+    docs: {
+      sidebar: {
+        hideable: false,
+        autoCollapseCategories: true,
+      },
     },
     googleFonts: {
       families: ["Roboto:400,500,700", "sans-serif"],
