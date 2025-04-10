@@ -203,6 +203,8 @@ RMC-SOFTWARE-DOCUMENTATION/
 
     - React components and JSON files are tied together through `figKey`, `tableKey`, and `equationKey` properties
 
+  - Example counters.json file:
+
   ```
   "01-chapter-title.mdx": {
       "figures": {
