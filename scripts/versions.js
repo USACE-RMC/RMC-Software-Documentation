@@ -28,7 +28,8 @@ const folderStructure = [
 // Function to check if a folder name is a valid version (can be modified based on your version naming convention)
 function isValidVersion(version) {
   // Assuming version names are in the form of 'vX.X.X', like 'v1.0.0'
-  return /^v\d+\.\d+\.\d+$/.test(version);
+  return /^v\d+\.\d+$/.test(version);
+  //return /^v\d+\.\d+\.\d+$/.test(version);
 }
 
 // Recursive function to traverse through all folder levels and find both the latest version and all versions
