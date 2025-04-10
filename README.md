@@ -261,7 +261,7 @@ RMC-SOFTWARE-DOCUMENTATION/
 
       - The version numbers in this file are used by the `VersionSelector` React component to automatically default the version dropdown menu on the webpage to the latest version
 
-      ```
+      ```json
       {
         "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation": "v1.0.0",
         "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression": "v1.1.0",
@@ -275,7 +275,7 @@ RMC-SOFTWARE-DOCUMENTATION/
 
       - The version numbers in this file are used by the `VersionSelector` React component to populate the version dropdown menu with all available document versions
 
-      ```
+      ```json
       {
         "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression": [
           "v1.0.0",
@@ -319,19 +319,12 @@ RMC-SOFTWARE-DOCUMENTATION/
   - The naming convention for items within the figures/ folder should follow that of the `docs/` folder:
 
     - desktop-applications
-
     - toolbox-technical-manuals
-
       - internal-erosion-suite
-
         - backward-erosion-piping-progression
-
           - figure1
-
           - figure2
-
           - figure3
-
     - web-applications
 
   - File names for figure images can be assigned arbitrarily but will need to be referenced by Figure components in `.mdx` files, so an intuitive naming convention is recommended
@@ -359,7 +352,7 @@ RMC-SOFTWARE-DOCUMENTATION/
   - Items are listed in the order they should appear in the sidebar
     - Items can take the form of single docs or collapsible categories
       - Single doc:
-      ```
+      ```js
       {
         type: 'doc',
         id: 'path/to/doc',
@@ -367,7 +360,7 @@ RMC-SOFTWARE-DOCUMENTATION/
       }
       ```
       - Collapsible category:
-        ```
+        ```js
         {
           type: 'category',
           label: 'Category Title',
@@ -391,7 +384,7 @@ RMC-SOFTWARE-DOCUMENTATION/
         - Appendix B - {title} (single doc)
 - The following is an example sidebar for Version 1.0.0 of the Backward Erosion Piping (Progression) Toolbox Technical Manual:
 
-```
+```js
 bepProgressionSidebar_v1_0_0: {
   "RMC Backward Erosion Piping (Progression) Toolbox": [
     {
@@ -517,7 +510,7 @@ To create a new .mdx file in Visual Studio Code, right click on the folder that 
 
 - `.mdx` files can begin with YAML front matter, wrapped in triple dashes:
 
-```
+```mdx
 ---
 reportDate: November 2023
 reportType: Computer Program Document
@@ -541,7 +534,7 @@ responsiblePersonNumber: 502-315-6599
 
 Use `#` to `######` to create headings from level 1 to 6
 
-```
+```mdx
 # H1
 ## H2
 ### H3
@@ -582,7 +575,7 @@ Use `#` to `######` to create headings from level 1 to 6
 
 - Bullet list
 
-```
+```mdx
 - Item 1
 - Item 2
   - Sub-item 2.1
@@ -591,7 +584,7 @@ Use `#` to `######` to create headings from level 1 to 6
 
 - Numbered list
 
-```
+```mdx
 1. Step one
 2. Step two
   1. Sub-step
@@ -601,13 +594,13 @@ Use `#` to `######` to create headings from level 1 to 6
 
 - Inline code: use backticks for inline code:
 
-````
+````mdx
 ```Inline code block```
 ````
 
 - Fenced code block (with syntax highlighting)
 
-````
+````mdx
 ```js title="example.js"
 function greet(name) {
   return `Hello, ${name}!`;
@@ -616,7 +609,7 @@ function greet(name) {
 
 - Live code block: primarily supports JSX
 
-````
+````mdx
 ```jsx live
 function Hello({ name="Name" }) {
   return (
