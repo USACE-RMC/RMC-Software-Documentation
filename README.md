@@ -1,35 +1,3 @@
-## Bibliography
-
-### Overview
-
-The `Bibliography` component is a reusable React component that dynamically loads and displays a formatted bibliography list from a JSON file. It is intended for use in documentation pages where a properly structured and styled reference list is required.
-
-### Props
-
-| Prop      | Type   | Required | Description                                                                         |
-| --------- | ------ | -------- | ----------------------------------------------------------------------------------- |
-| `bibFile` | String | ✅ Yes   | The relative path (from the public folder) to a JSON file containing citation data. |
-
-### Functionality
-
-- Fetches a bibliography JSON file located at `/RMC-Software-Documentation/${bibFile}`.
-  - The bibliography JSON files are stored in the /static/bibliographies folder
-  - Title the bibliography files with the applicable reportID (from /scripts/counters.js)
-- Parses the citation data and sorts the entries alphabetically by the first author's name.
-- Formats author lists intelligently:
-  - Two authors are shown as “Author A and Author B”.
-  - More than six authors are shortened to “Author A, et al.”
-- Formats citations with support for fields like:
-  - `author`, `title`, `year`, `journal`, `booktitle`, `volume`, `pages`, `doi`, `url`, `institution`, `organization`, etc.
-- Outputs an ordered list (`<ol>`) of citations, each styled and linked (where applicable).
-
-### Output Example
-
-```text
-[1] Smith, J. and Doe, A., "Understanding React," *Journal of Web Dev*, vol. 5, pp. 123–130, 2020. doi: 10.1234/abcd
-[2] Adams, R., et al., "Advanced Topics in UI Design," 2021. Available: https://example.com
-```
-
 # Docusaurus Project Setup and Usage
 
 This guide will help you set up and use Docusaurus, a modern static website generator, for your RMC Software Documentation project.
@@ -52,6 +20,14 @@ This guide will help you set up and use Docusaurus, a modern static website gene
     - [License](#license)
     - [Dependencies](#project-dependencies)
 - [Creating and Editing Pages](#creating-and-editing-pages)
+  - [MDX Basics](#file-basics)
+  - [Front Matter](#front-matter)
+  - [Markdown Content](#markdown-content)
+    - [Headings](#headings)
+    - [Text Formatting](#text-formatting)
+    - [Paragraphs and Line Breaks](#paragraphs-and-line-breaks)
+    - [Code Blocks](#code-blocks)
+  - [JSX and Components](#jsx-and-components)
 - [React Components](#react-components)
   - [Bibliography](#bibliography)
   - [Citation](#citation)
@@ -522,3 +498,644 @@ bepProgressionSidebar_v1_0_0: {
   - This file locks the exact versions of every package (and sub-package) installed at the time of `npm install`. It ensures that everyone working on the project uses the same dependency versions, which improves consistency across environments.
 
 ## Creating and Editing Pages
+
+`.mdx` (Markdown + JSX) allows you to write Markdown content and use React components side-by-side.
+
+To create a new .mdx file in Visual Studio Code, right click on the folder that the file will be located and click "New File". Name the file with your desired name and add `.mdx` for the document type. Follow the naming and numbering convention outlined in the [`docs/`](#docs) section.
+
+### MDX Basics
+
+- File extension: `.mdx`
+
+- Location: Inside the `docs` folder
+
+- Treated as pages in Docusaurus when placed in the `docs` folder and linked in the sidebar
+
+### Front Matter
+
+- `.mdx` files can begin with YAML front matter, wrapped in triple dashes:
+
+```
+---
+reportDate: November 2023
+reportType: Computer Program Document
+reportTitle: RMC Backward Erosion Piping (Progression) Toolbox
+reportSubTitle: RMC Internal Erosion Suite
+reportAuthors: ["Tim O'Leary, Risk Management Center"]
+reportAbstract: The spreadsheet tools contained in this toolbox deterministically and probabilistically assess the likelihood of backward erosion piping progression (hydraulic condition) using the adjusted Schmertmann (2000) method and the adjusted calculation rule of Sellmeijer et al. (2011) in addition to creep ratio methods of Bligh (1910) and Lane (1935).
+reportSubjectTerms: ["Internal erosion", "backward erosion piping", "Schmertmann", "Sellmeijer", "Bligh", "Lane", "creep ratio"]
+responsiblePersonName: Tim O'Leary
+responsiblePersonNumber: 502-315-6599
+---
+```
+
+- In the RMC Software Documentation project, the only `.mdx` files that contain front matter are `00-document-info.mdx`, which the front matter being called as a prop for the `<DocumentMetadata>` React component.
+
+### Markdown Content
+
+`.mdx` supports standard Markdown syntax out of the box.
+
+#### Headings
+
+Use `#` to `######` to create headings from level 1 to 6
+
+```
+# H1
+## H2
+### H3
+#### H4
+##### H5
+###### H6
+```
+
+#### Text Formatting
+
+- `**Bold text**` **Bold text**
+
+- `*Italic text*` _Italic text_
+
+- `~~Strikethrough~~` ~~Strikethrough~~
+
+- `**_Bold and italic_**` **_Bold and italic_**
+
+- HTML tags can also be used to format text
+
+  - `<b>Bold text</b>` <b>Bold text</b>
+
+  - `<i>Italic text</i>` <i>Italic text</i>
+
+  - `<b><i>Bold and italic text</i></b>` <b><i>Bold and italic text</i></b>
+
+  - `<u>Underline text</u>` <u>Underline text</u>
+
+  - `<sub>Subscript text</sub>` <sub>Subscript text</sub>
+
+  - `<sup>Superscript text</sup>` <sup>Superscript text</sup>
+
+#### Paragraphs and Line Breaks
+
+- Separate paragraphs with a blank line. To force a line break, end the line with <b>two spaces</b>.
+
+#### Lists
+
+- Bullet list
+
+```
+- Item 1
+- Item 2
+  - Sub-item 2.1
+  - Sub-item 2.2
+```
+
+- Numbered list
+
+```
+1. Step one
+2. Step two
+  1. Sub-step
+```
+
+#### Code Blocks
+
+- Inline code: use backticks for inline code:
+
+````
+```Inline code block```
+````
+
+- Fenced code block (with syntax highlighting)
+
+````
+```js title="example.js"
+function greet(name) {
+  return `Hello, ${name}!`;
+}```
+````
+
+- Live code block: primarily supports JSX
+
+````
+```jsx live
+function Hello({ name="Name" }) {
+  return (
+    <div>
+      <h2>Hello, {name}!</h2>
+    <div>
+  );
+}```
+````
+
+### JSX and Components
+
+React components can be inserted anywhere in `.mdx` files. Components must be imported from the `src` folder into the `.mdx` file before they can be used.
+
+```jsx
+import { MyComponent } from '@site/src/comopnents/MyComponent';
+
+<MyComopnent someProp="value" />
+```
+
+React components available within the RMC Software Documentation project are outlined [here](#react-components)
+
+## React Components
+
+The following React components are available for use within the RMC Software Documentation project. Each component description provides an overview of the component functionality, props required for component use, and example code for component use within `.mdx` files.
+
+This list does not include components used to create and format hub, sub-hub, or index website pages.
+
+### Bibliography
+
+<b><u>Overview and Functionality</u></b>
+
+- The `Bibliography` component is a reusable React component that dynamically loads and displays a formatted bibliography list from a JSON file. It is intended for use in documentation pages where a properly structured and styled reference list is required.
+
+- Functionality is as follows:
+  - Fetches a bibliography JSON file located at `/RMC-Software-Documentation/${bibFile}`.
+    - The bibliography JSON files are stored in the /static/bibliographies folder
+    - Title the bibliography files with the applicable reportID (from /scripts/counters.js)
+  - Parses the citation data and sorts the entries alphabetically by the first author's name.
+  - Formats author lists intelligently:
+    - Two authors are shown as “Author A and Author B”.
+    - More than six authors are shortened to “Author A, et al.”
+  - Formats citations with support for fields like:
+    - `author`, `title`, `year`, `journal`, `booktitle`, `volume`, `pages`, `doi`, `url`, `institution`, `organization`, etc.
+  - Outputs an ordered list (`<ol>`) of citations, each styled and linked (where applicable).
+
+<b><u>Props</u></b>
+
+| Prop      | Type   | Required | Description                                                                         |
+| --------- | ------ | -------- | ----------------------------------------------------------------------------------- |
+| `bibFile` | String | ✅ Yes   | The relative path (from the public folder) to a JSON file containing citation data. |
+
+<b><u>Example Usage</u></b>
+
+```jsx
+<Bibliography bibFile="/bibliographies/108_1_0_0-bib.json" />
+```
+
+### Citation
+
+<b><u>Overview and Functionality</u></b>
+
+- The `Citation` component is used to display a citation reference within a document. It fetches citation data from a specified bibliography JSON file and assigns a unique citation number to each citation based on its position in the list.
+- Functionality is as follows:
+  - Fetches the bibliography JSON file from the path provided via the `bibFile` prop.
+  - Sorts the citations alphabetically by the first author's name.
+  - Finds the citation matching the `citationKey` and assigns it a citation number.
+  - Stores the citation per document to avoid duplication and ensures the citation number is consistent across the document.
+  - Dispatches an event to notify other components (e.g., `CitationFootnote`) when citations are updated.
+  - Outputs the citation number as a clickable link, which points to the corresponding footnote.
+
+<b><u>Props</u></b>
+
+| Prop          | Type   | Required | Description                                                                                 |
+| ------------- | ------ | -------- | ------------------------------------------------------------------------------------------- |
+| `citationKey` | String | ✅ Yes   | The unique key for the citation, which corresponds to the citation in the JSON file.        |
+| `bibFile`     | String | ✅ Yes   | The relative path (from the public folder) to a JSON file containing the bibliography data. |
+
+<b><u>Example Usage</u></b>
+
+```jsx
+<Citation citationKey="Schmertmann2000" bibFile="/bibliographies/108_1_0_0-bib.json" />
+```
+
+### CitationFootnote
+
+<b><u>Overview and Functionality</u></b>
+
+- The `CitationFootnote` component is responsible for rendering the full citation details for all used citations inside a single `.mdx` document. It scans the `.mdx` file, gathers all instances of the `<Citation>` component, and provides a list of citations at the bottom of the document.
+- Functionality is as follows:
+  - Fetches the list of citations used in the current document by calling `getUsedCitations` based on the document's pathname.
+  - Renders each citation in a numbered list format.
+  - Formats citations using IEEE format.
+  - Each citation is rendered with a clickable link to the corresponding footnote.
+
+<b><u>Props</u></b>
+
+This component does not accept any props.
+
+<b><u>Example Usage</u></b>
+
+```jsx
+<CitationFootnote />
+```
+
+### DocumentMetadata
+
+<b><u>Overview and Functionality</u></b>
+
+- The `DocumentMetadata` component displays metadata about a report in a table format.
+- Functionality is as follows:
+  - Displays metadata fields such as report date, type, title, authors, abstract, and responsible person.
+  - Supports both string and array formats for certain fields (authors, subject terms).
+  - The table renders the metadata with headers and corresponding values for each field.
+
+<b><u>Props</u></b>
+
+| Prop       | Type   | Required | Description                                                                                                                                                                                                                                          |
+| ---------- | ------ | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `metadata` | Object | ✅ Yes   | The metadata object containing the report's details. It should include `reportDate`, `reportType`, `reportTitle`, `reportSubTitle`, `reportAuthors`, `reportAbstract`, `reportSubjectTerms`, `responsiblePersonName`, and `responsiblePersonNumber`. |
+
+<b><u>Example Usage</u></b>
+
+```jsx
+import React from "react";
+import DocumentMetadata from "../components/DocumentMetadata";
+
+const metadata = {
+  reportDate: "April 9, 2025",
+  reportType: "Technical Report",
+  reportTitle: "Risk Management Center Software Documentation",
+  reportSubTitle: "Version 1.0",
+  reportAuthors: ["John Doe", "Jane Smith"],
+  reportAbstract: "This document provides an overview of the RMC Software.",
+  reportSubjectTerms: ["Risk Management", "Software", "Documentation"],
+  responsiblePersonName: "John Doe",
+  responsiblePersonNumber: "123-456-7890",
+};
+
+export default function ReportPage() {
+  return (
+    <div>
+      <h1>RMC Software Documentation</h1>
+      <DocumentMetadata metadata={metadata} />
+    </div>
+  );
+}
+```
+
+### Equation
+
+<b><u>Overview and Functionality</u></b>
+
+- The `Equation` component is used to display mathematical equations within a document. It can render equations either inline or as block equations, using the KaTeX library for rendering LaTeX math.
+- Functionality is as follows:
+  - Fetches the equation number from a JSON file containing counters based on the `parentDocId` and `equationKey`.
+  - If the equation number is found, it renders the equation with the appropriate tag.
+  - Supports both inline and block rendering via the `inline` prop.
+
+<b><u>Props</u></b>
+
+| Prop          | Type    | Required | Description                                                                                             |
+| ------------- | ------- | -------- | ------------------------------------------------------------------------------------------------------- |
+| `parentDocId` | String  | ✅ Yes   | The ID of the parent document, used to locate the corresponding JSON file for equation counters.        |
+| `equationKey` | String  | ✅ Yes   | A unique key that identifies the specific equation within the parent document.                          |
+| `equation`    | String  | ✅ Yes   | The LaTeX string representing the equation to be rendered.                                              |
+| `inline`      | Boolean | ❌ No    | If `true`, renders the equation inline; otherwise, renders it as a block equation. Defaults to `false`. |
+
+<b><u>Example Usage</u></b>
+
+```jsx
+<Equation parentDocId="108_1_0_0" equationKey="fs-pipe-progression" equation="FS = \left(\frac{C_D C_L C_S C_K C_γ C_Z C_α i_{\textit{pmt}}}{C_R i_f}\right)" />
+```
+
+### EquationReference
+
+<b><u>Overview and Functionality</u></b>
+
+- The `EquationReference` component is used to display a reference to a specific equation within a document. It dynamically fetches the equation number from a JSON file based on the `parentDocId` and `equationKey`, which corresponds to the counter for the equation.
+- Functionality is as follows:
+  - Fetches the equation number from a JSON file containing counters.
+  - Displays the equation number in a formatted reference, such as "Equation 1", once the number is successfully loaded.
+  - Displays a "Loading..." message while the equation number is being fetched.
+
+<b><u>Props</u></b>
+
+| Prop          | Type   | Required | Description                                                                                      |
+| ------------- | ------ | -------- | ------------------------------------------------------------------------------------------------ |
+| `parentDocId` | String | ✅ Yes   | The ID of the parent document, used to locate the corresponding JSON file for equation counters. |
+| `equationKey` | String | ✅ Yes   | A unique key that identifies the specific equation within the parent document.                   |
+
+<b><u>Example Usage</u></b>
+
+```jsx
+<EquationReference parentDocId="108_1_0_0" equationKey="fs-pipe-progression" />
+```
+
+### Figure
+
+<b><u>Overview and Functionality</u></b>
+
+- The `Figure` component is used to display an image with a caption, where the caption includes the figure number. The figure number is dynamically fetched from a JSON file based on the `parentDocId` and `figKey`.
+- Functionality is as follows:
+  - Fetches the figure number from a JSON file containing counters for figures.
+  - Displays the image referenced by the `src` prop and provides an `alt` text for accessibility.
+  - Displays the caption, including the dynamically retrieved figure number.
+  - Displays a "Loading..." message while the figure number is being fetched.
+
+<b><u>Props</u></b>
+
+| Prop          | Type   | Required | Description                                                                                    |
+| ------------- | ------ | -------- | ---------------------------------------------------------------------------------------------- |
+| `parentDocId` | String | ✅ Yes   | The ID of the parent document, used to locate the corresponding JSON file for figure counters. |
+| `figKey`      | String | ✅ Yes   | A unique key that identifies the specific figure within the parent document.                   |
+| `src`         | String | ✅ Yes   | The relative path (from the root of the project) to the image source file for the figure.      |
+| `alt`         | String | ✅ Yes   | The alt text to be used for the image, providing a description for accessibility.              |
+| `caption`     | String | ✅ Yes   | The caption that will be displayed beneath the figure, which includes the figure number.       |
+
+<b><u>Example Usage</u></b>
+
+```jsx
+<Figure
+  parentDocId="108_1_0_0"
+  docId="04-background.mdx"
+  figKey="average-horizontal-gradient"
+  src="figures/toolbox-technical-manuals/backward-erosion-piping-progression/figure8.png"
+  alt="Geometry for average horizontal gradient."
+  caption="Geometry for average horizontal gradient."
+></Figure>
+```
+
+### FigureReference
+
+<b><u>Overview and Functionality</u></b>
+
+- The `FigureReference` component is used to display a reference to a figure number within the document. The figure number is dynamically fetched from a JSON file based on the `parentDocId` and `figKey`.
+- Functionality is as follows:
+  - Fetches the figure number from a JSON file containing counters for figures.
+  - Displays the figure number for the referenced figure.
+  - Displays a "Loading..." message while the figure number is being fetched.
+
+<b><u>Props</u></b>
+
+| Prop          | Type   | Required | Description                                                                                    |
+| ------------- | ------ | -------- | ---------------------------------------------------------------------------------------------- |
+| `parentDocId` | String | ✅ Yes   | The ID of the parent document, used to locate the corresponding JSON file for figure counters. |
+| `figKey`      | String | ✅ Yes   | A unique key that identifies the specific figure within the parent document.                   |
+
+<b><u>Example Usage</u></b>
+
+```jsx
+<FigReference parentDocId="108_1_0_0" figKey="average-horizontal-gradient"></FigReference>
+```
+
+### NavContainer
+
+<b><u>Overview and Functionality</u></b>
+
+- The `NavContainer` component is used to display a navigation container that includes a link and a version selector for a document.
+- Functionality is as follows:
+  - Displays a navigation link using the `NavLink` component.
+  - Displays a version selector using the `VersionSelector` component.
+
+<b><u>Props</u></b>
+
+| Prop        | Type   | Required | Description                                                                                      |
+| ----------- | ------ | -------- | ------------------------------------------------------------------------------------------------ |
+| `link`      | String | ✅ Yes   | The URL or path for the navigation link.                                                         |
+| `linkTitle` | String | ✅ Yes   | The title text for the navigation link.                                                          |
+| `document`  | Object | ✅ Yes   | The document object containing versioning information passed to the `VersionSelector` component. |
+
+<b><u>Example Usage</u></b>
+
+```jsx
+<NavContainer
+  link="/toolboxes/internal-erosion-suite"
+  linkTitle="Internal Erosion Suite"
+  document="toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression"
+></NavContainer>
+```
+
+### NavLink
+
+<b><u>Overview and Functionality</u></b>
+
+- The `NavLink` component is used to display a clickable navigation link with a leftward arrow (←) and a link title.
+- Functionality is as follows:
+  - Uses the `Link` component from Docusaurus to provide navigation to the specified URL.
+  - Displays a leftward arrow (`←`) followed by the provided `linkTitle`.
+
+<b><u>Props</u></b>
+
+| Prop        | Type   | Required | Description                              |
+| ----------- | ------ | -------- | ---------------------------------------- |
+| `link`      | String | ✅ Yes   | The URL or path for the navigation link. |
+| `linkTitle` | String | ✅ Yes   | The title text for the navigation link.  |
+
+<b><u>Example Usage</u></b>
+
+- The `NavLink` component will generally be called from within the `NavContainer` component, with props to `NavLink` passed through `NavContainer`:
+
+```jsx
+<NavContainer
+  link="/toolboxes/internal-erosion-suite"
+  linkTitle="Internal Erosion Suite"
+  document="toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression"
+></NavContainer>
+```
+
+- If calling `NavLink` individually it will look like this:
+
+```jsx
+<NavLink link="/toolboxes/internal-erosion-suite" linkTitle="Internal Erosion Suite" />
+```
+
+### TableAcronyms
+
+<b><u>Overview and Functionality</u></b>
+
+- `TableAcronyms` is used to display a table of report acronyms that does **not** require a caption,
+- It dynamically loads and references the table number based on a `tableKey`, although the number is not displayed in the table.
+- Useful for lists like acronyms, glossaries, or any supporting information tables without descriptive captions.
+
+<b><u>Props</u></b>
+
+| Prop          | Type   | Default | Required | Description                                                                                 |
+| ------------- | ------ | ------- | -------- | ------------------------------------------------------------------------------------------- |
+| `parentDocId` | String | N/A     | ✅ Yes   | Identifier for the document that helps determine which JSON counter file to load.           |
+| `tableKey`    | String | N/A     | ✅ Yes   | A unique key to locate the table number (not shown, but fetched for reference/consistency). |
+| `headers`     | Array  | `[]`    | ✅ Yes   | List of column headers.                                                                     |
+| `columns`     | Array  | `[]`    | ✅ Yes   | Each item is a column array of data for the table. All columns must be equal in length.     |
+
+<b><u>Example Usage</u></b>
+
+```jsx
+<TableAcronyms parentDocId="107_1_0_0" tableKey="acronyms"
+headers={["Acronym", "Full Form"]}
+columns={[
+  [
+  "BSC", "CE", "CEF", "CPD", "EE", "FC", "FEMA", "fm", "HEC", "HW", "IWR",
+  "JOS", "NAVD88", "NE", "NEF", "NGVD29", "NRCS", "QC", "RMC", "SE", "UDF",
+  "UNSW", "U.S.", "USACE", "USBR", "USDA"
+], // Column 1
+  [
+  "Base Soil Category", "Continuing Erosion", "Continuing Erosion Filter",
+  "Computer Program Document", "Excessive Erosion", "Fines Content",
+  "Federal Emergency Management Agency", "Fine-to-Medium",
+  "Hydrologic Engineering Center", "Headwater",
+  "Institute for Water Resources", "Joint Opening Size",
+  "North American Vertical Datum of 1988", "No Erosion", "No Erosion Filter",
+  "National Geodetic Vertical Datum of 1929",
+  "Natural Resource Conservation Center", "Quality Control",
+  "Risk Management Center", "Some Erosion", "User-Defined Function",
+  "University of New South Wales", "United States",
+  "United States Army Corps of Engineers",
+  "United States Bureau of Reclamation",
+  "United States Department of Agriculture"
+] // Column 2
+]}
+alt="Acronyms"
+caption="Acronyms"
+/>
+```
+
+### TableHorizontal
+
+<b><u>Overview and Functionality</u></b>
+
+- The `TableHorizontal` component is used to display a horizontal table with headers and rows fetched from a JSON file. The headers will be contained within the first column of the table (i.e., the left-most column).
+- Functionality is as follows:
+  - Loads table data dynamically based on the `tableKey` from a JSON file located in the `/counters` directory.
+  - Displays a table with the provided headers and rows.
+  - Each table is uniquely identified by the `tableKey`.
+  - The `alt` and `caption` props are used to describe the table for accessibility and display purposes.
+
+<b><u>Props</u></b>
+
+| Prop          | Type   | Required | Description                                                                                           |
+| ------------- | ------ | -------- | ----------------------------------------------------------------------------------------------------- |
+| `parentDocId` | String | ✅ Yes   | The document ID that corresponds to the JSON file used to fetch table data.                           |
+| `tableKey`    | String | ✅ Yes   | The unique key for the table within the JSON file.                                                    |
+| `headers`     | Array  | ✅ Yes   | An array of strings representing the table headers.                                                   |
+| `rows`        | Array  | ✅ Yes   | A two-dimensional array containing the rows of data for the table. Each inner array represents a row. |
+| `alt`         | String | ✅ Yes   | A description for the table (used for accessibility).                                                 |
+| `caption`     | String | ✅ Yes   | A caption for the table, typically used to describe the table's content.                              |
+
+<b><u>Example Usage</u></b>
+
+```jsx
+<TableHorizontal
+parentDocId="107_1_0_0"
+tableKey="constricted-exit-probabilities"
+headers={["JOS / D<sub>95</sub>B", "P<sub>CE</sub>"]}
+rows={[
+  ["< 0.4", "0.5", "0.75", "1.0", "2.0", "≥ 3.0"], // Row 1
+  ["0", "0.0001", "0.001", "0.1", "0.5", "0.9"] // Row 2
+]}
+alt="Probability of continuing erosion for joint/defect opening size."
+caption="Probability of continuing erosion for joint/defect opening size."
+/>
+```
+
+### TableReference
+
+<b><u>Overview and Functionality</u></b>
+
+- The `TableReference` component is used to display a reference to a table by its unique `tableKey`.
+- It loads the table information dynamically from a JSON file located in the `/counters` directory, based on the `tableKey`.
+- It displays the table number for referencing within the document.
+
+<b><u>Props</u></b>
+
+| Prop          | Type   | Required | Description                                                                 |
+| ------------- | ------ | -------- | --------------------------------------------------------------------------- |
+| `parentDocId` | String | ✅ Yes   | The document ID that corresponds to the JSON file used to fetch table data. |
+| `tableKey`    | String | ✅ Yes   | The unique key for the table within the JSON file.                          |
+
+<b><u>Example Usage</u></b>
+
+```jsx
+<TableReference parentDocId="107_1_0_0" tableKey="constricted-exit-probabilities" />
+```
+
+### TableVersionHistory
+
+<b><u>Overview and Functionality</u></b>
+
+- The `TableVersionHistory` component is used to display a version history table, typically in `00-version-history.mdx` files.
+- It takes several props containing version-related data and dynamically creates a table with version details, including version number, date, description, and the individuals involved in modification, review, and approval.
+
+<b><u>Props</u></b>
+
+| Prop           | Type  | Default | Required | Description                                                                 |
+| -------------- | ----- | ------- | -------- | --------------------------------------------------------------------------- |
+| `versions`     | Array | `[]`    | ✅ Yes   | A list of version numbers to be displayed in the first column of the table. |
+| `dates`        | Array | `[]`    | ✅ Yes   | A list of dates corresponding to each version number.                       |
+| `descriptions` | Array | `[]`    | ✅ Yes   | A list of descriptions for each version.                                    |
+| `modifiedBy`   | Array | `[]`    | ✅ Yes   | A list of individuals who modified each version.                            |
+| `reviewedBy`   | Array | `[]`    | ✅ Yes   | A list of individuals who reviewed each version.                            |
+| `approvedBy`   | Array | `[]`    | ✅ Yes   | A list of individuals who approved each version.                            |
+
+<b><u>Example Usage</u></b>
+
+```jsx
+<TableVersionHistory
+    versions={["1.0.0", "1.1.0"]}
+    dates={["November 2023", "April 2025"]}
+    descriptions={["Initial release.", "Updated documentation"]}
+    modifiedBy={["John Doe", "John Smith"]}
+    reviewedBy={["Jane Doe", "Jane Smith"]}
+    approvedBy={["Jim Doe", "Jim Smith"]}/>
+```
+
+### TableVertical
+
+<b><u>Overview and Functionality</u></b>
+
+- The `TableVertical` component displays a vertical table with customizable headers and columns. The headers will be contained within the first row of the table (i.e., the top-most row).
+- It dynamically fetches table information based on `parentDocId` and `tableKey` from a JSON file.
+- The table is rendered with a caption, and headers are displayed in the top row, with data rows populated from the provided columns.
+
+<b><u>Props</u></b>
+
+| Prop          | Type   | Default | Required | Description                                                                              |
+| ------------- | ------ | ------- | -------- | ---------------------------------------------------------------------------------------- |
+| `parentDocId` | String | N/A     | ✅ Yes   | A unique identifier for the document, used to construct the path to the JSON file.       |
+| `tableKey`    | String | N/A     | ✅ Yes   | The key to locate the specific table in the JSON file.                                   |
+| `headers`     | Array  | `[]`    | ✅ Yes   | A list of header names for the table.                                                    |
+| `columns`     | Array  | `[]`    | ✅ Yes   | A list of columns, where each column is an array representing the data for that column.  |
+| `alt`         | String | N/A     | ✅ Yes   | Alt text for the table (optional for accessibility).                                     |
+| `caption`     | String | N/A     | ✅ Yes   | The caption text for the table, typically includes a description of the table's content. |
+
+<b><u>Example Usage</u></b>
+
+```jsx
+<TableVertical
+parentDocId="108_1_0_0"
+tableKey="schmertmann-reference-values"
+headers={["Parameter", "Minimum"]}
+columns={[
+  [
+  <>Seepage path length, <i>L</i></>, <>Piping Layer Depth, <i>D</i></>, <>Particle size with 10% passing by weight, <i>d<sub>10</sub></i></>,
+  <>Anisotropy, <i>R<sub>k</sub> = k<sub>h</sub>/k<sub>v</sub>+</i></>, <>Relative density, <i>D<sub>r</sub></i></>, <>Pipe path inclination, <i>α</i></>
+], // Column 1
+  [
+  "5 feet", "1 foot", "0.20 millimeters", "1.5", "60 percent", "0 degrees"
+] // Row 2
+]}
+alt="Schmertmann reference test values"
+caption="Schmertmann reference test values"/>
+```
+
+### VersionSelector
+
+<b><u>Overview and Functionality</u></b>
+
+- `VersionSelector` provides a dropdown menu to switch between different versions of a document.
+- It reads available versions from a shared `versionList.json` file created by `scripts/versions.js` and updates the URL based on the selected version.
+- On change, it replaces the version number in the current URL and reloads the page.
+- It also stores the selected version in `localStorage` for consistent navigation between pages.
+
+<b><u>Props</u></b>
+
+| Prop       | Type   | Required | Description                                                                   |
+| ---------- | ------ | -------- | ----------------------------------------------------------------------------- |
+| `document` | String | ✅ Yes   | The document ID used to retrieve version information from `versionList.json`. |
+
+<b><u>Example Usage</u></b>
+
+- The `VersionSelector` component will generally be called from within the `NavContainer` component, with props to `VersionSelector` passed through `NavContainer`:
+
+```jsx
+<NavContainer
+  link="/toolboxes/internal-erosion-suite"
+  linkTitle="Internal Erosion Suite"
+  document="toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression"
+></NavContainer>
+```
+
+- If calling `VersionSelector` individually it will look like this:
+
+```jsx
+<VersionSelector document="toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression" />
+```

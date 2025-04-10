@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import "../css/custom.css";
-import "../css/table-vertical-no-cap.css";
+import "../css/table-acronyms.css";
 
-const TableVerticalNoCap = ({ parentDocId, tableKey, headers, columns }) => {
+const TableAcronyms = ({ parentDocId, tableKey, headers, columns }) => {
   const [tableInfo, setTableInfo] = useState(null);
   const jsonPath = useBaseUrl(
     `counters/${parentDocId.replace(/\//g, "-")}.json`
@@ -68,4 +68,4 @@ const TableVerticalNoCap = ({ parentDocId, tableKey, headers, columns }) => {
   );
 };
 
-export default TableVerticalNoCap;
+export default TableAcronyms;
