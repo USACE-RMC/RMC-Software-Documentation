@@ -9,6 +9,10 @@ This guide will help you set up and use Docusaurus, a modern static website gene
 - [Running Locally](#running-locally)
 - [Building for Production](#building-for-production)
 - [Deployment](#deployment)
+- [Versioning System](#versioning-system)
+  - [Major Versions](#major-versions-x0)
+  - [Minor Versions](#minor-versions-xy)
+  - [Excluded Changes](#excluded-changes)
 - [Project Structure](#project-structure)
   - [Docs](#docs)
   - [Scripts](#scripts)
@@ -125,6 +129,34 @@ $env:GIT_USER="USACE-RMC"
 ```powershell
 npm run deploy
 ```
+
+## Versioning System
+
+To maintain clarity and transparency in the evolution of online documentation, the RMC Software Documentation site uses a structured versioning system that distinguishes between significant updates and smaller changes. The versioning format follows a <b>Major.Minor</b> structure:
+
+### Major Versions (X.0):
+
+A major version update indicates significant changes to the book, typically involving updates, additions, or restructuring of entire chapters. These updates may reflect new content, substantial revisions, or major reorganization to enhance the book's structure or scope.
+
+### Minor Versions (X.Y):
+
+A minor version update denotes changes to specific sections within a chapter. These changes might include:
+
+- Expanding a section with new material
+- Rewriting sections for improved clarity
+- Adding new subsections or examples to an existing chapter
+
+### Excluded Changes:
+
+Typos, grammatical corrections, formatting adjustments, or other minor editorial edits that do not materially affect the book's content or structure are not reflected in the versioning system.
+
+### Version Numbering Example:
+
+- 1.0: Initial release or major update to chapters
+- 1.1: Update to a section in Chapter 1
+- 2.0: Addition of a new chapter or major overhaul of an existing chapter
+
+By adhering to this system, readers can easily track and identify substantive updates to the document's content while avoiding confusion caused by minor, inconsequential changes.
 
 ## Project Structure
 
@@ -251,7 +283,7 @@ RMC-SOFTWARE-DOCUMENTATION/
 
   - JavaScript file for creating static JSON files used for version control
 
-  - This script recursively searches through the `docs` folder and looks for folders that follow `v#.#.#` format
+  - This script recursively searches through the `docs` folder and looks for folders that follow `v#.#` format
 
   - Two static JSON files are created in the `static/versions`folder:
 
@@ -263,9 +295,9 @@ RMC-SOFTWARE-DOCUMENTATION/
 
       ```json
       {
-        "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation": "v1.0.0",
-        "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression": "v1.1.0",
-        "toolbox-technical-manuals/internal-erosion-suite/breach": "v1.0.0",
+        "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation": "v1.0",
+        "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression": "v1.1",
+        "toolbox-technical-manuals/internal-erosion-suite/breach": "v1.0",
       }
       ```
 
@@ -278,8 +310,8 @@ RMC-SOFTWARE-DOCUMENTATION/
       ```json
       {
         "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression": [
-          "v1.0.0",
-          "v1.1.0"
+          "v1.0",
+          "v1.1"
         ],
       }
       ```
@@ -347,8 +379,8 @@ RMC-SOFTWARE-DOCUMENTATION/
     - For example `bepProgressionSidebar` for the Backward Erosion Piping (Progression) Toolbox Technical Manual
   - Version numbers should be appended to the export keys to reflect the version that the sidebar is defining
     - A unique sidebar is required for each version of a document
-    - For example, version 1.0.0 of the BEP (Progression) sidebar would be appended to the export key as `bepProgressionSidebar_v_1_0_0`
-      - Version 1.1.0 would be appended to the export key as `bepProgressionSidebar_v_1_1_0`
+    - For example, version 1.0 of the BEP (Progression) sidebar would be appended to the export key as `bepProgressionSidebar_v_1_0`
+      - Version 1.1 would be appended to the export key as `bepProgressionSidebar_v_1_1`
   - Items are listed in the order they should appear in the sidebar
     - Items can take the form of single docs or collapsible categories
       - Single doc:
@@ -382,10 +414,10 @@ RMC-SOFTWARE-DOCUMENTATION/
       - Appendices (category, collapsed: true)
         - Appendix A - {title} (single doc)
         - Appendix B - {title} (single doc)
-- The following is an example sidebar for Version 1.0.0 of the Backward Erosion Piping (Progression) Toolbox Technical Manual:
+- The following is an example sidebar for Version 1.0 of the Backward Erosion Piping (Progression) Toolbox Technical Manual:
 
 ```js
-bepProgressionSidebar_v1_0_0: {
+bepProgressionSidebar_v1_0: {
   "RMC Backward Erosion Piping (Progression) Toolbox": [
     {
       type: "category",
@@ -395,12 +427,12 @@ bepProgressionSidebar_v1_0_0: {
       items: [
         {
           type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/document-info",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/document-info",
           label: "Document Info",
         },
         {
           type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/version-history",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/version-history",
           label: "Version History",
         },
       ],
@@ -413,47 +445,47 @@ bepProgressionSidebar_v1_0_0: {
       items: [
         {
           type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/introduction",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/introduction",
           label: "Introduction",
         },
         {
           type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/terms-and-conditions-for-use",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/terms-and-conditions-for-use",
           label: "Terms and Conditions for Use",
         },
         {
           type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/general-overview",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/general-overview",
           label: "General Overview",
         },
         {
           type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/background",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/background",
           label: "Background",
         },
         {
           type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/schmertmann",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/schmertmann",
           label: "Schmertmann",
         },
         {
           type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/sellmeijer",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/sellmeijer",
           label: "Sellmeijer",
         },
         {
           type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/creep-ratios",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/creep-ratios",
           label: "Creep Ratios",
         },
         {
           type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/summary",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/summary",
           label: "Summary",
         },
         {
           type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/references",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/references",
           label: "References",
         },
       ],
@@ -466,7 +498,7 @@ bepProgressionSidebar_v1_0_0: {
       items: [
         {
           type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0/appendix-acronyms",
+          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/appendix-acronyms",
           label: "Appendix A - Acronyms",
         },
       ],
