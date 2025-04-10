@@ -1,6 +1,6 @@
-# Docusaurus Project Setup and Usage
+# RMC Software Documentation - Docusaurus Project Setup and Usage
 
-This guide will help you set up and use Docusaurus, a modern static website generator, for your RMC Software Documentation project.
+This guide will help you set up and use Docusaurus, a modern static website generator, for the RMC Software Documentation project.
 
 ## Table of Contents
 
