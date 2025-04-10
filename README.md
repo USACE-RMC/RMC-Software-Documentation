@@ -739,9 +739,6 @@ This component does not accept any props.
 <b><u>Example Usage</u></b>
 
 ```jsx
-import React from "react";
-import DocumentMetadata from "../components/DocumentMetadata";
-
 const metadata = {
   reportDate: "April 9, 2025",
   reportType: "Technical Report",
