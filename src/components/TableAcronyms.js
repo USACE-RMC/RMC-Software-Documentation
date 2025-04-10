@@ -42,7 +42,7 @@ const TableAcronyms = ({ parentDocId, tableKey, headers, columns }) => {
 
   return (
     <div className="table-container">
-      <table className="static-table-vertical-no-cap">
+      <table className="static-table-vertical-acronyms">
         {/* Table header */}
         <thead>
           <tr>

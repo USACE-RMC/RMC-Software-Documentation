@@ -3,14 +3,18 @@ const path = require("path");
 
 // Unique numeric ID mapping for each report
 const reportIDs = {
-  "desktop-applications/lifesim/users-guide": 101_1_0_0,
-  "desktop-applications/rmc-bestfit/users-guide": 102_1_0_0,
-  "desktop-applications/rmc-rfa/users-guide": 103_1_0_0,
-  "desktop-applications/rmc-totalrisk/users-guide": 104_1_0_0,
-  "desktop-applications/rmc-totalrisk/applications-guide": 105_1_0_0,
-  "desktop-applications/rmc-totalrisk/verification-report": 106_1_0_0,
-  "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0": 107_1_0_0,
-  "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0": 108_1_0_0,
+  "desktop-applications/lifesim/users-guide": "101_1_0_0",
+  "desktop-applications/rmc-bestfit/users-guide": "102_1_0_0",
+  "desktop-applications/rmc-rfa/users-guide": "103_1_0_0",
+  "desktop-applications/rmc-totalrisk/users-guide": "104_1_0_0",
+  "desktop-applications/rmc-totalrisk/applications-guide": "105_1_0_0",
+  "desktop-applications/rmc-totalrisk/verification-report": "106_1_0_0",
+  "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0.0":
+    "107_1_0_0",
+  "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0.0":
+    "108_1_0_0",
+  "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1.0":
+    "108_1_1_0",
 };
 
 // Base paths
@@ -74,7 +78,7 @@ function processReport(reportPath) {
     // Regex patterns for <Table>
     const tableMatches = [
       ...content.matchAll(
-        /<(TableHorizontal|TableVertical|TableVerticalNoCap)\s+[^>]*tableKey="([^"]+)"/g
+        /<(TableHorizontal|TableVertical|TableAcronyms)\s+[^>]*tableKey="([^"]+)"/g
       ),
     ];
     tableMatches.forEach((match) => {
