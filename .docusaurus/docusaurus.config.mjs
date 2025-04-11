@@ -46,7 +46,9 @@ export default {
       "type": "text/css",
       "integrity": "sha384-odtC+0UGzzFL/6PNoE8rX/SPcQDXBJ+uRepguP4QkPCm2LBxH3FA3y+fKSiJ+AmM",
       "crossorigin": "anonymous"
-    }
+    },
+    "/css/custom.css",
+    "/css/nav-container.css"
   ],
   "themeConfig": {
     "navbar": {
@@ -98,6 +100,9 @@ export default {
         "Roboto:400,500,700",
         "sans-serif"
       ]
+    },
+    "liveCodeBlock": {
+      "playgroundPosition": "bottom"
     },
     "colorMode": {
       "defaultMode": "light",
@@ -255,9 +260,6 @@ export default {
     "tableOfContents": {
       "minHeadingLevel": 2,
       "maxHeadingLevel": 3
-    },
-    "liveCodeBlock": {
-      "playgroundPosition": "bottom"
     }
   },
   "baseUrlIssueBanner": true,

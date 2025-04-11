@@ -1,61 +1,55 @@
 import React, { useState, useEffect } from "react";
+import { useHistory, useLocation } from "@docusaurus/router";
 import "../css/custom.css";
 import "../css/version-selector.css";
 
 const VersionSelector = ({ document }) => {
+  const history = useHistory();
+  const location = useLocation();
+
   const [versions, setVersions] = useState([]);
   const [selectedVersion, setSelectedVersion] = useState("");
 
-  // Function to get the version from the URL
+  // Extract version from URL (format: /v1.0/, /v2.1/, etc.)
   const getVersionFromUrl = () => {
-    const url = window.location.pathname;
-    const versionMatch = url.match(/\/v([\d\.]+)\//); // Match the version pattern (e.g., /v1.1.0/)
-    return versionMatch ? versionMatch[1] : "";
+    const match = location.pathname.match(/\/(v\d+\.\d+)\//);
+    return match ? match[1] : "";
   };
 
-  // Fetch the versions when the component mounts
   useEffect(() => {
-    // Fetch the versionList JSON file
-    fetch("/RMC-Software-Documentation/versions/versionList.json")
-      .then((response) => response.json())
-      .then((data) => {
-        // Check if the data contains versions for the passed document
+    const fetchVersions = async () => {
+      try {
+        const response = await fetch(
+          "/RMC-Software-Documentation/versions/versionList.json"
+        );
+        const data = await response.json();
         const versionList = data[document] || [];
 
-        // If versions exist, update the state
-        if (versionList.length > 0) {
-          const versionOptions = versionList.map((version) => ({
-            document,
-            version,
-          }));
-          setVersions(versionOptions);
+        setVersions(versionList);
 
-          // Try to get the version from URL or use the stored version in localStorage
-          const storedVersion = localStorage.getItem("selectedVersion");
-          const currentVersion =
-            storedVersion || getVersionFromUrl() || versionList[0];
-          setSelectedVersion(currentVersion);
+        const urlVersion = getVersionFromUrl();
+        if (urlVersion && versionList.includes(urlVersion)) {
+          setSelectedVersion(urlVersion);
         }
-      })
-      .catch((error) => {
-        console.error("Error loading versions:", error);
-      });
-  }, [document]);
+      } catch (error) {
+        console.error("Error fetching version list:", error);
+      }
+    };
 
-  // Handle version selection change
+    fetchVersions();
+  }, [document, location.pathname]);
+
   const handleVersionChange = (event) => {
     const newVersion = event.target.value;
     setSelectedVersion(newVersion);
 
-    // Store the selected version in localStorage
-    localStorage.setItem("selectedVersion", newVersion);
-
-    // Update the URL with the new version and reload the page
-    const newUrl = window.location.pathname.replace(
-      /\/v[\d\.]+\//,
+    const newUrl = location.pathname.replace(
+      /\/v\d+\.\d+\//,
       `/${newVersion}/`
     );
-    window.location.href = newUrl; // This triggers a page reload
+    if (newUrl !== location.pathname) {
+      history.push(newUrl); // triggers navigation without full page reload
+    }
   };
 
   return (
@@ -67,12 +61,8 @@ const VersionSelector = ({ document }) => {
           onChange={handleVersionChange}
         >
           {versions.map((version) => (
-            <option
-              key={`${version.document}-${version.version}`}
-              className="version-selector-option"
-              value={version.version}
-            >
-              {version.version}
+            <option key={version} value={version}>
+              {version}
             </option>
           ))}
         </select>
