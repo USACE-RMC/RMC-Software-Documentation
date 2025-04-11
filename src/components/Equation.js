@@ -45,12 +45,13 @@ const Equation = ({ parentDocId, equationKey, equation, inline = false }) => {
 
   if (equationNumber === null) return <span>Loading...</span>;
 
+  const equationWithoutTag = equation;
   const equationWithTag = `${equation} \\tag{${equationNumber}}`;
 
   return (
     <span className="equation-container">
       {inline ? (
-        <InlineMath math={equationWithTag} />
+        <InlineMath math={equationWithoutTag} />
       ) : (
         <BlockMath math={equationWithTag} />
       )}
