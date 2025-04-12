@@ -43,9 +43,6 @@ export default {
         "sha384-odtC+0UGzzFL/6PNoE8rX/SPcQDXBJ+uRepguP4QkPCm2LBxH3FA3y+fKSiJ+AmM",
       crossorigin: "anonymous",
     },
-    "/css/custom.css",
-    "/css/nav-container.css",
-    "/css/search-bar.css",
   ],
 
   themeConfig: {

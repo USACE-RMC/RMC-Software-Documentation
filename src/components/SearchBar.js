@@ -1,4 +1,6 @@
 import React, { useEffect } from "react";
+import "../css/content-box.css";
+import "../css/search-bar.css";
 
 export default function SearchBar() {
   useEffect(() => {
@@ -9,8 +11,9 @@ export default function SearchBar() {
     document.body.appendChild(script);
 
     // Ensure the results container is hidden initially
-    document.getElementById("search-input").addEventListener("input", () => {
-      const results = document.getElementById("search-results");
+    const inputElement = document.getElementsByClassName("search-input")[0];
+    inputElement.addEventListener("input", () => {
+      const results = document.getElementsByClassName("search-results")[0];
       if (results) results.style.display = "block";
     });
 
@@ -20,14 +23,14 @@ export default function SearchBar() {
   }, []);
 
   return (
-    <div id="search-container">
+    <div className="search-container">
       <input
-        id="search-input"
+        className="search-input"
         type="search"
         placeholder="Search..."
         autoComplete="off"
       />
-      <div id="search-results">
+      <div className="search-results">
         {/* Pagefind will populate this dynamically */}
       </div>
     </div>
