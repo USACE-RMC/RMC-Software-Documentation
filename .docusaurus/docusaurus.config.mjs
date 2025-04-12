@@ -29,10 +29,6 @@ export default {
         },
         "theme": {
           "customCss": "C:\\Users\\USACE\\OneDrive\\Documents\\GitHub\\RMC-Software-Documentation\\src\\css\\custom.css"
-        },
-        "googleAnalytics": {
-          "trackingID": "G-LB2BWWGDTB",
-          "anonymizeIP": true
         }
       }
     ]
@@ -47,6 +43,15 @@ export default {
       "integrity": "sha384-odtC+0UGzzFL/6PNoE8rX/SPcQDXBJ+uRepguP4QkPCm2LBxH3FA3y+fKSiJ+AmM",
       "crossorigin": "anonymous"
     }
+  ],
+  "plugins": [
+    [
+      "@docusaurus/plugin-google-gtag",
+      {
+        "trackingID": "G-LB2BWWGDTB",
+        "anonymizeIP": true
+      }
+    ]
   ],
   "themeConfig": {
     "navbar": {
@@ -292,7 +297,6 @@ export default {
     "static"
   ],
   "customFields": {},
-  "plugins": [],
   "scripts": [],
   "headTags": [],
   "clientModules": [],

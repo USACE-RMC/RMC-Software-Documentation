@@ -25,10 +25,6 @@ export default {
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
         },
-        googleAnalytics: {
-          trackingID: "G-LB2BWWGDTB",
-          anonymizeIP: true, // Optional: anonymizes IPs for privacy
-        },
       },
     ],
   ],
@@ -43,6 +39,16 @@ export default {
         "sha384-odtC+0UGzzFL/6PNoE8rX/SPcQDXBJ+uRepguP4QkPCm2LBxH3FA3y+fKSiJ+AmM",
       crossorigin: "anonymous",
     },
+  ],
+
+  plugins: [
+    [
+      "@docusaurus/plugin-google-gtag",
+      {
+        trackingID: "G-LB2BWWGDTB",
+        anonymizeIP: true, // Optional: anonymizes IPs for privacy
+      },
+    ],
   ],
 
   themeConfig: {
