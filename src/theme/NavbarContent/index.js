@@ -2,7 +2,7 @@ import React from "react";
 import { useThemeConfig } from "@docusaurus/theme-common";
 import { useNavbarItems } from "@docusaurus/theme-common/internal";
 import NavbarItem from "@theme/NavbarItem";
-import PagefindSearch from "@site/src/components/PagefindSearch";
+import SearchBar from "@site/src/components/SearchBar";
 
 export default function NavbarContent() {
   const {
@@ -34,7 +34,7 @@ export default function NavbarContent() {
         ))}
       </div>
       <div className="navbar__items navbar__items--right">
-        <PagefindSearch />
+        <SearchBar />
         {rightItems.map((item, i) => (
           <NavbarItem {...item} key={`right-${i}`} />
         ))}
