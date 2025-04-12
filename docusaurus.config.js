@@ -57,6 +57,10 @@ export default {
       },
       items: [
         {
+          type: "custom-search",
+          position: "right",
+        },
+        {
           label: "RMC Home",
           to: "https://www.rmc.usace.army.mil/",
           position: "right",
