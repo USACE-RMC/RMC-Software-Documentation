@@ -1,7 +1,7 @@
 module.exports = {
   bepInitiationSidebar: {
     "RMC Backward Erosion Piping (Initiation) Toolbox": [
-      "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation/v1.0/introduction",
+      "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation/v1.0/preface",
     ],
   },
 
@@ -33,8 +33,8 @@ module.exports = {
         items: [
           {
             type: "doc",
-            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/introduction",
-            label: "Introduction",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/preface",
+            label: "Preface",
           },
           {
             type: "doc",
@@ -122,8 +122,8 @@ module.exports = {
         items: [
           {
             type: "doc",
-            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1/introduction",
-            label: "Introduction",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1/preface",
+            label: "Preface",
           },
           {
             type: "doc",
@@ -178,6 +178,11 @@ module.exports = {
             id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1/appendix-acronyms",
             label: "Appendix A - Acronyms",
           },
+          {
+            type: "doc",
+            id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1/appendix-common-applications",
+            label: "Appendix B - Common Applications",
+          },
         ],
       },
     ],
@@ -185,25 +190,25 @@ module.exports = {
 
   breachSidebar: {
     "RMC Breach Toolbox": [
-      "toolbox-technical-manuals/internal-erosion-suite/breach/v1.0/introduction",
+      "toolbox-technical-manuals/internal-erosion-suite/breach/v1.0/preface",
     ],
   },
 
   cleCrackingSidebar: {
     "RMC Contentrated Leak Erosion (Cracking) Toolbox": [
-      "toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-cracking/v1.0/introduction",
+      "toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-cracking/v1.0/preface",
     ],
   },
 
   cleInitiationSidebar: {
     "RMC Contentrated Leak Erosion (Initiation) Toolbox": [
-      "toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/introduction",
+      "toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/preface",
     ],
   },
 
   erodibilityParametersSidebar: {
     "RMC Erodibility Parameters Toolbox": [
-      "toolbox-technical-manuals/internal-erosion-suite/erodibility-parameters/v1.0/introduction",
+      "toolbox-technical-manuals/internal-erosion-suite/erodibility-parameters/v1.0/preface",
     ],
   },
 
@@ -235,8 +240,8 @@ module.exports = {
         items: [
           {
             type: "doc",
-            id: "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/introduction",
-            label: "Introduction",
+            id: "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/preface",
+            label: "Preface",
           },
           {
             type: "doc",
@@ -313,25 +318,25 @@ module.exports = {
 
   internalInstabilitySidebar: {
     "RMC Internal Instability Toolbox": [
-      "toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/introduction",
+      "toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/preface",
     ],
   },
 
   pipeServiceLifeSidebar: {
     "RMC Pipe Service Life (Flaw) Toolbox": [
-      "toolbox-technical-manuals/internal-erosion-suite/pipe-service-life/v1.0/introduction",
+      "toolbox-technical-manuals/internal-erosion-suite/pipe-service-life/v1.0/preface",
     ],
   },
 
   soilClassificationSidebar: {
     "RMC Soil Classification Toolbox": [
-      "toolbox-technical-manuals/internal-erosion-suite/soil-classification/v1.0/introduction",
+      "toolbox-technical-manuals/internal-erosion-suite/soil-classification/v1.0/preface",
     ],
   },
 
   soilContactErosionInitiationSidebar: {
     "RMC Soil Contact Erosion (Initiation) Toolbox": [
-      "toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/introduction",
+      "toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/preface",
     ],
   },
 

@@ -44,6 +44,7 @@ This guide will help you set up and use Docusaurus, a modern static website gene
   - [Counters](#counters)
   - [DocumentMetadata](#documentmetadata)
   - [Equation](#equation)
+  - [EquationNoRef](#equationnoref)
   - [EquationReference](#equationreference)
   - [Figure](#figure)
   - [FigureReference](#figurereference)
@@ -409,7 +410,7 @@ RMC-SOFTWARE-DOCUMENTATION/
         - Document Info (single doc)
         - Version History (single doc)
       - Main Report (category, collapsed: false)
-        - Introduction (single doc)
+        - Preface (single doc)
         - Report Chapters
       - Appendices (category, collapsed: true)
         - Appendix A - {title} (single doc)
@@ -540,7 +541,16 @@ To create a new .mdx file in Visual Studio Code, right click on the folder that 
 
 ### Front Matter
 
-- `.mdx` files can begin with YAML front matter, wrapped in triple dashes:
+- `.mdx` files can begin with YAML front matter, wrapped in triple dashes.
+
+- In the RMC Software Documentation project, front matter is used to define the title of each `.mdx` page. This title defines what is displayed in the tab heading of the browser:
+
+````mdx
+---
+title: Schmertmann
+---
+
+- Expanded front matter is used in `00-document-info.mdx` pages and is called as a prop for the `<DocumentMetadata>` React component:
 
 ```mdx
 ---
@@ -554,9 +564,7 @@ reportSubjectTerms: ["Internal erosion", "backward erosion piping", "Schmertmann
 responsiblePersonName: Tim O'Leary
 responsiblePersonNumber: 502-315-6599
 ---
-```
-
-- In the RMC Software Documentation project, the only `.mdx` files that contain front matter are `00-document-info.mdx`, which the front matter being called as a prop for the `<DocumentMetadata>` React component.
+````
 
 ### Markdown Content
 
@@ -796,7 +804,7 @@ export default function ReportPage() {
 - Functionality is as follows:
   - Fetches the equation number from a JSON file containing counters based on the `parentDocId` and `equationKey`.
   - If the equation number is found, it renders the equation with the appropriate tag.
-  - Supports both inline and block rendering via the `inline` prop.
+  - Supports both inline and block rendering via the `inline` prop. By default, `inline` is `false` and the equation will be block rendered.
 
 <b><u>Props</u></b>
 
@@ -812,6 +820,32 @@ export default function ReportPage() {
 ```jsx
 <Equation parentDocId="108_1_0_0" equationKey="fs-pipe-progression" equation="FS = \left(\frac{C_D C_L C_S C_K C_γ C_Z C_α i_{\textit{pmt}}}{C_R i_f}\right)" />
 ```
+
+- If the equation is inline, an additional `inline={true}` prop is added
+
+### EquationNoRef
+
+<b><u>Overview and Functionality</u></b>
+
+- The `EquationNoRef` component is used to display mathematical equations that do not require an equation number or equation reference within a document. It can render equations either inline or as block equations, using the KaTeX library for rendering LaTeX math.
+- Functionality is as follows:
+  - Takes an equation provided by the user and renders it.
+  - Supports both inline and block rendering via the `inline` prop. By default, `inline` is `false` and the equation will be block rendered.
+
+<b><u>Props</u></b>
+
+| Prop       | Type    | Required | Description                                                                                             |
+| ---------- | ------- | -------- | ------------------------------------------------------------------------------------------------------- |
+| `equation` | String  | ✅ Yes   | The LaTeX string representing the equation to be rendered.                                              |
+| `inline`   | Boolean | ❌ No    | If `true`, renders the equation inline; otherwise, renders it as a block equation. Defaults to `false`. |
+
+<b><u>Example Usage</u></b>
+
+```jsx
+<EquationNoRef equation="FS = \left(\frac{D}{r}\right)" inline={true}/>
+```
+
+- If the equation is a block equation, `inline={true}` can be removed
 
 ### EquationReference
 
