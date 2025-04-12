@@ -45,6 +45,7 @@ export default {
     },
     "/css/custom.css",
     "/css/nav-container.css",
+    "/css/search-bar.css",
   ],
 
   themeConfig: {

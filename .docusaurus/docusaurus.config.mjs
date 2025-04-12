@@ -48,7 +48,8 @@ export default {
       "crossorigin": "anonymous"
     },
     "/css/custom.css",
-    "/css/nav-container.css"
+    "/css/nav-container.css",
+    "/css/search-bar.css"
   ],
   "themeConfig": {
     "navbar": {
@@ -100,9 +101,6 @@ export default {
         "Roboto:400,500,700",
         "sans-serif"
       ]
-    },
-    "liveCodeBlock": {
-      "playgroundPosition": "bottom"
     },
     "colorMode": {
       "defaultMode": "light",
@@ -260,6 +258,9 @@ export default {
     "tableOfContents": {
       "minHeadingLevel": 2,
       "maxHeadingLevel": 3
+    },
+    "liveCodeBlock": {
+      "playgroundPosition": "bottom"
     }
   },
   "baseUrlIssueBanner": true,

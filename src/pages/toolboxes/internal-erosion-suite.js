@@ -9,7 +9,7 @@ export default function InternalErosionSuite() {
 
   useEffect(() => {
     // Fetch the latestVersions JSON file
-    fetch("/RMC-Software-Documentation/versions/latestVersions.json")
+    fetch("/RMC-Software-Documentation/static/versions/latestVersions.json")
       .then((response) => response.json())
       .then((data) => setLatestVersions(data))
       .catch((error) => console.error("Error loading latest versions:", error));
