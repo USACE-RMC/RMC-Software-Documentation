@@ -103,6 +103,9 @@ export default {
         "sans-serif"
       ]
     },
+    "liveCodeBlock": {
+      "playgroundPosition": "bottom"
+    },
     "colorMode": {
       "defaultMode": "light",
       "disableSwitch": false,
@@ -259,9 +262,6 @@ export default {
     "tableOfContents": {
       "minHeadingLevel": 2,
       "maxHeadingLevel": 3
-    },
-    "liveCodeBlock": {
-      "playgroundPosition": "bottom"
     }
   },
   "baseUrlIssueBanner": true,
