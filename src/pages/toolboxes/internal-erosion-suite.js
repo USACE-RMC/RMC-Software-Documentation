@@ -3,6 +3,7 @@ import Layout from "@theme/Layout";
 import "../../css/index.css";
 import ContentBox from "../../components/ContentBox";
 import addBaseUrl from "@docusaurus/useBaseUrl";
+import Link from "@docusaurus/Link";
 
 export default function InternalErosionSuite() {
   const [latestVersions, setLatestVersions] = useState({});
@@ -119,6 +120,11 @@ export default function InternalErosionSuite() {
           <h1>RMC Software Documentation</h1>
         </div>
         <div className="title-container">
+          <div className="title-container-nav-link">
+            <Link to={`${addBaseUrl("toolboxes/toolboxes")}`}>
+              &larr; Toolbox Suites
+            </Link>
+          </div>
           <img src={addBaseUrl("img/ToolboxFilled.png")} />
           <div className="text-container">
             <p className="text-title">Internal Erosion Suite</p>

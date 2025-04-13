@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import Layout from "@theme/Layout";
 import "../../css/index.css";
 import ContentBox from "../../components/ContentBox";
-import addBaseUrl from "@docusaurus/useBaseUrl"; // Correct import
+import addBaseUrl from "@docusaurus/useBaseUrl";
+import Link from "@docusaurus/Link";
 
 export default function DST() {
   const [latestVersions, setLatestVersions] = useState({});
@@ -37,6 +38,11 @@ export default function DST() {
           <h1>RMC Software Documentation</h1>
         </div>
         <div className="title-container">
+          <div className="title-container-nav-link">
+            <Link to={`${addBaseUrl("web-applications/web-applications")}`}>
+              &larr; Web Applications
+            </Link>
+          </div>
           <img src={addBaseUrl("img/WebAppFilled.png")}></img>
           <div className="text-container">
             <p className="text-title">Dam Screening Tool</p>
