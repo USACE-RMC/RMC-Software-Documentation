@@ -63,6 +63,11 @@ export default [
     exact: true
   },
   {
+    path: '/RMC-Software-Documentation/search',
+    component: ComponentCreator('/RMC-Software-Documentation/search', '8ed'),
+    exact: true
+  },
+  {
     path: '/RMC-Software-Documentation/toolboxes/internal-erosion-suite',
     component: ComponentCreator('/RMC-Software-Documentation/toolboxes/internal-erosion-suite', '13e'),
     exact: true

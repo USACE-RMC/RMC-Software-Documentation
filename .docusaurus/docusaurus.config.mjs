@@ -104,6 +104,17 @@ export default {
         "sans-serif"
       ]
     },
+    "algolia": {
+      "appId": "5IPYQGAW1I",
+      "apiKey": "797fecb09f4d22f8050f47976027c58c",
+      "indexName": "usace-rmcio",
+      "contextualSearch": true,
+      "searchParameters": {},
+      "searchPagePath": "search"
+    },
+    "liveCodeBlock": {
+      "playgroundPosition": "bottom"
+    },
     "colorMode": {
       "defaultMode": "light",
       "disableSwitch": false,
@@ -260,9 +271,6 @@ export default {
     "tableOfContents": {
       "minHeadingLevel": 2,
       "maxHeadingLevel": 3
-    },
-    "liveCodeBlock": {
-      "playgroundPosition": "bottom"
     }
   },
   "baseUrlIssueBanner": true,

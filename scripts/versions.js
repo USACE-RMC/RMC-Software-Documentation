@@ -17,6 +17,16 @@ const versionListOutputPath = path.join(
   "versions",
   "versionList.json"
 );
+const startUrlsOutputPath = path.join(
+  __dirname,
+  "..",
+  "static",
+  "versions",
+  "startUrls.json"
+);
+
+// Set your actual base URL here
+const baseUrl = "/RMC-Software-Documentation/";
 
 // Define your folder structure for versioning
 const folderStructure = [
@@ -25,14 +35,12 @@ const folderStructure = [
   "web-applications",
 ];
 
-// Function to check if a folder name is a valid version (can be modified based on your version naming convention)
+// Function to check if a folder name is a valid version
 function isValidVersion(version) {
-  // Assuming version names are in the form of 'vX.X.X', like 'v1.0.0'
   return /^v\d+\.\d+$/.test(version);
-  //return /^v\d+\.\d+\.\d+$/.test(version);
 }
 
-// Recursive function to traverse through all folder levels and find both the latest version and all versions
+// Traverse folders to find latest version and all versions
 function traverseFolders(basePath, currentPath = "") {
   const folderPath = path.join(basePath, currentPath);
   const entries = fs.readdirSync(folderPath);
@@ -45,12 +53,10 @@ function traverseFolders(basePath, currentPath = "") {
       const subFolderPath = path.join(currentPath, entry);
       const latestVersion = getLatestVersion(entryPath);
 
-      // If the current folder contains valid versions, gather them
       if (latestVersion) {
         latestResult[path.posix.join(currentPath, entry)] = latestVersion;
       }
 
-      // Collect all versions for the document
       const versions = fs
         .readdirSync(entryPath)
         .filter(
@@ -63,7 +69,6 @@ function traverseFolders(basePath, currentPath = "") {
         allVersionsResult[path.posix.join(currentPath, entry)] = versions;
       }
 
-      // Recurse deeper into subfolders
       const subResult = traverseFolders(basePath, subFolderPath);
       Object.assign(latestResult, subResult.latestResult);
       Object.assign(allVersionsResult, subResult.allVersionsResult);
@@ -73,23 +78,18 @@ function traverseFolders(basePath, currentPath = "") {
   return { latestResult, allVersionsResult };
 }
 
-// Function to get the latest version from the valid version folders
+// Get the latest version
 function getLatestVersion(folderPath) {
   const entries = fs.readdirSync(folderPath);
-
-  // Filter directories and get valid version directories
   const validVersions = entries.filter(
     (entry) =>
       fs.statSync(path.join(folderPath, entry)).isDirectory() &&
       isValidVersion(entry)
   );
-
   if (validVersions.length > 0) {
-    // Sort to get the highest version (latest version)
-    validVersions.sort((a, b) => b.localeCompare(a)); // Sort descending
-    return validVersions[0]; // Return the latest version
+    validVersions.sort((a, b) => b.localeCompare(a));
+    return validVersions[0];
   }
-
   return null;
 }
 
@@ -97,10 +97,8 @@ function generateVersions() {
   const latestVersions = {};
   const allVersions = {};
 
-  // Traverse through the folder structure to gather both latest version and all versions data
   folderStructure.forEach((folder) => {
     const folderPath = path.join(docsFolderPath, folder);
-
     if (fs.existsSync(folderPath)) {
       const { latestResult, allVersionsResult } = traverseFolders(
         docsFolderPath,
@@ -111,35 +109,37 @@ function generateVersions() {
     }
   });
 
-  // Convert paths to forward slashes
   const updatedLatestVersions = {};
   const updatedAllVersions = {};
 
-  // Format the latest versions and all versions (paths as forward slashes)
   for (const key in latestVersions) {
-    const newKey = key.replace(/\\/g, "/"); // Replace backslashes with forward slashes
+    const newKey = key.replace(/\\/g, "/");
     updatedLatestVersions[newKey] = latestVersions[key];
   }
 
   for (const key in allVersions) {
-    const newKey = key.replace(/\\/g, "/"); // Replace backslashes with forward slashes
+    const newKey = key.replace(/\\/g, "/");
     updatedAllVersions[newKey] = allVersions[key];
   }
 
-  // Write the result to latestVersions.json with proper path formatting
   fs.writeFileSync(
     latestVersionsOutputPath,
     JSON.stringify(updatedLatestVersions, null, 2)
   );
-  console.log("Latest versions have been written to latestVersions.json");
+  console.log("✅ latestVersions.json created");
 
-  // Write the result to versionList.json with all versions
   fs.writeFileSync(
     versionListOutputPath,
     JSON.stringify(updatedAllVersions, null, 2)
   );
-  console.log("Version list has been written to versionList.json");
+  console.log("✅ versionList.json created");
+
+  const startUrls = Object.entries(updatedLatestVersions).map(
+    ([key, version]) => `${baseUrl}${key}/${version}/`
+  );
+
+  fs.writeFileSync(startUrlsOutputPath, JSON.stringify(startUrls, null, 2));
+  console.log("✅ startUrls.json created with", startUrls.length, "URLs");
 }
 
-// Run the function to generate both latestVersions.json and versionList.json
 generateVersions();

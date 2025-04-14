@@ -97,5 +97,10 @@ export default {
     googleFonts: {
       families: ["Roboto:400,500,700", "sans-serif"],
     },
+    algolia: {
+      appId: "5IPYQGAW1I",
+      apiKey: "797fecb09f4d22f8050f47976027c58c",
+      indexName: "usace-rmcio",
+    },
   },
 };

@@ -24,7 +24,6 @@ This guide will help you set up and use Docusaurus, a modern static website gene
     - [License](#license)
     - [Dependencies](#project-dependencies)
 - [Creating and Editing Pages](#creating-and-editing-pages)
-  - [MDX Basics](#file-basics)
   - [Front Matter](#front-matter)
   - [Markdown Content](#markdown-content)
     - [Headings](#headings)
@@ -54,8 +53,8 @@ This guide will help you set up and use Docusaurus, a modern static website gene
   - [TableReference](#tablereference)
   - [TableVersionHistory](#tableversionhistory)
   - [TableVertical](#tablevertical)
-  - [TableVerticalNoCap](#tableverticalnocap)
-- [Troubleshooting](#troubleshooting)
+  - [VersionSelector](#versionselector)
+- [Search](#search)
 
 ## Prerequisites
 
@@ -1197,3 +1196,18 @@ caption="Schmertmann reference test values"/>
 ```jsx
 <VersionSelector document="toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression" />
 ```
+
+## Search
+
+This project uses **Algolia**, a powerful hosted search engine that delivers instant, full-text search results as you type. It's designed for speed, scalability, and relevance.
+
+When integrated with **Docusaurus**, Algolia provides a seamless search experience through its **DocSearch** service. DocSearch crawls and indexes your Docusaurus site, allowing users to quickly find relevant content across all pages and documentation versions.
+
+### How It Works:
+
+- Algolia’s crawler automatically scans your site at regular intervals.
+- Indexed content is stored in Algolia’s search backend.
+- A lightweight, customizable search UI (provided by DocSearch) is embedded in your Docusaurus site.
+- Users can search titles, content, headers, and metadata with fast, accurate results.
+
+The password for Algolia for this project is: rmc-software-documentation
