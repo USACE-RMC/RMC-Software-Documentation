@@ -49,21 +49,21 @@ export default function Home() {
   const homepageData = [
     {
       icon: addBaseUrl("img/DesktopApp.png"),
-      doc_location: addBaseUrl("desktop-applications/desktop-applications"),
+      doc_location: addBaseUrl("desktop-applications"),
       doc_name: "Desktop Applications",
       contentCardData: desktopAppCardData,
       active: true,
     },
     {
       icon: addBaseUrl("img/ToolboxFilled.png"),
-      doc_location: addBaseUrl("toolboxes/toolboxes"),
+      doc_location: addBaseUrl("toolboxes"),
       doc_name: "Toolboxes",
       contentCardData: toolboxCardData,
       active: true,
     },
     {
       icon: addBaseUrl("img/WebAppFilled.png"),
-      doc_location: addBaseUrl("/web-applications/web-applications"),
+      doc_location: addBaseUrl("web-applications"),
       doc_name: "Web Applications",
       contentCardData: webAppCardData,
       active: true,

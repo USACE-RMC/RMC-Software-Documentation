@@ -1,7 +1,7 @@
 import React from "react";
 import Layout from "@theme/Layout";
-import "../../css/index.css";
-import ContentBox from "../../components/ContentBox";
+import "../css/index.css";
+import ContentBox from "../components/ContentBox";
 import addBaseUrl from "@docusaurus/useBaseUrl";
 import Link from "@docusaurus/Link";
 

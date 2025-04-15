@@ -38,8 +38,8 @@ export default [
     exact: true
   },
   {
-    path: '/RMC-Software-Documentation/desktop-applications/desktop-applications',
-    component: ComponentCreator('/RMC-Software-Documentation/desktop-applications/desktop-applications', 'a9d'),
+    path: '/RMC-Software-Documentation/desktop-applications',
+    component: ComponentCreator('/RMC-Software-Documentation/desktop-applications', '2e1'),
     exact: true
   },
   {
@@ -68,13 +68,18 @@ export default [
     exact: true
   },
   {
+    path: '/RMC-Software-Documentation/toolboxes',
+    component: ComponentCreator('/RMC-Software-Documentation/toolboxes', '999'),
+    exact: true
+  },
+  {
     path: '/RMC-Software-Documentation/toolboxes/internal-erosion-suite',
     component: ComponentCreator('/RMC-Software-Documentation/toolboxes/internal-erosion-suite', '13e'),
     exact: true
   },
   {
-    path: '/RMC-Software-Documentation/toolboxes/toolboxes',
-    component: ComponentCreator('/RMC-Software-Documentation/toolboxes/toolboxes', '25e'),
+    path: '/RMC-Software-Documentation/web-applications',
+    component: ComponentCreator('/RMC-Software-Documentation/web-applications', '462'),
     exact: true
   },
   {
@@ -90,11 +95,6 @@ export default [
   {
     path: '/RMC-Software-Documentation/web-applications/rrft',
     component: ComponentCreator('/RMC-Software-Documentation/web-applications/rrft', '812'),
-    exact: true
-  },
-  {
-    path: '/RMC-Software-Documentation/web-applications/web-applications',
-    component: ComponentCreator('/RMC-Software-Documentation/web-applications/web-applications', 'cd8'),
     exact: true
   },
   {
