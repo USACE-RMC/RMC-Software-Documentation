@@ -60,7 +60,7 @@ export default {
       },
       items: [
         {
-          label: "RMC Home",
+          label: "RMC Website",
           to: "https://www.rmc.usace.army.mil/",
           position: "right",
           className: "rmc-home-link",

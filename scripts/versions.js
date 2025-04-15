@@ -17,6 +17,13 @@ const versionListOutputPath = path.join(
   "versions",
   "versionList.json"
 );
+const algoliaCrawlerVersionsOutputPath = path.join(
+  __dirname,
+  "..",
+  "static",
+  "versions",
+  "algoliaCrawlerVersions.json"
+);
 
 // Define your folder structure for versioning
 const folderStructure = [
@@ -139,6 +146,26 @@ function generateVersions() {
     JSON.stringify(updatedAllVersions, null, 2)
   );
   console.log("Version list has been written to versionList.json");
+
+  // Write the result to algoliaCrawlerVersions.json with ready-to-paste information for Algolia crawler
+  const baseUrl =
+    "https://usace-rmc.github.io/RMC-Software-Documentation/docs/";
+  const algoliaCrawlerStartUrls = Object.entries(updatedLatestVersions).map(
+    ([key, version]) => `${baseUrl}${key}/${version}`
+  );
+  const algoliaCrawlerDiscovery = Object.entries(updatedLatestVersions).map(
+    ([key, version]) => `${baseUrl}${key}/${version}/**`
+  );
+  const algoliaCrawlerData = {
+    startUrls: algoliaCrawlerStartUrls,
+    discoveryPatterns: algoliaCrawlerDiscovery,
+  };
+
+  fs.writeFileSync(
+    algoliaCrawlerVersionsOutputPath,
+    JSON.stringify(algoliaCrawlerData, null, 2)
+  );
+  console.log("Algolia Crawler URLs written to algoliaCrawlerVersions.json");
 }
 
 // Run the function to generate both latestVersions.json and versionList.json
