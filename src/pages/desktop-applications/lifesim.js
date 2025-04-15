@@ -39,9 +39,7 @@ export default function LifeSim() {
         </div>
         <div className="title-container">
           <div className="title-container-nav-link">
-            <Link
-              to={`${addBaseUrl("desktop-applications/desktop-applications")}`}
-            >
+            <Link to={`${addBaseUrl("desktop-applications")}`}>
               &larr; Desktop Applications
             </Link>
           </div>

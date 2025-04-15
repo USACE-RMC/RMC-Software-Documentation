@@ -39,7 +39,7 @@ export default function LST() {
         </div>
         <div className="title-container">
           <div className="title-container-nav-link">
-            <Link to={`${addBaseUrl("web-applications/web-applications")}`}>
+            <Link to={`${addBaseUrl("web-applications")}`}>
               &larr; Web Applications
             </Link>
           </div>

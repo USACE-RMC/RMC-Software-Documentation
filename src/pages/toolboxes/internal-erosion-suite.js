@@ -121,9 +121,7 @@ export default function InternalErosionSuite() {
         </div>
         <div className="title-container">
           <div className="title-container-nav-link">
-            <Link to={`${addBaseUrl("toolboxes/toolboxes")}`}>
-              &larr; Toolbox Suites
-            </Link>
+            <Link to={`${addBaseUrl("toolboxes")}`}>&larr; Toolbox Suites</Link>
           </div>
           <img src={addBaseUrl("img/ToolboxFilled.png")} />
           <div className="text-container">
