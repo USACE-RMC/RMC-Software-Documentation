@@ -3,4 +3,5 @@ export default [
   require("C:\\Users\\USACE\\OneDrive\\Documents\\GitHub\\RMC-Software-Documentation\\node_modules\\@docusaurus\\theme-classic\\lib\\prism-include-languages"),
   require("C:\\Users\\USACE\\OneDrive\\Documents\\GitHub\\RMC-Software-Documentation\\node_modules\\@docusaurus\\theme-classic\\lib\\nprogress"),
   require("C:\\Users\\USACE\\OneDrive\\Documents\\GitHub\\RMC-Software-Documentation\\src\\css\\custom.css"),
+  require("C:\\Users\\USACE\\OneDrive\\Documents\\GitHub\\RMC-Software-Documentation\\node_modules\\@docusaurus\\plugin-google-gtag\\lib\\gtag"),
 ];
