@@ -212,7 +212,7 @@ module.exports = {
     ],
   },
 
-  filterEvaluationSidebar: {
+  filterEvaluationSidebar_v_1_0: {
     "RMC Filter Evaluation (Continuation) Toolbox": [
       {
         type: "category",
@@ -346,6 +346,52 @@ module.exports = {
         type: "doc",
         id: "desktop-applications/rmc-totalrisk/users-guide/v1.0/users-guide",
         label: "Code Block Example",
+      },
+    ],
+  },
+
+  totalRiskApplicationsGuide_v_1_0: {
+    "RMC-TotalRisk Applications Guide": [
+      {
+        type: "category",
+        label: "Document Information",
+        collapsible: true,
+        collapsed: true,
+        items: [
+          {
+            type: "doc",
+            id: "desktop-applications/rmc-totalrisk/applications-guide/v1.0/document-info",
+            label: "Document Info",
+          },
+          {
+            type: "doc",
+            id: "desktop-applications/rmc-totalrisk/applications-guide/v1.0/version-history",
+            label: "Version History",
+          },
+        ],
+      },
+      {
+        type: "doc",
+        id: "desktop-applications/rmc-totalrisk/applications-guide/v1.0/preface",
+        label: "Preface",
+      },
+      {
+        type: "category",
+        label: "Hydrologic Risk Analysis",
+        collapsible: true,
+        collapsed: false,
+        items: [
+          {
+            type: "doc",
+            id: "desktop-applications/rmc-totalrisk/applications-guide/v1.0/hydrologic-risk-analysis-intro",
+            label: "Introduction",
+          },
+          {
+            type: "doc",
+            id: "desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1",
+            label: "Example 1 - Single Failure Mode",
+          },
+        ],
       },
     ],
   },

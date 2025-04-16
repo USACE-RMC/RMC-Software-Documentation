@@ -37,7 +37,7 @@ const DocumentMetadata = ({ metadata }) => {
     reportType,
     reportTitle,
     reportSubTitle,
-    Array.isArray(reportAuthors) ? reportAuthors.join(", ") : reportAuthors,
+    Array.isArray(reportAuthors) ? reportAuthors.join("; ") : reportAuthors,
     reportAbstract,
     Array.isArray(reportSubjectTerms)
       ? reportSubjectTerms.join(", ")

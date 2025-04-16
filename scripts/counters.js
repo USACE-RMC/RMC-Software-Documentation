@@ -7,7 +7,7 @@ const reportIDs = {
   "desktop-applications/rmc-bestfit/users-guide": "102_1_0",
   "desktop-applications/rmc-rfa/users-guide": "103_1_0",
   "desktop-applications/rmc-totalrisk/users-guide": "104_1_0",
-  "desktop-applications/rmc-totalrisk/applications-guide": "105_1_0",
+  "desktop-applications/rmc-totalrisk/applications-guide/v1.0": "105_1_0",
   "desktop-applications/rmc-totalrisk/verification-report": "106_1_0",
   "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0":
     "107_1_0",

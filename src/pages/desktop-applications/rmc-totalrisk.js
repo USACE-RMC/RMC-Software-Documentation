@@ -29,10 +29,10 @@ export default function TotalRisk() {
     {
       icon: addBaseUrl("img/TotalRisk.png"),
       doc_location: addBaseUrl(
-        `docs/desktop-applications/rmc-totalrisk/applications-guide/${latestVersions["desktop-applications/rmc-totalrisk/applications-guide"]}/applications-guide`
+        `docs/desktop-applications/rmc-totalrisk/applications-guide/${latestVersions["desktop-applications/rmc-totalrisk/applications-guide"]}/preface`
       ),
       doc_name: "RMC TotalRisk Applications Guide",
-      active: false,
+      active: true,
     },
     {
       icon: addBaseUrl("img/TotalRisk.png"),
