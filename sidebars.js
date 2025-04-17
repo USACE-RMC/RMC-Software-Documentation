@@ -378,18 +378,29 @@ module.exports = {
       {
         type: "category",
         label: "Hydrologic Risk Analysis",
+        link: {
+          type: "doc",
+          id: "desktop-applications/rmc-totalrisk/applications-guide/v1.0/hydrologic-risk-analysis-intro",
+        },
         collapsible: true,
-        collapsed: false,
+        collapsed: true,
         items: [
           {
-            type: "doc",
-            id: "desktop-applications/rmc-totalrisk/applications-guide/v1.0/hydrologic-risk-analysis-intro",
-            label: "Introduction",
-          },
-          {
-            type: "doc",
-            id: "desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1",
+            type: "category",
             label: "Example 1 - Single Failure Mode",
+            link: {
+              type: "doc",
+              id: "desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-intro",
+            },
+            collapsible: true,
+            collapsed: true,
+            items: [
+              {
+                type: "doc",
+                id: "desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-hazards",
+                label: "Hazards",
+              },
+            ],
           },
         ],
       },

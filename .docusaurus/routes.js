@@ -99,15 +99,15 @@ export default [
   },
   {
     path: '/RMC-Software-Documentation/docs',
-    component: ComponentCreator('/RMC-Software-Documentation/docs', '497'),
+    component: ComponentCreator('/RMC-Software-Documentation/docs', '2f4'),
     routes: [
       {
         path: '/RMC-Software-Documentation/docs',
-        component: ComponentCreator('/RMC-Software-Documentation/docs', '464'),
+        component: ComponentCreator('/RMC-Software-Documentation/docs', '349'),
         routes: [
           {
             path: '/RMC-Software-Documentation/docs',
-            component: ComponentCreator('/RMC-Software-Documentation/docs', 'e93'),
+            component: ComponentCreator('/RMC-Software-Documentation/docs', '17a'),
             routes: [
               {
                 path: '/RMC-Software-Documentation/docs/desktop-applications/lifesim/users-guide/v1.0/users-guide',
@@ -131,8 +131,14 @@ export default [
                 sidebar: "totalRiskApplicationsGuide_v_1_0"
               },
               {
-                path: '/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1', 'e19'),
+                path: '/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-hazards',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-hazards', 'd70'),
+                exact: true,
+                sidebar: "totalRiskApplicationsGuide_v_1_0"
+              },
+              {
+                path: '/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-intro',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-intro', '611'),
                 exact: true,
                 sidebar: "totalRiskApplicationsGuide_v_1_0"
               },

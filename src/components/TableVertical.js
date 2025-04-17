@@ -6,6 +6,7 @@ import "../css/table-vertical.css";
 const TableVertical = ({
   parentDocId,
   tableKey,
+  headerConfig,
   headers,
   columns,
   alt,
@@ -55,9 +56,15 @@ const TableVertical = ({
         </caption>
         <thead>
           <tr>
-            {headers.map((header, index) => (
-              <th key={index}>{header}</th>
-            ))}
+            {(headerConfig || headers).map((header, index) =>
+              headerConfig ? (
+                <th key={index} colSpan={header.colSpan || 1}>
+                  {header.label}
+                </th>
+              ) : (
+                <th key={index}>{header}</th>
+              )
+            )}
           </tr>
         </thead>
         <tbody>
