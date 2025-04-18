@@ -99,15 +99,15 @@ export default [
   },
   {
     path: '/RMC-Software-Documentation/docs',
-    component: ComponentCreator('/RMC-Software-Documentation/docs', '2f4'),
+    component: ComponentCreator('/RMC-Software-Documentation/docs', '063'),
     routes: [
       {
         path: '/RMC-Software-Documentation/docs',
-        component: ComponentCreator('/RMC-Software-Documentation/docs', '349'),
+        component: ComponentCreator('/RMC-Software-Documentation/docs', '905'),
         routes: [
           {
             path: '/RMC-Software-Documentation/docs',
-            component: ComponentCreator('/RMC-Software-Documentation/docs', '17a'),
+            component: ComponentCreator('/RMC-Software-Documentation/docs', 'df2'),
             routes: [
               {
                 path: '/RMC-Software-Documentation/docs/desktop-applications/lifesim/users-guide/v1.0/users-guide',
@@ -139,6 +139,18 @@ export default [
               {
                 path: '/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-intro',
                 component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-intro', '611'),
+                exact: true,
+                sidebar: "totalRiskApplicationsGuide_v_1_0"
+              },
+              {
+                path: '/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-system-responses',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-system-responses', '2e6'),
+                exact: true,
+                sidebar: "totalRiskApplicationsGuide_v_1_0"
+              },
+              {
+                path: '/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-transforms',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-transforms', 'a30'),
                 exact: true,
                 sidebar: "totalRiskApplicationsGuide_v_1_0"
               },

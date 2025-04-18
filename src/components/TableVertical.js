@@ -70,9 +70,57 @@ const TableVertical = ({
         <tbody>
           {Array.from({ length: rowCount }).map((_, rowIndex) => (
             <tr key={rowIndex}>
-              {columns.map((col, colIndex) => (
-                <td key={colIndex}>{col[rowIndex] || ""}</td>
-              ))}
+              {columns.map((col, colIndex) => {
+                // Find the cell value
+                const cell = col[rowIndex];
+
+                // Check if a previous cell in this column has a rowSpan that covers this row
+                const isCoveredByRowSpan = col.some(
+                  (prevCell, prevRowIndex) => {
+                    if (
+                      prevRowIndex < rowIndex &&
+                      typeof prevCell === "object" &&
+                      prevCell?.rowSpan
+                    ) {
+                      const spanStart = prevRowIndex;
+                      const spanEnd = prevRowIndex + prevCell.rowSpan;
+                      return rowIndex < spanEnd;
+                    }
+                    return false;
+                  }
+                );
+
+                // Check if this column is covered by colSpan from a previous column at the same row
+                const isCoveredByColSpan = columns
+                  .slice(0, colIndex)
+                  .some((prevCol) => {
+                    const prevCell = prevCol[rowIndex];
+                    if (typeof prevCell === "object" && prevCell?.colSpan) {
+                      const startIndex = columns.indexOf(prevCol);
+                      const spanEnd = startIndex + prevCell.colSpan;
+                      return colIndex < spanEnd;
+                    }
+                    return false;
+                  });
+
+                if (isCoveredByRowSpan || isCoveredByColSpan) return null;
+
+                // Render object cell
+                if (typeof cell === "object" && cell !== null) {
+                  return (
+                    <td
+                      key={`${colIndex}-${rowIndex}`}
+                      rowSpan={cell.rowSpan || undefined}
+                      colSpan={cell.colSpan || undefined}
+                    >
+                      {cell.value}
+                    </td>
+                  );
+                }
+
+                // Render regular string/number cell
+                return <td key={`${colIndex}-${rowIndex}`}>{cell}</td>;
+              })}
             </tr>
           ))}
         </tbody>

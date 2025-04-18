@@ -400,6 +400,16 @@ module.exports = {
                 id: "desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-hazards",
                 label: "Hazards",
               },
+              {
+                type: "doc",
+                id: "desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-transforms",
+                label: "Transforms",
+              },
+              {
+                type: "doc",
+                id: "desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-system-responses",
+                label: "System Responses",
+              },
             ],
           },
         ],
