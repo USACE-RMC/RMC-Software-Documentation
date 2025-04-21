@@ -386,31 +386,9 @@ module.exports = {
         collapsed: true,
         items: [
           {
-            type: "category",
+            type: "doc",
+            id: "desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1",
             label: "Example 1 - Single Failure Mode",
-            link: {
-              type: "doc",
-              id: "desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-intro",
-            },
-            collapsible: true,
-            collapsed: true,
-            items: [
-              {
-                type: "doc",
-                id: "desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-hazards",
-                label: "Hazards",
-              },
-              {
-                type: "doc",
-                id: "desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-transforms",
-                label: "Transforms",
-              },
-              {
-                type: "doc",
-                id: "desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-system-responses",
-                label: "System Responses",
-              },
-            ],
           },
         ],
       },

@@ -99,15 +99,15 @@ export default [
   },
   {
     path: '/RMC-Software-Documentation/docs',
-    component: ComponentCreator('/RMC-Software-Documentation/docs', '063'),
+    component: ComponentCreator('/RMC-Software-Documentation/docs', '497'),
     routes: [
       {
         path: '/RMC-Software-Documentation/docs',
-        component: ComponentCreator('/RMC-Software-Documentation/docs', '905'),
+        component: ComponentCreator('/RMC-Software-Documentation/docs', '464'),
         routes: [
           {
             path: '/RMC-Software-Documentation/docs',
-            component: ComponentCreator('/RMC-Software-Documentation/docs', 'df2'),
+            component: ComponentCreator('/RMC-Software-Documentation/docs', 'e93'),
             routes: [
               {
                 path: '/RMC-Software-Documentation/docs/desktop-applications/lifesim/users-guide/v1.0/users-guide',
@@ -131,26 +131,8 @@ export default [
                 sidebar: "totalRiskApplicationsGuide_v_1_0"
               },
               {
-                path: '/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-hazards',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-hazards', 'd70'),
-                exact: true,
-                sidebar: "totalRiskApplicationsGuide_v_1_0"
-              },
-              {
-                path: '/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-intro',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-intro', '611'),
-                exact: true,
-                sidebar: "totalRiskApplicationsGuide_v_1_0"
-              },
-              {
-                path: '/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-system-responses',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-system-responses', '2e6'),
-                exact: true,
-                sidebar: "totalRiskApplicationsGuide_v_1_0"
-              },
-              {
-                path: '/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-transforms',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1-transforms', 'a30'),
+                path: '/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1', 'e19'),
                 exact: true,
                 sidebar: "totalRiskApplicationsGuide_v_1_0"
               },
