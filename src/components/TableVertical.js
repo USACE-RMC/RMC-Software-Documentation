@@ -9,6 +9,7 @@ const TableVertical = ({
   headerConfig,
   headers,
   columns,
+  fullWidth = true,
   alt,
   caption,
 }) => {
@@ -48,9 +49,13 @@ const TableVertical = ({
 
   const rowCount = columns.length > 0 ? columns[0].length : 0;
 
+  const tableClass = fullWidth
+    ? "static-table-vertical-full"
+    : "static-table-vertical-partial";
+
   return (
     <div className="table-container">
-      <table alt={alt} className="static-table-vertical">
+      <table alt={alt} className={tableClass}>
         <caption className="table-caption">
           Table {tableInfo.tableNumber}: {caption}
         </caption>

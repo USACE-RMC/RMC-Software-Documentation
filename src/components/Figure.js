@@ -2,7 +2,14 @@ import React, { useEffect, useState } from "react";
 import "../css/custom.css";
 import "../css/figure.css";
 
-const Figure = ({ parentDocId, figKey, src, alt, caption }) => {
+const Figure = ({
+  parentDocId,
+  figKey,
+  src,
+  fullWidth = false,
+  alt,
+  caption,
+}) => {
   const [figInfo, setFigInfo] = useState(null);
   // Construct the path to fetch the JSON data using the parentDocId
 
@@ -47,9 +54,11 @@ const Figure = ({ parentDocId, figKey, src, alt, caption }) => {
 
   if (!figInfo) return <span>Loading...</span>;
 
+  const figClass = fullWidth ? "figure-image-full" : "figure-image-partial";
+
   return (
     <figure className="figure-container">
-      <img src={imgSrc} alt={alt} className="figure-image" />
+      <img src={imgSrc} alt={alt} className={figClass} />
       <figcaption className="figure-caption">
         Figure {figInfo.figNumber}: {caption}
       </figcaption>
