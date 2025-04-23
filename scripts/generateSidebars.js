@@ -58,7 +58,12 @@ function getFallbackLabel(filename) {
   return titleCase(parts.slice(1).join(" "));
 }
 
-function generateSidebarForVersion(versionPath, relativePath) {
+function generateSidebarForVersion(
+  versionPath,
+  relativePath,
+  docGroup,
+  folderName
+) {
   const files = fs.readdirSync(versionPath).filter((f) => f.endsWith(".mdx"));
   files.sort();
 
@@ -66,19 +71,71 @@ function generateSidebarForVersion(versionPath, relativePath) {
   const mainItems = [];
   const appendixItems = [];
 
+  // Special logic: applications-guide in rmc-totalrisk
+  console.log("Checking docGroup:", docGroup);
+  console.log("Checking folderName:", folderName);
+  if (docGroup === "rmc-totalrisk" && folderName === "applications-guide") {
+    console.log(
+      "Custom structure for RMC-TotalRisk Applications Guide activated!"
+    );
+    const documentInfoDocs = [];
+    let prefaceDoc = null;
+    let mainReportDoc = null;
+    const exampleDocs = [];
+
+    files.forEach((file) => {
+      const fileBase = file.replace(".mdx", "").replace(/^\d+-/, "");
+      const fullPath = path.join(versionPath, file);
+      const label = getFrontmatterTitle(fullPath) || getFallbackLabel(file);
+      const id = `${relativePath}/${fileBase}`;
+
+      if (file.startsWith("00-")) {
+        documentInfoDocs.push({ type: "doc", id, label });
+      } else if (file === "01-preface.mdx") {
+        prefaceDoc = { type: "doc", id, label };
+      } else if (file === "02-hydrologic-risk-analysis.mdx") {
+        hydrologicDoc = { id }; // Used as id for the "Main Report" category
+      } else if (file === "03-example-1.mdx") {
+        exampleDocs.push({ type: "doc", id, label });
+      }
+    });
+
+    const customStructure = [];
+
+    if (documentInfoDocs.length) {
+      customStructure.push({
+        type: "category",
+        label: "Document Information",
+        collapsible: true,
+        collapsed: true,
+        items: documentInfoDocs,
+      });
+    }
+
+    if (prefaceDoc) customStructure.push(prefaceDoc);
+
+    if (hydrologicDoc) {
+      customStructure.push({
+        type: "category",
+        label: "Hydrologic Risk Analysis",
+        link: { type: "doc", id: hydrologicDoc.id },
+        collapsible: true,
+        collapsed: false,
+        items: exampleDocs,
+      });
+    }
+
+    return customStructure;
+  }
+
+  // Default logic
   files.forEach((file) => {
     const fileBase = file.replace(".mdx", "").replace(/^\d+-/, "");
     const filePath = `${relativePath}/${fileBase}`;
     const fullPath = path.join(versionPath, file);
+    const label = getFrontmatterTitle(fullPath) || getFallbackLabel(file);
 
-    const frontmatterTitle = getFrontmatterTitle(fullPath);
-    const label = frontmatterTitle || getFallbackLabel(file);
-
-    const docItem = {
-      type: "doc",
-      id: filePath,
-      label,
-    };
+    const docItem = { type: "doc", id: filePath, label };
 
     if (file.startsWith("00-")) {
       infoItems.push(docItem);
@@ -138,20 +195,25 @@ function generateSidebars() {
     if (!versionMatch) return;
 
     const docPath = versionMatch[1];
-    const version = versionMatch[2]; // e.g., v1.2
-    const folderName = docPath.split("/").pop(); // e.g., backward-erosion-piping-progression
+    const version = versionMatch[2];
+    const docParts = docPath.split("/");
+    const docGroup = docParts[1]; // e.g., "rmc-totalrisk"
+    const folderName = docParts[docParts.length - 1]; // e.g., "applications-guide"
 
     const folderCamel = camelCase(folderName);
-    const versionFormatted = version.replace(".", "_"); // v1_2
+    const versionFormatted = version.replace(/\./g, "_");
     const sidebarKey = `${folderCamel}_${versionFormatted}`;
 
     const documentName = titleCase(folderName);
 
+    // Only create if not already present
     if (!sidebarContent[sidebarKey]) {
       sidebarContent[sidebarKey] = {
         [documentName]: generateSidebarForVersion(
           path.join(DOCS_DIR, relPath),
-          relPath
+          relPath,
+          docGroup,
+          folderName
         ),
       };
     }
@@ -173,7 +235,7 @@ function writeSidebarFile() {
   const output = `module.exports = {\n${sidebarEntries}\n};\n`;
 
   fs.writeFileSync(SIDEBAR_PATH, output, "utf8");
-  console.log("✅ sidebars.js has been generated.");
+  console.log("✅ sidebars.js has been generated correctly.");
 }
 
 writeSidebarFile();

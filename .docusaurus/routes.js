@@ -99,15 +99,15 @@ export default [
   },
   {
     path: '/RMC-Software-Documentation/docs',
-    component: ComponentCreator('/RMC-Software-Documentation/docs', '8f3'),
+    component: ComponentCreator('/RMC-Software-Documentation/docs', '9a9'),
     routes: [
       {
         path: '/RMC-Software-Documentation/docs',
-        component: ComponentCreator('/RMC-Software-Documentation/docs', '2ea'),
+        component: ComponentCreator('/RMC-Software-Documentation/docs', 'e37'),
         routes: [
           {
             path: '/RMC-Software-Documentation/docs',
-            component: ComponentCreator('/RMC-Software-Documentation/docs', 'bcf'),
+            component: ComponentCreator('/RMC-Software-Documentation/docs', 'd16'),
             routes: [
               {
                 path: '/RMC-Software-Documentation/docs/desktop-applications/lifesim/users-guide/v1.0/users-guide',
@@ -138,8 +138,8 @@ export default [
                 sidebar: "applicationsGuide_v1_0"
               },
               {
-                path: '/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/hydrologic-risk-analysis-intro',
-                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/hydrologic-risk-analysis-intro', '2ed'),
+                path: '/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/hydrologic-risk-analysis',
+                component: ComponentCreator('/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/hydrologic-risk-analysis', '97b'),
                 exact: true,
                 sidebar: "applicationsGuide_v1_0"
               },

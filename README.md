@@ -549,6 +549,8 @@ To create a new .mdx file in Visual Studio Code, right click on the folder that 
 title: Schmertmann
 ---
 
+- Appendix `.mdx` files should
+
 - Expanded front matter is used in `00-document-info.mdx` pages and is called as a prop for the `<DocumentMetadata>` React component:
 
 ```mdx
