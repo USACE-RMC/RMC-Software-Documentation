@@ -22,4 +22,4 @@ const reportIdMap = {
   "web-applications/lst/users-guide/v1.0": "lst-users-guide-v1.0",
   "web-applications/rrft/users-guide/v1.0": "rrft-users-guide-v1.0"
 };
-export default reportIdMap;
+module.exports = reportIdMap;

@@ -1,21 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-
-// Unique numeric ID mapping for each report
-const reportIDs = {
-  "desktop-applications/lifesim/users-guide": "101_1_0",
-  "desktop-applications/rmc-bestfit/users-guide": "102_1_0",
-  "desktop-applications/rmc-rfa/users-guide": "103_1_0",
-  "desktop-applications/rmc-totalrisk/users-guide": "104_1_0",
-  "desktop-applications/rmc-totalrisk/applications-guide/v1.0": "105_1_0",
-  "desktop-applications/rmc-totalrisk/verification-report": "106_1_0",
-  "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0":
-    "107_1_0",
-  "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0":
-    "108_1_0",
-  "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1":
-    "108_1_1",
-};
+const reportIdMap = require("../src/reportIdMap"); // Importing the map correctly
 
 // Base paths
 const docsBasePath = path.join(__dirname, "../docs");
@@ -26,96 +11,107 @@ if (!fs.existsSync(countersBasePath)) {
   fs.mkdirSync(countersBasePath, { recursive: true });
 }
 
-// Function to process each report
-function processReport(reportPath) {
-  const folder = path.join(docsBasePath, reportPath);
+// Function to normalize paths to a consistent format
+function normalizePath(p) {
+  return p.replace(/\\/g, "/"); // Normalize path slashes to forward slashes
+}
 
-  // Retrieve the unique numeric ID for this report
-  const reportId = reportIDs[reportPath];
-  if (!reportId) {
-    console.warn(`Skipping ${reportPath}: No unique ID assigned.`);
-    return;
+// Recursively find all documents with .mdx files
+function findAllDocumentPaths(dir, results = new Set()) {
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+
+  let containsMDX = false;
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      findAllDocumentPaths(fullPath, results);
+    } else if (entry.name.endsWith(".mdx")) {
+      containsMDX = true;
+    }
   }
 
-  // Use the numeric ID as the output file name
+  if (containsMDX) {
+    const relativePath = path.relative(docsBasePath, dir).replace(/\\/g, "/");
+    results.add(normalizePath(relativePath)); // Normalize path here
+  }
+
+  return results;
+}
+
+// Process each matched report
+function processReport(reportPath, reportId) {
+  const folder = path.join(docsBasePath, reportPath);
   const outputFile = path.join(countersBasePath, `${reportId}.json`);
 
-  let counters = {};
+  let counters = {
+    figures: {},
+    tables: {},
+    equations: {},
+  };
+
   let figureCount = 1;
   let tableCount = 1;
   let equationCount = 1;
 
-  // Check if the folder exists
-  if (!fs.existsSync(folder)) {
-    console.warn(`Skipping ${reportPath}: Directory not found.`);
-    return;
-  }
-
-  // Read all .mdx files in the folder
-  const files = fs.readdirSync(folder).filter((file) => file.endsWith(".mdx"));
+  const files = fs.readdirSync(folder).filter((f) => f.endsWith(".mdx"));
 
   files.forEach((file) => {
     const filePath = path.join(folder, file);
     const content = fs.readFileSync(filePath, "utf-8");
 
-    counters[file] = { figures: {}, tables: {}, equations: {} };
-
-    // Regex patterns for <Figure>
-    const figureMatches = [
-      ...content.matchAll(/<Figure\s+[^>]*figKey="([^"]+)"/g),
-    ];
-    figureMatches.forEach((match) => {
+    // Regex for figures
+    for (const match of content.matchAll(/<Figure\s+[^>]*figKey="([^"]+)"/g)) {
       const figKey = match[1];
-      counters[file].figures[figKey] = {
-        figNumber: figureCount,
-        parentDocId: reportId, // Store numeric ID instead of path
-        parentDocPath: reportPath, // Keep the original path for reference
+      counters.figures[figKey] = {
+        figNumber: figureCount++,
+        parentDocId: reportId,
+        parentDocPath: reportPath,
         docId: file,
       };
-      figureCount++;
-    });
+    }
 
-    // Regex patterns for <Table>
-    const tableMatches = [
-      ...content.matchAll(
-        /<(TableHorizontal|TableVertical|TableAcronyms)\s+[^>]*tableKey="([^"]+)"/g
-      ),
-    ];
-    tableMatches.forEach((match) => {
+    // Regex for tables
+    for (const match of content.matchAll(
+      /<(TableHorizontal|TableVertical|TableAcronyms)\s+[^>]*tableKey="([^"]+)"/g
+    )) {
       const tableKey = match[2];
-      counters[file].tables[tableKey] = {
-        tableNumber: tableCount,
-        parentDocId: reportId, // Store numeric ID instead of path
-        parentDocPath: reportPath, // Keep the original path for reference
+      counters.tables[tableKey] = {
+        tableNumber: tableCount++,
+        parentDocId: reportId,
+        parentDocPath: reportPath,
         docId: file,
       };
-      tableCount++;
-    });
+    }
 
-    // Regex patterns for <Equation>
-    const equationMatches = [
-      ...content.matchAll(/<Equation\s+[^>]*equationKey="([^"]+)"/g),
-    ];
-    equationMatches.forEach((match) => {
+    // Regex for equations
+    for (const match of content.matchAll(
+      /<Equation\s+[^>]*equationKey="([^"]+)"/g
+    )) {
       const equationKey = match[1];
-      counters[file].equations[equationKey] = {
-        equationNumber: equationCount,
-        parentDocId: reportId, // Store numeric ID instead of path
-        parentDocPath: reportPath, // Keep the original path for reference
+      counters.equations[equationKey] = {
+        equationNumber: equationCount++,
+        parentDocId: reportId,
+        parentDocPath: reportPath,
         docId: file,
       };
-      equationCount++;
-    });
-
-    console.log(
-      `Processed ${file}: ${figureMatches.length} figures, ${tableMatches.length} tables, ${equationMatches.length} equations`
-    );
+    }
   });
 
-  // Save the counters to the corresponding JSON file
+  // Write a global counters file with one list each for figures, tables, and equations
   fs.writeFileSync(outputFile, JSON.stringify(counters, null, 2));
-  console.log(`✅ Processed ${reportPath} -> ${outputFile}`);
+  console.log(`✅ ${reportPath} -> ${outputFile}`);
 }
 
-// Process each report
-Object.keys(reportIDs).forEach(processReport);
+// MAIN
+const allDocPaths = findAllDocumentPaths(docsBasePath);
+
+for (const docPath of allDocPaths) {
+  const normalizedDocPath = normalizePath(docPath); // Normalize path here
+  const reportId = reportIdMap[normalizedDocPath];
+
+  if (reportId) {
+    processReport(docPath, reportId);
+  } else {
+    console.warn(`⚠️ Skipping ${docPath}: Not found in reportIdMap.`);
+  }
+}

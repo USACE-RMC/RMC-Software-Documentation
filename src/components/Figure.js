@@ -1,56 +1,42 @@
 import React, { useEffect, useState } from "react";
 import "../css/custom.css";
 import "../css/figure.css";
+import { useReportId } from "../contexts/ReportIdContext"; // Import the context hook to retrieve the reportId
 
-const Figure = ({
-  parentDocId,
-  figKey,
-  src,
-  fullWidth = false,
-  alt,
-  caption,
-}) => {
+const Figure = ({ figKey, src, fullWidth = false, alt, caption }) => {
   const [figInfo, setFigInfo] = useState(null);
-  // Construct the path to fetch the JSON data using the parentDocId
-
-  const jsonPath = `/RMC-Software-Documentation/counters/${parentDocId.replace(
-    /\//g,
-    "-"
-  )}.json`;
-  const imgSrc = `/RMC-Software-Documentation/${src}`;
+  const reportId = useReportId(); // Get the reportId from the context
 
   useEffect(() => {
-    try {
-      const loadCounters = async () => {
-        try {
-          const response = await fetch(jsonPath);
-          if (!response.ok) throw new Error(`Failed to load ${jsonPath}`);
+    if (!reportId) return; // If reportId is not available, don't fetch
 
-          const data = await response.json();
+    const jsonPath = `/RMC-Software-Documentation/counters/${reportId}.json`; // Use reportId to determine the path
 
-          // Now, find the figure using the figKey in the JSON data
-          let foundFig = null;
-          Object.keys(data).forEach((docId) => {
-            if (data[docId]?.figures?.[figKey]) {
-              foundFig = data[docId].figures[figKey];
-            }
-          });
+    const loadCounters = async () => {
+      try {
+        const response = await fetch(jsonPath);
+        if (!response.ok) throw new Error(`Failed to load ${jsonPath}`);
 
-          if (foundFig) {
-            setFigInfo(foundFig);
-          } else {
-            console.warn(`Figure key "${figKey}" not found`);
-          }
-        } catch (error) {
-          console.error("Error loading counters:", error);
+        const data = await response.json();
+
+        // Now, find the figure using the figKey in the JSON data
+        let foundFig = null;
+        if (data?.figures?.[figKey]) {
+          foundFig = data.figures[figKey];
         }
-      };
 
-      loadCounters();
-    } catch (error) {
-      console.error("Critical error in useEffect:", error);
-    }
-  }, [parentDocId, figKey]); // Depend on both parentDocId and figKey
+        if (foundFig) {
+          setFigInfo(foundFig);
+        } else {
+          console.warn(`Figure key "${figKey}" not found in ${jsonPath}`);
+        }
+      } catch (error) {
+        console.error("Error loading counters:", error);
+      }
+    };
+
+    loadCounters();
+  }, [reportId, figKey]);
 
   if (!figInfo) return <span>Loading...</span>;
 
@@ -58,7 +44,11 @@ const Figure = ({
 
   return (
     <figure className="figure-container">
-      <img src={imgSrc} alt={alt} className={figClass} />
+      <img
+        src={`/RMC-Software-Documentation/${src}`}
+        alt={alt}
+        className={figClass}
+      />
       <figcaption className="figure-caption">
         Figure {figInfo.figNumber}: {caption}
       </figcaption>

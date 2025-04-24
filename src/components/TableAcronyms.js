@@ -2,14 +2,17 @@ import React, { useEffect, useState } from "react";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import "../css/custom.css";
 import "../css/table-acronyms.css";
+import { useReportId } from "../contexts/ReportIdContext"; // Import the context hook to retrieve the reportId
 
-const TableAcronyms = ({ parentDocId, tableKey, headers, columns }) => {
+const TableAcronyms = ({ tableKey, headers, columns }) => {
   const [tableInfo, setTableInfo] = useState(null);
-  const jsonPath = useBaseUrl(
-    `counters/${parentDocId.replace(/\//g, "-")}.json`
-  );
+  const reportId = useReportId(); // Get the reportId from the context
 
   useEffect(() => {
+    if (!reportId) return; // If reportId is not available, don't fetch
+
+    const jsonPath = `/RMC-Software-Documentation/counters/${reportId}.json`; // Use reportId to determine the path
+
     const loadCounters = async () => {
       try {
         const response = await fetch(jsonPath);
@@ -17,16 +20,14 @@ const TableAcronyms = ({ parentDocId, tableKey, headers, columns }) => {
 
         const data = await response.json();
         let foundTable = null;
-        Object.keys(data).forEach((docId) => {
-          if (data[docId]?.tables?.[tableKey]) {
-            foundTable = data[docId].tables[tableKey];
-          }
-        });
+        if (data?.tables?.[tableKey]) {
+          foundTable = data.tables[tableKey];
+        }
 
         if (foundTable) {
           setTableInfo(foundTable);
         } else {
-          console.warn(`Table key "${tableKey}" not found`);
+          console.warn(`Table key "${tableKey}" not found in ${jsonPath}`);
         }
       } catch (error) {
         console.error("Error loading counters:", error);
@@ -34,7 +35,7 @@ const TableAcronyms = ({ parentDocId, tableKey, headers, columns }) => {
     };
 
     loadCounters();
-  }, [parentDocId, tableKey]);
+  }, [reportId, tableKey]);
 
   if (!tableInfo) return <span>Loading...</span>;
 

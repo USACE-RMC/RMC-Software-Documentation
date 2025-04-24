@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import "../css/custom.css";
 import "../css/figure-reference.css";
+import { useReportId } from "../contexts/ReportIdContext";
 
-const FigReference = ({ parentDocId, figKey }) => {
+const FigReference = ({ figKey }) => {
   const [figInfo, setFigInfo] = useState(null);
-  // Assuming the figKey will help determine the correct JSON file path
-  const jsonPath = `/RMC-Software-Documentation/counters/${parentDocId.replace(
-    /\//g,
-    "-"
-  )}.json`;
+  const reportId = useReportId(); // Get the reportId from the context
 
   useEffect(() => {
+    if (!reportId) return; // If reportId is not available, don't fetch
+
+    const jsonPath = `/RMC-Software-Documentation/counters/${reportId}.json`; // Use reportId to determine the path
+
     const loadCounters = async () => {
       try {
         const response = await fetch(jsonPath);
@@ -20,16 +21,14 @@ const FigReference = ({ parentDocId, figKey }) => {
 
         // Now we need to find the figure with the matching figKey
         let foundFig = null;
-        Object.keys(data).forEach((docId) => {
-          if (data[docId]?.figures?.[figKey]) {
-            foundFig = data[docId].figures[figKey];
-          }
-        });
+        if (data?.figures?.[figKey]) {
+          foundFig = data.figures[figKey];
+        }
 
         if (foundFig) {
           setFigInfo(foundFig);
         } else {
-          console.warn(`Figure key "${figKey}" not found`);
+          console.warn(`Figure key "${figKey}" not found in ${jsonPath}`);
         }
       } catch (error) {
         console.error("Error loading counters:", error);

@@ -49,6 +49,6 @@ const fileContent = `// Auto-generated. Do not edit.\nconst reportIdMap = ${JSON
   reportIdMap,
   null,
   2
-)};\nexport default reportIdMap;\n`;
+)};\nmodule.exports = reportIdMap;\n`;
 fs.writeFileSync(OUTPUT_FILE, fileContent);
 console.log(`\n✅ reportIdMap written to ${OUTPUT_FILE}`);

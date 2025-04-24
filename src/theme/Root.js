@@ -6,7 +6,9 @@ import Root from "@theme-original/Root";
 export default function CustomRoot(props) {
   return (
     <CounterProvider>
-      <Root {...props} />
+      <ReportIdProvider>
+        <Root {...props} />
+      </ReportIdProvider>
     </CounterProvider>
   );
 }
