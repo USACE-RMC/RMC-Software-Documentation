@@ -19,8 +19,15 @@ const Citation = ({ citationKey, bibFile }) => {
         const data = await response.json();
 
         const sortedCitations = data.sort((a, b) => {
-          const authorA = Array.isArray(a.author) ? a.author[0] : a.author;
-          const authorB = Array.isArray(b.author) ? b.author[0] : b.author;
+          const getSortableAuthor = (entry) => {
+            if (Array.isArray(entry.author) && entry.author.length > 0)
+              return entry.author[0];
+            if (typeof entry.author === "string") return entry.author;
+            return ""; // fallback if no author
+          };
+
+          const authorA = getSortableAuthor(a).toLowerCase();
+          const authorB = getSortableAuthor(b).toLowerCase();
           return authorA.localeCompare(authorB);
         });
 

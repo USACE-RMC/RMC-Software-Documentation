@@ -21,7 +21,7 @@ export default function TotalRisk() {
     {
       icon: addBaseUrl("img/TotalRisk.png"),
       doc_location: addBaseUrl(
-        `docs/desktop-applications/rmc-totalrisk/users-guide/${latestVersions["desktop-applications/rmc-totalrisk/users-guide"]}/users-guide`
+        `docs/desktop-applications/rmc-totalrisk/users-guide/${latestVersions["desktop-applications/rmc-totalrisk/users-guide"]}/preface`
       ),
       doc_name: "RMC TotalRisk Users Guide",
       active: true,

@@ -10,10 +10,16 @@ const Bibliography = ({ bibFile }) => {
         const response = await fetch(bibFilePath);
         const data = await response.json();
 
-        // Sort citations alphabetically by author(s)
         const sortedCitations = data.sort((a, b) => {
-          const authorA = Array.isArray(a.author) ? a.author[0] : a.author;
-          const authorB = Array.isArray(b.author) ? b.author[0] : b.author;
+          const getSortableAuthor = (entry) => {
+            if (Array.isArray(entry.author) && entry.author.length > 0)
+              return entry.author[0];
+            if (typeof entry.author === "string") return entry.author;
+            return ""; // fallback if no author
+          };
+
+          const authorA = getSortableAuthor(a).toLowerCase();
+          const authorB = getSortableAuthor(b).toLowerCase();
           return authorA.localeCompare(authorB);
         });
 
@@ -27,6 +33,7 @@ const Bibliography = ({ bibFile }) => {
   }, [bibFilePath]);
 
   const formatAuthors = (authors) => {
+    if (!authors) return "";
     if (!Array.isArray(authors)) return authors;
     if (authors.length > 6) {
       return `${authors[0]}, et al.`;
@@ -48,6 +55,7 @@ const Bibliography = ({ bibFile }) => {
       institution,
       organization,
       location,
+      address, // Fix: added to support address field
       volume,
       edition,
       pages,
@@ -67,11 +75,13 @@ const Bibliography = ({ bibFile }) => {
       >
         <span style={{ minWidth: "40px", flexShrink: 0 }}> [{index + 1}] </span>
         <span style={{ display: "block" }}>
-          {formatAuthors(author)}, <q>{title},</q>
+          {formatAuthors(author)}
+          {author && title && ", "}
+          <q>{title}</q>
           {journal && <em> {journal},</em>}
           {booktitle && ` in ${booktitle},`}
           {organization && ` ${organization},`}
-          {location && ` ${location},`}
+          {(location || address) && ` ${location || address},`}
           {volume && ` vol. ${volume},`}
           {edition && ` no. ${edition},`}
           {pages && ` pp. ${pages},`}
@@ -79,7 +89,7 @@ const Bibliography = ({ bibFile }) => {
           {institution && ` ${institution},`}
           {report && ` ${report},`}
           {manual && ` ${manual},`}
-          {year}.
+          {year && ` ${year}.`}
           {doi && (
             <>
               {" "}
