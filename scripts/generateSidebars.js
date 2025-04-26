@@ -200,9 +200,10 @@ function generateSidebars() {
     const docGroup = docParts[1]; // e.g., "rmc-totalrisk"
     const folderName = docParts[docParts.length - 1]; // e.g., "applications-guide"
 
+    const groupCamel = camelCase(docGroup);
     const folderCamel = camelCase(folderName);
     const versionFormatted = version.replace(/\./g, "_");
-    const sidebarKey = `${folderCamel}_${versionFormatted}`;
+    const sidebarKey = `${groupCamel}${folderCamel}_${versionFormatted}`;
 
     const documentName = titleCase(folderName);
 
