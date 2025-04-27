@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "@docusaurus/router"; // Track current document
+import { useReportId } from "../contexts/ReportIdContext"; // Import the context hook to retrieve the reportId
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import "../css/custom.css";
 import "../css/citation.css";
@@ -7,10 +8,22 @@ import "../css/citation.css";
 // Store citations per document (not globally)
 const usedCitations = new Map();
 
-const Citation = ({ citationKey, bibFile }) => {
+const Citation = ({ citationKey }) => {
   const [citationNumber, setCitationNumber] = useState("?");
   const location = useLocation(); // Get the current .mdx file's pathname
-  const bibFilePath = useBaseUrl(bibFile);
+  // Extract the current path from the URL
+  const pathname = location.pathname;
+
+  const reportPath = pathname
+    .replace(
+      /^\/RMC-Software-Documentation\/docs\//,
+      "/RMC-Software-Documentation/bibliographies/"
+    ) // Step 1: remove full prefix
+    .replace(/\/[^/]*$/, ""); // Step 2: remove the last segment ('/overview')
+
+  // Construct the path to the bibliography JSON file
+  const bibFilePath = `${reportPath}/bib.json`;
+  console.log("bibFilePath:", bibFilePath);
 
   useEffect(() => {
     const fetchBibData = async () => {
@@ -63,7 +76,7 @@ const Citation = ({ citationKey, bibFile }) => {
 
   return (
     <span className="citation-reference">
-      <a href={`#footnote-${citationKey}`} style={{ textDecorartion: "none" }}>
+      <a href={`#footnote-${citationKey}`} style={{ textDecoration: "none" }}>
         [{citationNumber}]
       </a>
     </span>
