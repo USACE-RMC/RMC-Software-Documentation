@@ -1,8 +1,22 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "@docusaurus/router"; // Track current document
 
-const Bibliography = ({ bibFile }) => {
+const Bibliography = () => {
   const [citations, setCitations] = useState([]);
-  const bibFilePath = `/RMC-Software-Documentation/${bibFile}`;
+  const location = useLocation(); // Get the current .mdx file's pathname
+
+  // Extract the current path from the URL
+  const pathname = location.pathname;
+
+  const reportPath = pathname
+    .replace(
+      /^\/RMC-Software-Documentation\/docs\//,
+      "/RMC-Software-Documentation/bibliographies/"
+    ) // Step 1: remove full prefix
+    .replace(/\/[^/]*$/, ""); // Step 2: remove the last segment (e.g. '/overview')
+
+  // Construct the path to the bibliogrpahy JSON file
+  const bibFilePath = `${reportPath}/bib.json`;
 
   useEffect(() => {
     const fetchBibData = async () => {

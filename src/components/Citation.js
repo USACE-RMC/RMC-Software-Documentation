@@ -23,7 +23,6 @@ const Citation = ({ citationKey }) => {
 
   // Construct the path to the bibliography JSON file
   const bibFilePath = `${reportPath}/bib.json`;
-  console.log("bibFilePath:", bibFilePath);
 
   useEffect(() => {
     const fetchBibData = async () => {
