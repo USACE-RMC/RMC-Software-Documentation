@@ -30,21 +30,20 @@ const CitationFootnote = () => {
   if (citations.length === 0) return null;
 
   const formatAuthors = (authors) => {
+    if (!authors) return "";
     if (!Array.isArray(authors)) return authors;
-    return authors
-      .map((author) => {
-        const nameParts = author.split(" ");
-        const initials = nameParts
-          .slice(0, -1)
-          .map((name) => name[0] + ".")
-          .join(" ");
-        const lastName = nameParts[nameParts.length - 1];
-        return `${initials} ${lastName}`;
-      })
-      .join(", ");
+    if (authors.length > 3) {
+      return `${authors[0]}, et al.`; // Limit to the first author if more than 3
+    }
+    if (authors.length === 3) {
+      return `${authors[0]}, ${authors[1]}, and ${authors[2]}`
+    }
+    return authors.length === 2
+      ? `${authors[0]} and ${authors[1]}`
+      : authors[0];
   };
 
-  const formatCitation = (citation) => {
+  const formatCitation = (citation, index) => {
     const {
       author,
       year,
@@ -56,49 +55,73 @@ const CitationFootnote = () => {
       institution,
       organization,
       location,
+      address,
       volume,
       edition,
       pages,
       doi,
       url,
       publisher,
+      entryType,
     } = citation;
 
+    // Function to format title based on entryType
+    const formatTitle = (title, entryType) => {
+      if (entryType === "inproceedings") {
+        return `"${title}",`
+      }
+      if (entryType === "manual") {
+        return <i>{`${title},`}</i>
+      }
+      return <i>{`${title},`}</i>
+    }
+
     return (
-      <>
-        {formatAuthors(author)} ({year}). <em>{title}</em>.
-        {journal && ` ${journal}`}
-        {booktitle && ` In ${booktitle}`}
-        {organization && ` (${organization})`}
-        {location && `, ${location}`}
-        {volume && `, Vol. ${volume}`}
-        {edition && `(${edition})`}
-        {pages && `, pp. ${pages}`}
-        {publisher && ` ${publisher}`}
-        {institution && ` ${institution}`}
-        {report && ` ${report}`}
-        {manual && ` ${manual}`}
-        {doi && (
-          <>
-            {" "}
-            <a
-              href={`https://doi.org/${doi}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              https://doi.org/{doi}
-            </a>
-          </>
-        )}
-        {url && (
-          <>
-            {" "}
-            <a href={url} target="_blank" rel="noopener noreferrer">
-              {url}
-            </a>
-          </>
-        )}
-      </>
+        <>
+          {formatAuthors(author)}
+          {author && title && ", "}
+          {formatTitle(title, entryType)}
+          {volume && ` Vol. ${volume}, `}
+          {edition && ` ${edition} ed.,`}
+          {journal && <em> {journal},</em>}
+          {booktitle && ` ${booktitle}, `}
+          {(location || address) && ` ${location || address}:`}
+          {organization && ` ${organization},`}
+          {pages && ` pp. ${pages}, `}
+          {publisher && ` ${publisher}, `}
+          {institution && ` ${institution}, `}
+          {report && ` ${report}, `}
+          {manual && ` ${manual}, `}
+          {year && ` ${year}.`}
+          {doi && (
+            <>
+              {" "}
+              doi:{" "}
+              <a
+                href={`https://doi.org/${doi}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: "none" }}
+              >
+                {doi}
+              </a>
+            </>
+          )}
+          {url && (
+            <>
+              {" "}
+              Available:{" "}
+              <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: "none" }}
+              >
+                {url}
+              </a>
+            </>
+          )}
+        </>
     );
   };
 
