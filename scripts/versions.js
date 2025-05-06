@@ -101,6 +101,12 @@ function getLatestVersion(folderPath) {
 }
 
 function generateVersions() {
+  // Ensure the static/versions directory exists
+  const versionsDir = path.join(__dirname, "..", "static", "versions");
+  if (!fs.existsSync(versionsDir)) {
+    fs.mkdirSync(versionsDir, { recursive: true });
+  }
+  
   const latestVersions = {};
   const allVersions = {};
 

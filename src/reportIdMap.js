@@ -8,7 +8,6 @@ const reportIdMap = {
   "desktop-applications/rmc-totalrisk/verification-report/v1.0": "rmc-totalrisk-verification-report-v1.0",
   "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation/v1.0": "internal-erosion-suite-backward-erosion-piping-initiation-v1.0",
   "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0": "internal-erosion-suite-backward-erosion-piping-progression-v1.0",
-  "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.1": "internal-erosion-suite-backward-erosion-piping-progression-v1.1",
   "toolbox-technical-manuals/internal-erosion-suite/breach/v1.0": "internal-erosion-suite-breach-v1.0",
   "toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-cracking/v1.0": "internal-erosion-suite-concentrated-leak-erosion-cracking-v1.0",
   "toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0": "internal-erosion-suite-concentrated-leak-erosion-initiation-v1.0",

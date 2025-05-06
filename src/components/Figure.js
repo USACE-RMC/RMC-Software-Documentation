@@ -3,7 +3,12 @@ import "../css/custom.css";
 import "../css/figure.css";
 import { useReportId } from "../contexts/ReportIdContext"; // Import the context hook to retrieve the reportId
 
-const Figure = ({ figKey, src, fullWidth = false, alt, caption }) => {
+const Figure = ({ 
+  figKey, 
+  src, 
+  alt, 
+  caption 
+}) => {
   const [figInfo, setFigInfo] = useState(null);
   const reportId = useReportId(); // Get the reportId from the context
 
@@ -40,14 +45,12 @@ const Figure = ({ figKey, src, fullWidth = false, alt, caption }) => {
 
   if (!figInfo) return <span>Loading...</span>;
 
-  const figClass = fullWidth ? "figure-image-full" : "figure-image-partial";
-
   return (
     <figure className="figure-container">
       <img
         src={`/RMC-Software-Documentation/${src}`}
         alt={alt}
-        className={figClass}
+        className="figure-image"
       />
       <figcaption className="figure-caption">
         Figure {figInfo.figNumber}: {caption}

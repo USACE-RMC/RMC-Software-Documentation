@@ -31,16 +31,54 @@ const Citation = ({ citationKey }) => {
         const data = await response.json();
 
         const sortedCitations = data.sort((a, b) => {
-          const getSortableAuthor = (entry) => {
-            if (Array.isArray(entry.author) && entry.author.length > 0)
-              return entry.author[0];
-            if (typeof entry.author === "string") return entry.author;
-            return ""; // fallback if no author
+          // Helper function to extract the first initial of the first author
+          const extractFirstInitial = (author) => {
+            const nameParts = author.split(" "); // Split by spaces to get parts of the name
+            if (nameParts.length > 1) {
+              return nameParts[0][0].toLowerCase(); // Get the first initial of the first name
+            }
+            return ""; // Fallback if name parts are missing or only one name part
           };
+        
+          // Get the first initial of the first author for sorting purposes
+          const getSortableAuthor = (entry) => {
+            if (Array.isArray(entry.author) && entry.author.length > 0) {
+              return extractFirstInitial(entry.author[0]); // First initial of first author in array
+            }
+            if (typeof entry.author === "string" && entry.author.trim() !== "") {
+              return extractFirstInitial(entry.author); // First initial of a single author
+            }
+            return ""; // Fallback if no author (empty string)
+          };
+        
+          const getSortableTitle = (entry) => {
+            return entry.title ? entry.title.toLowerCase() : ""; // Fallback if no title
+          };
+        
+          const authorA = getSortableAuthor(a);
+          const authorB = getSortableAuthor(b);
+          const titleA = getSortableTitle(a);
+          const titleB = getSortableTitle(b);
+        
+          // If both entries have authors, compare by the first initial of the first author
+          if (authorA && authorB) {
+            return authorA.localeCompare(authorB);
+          }
 
-          const authorA = getSortableAuthor(a).toLowerCase();
-          const authorB = getSortableAuthor(b).toLowerCase();
-          return authorA.localeCompare(authorB);
+          // If entry a has an author and entry b does not, compare the first initial of the first author for entry a with the title of entry b
+          if (authorA && !authorB) {
+            return authorA.localeCompare(titleB);
+          }
+
+          // If entry b has an author and entry a does not, compare the first initial of the first author for entry b with the title of entry a
+          if (!authorA && authorB) {
+            return titleA.localeCompare(authorB);
+          }
+        
+          // If both entries have no author, sort by title
+          if (!authorA && !authorB) {
+            return getSortableTitle(a).localeCompare(getSortableTitle(b));
+          }
         });
 
         const citationIndex = sortedCitations.findIndex(
