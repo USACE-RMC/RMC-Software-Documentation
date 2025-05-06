@@ -3,7 +3,7 @@ import "../css/custom.css";
 import "../css/figure.css";
 import { useReportId } from "../contexts/ReportIdContext"; // Import the context hook to retrieve the reportId
 
-const Figure = ({ figKey, src, fullWidth = false, alt, caption }) => {
+const Figure = ({ figKey, src, fullWidth = true, alt, caption }) => {
   const [figInfo, setFigInfo] = useState(null);
   const reportId = useReportId(); // Get the reportId from the context
 
