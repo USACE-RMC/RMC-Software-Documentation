@@ -21,10 +21,10 @@ export default function LifeSim() {
     {
       icon: addBaseUrl("img/LifeSim.png"),
       doc_location: addBaseUrl(
-        `docs/desktop-applications/lifesim/users-guide/${latestVersions["desktop-applications/lifesim/users-guide"]}/users-guide`
+        `docs/desktop-applications/lifesim/users-guide/${latestVersions["desktop-applications/lifesim/users-guide"]}/preface`
       ),
       doc_name: "LifeSim Users Guide",
-      active: false,
+      active: true,
     },
   ];
 
