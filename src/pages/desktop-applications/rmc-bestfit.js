@@ -21,10 +21,10 @@ export default function BestFit() {
     {
       icon: addBaseUrl("img/BestFit.png"),
       doc_location: addBaseUrl(
-        `docs/desktop-applications/rmc-bestfit/users-guide/${latestVersions["desktop-applications/rmc-bestfit/users-guide"]}users-guide`
+        `docs/desktop-applications/rmc-bestfit/users-guide/${latestVersions["desktop-applications/rmc-bestfit/users-guide"]}/welcome-to-rmc-bestfit`
       ),
       doc_name: "RMC BestFit Users Guide",
-      active: false,
+      active: true,
     },
   ];
 
