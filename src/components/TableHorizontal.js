@@ -47,10 +47,10 @@ const TableHorizontal = ({ tableKey, headers, rows, alt, caption }) => {
 
   return (
     <div className="table-container">
+      <div className="table-caption">
+        Table {tableInfo.tableNumber}: {caption}
+      </div>
       <table alt={alt} className="static-table-horizontal">
-        <caption className="table-caption">
-          Table {tableInfo.tableNumber}: {caption}
-        </caption>
         <tbody>
           {headers.map((header, index) => (
             <tr key={index}>

@@ -55,10 +55,10 @@ const TableVertical = ({
 
   return (
     <div className="table-container">
+      <div className="table-caption">
+        Table {tableInfo.tableNumber}: {caption}
+      </div>
       <table alt={alt} className={tableClass}>
-        <caption className="table-caption">
-          Table {tableInfo.tableNumber}: {caption}
-        </caption>
         <thead>
           <tr>
             {(headerConfig || headers).map((header, index) =>
