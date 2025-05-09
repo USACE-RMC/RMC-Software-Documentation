@@ -72,7 +72,7 @@ function processReport(reportPath, reportId) {
 
     // Regex for tables
     for (const match of content.matchAll(
-      /<(TableHorizontal|TableVertical|TableAcronyms)\s+[^>]*tableKey="([^"]+)"/g
+      /<(TableHorizontal|TableVertical|TableVerticalLeftAlign|TableAcronyms)\s+[^>]*tableKey="([^"]+)"/g
     )) {
       const tableKey = match[2];
       counters.tables[tableKey] = {

@@ -39,9 +39,15 @@ const TableVersionHistory = ({
               <td>{versions[rowIndex] || ""}</td>
               <td>{dates[rowIndex] || ""}</td>
               <td>{descriptions[rowIndex] || ""}</td>
-              <td>{modifiedBy[rowIndex] || ""}</td>
-              <td>{reviewedBy[rowIndex] || ""}</td>
-              <td>{approvedBy[rowIndex] || ""}</td>
+              <td title={modifiedBy[rowIndex] || ""}>
+                {modifiedBy[rowIndex] || ""}
+              </td>
+              <td title={reviewedBy[rowIndex] || ""}>
+                {reviewedBy[rowIndex] || ""}
+              </td>
+              <td title={approvedBy[rowIndex]}>
+                {approvedBy[rowIndex] || ""}
+              </td>
             </tr>
           ))}
         </tbody>
