@@ -31,15 +31,12 @@ export default function InternalErosionSuite() {
       doc_location: addBaseUrl(
         `docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/${latestVersions["toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression"]}/preface`
       ),
-      doc_name:
-        "Backward Erosion Piping (Progression) Toolbox Technical Manual",
+      doc_name: "Backward Erosion Piping (Progression) Toolbox Technical Manual",
       active: true,
     },
     {
       icon: addBaseUrl("img/Toolbox.png"),
-      doc_location: addBaseUrl(
-        `docs/toolbox-technical-manuals/internal-erosion-suite/breach/${latestVersions["toolbox-technical-manuals/internal-erosion-suite/breach"]}/preface`
-      ),
+      doc_location: addBaseUrl(`docs/toolbox-technical-manuals/internal-erosion-suite/breach/${latestVersions["toolbox-technical-manuals/internal-erosion-suite/breach"]}/preface`),
       doc_name: "Breach Toolbox Technical Manual",
       active: false,
     },
@@ -56,8 +53,7 @@ export default function InternalErosionSuite() {
       doc_location: addBaseUrl(
         `docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/${latestVersions["toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation"]}/preface`
       ),
-      doc_name:
-        "Concentrated Leak Erosion (Initiation) Toolbox Technical Manual",
+      doc_name: "Concentrated Leak Erosion (Initiation) Toolbox Technical Manual",
       active: false,
     },
     {
@@ -106,15 +102,12 @@ export default function InternalErosionSuite() {
         `docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/${latestVersions["toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation"]}/preface`
       ),
       doc_name: "Soil Contact Erosion (Initiation) Toolbox Technical Manual",
-      active: false,
+      active: true,
     },
   ];
 
   return (
-    <Layout
-      title="RMC Software Documentation"
-      description="Documentation for RMC Software Packages"
-    >
+    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
       <main>
         <div className="header-container">
           <h1>RMC Software Documentation</h1>
