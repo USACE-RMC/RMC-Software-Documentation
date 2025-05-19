@@ -71,9 +71,7 @@ function processReport(reportPath, reportId) {
     }
 
     // Regex for tables
-    for (const match of content.matchAll(
-      /<(TableHorizontal|TableVertical|TableVerticalLeftAlign|TableAcronyms)\s+[^>]*tableKey="([^"]+)"/g
-    )) {
+    for (const match of content.matchAll(/<(TableHorizontal|TableVertical|TableVerticalLeftAlign|TableVerticalRefactored|TableAcronyms)\s+[^>]*tableKey="([^"]+)"/g)) {
       const tableKey = match[2];
       counters.tables[tableKey] = {
         tableNumber: tableCount++,
@@ -84,9 +82,7 @@ function processReport(reportPath, reportId) {
     }
 
     // Regex for equations
-    for (const match of content.matchAll(
-      /<Equation\s+[^>]*equationKey="([^"]+)"/g
-    )) {
+    for (const match of content.matchAll(/<Equation\s+[^>]*equationKey="([^"]+)"/g)) {
       const equationKey = match[1];
       counters.equations[equationKey] = {
         equationNumber: equationCount++,
