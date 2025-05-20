@@ -2,36 +2,24 @@ import React, { useEffect, useState } from "react";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import "../css/custom.css";
 import "../css/table-vertical-left-align.css";
-import { useReportId } from "../contexts/ReportIdContext"; // Import the context hook to retrieve the reportId
+import { useReportId } from "../contexts/ReportIdContext";
 
-const TableVerticalLeftAlign = ({
-  tableKey,
-  headerConfig,
-  headers,
-  columns,
-  fullWidth = true,
-  alt,
-  caption,
-}) => {
+const TableVerticalLeftAlign = ({ tableKey, headers = [], columns = [], fullWidth = true, alt, caption }) => {
   const [tableInfo, setTableInfo] = useState(null);
-  const reportId = useReportId(); // Get the reportId from the context
+  const reportId = useReportId();
 
   useEffect(() => {
-    if (!reportId) return; // If reportId is not available, don't fetch
+    if (!reportId) return;
 
-    const jsonPath = `/RMC-Software-Documentation/counters/${reportId}.json`; // Use reportId to determine the path
+    const jsonPath = `/RMC-Software-Documentation/counters/${reportId}.json`;
 
     const loadCounters = async () => {
       try {
         const response = await fetch(jsonPath);
         if (!response.ok) throw new Error(`Failed to load ${jsonPath}`);
-
         const data = await response.json();
-        let foundTable = null;
-        if (data?.tables?.[tableKey]) {
-          foundTable = data.tables[tableKey];
-        }
 
+        const foundTable = data?.tables?.[tableKey];
         if (foundTable) {
           setTableInfo(foundTable);
         } else {
@@ -48,87 +36,75 @@ const TableVerticalLeftAlign = ({
   if (!tableInfo) return <span>Loading...</span>;
 
   const rowCount = columns.length > 0 ? columns[0].length : 0;
+  const colCount = columns.length;
 
-  const tableClass = fullWidth
-    ? "static-table-vertical-full"
-    : "static-table-vertical-partial";
+  const tableClass = fullWidth ? "static-table-vertical-full" : "static-table-vertical-partial";
+
+  // Track which body cells should be skipped (due to spans)
+  const skipBodyCells = new Set();
 
   return (
     <div className="table-container">
+      <div className="table-caption">
+        Table {tableInfo.tableNumber}: {caption}
+      </div>
       <table alt={alt} className={tableClass}>
-        <caption className="table-caption">
-          Table {tableInfo.tableNumber}: {caption}
-        </caption>
         <thead>
-          <tr>
-            {(headerConfig || headers).map((header, index) =>
-              headerConfig ? (
-                <th key={index} colSpan={header.colSpan || 1}>
-                  {header.label}
+          {headers.map((headerRow, rowIndex) => {
+            const rowCells = [];
+            let colCursor = 0;
+
+            for (let cellIndex = 0; cellIndex < headerRow.length; cellIndex++) {
+              const cell = headerRow[cellIndex];
+              if (!cell) continue;
+
+              const { value, colSpan = 1, rowSpan = 1 } = cell;
+
+              // Skip columns covered by previous colSpan
+              while (rowCells.some((_, i) => i === colCursor)) {
+                colCursor++;
+              }
+
+              rowCells.push(
+                <th key={`header-${rowIndex}-${colCursor}`} colSpan={colSpan} rowSpan={rowSpan}>
+                  {value}
                 </th>
-              ) : (
-                <th key={index}>{header}</th>
-              )
-            )}
-          </tr>
+              );
+
+              colCursor += colSpan;
+            }
+
+            return <tr key={`header-row-${rowIndex}`}>{rowCells}</tr>;
+          })}
         </thead>
         <tbody>
           {Array.from({ length: rowCount }).map((_, rowIndex) => (
             <tr key={rowIndex}>
               {columns.map((col, colIndex) => {
-                // Find the cell value
+                const cellKey = `${colIndex}-${rowIndex}`;
+                if (skipBodyCells.has(cellKey)) return null;
+
                 const cell = col[rowIndex];
 
-                // Check if a previous cell in this column has a rowSpan that covers this row
-                const isCoveredByRowSpan = col.some(
-                  (prevCell, prevRowIndex) => {
-                    if (
-                      prevRowIndex < rowIndex &&
-                      typeof prevCell === "object" &&
-                      prevCell?.rowSpan
-                    ) {
-                      const spanStart = prevRowIndex;
-                      const spanEnd = prevRowIndex + prevCell.rowSpan;
-                      return rowIndex < spanEnd;
+                if (typeof cell === "object" && cell !== null && "value" in cell) {
+                  const { value, rowSpan = 1, colSpan = 1 } = cell;
+
+                  // Mark spanned cells to be skipped
+                  for (let r = 0; r < rowSpan; r++) {
+                    for (let c = 0; c < colSpan; c++) {
+                      if (r === 0 && c === 0) continue;
+                      skipBodyCells.add(`${colIndex + c}-${rowIndex + r}`);
                     }
-                    return false;
                   }
-                );
 
-                // Check if this column is covered by colSpan from a previous column at the same row
-                const isCoveredByColSpan = columns
-                  .slice(0, colIndex)
-                  .some((prevCol) => {
-                    const prevCell = prevCol[rowIndex];
-                    if (typeof prevCell === "object" && prevCell?.colSpan) {
-                      const startIndex = columns.indexOf(prevCol);
-                      const spanEnd = startIndex + prevCell.colSpan;
-                      return colIndex < spanEnd;
-                    }
-                    return false;
-                  });
-
-                if (isCoveredByRowSpan || isCoveredByColSpan) return null;
-
-                // Render object cell
-                if (
-                  typeof cell === "object" &&
-                  cell !== null &&
-                  "value" in cell
-                ) {
                   return (
-                    <td
-                      key={`${colIndex}-${rowIndex}`}
-                      rowSpan={cell.rowSpan || undefined}
-                      colSpan={cell.colSpan || undefined}
-                    >
-                      {cell.value}
+                    <td key={cellKey} rowSpan={rowSpan > 1 ? rowSpan : undefined} colSpan={colSpan > 1 ? colSpan : undefined}>
+                      {value}
                     </td>
                   );
                 }
 
-                // Render regular string/number cell
-                return <td key={`${colIndex}-${rowIndex}`}>{cell}</td>;
+                return <td key={cellKey}>{cell}</td>;
               })}
             </tr>
           ))}
