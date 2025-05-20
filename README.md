@@ -80,19 +80,25 @@ If you haven’t already, clone the RMC Software Documentation Docusaurus projec
 git clone https://github.com/your-username/RMC-Software-Documentation.git
 ```
 
+Or use GitHub Desktop to clone the repository to your local machine.
+
 ### Change into the project directory
 
 ```powershell
 cd RMC-Software-Documentation
 ```
 
+Or use GitHub Desktop to open the RMC-Software-Documentation project in your preferred Individual Development Environment (IDE).
+
 ### Install dependencies
 
-Once you've cloned the repository, install the required dependencies:
+Once you've cloned the repository and navigated to the project directory, install the required dependencies:
 
 ```powershell
 npm install
 ```
+
+This will install all necessary packages to edit, test, build, and deploy the Docusaurus project.
 
 ## Running Locally
 
@@ -129,6 +135,8 @@ $env:GIT_USER="USACE-RMC"
 ```powershell
 npm run deploy
 ```
+
+DEPLOYMENT OF THE PROJECT SHOULD BE DONE CAREFULLY. Check with a site administrator prior to deploying the project.
 
 ## Versioning System
 
@@ -172,12 +180,16 @@ RMC-SOFTWARE-DOCUMENTATION/
     node_modules/                   # Installed dependencies
     scripts/                        # Custom scripts
         counters.js                 # Script for handling counters in the documentation
+        generateReportIdMap.js      # Script for generating a report ID map for code automation
+        generateSidebars.js         # Script to automatically build sidebars.js for the Docusaurus project
         versions.js                 # Script to aid in version control
     src/                            # Source code for custom components and pages
         components/                 # Custom React components
+        contexts/                   # Context files
         css/                        # Custom CSS files
         pages/                      # Custom pages
         theme/                      # Custom theme files
+        reportIdMap.js              # Report ID file automatically built and updated by the generateReportIdMap.js file
     static/                         # Static files like images, fonts, etc.
         bibliographies/             # Bibliographies for citation and reference management
         counters/                   # Static files related to counters
@@ -185,6 +197,9 @@ RMC-SOFTWARE-DOCUMENTATION/
         fonts/                      # Custom fonts
         img/                        # Images for the website
         versions/                   # JSON files for version control
+    .gitattributes
+    .gitignore                      # Git ignore file for the project
+    .nojekyll
     docusaurus.config.js            # Main configuration file for Docusaurus
     LICENSE                         # License file
     package-lock.json               # Lock file for npm dependencies
@@ -203,81 +218,111 @@ RMC-SOFTWARE-DOCUMENTATION/
 
 - `web-applications/`: Documentation for web applications (such as LST, DST, RRFT, etc.)
 
-- Each document should follow a similar format and naming convention of report##-document-title.mdx
+#### Document Layout
 
-  - The first chapter is always `00-document-info.mdx` and uses the `DocumentMetadata` React component to provide document information
+Each document should follow a similar format and naming convention of report##-document-title.mdx
 
-  - The second chapter is always `00-version-history.mdx` and uses the `TableVersionHistory` React component to provide a table of versions, descriptions of changes, and the individuals who modified, reviewed, and approved the versions
+##### Section 1 - Document Information
 
-  - Each successive chapter should increase in number (01, 02, 03, etc.)
+The documents in this section will be contained within a collapsible sidebar titled "Document Information". Upon document open, this sidebar will be collapsed by default.
 
-- The file path for each report should follow the same standard:
+1. `00-document-info.mdx`
 
-  - For desktop applications: `docs/desktop-applications/{software-name}/{report-title}/{version-number}/{document-name}`
+   - Always the first chapter
+   - Uses the `DocumentMetadata` React component to provide document information
 
-  - For toolbox technical manuals: `docs/toolbox-technical-manuals/{toolbox-suite}/{toolbox-name}/{version-number}/{document-name}`
+2. `00-version-history.mdx`
+   - Always the second chapter
+   - Uses the `TableVersionHistory` React component to provide a table of versions, descriptions of changes, and individuals who modified, reviewed, and approved the versions
 
-  - For web applications: `docs/web-applications/{web-app-name}/{report-title}/{version-number}/{document-name}`
+##### Section 2 - Main Report
+
+This section houses the main report chapters for the document. It will be contained within a collapsible sidebar titled "Main Report". Upon document open, this sidebar will be
+expanded by default, with the user being directed to the first chapter. The chapter filenames should begin with "01" and increase in number sequentially (01, 02, 03, etc.).
+
+1. `01-preface.mdx`
+
+   - The first main report chaper will always be titled "Preface"
+
+2. `02-chapter-2.mdx`
+
+3. `03-chapter-3.mdx`
+
+The file path for each report follows the same standard:
+
+- For desktop applications: `docs/desktop-applications/{software-name}/{report-title}/{version-number}/{document-name}`
+
+- For toolbox technical manuals: `docs/toolbox-technical-manuals/{toolbox-suite}/{toolbox-name}/{version-number}/{document-name}`
+
+- For web applications: `docs/web-applications/{web-app-name}/{report-title}/{version-number}/{document-name}`
+
+##### Section 3 - Appendices
+
+This section houses appendices for the document. It is contained within a collapsible sidebar titled "Appendices" that is collapsed by default. The chapter filenames should continue
+in sequential order after the main report chapters (i.e., if the final main report chapter is 05, the first appendix chapter will be 06).
 
 ### `scripts/`
 
-- `counters.js`: JavaScript file for automatically populating figure, table, and equation numbers
+#### `counters.js`: JavaScript file for automatically populating figure, table, and equation numbers
 
-  - Prior to running the project locally or building for production, all files and their corresponding `reportIDs` should be added to the `counters.js` file
+Upon project start or build, this script searches through each MDX file within the `reportIdMap` file generated by `generateReportIdMap.js` (next section) to count the number of times
+the `Figure`, `TableHorizontal`, `TableVertical`, `TableVerticalLeftAlign`, and `Equation` React components are used.
 
-  - Upon project start or build, this script searches through each .mdx file within the specified `reportIDs` to count the number of times the `Figure`, `TableHorizontal`, `TableVertical`, and `Equation` React components are used
+- Prior to running the project locally or building for production, all files and their corresponding `reportIDs` should be added to the `counters.js` file
 
-  - Each instance of the specified React components is logged in a newly created JSON file with a title of "reportID.json" inside the `/static/counters` folder
+- Upon project start or build, this script searches through each .mdx file within the specified `reportIDs` to count the number of times the `Figure`, `TableHorizontal`, `TableVertical`, and `Equation` React components are used
 
-  - Figures, tables, and equations are logged separately using the file format below
+- Each instance of the specified React components is logged in a newly created JSON file with a title of "reportID.json" inside the `/static/counters` folder
 
-  - Counters JSON files are used by `FigureReference`, `TableReference`, and `EquationReference` React components to automatically assign figure, table, and equation numbers to captions and text references
+- Figures, tables, and equations are logged separately using the file format below
 
-    - React components and JSON files are tied together through `figKey`, `tableKey`, and `equationKey` properties
+- Counters JSON files are used by `FigureReference`, `TableReference`, and `EquationReference` React components to automatically assign figure, table, and equation numbers to captions and text references
 
-  - Example counters.json file:
+  - React components and JSON files are tied together through `figKey`, `tableKey`, and `equationKey` properties
 
-  ```
-  "01-chapter-title.mdx": {
-      "figures": {
-        "{figKey}": {                         # figKey is a user-defined property passed to the Figure component
-          "figNumber": 1,                     # Figure numbers are automatically assigned in sequential order
-                                                for all .mdx files within a single report
-          "parentDocId": {reportID},          # parentDocId is a property passed to the Figure component and aligns
-                                                with the reportID from counters.js
-          "parentDocPath": {parentDocPath},   # parentDocPath is automatically assigned during script execution
-          "docId": "01-chapter-title.mdx"     # docId is automatically assigned during script execution
-        },
-        "{figKey}": {                         # figKey is a property passed to the Figure component
-          "figNumber": 2,                     # Figure numbers are automatically assigned in sequential order
-          "parentDocId": {reportID},          # parentDocId is a property passed to the Figure component and aligns
-                                                with the reportID from counters.js
-          "parentDocPath": {parentDocPath},   # parentDocPath is automatically assigned during script execution
-          "docId": "01-chapter-title.mdx"     # docId is automatically assigned during script execution
-        },
+- Example counters.json file:
+
+```
+"01-chapter-title.mdx": {
+    "figures": {
+      "{figKey}": {                         # figKey is a user-defined property passed to the Figure component
+        "figNumber": 1,                     # Figure numbers are automatically assigned in sequential order
+                                              for all .mdx files within a single report
+        "parentDocId": {reportID},          # parentDocId is a property passed to the Figure component and aligns
+                                              with the reportID from counters.js
+        "parentDocPath": {parentDocPath},   # parentDocPath is automatically assigned during script execution
+        "docId": "01-chapter-title.mdx"     # docId is automatically assigned during script execution
       },
-      "tables": {
-        "{tableKey}": {                       # tableKey is a user-defined property passed to the Table component
-          "tableNumber": 1,                   # Table numbers are automatically assigned in sequential order
-                                                for all .mdx files within a single report
-          "parentDocId": {reportID},          # parentDocId is a property passed to the Figure component and aligns
-                                                with the reportID from counters.js
-          "parentDocPath": {parentDocPath},   # parentDocPath is automatically assigned during script execution
-          "docId": "01-chapter-title.mdx"     # docId is automatically assigned during script execution
-        }
+      "{figKey}": {                         # figKey is a property passed to the Figure component
+        "figNumber": 2,                     # Figure numbers are automatically assigned in sequential order
+        "parentDocId": {reportID},          # parentDocId is a property passed to the Figure component and aligns
+                                              with the reportID from counters.js
+        "parentDocPath": {parentDocPath},   # parentDocPath is automatically assigned during script execution
+        "docId": "01-chapter-title.mdx"     # docId is automatically assigned during script execution
       },
-      "equations": {
-        "{equationKey}": {                    # equationKey is a user-defined property passed to the Table component
-          "equationNumber": 1,                # Equation numbers are automatically assigned in sequential order
-                                                for all .mdx files within a single report
-          "parentDocId": {reportID},          # parentDocId is a property passed to the Figure component and aligns
-                                                with the reportID from counters.js
-          "parentDocPath": {parentDocPath},   # parentDocPath is automatically assigned during script execution
-          "docId": "01-chapter-title.mdx"     # docId is automatically assigned during script execution
-        }
+    },
+    "tables": {
+      "{tableKey}": {                       # tableKey is a user-defined property passed to the Table component
+        "tableNumber": 1,                   # Table numbers are automatically assigned in sequential order
+                                              for all .mdx files within a single report
+        "parentDocId": {reportID},          # parentDocId is a property passed to the Figure component and aligns
+                                              with the reportID from counters.js
+        "parentDocPath": {parentDocPath},   # parentDocPath is automatically assigned during script execution
+        "docId": "01-chapter-title.mdx"     # docId is automatically assigned during script execution
       }
     },
-  ```
+    "equations": {
+      "{equationKey}": {                    # equationKey is a user-defined property passed to the Table component
+        "equationNumber": 1,                # Equation numbers are automatically assigned in sequential order
+                                              for all .mdx files within a single report
+        "parentDocId": {reportID},          # parentDocId is a property passed to the Figure component and aligns
+                                              with the reportID from counters.js
+        "parentDocPath": {parentDocPath},   # parentDocPath is automatically assigned during script execution
+        "docId": "01-chapter-title.mdx"     # docId is automatically assigned during script execution
+      }
+    }
+  },
+```
 
 - `versions.js`
 
