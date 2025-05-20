@@ -2,7 +2,7 @@
 
 This guide will help you set up and use Docusaurus, a modern static website generator, for the RMC Software Documentation project.
 
-## Table of Contents
+# Table of Contents
 
 - [Prerequisites](#prerequisites)
 - [Cloning the Project](#cloning-the-project)
@@ -56,7 +56,7 @@ This guide will help you set up and use Docusaurus, a modern static website gene
   - [VersionSelector](#versionselector)
 - [Search](#search)
 
-## Prerequisites
+# Prerequisites
 
 Before you start, ensure you have the following installed:
 
@@ -70,9 +70,9 @@ node --version
 npm --version
 ```
 
-## Cloning the Project
+# Cloning the Project
 
-### Clone the repository:
+## Clone the repository:
 
 If you haven’t already, clone the RMC Software Documentation Docusaurus project repository to your local machine:
 
@@ -82,7 +82,7 @@ git clone https://github.com/your-username/RMC-Software-Documentation.git
 
 Or use GitHub Desktop to clone the repository to your local machine.
 
-### Change into the project directory
+## Change into the project directory
 
 ```powershell
 cd RMC-Software-Documentation
@@ -90,7 +90,7 @@ cd RMC-Software-Documentation
 
 Or use GitHub Desktop to open the RMC-Software-Documentation project in your preferred Individual Development Environment (IDE).
 
-### Install dependencies
+## Install dependencies
 
 Once you've cloned the repository and navigated to the project directory, install the required dependencies:
 
@@ -100,7 +100,7 @@ npm install
 
 This will install all necessary packages to edit, test, build, and deploy the Docusaurus project.
 
-## Running Locally
+# Running Locally
 
 To run the Docusaurus site locally, use:
 
@@ -110,7 +110,7 @@ npm run start
 
 This will start the development server at http://localhost:3000, and any changes you make will be reflected immediately in the browser.
 
-## Building for Production
+# Building for Production
 
 To build the Docusaurus site for production, use:
 
@@ -120,7 +120,7 @@ npm run build
 
 This will generate the static files in the build/ folder. These files are ready to be deployed to any static hosting service.
 
-## Deployment
+# Deployment
 
 To deploy the Docusaurus site on GitHub pages, follow these steps:
 
@@ -138,15 +138,15 @@ npm run deploy
 
 DEPLOYMENT OF THE PROJECT SHOULD BE DONE CAREFULLY. Check with a site administrator prior to deploying the project.
 
-## Versioning System
+# Versioning System
 
 To maintain clarity and transparency in the evolution of online documentation, the RMC Software Documentation site uses a structured versioning system that distinguishes between significant updates and smaller changes. The versioning format follows a <b>Major.Minor</b> structure:
 
-### Major Versions (X.0):
+## Major Versions (X.0):
 
 A major version update indicates significant changes to the book, typically involving updates, additions, or restructuring of entire chapters. These updates may reflect new content, substantial revisions, or major reorganization to enhance the book's structure or scope.
 
-### Minor Versions (X.Y):
+## Minor Versions (X.Y):
 
 A minor version update denotes changes to specific sections within a chapter. These changes might include:
 
@@ -154,11 +154,11 @@ A minor version update denotes changes to specific sections within a chapter. Th
 - Rewriting sections for improved clarity
 - Adding new subsections or examples to an existing chapter
 
-### Excluded Changes:
+## Excluded Changes:
 
 Typos, grammatical corrections, formatting adjustments, or other minor editorial edits that do not materially affect the book's content or structure are not reflected in the versioning system.
 
-### Version Numbering Example:
+## Version Numbering Example:
 
 - 1.0: Initial release or major update to chapters
 - 1.1: Update to a section in Chapter 1
@@ -166,7 +166,7 @@ Typos, grammatical corrections, formatting adjustments, or other minor editorial
 
 By adhering to this system, readers can easily track and identify substantive updates to the document's content while avoiding confusion caused by minor, inconsequential changes.
 
-## Project Structure
+# Project Structure
 
 The RMC Software Documentation project follows this structure:
 
@@ -208,7 +208,7 @@ RMC-SOFTWARE-DOCUMENTATION/
     sidebars.js                     # Sidebar configuration for navigation
 ```
 
-### `docs/`
+# `docs/`
 
 - Contains .mdx report files
 
@@ -218,11 +218,11 @@ RMC-SOFTWARE-DOCUMENTATION/
 
 - `web-applications/`: Documentation for web applications (such as LST, DST, RRFT, etc.)
 
-#### Document Layout
+## Document Layout
 
 Each document should follow a similar format and naming convention of report##-document-title.mdx
 
-##### Section 1 - Document Information
+### Section 1 - Document Information
 
 The documents in this section will be contained within a collapsible sidebar titled "Document Information". Upon document open, this sidebar will be collapsed by default.
 
@@ -235,7 +235,7 @@ The documents in this section will be contained within a collapsible sidebar tit
    - Always the second chapter
    - Uses the `TableVersionHistory` React component to provide a table of versions, descriptions of changes, and individuals who modified, reviewed, and approved the versions
 
-##### Section 2 - Main Report
+### Section 2 - Main Report
 
 This section houses the main report chapters for the document. It will be contained within a collapsible sidebar titled "Main Report". Upon document open, this sidebar will be
 expanded by default, with the user being directed to the first chapter. The chapter filenames should begin with "01" and increase in number sequentially (01, 02, 03, etc.).
@@ -256,112 +256,258 @@ The file path for each report follows the same standard:
 
 - For web applications: `docs/web-applications/{web-app-name}/{report-title}/{version-number}/{document-name}`
 
-##### Section 3 - Appendices
+### Section 3 - Appendices
 
 This section houses appendices for the document. It is contained within a collapsible sidebar titled "Appendices" that is collapsed by default. The chapter filenames should continue
 in sequential order after the main report chapters (i.e., if the final main report chapter is 05, the first appendix chapter will be 06).
 
-### `scripts/`
+# `scripts/`
 
-#### `counters.js`: JavaScript file for automatically populating figure, table, and equation numbers
+## 📊 `counters.js` Generate Counters for Figures, Tables, and Equations
 
-Upon project start or build, this script searches through each MDX file within the `reportIdMap` file generated by `generateReportIdMap.js` (next section) to count the number of times
-the `Figure`, `TableHorizontal`, `TableVertical`, `TableVerticalLeftAlign`, and `Equation` React components are used.
+This Node.js script scans all `.mdx` documentation files in the `docs/` directory, extracts metadata for custom components like
+`<Figure>`, `<Table*>`, and `<Equation>`, and generates a corresponding JSON file for each report. These JSON files are saved to
+`static/counters/` and include sequential numbering and metadata for each detected figure, table, and equation.
 
-- Prior to running the project locally or building for production, all files and their corresponding `reportIDs` should be added to the `counters.js` file
+---
 
-- Upon project start or build, this script searches through each .mdx file within the specified `reportIDs` to count the number of times the `Figure`, `TableHorizontal`, `TableVertical`, and `Equation` React components are used
+### 🔍 What It Does
 
-- Each instance of the specified React components is logged in a newly created JSON file with a title of "reportID.json" inside the `/static/counters` folder
+- Recursively scans the `docs/` directory for folders that contain `.mdx` files.
+- Uses `reportIdMap.js` to map folder paths to unique report IDs.
+- For each matched folder, it:
+  - Parses all `.mdx` files to find:
+    - `<Figure figKey="...">` components
+    - `<TableHorizontal tableKey="...">`, `<TableVertical>`, or `<TableVerticalLeftAlign>` components
+    - `<Equation equationKey="...">` components
+  - Assigns each component a unique sequential number:
+    - `figNumber` for figures
+    - `tableNumber` for tables
+    - `equationNumber` for equations
+  - Records additional metadata:
+    - `figKey`, `tableKey`, or `equationKey`
+    - `parentDocId` (from `reportIdMap`)
+    - `parentDocPath` (relative path within `docs/`)
+    - `docId` (filename of the `.mdx` file)
 
-- Figures, tables, and equations are logged separately using the file format below
+---
 
-- Counters JSON files are used by `FigureReference`, `TableReference`, and `EquationReference` React components to automatically assign figure, table, and equation numbers to captions and text references
+### 📁 Output
 
-  - React components and JSON files are tied together through `figKey`, `tableKey`, and `equationKey` properties
+Each output file is saved to `static/counters/<reportId>.json` and follows this structure:
 
-- Example counters.json file:
-
-```
-"01-chapter-title.mdx": {
-    "figures": {
-      "{figKey}": {                         # figKey is a user-defined property passed to the Figure component
-        "figNumber": 1,                     # Figure numbers are automatically assigned in sequential order
-                                              for all .mdx files within a single report
-        "parentDocId": {reportID},          # parentDocId is a property passed to the Figure component and aligns
-                                              with the reportID from counters.js
-        "parentDocPath": {parentDocPath},   # parentDocPath is automatically assigned during script execution
-        "docId": "01-chapter-title.mdx"     # docId is automatically assigned during script execution
-      },
-      "{figKey}": {                         # figKey is a property passed to the Figure component
-        "figNumber": 2,                     # Figure numbers are automatically assigned in sequential order
-        "parentDocId": {reportID},          # parentDocId is a property passed to the Figure component and aligns
-                                              with the reportID from counters.js
-        "parentDocPath": {parentDocPath},   # parentDocPath is automatically assigned during script execution
-        "docId": "01-chapter-title.mdx"     # docId is automatically assigned during script execution
-      },
-    },
-    "tables": {
-      "{tableKey}": {                       # tableKey is a user-defined property passed to the Table component
-        "tableNumber": 1,                   # Table numbers are automatically assigned in sequential order
-                                              for all .mdx files within a single report
-        "parentDocId": {reportID},          # parentDocId is a property passed to the Figure component and aligns
-                                              with the reportID from counters.js
-        "parentDocPath": {parentDocPath},   # parentDocPath is automatically assigned during script execution
-        "docId": "01-chapter-title.mdx"     # docId is automatically assigned during script execution
-      }
-    },
-    "equations": {
-      "{equationKey}": {                    # equationKey is a user-defined property passed to the Table component
-        "equationNumber": 1,                # Equation numbers are automatically assigned in sequential order
-                                              for all .mdx files within a single report
-        "parentDocId": {reportID},          # parentDocId is a property passed to the Figure component and aligns
-                                              with the reportID from counters.js
-        "parentDocPath": {parentDocPath},   # parentDocPath is automatically assigned during script execution
-        "docId": "01-chapter-title.mdx"     # docId is automatically assigned during script execution
-      }
+```json
+{
+  "figures": {
+    "fig-abc": {
+      "figNumber": 1,
+      "parentDocId": "soil-erosion",
+      "parentDocPath": "rmc/soil/contact-erosion",
+      "docId": "overview.mdx"
     }
   },
+  "tables": {
+    "table-xyz": {
+      "tableNumber": 1,
+      "parentDocId": "soil-erosion",
+      "parentDocPath": "rmc/soil/contact-erosion",
+      "docId": "overview.mdx"
+    }
+  },
+  "equations": {
+    "eqn-123": {
+      "equationNumber": 1,
+      "parentDocId": "soil-erosion",
+      "parentDocPath": "rmc/soil/contact-erosion",
+      "docId": "overview.mdx"
+    }
+  }
+}
 ```
 
-- `versions.js`
+### Usage
 
-  - JavaScript file for creating static JSON files used for version control
+This script is automatically run on project start, build, and deploy. No additional execution of this script is required.
 
-  - This script recursively searches through the `docs` folder and looks for folders that follow `v#.#` format
+---
 
-  - Two static JSON files are created in the `static/versions`folder:
+## 🗺️ `reportIdMap.js` Generate reportIdMap from Docs Directory Structure
 
-    - `latestVersions.json`
+This Node.js script scans the `docs/` folder structure to automatically generate a `reportIdMap.js` file in `src/`. It identifies
+documentation paths based on versioned subfolders (e.g., `v1.0`, `v2.1`) and builds unique report IDs based on the folder hierarchy.
 
-      - This file contains the latest version number for each document in the `docs` folder
+---
 
-      - The version numbers in this file are used by the `VersionSelector` React component to automatically default the version dropdown menu on the webpage to the latest version
+### 🔍 What It Does
 
-      ```json
-      {
-        "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation": "v1.0",
-        "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression": "v1.1",
-        "toolbox-technical-manuals/internal-erosion-suite/breach": "v1.0",
-      }
-      ```
+- Recursively walks the `docs/` directory.
+- Identifies folders with names matching a version pattern like `v1.0`, `v2.1`, etc.
+- Constructs a unique `reportId` in the format:
 
-    - `versionList.json`
+`<subHub>-<documentName>-<version>`
 
-      - This file contains all available version numbers for each document in the `docs` folder
+Where:
 
-      - The version numbers in this file are used by the `VersionSelector` React component to populate the version dropdown menu with all available document versions
+- `subHub` is the folder two levels above the version folder
+- `documentName` is the folder directly above the version folder
+- `version` is the version folder name (e.g., `v1.0`)
+- Maps the full relative path to the generated report ID.
+- Saves the result as an exported JavaScript object in `src/reportIdMap.js`.
 
-      ```json
-      {
-        "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression": [
-          "v1.0",
-          "v1.1"
-        ],
-      }
-      ```
+---
 
-### `src/`
+### ⚠️ Path Validation
+
+If the folder structure does not contain enough levels (i.e., it lacks a parent document or subHub folder), the script skips that
+entry and logs a warning:
+
+---
+
+### 📝 Output (`reportIdMap.js`)
+
+```js
+// Auto-generated. Do not edit.
+const reportIdMap = {
+  "desktop-applications/lifesim/users-guide/v1.0": "lifesim-users-guide-v1.0",
+  "desktop-applications/rmc-bestfit/users-guide/v1.0": "rmc-bestfit-users-guide-v1.0",
+  "desktop-applications/rmc-rfa/users-guide/v1.0": "rmc-rfa-users-guide-v1.0",
+  "desktop-applications/rmc-totalrisk/users-guide/v1.0": "rmc-totalrisk-users-guide-v1.0",
+  "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0": "internal-erosion-suite-backward-erosion-piping-progression-v1.0",
+  "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0": "internal-erosion-suite-filter-evaluation-continuation-v1.0",
+  "web-applications/lst/users-guide/v1.0": "lst-users-guide-v1.0",
+};
+module.exports = reportIdMap;
+```
+
+---
+
+### Usage
+
+This script is automatically run on project start, build, and deploy. No additional execution of this script is required.
+
+---
+
+## `generateSidebars.js` Generate Sidebars for Docusaurus
+
+This script automatically generates a structured `sidebars.js` file for a Docusaurus site, based on the organization of `.mdx` files within
+the `docs/` directory.
+
+It will scan all `.mdx` files in the `docs/` directory, organize them into logical categories, and write the result to `sidebars.js`.
+
+It uses naming conventions and frontmatter metadata to organize content into logical categories like:
+
+- Document Information
+- Main Report
+- Appendices
+
+It supports special-case logic for certain document types like `rmc-totalrisk/applications-guide`. Additional special-case logic for documents can be added to this
+file as necessary - to add special-case logic contact a site administrator.
+
+---
+
+### 📁 Directory Structure Requirements
+
+- Docs should be nested under `docs/<group>/<document>/<version>/`
+- Filenames should be prefixed with numeric codes for ordering (e.g., `00-document-info.mdx`, `01-preface.mdx`)
+- Appendix files must include `"appendix"` in the filename
+- Frontmatter titles will be used when available
+
+Example folder:
+
+```
+docs/
+└── rmc-totalrisk/
+    └── users-guide/
+        └── v1.0/
+            ├── 00-document-info.mdx
+            ├── 00-version-history.mdx
+            ├── 01-preface.mdx
+            ├── 02-chapter-1.mdx
+            ├── 03-chapter-2.mdx
+            └── 04-appendix-acronyms.mdx
+```
+
+---
+
+### 🧪 Usage
+
+This script is automatically run on project start, build, and deploy. No additional execution of this script is required.
+
+---
+
+### 📝 Notes
+
+- Special-case logic exists for specific folder/document combinations (like `rmc-totalrisk/applications-guide`). For additional special-case logic contact a site administrator.
+- Automatically converts kebab-case paths and file names into readable sidebar labels
+- Looks for YAML frontmatter to prefer titles from metadata
+
+---
+
+## `versions.js` Version Info Generator
+
+### What It Does
+
+This script scans your documentation directory structure to identify and collect version
+information for your docs. It produces JSON files that list the latest versions available,
+all available versions, and generates URLs for use with the Algolia crawler to index the
+correct documentation versions.
+
+### How It Works
+
+- Defines the base folders where documentation groups live (e.g., "toolbox-technical-manuals",
+  "desktop-applications", "web-applications").
+- Recursively walks through these folders to detect version folders that match a pattern
+  like `v1.0`, `v2.3`, etc.
+- Identifies the latest version by sorting the version folders descending alphabetically.
+- Collects all versions found for each document group.
+- Outputs three JSON files: latest version map, full version list, and Algolia crawler URLs.
+
+### Output
+
+- `latestVersions.json`: Contains a mapping of document paths to their latest version folder.
+
+```json
+{
+  "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression": "v1.0",
+  "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation": "v1.0",
+  "desktop-applications/lifesim/users-guide": "v1.0",
+  "desktop-applications/rmc-bestfit/users-guide": "v1.0",
+  "desktop-applications/rmc-totalrisk/users-guide": "v1.0",
+  "web-applications/lst/users-guide": "v1.0",
+}
+```
+
+- `versionList.json`: Contains a mapping of document paths to all available version folders.
+
+```json
+{
+  "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression": [
+    "v1.0"
+  ],
+  "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation": [
+    "v1.0"
+  ],
+}
+```
+
+- `algoliaCrawlerVersions.json`: Contains start URLs and discovery patterns based on the
+  latest versions for Algolia's documentation crawler.
+
+### Usage
+
+This script is automatically run on project start, build, and deploy. No additional execution of this script is required.
+
+The output JSON files will be saved in the `static/versions` folder.
+
+### Notes
+
+- The script ensures directory creation for output paths.
+- Paths in JSON are normalized to use forward slashes (`/`) for cross-platform compatibility.
+- Algolia crawler URLs are constructed based on your GitHub Pages URL pattern for docs.
+
+---
+
+# `src/`
 
 - React components, styles, pages, and theme files
 
@@ -379,7 +525,7 @@ the `Figure`, `TableHorizontal`, `TableVertical`, `TableVerticalLeftAlign`, and 
 
 - `theme/`: Custom theme-related files
 
-### `static/`
+# `static/`
 
 - Static files like bibliographies, counters, figure images, and fonts
 
@@ -399,9 +545,10 @@ the `Figure`, `TableHorizontal`, `TableVertical`, `TableVerticalLeftAlign`, and 
     - toolbox-technical-manuals
       - internal-erosion-suite
         - backward-erosion-piping-progression
-          - figure1
-          - figure2
-          - figure3
+          - v1.0
+            - figure1
+            - figure2
+            - figure3
     - web-applications
 
   - File names for figure images can be assigned arbitrarily but will need to be referenced by Figure components in `.mdx` files, so an intuitive naming convention is recommended
@@ -410,172 +557,66 @@ the `Figure`, `TableHorizontal`, `TableVertical`, `TableVerticalLeftAlign`, and 
 
 - `img/`: Contains static images used within website pages
 
-- `versions/`: Contains two JSON files produced by the `verions.js` script
+- `versions/`: Contains three JSON files produced by the `verions.js` script
+
+  - `algoliaCrawlerVersions.json`: Contains start URLs and discovery patterns based on the latest versions for Algolia's documentation crawler.
 
   - `latestVersions.json`: Contains a list of the latest versions for each report in the `docs` folder
 
   - `versionList.json`: Contains lists of all versions of each report in the `docs` folder
 
-### `sidebars.js`
+# `sidebars.js` Navigation Structure for Users Guides and Applications Guides
 
-- Creates a custom sidebar for each report in the `docs/` folder
-- Sidebars contain an export key, version number, and the items to be included in the sidebar
-  - Export keys should be intuitively named
-    - For example `bepProgressionSidebar` for the Backward Erosion Piping (Progression) Toolbox Technical Manual
-  - Version numbers should be appended to the export keys to reflect the version that the sidebar is defining
-    - A unique sidebar is required for each version of a document
-    - For example, version 1.0 of the BEP (Progression) sidebar would be appended to the export key as `bepProgressionSidebar_v_1_0`
-      - Version 1.1 would be appended to the export key as `bepProgressionSidebar_v_1_1`
-  - Items are listed in the order they should appear in the sidebar
-    - Items can take the form of single docs or collapsible categories
-      - Single doc:
-      ```js
-      {
-        type: 'doc',
-        id: 'path/to/doc',
-        label: 'Custom Label'
-      }
-      ```
-      - Collapsible category:
-        ```js
-        {
-          type: 'category',
-          label: 'Category Title',
-          collapsible: true,
-          collapsed: true,
-          items: [/* array of doc items */],
-        }
-        ```
-      - `id` corresponds to the relative file path from `docs/` without the `.mdx` extension
-      - `label` is the text shown in the sidebar navigation
-      - No front matter (`sidebar_label`, `sidebar_position`) is needed in the `.mdx` files
-    - All sidebars should follow a consistent layout:
-      - Document Information (category, collapsed: true)
-        - Document Info (single doc)
-        - Version History (single doc)
-      - Main Report (category, collapsed: false)
-        - Preface (single doc)
-        - Report Chapters
-      - Appendices (category, collapsed: true)
-        - Appendix A - {title} (single doc)
-        - Appendix B - {title} (single doc)
-- The following is an example sidebar for Version 1.0 of the Backward Erosion Piping (Progression) Toolbox Technical Manual:
+This module exports the navigation structure used for multiple user and application guides in a documentation system. It organizes documents into categories and
+subcategories with collapsible navigation items, suitable for static site generators like Docusaurus.
 
-```js
-bepProgressionSidebar_v1_0: {
-  "RMC Backward Erosion Piping (Progression) Toolbox": [
-    {
-      type: "category",
-      label: "Document Information",
-      collapsible: true,
-      collapsed: true,
-      items: [
-        {
-          type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/document-info",
-          label: "Document Info",
-        },
-        {
-          type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/version-history",
-          label: "Version History",
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "Main Report",
-      collapsible: true,
-      collapsed: false,
-      items: [
-        {
-          type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/introduction",
-          label: "Introduction",
-        },
-        {
-          type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/terms-and-conditions-for-use",
-          label: "Terms and Conditions for Use",
-        },
-        {
-          type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/general-overview",
-          label: "General Overview",
-        },
-        {
-          type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/background",
-          label: "Background",
-        },
-        {
-          type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/schmertmann",
-          label: "Schmertmann",
-        },
-        {
-          type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/sellmeijer",
-          label: "Sellmeijer",
-        },
-        {
-          type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/creep-ratios",
-          label: "Creep Ratios",
-        },
-        {
-          type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/summary",
-          label: "Summary",
-        },
-        {
-          type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/references",
-          label: "References",
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "Appendices",
-      collapsible: true,
-      collapsed: true,
-      items: [
-        {
-          type: "doc",
-          id: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/appendix-acronyms",
-          label: "Appendix A - Acronyms",
-        },
-      ],
-    },
-  ],
-},
-```
+---
 
-### Other
+## Structure Details
 
-#### `docusaurus.config.js`
+- `type`: Specifies the navigation item type (`category` or `doc`).
+- `label`: Display label for categories or documents.
+- `collapsed`: Whether the category is collapsed by default.
+- `collapsible`: If the category can be collapsed.
+- `items`: Nested navigation items (documents or subcategories).
+- `id`: Document id used for routing/linking.
+- `link`: (optional) Used for category linking to a document.
+
+---
+
+## Usage
+
+This file is automatically generated by the generateSidebars.js script during the project start, build, and deploy processes. No additional action is required.
+
+---
+
+# Other
+
+## `docusaurus.config.js`
 
 - Configuration file for the RMC Software Documentation website
 
-#### `LICENSE`
+## `LICENSE`
 
 - This project is licenses under the MIT License © 2025 Risk Management Center
 
-#### Project Dependencies
+## Project Dependencies
 
 - `package.json`
-  - This file lists the project's dependencies, scripts, and metadata. It defines the required vesions of packages needed to run or build the documentation site, and it includes custom scripts like `counters`, `versions`, `run`, `build`, and `deploy` for Docusaurus.
+  - This file lists the project's dependencies, scripts, and metadata. It defines the required vesions of packages needed to run or build the documentation site, and
+    it includes custom scripts like `counters`, `versions`, `run`, `start`, `build`, and `deploy` for Docusaurus.
 - `package-lock.json`
-  - This file locks the exact versions of every package (and sub-package) installed at the time of `npm install`. It ensures that everyone working on the project uses the same dependency versions, which improves consistency across environments.
+  - This file locks the exact versions of every package (and sub-package) installed at the time of `npm install`. It ensures that everyone working on the project uses
+    the same dependency versions, which improves consistency across environments.
 
-## Creating and Editing Pages
+# Creating and Editing Pages
 
 `.mdx` (Markdown + JSX) allows you to write Markdown content and use React components side-by-side.
 
-To create a new .mdx file in Visual Studio Code, right click on the folder that the file will be located and click "New File". Name the file with your desired name and add `.mdx` for the document type. Follow the naming and numbering convention outlined in the [`docs/`](#docs) section.
+To create a new .mdx file in Visual Studio Code, right click on the folder that the file will be located and click "New File". Name the file with your desired name
+and add `.mdx` for the document type. Follow the naming and numbering convention outlined in the [`docs/`](#docs) section.
 
-### MDX Basics
+## MDX Basics
 
 - File extension: `.mdx`
 
@@ -583,18 +624,22 @@ To create a new .mdx file in Visual Studio Code, right click on the folder that 
 
 - Treated as pages in Docusaurus when placed in the `docs` folder and linked in the sidebar
 
-### Front Matter
+## Front Matter
 
 - `.mdx` files can begin with YAML front matter, wrapped in triple dashes.
 
-- In the RMC Software Documentation project, front matter is used to define the title of each `.mdx` page. This title defines what is displayed in the tab heading of the browser:
+- In the RMC Software Documentation project, front matter is used to define the title of each `.mdx` page. This title defines what is displayed in the tab heading
+  of the browser:
 
-````mdx
+```mdx
 ---
 title: Schmertmann
 ---
 
-- Appendix `.mdx` files should
+---
+title: Appendix A - Acronyms
+---
+```
 
 - Expanded front matter is used in `00-document-info.mdx` pages and is called as a prop for the `<DocumentMetadata>` React component:
 
@@ -610,13 +655,13 @@ reportSubjectTerms: ["Internal erosion", "backward erosion piping", "Schmertmann
 responsiblePersonName: Tim O'Leary
 responsiblePersonNumber: 502-315-6599
 ---
-````
+```
 
-### Markdown Content
+## Markdown Content
 
 `.mdx` supports standard Markdown syntax out of the box.
 
-#### Headings
+### Headings
 
 Use `#` to `######` to create headings from level 1 to 6
 
@@ -629,15 +674,7 @@ Use `#` to `######` to create headings from level 1 to 6
 ###### H6
 ```
 
-#### Text Formatting
-
-- `**Bold text**` **Bold text**
-
-- `*Italic text*` _Italic text_
-
-- `~~Strikethrough~~` ~~Strikethrough~~
-
-- `**_Bold and italic_**` **_Bold and italic_**
+### Text Formatting
 
 - HTML tags can also be used to format text
 
@@ -653,11 +690,13 @@ Use `#` to `######` to create headings from level 1 to 6
 
   - `<sup>Superscript text</sup>` <sup>Superscript text</sup>
 
-#### Paragraphs and Line Breaks
+### Paragraphs and Line Breaks
 
 - Separate paragraphs with a blank line. To force a line break, end the line with <b>two spaces</b>.
 
-#### Lists
+- Line breaks can also be inserted by using `<br />`
+
+### Lists
 
 - Bullet list
 
@@ -676,7 +715,7 @@ Use `#` to `######` to create headings from level 1 to 6
   1. Sub-step
 ```
 
-#### Code Blocks
+### Code Blocks
 
 - Inline code: use backticks for inline code:
 
@@ -686,8 +725,9 @@ Use `#` to `######` to create headings from level 1 to 6
 
 - Fenced code block (with syntax highlighting)
 
-````mdx
-```js title="example.js"
+````
+```js
+title="example.js"
 function greet(name) {
   return `Hello, ${name}!`;
 }```
@@ -706,7 +746,7 @@ function Hello({ name="Name" }) {
 }```
 ````
 
-### JSX and Components
+## JSX and Components
 
 React components can be inserted anywhere in `.mdx` files. Components must be imported from the `src` folder into the `.mdx` file before they can be used.
 
@@ -718,15 +758,18 @@ import { MyComponent } from '@site/src/comopnents/MyComponent';
 
 React components available within the RMC Software Documentation project are outlined [here](#react-components)
 
-## React Components
+# React Components
 
-The following React components are available for use within the RMC Software Documentation project. Each component description provides an overview of the component functionality, props required for component use, and example code for component use within `.mdx` files.
+React components have been pre-built into the RMC Software Documentation project to aid in the creation of MDX files. The following list highlights the most common components
+that will be used for the average document. Each component description provides an overview of the component functaionality, props required for component use, and example code
+for component use within `.mdx` files.
 
-This list does not include components used to create and format hub, sub-hub, or index website pages.
+Existing React components should not be modified. If changes to a component are desired, or if additional React components would aid in the development of a document, contact
+a site administrator.
 
-### Bibliography
+## Bibliography
 
-<b><u>Overview and Functionality</u></b>
+### Overview and Functionality
 
 - The `Bibliography` component is a reusable React component that dynamically loads and displays a formatted bibliography list from a JSON file. It is intended for use in documentation pages where a properly structured and styled reference list is required.
 
@@ -742,21 +785,23 @@ This list does not include components used to create and format hub, sub-hub, or
     - `author`, `title`, `year`, `journal`, `booktitle`, `volume`, `pages`, `doi`, `url`, `institution`, `organization`, etc.
   - Outputs an ordered list (`<ol>`) of citations, each styled and linked (where applicable).
 
-<b><u>Props</u></b>
+### Props
 
 | Prop      | Type   | Required | Description                                                                         |
 | --------- | ------ | -------- | ----------------------------------------------------------------------------------- |
 | `bibFile` | String | ✅ Yes   | The relative path (from the public folder) to a JSON file containing citation data. |
 
-<b><u>Example Usage</u></b>
+### Example Usage
 
 ```jsx
 <Bibliography bibFile="/bibliographies/108_1_0_0-bib.json" />
 ```
 
-### Citation
+---
 
-<b><u>Overview and Functionality</u></b>
+## Citation
+
+### Overview and Functionality
 
 - The `Citation` component is used to display a citation reference within a document. It fetches citation data from a specified bibliography JSON file and assigns a unique citation number to each citation based on its position in the list.
 - Functionality is as follows:
@@ -767,22 +812,24 @@ This list does not include components used to create and format hub, sub-hub, or
   - Dispatches an event to notify other components (e.g., `CitationFootnote`) when citations are updated.
   - Outputs the citation number as a clickable link, which points to the corresponding footnote.
 
-<b><u>Props</u></b>
+### Props
 
 | Prop          | Type   | Required | Description                                                                                 |
 | ------------- | ------ | -------- | ------------------------------------------------------------------------------------------- |
 | `citationKey` | String | ✅ Yes   | The unique key for the citation, which corresponds to the citation in the JSON file.        |
 | `bibFile`     | String | ✅ Yes   | The relative path (from the public folder) to a JSON file containing the bibliography data. |
 
-<b><u>Example Usage</u></b>
+### Example Usage
 
 ```jsx
 <Citation citationKey="Schmertmann2000" bibFile="/bibliographies/108_1_0_0-bib.json" />
 ```
 
-### CitationFootnote
+---
 
-<b><u>Overview and Functionality</u></b>
+## CitationFootnote
+
+### Overview and Functionality
 
 - The `CitationFootnote` component is responsible for rendering the full citation details for all used citations inside a single `.mdx` document. It scans the `.mdx` file, gathers all instances of the `<Citation>` component, and provides a list of citations at the bottom of the document.
 - Functionality is as follows:
@@ -791,19 +838,21 @@ This list does not include components used to create and format hub, sub-hub, or
   - Formats citations using IEEE format.
   - Each citation is rendered with a clickable link to the corresponding footnote.
 
-<b><u>Props</u></b>
+### Props
 
 This component does not accept any props.
 
-<b><u>Example Usage</u></b>
+### Example Usage
 
 ```jsx
 <CitationFootnote />
 ```
 
-### DocumentMetadata
+---
 
-<b><u>Overview and Functionality</u></b>
+## DocumentMetadata
+
+### Overview and Functionality
 
 - The `DocumentMetadata` component displays metadata about a report in a table format.
 - Functionality is as follows:
@@ -811,13 +860,13 @@ This component does not accept any props.
   - Supports both string and array formats for certain fields (authors, subject terms).
   - The table renders the metadata with headers and corresponding values for each field.
 
-<b><u>Props</u></b>
+### Props
 
 | Prop       | Type   | Required | Description                                                                                                                                                                                                                                          |
 | ---------- | ------ | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `metadata` | Object | ✅ Yes   | The metadata object containing the report's details. It should include `reportDate`, `reportType`, `reportTitle`, `reportSubTitle`, `reportAuthors`, `reportAbstract`, `reportSubjectTerms`, `responsiblePersonName`, and `responsiblePersonNumber`. |
 
-<b><u>Example Usage</u></b>
+### Example Usage
 
 ```jsx
 const metadata = {
@@ -842,9 +891,11 @@ export default function ReportPage() {
 }
 ```
 
-### Equation
+---
 
-<b><u>Overview and Functionality</u></b>
+## Equation
+
+### Overview and Functionality
 
 - The `Equation` component is used to display mathematical equations within a document. It can render equations either inline or as block equations, using the KaTeX library for rendering LaTeX math.
 - Functionality is as follows:
@@ -852,7 +903,7 @@ export default function ReportPage() {
   - If the equation number is found, it renders the equation with the appropriate tag.
   - Supports both inline and block rendering via the `inline` prop. By default, `inline` is `false` and the equation will be block rendered.
 
-<b><u>Props</u></b>
+### Props
 
 | Prop          | Type    | Required | Description                                                                                             |
 | ------------- | ------- | -------- | ------------------------------------------------------------------------------------------------------- |
@@ -861,7 +912,7 @@ export default function ReportPage() {
 | `equation`    | String  | ✅ Yes   | The LaTeX string representing the equation to be rendered.                                              |
 | `inline`      | Boolean | ❌ No    | If `true`, renders the equation inline; otherwise, renders it as a block equation. Defaults to `false`. |
 
-<b><u>Example Usage</u></b>
+### Example Usage
 
 ```jsx
 <Equation parentDocId="108_1_0_0" equationKey="fs-pipe-progression" equation="FS = \left(\frac{C_D C_L C_S C_K C_γ C_Z C_α i_{\textit{pmt}}}{C_R i_f}\right)" />
@@ -869,23 +920,25 @@ export default function ReportPage() {
 
 - If the equation is inline, an additional `inline={true}` prop is added
 
-### EquationNoRef
+---
 
-<b><u>Overview and Functionality</u></b>
+## EquationNoRef
+
+### Overview and Functionality
 
 - The `EquationNoRef` component is used to display mathematical equations that do not require an equation number or equation reference within a document. It can render equations either inline or as block equations, using the KaTeX library for rendering LaTeX math.
 - Functionality is as follows:
   - Takes an equation provided by the user and renders it.
   - Supports both inline and block rendering via the `inline` prop. By default, `inline` is `false` and the equation will be block rendered.
 
-<b><u>Props</u></b>
+### Props
 
 | Prop       | Type    | Required | Description                                                                                             |
 | ---------- | ------- | -------- | ------------------------------------------------------------------------------------------------------- |
 | `equation` | String  | ✅ Yes   | The LaTeX string representing the equation to be rendered.                                              |
 | `inline`   | Boolean | ❌ No    | If `true`, renders the equation inline; otherwise, renders it as a block equation. Defaults to `false`. |
 
-<b><u>Example Usage</u></b>
+### Example Usage
 
 ```jsx
 <EquationNoRef equation="FS = \left(\frac{D}{r}\right)" inline={true}/>
@@ -893,9 +946,11 @@ export default function ReportPage() {
 
 - If the equation is a block equation, `inline={true}` can be removed
 
-### EquationReference
+---
 
-<b><u>Overview and Functionality</u></b>
+## EquationReference
+
+### Overview and Functionality
 
 - The `EquationReference` component is used to display a reference to a specific equation within a document. It dynamically fetches the equation number from a JSON file based on the `parentDocId` and `equationKey`, which corresponds to the counter for the equation.
 - Functionality is as follows:
@@ -903,22 +958,24 @@ export default function ReportPage() {
   - Displays the equation number in a formatted reference, such as "Equation 1", once the number is successfully loaded.
   - Displays a "Loading..." message while the equation number is being fetched.
 
-<b><u>Props</u></b>
+### Props
 
 | Prop          | Type   | Required | Description                                                                                      |
 | ------------- | ------ | -------- | ------------------------------------------------------------------------------------------------ |
 | `parentDocId` | String | ✅ Yes   | The ID of the parent document, used to locate the corresponding JSON file for equation counters. |
 | `equationKey` | String | ✅ Yes   | A unique key that identifies the specific equation within the parent document.                   |
 
-<b><u>Example Usage</u></b>
+### Example Usage
 
 ```jsx
 <EquationReference parentDocId="108_1_0_0" equationKey="fs-pipe-progression" />
 ```
 
-### Figure
+---
 
-<b><u>Overview and Functionality</u></b>
+## Figure
+
+### Overview and Functionality
 
 - The `Figure` component is used to display an image with a caption, where the caption includes the figure number. The figure number is dynamically fetched from a JSON file based on the `parentDocId` and `figKey`.
 - Functionality is as follows:
@@ -927,7 +984,7 @@ export default function ReportPage() {
   - Displays the caption, including the dynamically retrieved figure number.
   - Displays a "Loading..." message while the figure number is being fetched.
 
-<b><u>Props</u></b>
+### Props
 
 | Prop          | Type   | Required | Description                                                                                    |
 | ------------- | ------ | -------- | ---------------------------------------------------------------------------------------------- |
@@ -937,7 +994,7 @@ export default function ReportPage() {
 | `alt`         | String | ✅ Yes   | The alt text to be used for the image, providing a description for accessibility.              |
 | `caption`     | String | ✅ Yes   | The caption that will be displayed beneath the figure, which includes the figure number.       |
 
-<b><u>Example Usage</u></b>
+### Example Usage
 
 ```jsx
 <Figure
@@ -950,9 +1007,37 @@ export default function ReportPage() {
 ></Figure>
 ```
 
-### FigureReference
+---
 
-<b><u>Overview and Functionality</u></b>
+## FigureInline
+
+### Overview and Functionality
+
+- The `FigureInline` component is used to display an inline image (typically within a paragraph of text) without a caption or dynamic figure number.
+- Functionality is as follows:
+  - Receives the relative `src` path to the image as a prop.
+  - Automatically prepends the `/RMC-Software-Documentation/` base path to the image source.
+  - Applies a specific CSS class (`figure-inline`) to style the image for inline presentation.
+
+### Props
+
+| Prop  | Type   | Required | Description                                                                 |
+| ----- | ------ | -------- | --------------------------------------------------------------------------- |
+| `src` | String | ✅ Yes   | The relative path to the image, appended to `/RMC-Software-Documentation/`. |
+
+### Example Usage
+
+```jsx
+<FigureInline src="figures/toolbox-technical-manuals/breach/figure12.png" />
+```
+
+⚠️ Note: This component does not handle captions, alt text, or figure numbering. For full-figure display with captions and numbering, use the Figure component instead.
+
+---
+
+## FigureReference
+
+### Overview and Functionality
 
 - The `FigureReference` component is used to display a reference to a figure number within the document. The figure number is dynamically fetched from a JSON file based on the `parentDocId` and `figKey`.
 - Functionality is as follows:
@@ -960,29 +1045,31 @@ export default function ReportPage() {
   - Displays the figure number for the referenced figure.
   - Displays a "Loading..." message while the figure number is being fetched.
 
-<b><u>Props</u></b>
+### Props
 
 | Prop          | Type   | Required | Description                                                                                    |
 | ------------- | ------ | -------- | ---------------------------------------------------------------------------------------------- |
 | `parentDocId` | String | ✅ Yes   | The ID of the parent document, used to locate the corresponding JSON file for figure counters. |
 | `figKey`      | String | ✅ Yes   | A unique key that identifies the specific figure within the parent document.                   |
 
-<b><u>Example Usage</u></b>
+### Example Usage
 
 ```jsx
 <FigReference parentDocId="108_1_0_0" figKey="average-horizontal-gradient"></FigReference>
 ```
 
-### NavContainer
+---
 
-<b><u>Overview and Functionality</u></b>
+## NavContainer
+
+### Overview and Functionality
 
 - The `NavContainer` component is used to display a navigation container that includes a link and a version selector for a document.
 - Functionality is as follows:
   - Displays a navigation link using the `NavLink` component.
   - Displays a version selector using the `VersionSelector` component.
 
-<b><u>Props</u></b>
+### Props
 
 | Prop        | Type   | Required | Description                                                                                      |
 | ----------- | ------ | -------- | ------------------------------------------------------------------------------------------------ |
@@ -990,7 +1077,7 @@ export default function ReportPage() {
 | `linkTitle` | String | ✅ Yes   | The title text for the navigation link.                                                          |
 | `document`  | Object | ✅ Yes   | The document object containing versioning information passed to the `VersionSelector` component. |
 
-<b><u>Example Usage</u></b>
+### Example Usage
 
 ```jsx
 <NavContainer
@@ -1000,23 +1087,25 @@ export default function ReportPage() {
 ></NavContainer>
 ```
 
-### NavLink
+---
 
-<b><u>Overview and Functionality</u></b>
+## NavLink
+
+### Overview and Functionality
 
 - The `NavLink` component is used to display a clickable navigation link with a leftward arrow (←) and a link title.
 - Functionality is as follows:
   - Uses the `Link` component from Docusaurus to provide navigation to the specified URL.
   - Displays a leftward arrow (`←`) followed by the provided `linkTitle`.
 
-<b><u>Props</u></b>
+### Props
 
 | Prop        | Type   | Required | Description                              |
 | ----------- | ------ | -------- | ---------------------------------------- |
 | `link`      | String | ✅ Yes   | The URL or path for the navigation link. |
 | `linkTitle` | String | ✅ Yes   | The title text for the navigation link.  |
 
-<b><u>Example Usage</u></b>
+### Example Usage
 
 - The `NavLink` component will generally be called from within the `NavContainer` component, with props to `NavLink` passed through `NavContainer`:
 
@@ -1034,15 +1123,17 @@ export default function ReportPage() {
 <NavLink link="/toolboxes/internal-erosion-suite" linkTitle="Internal Erosion Suite" />
 ```
 
-### TableAcronyms
+---
 
-<b><u>Overview and Functionality</u></b>
+## TableAcronyms
+
+### Overview and Functionality
 
 - `TableAcronyms` is used to display a table of report acronyms that does **not** require a caption,
 - It dynamically loads and references the table number based on a `tableKey`, although the number is not displayed in the table.
 - Useful for lists like acronyms, glossaries, or any supporting information tables without descriptive captions.
 
-<b><u>Props</u></b>
+### Props
 
 | Prop          | Type   | Default | Required | Description                                                                                 |
 | ------------- | ------ | ------- | -------- | ------------------------------------------------------------------------------------------- |
@@ -1051,7 +1142,7 @@ export default function ReportPage() {
 | `headers`     | Array  | `[]`    | ✅ Yes   | List of column headers.                                                                     |
 | `columns`     | Array  | `[]`    | ✅ Yes   | Each item is a column array of data for the table. All columns must be equal in length.     |
 
-<b><u>Example Usage</u></b>
+### Example Usage
 
 ```jsx
 <TableAcronyms parentDocId="107_1_0_0" tableKey="acronyms"
@@ -1083,9 +1174,11 @@ caption="Acronyms"
 />
 ```
 
-### TableHorizontal
+---
 
-<b><u>Overview and Functionality</u></b>
+## TableHorizontal
+
+### Overview and Functionality
 
 - The `TableHorizontal` component is used to display a horizontal table with headers and rows fetched from a JSON file. The headers will be contained within the first column of the table (i.e., the left-most column).
 - Functionality is as follows:
@@ -1094,7 +1187,7 @@ caption="Acronyms"
   - Each table is uniquely identified by the `tableKey`.
   - The `alt` and `caption` props are used to describe the table for accessibility and display purposes.
 
-<b><u>Props</u></b>
+### Props
 
 | Prop          | Type   | Required | Description                                                                                           |
 | ------------- | ------ | -------- | ----------------------------------------------------------------------------------------------------- |
@@ -1105,7 +1198,7 @@ caption="Acronyms"
 | `alt`         | String | ✅ Yes   | A description for the table (used for accessibility).                                                 |
 | `caption`     | String | ✅ Yes   | A caption for the table, typically used to describe the table's content.                              |
 
-<b><u>Example Usage</u></b>
+### Example Usage
 
 ```jsx
 <TableHorizontal
@@ -1121,35 +1214,39 @@ caption="Probability of continuing erosion for joint/defect opening size."
 />
 ```
 
-### TableReference
+---
 
-<b><u>Overview and Functionality</u></b>
+## TableReference
+
+### Overview and Functionality
 
 - The `TableReference` component is used to display a reference to a table by its unique `tableKey`.
 - It loads the table information dynamically from a JSON file located in the `/counters` directory, based on the `tableKey`.
 - It displays the table number for referencing within the document.
 
-<b><u>Props</u></b>
+### Props
 
 | Prop          | Type   | Required | Description                                                                 |
 | ------------- | ------ | -------- | --------------------------------------------------------------------------- |
 | `parentDocId` | String | ✅ Yes   | The document ID that corresponds to the JSON file used to fetch table data. |
 | `tableKey`    | String | ✅ Yes   | The unique key for the table within the JSON file.                          |
 
-<b><u>Example Usage</u></b>
+### Example Usage
 
 ```jsx
 <TableReference parentDocId="107_1_0_0" tableKey="constricted-exit-probabilities" />
 ```
 
-### TableVersionHistory
+---
 
-<b><u>Overview and Functionality</u></b>
+## TableVersionHistory
+
+### Overview and Functionality
 
 - The `TableVersionHistory` component is used to display a version history table, typically in `00-version-history.mdx` files.
 - It takes several props containing version-related data and dynamically creates a table with version details, including version number, date, description, and the individuals involved in modification, review, and approval.
 
-<b><u>Props</u></b>
+### Props
 
 | Prop           | Type  | Default | Required | Description                                                                 |
 | -------------- | ----- | ------- | -------- | --------------------------------------------------------------------------- |
@@ -1160,7 +1257,7 @@ caption="Probability of continuing erosion for joint/defect opening size."
 | `reviewedBy`   | Array | `[]`    | ✅ Yes   | A list of individuals who reviewed each version.                            |
 | `approvedBy`   | Array | `[]`    | ✅ Yes   | A list of individuals who approved each version.                            |
 
-<b><u>Example Usage</u></b>
+### Example Usage
 
 ```jsx
 <TableVersionHistory
@@ -1172,15 +1269,17 @@ caption="Probability of continuing erosion for joint/defect opening size."
     approvedBy={["Jim Doe", "Jim Smith"]}/>
 ```
 
-### TableVertical
+---
 
-<b><u>Overview and Functionality</u></b>
+## TableVertical
+
+### Overview and Functionality
 
 - The `TableVertical` component displays a vertical table with customizable headers and columns. The headers will be contained within the first row of the table (i.e., the top-most row).
 - It dynamically fetches table information based on `parentDocId` and `tableKey` from a JSON file.
 - The table is rendered with a caption, and headers are displayed in the top row, with data rows populated from the provided columns.
 
-<b><u>Props</u></b>
+### Props
 
 | Prop          | Type   | Default | Required | Description                                                                              |
 | ------------- | ------ | ------- | -------- | ---------------------------------------------------------------------------------------- |
@@ -1191,7 +1290,7 @@ caption="Probability of continuing erosion for joint/defect opening size."
 | `alt`         | String | N/A     | ✅ Yes   | Alt text for the table (optional for accessibility).                                     |
 | `caption`     | String | N/A     | ✅ Yes   | The caption text for the table, typically includes a description of the table's content. |
 
-<b><u>Example Usage</u></b>
+### Example Usage
 
 ```jsx
 <TableVertical
@@ -1211,22 +1310,29 @@ alt="Schmertmann reference test values"
 caption="Schmertmann reference test values"/>
 ```
 
-### VersionSelector
+---
 
-<b><u>Overview and Functionality</u></b>
+## TableVerticalLeftAlign
+
+This component has the same functionality, props, and example usage as TableVertical. CSS is used on the back end for this component to align all table items to
+the left.
+
+## VersionSelector
+
+### Overview and Functionality
 
 - `VersionSelector` provides a dropdown menu to switch between different versions of a document.
 - It reads available versions from a shared `versionList.json` file created by `scripts/versions.js` and updates the URL based on the selected version.
 - On change, it replaces the version number in the current URL and reloads the page.
 - It also stores the selected version in `localStorage` for consistent navigation between pages.
 
-<b><u>Props</u></b>
+### Props
 
 | Prop       | Type   | Required | Description                                                                   |
 | ---------- | ------ | -------- | ----------------------------------------------------------------------------- |
 | `document` | String | ✅ Yes   | The document ID used to retrieve version information from `versionList.json`. |
 
-<b><u>Example Usage</u></b>
+### Example Usage
 
 - The `VersionSelector` component will generally be called from within the `NavContainer` component, with props to `VersionSelector` passed through `NavContainer`:
 
@@ -1244,13 +1350,15 @@ caption="Schmertmann reference test values"/>
 <VersionSelector document="toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression" />
 ```
 
-## Search
+---
+
+# Search
 
 This project uses **Algolia**, a powerful hosted search engine that delivers instant, full-text search results as you type. It's designed for speed, scalability, and relevance.
 
 When integrated with **Docusaurus**, Algolia provides a seamless search experience through its **DocSearch** service. DocSearch crawls and indexes your Docusaurus site, allowing users to quickly find relevant content across all pages and documentation versions.
 
-### How It Works:
+## How It Works:
 
 - Algolia’s crawler automatically scans your site at regular intervals.
 - Indexed content is stored in Algolia’s search backend.
