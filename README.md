@@ -35,24 +35,21 @@ This guide will help you set up and use Docusaurus, a modern static website gene
   - [Bibliography](#bibliography)
   - [Citation](#citation)
   - [CitationFootnote](#citationfootnote)
-  - [ContentBox](#contentbox)
-  - [ContentBoxLarge](#contentboxlarge)
-  - [ContentBubble](#contentbubble)
-  - [ContentBubbleLarge](#contentbubblelarge)
-  - [ContentCard](#contentcard)
-  - [Counters](#counters)
   - [DocumentMetadata](#documentmetadata)
   - [Equation](#equation)
   - [EquationNoRef](#equationnoref)
   - [EquationReference](#equationreference)
   - [Figure](#figure)
+  - [FigureInline] (#figureinline)
   - [FigureReference](#figurereference)
-  - [NavAndPrint](#navandprint)
-  - [PrintToPDFButton](#printtopdfbutton)
+  - [NavContainer] (#navcontainer)
+  - [NavLink] (#navlink)
+  - [TableAcronyms] (#tableacronyms)
   - [TableHorizontal](#tablehorizontal)
   - [TableReference](#tablereference)
   - [TableVersionHistory](#tableversionhistory)
   - [TableVertical](#tablevertical)
+  - [TableVerticalLeftAlign] (#tableverticalleftalign)
   - [VersionSelector](#versionselector)
 - [Search](#search)
 
@@ -565,10 +562,9 @@ The output JSON files will be saved in the `static/versions` folder.
 
   - `versionList.json`: Contains lists of all versions of each report in the `docs` folder
 
-# `sidebars.js` Navigation Structure for Users Guides and Applications Guides
+# `sidebars.js`
 
-This module exports the navigation structure used for multiple user and application guides in a documentation system. It organizes documents into categories and
-subcategories with collapsible navigation items, suitable for static site generators like Docusaurus.
+This file exports the navigation structure used for the documents within the project. It organizes documents into categories and subcategories with collapsible navigation items.
 
 ---
 
@@ -803,26 +799,28 @@ a site administrator.
 
 ### Overview and Functionality
 
-- The `Citation` component is used to display a citation reference within a document. It fetches citation data from a specified bibliography JSON file and assigns a unique citation number to each citation based on its position in the list.
-- Functionality is as follows:
-  - Fetches the bibliography JSON file from the path provided via the `bibFile` prop.
-  - Sorts the citations alphabetically by the first author's name.
-  - Finds the citation matching the `citationKey` and assigns it a citation number.
-  - Stores the citation per document to avoid duplication and ensures the citation number is consistent across the document.
-  - Dispatches an event to notify other components (e.g., `CitationFootnote`) when citations are updated.
-  - Outputs the citation number as a clickable link, which points to the corresponding footnote.
+- The `Citation` component displays a reference to a source within a document. It fetches citation data from a JSON bibliography file located in the same path as the current document (derived from the URL).
+- Functionality:
+  - Automatically determines the bibliography file path based on the current page URL.
+  - Loads and sorts the citation entries using a custom algorithm:
+    - Primarily by the first initial of the first author's name (if present).
+    - Falls back to sorting by title if no author is listed.
+  - Finds the citation matching the provided `citationKey` and assigns it a number based on its sorted position.
+  - Ensures each citation is uniquely numbered per document and avoids duplication.
+  - Stores citations per-document using an internal cache.
+  - Dispatches a `citationsUpdated` event to notify other components (e.g., footnotes).
+  - Renders the citation as a numbered, clickable link pointing to its corresponding footnote.
 
 ### Props
 
-| Prop          | Type   | Required | Description                                                                                 |
-| ------------- | ------ | -------- | ------------------------------------------------------------------------------------------- |
-| `citationKey` | String | ✅ Yes   | The unique key for the citation, which corresponds to the citation in the JSON file.        |
-| `bibFile`     | String | ✅ Yes   | The relative path (from the public folder) to a JSON file containing the bibliography data. |
+| Prop          | Type   | Required | Description                                                                     |
+| ------------- | ------ | -------- | ------------------------------------------------------------------------------- |
+| `citationKey` | String | ✅ Yes   | The unique key corresponding to a citation entry in the bibliography JSON file. |
 
 ### Example Usage
 
 ```jsx
-<Citation citationKey="Schmertmann2000" bibFile="/bibliographies/108_1_0_0-bib.json" />
+<Citation citationKey="Schmertmann2000" />
 ```
 
 ---
@@ -831,12 +829,18 @@ a site administrator.
 
 ### Overview and Functionality
 
-- The `CitationFootnote` component is responsible for rendering the full citation details for all used citations inside a single `.mdx` document. It scans the `.mdx` file, gathers all instances of the `<Citation>` component, and provides a list of citations at the bottom of the document.
-- Functionality is as follows:
-  - Fetches the list of citations used in the current document by calling `getUsedCitations` based on the document's pathname.
-  - Renders each citation in a numbered list format.
-  - Formats citations using IEEE format.
-  - Each citation is rendered with a clickable link to the corresponding footnote.
+- The `CitationFootnote` component renders the full details of all citations used within a single `.mdx` document.
+- It listens for and responds to updates from `<Citation />` components and dynamically re-renders the footnotes as needed.
+- Functionality:
+  - Detects the current document path using the router location.
+  - Retrieves the list of used citations from the internal citation cache (`getUsedCitations(pathname)`).
+  - Automatically updates whenever new citations are added by listening for the `citationsUpdated` event.
+  - Displays each citation in a numbered list, matching the order and numbers shown inline in the document.
+  - Formats each citation entry in a style similar to IEEE:
+    - Handles 1 to many authors, using `"et al."` when appropriate.
+    - Italicizes or quotes titles depending on type (e.g., journal, manual).
+    - Includes optional fields like volume, edition, pages, publisher, DOI, and URL.
+    - Renders each entry with a unique `id` for deep linking (e.g., `#footnote-Schmertmann2000`).
 
 ### Props
 
@@ -897,25 +901,33 @@ export default function ReportPage() {
 
 ### Overview and Functionality
 
-- The `Equation` component is used to display mathematical equations within a document. It can render equations either inline or as block equations, using the KaTeX library for rendering LaTeX math.
-- Functionality is as follows:
-  - Fetches the equation number from a JSON file containing counters based on the `parentDocId` and `equationKey`.
-  - If the equation number is found, it renders the equation with the appropriate tag.
-  - Supports both inline and block rendering via the `inline` prop. By default, `inline` is `false` and the equation will be block rendered.
+- The `Equation` component renders LaTeX mathematical equations using the KaTeX library.
+- It supports both block and inline rendering, and automatically tags block equations with a unique number from a JSON counter file.
+- The JSON file is selected based on the current `reportId`, which is retrieved from React context (`useReportId`).
+
+### Functionality Summary
+
+- Loads the equation number using `reportId` and `equationKey` from `/counters/{reportId}.json`.
+- If found, appends a `\tag{n}` to the block equation where `n` is the equation number.
+- Inline equations do not receive equation numbers.
 
 ### Props
 
-| Prop          | Type    | Required | Description                                                                                             |
-| ------------- | ------- | -------- | ------------------------------------------------------------------------------------------------------- |
-| `parentDocId` | String  | ✅ Yes   | The ID of the parent document, used to locate the corresponding JSON file for equation counters.        |
-| `equationKey` | String  | ✅ Yes   | A unique key that identifies the specific equation within the parent document.                          |
-| `equation`    | String  | ✅ Yes   | The LaTeX string representing the equation to be rendered.                                              |
-| `inline`      | Boolean | ❌ No    | If `true`, renders the equation inline; otherwise, renders it as a block equation. Defaults to `false`. |
+| Prop          | Type    | Required | Description                                                                                          |
+| ------------- | ------- | -------- | ---------------------------------------------------------------------------------------------------- |
+| `equationKey` | String  | ✅ Yes   | Unique key for identifying the equation in the counter JSON.                                         |
+| `equation`    | String  | ✅ Yes   | A LaTeX-formatted string representing the equation.                                                  |
+| `inline`      | Boolean | ❌ No    | If `true`, renders the equation inline without a tag. Defaults to `false` (block equation with tag). |
+
+> ℹ️ The `reportId` is obtained internally from the React context and is not passed as a prop.
 
 ### Example Usage
 
 ```jsx
-<Equation parentDocId="108_1_0_0" equationKey="fs-pipe-progression" equation="FS = \left(\frac{C_D C_L C_S C_K C_γ C_Z C_α i_{\textit{pmt}}}{C_R i_f}\right)" />
+<Equation
+  equationKey="fs-pipe-progression"
+  equation="FS = \left(\frac{C_D C_L C_S C_K C_γ C_Z C_α i_{\textit{pmt}}}{C_R i_f}\right)"
+/>
 ```
 
 - If the equation is inline, an additional `inline={true}` prop is added
@@ -926,25 +938,29 @@ export default function ReportPage() {
 
 ### Overview and Functionality
 
-- The `EquationNoRef` component is used to display mathematical equations that do not require an equation number or equation reference within a document. It can render equations either inline or as block equations, using the KaTeX library for rendering LaTeX math.
-- Functionality is as follows:
-  - Takes an equation provided by the user and renders it.
-  - Supports both inline and block rendering via the `inline` prop. By default, `inline` is `false` and the equation will be block rendered.
+- The `EquationNoRef` component renders LaTeX mathematical equations **without equation numbers**.
+- It uses the KaTeX library to display the math content.
+- Useful for displaying equations that do not need to be referenced or numbered in the document.
+- Rendering mode is controlled via the `inline` prop:
+  - `inline = true` → renders within a line of text.
+  - `inline = false` (default) → renders as a centered block.
 
 ### Props
 
-| Prop       | Type    | Required | Description                                                                                             |
-| ---------- | ------- | -------- | ------------------------------------------------------------------------------------------------------- |
-| `equation` | String  | ✅ Yes   | The LaTeX string representing the equation to be rendered.                                              |
-| `inline`   | Boolean | ❌ No    | If `true`, renders the equation inline; otherwise, renders it as a block equation. Defaults to `false`. |
+| Prop       | Type    | Required | Description                                                                                            |
+| ---------- | ------- | -------- | ------------------------------------------------------------------------------------------------------ |
+| `equation` | String  | ✅ Yes   | The LaTeX string representing the equation to be rendered.                                             |
+| `inline`   | Boolean | ❌ No    | If `true`, renders the equation inline; otherwise, renders it as a block equation. Defaults to `true`. |
 
 ### Example Usage
 
 ```jsx
-<EquationNoRef equation="FS = \left(\frac{D}{r}\right)" inline={true}/>
-```
+// Inline equation
+<EquationNoRef equation="FS = \left(\frac{D}{r}\right)" inline={true} />
 
-- If the equation is a block equation, `inline={true}` can be removed
+// Block equation
+<EquationNoRef equation="\gamma = \frac{W}{V}" />
+```
 
 ---
 
@@ -952,23 +968,30 @@ export default function ReportPage() {
 
 ### Overview and Functionality
 
-- The `EquationReference` component is used to display a reference to a specific equation within a document. It dynamically fetches the equation number from a JSON file based on the `parentDocId` and `equationKey`, which corresponds to the counter for the equation.
-- Functionality is as follows:
-  - Fetches the equation number from a JSON file containing counters.
-  - Displays the equation number in a formatted reference, such as "Equation 1", once the number is successfully loaded.
-  - Displays a "Loading..." message while the equation number is being fetched.
+- The `EquationReference` component renders a reference to a numbered equation, such as **"Equation 3"**.
+- It dynamically fetches the equation number from a JSON file containing counters, using the `equationKey` and the document-wide `reportId` (retrieved from React context).
+- This component is used to refer to previously rendered equations elsewhere in the document.
+
+### Functionality Summary
+
+- Fetches the equation number from:  
+  `/RMC-Software-Documentation/counters/[reportId].json`
+- Matches the provided `equationKey` to its corresponding equation number in the file.
+- Displays "Equation X" (e.g., "Equation 5") when resolved.
+- While loading or if unavailable, displays a fallback `"Loading..."` message.
 
 ### Props
 
-| Prop          | Type   | Required | Description                                                                                      |
-| ------------- | ------ | -------- | ------------------------------------------------------------------------------------------------ |
-| `parentDocId` | String | ✅ Yes   | The ID of the parent document, used to locate the corresponding JSON file for equation counters. |
-| `equationKey` | String | ✅ Yes   | A unique key that identifies the specific equation within the parent document.                   |
+| Prop          | Type   | Required | Description                                                      |
+| ------------- | ------ | -------- | ---------------------------------------------------------------- |
+| `equationKey` | String | ✅ Yes   | A unique key that identifies the specific equation to reference. |
+
+> ⚠️ Note: `reportId` is not passed as a prop; it is retrieved internally via `useReportId()` from React context.
 
 ### Example Usage
 
 ```jsx
-<EquationReference parentDocId="108_1_0_0" equationKey="fs-pipe-progression" />
+<EquationReference equationKey="fs-pipe-progression" />
 ```
 
 ---
@@ -977,34 +1000,37 @@ export default function ReportPage() {
 
 ### Overview and Functionality
 
-- The `Figure` component is used to display an image with a caption, where the caption includes the figure number. The figure number is dynamically fetched from a JSON file based on the `parentDocId` and `figKey`.
-- Functionality is as follows:
-  - Fetches the figure number from a JSON file containing counters for figures.
-  - Displays the image referenced by the `src` prop and provides an `alt` text for accessibility.
-  - Displays the caption, including the dynamically retrieved figure number.
-  - Displays a "Loading..." message while the figure number is being fetched.
+- The `Figure` component renders an image along with a dynamically numbered caption, such as **"Figure 3: Caption text."**
+- It retrieves the figure number from a counters JSON file using the `figKey` and the document-wide `reportId` (fetched via React context).
+- This component ensures all figures are automatically numbered and consistent throughout the document.
+
+### Functionality Summary
+
+- Loads figure number from:  
+  `/RMC-Software-Documentation/counters/[reportId].json`
+- Displays the figure image, alt text for accessibility, and a caption with the resolved figure number.
+- Shows a fallback `"Loading..."` message while data is being fetched or unavailable.
 
 ### Props
 
-| Prop          | Type   | Required | Description                                                                                    |
-| ------------- | ------ | -------- | ---------------------------------------------------------------------------------------------- |
-| `parentDocId` | String | ✅ Yes   | The ID of the parent document, used to locate the corresponding JSON file for figure counters. |
-| `figKey`      | String | ✅ Yes   | A unique key that identifies the specific figure within the parent document.                   |
-| `src`         | String | ✅ Yes   | The relative path (from the root of the project) to the image source file for the figure.      |
-| `alt`         | String | ✅ Yes   | The alt text to be used for the image, providing a description for accessibility.              |
-| `caption`     | String | ✅ Yes   | The caption that will be displayed beneath the figure, which includes the figure number.       |
+| Prop      | Type   | Required | Description                                                                      |
+| --------- | ------ | -------- | -------------------------------------------------------------------------------- |
+| `figKey`  | String | ✅ Yes   | Unique key identifying the specific figure in the JSON counter file.             |
+| `src`     | String | ✅ Yes   | Relative path to the image (excluding base path `/RMC-Software-Documentation/`). |
+| `alt`     | String | ✅ Yes   | Text description of the image for accessibility.                                 |
+| `caption` | String | ✅ Yes   | Text description displayed below the figure, after the figure number.            |
+
+> ⚠️ `reportId` is obtained internally via `useReportId()` from context and should not be passed as a prop.
 
 ### Example Usage
 
 ```jsx
 <Figure
-  parentDocId="108_1_0_0"
-  docId="04-background.mdx"
   figKey="average-horizontal-gradient"
   src="figures/toolbox-technical-manuals/backward-erosion-piping-progression/figure8.png"
   alt="Geometry for average horizontal gradient."
   caption="Geometry for average horizontal gradient."
-></Figure>
+/>
 ```
 
 ---
@@ -1013,25 +1039,31 @@ export default function ReportPage() {
 
 ### Overview and Functionality
 
-- The `FigureInline` component is used to display an inline image (typically within a paragraph of text) without a caption or dynamic figure number.
-- Functionality is as follows:
-  - Receives the relative `src` path to the image as a prop.
-  - Automatically prepends the `/RMC-Software-Documentation/` base path to the image source.
-  - Applies a specific CSS class (`figure-inline`) to style the image for inline presentation.
+- The `FigureInline` component is used to insert small images directly into the flow of text—commonly icons, formulas, or visual callouts.
+- Unlike the `Figure` component, it **does not include a caption or dynamic figure number**.
+- It is styled using a dedicated CSS class (`figure-inline`) for inline display.
+
+### Functionality Summary
+
+- Prepends the fixed base path `/RMC-Software-Documentation/` to the provided `src`.
+- Renders a plain `<img>` tag styled for inline usage.
 
 ### Props
 
-| Prop  | Type   | Required | Description                                                                 |
-| ----- | ------ | -------- | --------------------------------------------------------------------------- |
-| `src` | String | ✅ Yes   | The relative path to the image, appended to `/RMC-Software-Documentation/`. |
+| Prop  | Type   | Required | Description                                                    |
+| ----- | ------ | -------- | -------------------------------------------------------------- |
+| `src` | String | ✅ Yes   | Relative image path (e.g., `figures/example/inline-icon.png`). |
+
+> ⚠️ This component does not support captions, alt text, or dynamic figure numbers.  
+> Use the `Figure` component for full-sized, captioned figures.
 
 ### Example Usage
 
 ```jsx
-<FigureInline src="figures/toolbox-technical-manuals/breach/figure12.png" />
+<p>
+  The breach width increases as shown in <FigureInline src="figures/toolbox-technical-manuals/breach/figure12.png" /> with progressive failure.
+</p>
 ```
-
-⚠️ Note: This component does not handle captions, alt text, or figure numbering. For full-figure display with captions and numbering, use the Figure component instead.
 
 ---
 
@@ -1039,23 +1071,30 @@ export default function ReportPage() {
 
 ### Overview and Functionality
 
-- The `FigureReference` component is used to display a reference to a figure number within the document. The figure number is dynamically fetched from a JSON file based on the `parentDocId` and `figKey`.
-- Functionality is as follows:
-  - Fetches the figure number from a JSON file containing counters for figures.
-  - Displays the figure number for the referenced figure.
-  - Displays a "Loading..." message while the figure number is being fetched.
+- The `FigureReference` component displays a dynamic reference to a figure number within the document, sich as "Figure 3".
+- It fetches the figure number from a JSON counters file, identified by the document's `parentDocId` (retrieved via context) and the provided `figKey`.
+- While loading the figure number, it shows a "Loading..." placeholder.
+
+### Functionality Summary
+
+- Fetches the figure number from:  
+  `/RMC-Software-Documentation/counters/[reportId].json`
+- Matches the provided `figureKey` to its corresponding equation number in the file.
+- Displays "Figure X" (e.g., "Figure 5") when resolved.
+- While loading or if unavailable, displays a fallback `"Loading..."` message.
 
 ### Props
 
-| Prop          | Type   | Required | Description                                                                                    |
-| ------------- | ------ | -------- | ---------------------------------------------------------------------------------------------- |
-| `parentDocId` | String | ✅ Yes   | The ID of the parent document, used to locate the corresponding JSON file for figure counters. |
-| `figKey`      | String | ✅ Yes   | A unique key that identifies the specific figure within the parent document.                   |
+| Prop     | Type   | Required | Description                                                                                      |
+| -------- | ------ | -------- | ------------------------------------------------------------------------------------------------ |
+| `figKey` | String | ✅ Yes   | Unique key identifying the specific figure within the parent document for which to fetch number. |
+
+> ⚠️ Note: `reportId` is not passed as a prop; it is retrieved internally via `useReportId()` from React context.
 
 ### Example Usage
 
 ```jsx
-<FigReference parentDocId="108_1_0_0" figKey="average-horizontal-gradient"></FigReference>
+<FigReference figKey="average-horizontal-gradient" />
 ```
 
 ---
@@ -1129,48 +1168,50 @@ export default function ReportPage() {
 
 ### Overview and Functionality
 
-- `TableAcronyms` is used to display a table of report acronyms that does **not** require a caption,
-- It dynamically loads and references the table number based on a `tableKey`, although the number is not displayed in the table.
-- Useful for lists like acronyms, glossaries, or any supporting information tables without descriptive captions.
+- The `TableAcronyms` component renders a simple vertical table designed to display lists like acronyms, glossaries, or other supporting reference information.
+- It displays headers and multiple columns of data in a clean, static table format.
+- This component does **not** handle captions, numbering, or dynamic references.
+
+### Functionality Summary
+
+- Displays a table with the specified column headers.
+- Renders data by columns, ensuring all columns have equal length.
+- Suitable for static reference tables without numbering or captions.
 
 ### Props
 
-| Prop          | Type   | Default | Required | Description                                                                                 |
-| ------------- | ------ | ------- | -------- | ------------------------------------------------------------------------------------------- |
-| `parentDocId` | String | N/A     | ✅ Yes   | Identifier for the document that helps determine which JSON counter file to load.           |
-| `tableKey`    | String | N/A     | ✅ Yes   | A unique key to locate the table number (not shown, but fetched for reference/consistency). |
-| `headers`     | Array  | `[]`    | ✅ Yes   | List of column headers.                                                                     |
-| `columns`     | Array  | `[]`    | ✅ Yes   | Each item is a column array of data for the table. All columns must be equal in length.     |
+| Prop      | Type  | Required | Description                                                                                                                        |
+| --------- | ----- | -------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `headers` | Array | ✅ Yes   | An array of strings representing the column headers.                                                                               |
+| `columns` | Array | ✅ Yes   | An array of columns, where each column is an array of strings representing the table’s cells. Each column must be of equal length. |
 
 ### Example Usage
 
 ```jsx
-<TableAcronyms parentDocId="107_1_0_0" tableKey="acronyms"
-headers={["Acronym", "Full Form"]}
-columns={[
-  [
-  "BSC", "CE", "CEF", "CPD", "EE", "FC", "FEMA", "fm", "HEC", "HW", "IWR",
-  "JOS", "NAVD88", "NE", "NEF", "NGVD29", "NRCS", "QC", "RMC", "SE", "UDF",
-  "UNSW", "U.S.", "USACE", "USBR", "USDA"
-], // Column 1
-  [
-  "Base Soil Category", "Continuing Erosion", "Continuing Erosion Filter",
-  "Computer Program Document", "Excessive Erosion", "Fines Content",
-  "Federal Emergency Management Agency", "Fine-to-Medium",
-  "Hydrologic Engineering Center", "Headwater",
-  "Institute for Water Resources", "Joint Opening Size",
-  "North American Vertical Datum of 1988", "No Erosion", "No Erosion Filter",
-  "National Geodetic Vertical Datum of 1929",
-  "Natural Resource Conservation Center", "Quality Control",
-  "Risk Management Center", "Some Erosion", "User-Defined Function",
-  "University of New South Wales", "United States",
-  "United States Army Corps of Engineers",
-  "United States Bureau of Reclamation",
-  "United States Department of Agriculture"
-] // Column 2
-]}
-alt="Acronyms"
-caption="Acronyms"
+<TableAcronyms
+  headers={["Acronym", "Full Form"]}
+  columns={[
+    [
+      "BSC", "CE", "CEF", "CPD", "EE", "FC", "FEMA", "fm", "HEC", "HW", "IWR",
+      "JOS", "NAVD88", "NE", "NEF", "NGVD29", "NRCS", "QC", "RMC", "SE", "UDF",
+      "UNSW", "U.S.", "USACE", "USBR", "USDA"
+    ],
+    [
+      "Base Soil Category", "Continuing Erosion", "Continuing Erosion Filter",
+      "Computer Program Document", "Excessive Erosion", "Fines Content",
+      "Federal Emergency Management Agency", "Fine-to-Medium",
+      "Hydrologic Engineering Center", "Headwater",
+      "Institute for Water Resources", "Joint Opening Size",
+      "North American Vertical Datum of 1988", "No Erosion", "No Erosion Filter",
+      "National Geodetic Vertical Datum of 1929",
+      "Natural Resource Conservation Center", "Quality Control",
+      "Risk Management Center", "Some Erosion", "User-Defined Function",
+      "University of New South Wales", "United States",
+      "United States Army Corps of Engineers",
+      "United States Bureau of Reclamation",
+      "United States Department of Agriculture"
+    ]
+  ]}
 />
 ```
 
@@ -1180,37 +1221,49 @@ caption="Acronyms"
 
 ### Overview and Functionality
 
-- The `TableHorizontal` component is used to display a horizontal table with headers and rows fetched from a JSON file. The headers will be contained within the first column of the table (i.e., the left-most column).
-- Functionality is as follows:
-  - Loads table data dynamically based on the `tableKey` from a JSON file located in the `/counters` directory.
-  - Displays a table with the provided headers and rows.
-  - Each table is uniquely identified by the `tableKey`.
-  - The `alt` and `caption` props are used to describe the table for accessibility and display purposes.
+- The `TableHorizontal` component displays a horizontal table where the **first column** contains row headers.
+- It dynamically fetches the table number from a JSON counters file located at `/RMC-Software-Documentation/counters/{reportId}.json`, where `reportId` is provided by React context.
+- The `tableKey` prop identifies the specific table in the JSON data to retrieve the table number.
+- The table caption includes the fetched table number alongside the provided caption text.
+- Each row consists of a header (from `headers`) followed by data cells (from `rows`).
+- The component supports rendering HTML content inside cells via `dangerouslySetInnerHTML`.
 
 ### Props
 
-| Prop          | Type   | Required | Description                                                                                           |
-| ------------- | ------ | -------- | ----------------------------------------------------------------------------------------------------- |
-| `parentDocId` | String | ✅ Yes   | The document ID that corresponds to the JSON file used to fetch table data.                           |
-| `tableKey`    | String | ✅ Yes   | The unique key for the table within the JSON file.                                                    |
-| `headers`     | Array  | ✅ Yes   | An array of strings representing the table headers.                                                   |
-| `rows`        | Array  | ✅ Yes   | A two-dimensional array containing the rows of data for the table. Each inner array represents a row. |
-| `alt`         | String | ✅ Yes   | A description for the table (used for accessibility).                                                 |
-| `caption`     | String | ✅ Yes   | A caption for the table, typically used to describe the table's content.                              |
+| Prop       | Type   | Required | Description                                                                                                  |
+| ---------- | ------ | -------- | ------------------------------------------------------------------------------------------------------------ |
+| `tableKey` | String | ✅ Yes   | Unique key used to look up the table’s metadata (including its number) in the JSON counters file.            |
+| `headers`  | Array  | ✅ Yes   | An array of strings containing the row headers; one header per table row. Can include HTML markup.           |
+| `rows`     | Array  | ✅ Yes   | An array of arrays, where each inner array contains the data cells corresponding to the matching header row. |
+| `alt`      | String | ✅ Yes   | Alternative text for the table, used for accessibility purposes.                                             |
+| `caption`  | String | ✅ Yes   | Caption text describing the table, shown alongside the dynamically loaded table number.                      |
+
+### Important Note on Data Shape
+
+- The number of elements in `headers` **must match** the number of inner arrays in `rows`.
+- Each `rows[i]` array corresponds to the data cells in the same row as `headers[i]`.
 
 ### Example Usage
 
 ```jsx
 <TableHorizontal
-parentDocId="107_1_0_0"
-tableKey="constricted-exit-probabilities"
-headers={["JOS / D<sub>95</sub>B", "P<sub>CE</sub>"]}
-rows={[
-  ["< 0.4", "0.5", "0.75", "1.0", "2.0", "≥ 3.0"], // Row 1
-  ["0", "0.0001", "0.001", "0.1", "0.5", "0.9"] // Row 2
-]}
-alt="Probability of continuing erosion for joint/defect opening size."
-caption="Probability of continuing erosion for joint/defect opening size."
+  tableKey="example-table-key"
+  headers={
+    [
+      ["Header 1"],
+      ["Header 2"],
+      ["Header 3"]
+    ]
+  }
+  rows={
+    [
+      ["Data 1-1", "Data 1-2", "Data 1-3"],
+      ["Data 2-1", "Data 2-2", "Data 2-3"],
+      ["Data 3-1", "Data 3-2", "Data 3-3"]
+    ]
+  }
+  alt="Example horizontal table."
+  caption="This is an example horizontal table."
 />
 ```
 
@@ -1220,21 +1273,27 @@ caption="Probability of continuing erosion for joint/defect opening size."
 
 ### Overview and Functionality
 
-- The `TableReference` component is used to display a reference to a table by its unique `tableKey`.
-- It loads the table information dynamically from a JSON file located in the `/counters` directory, based on the `tableKey`.
-- It displays the table number for referencing within the document.
+- The `TableReference` component renders a simple inline reference to a table by its unique `tableKey`.
+- It dynamically fetches the table metadata (including its table number) from a JSON counters file located at `/RMC-Software-Documentation/counters/{reportId}.json`.
+- The `reportId` is obtained from React context (`useReportId`), so no manual prop for document ID is needed.
+- Once loaded, it displays the text `Table {tableNumber}` for referencing the table elsewhere in the document.
 
 ### Props
 
-| Prop          | Type   | Required | Description                                                                 |
-| ------------- | ------ | -------- | --------------------------------------------------------------------------- |
-| `parentDocId` | String | ✅ Yes   | The document ID that corresponds to the JSON file used to fetch table data. |
-| `tableKey`    | String | ✅ Yes   | The unique key for the table within the JSON file.                          |
+| Prop       | Type   | Required | Description                                                         |
+| ---------- | ------ | -------- | ------------------------------------------------------------------- |
+| `tableKey` | String | ✅ Yes   | The unique key identifying the table within the JSON counters file. |
+
+### Usage Notes
+
+- The component internally uses the `reportId` from context to build the path to the JSON file.
+- It fetches the table info asynchronously and shows a loading placeholder until the data is ready.
+- The component displays a warning in the console if the `tableKey` is not found.
 
 ### Example Usage
 
 ```jsx
-<TableReference parentDocId="107_1_0_0" tableKey="constricted-exit-probabilities" />
+<TableReference tableKey="constricted-exit-probabilities" />
 ```
 
 ---
@@ -1275,39 +1334,55 @@ caption="Probability of continuing erosion for joint/defect opening size."
 
 ### Overview and Functionality
 
-- The `TableVertical` component displays a vertical table with customizable headers and columns. The headers will be contained within the first row of the table (i.e., the top-most row).
-- It dynamically fetches table information based on `parentDocId` and `tableKey` from a JSON file.
-- The table is rendered with a caption, and headers are displayed in the top row, with data rows populated from the provided columns.
+- The `TableVertical` component displays a vertical (standard) table with headers in the top row.
+- It dynamically retrieves the figure number (`tableNumber`) from a JSON file based on the current `reportId` (retrieved from context) and the `tableKey`.
+- The component supports complex headers with row and column spans (`rowSpan` and `colSpan`).
+- Body cells can also span multiple rows or columns using the same `value`, `rowSpan`, and `colSpan` object structure.
+- The table is rendered with a caption and can be styled as full-width or partial-width based on the `fullWidth` prop.
 
 ### Props
 
-| Prop          | Type   | Default | Required | Description                                                                              |
-| ------------- | ------ | ------- | -------- | ---------------------------------------------------------------------------------------- |
-| `parentDocId` | String | N/A     | ✅ Yes   | A unique identifier for the document, used to construct the path to the JSON file.       |
-| `tableKey`    | String | N/A     | ✅ Yes   | The key to locate the specific table in the JSON file.                                   |
-| `headers`     | Array  | `[]`    | ✅ Yes   | A list of header names for the table.                                                    |
-| `columns`     | Array  | `[]`    | ✅ Yes   | A list of columns, where each column is an array representing the data for that column.  |
-| `alt`         | String | N/A     | ✅ Yes   | Alt text for the table (optional for accessibility).                                     |
-| `caption`     | String | N/A     | ✅ Yes   | The caption text for the table, typically includes a description of the table's content. |
+| Prop        | Type    | Default | Required | Description                                                                                                                                       |
+| ----------- | ------- | ------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tableKey`  | String  | N/A     | ✅ Yes   | A unique key used to locate the specific table's metadata in the JSON file.                                                                       |
+| `headers`   | Array   | `[]`    | ✅ Yes   | An array of rows; each row is an array of header cell objects with `value`, `rowSpan`, and `colSpan`.                                             |
+| `columns`   | Array   | `[]`    | ✅ Yes   | A list of columns, where each column is an array of data cells. Each cell can be a raw value or an object with `value`, `rowSpan`, and `colSpan`. |
+| `fullWidth` | Boolean | `true`  | ❌ No    | If `true`, applies full-width table styling; if `false`, applies partial-width styling.                                                           |
+| `alt`       | String  | N/A     | ✅ Yes   | Alt text for the table (for accessibility).                                                                                                       |
+| `caption`   | String  | N/A     | ✅ Yes   | Text displayed as the caption under "Table X:", where X is the dynamic table number.                                                              |
 
 ### Example Usage
 
 ```jsx
 <TableVertical
-parentDocId="108_1_0_0"
-tableKey="schmertmann-reference-values"
-headers={["Parameter", "Minimum"]}
-columns={[
-  [
-  <>Seepage path length, <i>L</i></>, <>Piping Layer Depth, <i>D</i></>, <>Particle size with 10% passing by weight, <i>d<sub>10</sub></i></>,
-  <>Anisotropy, <i>R<sub>k</sub> = k<sub>h</sub>/k<sub>v</sub>+</i></>, <>Relative density, <i>D<sub>r</sub></i></>, <>Pipe path inclination, <i>α</i></>
-], // Column 1
-  [
-  "5 feet", "1 foot", "0.20 millimeters", "1.5", "60 percent", "0 degrees"
-] // Row 2
-]}
-alt="Schmertmann reference test values"
-caption="Schmertmann reference test values"/>
+  tableKey="schmertmann-reference-values"
+  headers={[
+    [
+      { value: "Parameter", rowSpan: 1, colSpan: 1 },
+      { value: "Minimum", rowSpan: 1, colSpan: 1 }
+    ]
+  ]}
+  columns={[
+    [
+      <>Seepage path length, <i>L</i></>,
+      <>Piping Layer Depth, <i>D</i></>,
+      <>Particle size with 10% passing by weight, <i>d<sub>10</sub></i></>,
+      <>Anisotropy, <i>R<sub>k</sub> = k<sub>h</sub>/k<sub>v</sub></i></>,
+      <>Relative density, <i>D<sub>r</sub></i></>,
+      <>Pipe path inclination, <i>α</i></>
+    ],
+    [
+      "5 feet",
+      "1 foot",
+      "0.20 millimeters",
+      "1.5",
+      "60 percent",
+      "0 degrees"
+    ]
+  ]}
+  alt="Schmertmann reference test values"
+  caption="Schmertmann reference test values"
+/>
 ```
 
 ---
