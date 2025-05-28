@@ -18,7 +18,7 @@ const totalRiskData = [
     icon: "img/TotalRisk.png",
     doc_location: "desktop-applications/rmc-totalrisk/applications-guide",
     doc_name: "RMC TotalRisk Applications Guide",
-    active: true,
+    active: false,
     draft: true,
   },
   {

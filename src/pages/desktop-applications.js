@@ -23,7 +23,7 @@ export default function DesktopApps() {
       icon: addBaseUrl("img/RFA.png"),
       doc_location: addBaseUrl("desktop-applications/rmc-rfa"),
       doc_name: "RMC RFA",
-      active: true,
+      active: false,
     },
     {
       icon: addBaseUrl("img/LifeSim.png"),
@@ -34,10 +34,7 @@ export default function DesktopApps() {
   ];
 
   return (
-    <Layout
-      title="RMC Software Documentation"
-      description="Documentation for RMC Software Packages"
-    >
+    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
       <main>
         <div className="header-container">
           <h1>RMC Software Documentation</h1>

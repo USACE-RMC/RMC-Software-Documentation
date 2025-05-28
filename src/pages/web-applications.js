@@ -11,27 +11,24 @@ export default function WebApps() {
       icon: addBaseUrl("img/WebApp.png"),
       doc_location: addBaseUrl("web-applications/rrft"),
       doc_name: "Rainfall Runoff Frequency Tool",
-      active: true,
+      active: false,
     },
     {
       icon: addBaseUrl("img/WebApp.png"),
       doc_location: addBaseUrl("web-applications/lst"),
       doc_name: "Levee Screening Tool",
-      active: true,
+      active: false,
     },
     {
       icon: addBaseUrl("img/WebApp.png"),
       doc_location: addBaseUrl("web-applications/dst"),
       doc_name: "Dam Screening Tool",
-      active: true,
+      active: false,
     },
   ];
 
   return (
-    <Layout
-      title="RMC Software Documentation"
-      description="Documentation for RMC Software Packages"
-    >
+    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
       <main>
         <div className="header-container">
           <h1>RMC Software Documentation</h1>

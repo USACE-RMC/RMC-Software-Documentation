@@ -38,7 +38,7 @@ const TableVerticalLeftAlign = ({ tableKey, headers = [], columns = [], fullWidt
   const rowCount = columns.length > 0 ? columns[0].length : 0;
   const colCount = columns.length;
 
-  const tableClass = fullWidth ? "static-table-vertical-full" : "static-table-vertical-partial";
+  const tableClass = fullWidth ? "static-table-vertical-full-left" : "static-table-vertical-partial-left";
 
   // Track which body cells should be skipped (due to spans)
   const skipBodyCells = new Set();

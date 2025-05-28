@@ -1,0 +1,300 @@
+---
+title: "Appendix C - Editing Road Network Data for use in LifeSim"
+---
+
+import NavContainer from "@site/src/components/NavContainer";
+import VersionSelector from "@site/src/components/VersionSelector";
+import Link from "@docusaurus/Link";
+import addBaseUrl from "@docusaurus/useBaseUrl";
+import CitationFootnote from "@site/src/components/CitationFootnote";
+import Figure from "@site/src/components/Figure";
+import FigReference from "@site/src/components/FigureReference";
+import FigureInline from "@site/src/components/FigureInline";
+
+<NavContainer 
+  link="/desktop-applications/lifesim"
+  linkTitle="LifeSim"
+  document="desktop-applications/lifesim/users-guide"
+></NavContainer>
+
+# Appendix C - Editing Road Network Data for use in LifeSim
+
+The road network is an important part of the LifeSim computations when simulating the evacuation process. A road network with missing connectivity or
+incorrect directions on one-way roads can lead to erroneous results. This appendix provides some methods for editing the road network dataset to
+provide a reliable foundation for traffic simulation. This appendix makes use of the editing functionality in the map window of the LifeSim main
+window (<FigReference figKey="figure-311" />). The map window functionality and a full list of the tools available can be found in [Appendix
+B](#appendix-b-map-preferences. The road network used in the following examples was obtained from OpenStreetMap (). This appendix focuses on two
+aspects of road network improvement:
+
+- 	Verifying network connectivity.
+
+- 	Verifying one-way street direction.
+
+<Figure
+  figKey="figure-314"
+  src="figures/desktop-applications/lifesim/users-guide/v1.0/figures/figure314.png"
+  alt="LifeSim Main Window – Map Window – Road Network Layer"
+  caption="LifeSim Main Window – Map Window – Road Network Layer"
+/>
+
+## Overview
+
+The road network connectivity defines how vehicles can traverse from one road segment to the next road segment in LifeSim. Roads are considered
+connected if the individual road segments share an end point.
+
+If two roads do not share an end point then a vehicle cannot move between the two roads. Conversely, if two roads share an end point a vehicle can
+move between the roads even if one is a bridge and the other is the road going underneath. The first step is to check for disconnect between road
+segments (see [Disconnect Invalid Road Segment
+Connections](./19-appendix-editing-road-network-data-for-use-in-lifesim.mdx#disconnect-invalid-road-segment-connections) and [Roads That Should Be
+Connected](./19-appendix-editing-road-network-data-for-use-in-lifesim.mdx#roads-that-should-be-connected)). Another step to verify the direction on
+one-way streets (refer to [Verify One-Way Street
+Direction](./19-appendix-editing-road-network-data-for-use-in-lifesim.mdx#verify-one-way-street-direction)).
+
+### Disconnect Invalid Road Segment Connections
+
+Invalid road segment connections can occur several ways. For example, it is common for overpasses or underpasses to have roads connected at the
+overpass intersection. In LifeSim, this connection would imply that vehicles can jump from an overpass down onto a highway as if it were a standard
+intersection.
+
+For example, in <FigReference figKey="figure-312" />, in an off-ramp that goes underneath a highway is displayed. The road segment that goes
+underneath the highway shares an endpoint with the highway. The invalid road segment connection would allow vehicles to immediately jump from the
+highway to the underpass rather than take the off ramp, which would affect simulation results (i.e., destination arrival times, evacuation times,
+evacuation outflow).
+
+<Figure
+  figKey="figure-315"
+  src="figures/desktop-applications/lifesim/users-guide/v1.0/figures/figure315.png"
+  alt="Road Network with Bad Connectivity"
+  caption="Road Network with Bad Connectivity"
+/>
+
+The following steps can be used to fix road network connectivity issues:
+
+1. To add a road network layer to the map window, from the <strong>Study</strong> tab, from the <strong>Road Networks</strong> folder, right-click on
+a road network dataset. From the shortcut menu, click <strong>Show In Map Window</strong>, the select road network dataset will now display in the map
+ window of the LifeSim main window (<FigReference figKey="figure-311" />).
+
+1. To start an edit session, from the <strong>Map Layers</strong> tab (<FigReference figKey="figure-312" />), right-click a road network layer, from
+the shortcut menu click <strong>Edit</strong>. Another way to start an edit session is from the <strong>Map Layers</strong> tab (
+{"\n"}<FigReference figKey="figure-312" />), right-click on a road network layer, from the shortcut menu click <strong>Open Attribute Table</strong>.
+The <em>Map Layer</em> <strong>Attributes</strong> dialog box will open (<FigReference figKey="figure-313" />), click
+{"\n"}<FigureInline src="figures/desktop-applications/lifesim/users-guide/v1.0/inline-images/inline-e2c0558b.png" /> (<strong>Start Feature Edit
+Session</strong>), close the <em>Map Layer</em> <strong>Attributes</strong> dialog box. Either way, the <strong>Edit Toolbar</strong> (
+{"\n"}<FigReference figKey="figure-314" />) on the LifeSim main window (<FigReference figKey="figure-314" />) now becomes active.
+
+<Figure
+  figKey="figure-316"
+  src="figures/desktop-applications/lifesim/users-guide/v1.0/figures/figure316.png"
+  alt="Map Layer Attributes Dialog Box"
+  caption="Map Layer Attributes Dialog Box"
+/>
+
+<Figure
+  figKey="figure-317"
+  src="figures/desktop-applications/lifesim/users-guide/v1.0/figures/figure317.png"
+  alt="Edit Toolbar"
+  caption="Edit Toolbar"
+/>
+
+1. Use the <strong>Break Line Feature</strong> tool
+{"\n"}<FigureInline src="figures/desktop-applications/lifesim/users-guide/v1.0/inline-images/inline-e9d16d85.png" /> (hot key <strong>K</strong>) to
+break the connected line segment away from the highway segment (<FigReference figKey="figure-315" />).
+
+<Figure
+  figKey="figure-318"
+  src="figures/desktop-applications/lifesim/users-guide/v1.0/figures/figure318.png"
+  alt="Break Line Feature Tool – Break a Road Segment into Two Segments"
+  caption="Break Line Feature Tool – Break a Road Segment into Two Segments"
+/>
+
+1. Now select the segment that shares an end point with the highway segment using the <strong>Select</strong> tool
+{"\n"}<FigureInline src="figures/desktop-applications/lifesim/users-guide/v1.0/inline-images/inline-f5089b1a.png" /> and delete the selected segment.
+Either right-click on the segment and from the shortcut menu click <strong>Delete Selected Features</strong> (<FigReference figKey="figure-316" />),
+or press <strong>Delete</strong> key.
+
+<Figure
+  figKey="figure-319"
+  src="figures/desktop-applications/lifesim/users-guide/v1.0/figures/figure319.png"
+  alt="Road Network – Delete Undesired Road Segment"
+  caption="Road Network – Delete Undesired Road Segment"
+/>
+
+1. Now select the <strong>Snapping</strong> tool
+{"\n"}<FigureInline src="figures/desktop-applications/lifesim/users-guide/v1.0/inline-images/inline-d15e7265.png" /> (
+{"\n"}<FigReference figKey="figure-314" />) to make sure that when re-connecting the line segment it will be properly connected by having the network
+points directly on top of each other. Click
+{"\n"}<FigureInline src="figures/desktop-applications/lifesim/users-guide/v1.0/inline-images/inline-d15e7265.png" />, a <strong>Snapping</strong>
+window (<FigReference figKey="figure-317" />) will open.
+
+<Figure
+  figKey="figure-320"
+  src="figures/desktop-applications/lifesim/users-guide/v1.0/figures/figure320.png"
+  alt="Snapping Options – Road Network – Reconnect Road Segments"
+  caption="Snapping Options – Road Network – Reconnect Road Segments"
+/>
+
+1. Select <strong>Enable Snapping</strong> (<FigReference figKey="figure-317" />), from the <strong>Snap To Layer</strong> list, select the road
+network layer that will be edited (e.g., <em>Roads OSM</em>), and then select <strong>End Points (Lines)</strong> (
+{"\n"}<FigReference figKey="figure-317" />).
+
+1. After snapping has been enabled, click
+{"\n"}<FigureInline src="figures/desktop-applications/lifesim/users-guide/v1.0/inline-images/inline-f5089b1a.png" />, and double-click the other road
+segment that is connected to the highway end point to enter vertex editing mode (<FigReference figKey="figure-318" />a). Next, move the mouse over
+the vertex that will be connected, left-click, hold and drag to move the vertex towards the disconnected road segment. Once close enough, the
+indicator line will snap to the endpoint of the open road segment (<FigReference figKey="figure-318" />b). Release the left-click to finish moving
+the vertex. Either left-click away from the line segment or right-click and click <strong>Finish Editing Vertices </strong>from the shortcut menu to
+exit the editing session (<FigReference figKey="figure-318" />c).
+
+<Figure
+  figKey="figure-321"
+  src="figures/desktop-applications/lifesim/users-guide/v1.0/figures/figure321.png"
+  alt="Process for Reconnecting Road Segments – Better Network Connectivity"
+  caption="Process for Reconnecting Road Segments – Better Network Connectivity"
+/>
+
+1. Now, the road segment does not share an end point with the highway road segments and in LifeSim vehicles will have to, appropriately, take the
+highway off-ramp to get to the underpass (<FigReference figKey="figure-319" />).
+
+<Figure
+  figKey="figure-322"
+  src="figures/desktop-applications/lifesim/users-guide/v1.0/figures/figure322.png"
+  alt="Better Network Connectivity – After Road Network Edits"
+  caption="Better Network Connectivity – After Road Network Edits"
+/>
+
+1. This process should be repeated for any other roads in the road network that should not be connected.
+
+1. Remember to save often (from the <strong>Edit Toolbar </strong>(<FigReference figKey="figure-314" />) click
+{"\n"}<FigureInline src="figures/desktop-applications/lifesim/users-guide/v1.0/inline-images/inline-8d7596cf.png" />).To avoid spending an hour
+editing the road network and then get surprised with a computer restart or worse an unexpected error in the software.
+
+### Roads That Should Be Connected
+
+Road segments that represent a continuous road can sometimes lack a common endpoint (<FigReference figKey="figure-320" />). When this happens,
+vehicles in LifeSim cannot move from one segment to the next when in reality the vehicles clearly should be able move freely.
+
+<Figure
+  figKey="figure-323"
+  src="figures/desktop-applications/lifesim/users-guide/v1.0/figures/figure323.png"
+  alt="Invalid Connectivity – Road Segment End Point Interferes with Other Roads Connectivity"
+  caption="Invalid Connectivity – Road Segment End Point Interferes with Other Roads Connectivity"
+/>
+
+The following steps can be used to fix the connectivity issue:
+
+1. A tool that can aid in finding connectivity issues is to display a shapefile that shows locations where a line segment's endpoint is not shared
+with another line segment. From the LifeSim main window (<FigReference figKey="figure-311" />), from the <strong>Study</strong> tab, from the
+<strong>Road Networks </strong>folder, right-click on a road network dataset. From the shortcut menu, click <strong>Show Dangles in Map
+Window</strong>, a shapefile that contains dangle locations will display in the map window of the LifeSim main window (
+{"\n"}<FigReference figKey="figure-311" />).
+
+1. To connect the road segment at the West Spruce Street intersection, from the <strong>Map Layers</strong> tab (<FigReference figKey="figure-312" />
+), right-click a road network layer, from the shortcut menu click <strong>Edit</strong>. Another way to start an edit session is from the <strong>Map
+Layers</strong> tab (<FigReference figKey="figure-312" />), right-click on a road network layer, from the shortcut menu click <strong>Open Attribute
+Table</strong>. The <em>Map Layer</em> <strong>Attributes</strong> dialog box will open (<FigReference figKey="figure-313" />), click
+{"\n"}<FigureInline src="figures/desktop-applications/lifesim/users-guide/v1.0/inline-images/inline-e2c0558b.png" /> (<strong>Start Feature Edit
+Session</strong>), close the <em>Map Layer</em> <strong>Attributes</strong> dialog box. Either way, the <strong>Edit Toolbar</strong> (
+{"\n"}<FigReference figKey="figure-314" />) on the LifeSim main window (<FigReference figKey="figure-311" />) now becomes active.
+
+1. Now turn on snapping, click <FigureInline src="figures/desktop-applications/lifesim/users-guide/v1.0/inline-images/inline-d15e7265.png" />, from
+the <strong>Edit Toolbar</strong> (<FigReference figKey="figure-314" />), a <strong>Snapping</strong> window will open (
+{"\n"}<FigReference figKey="figure-317" />). Make sure that the re-connected line segment is properly connected by having the network points directly
+on top of each other. From the Snapping window (<FigReference figKey="figure-317" />), click <strong>Enable Snapping</strong>, from the <strong>Snap
+To Layer</strong> list select the road network that is currently being edited (e.g., <em>Roads OSM</em>), and then select <strong>End Points
+(Lines)</strong>.
+
+1. Click <FigureInline src="figures/desktop-applications/lifesim/users-guide/v1.0/inline-images/inline-f5089b1a.png" />, double-click the road
+segment that is not connected to the intersection to enter vertex editing mode (<FigReference figKey="figure-321" />a). Next, move the mouse over the
+ vertex to connect, left-click hold and drag to move the vertex towards the intersection. Once close enough, the indicator line will snap to the end
+point of the intersection (<FigReference figKey="figure-321" />b). Release the left-click to finish moving the vertex. Either left-click away from
+the line segment or right-click and click <strong>Finish Editing Vertices</strong> from the shortcut menu to exit the editing session (
+{"\n"}<FigReference figKey="figure-321" />c).
+
+<Figure
+  figKey="figure-324"
+  src="figures/desktop-applications/lifesim/users-guide/v1.0/figures/figure324.png"
+  alt="Process -Connect Road Segments – Better Network Connectivity"
+  caption="Process -Connect Road Segments – Better Network Connectivity"
+/>
+
+1. Now, the road segment that was previously disconnected will now allow traffic to continue on <em>West Spruce Street</em> (
+{"\n"}<FigReference figKey="figure-322" />).
+
+<Figure
+  figKey="figure-325"
+  src="figures/desktop-applications/lifesim/users-guide/v1.0/figures/figure325.png"
+  alt="Example – Better Network Connectivity – Following Road Network Edits"
+  caption="Example – Better Network Connectivity – Following Road Network Edits"
+/>
+
+1. This process should be repeated for any other roads in the road network that should be connected.
+
+1. Remember to save often (from the <strong>Edit Toolbar </strong>(<FigReference figKey="figure-314" />) click
+{"\n"}<FigureInline src="figures/desktop-applications/lifesim/users-guide/v1.0/inline-images/inline-8d7596cf.png" /> ).To avoid spending an hour
+editing the road network and then get surprised with a computer restart or worse an unexpected error in the software.
+
+## Verify One-Way Street Direction
+
+LifeSim's traffic simulation engine allows road segments to either be one-way or two-way road segments. If a road is considered one-way, then vehicles
+ can only travel in one direction along the road segment. The direction is defined from the first point in the road segment to the last point in the
+road segment and can be defined by enabling arrows to be drawn at the end of one-way roads through the road network map layer properties. For details
+on how to use the map layer properties refer to [Map Layers Properties](./18-appendix-map-preferences.mdx#map-layers-properties). Sometimes a road
+segment that is defined as one-way will be pointing in the wrong direction. This would mean that vehicles would have to find a way around the
+incorrectly oriented one-way segment. The following example (<FigReference figKey="figure-323" />) shows a case where a one-way highway segment is
+pointing in the wrong direction and needs to be fixed.
+
+<Figure
+  figKey="figure-326"
+  src="figures/desktop-applications/lifesim/users-guide/v1.0/figures/figure326.png"
+  alt="Example – One-Way Road Segment in LifeSim – Set in the Wrong Direction"
+  caption="Example – One-Way Road Segment in LifeSim – Set in the Wrong Direction"
+/>
+
+To fix the orientation of a one-way road segment which is pointing in the wrong direction follow the steps below:
+
+1. A tool that can aid in finding connectivity issues is to display a shapefile that shows locations where a line segment's endpoint is not shared
+with another line segment. From the LifeSim main window (<FigReference figKey="figure-311" />), from the <strong>Study</strong> tab, from the
+<strong>Road Networks </strong>folder, right-click on a road network dataset. From the shortcut menu, click <strong>Show Dangles in Map
+Window</strong>, a shapefile that contains dangle locations will display in the map window of the LifeSim main window (
+{"\n"}<FigReference figKey="figure-311" />).
+
+1. From the <strong>Map Layers</strong> tab (<FigReference figKey="figure-312" />), right-click a road network layer, from the shortcut menu click
+<strong>Edit</strong>. Another way to start an edit session is from the <strong>Map Layers</strong> tab (<FigReference figKey="figure-312" />),
+right-click on a road network layer, from the shortcut menu click <strong>Open Attribute Table</strong>. The <em>Map Layer</em>
+<strong>Attributes</strong> dialog box will open (<FigReference figKey="figure-313" />), click
+{"\n"}<FigureInline src="figures/desktop-applications/lifesim/users-guide/v1.0/inline-images/inline-e2c0558b.png" /> (<strong>Start Feature Edit
+Session</strong>), close the <em>Map Layer</em> <strong>Attributes</strong> dialog box. Either way, the <strong>Edit Toolbar</strong> (
+{"\n"}<FigReference figKey="figure-314" />) on the LifeSim main window (<FigReference figKey="figure-311" />) now becomes active.
+
+1. Once edit mode has been initiated, click
+{"\n"}<FigureInline src="figures/desktop-applications/lifesim/users-guide/v1.0/inline-images/inline-f5089b1a.png" />, and select the road segment that
+ is oriented in the wrong direction. With the correct segment selected, either press the <strong>R</strong> key, or right-click, and from the shortcut
+ menu click <strong>Reverse Selected Features</strong> (<FigReference figKey="figure-324" />) to reverse the direction of the line segment.
+
+<Figure
+  figKey="figure-327"
+  src="figures/desktop-applications/lifesim/users-guide/v1.0/figures/figure327.png"
+  alt="Example – Reverse Selected Features – Shortcut Menu"
+  caption="Example – Reverse Selected Features – Shortcut Menu"
+/>
+
+1. <strong>Note</strong>, reversing the direction of selected features applies to all features that are currently selected. Make sure that selected
+line features only contain lines whose direction is desired to be reversed.
+
+1. Now, the one-way road segment that was previously oriented in the wrong direction (against the flow of traffic) will allow traffic to continue in
+the appropriate direction (<FigReference figKey="figure-325" />).
+
+1. This process should be repeated for any other roads in the road network that are defined as one-way roads and are oriented in the wrong direction.
+
+1. Remember to save often (from the <strong>Edit Toolbar </strong>(<FigReference figKey="figure-314" />) click
+{"\n"}<FigureInline src="figures/desktop-applications/lifesim/users-guide/v1.0/inline-images/inline-8d7596cf.png" /> ).To avoid spending an hour
+editing the road network and then get surprised with a computer restart or worse an unexpected error in the software.
+
+<Figure
+  figKey="figure-328"
+  src="figures/desktop-applications/lifesim/users-guide/v1.0/figures/figure328.png"
+  alt="Example - Better Network Connectivity – Following Road Network Edits"
+  caption="Example - Better Network Connectivity – Following Road Network Edits"
+/>
+
+<CitationFootnote />
