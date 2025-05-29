@@ -34,7 +34,6 @@ export default function BestFit() {
     icon: addBaseUrl(doc.icon),
     doc_location: addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, "")]}/preface`),
   }));
-  estf;
 
   return (
     <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
