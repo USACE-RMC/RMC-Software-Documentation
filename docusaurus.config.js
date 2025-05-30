@@ -5,6 +5,7 @@ import remarkGfm from "remark-gfm";
 export default {
   title: "RMC Software Documentation",
   tagline: "Documentation for RMC Software Packages",
+  onBrokenAnchors: "warn",
   url: "https://USACE-RMC.github.io", // Replace with your site's URL
   baseUrl: "/RMC-Software-Documentation/",
   favicon: "img/USACE.png",
@@ -35,8 +36,7 @@ export default {
     {
       href: "https://cdn.jsdelivr.net/npm/katex@0.13.24/dist/katex.min.css",
       type: "text/css",
-      integrity:
-        "sha384-odtC+0UGzzFL/6PNoE8rX/SPcQDXBJ+uRepguP4QkPCm2LBxH3FA3y+fKSiJ+AmM",
+      integrity: "sha384-odtC+0UGzzFL/6PNoE8rX/SPcQDXBJ+uRepguP4QkPCm2LBxH3FA3y+fKSiJ+AmM",
       crossorigin: "anonymous",
     },
   ],
