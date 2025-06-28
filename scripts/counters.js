@@ -47,11 +47,13 @@ function processReport(reportPath, reportId) {
     figures: {},
     tables: {},
     equations: {},
+    citations: {},
   };
 
   let figureCount = 1;
   let tableCount = 1;
   let equationCount = 1;
+  let citationCount = 1;
 
   const files = fs.readdirSync(folder).filter((f) => f.endsWith(".mdx"));
 
@@ -90,6 +92,20 @@ function processReport(reportPath, reportId) {
         parentDocPath: reportPath,
         docId: file,
       };
+    }
+
+    // Regex for citations
+    for (const match of content.matchAll(/<Citation\s+[^>]*citationKey="([^"]+)"/g)) {
+      const citationKey = match[1];
+      if (!(citationKey in counters.citations)) {
+        // Only count the first occurrence}
+        counters.citations[citationKey] = {
+          citationNumber: citationCount++,
+          parentDocId: reportId,
+          parentDocPath: reportPath,
+          docId: file,
+        };
+      }
     }
   });
 
