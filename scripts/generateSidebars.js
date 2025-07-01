@@ -23,9 +23,7 @@ function titleCase(str) {
 }
 
 function camelCase(str) {
-  return str
-    .replace(/[-_](.)/g, (_, group1) => group1.toUpperCase())
-    .replace(/^(.)/, (_, group1) => group1.toLowerCase());
+  return str.replace(/[-_](.)/g, (_, group1) => group1.toUpperCase()).replace(/^(.)/, (_, group1) => group1.toLowerCase());
 }
 
 function getFrontmatterTitle(filePath) {
@@ -58,12 +56,7 @@ function getFallbackLabel(filename) {
   return titleCase(parts.slice(1).join(" "));
 }
 
-function generateSidebarForVersion(
-  versionPath,
-  relativePath,
-  docGroup,
-  folderName
-) {
+function generateSidebarForVersion(versionPath, relativePath, docGroup, folderName) {
   const files = fs.readdirSync(versionPath).filter((f) => f.endsWith(".mdx"));
   files.sort();
 
@@ -75,9 +68,7 @@ function generateSidebarForVersion(
   console.log("Checking docGroup:", docGroup);
   console.log("Checking folderName:", folderName);
   if (docGroup === "rmc-totalrisk" && folderName === "applications-guide") {
-    console.log(
-      "Custom structure for RMC-TotalRisk Applications Guide activated!"
-    );
+    console.log("Custom structure for RMC-TotalRisk Applications Guide activated!");
     const documentInfoDocs = [];
     let prefaceDoc = null;
     let mainReportDoc = null;
@@ -181,11 +172,42 @@ function generateSidebarForVersion(
   return sidebar;
 }
 
+function generateDocumentationGuideSidebar() {
+  const guideDir = path.join(DOCS_DIR, "00-documentation-guide");
+  if (!fs.existsSync(guideDir)) return null;
+
+  const files = fs
+    .readdirSync(guideDir)
+    .filter((f) => f.endsWith(".mdx"))
+    .sort();
+
+  // Each file becomes a doc item, using its filename (without extention) as the id
+  const items = files.map((file) => {
+    const fileBase = file.replace(/\.mdx$/, "").replace(/^\d+-/, "");
+    const fullPath = path.join(guideDir, file);
+    // Try to get the frontmatter title, fallback to title-cased filename
+    const label = getFrontmatterTitle(fullPath) || titleCase(fileBase);
+    return {
+      type: "doc",
+      id: `documentation-guide/${fileBase}`,
+      label,
+    };
+  });
+
+  return [
+    {
+      type: "category",
+      label: "Documentation Guide",
+      collapsible: false,
+      collapsed: false,
+      items,
+    },
+  ];
+}
+
 function generateSidebars() {
   const sidebarContent = {};
-  const versions = walkDir(DOCS_DIR).filter((filePath) =>
-    /\bv\d+\.\d+\b/.test(filePath)
-  );
+  const versions = walkDir(DOCS_DIR).filter((filePath) => /\bv\d+\.\d+\b/.test(filePath));
 
   versions.forEach((filePath) => {
     const versionDir = path.dirname(filePath);
@@ -210,15 +232,18 @@ function generateSidebars() {
     // Only create if not already present
     if (!sidebarContent[sidebarKey]) {
       sidebarContent[sidebarKey] = {
-        [documentName]: generateSidebarForVersion(
-          path.join(DOCS_DIR, relPath),
-          relPath,
-          docGroup,
-          folderName
-        ),
+        [documentName]: generateSidebarForVersion(path.join(DOCS_DIR, relPath), relPath, docGroup, folderName),
       };
     }
   });
+
+  // Add Documentation Guide sidebar if present
+  const docGuideSidebar = generateDocumentationGuideSidebar();
+  if (docGuideSidebar) {
+    sidebarContent.documentationGuide = {
+      "Documentation Guide": docGuideSidebar,
+    };
+  }
 
   return sidebarContent;
 }
@@ -227,10 +252,7 @@ function writeSidebarFile() {
   const sidebars = generateSidebars();
 
   const sidebarEntries = Object.entries(sidebars)
-    .map(
-      ([key, value]) =>
-        `  ${key}: ${JSON.stringify(value, null, 2).replace(/\n/g, "\n  ")}`
-    )
+    .map(([key, value]) => `  ${key}: ${JSON.stringify(value, null, 2).replace(/\n/g, "\n  ")}`)
     .join(",\n");
 
   const output = `module.exports = {\n${sidebarEntries}\n};\n`;

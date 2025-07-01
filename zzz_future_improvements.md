@@ -1,6 +1,6 @@
 ## Future Improvements
 
-- Citations - IEEE citations should be in the order the references appear in the document, not alphabetical
+- (Complete 6/28/25): Citations - IEEE citations should be in the order the references appear in the document, not alphabetical
 
 - (Complete 6/24/25): Add more margin between figures and captions for visual clarity
 

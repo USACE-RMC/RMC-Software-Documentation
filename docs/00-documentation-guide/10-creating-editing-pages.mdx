@@ -1,0 +1,158 @@
+---
+title: Creating and Editing Pages
+sidebar_label: Creating and Editing Pages
+---
+
+# Creating and Editing Pages
+
+`.mdx` (Markdown + JSX) allows you to write Markdown content and use React components side-by-side.
+
+To create a new `.mdx` file in Visual Studio Code, right-click on the folder where the file will be located and click "New File". Name the file with your desired name and add `.mdx` for the document type. Follow the naming and numbering convention outlined in the [`docs/`](./04-docs-folder.mdx) section.
+
+---
+
+## MDX Basics
+
+- **File extension:** `.mdx`
+- **Location:** Inside the `docs` folder
+- **Behavior:** Treated as pages in Docusaurus when placed in the `docs` folder and linked in the sidebar
+
+---
+
+## Front Matter
+
+`.mdx` files can begin with YAML front matter, wrapped in triple dashes.  
+In this project, front matter is used to define the title of each `.mdx` page, which is displayed in the browser tab heading.
+
+```mdx
+---
+title: Schmertmann
+---
+
+---
+title: Appendix A - Acronyms
+---
+```
+
+Expanded front matter is used in `00-document-info.mdx` pages and is passed as a prop to the `<DocumentMetadata>` React component:
+
+```mdx
+---
+reportDate: November 2023
+reportType: Computer Program Document
+reportTitle: RMC Backward Erosion Piping (Progression) Toolbox
+reportSubTitle: RMC Internal Erosion Suite
+reportAuthors: ["Tim O'Leary, Risk Management Center"]
+reportAbstract: The spreadsheet tools contained in this toolbox deterministically and probabilistically assess the likelihood of backward erosion piping progression (hydraulic condition) using the adjusted Schmertmann (2000) method and the adjusted calculation rule of Sellmeijer et al. (2011) in addition to creep ratio methods of Bligh (1910) and Lane (1935).
+reportSubjectTerms: ["Internal erosion", "backward erosion piping", "Schmertmann", "Sellmeijer", "Bligh", "Lane", "creep ratio"]
+responsiblePersonName: Tim O'Leary
+responsiblePersonNumber: 502-315-6599
+---
+```
+
+---
+
+## Markdown Content
+
+`.mdx` supports standard Markdown syntax out of the box.
+
+### Headings
+
+Use `#` to `######` to create headings from level 1 to 6:
+
+```md
+# H1
+## H2
+### H3
+#### H4
+##### H5
+###### H6
+```
+
+### Text Formatting
+
+You can use both Markdown and HTML tags to format text:
+
+```html
+<b>Bold text</b> <strong>Bold text</strong>
+<i>Italic text</i> <em>Italic text</em>
+<b><i>Bold and italic text</i></b>
+<u>Underline text</u>
+<sub>Subscript text</sub>
+<sup>Superscript text</sup>
+```
+
+### Paragraphs and Line Breaks
+
+- Separate paragraphs with a blank line.
+- To force a line break, end the line with two spaces.
+- Line breaks can also be inserted by using `<br />`.
+
+### Lists
+
+- Bullet list:
+
+```md
+- Item 1
+- Item 2
+  - Sub-item 2.1
+  - Sub-item 2.2
+```
+
+- Numbered list:
+
+```md
+1. Step one
+2. Step two
+   1. Sub-step
+```
+
+### Code Blocks
+
+**Inline code:** Use backticks for inline code: `` `Inline code block` ``
+
+**Fenced code block (with syntax highlighting):**
+
+```js title="example.js"
+function greet(name) {
+  return `Hello, ${name}!`;
+}
+```
+
+**Live code block (primarily supports JSX):**
+
+```jsx live
+function Hello({ name = "Name" }) {
+  return (
+    <div>
+      <h2>Hello, {name}!</h2>
+    </div>
+  );
+}
+```
+
+---
+
+## JSX and Components
+
+React components can be inserted anywhere in `.mdx` files.  
+Components must be imported from the `src` folder into the `.mdx` file before they can be used.
+
+```jsx
+import { MyComponent } from '@site/src/components/MyComponent';
+
+<MyComponent someProp="value" />
+```
+
+React components available within the RMC Software Documentation project are outlined in the [React Components](./11-react-components.mdx) section.
+
+---
+
+## Best Practices
+
+- Use clear, consistent naming for all `.mdx` files.
+- Always start each document with `00-document-info.mdx` and `00-version-history.mdx`.
+- Use numeric prefixes (`01-`, `02-`, etc.) for main chapters and appendices to ensure correct ordering in the sidebar.
+- Place all images, figures, and supporting files in the appropriate subfolders under `static/`.
+- Use front matter to set the page title and metadata.
+- Import and use React components as needed for advanced formatting and dynamic content.

@@ -1,0 +1,240 @@
+---
+title: Scripts
+sidebar_label: Scripts
+---
+
+# Scripts
+
+The `scripts/` folder contains custom Node.js scripts for automation and data generation in the RMC Software Documentation project.
+
+---
+
+## 📊 `counters.js` Generate Counters for Figures, Tables, and Equations
+
+This Node.js script scans all `.mdx` documentation files in the `docs/` directory, extracts metadata for custom components like `<Figure>`, `<Table*>`, and `<Equation>`, and generates a corresponding JSON file for each report. These JSON files are saved to `static/counters/` and include sequential numbering and metadata for each detected figure, table, and equation.
+
+---
+
+### 🔍 What It Does
+
+- Recursively scans the `docs/` directory for folders that contain `.mdx` files.
+- Uses `reportIdMap.js` to map folder paths to unique report IDs.
+- For each matched folder, it:
+  - Parses all `.mdx` files to find:
+    - `<Figure figKey="...">` components
+    - `<TableHorizontal tableKey="...">`, `<TableVertical>`, or `<TableVerticalLeftAlign>` components
+    - `<Equation equationKey="...">` components
+  - Assigns each component a unique sequential number:
+    - `figNumber` for figures
+    - `tableNumber` for tables
+    - `equationNumber` for equations
+  - Records additional metadata:
+    - `figKey`, `tableKey`, or `equationKey`
+    - `parentDocId` (from `reportIdMap`)
+    - `parentDocPath` (relative path within `docs/`)
+    - `docId` (filename of the `.mdx` file)
+
+---
+
+### 📁 Output
+
+Each output file is saved to `static/counters/<reportId>.json` and follows this structure:
+
+```json
+{
+  "figures": {
+    "fig-abc": {
+      "figNumber": 1,
+      "parentDocId": "soil-erosion",
+      "parentDocPath": "rmc/soil/contact-erosion",
+      "docId": "overview.mdx"
+    }
+  },
+  "tables": {
+    "table-xyz": {
+      "tableNumber": 1,
+      "parentDocId": "soil-erosion",
+      "parentDocPath": "rmc/soil/contact-erosion",
+      "docId": "overview.mdx"
+    }
+  },
+  "equations": {
+    "eqn-123": {
+      "equationNumber": 1,
+      "parentDocId": "soil-erosion",
+      "parentDocPath": "rmc/soil/contact-erosion",
+      "docId": "overview.mdx"
+    }
+  }
+}
+```
+
+### Usage
+
+This script is automatically run on project start, build, and deploy. No additional execution of this script is required.
+
+---
+
+## 🗺️ `reportIdMap.js` Generate reportIdMap from Docs Directory Structure
+
+This Node.js script scans the `docs/` folder structure to automatically generate a `reportIdMap.js` file in `src/`. It identifies documentation paths based on versioned subfolders (e.g., `v1.0`, `v2.1`) and builds unique report IDs based on the folder hierarchy.
+
+---
+
+### 🔍 What It Does
+
+- Recursively walks the `docs/` directory.
+- Identifies folders with names matching a version pattern like `v1.0`, `v2.1`, etc.
+- Constructs a unique `reportId` in the format:
+
+`<subHub>-<documentName>-<version>`
+
+Where:
+
+- `subHub` is the folder two levels above the version folder
+- `documentName` is the folder directly above the version folder
+- `version` is the version folder name (e.g., `v1.0`)
+- Maps the full relative path to the generated report ID.
+- Saves the result as an exported JavaScript object in `src/reportIdMap.js`.
+
+---
+
+### ⚠️ Path Validation
+
+If the folder structure does not contain enough levels (i.e., it lacks a parent document or subHub folder), the script skips that entry and logs a warning.
+
+---
+
+### 📝 Output (`reportIdMap.js`)
+
+```js
+// Auto-generated. Do not edit.
+const reportIdMap = {
+  "desktop-applications/lifesim/users-guide/v1.0": "lifesim-users-guide-v1.0",
+  "desktop-applications/rmc-bestfit/users-guide/v1.0": "rmc-bestfit-users-guide-v1.0",
+  "desktop-applications/rmc-rfa/users-guide/v1.0": "rmc-rfa-users-guide-v1.0",
+  "desktop-applications/rmc-totalrisk/users-guide/v1.0": "rmc-totalrisk-users-guide-v1.0",
+  "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0": "internal-erosion-suite-backward-erosion-piping-progression-v1.0",
+  "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0": "internal-erosion-suite-filter-evaluation-continuation-v1.0",
+  "web-applications/lst/users-guide/v1.0": "lst-users-guide-v1.0"
+};
+module.exports = reportIdMap;
+```
+
+### Usage
+
+This script is automatically run on project start, build, and deploy. No additional execution of this script is required.
+
+---
+
+## `generateSidebars.js` Generate Sidebars for Docusaurus
+
+This script automatically generates a structured `sidebars.js` file for a Docusaurus site, based on the organization of `.mdx` files within the `docs/` directory.
+
+It will scan all `.mdx` files in the `docs/` directory, organize them into logical categories, and write the result to `sidebars.js`.
+
+It uses naming conventions and frontmatter metadata to organize content into logical categories like:
+
+- Document Information
+- Main Report
+- Appendices
+
+It supports special-case logic for certain document types like `rmc-totalrisk/applications-guide`. Additional special-case logic for documents can be added to this file as necessary — to add special-case logic contact a site administrator.
+
+---
+
+### 📁 Directory Structure Requirements
+
+- Docs should be nested under `docs/<group>/<document>/<version>/`
+- Filenames should be prefixed with numeric codes for ordering (e.g., `00-document-info.mdx`, `01-preface.mdx`)
+- Appendix files must include `"appendix"` in the filename
+- Frontmatter titles will be used when available
+
+Example folder:
+
+```
+docs/
+└── rmc-totalrisk/
+    └── users-guide/
+        └── v1.0/
+            ├── 00-document-info.mdx
+            ├── 00-version-history.mdx
+            ├── 01-preface.mdx
+            ├── 02-chapter-1.mdx
+            ├── 03-chapter-2.mdx
+            └── 04-appendix-acronyms.mdx
+```
+
+---
+
+### 🧪 Usage
+
+This script is automatically run on project start, build, and deploy. No additional execution of this script is required.
+
+---
+
+### 📝 Notes
+
+- Special-case logic exists for specific folder/document combinations (like `rmc-totalrisk/applications-guide`). For additional special-case logic contact a site administrator.
+- Automatically converts kebab-case paths and file names into readable sidebar labels
+- Looks for YAML frontmatter to prefer titles from metadata
+
+---
+
+## `versions.js` Version Info Generator
+
+### What It Does
+
+This script scans your documentation directory structure to identify and collect version information for your docs. It produces JSON files that list the latest versions available, all available versions, and generates URLs for use with the Algolia crawler to index the correct documentation versions.
+
+### How It Works
+
+- Defines the base folders where documentation groups live (e.g., "toolbox-technical-manuals", "desktop-applications", "web-applications").
+- Recursively walks through these folders to detect version folders that match a pattern like `v1.0`, `v2.3`, etc.
+- Identifies the latest version by sorting the version folders descending alphabetically.
+- Collects all versions found for each document group.
+- Outputs three JSON files: latest version map, full version list, and Algolia crawler URLs.
+
+### Output
+
+- `latestVersions.json`: Contains a mapping of document paths to their latest version folder.
+
+```json
+{
+  "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression": "v1.0",
+  "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation": "v1.0",
+  "desktop-applications/lifesim/users-guide": "v1.0",
+  "desktop-applications/rmc-bestfit/users-guide": "v1.0",
+  "desktop-applications/rmc-totalrisk/users-guide": "v1.0",
+  "web-applications/lst/users-guide": "v1.0"
+}
+```
+
+- `versionList.json`: Contains a mapping of document paths to all available version folders.
+
+```json
+{
+  "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression": [
+    "v1.0"
+  ],
+  "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation": [
+    "v1.0"
+  ]
+}
+```
+
+- `algoliaCrawlerVersions.json`: Contains start URLs and discovery patterns based on the latest versions for Algolia's documentation crawler.
+
+### Usage
+
+This script is automatically run on project start, build, and deploy. No additional execution of this script is required.
+
+The output JSON files will be saved in the `static/versions` folder.
+
+### Notes
+
+- The script ensures directory creation for output paths.
+- Paths in JSON are normalized to use forward slashes (`/`) for cross-platform compatibility.
+- Algolia crawler URLs are constructed based on your GitHub Pages URL pattern for docs.
+
+---
