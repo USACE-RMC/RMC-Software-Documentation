@@ -176,33 +176,53 @@ function generateDocumentationGuideSidebar() {
   const guideDir = path.join(DOCS_DIR, "00-documentation-guide");
   if (!fs.existsSync(guideDir)) return null;
 
+  const mainIds = ["00-introduction", "01-getting-started", "02-versioning-system", "03-project-structure", "10-creating-editing-pages", "11-react-components", "12-search"];
+  const subIds = ["04-docs-folder", "05-scripts", "06-src-folder", "07-static-folder", "08-sidebars", "09-other-files"];
+
   const files = fs
     .readdirSync(guideDir)
     .filter((f) => f.endsWith(".mdx"))
     .sort();
 
-  // Each file becomes a doc item, using its filename (without extention) as the id
-  const items = files.map((file) => {
-    const fileBase = file.replace(/\.mdx$/, "").replace(/^\d+-/, "");
-    const fullPath = path.join(guideDir, file);
-    // Try to get the frontmatter title, fallback to title-cased filename
-    const label = getFrontmatterTitle(fullPath) || titleCase(fileBase);
-    return {
-      type: "doc",
-      id: `documentation-guide/${fileBase}`,
-      label,
-    };
+  function getLabel(fileBase) {
+    const fullPath = path.join(guideDir, `${fileBase}.mdx`);
+    return getFrontmatterTitle(fullPath) || titleCase(fileBase.replace(/^\d+-/, ""));
+  }
+
+  // Build sub-items for Project Structure
+  const projectStructureSubItems = [
+    ...subIds
+      .filter((id) => files.includes(`${id}.mdx`))
+      .map((id) => ({
+        type: "doc",
+        id: `documentation-guide/${id.replace(/^\d+-/, "")}`,
+        label: getLabel(id),
+      })),
+  ];
+
+  // Build main sidebar items
+  const items = [];
+  mainIds.forEach((id) => {
+    if (!files.includes(`${id}.mdx`)) return;
+    if (id === "03-project-structure") {
+      items.push({
+        type: "category",
+        label: getLabel(id),
+        link: { type: "doc", id: `documentation-guide/${id.replace(/^\d+-/, "")}` },
+        collapsible: false,
+        collapsed: false,
+        items: projectStructureSubItems,
+      });
+    } else {
+      items.push({
+        type: "doc",
+        id: `documentation-guide/${id.replace(/^\d+-/, "")}`,
+        label: getLabel(id),
+      });
+    }
   });
 
-  return [
-    {
-      type: "category",
-      label: "Documentation Guide",
-      collapsible: false,
-      collapsed: false,
-      items,
-    },
-  ];
+  return items;
 }
 
 function generateSidebars() {
