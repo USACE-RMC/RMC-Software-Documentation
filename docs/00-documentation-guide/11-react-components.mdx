@@ -1,3 +1,84 @@
 ---
 title: React Components
 ---
+
+# React Components
+
+## What is React?
+
+**React** is an open-source JavaScript library developed by Facebook for building user interfaces, particularly single-page applications where a dynamic
+and responsive experience is important. It allows developers to create reusable UI components that efficiently update and render based on changing data.
+
+React uses a **component-based architecture**, where the UI is broken into small, self-contained pieces called components. Each component manages its own
+state and renders based on that state and its inputs (called props). React uses a **virtual DOM** - an in-memory representation of the real DOM - to optimize
+updates. When data changes, React efficiently computes the minimal set of changes and applies them to the actual DOM, improving performance and responsiveness.
+
+## Why This Project Uses React
+
+This documentation site uses React because:
+
+- **Component Reusability**: Custom components like `<Figure>`, `<TableVertical>`, and `<Citation>` allow for consistent formatting and easy reuse across multiple documents.
+- **Dynamic Rendering**: React enables conditional rendering and logic-based content, which is valuable for development and component-driven pages.
+- **Docusaurus Integration**: Docusaurus is built on React, so using React components fits naturally with the framework and extends its capabilities.
+
+By leveraging React, the documentation becomes more modular, maintainable, and interactive, aligning with modern web development standards.
+
+## React Components in This Project
+
+This project includes several custom React components that enhance the documentation experience. These components are designed to be reusable and provide
+consistent formatting across different pages. The following sections describe the key components available to developers.
+
+:::danger NOTICE
+React components should not be altered, removed, or added to this project. To request changes, additions, or improvements, please contact a site administrator.
+:::
+
+### Bibliography
+
+#### Overview and Functionality
+
+The `<Bibliography>` component is a dynamic React component used to render a properly ordered and formatted list of citations within a documentation page.
+It automatically loads citation metadata from a `bib.json` file and aligns each entry to the citation numbers defined in the corresponding `counters.json` file.
+
+This component is intended for reports and technical documentation where references must be accurate, consistent, and easily maintained across versions.
+
+**Key functionality includes:**
+
+- Automatically determines the bibliography file path based on the current page URL and active `reportId` from context.
+- Loads two JSON files:
+  - `bib.json` – Contains full citation metadata.
+  - `counters/{reportId}.json` – Maps `citationKey`s to citation numbers.
+- Merges and sorts citations in proper numerical order (`[1]`, `[2]`, etc.).
+- Formats author lists based on count:
+  - 1 author: `Author A`
+  - 2 authors: `Author A and Author B`
+  - 3 authors: `Author A, Author B, and Author C`
+  - > 3 authors: `Author A, et al.`
+- Outputs an ordered list (`<ol>`) of styled citations:
+  - Italicizes titles
+  - Links DOIs and URLs
+  - Handles fields like `journal`, `volume`, `pages`, `organization`, `institution`, and more
+
+:::tip
+Store all bibliography files in `/static/bibliographies/` and follow the name convention laid out in [Static Folder](./07-static-folder.mdx) to allow the
+component to resolve them automatically.
+:::
+
+#### Props
+
+The component does **not accept any props**. Instead, it uses two React Context hooks internally:
+
+| Source          | Description                                                                   |
+| --------------- | ----------------------------------------------------------------------------- |
+| `useLocation()` | Extracts the current documentation path to construct the `bib.json` file path |
+| `useReportId()` | Resolves the active `reportId` to locate the corresponding `counters.json`    |
+
+#### Example Usage
+
+To render a bibliography section in a documentation page, simply import and place the component in your References page:
+
+```jsx
+import Bibliography from '@site/src/components/Bibliography';
+
+<Bibliography />
+
+```
