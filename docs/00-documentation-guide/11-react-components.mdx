@@ -41,7 +41,7 @@ It automatically loads citation metadata from a `bib.json` file and aligns each 
 
 This component is intended for reports and technical documentation where references must be accurate, consistent, and easily maintained across versions.
 
-**Key functionality includes:**
+**Functionality includes:**
 
 - Automatically determines the bibliography file path based on the current page URL and active `reportId` from context.
 - Loads two JSON files:
@@ -81,4 +81,322 @@ import Bibliography from '@site/src/components/Bibliography';
 
 <Bibliography />
 
+```
+
+---
+
+### Citation
+
+#### Overview and Functionality
+
+The `<Citation>` component is a lightweight inline React component that displays a numbered reference (e.g., `[3]`) tied to a citation entry in the page’s
+bibliography. It ensures in-text references are dynamically synchronized with the citation order defined in the associated `counters.json` file.
+
+**Functionality includes:**
+
+- Automatically determines the citation number based on the current page’s path and the active `reportId` (via `useReportId()`).
+- Loads the following resources:
+  - `counters/{reportId}.json` – Maps `citationKey` to its assigned citation number
+  - `bib.json` – Ensures the citation actually exists in the bibliography file
+- Tracks which citations are used on each page via `getUsedCitations(pathname)`
+- Renders a bracketed, clickable reference:
+  - `[1]`, `[2]`, etc.
+  - Links to the matching entry in the `<Bibliography />` component (via `#footnote-{citationKey}`)
+
+:::warning
+The component assumes a one-to-one match between `citationKey` in `bib.json` and the `counters.json` file. If the key is missing from the counters file,
+the reference will display as `[?]`.
+:::
+
+#### Props
+
+| Prop          | Type   | Required | Description                                                                   |
+| ------------- | ------ | -------- | ----------------------------------------------------------------------------- |
+| `citationKey` | string | ✅ Yes   | A unique key identifying the citation in both `bib.json` and `counters.json`. |
+
+#### Example Usage
+
+To insert an inline citation in your documentation, pass the `citationKey` to the component:
+
+```jsx
+import Citation from '@site/src/components/Citation';
+
+This guidance is consistent with earlier findings <Citation citationKey="USACE2023c" />.
+```
+
+---
+
+### CitationFootnote
+
+#### Overview and Functionality
+
+The `<CitationFootnote>` component renders a list of full citation footnotes at the bottom of a documentation page, based on which `<Citation />` references were used. It ensures that only citations actually referenced in the content are displayed, and that they appear in correct numerical order.
+
+**Functionality includes:**
+
+- Retrieves the current page path and active `reportId` to resolve:
+  - `bib.json` – Contains full metadata for all potential citations
+  - `counters/{reportId}.json` – Maps `citationKey`s to their assigned citation numbers
+- Uses `getUsedCitations(pathname)` from the `<Citation />` module to determine which citation keys are used on the current page
+- Sorts citations in ascending numerical order before rendering
+- Formats author lists and fields such as:
+  - `author`, `title`, `journal`, `volume`, `pages`, `publisher`, `organization`, `institution`, `doi`, `url`, etc.
+- Wraps each entry in a list item with an ID like `#footnote-USACE2023c` for in-page linking from `<Citation />`
+
+:::warning
+The component will not render anything if no `<Citation />` components were used on the page. It only displays footnotes for referenced citations.
+:::
+
+#### Props
+
+The component does **not accept any props**. Instead, it uses two React Context hooks internally:
+
+| Source          | Description                                                                   |
+| --------------- | ----------------------------------------------------------------------------- |
+| `useLocation()` | Extracts the current documentation path to construct the `bib.json` file path |
+| `useReportId()` | Resolves the active `reportId` to locate the corresponding `counters.json`    |
+
+#### Example Usage
+
+Place `<CitationFootnote />` at the bottom of your `.mdx` file to display footnotes for all citations used in the page:
+
+```jsx
+import CitationFootnote from '@site/src/components/CitationFootnote';
+
+<CitationFootnote />
+```
+
+---
+
+### DocumentMetadata
+
+#### Overview and Functionality
+
+The `<DocumentMetadata>` component displays structured report metadata in a tabular format at the top or bottom of a documentation page. It is
+designed to be used in the 00-document-info.mdx page to present key contextual information about the document—such as title, authorship, abstract,
+and citation guidance—in a clean and consistent layout.
+
+**Functionality includes:**
+
+- Renders a table with defined metadata fields:
+  - `Report Date`, `Type`, `Title`, `Subtitle`, `Author(s)`, `Abstract`, `Acknowledgements`, `Subject Terms`, `Responsible Person`,
+    and `How to Cite This Document`
+- Accepts metadata values as a single `metadata` object via props
+- Handles arrays (`reportAuthors`, `reportSubjectTerms`) with custom formatting:
+  - Authors are joined with `; `
+  - Subject terms are joined with `, `
+- Filters out any undefined or empty values to avoid displaying blank rows
+- Renders text content as raw HTML using `dangerouslySetInnerHTML` to allow styled input (e.g., italics, superscripts)
+
+:::warning
+This component does not handle data fetching. Metadata must be passed as a complete object from the parent `.mdx` file or component.
+:::
+
+#### Props
+
+| Prop       | Type   | Required | Description                                                            |
+| ---------- | ------ | -------- | ---------------------------------------------------------------------- |
+| `metadata` | object | ✅ Yes   | An object containing key-value pairs for document metadata. See below. |
+
+The metadata object should be formatted as frontMatter in the `.mdx` file, typically defined at the top of the document.
+
+##### Expected Metadata Fields
+
+| Key                       | Type              | Description                                        |
+| ------------------------- | ----------------- | -------------------------------------------------- |
+| `reportDate`              | string            | Date the report was finalized                      |
+| `reportType`              | string            | Document type (e.g., Technical Report, User Guide) |
+| `reportTitle`             | string            | Main title of the document                         |
+| `reportSubTitle`          | string (optional) | Optional subtitle or secondary title               |
+| `reportAuthors`           | string \| array   | Author name(s), either as a single string or array |
+| `reportAbstract`          | string            | Summary of the document’s content                  |
+| `reportAcknowledgments`   | string (optional) | Credits for contributions or support               |
+| `reportSubjectTerms`      | string \| array   | Keywords or indexing terms                         |
+| `responsiblePersonName`   | string (optional) | Contact person for the document                    |
+| `responsiblePersonNumber` | string (optional) | Phone number or contact ID                         |
+| `citationGuide`           | string            | How to properly cite the document                  |
+
+:::caution
+The component uses `dangerouslySetInnerHTML` to render all values. Be sure that all strings passed to `metadata` are sanitized or trusted content.
+:::
+
+#### Example Usage
+
+To display metadata at the beginning of a page:
+
+```jsx
+import DocumentMetadata from '@site/src/components/DocumentMetadata';
+
+---
+title: Document Info
+reportDate: May 2025
+reportType: Computer Program Document
+reportTitle: RMC Filter Evaluation (Continuation) Toolbox
+reportSubTitle: RMC Internal Erosion Suite
+reportAuthors: ["Adam Gohs, Risk Management Center"]
+reportAbstract: The spreadsheet tools contained in this toolbox assess the particle retention and permeability criteria for filter materials. It includes modern no-erosion filter design criteria, the Foster and Fell (2001) method for filters that do not meet modern filter design criteria, and the Fell et al. (2008) method for “continuing erosion” condition for constricted exits.
+reportSubjectTerms: ["Internal erosion", "continuation", "filter evaluation", "filter design criteria"]
+responsiblePersonName: Tim O'Leary
+responsiblePersonNumber: 502-315-6599
+citationGuide: "A. C. Gohs, <i>RMC Filter Evaluation (Continuation) Toolbox Technical Manual</i>, Lakewood, CO: U.S. Army Corps of Engineers, Risk Management Center, 2025. Accessed on <i>{enter current date here}</i>."
+---
+
+<DocumentMetadata metadata={frontMatter} />
+```
+
+---
+
+### Equation
+
+#### Overview and Functionality
+
+The `<Equation>` component renders LaTeX equations using [KaTeX](https://katex.org/) and optionally displays equation numbers based on the `equationKey`. It
+supports both **inline** and **block-level** equations and ensures automatic numbering via a shared `counters.json` file scoped to the current `reportId`.
+
+**Functionality includes:**
+
+- Fetches the current `reportId` from context (`useReportId()`).
+- Loads the corresponding counters file:
+  - `/RMC-Software-Documentation/counters/{reportId}.json`
+- Matches the provided `equationKey` to retrieve the associated `equationNumber`.
+- Displays the equation with or without a number depending on the `inline` prop.
+- Renders equations using:
+  - `<InlineMath />` from `react-katex` for inline formatting
+  - `<BlockMath />` from `react-katex` for centered display with numbering
+
+:::note
+All equations are rendered with [KaTeX](https://katex.org/), which supports a large subset of LaTeX. Be sure your expressions are KaTeX-compatible.
+:::
+
+#### Props
+
+| Prop          | Type    | Required | Description                                                                  |
+| ------------- | ------- | -------- | ---------------------------------------------------------------------------- |
+| `equationKey` | string  | ✅ Yes   | Unique key used to match the equation in `counters/{reportId}.json`.         |
+| `equation`    | string  | ✅ Yes   | A valid LaTeX string representing the equation to be rendered.               |
+| `inline`      | boolean | ❌ No    | If `true`, renders the equation inline (default: `false`, renders as block). |
+
+:::caution
+If `equationKey` is not found in the counters file, the equation will still render but without a number. Check the console for warnings if a number does not appear.
+:::
+
+#### Example Usage
+
+To render a numbered equation in block format:
+
+```jsx
+import Equation from '@site/src/components/Equation';
+
+<Equation
+  equationKey="eqn_energy_balance"
+  equation="E = mc^2"
+/>
+```
+
+To render an inline equation without a number:
+
+```jsx
+
+<Equation
+  equationKey="eqn_energy_balance"
+  equation="E = mc^2"
+  inline={true}>
+/>
+```
+
+---
+
+### EquationNoRef
+
+#### Overview and Functionality
+
+The `<EquationNoRef>` component renders LaTeX-based equations using [KaTeX](https://katex.org/), but **without** reference numbers. It is ideal for displaying
+supporting mathematical expressions where numbering is unnecessary, such as intermediate steps or formulas mentioned in passing.
+
+**Functionality includes:**
+
+- Uses the [KaTeX](https://katex.org/) library to render mathematical content.
+- Supports both inline and block display modes via the `inline` prop:
+  - Inline mode renders within a line of text.
+  - Block mode renders centered on its own line.
+- Requires only the LaTeX equation string — no `reportId`, `equationKey`, or counters integration.
+
+:::warning
+This component is purely visual. It does **not** manage equation numbering, anchors, or references. Use `<Equation />` for numbered equations.
+:::
+
+#### Props
+
+| Prop       | Type    | Required | Description                                                                   |
+| ---------- | ------- | -------- | ----------------------------------------------------------------------------- |
+| `equation` | string  | ✅ Yes   | A LaTeX-compatible string representing the equation.                          |
+| `inline`   | boolean | ❌ No    | If `true`, renders inline; if `false`, renders as a block. Default is `true`. |
+
+:::info
+This component does not fetch or display equation numbers. If you need an equation to be numbered and cross-referenced, use `<Equation />` instead.
+:::
+
+#### Example Usage
+
+To render an inline equation:
+
+```jsx
+import EquationNoRef from '@site/src/components/EquationNoRef';
+
+<EquationNoRef equation="a^2 + b^2 = c^2" />
+```
+
+To render the same equation as a centered block:
+
+```jsx
+<EquationNoRef equation="a^2 + b^2 = c^2" inline={false} />
+```
+
+:::tip Best Practice
+Use `<EquationNoRef>` for simple, unnumbered equations, when displaying intermediate steps in derivations, or short equations within text.
+:::
+
+---
+
+### EquationReference
+
+#### Overview and Functionality
+
+The `<EquationReference>` component is used to **dynamically display a reference** to a numbered equation based on its `equationKey`. It
+retrieves the equation number from a counters file scoped to the current `reportId` and renders a formatted string like `Equation 3`.
+
+This is useful for referring to previously defined equations elsewhere in the documentation without hardcoding numbers.
+
+**Functionality includes:**
+
+- Retrieves the current `reportId` from context (`useReportId()`).
+- Loads the appropriate `counters.json` file from:
+  - `/RMC-Software-Documentation/counters/{reportId}.json`
+- Looks up the equation number corresponding to the provided `equationKey`.
+- Renders a simple, styled text label like `Equation 5`.
+
+:::note
+This component does not render the equation itself—only a textual reference to its number. Use it in conjunction with `<Equation />` to
+create cross-references.
+:::
+
+#### Props
+
+| Prop          | Type   | Required | Description                                                                    |
+| ------------- | ------ | -------- | ------------------------------------------------------------------------------ |
+| `equationKey` | string | ✅ Yes   | Unique identifier used to retrieve the equation number from the counters file. |
+
+:::caution
+If the `equationKey` is not found or the counters file cannot be loaded, the component will fallback to `Loading...`. Console warnings
+will be shown to help with debugging.
+:::
+
+#### Example Usage
+
+Use `<EquationReference />` inline to refer to a previously displayed equation:
+
+```jsx
+import EquationReference from '@site/src/components/EquationReference';
+
+As shown in <EquationReference equationKey="eqn_energy_balance" />, energy is conserved...
 ```
