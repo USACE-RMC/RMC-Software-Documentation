@@ -17,6 +17,12 @@ const reportIdMap = {
   "toolbox-technical-manuals/internal-erosion-suite/pipe-service-life/v1.0": "internal-erosion-suite-pipe-service-life-v1.0",
   "toolbox-technical-manuals/internal-erosion-suite/soil-classification/v1.0": "internal-erosion-suite-soil-classification-v1.0",
   "toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0": "internal-erosion-suite-soil-contact-erosion-initiation-v1.0",
+  "toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.0": "risk-calculations-suite-typical-event-tree-database-v1.0",
+  "toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.1": "risk-calculations-suite-typical-event-tree-database-v1.1",
+  "toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.2": "risk-calculations-suite-typical-event-tree-database-v1.2",
+  "toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.3": "risk-calculations-suite-typical-event-tree-database-v1.3",
+  "toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.4": "risk-calculations-suite-typical-event-tree-database-v1.4",
+  "toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.5": "risk-calculations-suite-typical-event-tree-database-v1.5",
   "web-applications/dst/users-guide/v1.0": "dst-users-guide-v1.0",
   "web-applications/lst/users-guide/v1.0": "lst-users-guide-v1.0",
   "web-applications/rrft/users-guide/v1.0": "rrft-users-guide-v1.0"

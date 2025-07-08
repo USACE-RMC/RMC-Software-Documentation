@@ -38,28 +38,16 @@ const TableVersionHistory = ({
             <tr key={rowIndex}>
               <td>{versions[rowIndex] || ""}</td>
               <td>{dates[rowIndex] || ""}</td>
-              <td>
-                {Array.isArray(descriptions[rowIndex]) ? (
-                  descriptions[rowIndex].length > 1 ? (
-                    <ul>
-                      {descriptions[rowIndex].map((item, i) => (
-                        <li key={i}>{item}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    descriptions[rowIndex][0] || ""
-                  )
-                ) : (
-                  descriptions[rowIndex] || ""
-                )}
-              </td>
+              <td>{descriptions[rowIndex] || ""}</td>
               <td title={modifiedBy[rowIndex] || ""}>
                 {modifiedBy[rowIndex] || ""}
               </td>
               <td title={reviewedBy[rowIndex] || ""}>
                 {reviewedBy[rowIndex] || ""}
               </td>
-              <td title={approvedBy[rowIndex]}>{approvedBy[rowIndex] || ""}</td>
+              <td title={approvedBy[rowIndex]}>
+                {approvedBy[rowIndex] || ""}
+              </td>
             </tr>
           ))}
         </tbody>

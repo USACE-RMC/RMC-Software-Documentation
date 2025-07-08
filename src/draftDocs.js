@@ -1,4 +1,5 @@
 import { internalErosionSuiteDocs } from "./pages/toolboxes/internal-erosion-suite";
+import { riskCalculationsSuiteDocs } from "./pages/toolboxes/risk-calculations-suite";
 import { lifeSimDocs } from "./pages/desktop-applications/lifesim";
 import { bestFitDocs } from "./pages/desktop-applications/rmc-bestfit";
 import { RFADocs } from "./pages/desktop-applications/rmc-rfa";
@@ -10,6 +11,7 @@ import { rrftDocs } from "./pages/web-applications/rrft";
 
 const allDocs = [
   ...internalErosionSuiteDocs,
+  ...riskCalculationsSuiteDocs,
   ...lifeSimDocs,
   ...bestFitDocs,
   ...RFADocs,
