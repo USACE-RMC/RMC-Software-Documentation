@@ -79,10 +79,9 @@ The component does **not accept any props**. Instead, it uses two React Context 
 To render a bibliography section in a documentation page, simply import and place the component in your References page:
 
 ```jsx
-import Bibliography from '@site/src/components/Bibliography';
+import Bibliography from "@site/src/components/Bibliography";
 
-<Bibliography />
-
+<Bibliography />;
 ```
 
 ---
@@ -163,9 +162,9 @@ The component does **not accept any props**. Instead, it uses two React Context 
 Place `<CitationFootnote />` at the bottom of your `.mdx` file to display footnotes for all citations used in the page:
 
 ```jsx
-import CitationFootnote from '@site/src/components/CitationFootnote';
+import CitationFootnote from "@site/src/components/CitationFootnote";
 
-<CitationFootnote />
+<CitationFootnote />;
 ```
 
 ---
@@ -287,12 +286,9 @@ If `equationKey` is not found in the counters file, the equation will still rend
 To render a numbered equation in block format:
 
 ```jsx
-import Equation from '@site/src/components/Equation';
+import Equation from "@site/src/components/Equation";
 
-<Equation
-  equationKey="eqn_energy_balance"
-  equation="E = mc^2"
-/>
+<Equation equationKey="eqn_energy_balance" equation="E = mc^2" />;
 ```
 
 To render an inline equation without a number:
@@ -343,9 +339,9 @@ This component does not fetch or display equation numbers. If you need an equati
 To render an inline equation:
 
 ```jsx
-import EquationNoRef from '@site/src/components/EquationNoRef';
+import EquationNoRef from "@site/src/components/EquationNoRef";
 
-<EquationNoRef equation="a^2 + b^2 = c^2" />
+<EquationNoRef equation="a^2 + b^2 = c^2" />;
 ```
 
 To render the same equation as a centered block:
@@ -444,15 +440,14 @@ If `figKey` is not found or the counters file cannot be loaded, the component wi
 #### Example Usage
 
 ```jsx
-import Figure from '@site/src/components/Figure';
+import Figure from "@site/src/components/Figure";
 
 <Figure
   figKey="fig_infiltration_diagram"
   src="figures/infiltration-diagram.png"
   alt="Cross-sectional view of infiltration process"
   caption="Conceptual model illustrating infiltration through embankment materials."
-/>
-
+/>;
 ```
 
 ---
@@ -547,7 +542,7 @@ As shown in <FigureReference figKey="fig_infiltration_diagram" />, infiltration 
 The `<NavContainer>` component provides a consistent layout for displaying **navigation and version selection controls** at the top of a documentation page. It wraps two subcomponents:
 
 - `<NavLink />`: A [navigational link](#navlink) back to a parent page or section.
-- `<VersionSelector />`: A dropdown for selecting available document versions.
+- `<VersionSelector />`: A [dropdown](#versionselector) for selecting available document versions.
 
 This layout ensures users always have quick access to both the document structure and alternate versions of the current content.
 
@@ -576,14 +571,13 @@ All three props are required. Omitting any of them may result in broken layout o
 #### Example Usage
 
 ```jsx
-import NavContainer from '@site/src/components/NavContainer';
+import NavContainer from "@site/src/components/NavContainer";
 
 <NavContainer
   link="/docs/project-x/overview"
   linkTitle="← Back to Project Overview"
   document="project-x"
-/>
-
+/>;
 ```
 
 ---
@@ -619,13 +613,12 @@ Make sure `link` is a valid internal route in your Docusaurus project. External 
 #### Example Usage
 
 ```jsx
-import NavLink from '@site/src/components/NavLink';
+import NavLink from "@site/src/components/NavLink";
 
 <NavLink
   link="/docs/project-x/overview"
   linkTitle="Back to Project Overview"
-/>
-
+/>;
 ```
 
 ---
@@ -663,16 +656,19 @@ All columns must have the same number of rows. Empty cells will be padded automa
 #### Example Usage
 
 ```jsx
-import TableAcronyms from '@site/src/components/TableAcronyms';
+import TableAcronyms from "@site/src/components/TableAcronyms";
 
 <TableAcronyms
   headers={["Acronym", "Definition"]}
   columns={[
     ["RMC", "USACE", "FEMA"],
-    ["Risk Management Center", "U.S. Army Corps of Engineers", "Federal Emergency Management Agency"]
+    [
+      "Risk Management Center",
+      "U.S. Army Corps of Engineers",
+      "Federal Emergency Management Agency",
+    ],
   ]}
-/>
-
+/>;
 ```
 
 ---
@@ -724,18 +720,18 @@ help with debugging.
 #### Example Usage
 
 ```jsx
-import TableHorizontal from '@site/src/components/TableHorizontal';
+import TableHorizontal from "@site/src/components/TableHorizontal";
 
 <TableHorizontal
   tableKey="overtopping-depth-duration"
   headers={["Overtopping Depth (ft)", "Overtopping Duration (hrs)"]}
   rows={[
     ["0", "0.5", "1.0", "1.5", "2.0"],
-    ["0", "2", "4", "8", "13", "20"]
+    ["0", "2", "4", "8", "13", "20"],
   ]}
   alt="Overtopping depth and duration comparison"
   caption="Overtopping durations in hours for given peak overtopping depths in feet."
-/>
+/>;
 ```
 
 ---
@@ -784,3 +780,220 @@ embankment zones.
 ```
 
 ---
+
+### TableVersionHistory
+
+#### Overview and Functionality
+
+The `<TableVersionHistory>` component displays a structured version history table for a document or software application. It is designed to be used in the
+00-version-history.mdx page to present version history information about the document - such as version number, date, version update descriptions, modified by,
+reviewed by, and approved by.
+
+**Functionality includes:**
+
+- Accepts six parallel arrays as props: `versions`, `dates`, `descriptions`, `modifiedBy`, `reviewedBy`, and `approvedBy`
+- Automatically calculates the total number of rows needed based on the longest column
+- Displays a static HTML `<table>` with consistent formatting via `static-table-version-history` CSS class
+- Applies `title` tooltips on reviewer/approver/modifier cells for clarity on hover
+
+:::note
+The table rows are padded automatically if some columns are shorter than others, ensuring visual consistency.
+:::
+
+#### Props
+
+| Prop           | Type     | Required | Description                                      |
+| -------------- | -------- | -------- | ------------------------------------------------ |
+| `versions`     | string[] | ✅ Yes   | Array of version labels (e.g., `"1.0"`, `"2.1"`) |
+| `dates`        | string[] | ✅ Yes   | Corresponding array of dates for each version    |
+| `descriptions` | string[] | ✅ Yes   | Description of what changed in each version      |
+| `modifiedBy`   | string[] | ✅ Yes   | Who modified the document in each version        |
+| `reviewedBy`   | string[] | ✅ Yes   | Who reviewed each version                        |
+| `approvedBy`   | string[] | ✅ Yes   | Who approved each version                        |
+
+:::caution
+All arrays must represent parallel data. The table will expand to the longest array and fill empty cells where necessary.
+:::
+
+#### Example Usage
+
+```jsx
+import TableVersionHistory from "@site/src/components/TableVersionHistory";
+
+<TableVersionHistory
+  versions={["1.0", "1.1", "2.0"]}
+  dates={["2023-05-01", "2023-06-15", "2024-01-10"]}
+  descriptions={[
+    "Initial release",
+    "Minor updates and formatting improvements",
+    "Major update with new analysis section",
+  ]}
+  modifiedBy={["A. Engineer", "B. Analyst", "C. Reviewer"]}
+  reviewedBy={["D. Checker", "E. QA", "F. Lead Reviewer"]}
+  approvedBy={["G. Manager", "H. Manager", "I. Director"]}
+/>;
+```
+
+---
+
+### TableVertical
+
+#### Overview and Functionality
+
+The `<TableVertical>` component renders a **standard vertical table layout**, where column headers appear at the top and data is populated row by row below. It supports complex table structures, including merged header and data cells via `rowSpan` and `colSpan`, and it integrates with a `counters.json` file to provide automatic table numbering.
+
+**Functionality includes:**
+
+- Loads the current `reportId` from context (`useReportId()`)
+- Retrieves table number from:
+  - `/RMC-Software-Documentation/counters/{reportId}.json`
+- Renders:
+  - A multi-row `<thead>` for flexible column grouping and merging
+  - A multi-column `<tbody>` based on column-structured input arrays
+- Supports `colSpan` and `rowSpan` for both headers and data cells
+- Dynamically applies full-width or partial-width styling using the `fullWidth` prop
+
+:::note
+This component is ideal for structured engineering, scientific, or technical tables that require precise formatting and automatic numbering.
+:::
+
+#### Props
+
+| Prop        | Type      | Required | Description                                                                                                              |
+| ----------- | --------- | -------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `tableKey`  | string    | ✅ Yes   | Unique key used to match the table in the `counters.json` file                                                           |
+| `headers`   | array[][] | ✅ Yes   | Array of header rows, where each row is an array of `{ value, colSpan?, rowSpan? }` objects                              |
+| `columns`   | array[][] | ✅ Yes   | Array of columns, where each column is an array of cell strings or cell objects with `value`, `rowSpan?`, and `colSpan?` |
+| `fullWidth` | boolean   | ❌ No    | Whether to apply full-width table styling (default: `true`)                                                              |
+| `alt`       | string    | ✅ Yes   | Alternative text for accessibility                                                                                       |
+| `caption`   | string    | ✅ Yes   | Descriptive label shown with the table number                                                                            |
+
+:::caution
+All `columns` must be the same length. Use empty strings to pad shorter columns to maintain alignment.
+:::
+
+#### Example Usage
+
+```jsx
+import TableVertical from "@site/src/components/TableVertical";
+
+<TableVertical
+  tableKey="table_material_classification"
+  headers={[
+    [
+      { value: "Material", rowSpan: 2 },
+      { value: "Properties", colSpan: 2 },
+    ],
+    [
+      { value: null },
+      { value: "Unit Weight (pcf)" },
+      { value: "Permeability (cm/s)" },
+    ],
+  ]}
+  columns={[
+    ["Clay", "Sand", "Gravel"],
+    ["120", "110", "100"],
+    ["1e-7", "1e-4", "1e-2"],
+  ]}
+  alt="Typical material properties"
+  caption="Typical unit weight and permeability values for embankment materials."
+/>;
+```
+
+---
+
+### TableVerticalLeftAlign
+
+#### Overview and Functionality
+
+The `<TableVerticalLeftAlign>` component is a variant of `<TableVertical />` that uses **left-aligned styling** for all header and data cells.
+It is ideal for tables with descriptive or text-heavy content where left alignment improves readability.
+
+All functionality and input structure are the same as `<TableVertical />`, including:
+
+- Support for merged headers and data cells (`rowSpan`, `colSpan`)
+- Automatic table numbering using `tableKey` and `reportId`
+- Full-width or partial-width layout via `fullWidth`
+
+:::note
+This component differs from `<TableVertical />` only in visual alignment. It is otherwise interchangeable.
+:::
+
+#### Props
+
+Identical to `<TableVertical />`:
+
+| Prop        | Type      | Required | Description                                                   |
+| ----------- | --------- | -------- | ------------------------------------------------------------- |
+| `tableKey`  | string    | ✅ Yes   | Key for retrieving table number from the `counters.json` file |
+| `headers`   | array[][] | ✅ Yes   | Header rows with `{ value, colSpan?, rowSpan? }` objects      |
+| `columns`   | array[][] | ✅ Yes   | Column-major data format                                      |
+| `fullWidth` | boolean   | ❌ No    | Enables full-width styling (default: `true`)                  |
+| `alt`       | string    | ✅ Yes   | Alt text for screen readers                                   |
+| `caption`   | string    | ✅ Yes   | Descriptive caption shown with table number                   |
+
+#### Example Usage
+
+```jsx
+import TableVerticalLeftAlign from "@site/src/components/TableVerticalLeftAlign";
+
+<TableVerticalLeftAlign
+  tableKey="table_material_classification"
+  headers={[
+    [
+      { value: "Material", rowSpan: 2 },
+      { value: "Properties", colSpan: 2 },
+    ],
+    [
+      { value: null },
+      { value: "Unit Weight (pcf)" },
+      { value: "Permeability (cm/s)" },
+    ],
+  ]}
+  columns={[
+    ["Clay", "Sand", "Gravel"],
+    ["120", "110", "100"],
+    ["1e-7", "1e-4", "1e-2"],
+  ]}
+  alt="Typical material properties"
+  caption="Typical unit weight and permeability values for embankment materials."
+/>;
+```
+
+---
+
+### VersionSelector
+
+#### Overview and Functionality
+
+The `<VersionSelector>` component renders a dropdown that allows users to switch between different versions of a document. It automatically detects the current version from the URL and updates the browser route when a new version is selected—without requiring a full page reload.
+
+**Functionality includes:**
+
+- Loads available versions for the current document from:
+  - `/RMC-Software-Documentation/versions/versionList.json`
+- Extracts the version segment (e.g., `/v1.0/`) from the current URL
+- Updates the URL path when the user selects a different version
+- Maintains client-side navigation using Docusaurus’ `useHistory()` and `useLocation()`
+
+:::note
+This component relies on the presence of a JSON object in `versionList.json` where each document maps to an array of version strings (e.g., `["v1.0", "v2.1"]`).
+:::
+
+#### Props
+
+| Prop       | Type   | Required | Description                                                                |
+| ---------- | ------ | -------- | -------------------------------------------------------------------------- |
+| `document` | string | ✅ Yes   | A unique identifier used to fetch the version list from `versionList.json` |
+
+:::caution
+If `document` is not provided or not found in the version list, the dropdown will not render and a fallback message will be shown.
+:::
+
+#### Example Usage
+
+```jsx
+import VersionSelector from "@site/src/components/VersionSelector";
+
+<VersionSelector document="rmc-dam-safety-toolbox" />;
+```
