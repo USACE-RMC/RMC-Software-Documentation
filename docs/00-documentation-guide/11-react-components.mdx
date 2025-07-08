@@ -2,6 +2,8 @@
 title: React Components
 ---
 
+import TableHorizontal from "@site/src/components/TableHorizontal";
+
 # React Components
 
 ## What is React?
@@ -400,3 +402,385 @@ import EquationReference from '@site/src/components/EquationReference';
 
 As shown in <EquationReference equationKey="eqn_energy_balance" />, energy is conserved...
 ```
+
+---
+
+### Figure
+
+#### Overview and Functionality
+
+The `<Figure>` component is used to embed images within documentation and automatically apply figure numbering using a centralized `counters.json` file.
+It is ideal for technical reports that require consistently numbered figures across pages and references.
+
+**Functionality includes:**
+
+- Retrieves the current `reportId` from context using `useReportId()`
+- Loads the associated `counters.json` file from:
+  - `/RMC-Software-Documentation/counters/{reportId}.json`
+- Matches the provided `figKey` to the figure number in the counters file
+- Renders:
+  - An image using the `src` path
+  - A caption with automatic numbering: `Figure 3: Caption text`
+
+:::info
+This component handles figure **numbering and display** in **block format**. To insert a figure inline with text, use the `<FigureInline />` component.
+
+This component handles figure **numbering and display**. To insert an inline figure reference (e.g., "see Figure 3"), use the `<FigureReference />` component.
+:::
+
+#### Props
+
+| Prop      | Type   | Required | Description                                                                |
+| --------- | ------ | -------- | -------------------------------------------------------------------------- |
+| `figKey`  | string | ✅ Yes   | Unique identifier for the figure in the counters file                      |
+| `src`     | string | ✅ Yes   | Path to the image file relative to the `/RMC-Software-Documentation/` root |
+| `alt`     | string | ✅ Yes   | Alternative text for the image (used for accessibility and SEO)            |
+| `caption` | string | ✅ Yes   | Text that appears below the figure as its description                      |
+
+:::caution
+If `figKey` is not found or the counters file cannot be loaded, the component will fallback to `Loading...`. Console warnings will be shown to help with debugging.
+:::
+
+#### Example Usage
+
+```jsx
+import Figure from '@site/src/components/Figure';
+
+<Figure
+  figKey="fig_infiltration_diagram"
+  src="figures/infiltration-diagram.png"
+  alt="Cross-sectional view of infiltration process"
+  caption="Conceptual model illustrating infiltration through embankment materials."
+/>
+
+```
+
+---
+
+### FigureInline
+
+#### Overview and Functionality
+
+The `<FigureInline>` component is a simple, unnumbered image renderer used to display small images inline with surrounding content. It is best
+suited for icons, schematic thumbnails, or other visuals that do **not** require figure numbers or captions.
+
+**Functionality includes:**
+
+- Constructs the image path by prepending `/RMC-Software-Documentation/` to the provided `src`.
+- Applies inline styling via the `figure-inline` CSS class to ensure the image flows with surrounding text.
+- Does **not** include captions, alt text, or numbering.
+
+:::note
+This component is strictly visual and is not included in the automatic figure numbering system. Use `<Figure />` if you need a captioned and
+numbered image.
+:::
+
+#### Props
+
+| Prop  | Type   | Required | Description                                                               |
+| ----- | ------ | -------- | ------------------------------------------------------------------------- |
+| `src` | string | ✅ Yes   | Relative path to the image (from the `/RMC-Software-Documentation/` root) |
+
+:::caution
+This component does **not** support `alt` text. If accessibility is a requirement, use the `<img>` tag directly or extend this component.
+:::
+
+#### Example Usage
+
+```jsx
+import FigureInline from '@site/src/components/FigureInline';
+
+Here is a comparison chart <FigureInline src="figures/chart-thumbnail.png" /> that shows the performance differences between models.
+
+```
+
+---
+
+### FigureReference
+
+#### Overview and Functionality
+
+The `<FigureReference>` component is used to dynamically insert a numbered reference to a figure within a sentence or paragraph. It fetches
+the correct figure number from the centralized `counters.json` file using the provided `figKey`, and renders text such as `Figure 5`.
+
+**Functionality includes:**
+
+- Retrieves the current `reportId` from context via `useReportId()`
+- Loads the counters file from:
+  - `/RMC-Software-Documentation/counters/{reportId}.json`
+- Locates the figure number using the provided `figKey`
+- Renders a simple inline label like `Figure 2`
+
+:::note
+This component is useful for cross-referencing figures from elsewhere in the document. It does **not** render the image itself—only the figure
+number.
+:::
+
+#### Props
+
+| Prop     | Type   | Required | Description                                                       |
+| -------- | ------ | -------- | ----------------------------------------------------------------- |
+| `figKey` | string | ✅ Yes   | Unique key for the figure, matching an entry in the counters file |
+
+:::caution
+If the `figKey` is not found or the counters file fails to load, the output will display `Loading...`. Console warnings will indicate the
+missing reference.
+:::
+
+#### Example Usage
+
+Use `<FigureReference />` inline to refer to a previously inserted `<Figure />`:
+
+```jsx
+import FigureReference from '@site/src/components/FigureReference';
+
+As shown in <FigureReference figKey="fig_infiltration_diagram" />, infiltration occurs vertically through the embankment core...
+
+```
+
+---
+
+### NavContainer
+
+#### Overview and Functionality
+
+The `<NavContainer>` component provides a consistent layout for displaying **navigation and version selection controls** at the top of a documentation page. It wraps two subcomponents:
+
+- `<NavLink />`: A [navigational link](#navlink) back to a parent page or section.
+- `<VersionSelector />`: A dropdown for selecting available document versions.
+
+This layout ensures users always have quick access to both the document structure and alternate versions of the current content.
+
+**Functionality includes:**
+
+- Displays a styled navigation link using the provided `link` and `linkTitle`.
+- Displays a version selector dropdown based on the `document` prop.
+- Organizes both elements using a flexible container layout styled via `nav-container.css`.
+
+:::note
+This component is a layout utility and does not manage routing or version state itself. It delegates those tasks to `<NavLink />` and `<VersionSelector />`.
+:::
+
+#### Props
+
+| Prop        | Type   | Required | Description                                                                  |
+| ----------- | ------ | -------- | ---------------------------------------------------------------------------- |
+| `link`      | string | ✅ Yes   | The relative path to the parent or target page for navigation                |
+| `linkTitle` | string | ✅ Yes   | The text label for the navigation link (e.g., "Back to Overview")            |
+| `document`  | string | ✅ Yes   | The identifier used by `<VersionSelector />` to determine available versions |
+
+:::caution
+All three props are required. Omitting any of them may result in broken layout or missing navigation elements.
+:::
+
+#### Example Usage
+
+```jsx
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer
+  link="/docs/project-x/overview"
+  linkTitle="← Back to Project Overview"
+  document="project-x"
+/>
+
+```
+
+---
+
+### NavLink
+
+#### Overview and Functionality
+
+The `<NavLink>` component renders a styled navigational link that points to a related page within your Docusaurus site. It is typically used to provide a “Back to…” or “Return to…” link at the top of a documentation page, and is often embedded inside `<NavContainer />`.
+
+**Functionality includes:**
+
+- Resolves the base URL dynamically using Docusaurus’ `useBaseUrl()` hook.
+- Wraps the destination in a `<Link />` component for proper SPA navigation.
+- Renders left-pointing arrow (`←`) followed by a custom label from `linkTitle`.
+- Styled via the shared `nav-and-print.css` class set.
+
+:::note
+This component is purely presentational. It does not conditionally render or validate whether the target path exists.
+:::
+
+#### Props
+
+| Prop        | Type   | Required | Description                                                               |
+| ----------- | ------ | -------- | ------------------------------------------------------------------------- |
+| `link`      | string | ✅ Yes   | The relative path to the destination page (e.g., `/docs/project-x/intro`) |
+| `linkTitle` | string | ✅ Yes   | The text displayed next to the arrow (e.g., `Back to Overview`)           |
+
+:::caution
+Make sure `link` is a valid internal route in your Docusaurus project. External URLs will not work properly here.
+:::
+
+#### Example Usage
+
+```jsx
+import NavLink from '@site/src/components/NavLink';
+
+<NavLink
+  link="/docs/project-x/overview"
+  linkTitle="Back to Project Overview"
+/>
+
+```
+
+---
+
+### TableAcronyms
+
+#### Overview and Functionality
+
+The `<TableAcronyms>` component was created specifically to display acronyms and their long-form definitions in a static, two-column vertical
+table. This component is to be used in the Acronym appendix of documents.
+
+**Functionality includes:**
+
+- Accepts a list of column headers and column data arrays as props.
+- Dynamically computes the number of rows based on the length of the first column.
+- Renders a simple HTML `<table>` with:
+  - One `<thead>` row for column labels
+  - Multiple `<tbody>` rows built from corresponding items in each column
+
+:::note
+This component renders a **fixed-layout** table. It does not support dynamic sorting, filtering, or merging of cells.
+:::
+
+#### Props
+
+| Prop      | Type     | Required | Description                                                                |
+| --------- | -------- | -------- | -------------------------------------------------------------------------- |
+| `headers` | string[] | ✅ Yes   | An array of column labels (typically `["Acronym", "Definition"]`)          |
+| `columns` | array[]  | ✅ Yes   | An array of arrays, where each inner array represents one column of values |
+
+:::caution
+All columns must have the same number of rows. Empty cells will be padded automatically, but uneven arrays may produce unexpected results.
+:::
+
+#### Example Usage
+
+```jsx
+import TableAcronyms from '@site/src/components/TableAcronyms';
+
+<TableAcronyms
+  headers={["Acronym", "Definition"]}
+  columns={[
+    ["RMC", "USACE", "FEMA"],
+    ["Risk Management Center", "U.S. Army Corps of Engineers", "Federal Emergency Management Agency"]
+  ]}
+/>
+
+```
+
+---
+
+### TableHorizontal
+
+#### Overview and Functionality
+
+The `<TableHorizontal>` component displays a horizontal table where **headers are listed vertically in the first column**, and corresponding row
+data is arranged to the right. This format is useful for comparing attribute values side-by-side across multiple items.
+
+It also supports automatic **table numbering** via a central `counters.json` file, ensuring consistent references across documents.
+
+**Functionality includes:**
+
+- Loads the current `reportId` from context using `useReportId()`
+- Retrieves the table number using `tableKey` from:
+  - `/RMC-Software-Documentation/counters/{reportId}.json`
+- Displays:
+  - A caption with the resolved table number
+  - A horizontal layout where each row starts with a header and is followed by values
+- Supports inline HTML formatting inside cells using `dangerouslySetInnerHTML`
+
+:::note
+This component is designed for **transposed tables**—use it when each row represents a field and each column represents a different scenario
+or category.
+
+This component handles table **numbering and display**. To insert an inline table reference (e.g., "see Table 3"), use the `<TableReference />`
+component.
+:::
+
+#### Props
+
+| Prop       | Type     | Required | Description                                                              |
+| ---------- | -------- | -------- | ------------------------------------------------------------------------ |
+| `tableKey` | string   | ✅ Yes   | Unique key used to match the table in the `counters.json` file           |
+| `headers`  | string[] | ✅ Yes   | Array of header labels for each row (first column of the table)          |
+| `rows`     | array[]  | ✅ Yes   | 2D array of cell values (one array per row, excluding the header column) |
+| `alt`      | string   | ✅ Yes   | Alternative text for accessibility and screen readers                    |
+| `caption`  | string   | ✅ Yes   | Descriptive text shown under the table number                            |
+
+:::caution
+Make sure the number of `headers` matches the number of `rows`. Mismatches will result in misaligned rows or rendering issues.
+
+If tableKey is not found or the counters file cannot be loaded, the component will fallback to `Loading...`. Console warnings will be shown to
+help with debugging.
+:::
+
+#### Example Usage
+
+```jsx
+import TableHorizontal from '@site/src/components/TableHorizontal';
+
+<TableHorizontal
+  tableKey="overtopping-depth-duration"
+  headers={["Overtopping Depth (ft)", "Overtopping Duration (hrs)"]}
+  rows={[
+    ["0", "0.5", "1.0", "1.5", "2.0"],
+    ["0", "2", "4", "8", "13", "20"]
+  ]}
+  alt="Overtopping depth and duration comparison"
+  caption="Overtopping durations in hours for given peak overtopping depths in feet."
+/>
+```
+
+---
+
+### TableReference
+
+#### Overview and Functionality
+
+The `<TableReference>` component is used to insert dynamic references to tables elsewhere in the documentation. When given a `tableKey`,
+it fetches the corresponding table number from the centralized `counters.json` file associated with the current `reportId` and displays it
+inline as `Table 4`, for example.
+
+This helps maintain consistent, automatically updated references across pages—even if table numbering changes during editing.
+
+**Functionality includes:**
+
+- Retrieves the active `reportId` from context via `useReportId()`
+- Loads table metadata from:
+  - `/RMC-Software-Documentation/counters/{reportId}.json`
+- Locates and displays the table number that matches the given `tableKey`
+- Renders a styled inline reference like `Table 5`
+
+:::note
+This component is used for **text references only**. It does not render the full table. To display an actual table, use a component
+like `<TableHorizontal />` or `<TableVertical />`.
+:::
+
+#### Props
+
+| Prop       | Type   | Required | Description                                                            |
+| ---------- | ------ | -------- | ---------------------------------------------------------------------- |
+| `tableKey` | string | ✅ Yes   | Unique key used to locate the table number in the `counters.json` file |
+
+:::caution
+If tableKey is not found or the counters file cannot be loaded, the component will fallback to `Loading...`. Console warnings will be shown to
+help with debugging.
+:::
+
+#### Example Usage
+
+```jsx
+import TableReference from '@site/src/components/TableReference';
+
+The material properties shown in <TableReference tableKey="table_material_properties" /> illustrate typical values for different
+embankment zones.
+```
+
+---
