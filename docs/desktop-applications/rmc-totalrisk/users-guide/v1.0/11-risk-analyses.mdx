@@ -136,7 +136,7 @@ handles numerical integration. <FigReference figKey="integration-options-vegas" 
 
 - **Final Evaluations**: Specifies the number of integrand evaluations performed after completing the warmup phase. The default is <EquationNoRef equation="10,000" />.
 
-For more details on the numerical integration methods used by RMC-TotalRisk, refer to the technical reference manual <Citation key="cite-TechRef" />.
+For more details on the numerical integration methods used by RMC-TotalRisk, refer to the technical reference manual <Citation citationKey="TechRef" />.
 
 ## System Component Options
 
@@ -259,8 +259,20 @@ For more details about the additional risk measures in RMC-TotalRisk, refer to t
 RMC-TotalRisk defines a risk analysis using an intuitive diagram, as shown in <FigReference figKey="risk-diagram" />. This diagram provides a clear way to create and
 connect the components of the modeled system.
 
-A risk analysis computes the risk associated with multiple potential failure modes for each system component. Each failure mode combines a hazard, the system's response
+A risk analysis computes the risk associated with multiple potential failure modes for each system component. Each failure mode combines a hazard, the system’s response
 to that hazard, and the consequences of the response. Non-failure modes consist of a hazard and the non-failure consequences associated with it.
+
+<FigReference figKey="risk-diagram" /> illustrates a single system component for a dam safety risk analysis. The diagram includes a non-failure mode, represented 
+by the purple line at the top, connecting the hazard function directly to the non-failure consequences without involving a system response. Many dams experience 
+non-failure consequences. For example, during a major flood event, a dam might activate its emergency spillway to prevent overtopping. While this action protects 
+the dam, it can still result in downstream impacts. The non-failure mode in the diagram represents the risk associated with these non-failure scenarios.
+
+The diagram also includes two failure modes:
+
+1. **Spilway erosion failure mode (PFM 1)**: This mode, shown in the center of the diagram, connects the hazard function at Dam A to the PFM 1 response function
+   and consequence function.
+
+2. **Concentrated leak erosion failure mode (PFM 2)**: This mode, shown at the bottom of the diagram, follows the same structure as PFM 1.
 
 <Figure
   figKey="risk-diagram"
@@ -270,11 +282,11 @@ to that hazard, and the consequences of the response. Non-failure modes consist 
   caption="RMC-TotalRisk risk diagram."
 />
 
-The risk diagram connects input functions from left to right, linking them based on their hazard type (e.g., stage, flow) and units (e.g., ft, cfs). Circular or redundant
-connections are not allowed, making the risk diagram a type of directed acyclic graph (DAG).
+The risk diagram connects input functions from left to right, linking them based on their hazard type (e.g., stage, flow) and units (e.g., ft, cfs). Circular or
+redundant connections are not allowed, making the risk diagram a type of directed acyclic graph (DAG).
 
-System components in the diagram are labeled by their selected hazard functions. You can rename system components by right-clicking their names in the diagram or editing
-their names in the Properties window. Failure modes within each component are labeled by their corresponding response functions.
+System components in the diagram are labeled by their selected hazard functions. You can rename system components by right-clicking their names in the diagram or
+editing their names in the Properties window. Failure modes within each component are labeled by their corresponding response functions.
 
 RMC-TotalRisk supports an unlimited number of failure modes per component, depending on the selected failure mode method. However, a single system is limited to 20
 components due to virtual memory and runtime constraints. For example, you can evaluate the system risk for a watershed with up to 20 dams, each containing multiple
@@ -335,33 +347,33 @@ left-click and hold the input of the connected node, then drag the cursor to ano
 
 The diagram has four fundamental node types:
 
-- <FigureInline src="/figures/desktop-applications/rmc-totalrisk/users-guide/hazardIcon.png"/> **Hazard Node**: Describes exceedance probabilities for various hazard levels 
+- <FigureInline src="/figures/desktop-applications/rmc-totalrisk/users-guide/v1.0/hazardIcon.png"/> **Hazard Node**: Describes exceedance probabilities for various hazard levels 
 (e.g., peak flow-frequency or reservoir stage frequency). Hazard nodes define the system component’s identity and can have multiple outputs.
 
-- <FigureInline src="/figures/desktop-applications/rmc-totalrisk/users-guide/transformIcon.png"/> **Transform Node**: Converts hazard levels from one type to another 
+- <FigureInline src="/figures/desktop-applications/rmc-totalrisk/users-guide/v1.0/transformIcon.png"/> **Transform Node**: Converts hazard levels from one type to another 
 (e.g., flow 
 to stage). Transform nodes can connect sequentially and have multiple outputs unless linked to a response function.
 
-- <FigureInline src="/figures/desktop-applications/rmc-totalrisk/users-guide/responseIcon.png"/> **Response Node**: Represents the system’s conditional probability of 
+- <FigureInline src="/figures/desktop-applications/rmc-totalrisk/users-guide/v1.0/responseIcon.png"/> **Response Node**: Represents the system’s conditional probability of 
 failure at 
 various hazard levels. Response nodes define failure modes and allow one output connection.
 
-- <FigureInline src="/figures/desktop-applications/rmc-totalrisk/users-guide/consequenceIcon.png"/> **Consequence Node**: Defines the consequences of failure or non-failure. 
+- <FigureInline src="/figures/desktop-applications/rmc-totalrisk/users-guide/v1.0/consequenceIcon.png"/> **Consequence Node**: Defines the consequences of failure or non-failure. 
 Non-failure consequences connect directly to the hazard node without a response function.
 
 #### Visual Feedback
 
 The diagram provides visual feedback for data validation:
 
-- <FigureInline src="/figures/desktop-applications/rmc-totalrisk/users-guide/noInputSelected.png"/> **No Input Selected**: Red outlines indicate a node with no input defined.
+- <FigureInline src="/figures/desktop-applications/rmc-totalrisk/users-guide/v1.0/noInputSelected.png"/> **No Input Selected**: Red outlines indicate a node with no input defined.
 
-- <FigureInline src="/figures/desktop-applications/rmc-totalrisk/users-guide/incompleteConnection.png"/> **Incomplete Connection**: Black lines indicate valid connections 
+- <FigureInline src="/figures/desktop-applications/rmc-totalrisk/users-guide/v1.0/incompleteConnection.png"/> **Incomplete Connection**: Black lines indicate valid connections 
 that lack complete failure or non-failure modes.
 
-- <FigureInline src="/figures/desktop-applications/rmc-totalrisk/users-guide/invalidConnection.png"/> **Invalid Connection**: Red lines indicate mismatched units or 
+- <FigureInline src="/figures/desktop-applications/rmc-totalrisk/users-guide/v1.0/invalidConnection.png"/> **Invalid Connection**: Red lines indicate mismatched units or 
 undefined inputs.
 
-- <FigureInline src="/figures/desktop-applications/rmc-totalrisk/users-guide/validNFModeConnection.png"/> **Valid Non-Failure Mode Connection**: Purple lines indicate 
+- <FigureInline src="/figures/desktop-applications/rmc-totalrisk/users-guide/v1.0/validNFModeConnection.png"/> **Valid Non-Failure Mode Connection**: Purple lines indicate 
 valid non-failure mode connections.
 
 #### Example Levee Risk Diagram
