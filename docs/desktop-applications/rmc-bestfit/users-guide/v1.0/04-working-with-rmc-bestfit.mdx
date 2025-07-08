@@ -280,9 +280,14 @@ position. Many plotting position formulae are special cases of the general formu
   equationKey="general-formula"
   equation="P_i = \frac{i - α}{n + 1 - 2a}" />
 
-where _i_ is the rank of the event, _n_ is the sample size, _α_ is a constant greater than or equal to 0 and less than 1, and _P<sub>i</sub>_ is the exceedance
-probability for an event with rank _i_. The value of determines how well the calculated plotting positions will fit a given theoretical probability
-distribution.
+where:
+
+> _i_ = the rank of the event  
+> _n_ = the sample size  
+> _α_ = a constant greater than or equal to 0 and less than 1  
+> _P<sub>i</sub>_ = the exceedance probability for an event with rank _i_
+
+The value of _α_ determines how well the calculated plotting positions will fit a given theoretical probability distribution.
 
 RMC-BestFit uses the Hirsch-Stedinger (H-S) plotting position formula <Citation citationKey="HirschStedinger1987" /> <Citation citationKey="USGS2018" />,
 which is an extension of the general formula above that is also capable of incorporating threshold-censored data. The H-S plotting positions are
@@ -582,8 +587,8 @@ The likelihood function gives the probability of the data conditional on the dis
 
 where:
 
-- <EquationNoRef equation="D" /> is the sample of systematically recorded annual discharge maxima <EquationNoRef equation="(X_1, \dots, X_{n_S})" />
-- <EquationNoRef equation="f(∙)" /> is the probability density function (PDF) of the variable <EquationNoRef equation="X" />
+> <EquationNoRef equation="D" /> = the sample of systematically recorded annual discharge maxima <EquationNoRef equation="(X_1, \dots, X_{n_S})" />  
+{"\n"} <EquationNoRef equation="f(∙)" /> = the probability density function (PDF) of the variable <EquationNoRef equation="X" />
 
 Censored data can be incorporated into the MLE method by augmenting the likelihood function. Left-censored threshold data has the following likelihood function:
 
@@ -592,10 +597,15 @@ Censored data can be incorporated into the MLE method by augmenting the likeliho
   equation="L_L(D \mid \theta) = \prod_{i=1}^{n_L} \binom{h}{k} F(X_0 \mid \theta)^{h - k}"
 />
 
-where <EquationNoRef equation="X_0" /> is the threshold; <EquationNoRef equation="h" /> is the threshold period; <EquationNoRef equation="k" /> is
-the number of observations that exceeded the threshold during the period; <EquationNoRef equation="(h \mid k)" /> is the binomial coefficient;
-and <EquationNoRef equation="F(∙)" /> is the cumulative distribution function (CDF) of the variable <EquationNoRef equation="X_0" />. The binomial
-coefficient can be dropped from <EquationReference equationKey="log-likelihood-function" /> because it will be held constant
+where:
+
+> <EquationNoRef equation="X_0" /> = the threshold  
+{"\n"} <EquationNoRef equation="h" /> = the threshold period  
+{"\n"} <EquationNoRef equation="k" /> = the number of observations that exceeded the threshold during the period  
+{"\n"} <EquationNoRef equation="(h \mid k)" /> = the binomial coefficient  
+{"\n"} <EquationNoRef equation="F(∙)" /> = the cumulative distribution function (CDF) of the variable <EquationNoRef equation="X_0" />
+
+The binomial coefficient can be dropped from <EquationReference equationKey="log-likelihood-function" /> because it will be held constant
 as <EquationNoRef equation="θ" /> is varied. Interval-censored data has the following likelihood function:
 
 <Equation
@@ -629,8 +639,10 @@ graphs to help you evaluate the fits and select the best probability distributio
 #### Goodness-of-Fit Measures
 
 RMC-BestFit provides three goodness-of-fit measures: AIC, BIC, and RMSE. These measures indicate how well the distribution fits the input data, with a
-smaller value representing a better fit. The goodness-of-fit statistics are used for two purposes: 1) _Model selection_ is the process of picking one
-fitted distribution over another; 2) whereas, _fit validation_ is the process of determining whether a fitted distribution agrees well with the data.
+smaller value representing a better fit. The goodness-of-fit statistics are used for two purposes:
+
+1. _Model selection_ is the process of picking one fitted distribution over another;
+2. _Fit validation_ is the process of determining whether a fitted distribution agrees well with the data.
 
 AIC and BIC are used for model selection among a finite set of models (the term _model_ is synonymous with _probability distribution_). The model with
 the lowest AIC or BIC is preferred. When comparing multiple models, additional parameters often yield larger, optimized log-likelihood values.AIC and
@@ -649,7 +661,11 @@ sizes for AIC.
   equation="BIC = \ln(n)k - 2 \ln(\hat{L})" 
 />
 
-where _k_ is the number of parameters; _n_ is the sample size; and _L̂_ is the maximum value of the likelihood function for the model.
+where:
+
+> _k_ = the number of parameters  
+> _n_ = the sample size  
+> _L̂_ = the maximum value of the likelihood function for the model
 
 RSME provides a measure for fit validation, with smaller values indicating a better fit. RMSE is computed based on how well the probability
 distribution agrees with the plotting positions of the input data. You can set the plotting position parameter based on preference or theoretical
@@ -661,7 +677,11 @@ is set to Weibull (α = 0), which is unbiased. The formula for RMSE is as follow
   equation="RMSE = \sqrt{\frac{\sum_{i=1}^{n} (\hat{y}_i - y_i)^2}{n}}"
  />
 
-where _n_ is the sample size; _ŷ<sub>i</sub>_ is the predicted value for item _i_; and _y<sub>i</sub>_ is the observed value for step <i>i</i>.
+where:
+
+> _n_ = the sample size  
+> _ŷ<sub>i</sub>_ = the predicted value for item _i_  
+> _y<sub>i</sub>_ = the observed value for step <i>i</i>
 
 You can sort each column of the goodness-of-fit table in ascending or descending order by right-clicking the column header as shown
 in <FigReference figKey="distribution-fitting-analysis-gof" />. As you move your cursor over the table, a tooltip will appear showing the fitted parameters
@@ -849,9 +869,13 @@ with the observed data, using the likelihood <EquationNoRef equation="P(D | θ)"
   equation="P(D \mid \theta) = \prod_{i=1}^{n} f(X_i \mid \theta)"
 />
 
-where <EquationNoRef equation="P(θ | D)" /> is the posterior probability density function (PDF) of <EquationNoRef equation="θ"/>; <EquationNoRef equation="P(θ)"/>
-is the prior PDF of <EquationNoRef equation="θ"/>; and <EquationNoRef equation="P(D | θ)"/> is the likelihood function. The posterior cumulative
-distribution function (CDF) of <EquationNoRef equation="X"/> now follows from the total probability theorem:
+where:
+
+> <EquationNoRef equation="P(θ | D)" /> = the posterior probability density function (PDF) of <EquationNoRef equation="θ"/>  
+{"\n"} <EquationNoRef equation="P(θ)"/> = the prior PDF of <EquationNoRef equation="θ"/>  
+{"\n"} <EquationNoRef equation="P(D | θ)"/> = the likelihood function.
+
+The posterior cumulative distribution function (CDF) of <EquationNoRef equation="X"/> now follows from the total probability theorem:
 
 <Equation
   equationKey="posterior-predictive"
@@ -859,9 +883,9 @@ distribution function (CDF) of <EquationNoRef equation="X"/> now follows from th
 />
 
 which is a probability-weighted sum of the CDFs under different posterior parameter sets . <EquationReference equationKey="posterior-predictive" /> is known as
-the Bayesian posterior predictive distribution and is equivalent to the _expected probability of exceedance_ concept first presented by <Citation citationKey="Beard1960" />.
+the Bayesian posterior predictive distribution and is equivalent to the _expected probability of exceedance_ concept first presented by Beard <Citation citationKey="Beard1960" />.
 
-<Citation citationKey="Stedinger1983" /> and <Citation citationKey="Kuczera1999" /> refer to this integral as the design flood distribution, and it 
+Stedinger <Citation citationKey="Stedinger1983" /> and Kuczera <Citation citationKey="Kuczera1999" /> refer to this integral as the design flood distribution, and it
 is considered the optimal estimator of an exceedance probability.
 
 In most cases, there is not a closed form solution to the denominator of <EquationReference equationKey="bayes-theorem" />. Therefore, Monte Carlo
