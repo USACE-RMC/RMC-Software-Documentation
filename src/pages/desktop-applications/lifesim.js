@@ -11,7 +11,7 @@ const lifeSimData = [
     icon: "img/LifeSim.png",
     doc_location: "desktop-applications/lifesim/users-guide",
     doc_name: "LifeSim Users Guide",
-    active: true,
+    active: false,
     draft: true,
   },
 ];
@@ -32,18 +32,27 @@ export default function LifeSim() {
   const lifeSimData = lifeSimDocs.map((doc) => ({
     ...doc,
     icon: addBaseUrl(doc.icon),
-    doc_location: addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, "")]}/preface`),
+    doc_location: addBaseUrl(
+      `docs/${doc.doc_location}/${
+        latestVersions[doc.doc_location.replace(/^docs\//, "")]
+      }/preface`
+    ),
   }));
 
   return (
-    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
+    <Layout
+      title="RMC Software Documentation"
+      description="Documentation for RMC Software Packages"
+    >
       <main>
         <div className="header-container">
           <h1>RMC Software Documentation</h1>
         </div>
         <div className="title-container">
           <div className="title-container-nav-link">
-            <Link to={`${addBaseUrl("desktop-applications")}`}>&larr; Desktop Applications</Link>
+            <Link to={`${addBaseUrl("desktop-applications")}`}>
+              &larr; Desktop Applications
+            </Link>
           </div>
           <img src={addBaseUrl("img/LifeSim.png")}></img>
           <div className="text-container">

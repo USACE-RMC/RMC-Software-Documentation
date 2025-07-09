@@ -12,7 +12,7 @@ const totalRiskData = [
     doc_location: "desktop-applications/rmc-totalrisk/users-guide",
     doc_name: "RMC TotalRisk Users Guide",
     active: true,
-    draft: true,
+    draft: false,
   },
   {
     icon: "img/TotalRisk.png",
@@ -46,18 +46,27 @@ export default function TotalRisk() {
   const totalRiskData = totalRiskDocs.map((doc) => ({
     ...doc,
     icon: addBaseUrl(doc.icon),
-    doc_location: addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, "")]}/preface`),
+    doc_location: addBaseUrl(
+      `docs/${doc.doc_location}/${
+        latestVersions[doc.doc_location.replace(/^docs\//, "")]
+      }/preface`
+    ),
   }));
 
   return (
-    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
+    <Layout
+      title="RMC Software Documentation"
+      description="Documentation for RMC Software Packages"
+    >
       <main>
         <div className="header-container">
           <h1>RMC Software Documentation</h1>
         </div>
         <div className="title-container">
           <div className="title-container-nav-link">
-            <Link to={`${addBaseUrl("desktop-applications")}`}>&larr; Desktop Applications</Link>
+            <Link to={`${addBaseUrl("desktop-applications")}`}>
+              &larr; Desktop Applications
+            </Link>
           </div>
           <img src={addBaseUrl("img/TotalRisk.png")}></img>
           <div className="text-container">

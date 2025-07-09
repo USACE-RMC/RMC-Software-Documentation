@@ -76,7 +76,10 @@ export default function Toolboxes() {
   ];
 
   return (
-    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
+    <Layout
+      title="RMC Software Documentation"
+      description="Documentation for RMC Software Packages"
+    >
       <main>
         <div className="header-container">
           <h1>RMC Software Documentation</h1>
