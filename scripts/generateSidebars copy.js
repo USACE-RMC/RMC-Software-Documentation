@@ -1,24 +1,8 @@
-/**
- * RMC Software Documentation Sidebar Generator
- *
- * This script generates the Docusaurus sidebar structure for all documentation sets.
- *
- * - "Standard logic" is used for most documents.
- * - "Custom logic" is used for the following specific documents:
- *    - RMC-TotalRisk Applications Guide
- *    - Event Tree Database
- *    - Documentation Guide
- *
- * Each section is clearly marked below.
- */
-
 const fs = require("fs");
 const path = require("path");
 
 const DOCS_DIR = path.join(__dirname, "..", "docs");
 const SIDEBAR_PATH = path.join(__dirname, "..", "sidebars.js");
-
-/* --- Utility Functions (Standard Logic) --- */
 
 function walkDir(dir) {
   let results = [];
@@ -67,172 +51,12 @@ function getFallbackLabel(filename) {
     }
     return "Appendix";
   }
+
   const parts = filename.replace(".mdx", "").split("-");
   return titleCase(parts.slice(1).join(" "));
 }
 
-/* --- Custom Logic: Event Tree Database Sidebar --- */
-
-function generateSidebarForEventTree(versionPath, relativePath) {
-  const files = fs.readdirSync(versionPath).filter((f) => f.endsWith(".mdx"));
-  files.sort();
-
-  const infoItems = [];
-  const topLevelDocs = [];
-  const majorCategories = {};
-
-  files.forEach((file) => {
-    const fileBase = file.replace(/\.mdx$/, "");
-    const fullPath = path.join(versionPath, file);
-    // Strip all leading NN- patterns for doc ID
-    const strippedBase = fileBase.replace(/^(\d{2,3}-)+/, "");
-    const fileId = `${relativePath}/${strippedBase}`;
-    const label = getFrontmatterTitle(fullPath) || titleCase(strippedBase);
-    const docItem = { type: "doc", id: fileId, label };
-
-    // Document Information
-    if (file === "00-document-info.mdx" || file === "00-version-history.mdx") {
-      infoItems.push(docItem);
-      return;
-    }
-
-    // Standalone top-level docs
-    if (file === "01-preface.mdx" || file === "02-table-of-contents.mdx") {
-      topLevelDocs.push(docItem);
-      return;
-    }
-
-    // Major category: 3-digit number, dash, then anything (e.g., 030-major-category)
-    const majorCatMatch = fileBase.match(/^(\d{3})-(.+)$/);
-    if (majorCatMatch && majorCatMatch[1][2] === "0") {
-      const majorNum = majorCatMatch[1];
-      majorCategories[majorNum] = {
-        type: "category",
-        label,
-        collapsible: true,
-        collapsed: true,
-        items: [],
-        link: { type: "doc", id: fileId },
-      };
-      return;
-    }
-
-    // Sub-item: 3-digit number, dash, then anything (e.g., 031-event-tree)
-    const subItemMatch = fileBase.match(/^(\d{3})-(.+)$/);
-    if (subItemMatch && subItemMatch[1][2] !== "0") {
-      // Place under the corresponding major category (e.g., 031 -> 030)
-      const majorNum = subItemMatch[1].slice(0, 2) + "0";
-      if (!majorCategories[majorNum]) {
-        // If the major category doc doesn't exist, create a placeholder
-        majorCategories[majorNum] = {
-          type: "category",
-          label: `Category ${majorNum}`,
-          collapsible: true,
-          collapsed: true,
-          items: [],
-        };
-      }
-      majorCategories[majorNum].items.push(docItem);
-      return;
-    }
-
-    // If it doesn't match anything above, just push to top-level docs
-    topLevelDocs.push(docItem);
-  });
-
-  // Sort major categories numerically
-  const sortedMajorCategories = Object.keys(majorCategories)
-    .sort((a, b) => Number(a) - Number(b))
-    .map((key) => majorCategories[key]);
-
-  const sidebar = [];
-
-  if (infoItems.length) {
-    sidebar.push({
-      type: "category",
-      label: "Document Information",
-      collapsible: true,
-      collapsed: true,
-      items: infoItems,
-    });
-  }
-
-  sidebar.push(...topLevelDocs);
-  sidebar.push(...sortedMajorCategories);
-
-  return sidebar;
-}
-
-/* --- Custom Logic: RMC-TotalRisk Applications Guide Sidebar --- */
-
-function generateSidebarForRmcTotalRiskApplicationsGuide(versionPath, relativePath) {
-  const files = fs.readdirSync(versionPath).filter((f) => f.endsWith(".mdx"));
-  files.sort();
-
-  const documentInfoDocs = [];
-  let prefaceDoc = null;
-  let hydrologicDoc = null;
-  const exampleDocs = [];
-
-  files.forEach((file) => {
-    const fileBase = file.replace(".mdx", "").replace(/^\d+-/, "");
-    const fullPath = path.join(versionPath, file);
-    const label = getFrontmatterTitle(fullPath) || getFallbackLabel(file);
-    const id = `${relativePath}/${fileBase}`;
-
-    if (file.startsWith("00-")) {
-      documentInfoDocs.push({ type: "doc", id, label });
-    } else if (file === "01-preface.mdx") {
-      prefaceDoc = { type: "doc", id, label };
-    } else if (file === "02-hydrologic-risk-analysis.mdx") {
-      hydrologicDoc = { id, label };
-    } else if (file.startsWith("03-")) {
-      exampleDocs.push({ type: "doc", id, label });
-    }
-  });
-
-  const customStructure = [];
-
-  if (documentInfoDocs.length) {
-    customStructure.push({
-      type: "category",
-      label: "Document Information",
-      collapsible: true,
-      collapsed: true,
-      items: documentInfoDocs,
-    });
-  }
-
-  if (prefaceDoc) customStructure.push(prefaceDoc);
-
-  if (hydrologicDoc) {
-    customStructure.push({
-      type: "category",
-      label: hydrologicDoc.label || "Hydrologic Risk Analysis",
-      link: { type: "doc", id: hydrologicDoc.id },
-      collapsible: true,
-      collapsed: false,
-      items: exampleDocs,
-    });
-  }
-
-  return customStructure;
-}
-
-/* --- Standard Logic: Default Sidebar for Most Documents --- */
-
 function generateSidebarForVersion(versionPath, relativePath, docGroup, folderName) {
-  // CUSTOM LOGIC: Event Tree Database
-  if (folderName === "typical-event-tree-database") {
-    return generateSidebarForEventTree(versionPath, relativePath);
-  }
-
-  // CUSTOM LOGIC: RMC-TotalRisk Applications Guide
-  if (docGroup === "rmc-totalrisk" && folderName === "applications-guide") {
-    return generateSidebarForRmcTotalRiskApplicationsGuide(versionPath, relativePath);
-  }
-
-  // STANDARD LOGIC: All other documents
   const files = fs.readdirSync(versionPath).filter((f) => f.endsWith(".mdx"));
   files.sort();
 
@@ -240,6 +64,62 @@ function generateSidebarForVersion(versionPath, relativePath, docGroup, folderNa
   const mainItems = [];
   const appendixItems = [];
 
+  // Special logic: applications-guide in rmc-totalrisk
+  console.log("Checking docGroup:", docGroup);
+  console.log("Checking folderName:", folderName);
+  if (docGroup === "rmc-totalrisk" && folderName === "applications-guide") {
+    console.log("Custom structure for RMC-TotalRisk Applications Guide activated!");
+    const documentInfoDocs = [];
+    let prefaceDoc = null;
+    let mainReportDoc = null;
+    const exampleDocs = [];
+
+    files.forEach((file) => {
+      const fileBase = file.replace(".mdx", "").replace(/^\d+-/, "");
+      const fullPath = path.join(versionPath, file);
+      const label = getFrontmatterTitle(fullPath) || getFallbackLabel(file);
+      const id = `${relativePath}/${fileBase}`;
+
+      if (file.startsWith("00-")) {
+        documentInfoDocs.push({ type: "doc", id, label });
+      } else if (file === "01-preface.mdx") {
+        prefaceDoc = { type: "doc", id, label };
+      } else if (file === "02-hydrologic-risk-analysis.mdx") {
+        hydrologicDoc = { id }; // Used as id for the "Main Report" category
+      } else if (file === "03-example-1.mdx") {
+        exampleDocs.push({ type: "doc", id, label });
+      }
+    });
+
+    const customStructure = [];
+
+    if (documentInfoDocs.length) {
+      customStructure.push({
+        type: "category",
+        label: "Document Information",
+        collapsible: true,
+        collapsed: true,
+        items: documentInfoDocs,
+      });
+    }
+
+    if (prefaceDoc) customStructure.push(prefaceDoc);
+
+    if (hydrologicDoc) {
+      customStructure.push({
+        type: "category",
+        label: "Hydrologic Risk Analysis",
+        link: { type: "doc", id: hydrologicDoc.id },
+        collapsible: true,
+        collapsed: false,
+        items: exampleDocs,
+      });
+    }
+
+    return customStructure;
+  }
+
+  // Default logic
   files.forEach((file) => {
     const fileBase = file.replace(".mdx", "").replace(/^\d+-/, "");
     const filePath = `${relativePath}/${fileBase}`;
@@ -292,8 +172,6 @@ function generateSidebarForVersion(versionPath, relativePath, docGroup, folderNa
   return sidebar;
 }
 
-/* --- Custom Logic: Documentation Guide Sidebar --- */
-
 function generateDocumentationGuideSidebar() {
   const guideDir = path.join(DOCS_DIR, "00-documentation-guide");
   if (!fs.existsSync(guideDir)) return null;
@@ -312,13 +190,15 @@ function generateDocumentationGuideSidebar() {
   }
 
   // Build sub-items for Project Structure
-  const projectStructureSubItems = subIds
-    .filter((id) => files.includes(`${id}.mdx`))
-    .map((id) => ({
-      type: "doc",
-      id: `documentation-guide/${id.replace(/^\d+-/, "")}`,
-      label: getLabel(id),
-    }));
+  const projectStructureSubItems = [
+    ...subIds
+      .filter((id) => files.includes(`${id}.mdx`))
+      .map((id) => ({
+        type: "doc",
+        id: `documentation-guide/${id.replace(/^\d+-/, "")}`,
+        label: getLabel(id),
+      })),
+  ];
 
   // Build main sidebar items
   const items = [];
@@ -328,16 +208,10 @@ function generateDocumentationGuideSidebar() {
       items.push({
         type: "category",
         label: getLabel(id),
+        link: { type: "doc", id: `documentation-guide/${id.replace(/^\d+-/, "")}` },
         collapsible: false,
         collapsed: false,
-        items: [
-          {
-            type: "doc",
-            id: `documentation-guide/${id.replace(/^\d+-/, "")}`,
-            label: getLabel(id),
-          },
-          ...projectStructureSubItems,
-        ],
+        items: projectStructureSubItems,
       });
     } else {
       items.push({
@@ -350,8 +224,6 @@ function generateDocumentationGuideSidebar() {
 
   return items;
 }
-
-/* --- Sidebar Generation Entrypoint --- */
 
 function generateSidebars() {
   const sidebarContent = {};
@@ -395,8 +267,6 @@ function generateSidebars() {
 
   return sidebarContent;
 }
-
-/* --- Write Sidebar File --- */
 
 function writeSidebarFile() {
   const sidebars = generateSidebars();

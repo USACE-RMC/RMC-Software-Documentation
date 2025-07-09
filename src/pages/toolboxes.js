@@ -35,7 +35,7 @@ export default function Toolboxes() {
       icon: addBaseUrl("img/Toolbox.png"),
       doc_location: addBaseUrl("toolboxes/risk-calculations-suite"),
       doc_name: "Risk Calculations Suite",
-      active: false,
+      active: true,
     },
     {
       icon: addBaseUrl("img/Toolbox.png"),
@@ -76,10 +76,7 @@ export default function Toolboxes() {
   ];
 
   return (
-    <Layout
-      title="RMC Software Documentation"
-      description="Documentation for RMC Software Packages"
-    >
+    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
       <main>
         <div className="header-container">
           <h1>RMC Software Documentation</h1>
