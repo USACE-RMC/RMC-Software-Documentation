@@ -23,6 +23,7 @@ const reportIdMap = {
   "toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.3": "risk-calculations-suite-typical-event-tree-database-v1.3",
   "toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.4": "risk-calculations-suite-typical-event-tree-database-v1.4",
   "toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.5": "risk-calculations-suite-typical-event-tree-database-v1.5",
+  "toolbox-technical-manuals/seismic-hazard-suite/site-classification/v1.0": "seismic-hazard-suite-site-classification-v1.0",
   "web-applications/dst/users-guide/v1.0": "dst-users-guide-v1.0",
   "web-applications/lst/users-guide/v1.0": "lst-users-guide-v1.0",
   "web-applications/rrft/users-guide/v1.0": "rrft-users-guide-v1.0"
