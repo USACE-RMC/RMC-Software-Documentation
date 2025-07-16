@@ -1,7 +1,10 @@
 const fs = require("fs");
 const path = require("path");
 
-const BASE_PATH = path.join(__dirname, "../docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database");
+const BASE_PATH = path.join(
+  __dirname,
+  "../docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database"
+);
 const OUTPUT_FILE = path.join(__dirname, "../src/data/eventTreeToc.json");
 
 function isIgnorable(fileName) {
@@ -19,7 +22,9 @@ function getFrontmatterTitle(filePath) {
   if (!match) return null;
 
   const frontmatter = match[1];
-  const titleLine = frontmatter.split("\n").find((line) => line.trim().startsWith("title:"));
+  const titleLine = frontmatter
+    .split("\n")
+    .find((line) => line.trim().startsWith("title:"));
   if (!titleLine) return null;
 
   return titleLine
@@ -58,7 +63,21 @@ function getTOCForVersion(versionPath, version) {
 }
 
 function generateTOC() {
-  const versions = fs.readdirSync(BASE_PATH).filter((d) => fs.statSync(path.join(BASE_PATH, d)).isDirectory());
+  const dataDir = path.join(__dirname, "../src/data");
+
+  // Ensure src/data folder exists
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+  }
+
+  // Delete existing JSON file if it exists
+  if (fs.existsSync(OUTPUT_FILE)) {
+    fs.unlinkSync(OUTPUT_FILE);
+  }
+
+  const versions = fs
+    .readdirSync(BASE_PATH)
+    .filter((d) => fs.statSync(path.join(BASE_PATH, d)).isDirectory());
 
   const toc = {};
 
