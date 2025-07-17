@@ -12,4 +12,6 @@
 
 - (Complete 6/24/25): Align the desktop applications content cards
 
+-
+
 ## Bug Reports
