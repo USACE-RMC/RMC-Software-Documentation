@@ -265,7 +265,94 @@ burden of manually numbering these elements.
 
 ---
 
-## **reportIdMap.js**
+## **generateEventTreeToc.js**
+
+:::info Note
+This script is only used for the RMC Typical Event Tree Database document.
+:::
+
+### Overview
+
+This Node.js script scans the `docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database` directory and generates a versioned table of contents
+(`eventTreeToc.json`) in the `src/data/` folder. It organizes `.mdx` files into categories and sub-items based on their numeric filename prefixes and the title found in
+each file’s frontmatter.
+
+### What It Does
+
+- Scans each versioned folder (e.g., `v1.0`, `v1.4`) under the event tree database directory.
+- Filters out `.mdx` files starting with `00`, `01`, or `02`.
+- Parses numeric prefixes from filenames:
+  - Files ending in `0` (e.g., `030-...`) are treated as **categories**.
+  - Files with other prefixes (e.g., `031-...`, `046-...`) are grouped under the most recent category.
+- Extracts the `title` value from each file’s frontmatter.
+- Builds a versioned TOC object mapping each category to its sub-items.
+- Saves the result as a JSON file in `src/data/eventTreeToc.json`.
+
+:::info
+
+If a file does not have a `title` in its frontmatter, the script will fallback to using the filename (with its numeric prefix removed) as the label. This ensures that
+each entry has a human-readable label even if metadata is missing.
+
+:::
+
+### Output
+
+The output file (`eventTreeToc.json`) is saved to: `src/data/eventTreeToc.json`
+
+It contains an object with each version and its associated categories and paths. Example:
+
+```json
+{
+  "v1.4": {
+    "Geotechnical Hydrologic": [
+      {
+        "label": "Generic Internal Erosion",
+        "path": "/docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.0/Generic-Internal-Erosion"
+      },
+    ],
+    "Geotechnical Seismic": [
+      {
+        "label": "Concentrated Leak Erosion (Seismic)",
+        "path": "/docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.0/Concentrated-Leak-Erosion-Seismic"
+      },
+    ],
+    "Spillways Hydrologic": [
+      {
+        "label": "Unlined Spillway Erosion",
+        "path": "/docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.0/Unlined-Spillway-Erosion"
+      },
+    ],
+  },
+  "v1.5": {
+    "Geotechnical Hydrologic": [
+      {
+        "label": "Generic Internal Erosion",
+        "path": "/docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.0/Generic-Internal-Erosion"
+      },
+    ],
+    "Geotechnical Seismic": [
+      {
+        "label": "Concentrated Leak Erosion (Seismic)",
+        "path": "/docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.0/Concentrated-Leak-Erosion-Seismic"
+      },
+    ],
+    "Spillways Hydrologic": [
+      {
+        "label": "Unlined Spillway Erosion",
+        "path": "/docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.0/Unlined-Spillway-Erosion"
+      },
+    ],
+  },
+}
+```
+
+### Usage
+
+This script is automatically run on project start, build, and deploy. No additional execution of this script is required.
+
+---
+
+## **generateReportIdMap.js**
 
 ### Overview
 
