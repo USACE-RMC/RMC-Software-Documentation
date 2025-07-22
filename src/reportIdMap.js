@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 const reportIdMap = {
   "desktop-applications/lifesim/users-guide/v1.0": "lifesim-users-guide-v1.0",
+  "desktop-applications/lifesim/validation-studies/v1.0": "lifesim-validation-studies-v1.0",
   "desktop-applications/rmc-bestfit/users-guide/v1.0": "rmc-bestfit-users-guide-v1.0",
   "desktop-applications/rmc-rfa/users-guide/v1.0": "rmc-rfa-users-guide-v1.0",
   "desktop-applications/rmc-totalrisk/applications-guide/v1.0": "rmc-totalrisk-applications-guide-v1.0",

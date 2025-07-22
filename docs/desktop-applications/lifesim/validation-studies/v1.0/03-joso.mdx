@@ -1,0 +1,169 @@
+---
+title: "Jōsō"
+---
+
+import NavContainer from "@site/src/components/NavContainer";
+import VersionSelector from "@site/src/components/VersionSelector";
+import Link from "@docusaurus/Link";
+import addBaseUrl from "@docusaurus/useBaseUrl";
+import Citation from "@site/src/components/Citation";
+import CitationFootnote from "@site/src/components/CitationFootnote";
+import TableVertical from "@site/src/components/TableVertical";
+import Figure from "@site/src/components/Figure";
+import Video from "@site/src/components/Figure";
+import FigReference from "@site/src/components/FigureReference";
+import FigureInline from "@site/src/components/FigureInline";
+import TableReference from "@site/src/components/TableReference";
+
+<NavContainer 
+  link="/desktop-applications/lifesim"
+  linkTitle="LifeSim"
+  document="desktop-applications/lifesim/validation-studies"
+></NavContainer>
+
+# Jōsō
+
+Kinugawa Levee in Jōsō (常総市), Ibaraki Prefecture, Japan.
+
+## Download Model (!! UPDATE LINK !!)
+
+The public LifeSim model is available for download <a href="https://www.rmc.usace.army.mil/Software/LifeSim/" target="_blank" rel="noopener noreferrer">*here*</a>.
+
+## Overview
+
+In September 2015, moisture from Typhoons 17 (Kilo) and 18 (Etau) converged over northern Honshū (本州) Island, Japan. Intense rain bands stalled between the 
+cyclones over the central mountain range and produced exceptional rainfall up to 660 mm over five days. On the Kinugawa River, four flood control dams spilled 
+and sent record flows down the steep river. The river rose quickly (10 meters over 24 hours) and prompted warnings of possible flooding. On September 
+10, 2015, a low point began to overtop in the municipality of Jōsō and erode the natural high ground. Floodwaters inundated rural neighborhoods and 
+many hectares of rice fields. The river continued to rise and overtop other low points in the left bank levee. Shortly before 1:00 PM, a 4-meter tall 
+levee breached directly adjacent to several homes, releasing a powerful flood wave capable of toppling homes and floating away cars. The breach flow combined 
+with upstream flow from a minor breach and overbank flooding. Inundation began to pool near the downtown area of Jōsō, trapping hundreds of people in their homes. 
+
+The disaster resulted in two fatalities. 
+
+National and local government agencies responded by performing thousands of rescues by air (<FigReference figKey="joso-news"/>), 
+water, and even carrying people to safety on their backs.
+
+<Figure
+  figKey="joso-news"
+  src="figures/desktop-applications/lifesim/validation-studies/v1.0/figures/figure17.png"
+  alt="Kyodo News broadcast of Jōsō levee failure and helicopter rescues."
+  caption={
+    <>
+      Still image of local news coverage on Jōsō levee failure and helicopter rescues. <Citation citationKey="KyodoNews2015"/>
+    </>
+  }
+/>
+
+## Data
+
+The following provides a short description of the data sources used for validation. The model for this validation effort was created by the U.S. Army Corps of Engineers (USACE) and benefited 
+from social media-augmented official sources to create a complete and accurate data set. 
+
+All data sources contributing to the model and documentation are detailed in Risher et al (2017) <Citation citationKey="Risher2017"/>.
+
+### Hydraulics
+
+The following excerpt was taken from Risher et al (2017) <Citation citationKey="Risher2017"/>: 
+
+*"River hydraulic modeling started with pre-flood LIDAR terrain data for the Kinugawa and flooded area. 
+[…] No tributaries were in the modeled reach. Modeled levees use the lateral structure option to allow overtopping and breach. The large canal gate near downtown 
+Jōsō allows flow to exit the flooded area once river levels begin to recede. A crucial missing component was the inflow hydrograph that the team had to derive 
+from observed stage data at the Kamaniwa gage, at 27.34 km (upstream of the overtopping area). MLIT provided a modeled stage hydrograph at the breach location 
+(21.0 km) to calibrate the inflow. […] Many observations were made of the breach through the course of the event with their times noted and breach width 
+estimated."*
+
+Calibration of the hydraulic model used data from a variety of sources. Several time-stamped aerial photos and Japan’s Geospatial Information Authority (GSI) 
+maps outlined the flood limits. Geo-located photos of high water marks provided over seventy-five maximum depth estimates. Time-specific depths came from 
+photos, video, and eyewitness descriptions. Calibration focused on arrival time and maximum depth – the two criteria most important to evacuation and life 
+loss modeling. Velocities were also spot-checked where structures failed. One early problem with the river hydraulics model was that water was moving too 
+fast through the floodplain, trapping more people than expected. To match observed conditions, the modeling team added several road and railway embankments, causing 
+water to pool and overtop them sequentially before moving on.
+
+### Structure Inventory
+
+LifeSim requires an inventory of all possibly-affected structures as the starting point for population. A structure inventory was created by manually 
+placing a point on each building observed in recent aerial imagery. The limits of the survey were the Kinugawa River on the west, the Kokaigawa River on 
+the east, and a 100-meter buffer beyond the observed flooding limit to the North and South. Each building has a damage category, occupancy type, foundation 
+height, number of stories, and construction material. The structure locations were checked against OpenStreetMap <Citation citationKey="OSM"/> while the other parameters were checked 
+with Google Street View. The structures were populated based on their occupancy type for daytime and nighttime conditions. The population estimate 
+for Jōsō-shi started with 2010 adjusted census data at the neighborhood level (<Citation citationKey="StatisticsBureau2015"/>, <Citation citationKey="GIAJ2014"/>). It was indexed 
+based on 2015 population growth rates at the shi level 
+and applied uniformly across all census blocks within the shi. There was a small decrease in population from 2010 to 2015. The final population estimate 
+was 28,052 in Jōsō-shi and 33,219 total, including small parts of adjacent shi that were flooded. The model population is split into groups over and under 
+age 65 based on the 2010 shi-level ratios (roughly 21-23% elderly). 
+
+The breach zones got special attention where deep and fast water can destroy buildings. These areas accounted for a significant portion of the lifeloss. 
+Using video and other evidence of the rescue effort, the homes in the breach area were populated with the correct number of people at home. Foundation heights, 
+construction materials, number of stories, and other attributes were refined further to ensure the proper depth and structural stability curve 
+would be applied. In LifeSim, if a building collapses, all the people inside are subject to the highest chance fatality rate (average of 91.45%). Therefore, it is 
+important to define those buildings properly.
+
+### Road Network
+
+The road import tool in LifeSim sources from OpenStreetMap data, available under Open Database License <Citation citationKey="OSM"/>. Each road segment has 
+a traffic capacity rating based on its size and design (e.g., highway vs. street). The team checked the network for one-way streets, unnecessary segments, 
+and traffic capacity to prevent too many people trapped on roads while evacuating. Any bridges or elevated roads are vertically offset to prevent them from 
+flooding. 
+
+### Destinations
+
+Destinations were set at each bridge out of the leveed area and roads leading north and south out of the flooded area.
+
+### Emergency Planning Zones
+
+In Japan, as in the U.S, local municipalities give evacuation warnings while a national agency gives severe weather statements. Evacuation warnings come in 
+the form of pre-evacuation information, evacuation recommendations, and evacuation orders. All three types of warnings were given at various times and places 
+by local government officials based on their perception of the risk. For modeling purposes, it was assumed people outside of the warned zones may still 
+have gotten a warning unintentionally or indirectly, but the warning dissemination will be slower. It was also assumed the recommendation at 4:00 AM was not 
+as good as an order.
+
+The **Protective Action Initiation** (PAI) curve defines the time when evacuation begins. People evacuate by car following the road network from a structure to the nearest destination point. 
+Flatter curves indicate populations are slower to evacuate after hearing a warning. Typically, a maximum rate is set below 100% because some portion of the 
+population will choose not to leave or cannot leave. For this event, the maximum rate was set at 58.5% based on responses from the survey. This rate aligns with 
+anecdotal evidence from Japan that evacuation rates are typically low, but there is no solid information about how many, how fast, or by what means people 
+evacuated. 
+
+The PAI curve is the most uncertain parameter in the consequence model due to the lack of information. There were reports of traffic congestion 
+and thousands of people in shelters. However, there were also thousands rescued by boat and helicopter, and people reaching safety on-foot through the flood. Rescue and sheltering are 
+not accounted for in model evacuation.
+
+### Alternative
+
+To simulate the staged warnings and mix of official and unofficial warnings, each **Emergency Planning Zone** was given its own warning time relative to breach initiation. 
+
+Critically, the zone nearest to the breach zone was assumed to receive warning after breach; however, population-at-risk were removed from the structures 
+near the breach from available evidence suggesting the homes were empty at the time of the breach.
+
+## Modeling Conclusion
+
+LifeSim performed well considering it could not account for rescue. The evacuated
+population was likely higher than expected pre-event. If the model results are an indicator, heroic efforts and rescues reduced the life loss
+significantly from structures that eventually collapsed and cars that overturned. It also seems that a strong community fabric
+exists in Jōsō – one concerned with evacuating the elderly and less-mobile people. Where modeling showed several fatalities
+to this vulnerable group, none occurred in Jōsō outside the breach zone. 
+
+Additionally,
+
+1. Evacuation orders should consider the expected movement of floodwaters, and be coordinated with neighboring jurisdictions as early as possible. Warnings were sent haphazardly 
+and neglected several areas at risk. Local shelters were opened in areas that should have been expected to flood and were indeed inundated, trapping many people. Agreements had to 
+be reached during the emergency with neighboring municipalities to shelter evacuees out of the flooded area.
+
+2. Video and photos taken during the breach event were very valuable to post-event analysis of the hazard and consequence research including breach erosion progression. Efforts 
+should be made to collect this information while it is fresh following dam and levee failures to aid in analysis later.
+
+3. Although National government agencies knew of the levee and river status before and during the event, the local government agency was not able to evacuate residents in time. 
+This was due to both inadequate communication between agencies, and lack of capability at the local level to interpret the available information and take action. 
+<a href="https://mainichi.jp/english/articles/20170528/p2a/00m/0na/004000c" target="_blank" rel="noopener noreferrer">Since the incident, the Federal government has taken the initiative to communicate river conditions 
+directly to impacted residents.</a>
+
+4. A detailed breach and flood hydraulics model, coupled with an agent-based evacuation and consequence model provided valuable insight to the hazard progression and damages. 
+They were calibrated with video, photo, and other observations such as stream gages. These tools may provide value for planning efforts by increasing understanding of the impacts 
+of inadequate warning time as it relates dynamically to the progression of the flood. 
+
+## Model Version
+
+The original LifeSim model was developed in 2017 using LifeSim version 1.0 beta. The public model was updated in 2025 to LifeSim version 2.1.5 and 
+produced negligible changes from the original documented results. 
+
+<CitationFootnote />

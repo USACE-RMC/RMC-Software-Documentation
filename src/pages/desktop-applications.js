@@ -29,7 +29,7 @@ export default function DesktopApps() {
       icon: addBaseUrl("img/LifeSim.png"),
       doc_location: addBaseUrl("desktop-applications/lifesim"),
       doc_name: "LifeSim",
-      active: false,
+      active: true,
     },
   ];
 

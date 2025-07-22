@@ -14,6 +14,13 @@ const lifeSimData = [
     active: true,
     draft: true,
   },
+  {
+    icon: "img/LifeSim.png",
+    doc_location: "desktop-applications/lifesim/validation-studies",
+    doc_name: "LifeSim Validation Studies",
+    active: true,
+    draft: true,
+  },
 ];
 
 export const lifeSimDocs = lifeSimData;
