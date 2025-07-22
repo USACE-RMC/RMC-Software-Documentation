@@ -19,9 +19,7 @@ const VersionSelector = ({ document }) => {
   useEffect(() => {
     const fetchVersions = async () => {
       try {
-        const response = await fetch(
-          "/RMC-Software-Documentation/versions/versionList.json"
-        );
+        const response = await fetch("/RMC-Software-Documentation/versions/versionList.json");
         const data = await response.json();
         const versionList = data[document] || [];
 
@@ -39,27 +37,20 @@ const VersionSelector = ({ document }) => {
     fetchVersions();
   }, [document, location.pathname]);
 
-  const handleVersionChange = (event) => {
+  const handleVersionChange = async (event) => {
     const newVersion = event.target.value;
     setSelectedVersion(newVersion);
 
-    const newUrl = location.pathname.replace(
-      /\/v\d+\.\d+\//,
-      `/${newVersion}/`
-    );
-    if (newUrl !== location.pathname) {
-      history.push(newUrl); // triggers navigation without full page reload
+    const prefaceUrl = location.pathname.replace(/\/v\d+\.\d+\/[^/]+/, `/${newVersion}/preface`);
+    if (prefaceUrl !== location.pathname) {
+      history.push(prefaceUrl);
     }
   };
 
   return (
     <div className="version-selector-container">
       {versions.length > 0 ? (
-        <select
-          className="version-selector-dropdown"
-          value={selectedVersion}
-          onChange={handleVersionChange}
-        >
+        <select className="version-selector-dropdown" value={selectedVersion} onChange={handleVersionChange}>
           {versions.map((version) => (
             <option key={version} value={version}>
               {version}

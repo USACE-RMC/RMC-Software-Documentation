@@ -1,0 +1,541 @@
+---
+title: Scripts Folder
+sidebar_label: Scripts Folder
+---
+
+# Scripts Folder
+
+The `scripts/` folder contains custom Node.js scripts for automation and data generation in the RMC Software Documentation project.
+
+---
+
+## DOCX to MDX Converter
+
+### Overview
+
+The `docx_to_mdx` Python script is designed to automate the conversion of Microsoft Word (`.docx`) documents using the standard RMC Word Document Template into modular
+MDX files, suitable for use with Docusaurus or other React-based documentation systems. It extracts and processes figures, tables, equations, citations, and document
+structure, outputting clean, component-rich MDX files and associated assets. This script allows for efficient conversion of existing Word documents into the RMC Software
+Documentation site format.
+
+:::warning
+
+**This script will not work if the DOCX file does not follow the standard RMC Word Document Template.**  
+Ensure your document is formatted correctly before running the script.
+
+:::
+
+#### File Structure
+
+Below is a typical file structure for the `docx_to_mdx` script, with a brief description of each file’s purpose.
+
+```
+docx_to_mdx/
+│
+├── main.py              # Entry point; orchestrates the DOCX to MDX conversion process.
+├── constants.py         # Contains style mappings and global constants for parsing DOCX.
+├── helpers.py           # Utility functions for formatting, file operations, JSX/MDX generation, and user prompts.
+├── figures.py           # Handles extraction of figures and their captions from DOCX, saves images, and manages figure references.
+├── tables.py            # Extracts tables from DOCX, formats them for MDX, and manages table references.
+├── citations.py         # Parses citations and bibliography entries, formats them for MDX.
+├── equations.py         # Extracts and formats equations and equation references for MDX.
+├── docx_processor.py    # Main DOCX parsing logic; splits document into sections, identifies elements, and coordinates extraction.
+├── mdx_writer.py        # Writes the processed content (sections, figures, tables, etc.) to MDX files.
+├── README.md            # Documentation for the script, usage instructions, and requirements.
+```
+
+#### File Descriptions
+
+- **main.py**  
+  The main script to run. Handles user prompts, sets up input/output paths, and calls the appropriate modules to process the DOCX and generate MDX files and assets.
+
+- **constants.py**  
+  Stores style names, mappings, and other constants used to identify and process elements in the DOCX file (e.g., which styles correspond to headings, figures, tables, etc.).
+
+- **helpers.py**  
+  Provides utility functions for formatting text, handling JSX/MDX output, file and directory operations, user confirmations, and other shared logic.
+
+- **figures.py**  
+  Contains logic for detecting figures in the DOCX, extracting and saving figure images, parsing and cleaning captions, and generating MDX-compatible figure components and references.
+
+- **tables.py**  
+  Handles extraction of tables from the DOCX, formatting them as Markdown or MDX components, and managing table references.
+
+- **citations.py**  
+  Parses in-text citations and bibliography entries, formats them for MDX, and links them to the bibliography if provided.
+
+- **equations.py**  
+  Extracts equations and equation references from the DOCX, formats them for MDX, and generates appropriate components.
+
+- **docx_processor.py**  
+  The core parser that reads the DOCX file, identifies document structure (sections, headings, paragraphs), and coordinates the extraction of figures, tables, equations, and citations.
+
+- **mdx_writer.py**  
+  Responsible for writing the processed content to MDX files, organizing sections, and ensuring correct references and imports for assets.
+
+- **README.md**  
+  Provides an overview, usage instructions, requirements, and other documentation for users of the script.
+
+### What It Does
+
+1. **Configuration and Setup**
+
+   - The user specifies input and output paths for the DOCX file, bibliography, figures directory, and MDX output directory in `main.py`.
+   - The script checks for required dependencies and prompts the user to confirm whether the input variables are set correctly and whether figures should be regenerated within
+     the figures folder of the Docusaurus project.
+
+2. **DOCX Parsing**
+
+   - The script loads the DOCX file using `python-docx` and parses the document structure, identifying sections, headings, paragraphs, figures, tables, equations, and citations
+     based on style mappings defined in `constants.py`.
+
+3. **Figure Extraction**
+
+   - Figures are detected by their style (e.g., "RMC_Figure").
+   - Each figure image is extracted and saved as a PNG file in the specified figures directory.
+   - Figure captions are parsed, cleaned, and associated with the correct image.
+
+4. **Table Extraction**
+
+   - Tables are identified and converted into Markdown or MDX table components.
+   - Table captions and references are handled and linked appropriately.
+
+5. **Equation and Citation Handling**
+
+   - Inline equations and references are detected and formatted for MDX.
+   - Citations are parsed and linked to the provided bibliography file.
+
+6. **Section and Navigation Structure**
+
+   - The script builds a modular section structure, splitting the document into logical MDX files based on headings.
+   - Navigation metadata can be generated for Docusaurus sidebars.
+
+7. **MDX File Generation**
+
+   - Each section, figure, table, and equation is written to an MDX file in the output directory.
+   - MDX files include custom React components for figures, tables, and references, ready for use in Docusaurus.
+
+8. **Asset Management**
+   - All extracted images are saved to the figures directory.
+   - Relative paths are set so MDX files can reference images correctly.
+
+### Output
+
+:::tip
+
+The script generates the necessary MDX files and figures to allow the Docusaurus project to build the document. When successful, the document will be in draft form and
+ready for review following minor edits.
+
+:::
+
+Outputs include:
+
+- **MDX Files:**  
+  Modular `.mdx` files for each section or chapter of the original DOCX, placed in your specified output directory (e.g., `docs/` or `docs/generated/`).
+- **Figures:**  
+  Extracted figure images as `.png` files, saved in the designated figures directory (e.g., `static/img/figures/`).
+
+### Usage
+
+1. **Assign Input and Output Paths**
+
+   - Open `main.py` in the `scripts/` folder.
+   - Set the following variables at the top:
+     - `DOCX_PATH`: Path to your input `.docx` file (e.g., `../input/YourDoc.docx`)
+     - `BIB_PATH`: Path to your bibliography JSON file (optional)
+     - `FIGURES_DIR`: Output directory for extracted figures (e.g., `../static/img/figures`)
+     - `MDX_DIR`: Output directory for generated MDX files (e.g., `../docs/generated`)
+     - `FIGSRC`: Relative path for figures in MDX (e.g., `/img/figures`)
+     - Navigation variables as needed for your Docusaurus sidebar
+
+2. **Install Dependencies**
+
+   - Ensure you have Python 3.8+ installed.
+   - Install required packages:
+     ```sh
+     pip install python-docx pillow python-slugify docx2python
+     ```
+
+3. **Run the Script**
+
+   - From your project root or the `scripts/` folder, run:
+     ```sh
+     npm run convert
+     ```
+   - The script will prompt you to confirm the following:
+     - Whether the input and output variables are set correctly (Y or N). If you choose N, the script will exit.
+     - Whether to regenerate figures in the Docusaurus project directory (Y or N). If all figures from the DOCX are already present in the figures directory,
+       you can choose not to regenerate them (N). If you choose to regenerate figures (Y), the script will overwrite existing images in the figures directory.
+
+4. **Check Outputs**
+
+   - Find your generated `.mdx` files in the output directory you specified (e.g., `docs/generated/`).
+   - Find extracted figure images in the figures directory (e.g., `static/img/figures/`).
+
+5. **Integrate with Docusaurus**
+
+   - The generated MDX files and images are now ready for use in your Docusaurus site.
+
+:::info
+
+This Python script is a preprocessing tool. It is not run by Docusaurus at runtime, but before you build or serve your site.
+For troubleshooting, check the console output and review the generated files for formatting or extraction issues.
+
+:::
+
+---
+
+## **counters.js**
+
+### Overview
+
+The `counters.js` script scans all `.mdx` files in the `docs/` directory, extracts metadata from custom components like `<Figure>`,
+`<Table*>`, `<Equation>`, and `<Citation>`, and generates a structured JSON file for each report. These JSON files are stored in
+`static/counters/` and contain consistent numbering and metadata for figures, tables, equations, and citations.
+
+### What It Does
+
+- Recursively scans the `docs/` directory for folders containing `.mdx` files.
+- Uses `reportIdMap.js` to associate each folder with a unique `reportId`.
+- For each matched folder:
+  - Parses all `.mdx` files to find:
+    - `<Figure figKey="...">` components
+    - `<TableHorizontal tableKey="...">`, `<TableVertical>`, or `<TableVerticalLeftAlign>` components
+    - `<Equation equationKey="...">` components
+    - `<Citation citationKey="...">` components
+  - Assigns a unique number to each:
+    - `figNumber` for figures
+    - `tableNumber` for tables
+    - `equationNumber` for equations
+    - `citationNumber` for citations
+  - Records additional metadata for each:
+    - `figKey`, `tableKey`, `equationKey`, or `citationKey`
+    - `parentDocId` (from `reportIdMap.js`)
+    - `parentDocPath` (relative path within `docs/`)
+    - `docId` (name of the `.mdx` file)
+
+### Output
+
+Each output file is saved to: `static/counters/<reportId>.json`. The structure of the JSON output looks like this:
+
+```json
+{
+  "figures": {
+    "figKey": {
+      "figNumber": 1,
+      "parentDocId": "soil-erosion",
+      "parentDocPath": "rmc/soil/contact-erosion",
+      "docId": "overview.mdx"
+    }
+  },
+  "tables": {
+    "tableKey": {
+      "tableNumber": 1,
+      "parentDocId": "soil-erosion",
+      "parentDocPath": "rmc/soil/contact-erosion",
+      "docId": "overview.mdx"
+    }
+  },
+  "equations": {
+    "equationKey": {
+      "equationNumber": 1,
+      "parentDocId": "soil-erosion",
+      "parentDocPath": "rmc/soil/contact-erosion",
+      "docId": "overview.mdx"
+    }
+  },
+  "citations": {
+    "citationKey": {
+      "citationNumber": 1,
+      "parentDocId": "internal-erosion-suite-backward-erosion-piping-progression-v1.0",
+      "parentDocPath": "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0",
+      "docId": "04-background.mdx"
+    },
+  }
+}
+```
+
+### Usage
+
+This script is automatically run on project start, build, and deploy. No additional execution of this script is required.
+
+During project build, React components like `<Figure>`, `<Table*>`, `<Equation>`, `<Citation>`, `<CitationFootnote>`, and `<Bibliography>` will use the generated
+counters JSON files to automatically assign sequential and appropriate numbering to figures, tables, equations, captions, and citations. This relieves the user of the
+burden of manually numbering these elements.
+
+---
+
+## **generateEventTreeToc.js**
+
+:::info Note
+This script is only used for the RMC Typical Event Tree Database document.
+:::
+
+### Overview
+
+This Node.js script scans the `docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database` directory and generates a versioned table of contents
+(`eventTreeToc.json`) in the `src/data/` folder. It organizes `.mdx` files into categories and sub-items based on their numeric filename prefixes and the title found in
+each file’s frontmatter.
+
+### What It Does
+
+- Scans each versioned folder (e.g., `v1.0`, `v1.4`) under the event tree database directory.
+- Filters out `.mdx` files starting with `00`, `01`, or `02`.
+- Parses numeric prefixes from filenames:
+  - Files ending in `0` (e.g., `030-...`) are treated as **categories**.
+  - Files with other prefixes (e.g., `031-...`, `046-...`) are grouped under the most recent category.
+- Extracts the `title` value from each file’s frontmatter.
+- Builds a versioned TOC object mapping each category to its sub-items.
+- Saves the result as a JSON file in `src/data/eventTreeToc.json`.
+
+:::info
+
+If a file does not have a `title` in its frontmatter, the script will fallback to using the filename (with its numeric prefix removed) as the label. This ensures that
+each entry has a human-readable label even if metadata is missing.
+
+:::
+
+### Output
+
+The output file (`eventTreeToc.json`) is saved to: `src/data/eventTreeToc.json`
+
+It contains an object with each version and its associated categories and paths. Example:
+
+```json
+{
+  "v1.4": {
+    "Geotechnical Hydrologic": [
+      {
+        "label": "Generic Internal Erosion",
+        "path": "/docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.0/Generic-Internal-Erosion"
+      },
+    ],
+    "Geotechnical Seismic": [
+      {
+        "label": "Concentrated Leak Erosion (Seismic)",
+        "path": "/docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.0/Concentrated-Leak-Erosion-Seismic"
+      },
+    ],
+    "Spillways Hydrologic": [
+      {
+        "label": "Unlined Spillway Erosion",
+        "path": "/docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.0/Unlined-Spillway-Erosion"
+      },
+    ],
+  },
+  "v1.5": {
+    "Geotechnical Hydrologic": [
+      {
+        "label": "Generic Internal Erosion",
+        "path": "/docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.0/Generic-Internal-Erosion"
+      },
+    ],
+    "Geotechnical Seismic": [
+      {
+        "label": "Concentrated Leak Erosion (Seismic)",
+        "path": "/docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.0/Concentrated-Leak-Erosion-Seismic"
+      },
+    ],
+    "Spillways Hydrologic": [
+      {
+        "label": "Unlined Spillway Erosion",
+        "path": "/docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.0/Unlined-Spillway-Erosion"
+      },
+    ],
+  },
+}
+```
+
+### Usage
+
+This script is automatically run on project start, build, and deploy. No additional execution of this script is required.
+
+---
+
+## **generateReportIdMap.js**
+
+### Overview
+
+This Node.js script scans the `docs/` folder structure to automatically generate a `reportIdMap.js` file in `src/`. It identifies documentation paths
+based on versioned subfolders (e.g., `v1.0`, `v2.1`) and builds unique report IDs based on the folder hierarchy.
+
+### What It Does
+
+- Recursively walks the `docs/` directory.
+- Identifies folders with names matching a version pattern like `v1.0`, `v2.1`, etc.
+- Constructs a unique `reportId` in the format: `<subHub>-<documentName>-<version>`
+  - Where:
+    - `subHub` is the folder two levels above the version folder
+    - `documentName` is the folder directly above the version folder
+    - `version` is the version folder name (e.g., `v1.0`)
+- Maps the full relative path to the generated report ID.
+- Saves the result as an exported JavaScript object in `src/reportIdMap.js`.
+
+:::info
+
+If the folder structure does not contain enough levels (i.e., it lacks a parent document or subHub folder), the script skips that entry and logs a warning.
+
+:::
+
+### Output
+
+The output file (`reportIdMap.js`) is saved to: `src/reportIdMap.js`. It exports an object mapping documentation paths to unique report IDs. The structure looks like this:
+
+```js
+// Auto-generated. Do not edit.
+const reportIdMap = {
+  "desktop-applications/lifesim/users-guide/v1.0": "lifesim-users-guide-v1.0",
+  "desktop-applications/rmc-bestfit/users-guide/v1.0": "rmc-bestfit-users-guide-v1.0",
+  "desktop-applications/rmc-rfa/users-guide/v1.0": "rmc-rfa-users-guide-v1.0",
+  "desktop-applications/rmc-totalrisk/users-guide/v1.0": "rmc-totalrisk-users-guide-v1.0",
+  "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0": "internal-erosion-suite-backward-erosion-piping-progression-v1.0",
+  "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0": "internal-erosion-suite-filter-evaluation-continuation-v1.0",
+  "web-applications/lst/users-guide/v1.0": "lst-users-guide-v1.0"
+};
+module.exports = reportIdMap;
+```
+
+### Usage
+
+This script is automatically run on project start, build, and deploy. No additional execution of this script is required. It is used during the build process to
+allow React components to reference documentation paths by their unique report IDs.
+
+---
+
+## **generateSidebars.js**
+
+### Overview
+
+This script automatically generates a structured `sidebars.js` file for the RMC Software Documentation Docusaurus site, based on the organization of `.mdx` files
+within the `docs/` directory.
+
+### What It Does
+
+- Recursively walks the `docs/` directory to find all `.mdx` files.
+- Groups files into categories based on their folder structure.
+- Constructs a sidebar structure that follows the standard document layout and naming convention defined in [Docs Folder](docs/00-documentation-guide/04-docs-folder.mdx).
+- Generates a `sidebars.js` file that exports a structured object for Docusaurus navigation.
+
+:::tip
+
+This script supports special-case logic for documents that require unique sidebar handling. Contact a site administrator if special-case logic is needed.
+
+:::
+
+### Output
+
+The output file is saved to: `sidebars.js`. It exports an object that defines the sidebar structure for Docusaurus. The structure looks like this:
+
+```js
+rmcTotalriskusersGuide_v1_0: {
+    "Users Guide": [
+      {
+        "type": "category",
+        "label": "Document Information",
+        "collapsible": true,
+        "collapsed": true,
+        "items": [
+          {
+            "type": "doc",
+            "id": "desktop-applications/rmc-totalrisk/users-guide/v1.0/document-info",
+            "label": "Document Info"
+          },
+          {
+            "type": "doc",
+            "id": "desktop-applications/rmc-totalrisk/users-guide/v1.0/version-history",
+            "label": "Version History"
+          }
+        ]
+      },
+      {
+        "type": "category",
+        "label": "Main Report",
+        "collapsible": true,
+        "collapsed": false,
+        "items": [
+          {
+            "type": "doc",
+            "id": "desktop-applications/rmc-totalrisk/users-guide/v1.0/preface",
+            "label": "Preface"
+          },
+          {
+            "type": "doc",
+            "id": "desktop-applications/rmc-totalrisk/users-guide/v1.0/welcome",
+            "label": "Welcome to RMC-TotalRisk"
+          }
+        ]
+      },
+      {
+        "type": "category",
+        "label": "Appendices",
+        "collapsible": true,
+        "collapsed": true,
+        "items": [
+          {
+            "type": "doc",
+            "id": "desktop-applications/rmc-totalrisk/users-guide/v1.0/appendix-acronyms",
+            "label": "Appendix A - Acronyms"
+          }
+        ]
+      }
+    ]
+  },
+```
+
+### Usage
+
+This script is automatically run on project start, build, and deploy. No additional execution of this script is required. The generated `sidebars.js` file will be
+used by Docusaurus to render the sidebar navigation for the documentation site.
+
+---
+
+## **versions.js**
+
+### Overview
+
+This script scans the `docs/` folder to identify and collect version information. It produces JSON files that list the latest versions available, all available
+versions, and generates URLs for use with the Algolia crawler to index the correct documentation versions.
+
+### What It Does
+
+- Defines the base folders where documentation groups live (e.g., "desktop-applications", "toolbox-technical-manuals", "web-applications").
+- Recursively walks through these folders to detect version folders that match a pattern like `v1.0`, `v2.3`, etc.
+- Identifies the latest version by sorting the version folders descending alphabetically.
+- Collects all versions found for each document group.
+- Outputs three JSON files: latest version map, full version list, and Algolia crawler URLs.
+
+### Output
+
+- `latestVersions.json`: Contains a mapping of document paths to their latest version folder.
+
+```json
+{
+  "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression": "v1.0",
+  "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation": "v1.0",
+  "desktop-applications/lifesim/users-guide": "v1.0",
+  "desktop-applications/rmc-bestfit/users-guide": "v1.0",
+  "desktop-applications/rmc-totalrisk/users-guide": "v1.0",
+  "web-applications/lst/users-guide": "v1.0"
+}
+```
+
+- `versionList.json`: Contains a mapping of document paths to all available version folders.
+
+```json
+{
+  "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression": [
+    "v1.0"
+  ],
+  "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation": [
+    "v1.0"
+  ]
+}
+```
+
+- `algoliaCrawlerVersions.json`: Contains start URLs and discovery patterns based on the latest versions for Algolia's documentation crawler.
+
+### Usage
+
+This script is automatically run on project start, build, and deploy. No additional execution of this script is required.
+
+The output JSON files will be saved in the `static/versions` folder.

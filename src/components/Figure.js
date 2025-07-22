@@ -3,12 +3,7 @@ import "../css/custom.css";
 import "../css/figure.css";
 import { useReportId } from "../contexts/ReportIdContext"; // Import the context hook to retrieve the reportId
 
-const Figure = ({ 
-  figKey, 
-  src, 
-  alt, 
-  caption 
-}) => {
+const Figure = ({ figKey, src, alt, caption, width = "80%" }) => {
   const [figInfo, setFigInfo] = useState(null);
   const reportId = useReportId(); // Get the reportId from the context
 
@@ -51,6 +46,7 @@ const Figure = ({
         src={`/RMC-Software-Documentation/${src}`}
         alt={alt}
         className="figure-image"
+        style={{ maxWidth: width }}
       />
       <figcaption className="figure-caption">
         Figure {figInfo.figNumber}: {caption}

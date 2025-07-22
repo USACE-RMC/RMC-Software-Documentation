@@ -27,59 +27,56 @@ export default function Toolboxes() {
     },
     {
       icon: addBaseUrl("img/Toolbox.png"),
-      doc_location: addBaseUrl("overtopping-erosion-suite"),
+      doc_location: addBaseUrl("toolboxes/overtopping-erosion-suite"),
       doc_name: "Overtopping Erosion Suite",
       active: false,
     },
     {
       icon: addBaseUrl("img/Toolbox.png"),
-      doc_location: addBaseUrl("risk-calculations-suite"),
+      doc_location: addBaseUrl("toolboxes/risk-calculations-suite"),
       doc_name: "Risk Calculations Suite",
-      active: false,
+      active: true,
     },
     {
       icon: addBaseUrl("img/Toolbox.png"),
-      doc_location: addBaseUrl("riverine-erosion-suite"),
+      doc_location: addBaseUrl("toolboxes/riverine-erosion-suite"),
       doc_name: "Riverine Erosion Toolbox",
       active: false,
     },
     {
       icon: addBaseUrl("img/Toolbox.png"),
-      doc_location: addBaseUrl("hydraulic-fracture-toolbox"),
+      doc_location: addBaseUrl("toolboxes/hydraulic-fracture-toolbox"),
       doc_name: "Hydraulic Fracture Toolbox",
       active: false,
     },
     {
       icon: addBaseUrl("img/Toolbox.png"),
-      doc_location: addBaseUrl("rmc-qracalcs-suite"),
+      doc_location: addBaseUrl("toolboxes/rmc-qracalcs-suite"),
       doc_name: "RMC-QRAcalcs",
       active: false,
     },
     {
       icon: addBaseUrl("img/Toolbox.png"),
-      doc_location: addBaseUrl("seismic-hazard-suite"),
+      doc_location: addBaseUrl("toolboxes/seismic-hazard-suite"),
       doc_name: "Seismic Hazard Suite",
-      active: false,
+      active: true,
     },
     {
       icon: addBaseUrl("img/Toolbox.png"),
-      doc_location: addBaseUrl("spillway-erosion-suite"),
+      doc_location: addBaseUrl("toolboxes/spillway-erosion-suite"),
       doc_name: "Spillway Erosion Suite",
       active: false,
     },
     {
       icon: addBaseUrl("img/Toolbox.png"),
-      doc_location: addBaseUrl("structural-suite"),
+      doc_location: addBaseUrl("toolboxes/structural-suite"),
       doc_name: "Structural Suite",
       active: false,
     },
   ];
 
   return (
-    <Layout
-      title="RMC Software Documentation"
-      description="Documentation for RMC Software Packages"
-    >
+    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
       <main>
         <div className="header-container">
           <h1>RMC Software Documentation</h1>

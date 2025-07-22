@@ -16,6 +16,7 @@ const DocumentMetadata = ({ metadata }) => {
     reportSubjectTerms,
     responsiblePersonName,
     responsiblePersonNumber,
+    citationGuide,
   } = metadata;
 
   const renderHTML = (content) => {
@@ -28,30 +29,16 @@ const DocumentMetadata = ({ metadata }) => {
     ["Type", reportType],
     ["Title", reportTitle],
     ["Subtitle", reportSubTitle],
-    [
-      "Author(s)",
-      Array.isArray(reportAuthors) ? reportAuthors.join("; ") : reportAuthors,
-    ],
+    ["Author(s)", Array.isArray(reportAuthors) ? reportAuthors.join("; ") : reportAuthors],
     ["Abstract", reportAbstract],
     ["Acknowledgements", reportAcknowledgments],
-    [
-      "Subject Terms",
-      Array.isArray(reportSubjectTerms)
-        ? reportSubjectTerms.join(", ")
-        : reportSubjectTerms,
-    ],
-    [
-      "Responsible Person",
-      `${responsiblePersonName || ""}${
-        responsiblePersonNumber ? ` | ${responsiblePersonNumber}` : ""
-      }`.trim(),
-    ],
+    ["Subject Terms", Array.isArray(reportSubjectTerms) ? reportSubjectTerms.join(", ") : reportSubjectTerms],
+    ["Responsible Person", `${responsiblePersonName || ""}${responsiblePersonNumber ? ` | ${responsiblePersonNumber}` : ""}`.trim()],
+    ["How to Cite This Document", citationGuide],
   ];
 
   // Filter out empty or undefined values
-  const filteredItems = metadataItems.filter(
-    ([_, value]) => value && value.trim() !== ""
-  );
+  const filteredItems = metadataItems.filter(([_, value]) => value && value.trim() !== "");
 
   return (
     <div className="table-container-metadata">
