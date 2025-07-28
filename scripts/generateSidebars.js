@@ -71,6 +71,42 @@ function getFallbackLabel(filename) {
   return titleCase(parts.slice(1).join(" "));
 }
 
+/* --- Custom Logic: LifeSim Validation Studies Sidebar --- */
+function generateSidebarForLifeSimValidationStudies(versionPath, relativePath) {
+  // No double nesting: return the items array directly
+  return [
+    {
+      type: "category",
+      label: "Document Information",
+      collapsible: true,
+      collapsed: true,
+      items: [
+        { type: "doc", id: `${relativePath}/document-info`, label: "Document Information" },
+        { type: "doc", id: `${relativePath}/version-history`, label: "Version History" },
+      ],
+    },
+    { type: "doc", id: `${relativePath}/preface`, label: "Preface" },
+    {
+      type: "category",
+      label: "Studies",
+      collapsible: true,
+      collapsed: false,
+      items: [
+        { type: "doc", id: `${relativePath}/brumadinho`, label: "Brumadinho" },
+        { type: "doc", id: `${relativePath}/johnstown`, label: "Johnstown" },
+        { type: "doc", id: `${relativePath}/joso`, label: "Joso" },
+        { type: "doc", id: `${relativePath}/katrina-east-bowl`, label: "Katrina East Bowl" },
+        { type: "doc", id: `${relativePath}/kelly-barnes`, label: "Kelly Barnes" },
+        { type: "doc", id: `${relativePath}/malpasset`, label: "Malpasset" },
+        { type: "doc", id: `${relativePath}/midland-dams`, label: "Midland Dams" },
+        { type: "doc", id: `${relativePath}/oroville`, label: "Oroville" },
+        { type: "doc", id: `${relativePath}/teton`, label: "Teton" },
+      ],
+    },
+    { type: "doc", id: `${relativePath}/references`, label: "References" },
+  ];
+}
+
 /* --- Custom Logic: Event Tree Database Sidebar --- */
 
 function generateSidebarForEventTree(versionPath, relativePath) {
@@ -230,6 +266,11 @@ function generateSidebarForVersion(versionPath, relativePath, docGroup, folderNa
   // CUSTOM LOGIC: RMC-TotalRisk Applications Guide
   if (docGroup === "rmc-totalrisk" && folderName === "applications-guide") {
     return generateSidebarForRmcTotalRiskApplicationsGuide(versionPath, relativePath);
+  }
+
+  // CUSTOM LOGIC: LifeSim Validation Studies
+  if (docGroup === "lifesim" && folderName === "validation-studies") {
+    return generateSidebarForLifeSimValidationStudies(versionPath, relativePath);
   }
 
   // STANDARD LOGIC: All other documents
