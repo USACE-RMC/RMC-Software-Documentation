@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "@docusaurus/router";
-import { useReportId } from "../contexts/ReportIdContext";
+import { useReportId } from "../../contexts/ReportIdContext";
 
 const Bibliography = () => {
   const [citations, setCitations] = useState([]);
@@ -92,7 +92,7 @@ const Bibliography = () => {
           <>
             {" "}
             doi:{" "}
-            <a href={`https://doi.org/${doi}`} target="_blank" rel="noopener noreferrer" className="no-underline text-ifm-link hover:text-ifm-link-hover hover:underline">
+            <a href={`https://doi.org/${doi}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
               {doi}
             </a>
           </>
@@ -101,7 +101,7 @@ const Bibliography = () => {
           <>
             {" "}
             Available:{" "}
-            <a href={url} target="_blank" rel="noopener noreferrer" className="no-underline text-ifm-link hover:text-ifm-link-hover hover:underline">
+            <a href={url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
               {url}
             </a>
           </>
@@ -112,11 +112,18 @@ const Bibliography = () => {
 
   return (
     <div>
-      <ol className="list-none pl-0 mt-5">
+      <ol style={{ paddingLeft: "0", listStyleType: "none" }}>
         {citations.map((citation) => (
-          <li key={citation.citationKey} className="flex items-start mb-2.5">
-            <span className="min-w-[40px] flex-shrink-0">[{citation.number}]</span>
-            <span className="block">{formatCitation(citation)}</span>
+          <li
+            key={citation.citationKey}
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              marginBottom: "10px",
+            }}
+          >
+            <span style={{ minWidth: "40px", flexShrink: 0 }}>[{citation.number}]</span>
+            <span style={{ display: "block" }}>{formatCitation(citation)}</span>
           </li>
         ))}
       </ol>

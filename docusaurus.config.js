@@ -2,6 +2,18 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 
+// Tailwind custom plugin
+const tailwindPlugin = async function tailwindPlugin(context, options) {
+  return {
+    name: "docusaurus-tailwindcss",
+    configurePostCss(postcssOptions) {
+      postcssOptions.plugins.push(require("tailwindcss"));
+      postcssOptions.plugins.push(require("autoprefixer"));
+      return postcssOptions;
+    },
+  };
+};
+
 export default {
   title: "RMC Software Documentation",
   tagline: "Documentation for RMC Software Packages",
@@ -42,13 +54,17 @@ export default {
   ],
 
   plugins: [
+    // Google Analytics plugin
     [
       "@docusaurus/plugin-google-gtag",
       {
         trackingID: "G-LB2BWWGDTB",
-        anonymizeIP: true, // Optional: anonymizes IPs for privacy
+        anonymizeIP: true,
       },
     ],
+
+    // TailwindCSS as a custom plugin
+    tailwindPlugin,
   ],
 
   themeConfig: {

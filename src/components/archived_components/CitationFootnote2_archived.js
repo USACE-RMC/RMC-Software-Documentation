@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { getUsedCitations } from "./Citation";
+import { getUsedCitations } from "../Citation";
 import { useLocation } from "@docusaurus/router";
-import { useReportId } from "../contexts/ReportIdContext";
+import { useReportId } from "../../contexts/ReportIdContext";
 import "../css/custom.css";
+import "../css/citation-footnote.css";
 
 const CitationFootnote = () => {
   const [citations, setCitations] = useState([]);
@@ -11,16 +12,9 @@ const CitationFootnote = () => {
 
   // Paths for bib.json and counters.json
   const pathname = location.pathname;
-  const reportPath = pathname
-    .replace(
-      /^\/RMC-Software-Documentation\/docs\//,
-      "/RMC-Software-Documentation/bibliographies/"
-    )
-    .replace(/\/[^/]*$/, "");
+  const reportPath = pathname.replace(/^\/RMC-Software-Documentation\/docs\//, "/RMC-Software-Documentation/bibliographies/").replace(/\/[^/]*$/, "");
   const bibFilePath = `${reportPath}/bib.json`;
-  const countersFilePath = reportId
-    ? `/RMC-Software-Documentation/counters/${reportId}.json`
-    : null;
+  const countersFilePath = reportId ? `/RMC-Software-Documentation/counters/${reportId}.json` : null;
 
   useEffect(() => {
     let isMounted = true;
@@ -32,18 +26,14 @@ const CitationFootnote = () => {
         const usedKeys = usedCitations.map((c) => c.citationKey || c);
 
         // 2. Fetch bib.json and counters.json
-        const [bibRes, countersRes] = await Promise.all([
-          fetch(bibFilePath),
-          fetch(countersFilePath),
-        ]);
+        const [bibRes, countersRes] = await Promise.all([fetch(bibFilePath), fetch(countersFilePath)]);
         const bibData = await bibRes.json();
         const counters = await countersRes.json();
 
         // 3. Build citation objects for only those used on this page
         const citationEntries = usedKeys
           .map((citationKey) => {
-            const bib =
-              bibData.find((c) => c.citationKey === citationKey) || {};
+            const bib = bibData.find((c) => c.citationKey === citationKey) || {};
             const entry = counters.citations[citationKey];
             return entry
               ? {
@@ -78,32 +68,11 @@ const CitationFootnote = () => {
     if (authors.length === 3) {
       return `${authors[0]}, ${authors[1]}, and ${authors[2]}`;
     }
-    return authors.length === 2
-      ? `${authors[0]} and ${authors[1]}`
-      : authors[0];
+    return authors.length === 2 ? `${authors[0]} and ${authors[1]}` : authors[0];
   };
 
   const formatCitation = (citation) => {
-    const {
-      author,
-      year,
-      title,
-      journal,
-      booktitle,
-      report,
-      manual,
-      institution,
-      organization,
-      location,
-      address,
-      volume,
-      edition,
-      pages,
-      doi,
-      url,
-      publisher,
-      entryType,
-    } = citation;
+    const { author, year, title, journal, booktitle, report, manual, institution, organization, location, address, volume, edition, pages, doi, url, publisher, entryType } = citation;
 
     const formatTitle = (title, entryType) => {
       if (entryType === "inproceedings") {
@@ -136,12 +105,7 @@ const CitationFootnote = () => {
           <>
             {" "}
             doi:{" "}
-            <a
-              href={`https://doi.org/${doi}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="no-underline gw-text-red-600 hover:underline"
-            >
+            <a href={`https://doi.org/${doi}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
               {doi}
             </a>
           </>
@@ -150,12 +114,7 @@ const CitationFootnote = () => {
           <>
             {" "}
             Available:{" "}
-            <a
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="no-underline gw-text-blue-600 hover:underline"
-            >
+            <a href={url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
               {url}
             </a>
           </>
@@ -165,19 +124,20 @@ const CitationFootnote = () => {
   };
 
   return (
-    <div className="gw-mt-10 gw-pt-2 gw-border-t gw-border-color">
-      <ol className="list-none pl-0">
+    <div className="citation-footnote">
+      <ol style={{ listStyleType: "none", paddingLeft: "0" }}>
         {citations.map((citation) => (
           <li
             value={citation.number}
             key={citation.citationKey}
             id={`footnote-${citation.citationKey}`}
-            className="flex items-start gw-mb-2.5"
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              marginBottom: "10px",
+            }}
           >
-            <span className="gw-min-w-[40px] flex-shrink-0">
-              [{citation.number}]
-            </span>
-            <span className="block">{formatCitation(citation)}</span>
+            <span style={{ minWidth: "40px", flexShrink: 0 }}>[{citation.number}]</span> <span style={{ display: "block" }}>{formatCitation(citation)}</span>
           </li>
         ))}
       </ol>
