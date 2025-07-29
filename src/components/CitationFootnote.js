@@ -3,7 +3,6 @@ import { getUsedCitations } from "./Citation";
 import { useLocation } from "@docusaurus/router";
 import { useReportId } from "../contexts/ReportIdContext";
 import "../css/custom.css";
-import "../css/citation-footnote.css";
 
 const CitationFootnote = () => {
   const [citations, setCitations] = useState([]);
@@ -105,7 +104,7 @@ const CitationFootnote = () => {
           <>
             {" "}
             doi:{" "}
-            <a href={`https://doi.org/${doi}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+            <a href={`https://doi.org/${doi}`} target="_blank" rel="noopener noreferrer" className="no-underline text-ifm-link hover:text-ifm-link-hover hover:underline">
               {doi}
             </a>
           </>
@@ -114,7 +113,7 @@ const CitationFootnote = () => {
           <>
             {" "}
             Available:{" "}
-            <a href={url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+            <a href={url} target="_blank" rel="noopener noreferrer" className="no-underline text-ifm-link hover:text-ifm-link-hover hover:underline">
               {url}
             </a>
           </>
@@ -124,20 +123,12 @@ const CitationFootnote = () => {
   };
 
   return (
-    <div className="citation-footnote" style={{ marginLeft: "20px" }}>
-      <ol style={{ listStyleType: "none", paddingLeft: "0" }}>
+    <div className="mt-20 pt-2 border-t border-color">
+      <ol className="list-none pl-0 mt-5">
         {citations.map((citation) => (
-          <li
-            value={citation.number}
-            key={citation.citationKey}
-            id={`footnote-${citation.citationKey}`}
-            style={{
-              display: "flex",
-              alignItems: "flex-start",
-              marginBottom: "10px",
-            }}
-          >
-            <span style={{ minWidth: "40px", flexShrink: 0 }}>[{citation.number}]</span> <span style={{ display: "block" }}>{formatCitation(citation)}</span>
+          <li value={citation.number} key={citation.citationKey} id={`footnote-${citation.citationKey}`} className="flex items-start mb-2.5">
+            <span className="min-w-[40px] flex-shrink-0">[{citation.number}]</span>
+            <span className="block">{formatCitation(citation)}</span>
           </li>
         ))}
       </ol>

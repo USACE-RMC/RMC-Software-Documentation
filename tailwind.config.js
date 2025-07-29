@@ -1,17 +1,20 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  prefix: "gw-",
   content: [
-    "./index.html",
-    "./lib/**/*.{js,ts,jsx,tsx}",
     "./src/**/*.{js,ts,jsx,tsx}",
-    "./docs/**/*.{md,mdx}",
-    "./blog/**/*.{md,mdx}",
+    "./docs/**/*.{js,ts,jsx,tsx,md,mdx}", // ✅ Recursive match for ALL docs content
+    "./blog/**/*.{js,ts,jsx,tsx,md,mdx}",
+    "./index.html",
   ],
+  safelist: ["gw-text-red-600"],
   theme: {
     extend: {
       fontFamily: {
         usace: ["Roboto", "Arial", "Helvetica", "sans-serif"],
+      },
+      fontSize: {
+        normal: "clamp(0.9rem, 2vw, 1.1rem)",
+        large: "clamp(1.5rem, 3vw, 3rem)",
       },
       gridTemplateRows: {
         "1fr-auto": "1fr auto",
