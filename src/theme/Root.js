@@ -2,7 +2,7 @@ import React from "react";
 import { CounterProvider } from "../components/Counters";
 import { ReportIdProvider } from "@site/src/contexts/ReportIdContext";
 import Root from "@theme-original/Root";
-import "../css/tailwind.css";
+import "../css/custom.css";
 
 export default function CustomRoot(props) {
   return (
@@ -22,7 +22,7 @@ export default function CustomRoot(props) {
 //import { SiteWrapper } from "@usace/groundwork";
 //import "@usace/groundwork/dist/style.css";
 //import Root from "@theme-original/Root";
-//import "../css/tailwind.css";
+//import "../css/custom.css";
 
 //export default function CustomRoot(props) {
 //  return (
