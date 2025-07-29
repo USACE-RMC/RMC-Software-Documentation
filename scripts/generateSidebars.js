@@ -94,8 +94,8 @@ function generateSidebarForLifeSimValidationStudies(versionPath, relativePath) {
       items: [
         { type: "doc", id: `${relativePath}/brumadinho`, label: "Brumadinho" },
         { type: "doc", id: `${relativePath}/johnstown`, label: "Johnstown" },
-        { type: "doc", id: `${relativePath}/joso`, label: "Joso" },
-        { type: "doc", id: `${relativePath}/katrina-east-bowl`, label: "Katrina East Bowl" },
+        { type: "doc", id: `${relativePath}/joso`, label: "Jōsō" },
+        { type: "doc", id: `${relativePath}/katrina-east-bowl`, label: "Katrina - East Bowl" },
         { type: "doc", id: `${relativePath}/kelly-barnes`, label: "Kelly Barnes" },
         { type: "doc", id: `${relativePath}/malpasset`, label: "Malpasset" },
         { type: "doc", id: `${relativePath}/midland-dams`, label: "Midland Dams" },

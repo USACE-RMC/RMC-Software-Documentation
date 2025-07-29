@@ -11,7 +11,7 @@ const lifeSimData = [
     icon: "img/LifeSim.png",
     doc_location: "desktop-applications/lifesim/users-guide",
     doc_name: "LifeSim Users Guide",
-    active: false,
+    active: true,
     draft: true,
   },
   {
