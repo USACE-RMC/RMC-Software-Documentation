@@ -13,8 +13,9 @@ export default {
         usace: ["Roboto", "Arial", "Helvetica", "sans-serif"],
       },
       fontSize: {
-        normal: "clamp(0.9rem, 2vw, 1.1rem)",
+        normal: "clamp(0.8rem, 2vw, 1.0rem)",
         large: "clamp(1.5rem, 3vw, 3rem)",
+        breadcrumbs: "16px",
       },
       gridTemplateRows: {
         "1fr-auto": "1fr auto",
