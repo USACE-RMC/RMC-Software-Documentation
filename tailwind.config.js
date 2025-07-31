@@ -6,16 +6,30 @@ export default {
     "./blog/**/*.{js,ts,jsx,tsx,md,mdx}",
     "./index.html",
   ],
-  safelist: ["gw-text-red-600"],
   theme: {
     extend: {
       fontFamily: {
         usace: ["Roboto", "Arial", "Helvetica", "sans-serif"],
       },
       fontSize: {
+        "1-0": "1rem",
+        "1-25": "1.25rem",
+        "1-5": "1.5rem",
+        "1-75": "1.75rem",
+        "2-0": "2rem",
+        10: "10px",
+        12: "12px",
+        14: "14px",
+        16: "16px",
+        18: "18px",
+        20: "20px",
+        24: "24px",
         normal: "clamp(0.8rem, 2vw, 1.0rem)",
-        large: "clamp(1.5rem, 3vw, 3rem)",
-        breadcrumbs: "16px",
+        large: "clamp(1.1rem, 2vw, 1.5rem)",
+        xlarge: "clamp(1.2rem, 2.5vw, 1.4rem)",
+        xxlarge: "clamp(1.5rem, 3vw, 3.0rem)",
+        xxxlarge: "clamp(1.8rem, 2.5vw, 2.0rem)",
+        navbar: "clamp(0.8rem, 2vw, 1.0rem)",
       },
       gridTemplateRows: {
         "1fr-auto": "1fr auto",
@@ -42,6 +56,7 @@ export default {
         "font-color-inverse": "var(--font-color-inverse)",
         "sidebar-bg": "var(--sidebar-background-color)",
         "sidebar-text": "var(--sidebar-text-color)",
+        "background-theme": "var(--ifm-background-color-theme)",
 
         "ifm-primary": "var(--ifm-color-primary)",
         "ifm-primary-dark": "var(--ifm-color-primary-dark)",
