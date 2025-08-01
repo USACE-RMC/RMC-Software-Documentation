@@ -46,8 +46,8 @@ const TableHorizontal = ({ tableKey, headers, rows, alt, caption }) => {
   };
 
   return (
-    <div className="w-full overflow-x-auto ml-0 mr-auto my-4 pt-[15px] pb-[10px] justify-items-start border-t border-b border-border-color">
-      <div className="max-w-full font-usace text-caption italic text-[gray] text-left">
+    <div className="table-container">
+      <div className="table-caption">
         Table {tableInfo.tableNumber}: {caption}
       </div>
       <table alt={alt} className="static-table-horizontal">
@@ -56,7 +56,10 @@ const TableHorizontal = ({ tableKey, headers, rows, alt, caption }) => {
             <tr key={index}>
               <th dangerouslySetInnerHTML={renderHTML(header)} />
               {rows[index].map((cell, cellIndex) => (
-                <td key={cellIndex} dangerouslySetInnerHTML={renderHTML(cell)} />
+                <td
+                  key={cellIndex}
+                  dangerouslySetInnerHTML={renderHTML(cell)}
+                />
               ))}
             </tr>
           ))}

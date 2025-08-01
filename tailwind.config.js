@@ -25,6 +25,7 @@ export default {
         18: "18px",
         20: "20px",
         24: "24px",
+        caption: "clamp(0.7rem, 2vw, 0.9rem)",
         normal: "clamp(0.8rem, 2vw, 1.0rem)",
         large: "clamp(1.1rem, 2vw, 1.5rem)",
         xlarge: "clamp(1.2rem, 2.5vw, 1.4rem)",
