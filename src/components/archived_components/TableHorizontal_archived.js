@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import "../css/custom.css";
 import "../css/table-horizontal.css";
-import { useReportId } from "../contexts/ReportIdContext"; // Import the context hook to retrieve the reportId
+import { useReportId } from "../../contexts/ReportIdContext"; // Import the context hook to retrieve the reportId
 
 const TableHorizontal = ({ tableKey, headers, rows, alt, caption }) => {
   const [tableInfo, setTableInfo] = useState(null);
@@ -56,10 +56,7 @@ const TableHorizontal = ({ tableKey, headers, rows, alt, caption }) => {
             <tr key={index}>
               <th dangerouslySetInnerHTML={renderHTML(header)} />
               {rows[index].map((cell, cellIndex) => (
-                <td
-                  key={cellIndex}
-                  dangerouslySetInnerHTML={renderHTML(cell)}
-                />
+                <td key={cellIndex} dangerouslySetInnerHTML={renderHTML(cell)} />
               ))}
             </tr>
           ))}
