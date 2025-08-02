@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "@docusaurus/router"; // Track current document
-import { useReportId } from "../contexts/ReportIdContext"; // Import the context hook to retrieve the reportId
+import { useReportId } from "../../contexts/ReportIdContext"; // Import the context hook to retrieve the reportId
 import "../css/custom.css";
+import "../css/citation.css";
 
 // Store citations per document (not globally)
 const usedCitations = new Map();
@@ -80,8 +81,8 @@ const Citation = ({ citationKey }) => {
   }, [pathname, citationKey]);
 
   return (
-    <span className="font-usace text-[inherit]">
-      <a href={`#footnote-${citationKey}`} className="no-underline text-ifm-link hover:text-ifm-link-hover">
+    <span className="citation-reference">
+      <a href={`#footnote-${citationKey}`} style={{ textDecoration: "none" }}>
         [{citationNumber}]
       </a>
     </span>
