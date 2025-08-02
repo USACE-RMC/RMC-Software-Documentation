@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import "../css/custom.css";
+import "../css/table-horizontal.css";
 import { useReportId } from "../contexts/ReportIdContext"; // Import the context hook to retrieve the reportId
 
 const TableHorizontal = ({ tableKey, headers, rows, alt, caption }) => {
@@ -49,27 +50,7 @@ const TableHorizontal = ({ tableKey, headers, rows, alt, caption }) => {
       <div className="max-w-full font-usace text-caption italic text-[gray] text-left">
         Table {tableInfo.tableNumber}: {caption}
       </div>
-      <table
-        alt={alt}
-        className="
-        flex flex-auto flex-col w-full border-collapse mt-[10px]
-        [&_th]:font-usace [&_td]:font-usace
-        [&_th]:text-table [&_td]:text-table
-        [&_th]:box-border [&_td]:box-border
-        [&_th]:border [&_td]:border
-        [&_th]:border-[#ddd] &[&_td]:border-[#ddd]
-        dark:[&_th]:border-[#2c3032] dark:[&_td]:border-[#2c3032]
-        [&_th]:text-center [&_td]:text-center
-        [&_th]:w-auto [&_td]:w-auto
-        [&_th]:min-w-[150px] [&_td]:min-w-[100px]
-        [&_th]:py-[5px] [&_td]:py-[5px]
-        [&_th]:px-[10px] [&_td]:px-[10px]
-        [&_th]:bg-ifm-primary-lighter dark:[&_th]:bg-ifm-primary-darkest
-        [&_th]:text-font-color-inverse [&_td]:text-font-color
-        [&_td]:whitespace-nowrap
-        [&>tbody>tr:nth-child(2n)]:bg-[#f5f5f5] dark:[&>tbody>tr:nth-child(2n)]:bg-[#121212]
-        "
-      >
+      <table alt={alt} className="static-table-horizontal">
         <tbody>
           {headers.map((header, index) => (
             <tr key={index}>
