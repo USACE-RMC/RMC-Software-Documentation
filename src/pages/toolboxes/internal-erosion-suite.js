@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Layout from "@theme/Layout";
-import "../../css/index.css";
+import "../../css/custom.css";
 import ContentBox from "../../components/ContentBox";
 import addBaseUrl from "@docusaurus/useBaseUrl";
 import Link from "@docusaurus/Link";
@@ -16,8 +16,7 @@ const internalErosionSuite = [
   },
   {
     icon: "img/Toolbox.png",
-    doc_location:
-      "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression",
+    doc_location: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression",
     doc_name: "Backward Erosion Piping (Progression) Toolbox Technical Manual",
     active: true,
     draft: false,
@@ -102,18 +101,11 @@ export default function InternalErosionSuite() {
   const internalErosionSuite = internalErosionSuiteDocs.map((doc) => ({
     ...doc,
     icon: addBaseUrl(doc.icon),
-    doc_location: addBaseUrl(
-      `docs/${doc.doc_location}/${
-        latestVersions[doc.doc_location.replace(/^docs\//, "")]
-      }/preface`
-    ),
+    doc_location: addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, "")]}/preface`),
   }));
 
   return (
-    <Layout
-      title="RMC Software Documentation"
-      description="Documentation for RMC Software Packages"
-    >
+    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
       <main>
         <div className="header-container">
           <h1>RMC Software Documentation</h1>
