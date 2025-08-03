@@ -30,8 +30,9 @@ export default {
         "content-bubble": "clamp(1.0rem, 2vw, 1.2rem)",
         large: "clamp(1.1rem, 2vw, 1.5rem)",
         xlarge: "clamp(1.2rem, 2.5vw, 1.4rem)",
-        xxlarge: "clamp(1.5rem, 3vw, 3.0rem)",
-        xxxlarge: "clamp(1.8rem, 2.5vw, 2.0rem)",
+        "2xl": "clamp(1.5rem, 3vw, 3.0rem)",
+        "3xl": "clamp(1.75rem, 2.5vw, 2.0rem)",
+        "4xl": "clamp(1.8rem, 2.5vw, 2.0rem)",
         navbar: "clamp(0.8rem, 2vw, 1.0rem)",
       },
       gridTemplateRows: {

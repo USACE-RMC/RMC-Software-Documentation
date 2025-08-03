@@ -28,7 +28,7 @@ const ContentBubble = ({ icon, doc_location, doc_name, active }) => {
         <img src={icon} className="w-[60px] h-auto" />
       </div>
       <div className="text-ifm-primary">
-        <p className="font-usace text-content-bubble no-underline leading-[1.2] mb-0">{doc_name}</p>
+        <p className="font-usace lg:text-content-bubble no-underline leading-[1.2] mb-0 md:text-normal">{doc_name}</p>
       </div>
     </a>
   ) : (
@@ -37,8 +37,8 @@ const ContentBubble = ({ icon, doc_location, doc_name, active }) => {
         <img src={icon} className="w-[60px] h-auto" />
       </div>
       <div className="text-ifm-primary">
-        <p className="font-usace text-content-bubble no-underline leading-[1.2] mb-0">{doc_name}</p>
-        <p className="font-usace text-content-bubble no-underline leading-none">Coming soon!</p>
+        <p className="font-usace lg:text-content-bubble no-underline leading-[1.2] mb-0 md:text-normal">{doc_name}</p>
+        <p className="font-usace lg:text-content-bubble no-underline leading-none md:text-normal">Coming soon!</p>
       </div>
     </div>
   );
