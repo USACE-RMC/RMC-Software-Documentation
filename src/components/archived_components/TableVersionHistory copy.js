@@ -1,13 +1,27 @@
 import React from "react";
 import "../css/custom.css";
-import "../css/tables.css";
+import "../css/table-version-history.css";
 
-const TableVersionHistory = ({ versions = [], dates = [], descriptions = [], modifiedBy = [], reviewedBy = [], approvedBy = [] }) => {
-  const rowCount = Math.max(versions.length, dates.length, descriptions.length, modifiedBy.length, reviewedBy.length, approvedBy.length);
+const TableVersionHistory = ({
+  versions = [],
+  dates = [],
+  descriptions = [],
+  modifiedBy = [],
+  reviewedBy = [],
+  approvedBy = [],
+}) => {
+  const rowCount = Math.max(
+    versions.length,
+    dates.length,
+    descriptions.length,
+    modifiedBy.length,
+    reviewedBy.length,
+    approvedBy.length
+  );
 
   return (
-    <div className="table-container">
-      <table className="version-history-table table-zebra">
+    <div className="table-container-version-history">
+      <table className="static-table-version-history">
         <thead>
           <tr>
             <th>Version</th>
@@ -18,6 +32,7 @@ const TableVersionHistory = ({ versions = [], dates = [], descriptions = [], mod
             <th>Approved By</th>
           </tr>
         </thead>
+
         <tbody>
           {Array.from({ length: rowCount }).map((_, rowIndex) => (
             <tr key={rowIndex}>
@@ -26,7 +41,7 @@ const TableVersionHistory = ({ versions = [], dates = [], descriptions = [], mod
               <td>
                 {Array.isArray(descriptions[rowIndex]) ? (
                   descriptions[rowIndex].length > 1 ? (
-                    <ul className="list-disc pl-5">
+                    <ul>
                       {descriptions[rowIndex].map((item, i) => (
                         <li key={i}>{item}</li>
                       ))}
@@ -38,9 +53,13 @@ const TableVersionHistory = ({ versions = [], dates = [], descriptions = [], mod
                   descriptions[rowIndex] || ""
                 )}
               </td>
-              <td title={modifiedBy[rowIndex] || ""}>{modifiedBy[rowIndex] || ""}</td>
-              <td title={reviewedBy[rowIndex] || ""}>{reviewedBy[rowIndex] || ""}</td>
-              <td title={approvedBy[rowIndex] || ""}>{approvedBy[rowIndex] || ""}</td>
+              <td title={modifiedBy[rowIndex] || ""}>
+                {modifiedBy[rowIndex] || ""}
+              </td>
+              <td title={reviewedBy[rowIndex] || ""}>
+                {reviewedBy[rowIndex] || ""}
+              </td>
+              <td title={approvedBy[rowIndex]}>{approvedBy[rowIndex] || ""}</td>
             </tr>
           ))}
         </tbody>

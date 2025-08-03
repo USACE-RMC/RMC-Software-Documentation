@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import "../css/custom.css";
-import "../css/table-vertical.css";
+import "../css/tables.css";
 import { useReportId } from "../contexts/ReportIdContext";
 
 const TableVertical = ({ tableKey, headers = [], columns = [], fullWidth = true, alt, caption }) => {
@@ -36,42 +36,30 @@ const TableVertical = ({ tableKey, headers = [], columns = [], fullWidth = true,
   if (!tableInfo) return <span>Loading...</span>;
 
   const rowCount = columns.length > 0 ? columns[0].length : 0;
-  const colCount = columns.length;
-
-  const tableClass = fullWidth ? "static-table-vertical-full" : "static-table-vertical-partial";
-
-  // Track which body cells should be skipped (due to spans)
+  const widthClass = fullWidth ? "vertical-table-full" : "vertical-table-partial";
   const skipBodyCells = new Set();
 
   return (
     <div className="table-container">
-      <div className="table-caption">
+      <div className="table-cap">
         Table {tableInfo.tableNumber}: {caption}
       </div>
-      <table alt={alt} className={tableClass}>
+      <table alt={alt} className={`table-base vertical-table table-zebra ${widthClass}`}>
         <thead>
           {headers.map((headerRow, rowIndex) => {
             const rowCells = [];
-            let colCursor = 0;
 
-            for (let cellIndex = 0; cellIndex < headerRow.length; cellIndex++) {
-              const cell = headerRow[cellIndex];
+            for (let colIndex = 0; colIndex < headerRow.length; colIndex++) {
+              const cell = headerRow[colIndex];
               if (!cell) continue;
 
               const { value, colSpan = 1, rowSpan = 1 } = cell;
 
-              // Skip columns covered by previous colSpan
-              while (rowCells.some((_, i) => i === colCursor)) {
-                colCursor++;
-              }
-
               rowCells.push(
-                <th key={`header-${rowIndex}-${colCursor}`} colSpan={colSpan} rowSpan={rowSpan}>
+                <th key={`header-${rowIndex}-${colIndex}`} colSpan={colSpan > 1 ? colSpan : undefined} rowSpan={rowSpan > 1 ? rowSpan : undefined}>
                   {value}
                 </th>
               );
-
-              colCursor += colSpan;
             }
 
             return <tr key={`header-row-${rowIndex}`}>{rowCells}</tr>;
@@ -89,11 +77,11 @@ const TableVertical = ({ tableKey, headers = [], columns = [], fullWidth = true,
                 if (typeof cell === "object" && cell !== null && "value" in cell) {
                   const { value, rowSpan = 1, colSpan = 1 } = cell;
 
-                  // Mark spanned cells to be skipped
                   for (let r = 0; r < rowSpan; r++) {
                     for (let c = 0; c < colSpan; c++) {
-                      if (r === 0 && c === 0) continue;
-                      skipBodyCells.add(`${colIndex + c}-${rowIndex + r}`);
+                      if (r !== 0 || c !== 0) {
+                        skipBodyCells.add(`${colIndex + c}-${rowIndex + r}`);
+                      }
                     }
                   }
 

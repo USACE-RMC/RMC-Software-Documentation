@@ -1,6 +1,6 @@
 import React from "react";
 import "../css/custom.css";
-import "../css/tables.css"; // ✅ unified table styles
+import "../css/document-metadata.css";
 
 const DocumentMetadata = ({ metadata }) => {
   if (!metadata) return null;
@@ -37,11 +37,12 @@ const DocumentMetadata = ({ metadata }) => {
     ["How to Cite This Document", citationGuide],
   ];
 
+  // Filter out empty or undefined values
   const filteredItems = metadataItems.filter(([_, value]) => value && value.trim() !== "");
 
   return (
-    <div className="table-container">
-      <table className="table-base metadata-table table-zebra">
+    <div className="table-container-metadata">
+      <table className="static-table-metadata">
         <tbody>
           {filteredItems.map(([header, value], index) => (
             <tr key={index}>

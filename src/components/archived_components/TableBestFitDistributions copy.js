@@ -1,14 +1,14 @@
 import "../css/custom.css";
-import "../css/tables.css";
+import "../css/table-bestfit-distributions.css";
 
 const TableBestFitDistributions = ({ headerConfig, headers, columns, fullWidth = true }) => {
   const rowCount = columns.length > 0 ? columns[0].length : 0;
 
-  const widthClass = fullWidth ? "bestfit-table-full" : "bestfit-table-partial";
+  const tableClass = fullWidth ? "static-table-vertical-bestfit-full" : "static-table-vertical-bestfit-partial";
 
   return (
-    <div className="table-container">
-      <table className={`table-base bestfit-table table-zebra ${widthClass}`}>
+    <div className="table-container-bestfit">
+      <table className={tableClass}>
         <thead>
           <tr>
             {(headerConfig || headers).map((header, index) =>
@@ -26,9 +26,10 @@ const TableBestFitDistributions = ({ headerConfig, headers, columns, fullWidth =
           {Array.from({ length: rowCount }).map((_, rowIndex) => (
             <tr key={rowIndex}>
               {columns.map((col, colIndex) => {
+                // Find the cell value
                 const cell = col[rowIndex];
 
-                // Row span check
+                // Check if a previous cell in this column has a rowSpan that covers this row
                 const isCoveredByRowSpan = col.some((prevCell, prevRowIndex) => {
                   if (prevRowIndex < rowIndex && typeof prevCell === "object" && prevCell?.rowSpan) {
                     const spanStart = prevRowIndex;
@@ -38,7 +39,7 @@ const TableBestFitDistributions = ({ headerConfig, headers, columns, fullWidth =
                   return false;
                 });
 
-                // Col span check
+                // Check if this column is covered by colSpan from a previous column at the same row
                 const isCoveredByColSpan = columns.slice(0, colIndex).some((prevCol) => {
                   const prevCell = prevCol[rowIndex];
                   if (typeof prevCell === "object" && prevCell?.colSpan) {
@@ -51,6 +52,7 @@ const TableBestFitDistributions = ({ headerConfig, headers, columns, fullWidth =
 
                 if (isCoveredByRowSpan || isCoveredByColSpan) return null;
 
+                // Render object cell
                 if (typeof cell === "object" && cell !== null && "value" in cell) {
                   return (
                     <td key={`${colIndex}-${rowIndex}`} rowSpan={cell.rowSpan || undefined} colSpan={cell.colSpan || undefined}>
@@ -59,6 +61,7 @@ const TableBestFitDistributions = ({ headerConfig, headers, columns, fullWidth =
                   );
                 }
 
+                // Render regular string/number cell
                 return <td key={`${colIndex}-${rowIndex}`}>{cell}</td>;
               })}
             </tr>

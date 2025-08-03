@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import "../css/custom.css";
-import "../css/tables.css"; // ✅ Consolidated styles
-import { useReportId } from "../contexts/ReportIdContext";
+import "../css/table-reference.css";
+import { useReportId } from "../../contexts/ReportIdContext"; // Import the context hook to retrieve the reportId
 
 const TableReference = ({ tableKey }) => {
   const [tableInfo, setTableInfo] = useState(null);
-  const reportId = useReportId();
+  const reportId = useReportId(); // Get the reportId from the context
 
   useEffect(() => {
-    if (!reportId) return;
+    if (!reportId) return; // If reportId is not available, don't fetch
 
-    const jsonPath = `/RMC-Software-Documentation/counters/${reportId}.json`;
+    const jsonPath = `/RMC-Software-Documentation/counters/${reportId}.json`; // Use reportId to determine the path
 
     const loadCounters = async () => {
       try {
@@ -19,12 +19,17 @@ const TableReference = ({ tableKey }) => {
         if (!response.ok) throw new Error(`Failed to load ${jsonPath}`);
 
         const data = await response.json();
-        const foundTable = data?.tables?.[tableKey];
+
+        // Now we need to find the figure with the matching figKey
+        let foundTable = null;
+        if (data?.tables?.[tableKey]) {
+          foundTable = data.tables[tableKey];
+        }
 
         if (foundTable) {
           setTableInfo(foundTable);
         } else {
-          console.warn(`Table key "${tableKey}" not found in ${jsonPath}`);
+          console.warn(`Figure key "${tableKey}" not found in ${jsonPath}`);
         }
       } catch (error) {
         console.error("Error loading counters:", error);
@@ -32,7 +37,7 @@ const TableReference = ({ tableKey }) => {
     };
 
     loadCounters();
-  }, [tableKey]);
+  }, [tableKey]); // Re-fetch if tableKey changes
 
   if (!tableInfo) return <span>Loading...</span>;
 

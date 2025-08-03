@@ -35,6 +35,7 @@ export default {
         "4xl": "clamp(1.8rem, 2.5vw, 2.0rem)",
         "header-container": "clamp(1.8rem, 3.0vw, 2.0rem)",
         navbar: "clamp(0.8rem, 2vw, 1.0rem)",
+        table: "clamp(0.8rem, 2vw, 1.0rem)",
       },
       gridTemplateRows: {
         "1fr-auto": "1fr auto",

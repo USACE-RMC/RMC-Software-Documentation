@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import "../css/custom.css";
-import "../css/tables.css"; // ✅ Use unified table styles
-import { useReportId } from "../contexts/ReportIdContext";
+import "../css/table-vertical.css";
+import { useReportId } from "../../contexts/ReportIdContext";
 
-const TableVerticalLeftAlign = ({ tableKey, headers = [], columns = [], fullWidth = true, alt, caption }) => {
+const TableVertical = ({ tableKey, headers = [], columns = [], fullWidth = true, alt, caption }) => {
   const [tableInfo, setTableInfo] = useState(null);
   const reportId = useReportId();
 
@@ -36,31 +36,42 @@ const TableVerticalLeftAlign = ({ tableKey, headers = [], columns = [], fullWidt
   if (!tableInfo) return <span>Loading...</span>;
 
   const rowCount = columns.length > 0 ? columns[0].length : 0;
-  const widthClass = fullWidth ? "vertical-table-full" : "vertical-table-partial";
+  const colCount = columns.length;
 
+  const tableClass = fullWidth ? "static-table-vertical-full" : "static-table-vertical-partial";
+
+  // Track which body cells should be skipped (due to spans)
   const skipBodyCells = new Set();
 
   return (
     <div className="table-container">
-      <div className="table-cap">
+      <div className="table-caption">
         Table {tableInfo.tableNumber}: {caption}
       </div>
-      <table alt={alt} className={`table-base vertical-left-table table-zebra ${widthClass}`}>
+      <table alt={alt} className={tableClass}>
         <thead>
           {headers.map((headerRow, rowIndex) => {
             const rowCells = [];
+            let colCursor = 0;
 
-            for (let colIndex = 0; colIndex < headerRow.length; colIndex++) {
-              const cell = headerRow[colIndex];
+            for (let cellIndex = 0; cellIndex < headerRow.length; cellIndex++) {
+              const cell = headerRow[cellIndex];
               if (!cell) continue;
 
               const { value, colSpan = 1, rowSpan = 1 } = cell;
 
+              // Skip columns covered by previous colSpan
+              while (rowCells.some((_, i) => i === colCursor)) {
+                colCursor++;
+              }
+
               rowCells.push(
-                <th key={`header-${rowIndex}-${colIndex}`} colSpan={colSpan > 1 ? colSpan : undefined} rowSpan={rowSpan > 1 ? rowSpan : undefined}>
+                <th key={`header-${rowIndex}-${colCursor}`} colSpan={colSpan} rowSpan={rowSpan}>
                   {value}
                 </th>
               );
+
+              colCursor += colSpan;
             }
 
             return <tr key={`header-row-${rowIndex}`}>{rowCells}</tr>;
@@ -78,11 +89,11 @@ const TableVerticalLeftAlign = ({ tableKey, headers = [], columns = [], fullWidt
                 if (typeof cell === "object" && cell !== null && "value" in cell) {
                   const { value, rowSpan = 1, colSpan = 1 } = cell;
 
+                  // Mark spanned cells to be skipped
                   for (let r = 0; r < rowSpan; r++) {
                     for (let c = 0; c < colSpan; c++) {
-                      if (r !== 0 || c !== 0) {
-                        skipBodyCells.add(`${colIndex + c}-${rowIndex + r}`);
-                      }
+                      if (r === 0 && c === 0) continue;
+                      skipBodyCells.add(`${colIndex + c}-${rowIndex + r}`);
                     }
                   }
 
@@ -103,4 +114,4 @@ const TableVerticalLeftAlign = ({ tableKey, headers = [], columns = [], fullWidt
   );
 };
 
-export default TableVerticalLeftAlign;
+export default TableVertical;
