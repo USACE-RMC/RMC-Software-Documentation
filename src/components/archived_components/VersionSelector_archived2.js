@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useLocation } from "@docusaurus/router";
 import "../css/custom.css";
+import "../css/version-selector.css";
 
 const VersionSelector = ({ document }) => {
   const history = useHistory();
@@ -47,32 +48,17 @@ const VersionSelector = ({ document }) => {
   };
 
   return (
-    <div className="m-0">
+    <div className="version-selector-container">
       {versions.length > 0 ? (
-        <select
-          className="
-            px-[10px] py-[5px]
-            font-usace text-normal text-font-color
-            rounded-[4px]
-            border border-[#ccc] 
-            bg-background-theme 
-            hover:border-[#888]
-            w-[90px]
-            cursor-pointer
-            transition-colors duration-300 ease-in-out
-            focus:outline-none focus:ring-0 focus:border-[#888] focus:shadow-none
-          "
-          value={selectedVersion}
-          onChange={handleVersionChange}
-        >
+        <select className="version-selector-dropdown" value={selectedVersion} onChange={handleVersionChange}>
           {versions.map((version) => (
-            <option key={version} value={version} className="p-2 text-normal text-font-color bg-background-theme">
+            <option key={version} value={version}>
               {version}
             </option>
           ))}
         </select>
       ) : (
-        <p className="text-normal text-[#999]">Loading versions...</p>
+        <p className="loading-message">Loading versions...</p>
       )}
     </div>
   );
