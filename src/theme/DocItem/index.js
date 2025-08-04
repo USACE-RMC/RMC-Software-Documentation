@@ -1,7 +1,6 @@
 import React from "react";
 import DocItem from "@theme-original/DocItem";
 import { useLocation } from "@docusaurus/router";
-import "../../css/draft-watermark.css";
 import { draftDocs } from "../../draftDocs";
 
 function isDraftDoc(pathname) {
@@ -18,7 +17,11 @@ export default function DocItemWrapper(props) {
 
   return (
     <>
-      {showWatermark && <div className="draft-watermark">DRAFT</div>}
+      {showWatermark && (
+        <div className="fixed top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-[30deg] text-[10rem] text-[rgba(200,0,0,0.15)] z-[9999] pointer-events-none select-none font-bold uppercase">
+          DRAFT
+        </div>
+      )}
       <DocItem {...props} />
     </>
   );
