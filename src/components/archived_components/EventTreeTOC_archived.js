@@ -2,6 +2,7 @@ import React from "react";
 import Link from "@docusaurus/Link";
 import tocData from "@site/src/data/eventTreeToc.json";
 import { useLocation } from "@docusaurus/router";
+import "../css/event-tree-toc.css";
 
 const EventTreeTOC = () => {
   const location = useLocation();
@@ -15,8 +16,8 @@ const EventTreeTOC = () => {
     <div>
       {Object.entries(versionTOC).map(([category, links]) => (
         <details key={category}>
-          <summary className="font-usace text-normal">{category.replace(/-/g, " ")}</summary>
-          <ul className="ml-4">
+          <summary className="event-tree-toc-summary">{category.replace(/-/g, " ")}</summary>
+          <ul className="event-tree-toc-list">
             {links.map(({ label, path }) => (
               <li key={path}>
                 <Link to={path}>{label}</Link>

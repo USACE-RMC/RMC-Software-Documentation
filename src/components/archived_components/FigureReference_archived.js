@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../css/custom.css";
 import "../css/figure-reference.css";
-import { useReportId } from "../contexts/ReportIdContext";
+import { useReportId } from "../../contexts/ReportIdContext";
 
 const FigReference = ({ figKey }) => {
   const [figInfo, setFigInfo] = useState(null);
