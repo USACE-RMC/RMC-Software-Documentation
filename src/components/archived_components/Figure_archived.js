@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../css/custom.css";
+import "../css/figure.css";
 import { useReportId } from "../contexts/ReportIdContext"; // Import the context hook to retrieve the reportId
 
 const Figure = ({ figKey, src, alt, caption, width = "80%" }) => {
@@ -40,16 +41,14 @@ const Figure = ({ figKey, src, alt, caption, width = "80%" }) => {
   if (!figInfo) return <span>Loading...</span>;
 
   return (
-    <figure
-      className="
-      w-full
-      ml-0 mr-auto my-[1em]
-      py-5
-      justify-items-start
-      border-y border-border-color"
-    >
-      <img src={`/RMC-Software-Documentation/${src}`} alt={alt} className="h-auto block" style={{ maxWidth: width }} />
-      <figcaption className="max-w-full font-usace text-caption italic text-left text-gray-500 mt-[1em]">
+    <figure className="figure-container">
+      <img
+        src={`/RMC-Software-Documentation/${src}`}
+        alt={alt}
+        className="figure-image"
+        style={{ maxWidth: width }}
+      />
+      <figcaption className="figure-caption">
         Figure {figInfo.figNumber}: {caption}
       </figcaption>
     </figure>
