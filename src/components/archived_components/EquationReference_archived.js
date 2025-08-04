@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../css/custom.css";
+import "../css/equation-reference.css";
 import { useReportId } from "../contexts/ReportIdContext"; // Import the context hook to retrieve the reportId
 
 const EquationReference = ({ equationKey }) => {
@@ -25,7 +26,9 @@ const EquationReference = ({ equationKey }) => {
         if (foundEquation) {
           setEquationNumber(foundEquation.equationNumber);
         } else {
-          console.warn(`Equation key "${equationKey}" not found in ${jsonPath}`);
+          console.warn(
+            `Equation key "${equationKey}" not found in ${jsonPath}`
+          );
         }
       } catch (error) {
         console.error("Error loading counters:", error);
@@ -37,7 +40,7 @@ const EquationReference = ({ equationKey }) => {
 
   if (equationNumber === null) return <span>Loading...</span>;
 
-  return <span className="font-usace text-normal">Equation {equationNumber}</span>;
+  return <span className="equation-reference">Equation {equationNumber}</span>;
 };
 
 export default EquationReference;

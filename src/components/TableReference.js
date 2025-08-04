@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import "../css/custom.css";
-import "../css/tables.css"; // ✅ Consolidated styles
 import { useReportId } from "../contexts/ReportIdContext";
 
 const TableReference = ({ tableKey }) => {
@@ -36,7 +35,7 @@ const TableReference = ({ tableKey }) => {
 
   if (!tableInfo) return <span>Loading...</span>;
 
-  return <span className="table-reference">Table {tableInfo.tableNumber}</span>;
+  return <span className="font-usace text-normal">Table {tableInfo.tableNumber}</span>;
 };
 
 export default TableReference;
