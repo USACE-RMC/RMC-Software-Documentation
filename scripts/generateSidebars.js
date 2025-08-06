@@ -39,7 +39,9 @@ function titleCase(str) {
 }
 
 function camelCase(str) {
-  return str.replace(/[-_](.)/g, (_, group1) => group1.toUpperCase()).replace(/^(.)/, (_, group1) => group1.toLowerCase());
+  return str
+    .replace(/[-_](.)/g, (_, group1) => group1.toUpperCase())
+    .replace(/^(.)/, (_, group1) => group1.toLowerCase());
 }
 
 function getFrontmatterTitle(filePath) {
@@ -81,8 +83,16 @@ function generateSidebarForLifeSimValidationStudies(versionPath, relativePath) {
       collapsible: true,
       collapsed: true,
       items: [
-        { type: "doc", id: `${relativePath}/document-info`, label: "Document Information" },
-        { type: "doc", id: `${relativePath}/version-history`, label: "Version History" },
+        {
+          type: "doc",
+          id: `${relativePath}/document-info`,
+          label: "Document Information",
+        },
+        {
+          type: "doc",
+          id: `${relativePath}/version-history`,
+          label: "Version History",
+        },
       ],
     },
     { type: "doc", id: `${relativePath}/preface`, label: "Preface" },
@@ -95,10 +105,22 @@ function generateSidebarForLifeSimValidationStudies(versionPath, relativePath) {
         { type: "doc", id: `${relativePath}/brumadinho`, label: "Brumadinho" },
         { type: "doc", id: `${relativePath}/johnstown`, label: "Johnstown" },
         { type: "doc", id: `${relativePath}/joso`, label: "Jōsō" },
-        { type: "doc", id: `${relativePath}/katrina-east-bowl`, label: "Katrina - East Bowl" },
-        { type: "doc", id: `${relativePath}/kelly-barnes`, label: "Kelly Barnes" },
+        {
+          type: "doc",
+          id: `${relativePath}/katrina-east-bowl`,
+          label: "Katrina - East Bowl",
+        },
+        {
+          type: "doc",
+          id: `${relativePath}/kelly-barnes`,
+          label: "Kelly Barnes",
+        },
         { type: "doc", id: `${relativePath}/malpasset`, label: "Malpasset" },
-        { type: "doc", id: `${relativePath}/midland-dams`, label: "Midland Dams" },
+        {
+          type: "doc",
+          id: `${relativePath}/midland-dams`,
+          label: "Midland Dams",
+        },
         { type: "doc", id: `${relativePath}/oroville`, label: "Oroville" },
         { type: "doc", id: `${relativePath}/teton`, label: "Teton" },
       ],
@@ -201,7 +223,10 @@ function generateSidebarForEventTree(versionPath, relativePath) {
 
 /* --- Custom Logic: RMC-TotalRisk Applications Guide Sidebar --- */
 
-function generateSidebarForRmcTotalRiskApplicationsGuide(versionPath, relativePath) {
+function generateSidebarForRmcTotalRiskApplicationsGuide(
+  versionPath,
+  relativePath
+) {
   const files = fs.readdirSync(versionPath).filter((f) => f.endsWith(".mdx"));
   files.sort();
 
@@ -257,7 +282,12 @@ function generateSidebarForRmcTotalRiskApplicationsGuide(versionPath, relativePa
 
 /* --- Standard Logic: Default Sidebar for Most Documents --- */
 
-function generateSidebarForVersion(versionPath, relativePath, docGroup, folderName) {
+function generateSidebarForVersion(
+  versionPath,
+  relativePath,
+  docGroup,
+  folderName
+) {
   // CUSTOM LOGIC: Event Tree Database
   if (folderName === "typical-event-tree-database") {
     return generateSidebarForEventTree(versionPath, relativePath);
@@ -265,12 +295,18 @@ function generateSidebarForVersion(versionPath, relativePath, docGroup, folderNa
 
   // CUSTOM LOGIC: RMC-TotalRisk Applications Guide
   if (docGroup === "rmc-totalrisk" && folderName === "applications-guide") {
-    return generateSidebarForRmcTotalRiskApplicationsGuide(versionPath, relativePath);
+    return generateSidebarForRmcTotalRiskApplicationsGuide(
+      versionPath,
+      relativePath
+    );
   }
 
   // CUSTOM LOGIC: LifeSim Validation Studies
   if (docGroup === "lifesim" && folderName === "validation-studies") {
-    return generateSidebarForLifeSimValidationStudies(versionPath, relativePath);
+    return generateSidebarForLifeSimValidationStudies(
+      versionPath,
+      relativePath
+    );
   }
 
   // STANDARD LOGIC: All other documents
@@ -339,8 +375,24 @@ function generateDocumentationGuideSidebar() {
   const guideDir = path.join(DOCS_DIR, "00-documentation-guide");
   if (!fs.existsSync(guideDir)) return null;
 
-  const mainIds = ["00-introduction", "01-getting-started", "02-versioning-system", "03-project-structure", "10-creating-editing-pages", "11-react-components", "12-search"];
-  const subIds = ["04-docs-folder", "05-scripts", "06-src-folder", "07-static-folder", "08-sidebars", "09-other-files"];
+  const mainIds = [
+    "00-introduction",
+    "01-getting-started",
+    "02-versioning-system",
+    "03-project-structure",
+    "11-creating-editing-pages",
+    "12-react-components",
+    "13-search",
+  ];
+  const subIds = [
+    "04-docx_converter",
+    "05-docs-folder",
+    "06-scripts",
+    "07-src-folder",
+    "08-static-folder",
+    "09-sidebars",
+    "10-other-files",
+  ];
 
   const files = fs
     .readdirSync(guideDir)
@@ -349,7 +401,9 @@ function generateDocumentationGuideSidebar() {
 
   function getLabel(fileBase) {
     const fullPath = path.join(guideDir, `${fileBase}.mdx`);
-    return getFrontmatterTitle(fullPath) || titleCase(fileBase.replace(/^\d+-/, ""));
+    return (
+      getFrontmatterTitle(fullPath) || titleCase(fileBase.replace(/^\d+-/, ""))
+    );
   }
 
   // Build sub-items for Project Structure
@@ -369,16 +423,13 @@ function generateDocumentationGuideSidebar() {
       items.push({
         type: "category",
         label: getLabel(id),
+        link: {
+          type: "doc",
+          id: `documentation-guide/${id.replace(/^\d+-/, "")}`,
+        },
         collapsible: false,
         collapsed: false,
-        items: [
-          {
-            type: "doc",
-            id: `documentation-guide/${id.replace(/^\d+-/, "")}`,
-            label: getLabel(id),
-          },
-          ...projectStructureSubItems,
-        ],
+        items: projectStructureSubItems,
       });
     } else {
       items.push({
@@ -396,7 +447,9 @@ function generateDocumentationGuideSidebar() {
 
 function generateSidebars() {
   const sidebarContent = {};
-  const versions = walkDir(DOCS_DIR).filter((filePath) => /\bv\d+\.\d+\b/.test(filePath));
+  const versions = walkDir(DOCS_DIR).filter((filePath) =>
+    /\bv\d+\.\d+\b/.test(filePath)
+  );
 
   versions.forEach((filePath) => {
     const versionDir = path.dirname(filePath);
@@ -421,7 +474,12 @@ function generateSidebars() {
     // Only create if not already present
     if (!sidebarContent[sidebarKey]) {
       sidebarContent[sidebarKey] = {
-        [documentName]: generateSidebarForVersion(path.join(DOCS_DIR, relPath), relPath, docGroup, folderName),
+        [documentName]: generateSidebarForVersion(
+          path.join(DOCS_DIR, relPath),
+          relPath,
+          docGroup,
+          folderName
+        ),
       };
     }
   });
@@ -443,7 +501,10 @@ function writeSidebarFile() {
   const sidebars = generateSidebars();
 
   const sidebarEntries = Object.entries(sidebars)
-    .map(([key, value]) => `  ${key}: ${JSON.stringify(value, null, 2).replace(/\n/g, "\n  ")}`)
+    .map(
+      ([key, value]) =>
+        `  ${key}: ${JSON.stringify(value, null, 2).replace(/\n/g, "\n  ")}`
+    )
     .join(",\n");
 
   const output = `module.exports = {\n${sidebarEntries}\n};\n`;
