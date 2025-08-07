@@ -16,6 +16,13 @@ const riskCalculationsSuite = [
   },
   {
     icon: "img/Toolbox.png",
+    doc_location: `toolbox-technical-manuals/risk-calculations-suite/qra-calcs`,
+    doc_name: "QRAcalcs Toolbox Technical Manual",
+    active: false,
+    draft: true,
+  },
+  {
+    icon: "img/Toolbox.png",
     doc_location: `toolbox-technical-manuals/risk-calculations-suite/event-combination`,
     doc_name: "Event Combination Toolbox Technical Manual",
     active: false,
@@ -59,11 +66,18 @@ export default function RiskCalculationsSuite() {
   const riskCalculationsSuite = riskCalculationsSuiteDocs.map((doc) => ({
     ...doc,
     icon: addBaseUrl(doc.icon),
-    doc_location: addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, "")]}/preface`),
+    doc_location: addBaseUrl(
+      `docs/${doc.doc_location}/${
+        latestVersions[doc.doc_location.replace(/^docs\//, "")]
+      }/preface`
+    ),
   }));
 
   return (
-    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
+    <Layout
+      title="RMC Software Documentation"
+      description="Documentation for RMC Software Packages"
+    >
       <main>
         <div className="header-container">
           <h1>RMC Software Documentation</h1>

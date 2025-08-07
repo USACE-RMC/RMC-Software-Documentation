@@ -11,7 +11,7 @@ const seismicHazardSuite = [
     icon: "img/Toolbox.png",
     doc_location: `toolbox-technical-manuals/seismic-hazard-suite/site-classification`,
     doc_name: "Site Classification Toolbox Technical Manual",
-    active: true,
+    active: false,
     draft: true,
   },
   {
@@ -52,11 +52,18 @@ export default function SeismicHazardSuite() {
   const seismicHazardSuite = seismicHazardSuiteDocs.map((doc) => ({
     ...doc,
     icon: addBaseUrl(doc.icon),
-    doc_location: addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, "")]}/preface`),
+    doc_location: addBaseUrl(
+      `docs/${doc.doc_location}/${
+        latestVersions[doc.doc_location.replace(/^docs\//, "")]
+      }/preface`
+    ),
   }));
 
   return (
-    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
+    <Layout
+      title="RMC Software Documentation"
+      description="Documentation for RMC Software Packages"
+    >
       <main>
         <div className="header-container">
           <h1>RMC Software Documentation</h1>

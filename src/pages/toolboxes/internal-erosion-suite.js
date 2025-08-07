@@ -16,10 +16,11 @@ const internalErosionSuite = [
   },
   {
     icon: "img/Toolbox.png",
-    doc_location: "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression",
+    doc_location:
+      "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression",
     doc_name: "Backward Erosion Piping (Progression) Toolbox Technical Manual",
     active: true,
-    draft: false,
+    draft: true,
   },
   {
     icon: "img/Toolbox.png",
@@ -54,7 +55,14 @@ const internalErosionSuite = [
     doc_location: `toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation`,
     doc_name: "Filter Evaluation (Continuation) Toolbox Technical Manual",
     active: true,
-    draft: false,
+    draft: true,
+  },
+  {
+    icon: "img/Toolbox.png",
+    doc_location: `toolbox-technical-manuals/internal-erosion-suite/hydraulic-fracture`,
+    doc_name: "Hydraulic Fracture Toolbox Technical Manual",
+    active: false,
+    draft: true,
   },
   {
     icon: "img/Toolbox.png",
@@ -82,7 +90,7 @@ const internalErosionSuite = [
     doc_location: `toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation`,
     doc_name: "Soil Contact Erosion (Initiation) Toolbox Technical Manual",
     active: true,
-    draft: false,
+    draft: true,
   },
 ];
 
@@ -101,11 +109,18 @@ export default function InternalErosionSuite() {
   const internalErosionSuite = internalErosionSuiteDocs.map((doc) => ({
     ...doc,
     icon: addBaseUrl(doc.icon),
-    doc_location: addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, "")]}/preface`),
+    doc_location: addBaseUrl(
+      `docs/${doc.doc_location}/${
+        latestVersions[doc.doc_location.replace(/^docs\//, "")]
+      }/preface`
+    ),
   }));
 
   return (
-    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
+    <Layout
+      title="RMC Software Documentation"
+      description="Documentation for RMC Software Packages"
+    >
       <main>
         <div className="header-container">
           <h1>RMC Software Documentation</h1>

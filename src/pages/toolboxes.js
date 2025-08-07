@@ -9,18 +9,6 @@ export default function Toolboxes() {
   const toolboxSuiteData = [
     {
       icon: addBaseUrl("img/Toolbox.png"),
-      doc_location: addBaseUrl("breach-parameters-suite"),
-      doc_name: "Breach Parameters Suite",
-      active: false,
-    },
-    {
-      icon: addBaseUrl("img/Toolbox.png"),
-      doc_location: addBaseUrl("flood-hazard-suite"),
-      doc_name: "Flood Hazard Suite",
-      active: false,
-    },
-    {
-      icon: addBaseUrl("img/Toolbox.png"),
       doc_location: addBaseUrl("toolboxes/internal-erosion-suite"),
       doc_name: "Internal Erosion Suite",
       active: true,
@@ -45,21 +33,9 @@ export default function Toolboxes() {
     },
     {
       icon: addBaseUrl("img/Toolbox.png"),
-      doc_location: addBaseUrl("toolboxes/hydraulic-fracture-toolbox"),
-      doc_name: "Hydraulic Fracture Toolbox",
-      active: false,
-    },
-    {
-      icon: addBaseUrl("img/Toolbox.png"),
-      doc_location: addBaseUrl("toolboxes/rmc-qracalcs-suite"),
-      doc_name: "RMC-QRAcalcs",
-      active: false,
-    },
-    {
-      icon: addBaseUrl("img/Toolbox.png"),
       doc_location: addBaseUrl("toolboxes/seismic-hazard-suite"),
       doc_name: "Seismic Hazard Suite",
-      active: true,
+      active: false,
     },
     {
       icon: addBaseUrl("img/Toolbox.png"),
@@ -76,7 +52,10 @@ export default function Toolboxes() {
   ];
 
   return (
-    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
+    <Layout
+      title="RMC Software Documentation"
+      description="Documentation for RMC Software Packages"
+    >
       <main>
         <div className="header-container">
           <h1>RMC Software Documentation</h1>

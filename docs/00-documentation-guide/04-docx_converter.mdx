@@ -146,10 +146,14 @@ Outputs include:
 
 2. **Create a Virtual Environment (Optional but Recommended) and Install Dependencies**
 
-   - Create a virtual environment in the `docx_converter/` folder:
+   - Create a virtual environment in the `docx_converter/` folder by running one of the following commands (depending on how Python is configured on your system):
 
      ```sh
      python -m venv venv
+
+     python3 -m venv venv
+
+     py -m venv venv
      ```
 
    - Activate the virtual environment:
@@ -163,7 +167,7 @@ Outputs include:
      pip install -r requirements.txt
      ```
 
-3. Set the **Environment** for the conversion
+3. **Set the Environment for the conversion**
 
    - The script is set up to allow for **practice** conversions in a **development** environment to test the procedure and ensure that the script is acting as expected.
    - To set the environment, open `main.py` and set the `ENVIRONMENT` variable
@@ -176,46 +180,46 @@ Outputs include:
    ENVIRONMENT = "development"  # Change to "production" for final runs
    ```
 
-4. Assign Input and Output Paths
+4. **Create the necessary `bib.json` file for the document you are converting**
 
-   - Open `main.py` in the `docx_converter/` folder.
-   - Set the following variables in `main.py`:
+   - All references contained within the DOCX must be stored in the appropriate `bib.json` file prior to conversion
+   - Additional information on the `bib.json` file is provided in the [Bibliographies](static-folder#bibliographies) section of this guide
 
-     - `FIGSRC`: File path of figures relative to the Docusaurus project root.Relative file path for the figure storage location (e.g., `static/img/figures/software/v1.0/figures`)
+5. **Assign Input and Output Paths**
 
-       - Used to inject the relative path for figures in the [Figure](/docs/documentation-guide/react-components#figure) component
+   - Open `main.py` in the `docx_converter/` folder and set the following variables:
+
+     - `FIGSRC`: File path of figures relative to the Docusaurus project root. (e.g., `static/img/figures/software/v1.0/figures`)
 
      - `NAVLINK`, `NAVTITLE`, `NAVDOC`: Navigation settings for the [NavContainer](/docs/documentation-guide/react-components#navcontainer) component
 
      - `DOCX_PATH`: Path to your input `.docx` file
-     - `BIB_PATH`: Path to your bibliography JSON file; used for the [Citation](/docs/documentation-guide/react-components#citation) component
+     - `BIB_PATH`: Path to your bibliography JSON file
      - `FIGURES_DIR`: Output directory for extracted figures (e.g., `../static/img/figures`)
      - `MDX_DIR`: Output directory for generated MDX files (e.g., `../docs/generated`)
 
-5. **Run the Script**
-
-   - Ensure your **virtual environment** is activated
-
-     ```sh
-     venv\Scripts\activate
-     ```
+6. **Run the Script**
 
    - Open a new **terminal** using `` `Ctrl + Shift + ` `` or clicking "Terminal -> New Terminal"
 
    - Navigate to the docx_converter folder in the Terminal
      `cd docx_converter`
 
+   - Activate your **virtual environment** if it is not already activated:
+
+     ```sh
+     venv\Scripts\activate
+     ```
+
+     When activated, you will see `(venv)` in the terminal before your terminal location.
+
    - From the `docx_converter` folder, run one of the following commands (depending on how Python is configured on your system):
 
      ```sh
      python main.py
-     ```
 
-     ```sh
      python3 main.py
-     ```
 
-     ```sh
      py main.py
      ```
 
@@ -224,12 +228,20 @@ Outputs include:
      - Whether to regenerate figures in the Docusaurus project directory (Y or N). If all figures from the DOCX are already present in the figures directory,
        you can choose not to regenerate them (N). If you choose to regenerate figures (Y), the script will overwrite existing images in the figures directory.
 
-6. **Check Outputs**
+7. **Check Outputs**
 
    - Find your generated `.mdx` files in the output directory you specified (e.g., `docs/generated/`).
    - Find extracted figure images in the figures directory (e.g., `static/img/figures/`).
+   - Confirm the output files match your expectations (formatting, content, React components, etc.)
 
-7. **Integrate with Docusaurus**
+Once you have confirmed the outputs are correct within the `development` environment, repeat steps 3-5 with the `environment` variable
+set to `production` and to convert the DOCX into the Docusaurus project.
+
+:::danger
+Ensure the `production` file paths are correct. If set incorrectly, existing MDX docs within the Docusaurus project can be overridden.
+:::
+
+8. **Integrate with Docusaurus**
 
    - The generated MDX files and images are now ready for use in the Docusaurus site.
 

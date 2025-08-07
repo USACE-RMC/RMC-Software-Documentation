@@ -3,6 +3,7 @@ title: React Components
 ---
 
 import TableHorizontal from "@site/src/components/TableHorizontal";
+import TableVerticalLeftAlignNoRef from "@site/src/components/TableVerticalLeftAlignNoRef";
 
 # React Components
 
@@ -24,6 +25,201 @@ This documentation site uses React because:
 - **Docusaurus Integration**: Docusaurus is built on React, so using React components fits naturally with the framework and extends its capabilities.
 
 By leveraging React, the documentation becomes more modular, maintainable, and interactive, aligning with modern web development standards.
+
+## How React Components are Styled for This Project
+
+All React components in this project are styled using [Tailwind CSS](tailwindcss.com), a utility-first CSS framework that allows for rapid and consistent UI development.
+Rather than writing separate CSS classes or stylesheets, styles are applied directly via Tailwind utility classes within each component's JSX.
+
+This approach promotes consistency, reduces the need for custom CSS, and makes it easy to manage responsive layouts, theming, and typography. Custom design tokens -
+such as font sizes, colors, and breakpoints - are defined in [`tailwind.config.js`](other-files#tailwind.config.js) and reused across components to ensure alignment
+with USACE branding and Groundwork standards.
+
+Where appropriate, utility classes are combined with conditionally applied class names (e.g., for dark mode or responsive behavior), and semanding Tailwind tokens like
+`text-normal`, `font-usace`, or `bg-sidebar-bg` are used in place of raw values for better readability and maintainability.
+
+### Examples: Styling React Components with Tailwind CSS
+
+#### FigureNoRef
+
+```jsx
+import "../css/custom.css";
+
+const FigureNoRef = ({ src, alt, width = "80%" }) => {
+  return (
+    <figure className="w-full ml-0 mr-auto my-[1em] py-5 justify-items-start border-y border-border-color">
+      <img
+        src={`/RMC-Software-Documentation/${src}`}
+        alt={alt}
+        className="h-auto block"
+        style={{ maxWidth: width }}
+      />
+    </figure>
+  );
+};
+
+export default FigureNoRef;
+```
+
+<TableVerticalLeftAlignNoRef
+  alt="Tailwind vs. CSS equivalents for figure styling"
+  headers={[[{ value: "Tailwind Class" }, { value: "Vanilla CSS Equivalent" }]]}
+  columns={[
+    [
+      { value: "w-full" },
+      { value: "ml-0" },
+      { value: "mr-auto" },
+      { value: "my-[1em]" },
+      { value: "py-5" },
+      { value: "justify-items-start" },
+      { value: "border-y" },
+      { value: "border-border-color" },
+    ],
+    [
+      { value: "width: 100%;" },
+      { value: "margin-left: 0;" },
+      { value: "margin-right: auto;" },
+      { value: "margin-top: 1em; margin-bottom: 1em;" },
+      { value: "padding-top: 1.25rem; padding-bottom: 1.25rem;" },
+      { value: "justify-items: start; (grid containers only)" },
+      { value: "border-top: 1px solid; border-bottom: 1px solid;" },
+      { value: "border-color: var(--border-color);" },
+    ],
+  ]}
+  fullWidth={false}
+/>
+
+<TableVerticalLeftAlignNoRef
+  alt="Tailwind vs. CSS equivalents for img styling"
+  headers={[[{ value: "Tailwind Class" }, { value: "Vanilla CSS Equivalent" }]]}
+  columns={[
+    [
+      { value: "h-auto" },
+      { value: "block" },
+      { value: "style={{ maxWidth: width }}" },
+    ],
+    [
+      { value: "height: auto;" },
+      { value: "display: block;" },
+      { value: "max-width: 80%; (or passed via prop)" },
+    ],
+  ]}
+  fullWidth={false}
+/>
+
+#### Button
+
+```jsx
+import React from "react";
+
+const baseClasses = `
+  px-4 py-[10px]
+  bg-ifm-primary-dark
+  text-font-color-inverse
+  rounded-md
+  font-bold
+  text-1-0
+  no-underline
+  inline-block
+  transition-colors
+  duration-300
+  ease-in-out
+  border-none
+  cursor-pointer
+  hover:bg-[#6799ab]
+  hover:text-font-color
+  hover:no-underline
+  disabled:opacity-60
+  disabled:cursor-not-allowed
+  dark:hover:bg-[#003e53]
+`;
+
+export default function Button({
+  children,
+  onClick,
+  href,
+  to,
+  className = "",
+  ...props
+}) {
+  const classes = `${baseClasses} ${className}`.replace(/\s+/g, " ");
+
+  if (href || to) {
+    return (
+      <a
+        href={href || to}
+        className={classes}
+        target={href ? "_blank" : undefined}
+        rel={href ? "noopener noreferrer" : undefined}
+        {...props}
+      >
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <button onClick={onClick} className={classes} {...props}>
+      {children}
+    </button>
+  );
+}
+```
+
+<TableVerticalLeftAlignNoRef
+  alt="Tailwind vs. CSS equivalents for Button styling"
+  headers={[[{ value: "Tailwind Class" }, { value: "Vanilla CSS Equivalent" }]]}
+  columns={[
+    [
+      { value: "px-4" },
+      { value: "py-[10px]" },
+      { value: "bg-ifm-primary-dark" },
+      { value: "text-font-color-inverse" },
+      { value: "rounded-md" },
+      { value: "font-bold" },
+      { value: "text-1-0" },
+      { value: "no-underline" },
+      { value: "inline-block" },
+      { value: "transition-colors" },
+      { value: "duration-300" },
+      { value: "ease-in-out" },
+      { value: "border-none" },
+      { value: "cursor-pointer" },
+      { value: "hover:bg-[#6799ab]" },
+      { value: "hover:text-font-color" },
+      { value: "hover:no-underline" },
+      { value: "disabled:opacity-60" },
+      { value: "disabled:cursor-not-allowed" },
+      { value: "dark:hover:bg-[#003e53]" },
+    ],
+    [
+      { value: "padding-left: 1rem; padding-right: 1rem;" },
+      { value: "padding-top: 10px; padding-bottom: 10px;" },
+      { value: "background-color: var(--ifm-color-primary-dark);" },
+      { value: "color: var(--font-color-inverse);" },
+      { value: "border-radius: 0.375rem;" },
+      { value: "font-weight: 700;" },
+      { value: "font-size: 1rem;" },
+      { value: "text-decoration: none;" },
+      { value: "display: inline-block;" },
+      {
+        value:
+          "transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;",
+      },
+      { value: "transition-duration: 300ms;" },
+      { value: "transition-timing-function: ease-in-out;" },
+      { value: "border: none;" },
+      { value: "cursor: pointer;" },
+      { value: "background-color on hover: #6799ab;" },
+      { value: "color on hover: var(--font-color);" },
+      { value: "text-decoration on hover: none;" },
+      { value: "opacity: 0.6 when disabled;" },
+      { value: "cursor: not-allowed when disabled;" },
+      { value: "background-color on hover (dark mode): #003e53;" },
+    ],
+  ]}
+  fullWidth={false}
+/>
 
 ## React Components in This Project
 
@@ -69,10 +265,24 @@ component to resolve them automatically.
 
 The component does **not accept any props**. Instead, it uses two React Context hooks internally:
 
-| Source          | Description                                                                   |
-| --------------- | ----------------------------------------------------------------------------- |
-| `useLocation()` | Extracts the current documentation path to construct the `bib.json` file path |
-| `useReportId()` | Resolves the active `reportId` to locate the corresponding `counters.json`    |
+<TableVerticalLeftAlignNoRef
+  alt="Description of internal hooks"
+  headers={[[{ value: "Source" }, { value: "Description" }]]}
+  columns={[
+    [{ value: "useLocation()" }, { value: "useReportId()" }],
+    [
+      {
+        value:
+          "Extracts the current documentation path to construct the bib.json file path",
+      },
+      {
+        value:
+          "Resolves the active reportId to locate the corresponding counters.json",
+      },
+    ],
+  ]}
+  fullWidth={false}
+/>
 
 #### Example Usage
 
@@ -82,6 +292,93 @@ To render a bibliography section in a documentation page, simply import and plac
 import Bibliography from "@site/src/components/Bibliography";
 
 <Bibliography />;
+```
+
+---
+
+### Button
+
+#### Overview and Functionality
+
+The `<Button>` component renders a consistent, styled button or link using Tailwind CSS utility classes. It supports both clickable buttons and navigation links, making it reusable across the documentation site.
+
+**Functionality includes:**
+
+- Applies a shared set of Tailwind utility classes for layout, color, and interaction styling
+- Renders as either:
+  - a `<button>` when `onClick` is provided (e.g., for form actions or events)
+  - an `<a>` when `href` or `to` is provided (for navigation or external links)
+- Accepts additional utility classes via the `className` prop
+- Handles hover, focus, and disabled states with smooth transitions
+- Supports dark mode via `dark:hover:*` utility classes
+
+:::note
+The component relies on a centralized `baseClasses` string that defines all default styles using Tailwind. These styles include spacing, font, color, and transition behavior.
+:::
+
+#### Props
+
+<TableVerticalLeftAlignNoRef
+  fullWidth={false}
+  alt="Props for the Button component"
+  headers={[
+    [
+      { value: "Prop" },
+      { value: "Type" },
+      { value: "Required" },
+      { value: "Description" },
+    ],
+  ]}
+  columns={[
+    [
+      { value: "children" },
+      { value: "onClick" },
+      { value: "href" },
+      { value: "to" },
+      { value: "className" },
+    ],
+    [
+      { value: "ReactNode" },
+      { value: "function" },
+      { value: "string" },
+      { value: "string" },
+      { value: "string" },
+    ],
+    [
+      { value: "Yes" },
+      { value: "No" },
+      { value: "No" },
+      { value: "No" },
+      { value: "No" },
+    ],
+    [
+      { value: "Content inside the button (e.g., label or icon)" },
+      { value: "Click handler for button behavior" },
+      { value: "Optional URL for navigation (renders as `<a>`)" },
+      { value: "Alias for `href` (used interchangeably)" },
+      { value: "Additional class names to override or extend styling" },
+    ],
+  ]}
+/>
+
+:::caution
+You must provide either an `onClick` **or** an `href`/`to` prop. If neither is present, the component will render a button element with no behavior.
+:::
+
+#### Example Usage
+
+```jsx
+import Button from "@site/src/components/Button";
+
+// As a clickable button
+<Button onClick={() => alert("Clicked!")}>
+  Submit
+</Button>
+
+// As a navigation link
+<Button href="/docs/introduction">
+  Read More
+</Button>
 ```
 
 ---
@@ -111,9 +408,29 @@ the reference will display as `[?]`.
 
 #### Props
 
-| Prop          | Type   | Required | Description                                                                   |
-| ------------- | ------ | -------- | ----------------------------------------------------------------------------- |
-| `citationKey` | string | ✅ Yes   | A unique key identifying the citation in both `bib.json` and `counters.json`. |
+<TableVerticalLeftAlignNoRef
+  alt="Props for the Citation component"
+  headers={[
+    [
+      { value: "Prop" },
+      { value: "Type" },
+      { value: "Required" },
+      { value: "Description" },
+    ],
+  ]}
+  columns={[
+    [{ value: "citationKey" }],
+    [{ value: "string" }],
+    [{ value: "Yes" }],
+    [
+      {
+        value:
+          "A unique key identifying the citation in both bib.json and counters.json.",
+      },
+    ],
+  ]}
+  fullWidth={false}
+/>
 
 #### Example Usage
 
@@ -152,10 +469,24 @@ The component will not render anything if no `<Citation />` components were used
 
 The component does **not accept any props**. Instead, it uses two React Context hooks internally:
 
-| Source          | Description                                                                   |
-| --------------- | ----------------------------------------------------------------------------- |
-| `useLocation()` | Extracts the current documentation path to construct the `bib.json` file path |
-| `useReportId()` | Resolves the active `reportId` to locate the corresponding `counters.json`    |
+<TableVerticalLeftAlignNoRef
+  fullWidth={false}
+  alt="Explanation of internal hook sources"
+  headers={[[{ value: "Source" }, { value: "Description" }]]}
+  columns={[
+    [{ value: "useLocation()" }, { value: "useReportId()" }],
+    [
+      {
+        value:
+          "Extracts the current documentation path to construct the bib.json file path",
+      },
+      {
+        value:
+          "Resolves the active reportId to locate the corresponding counters.json",
+      },
+    ],
+  ]}
+/>
 
 #### Example Usage
 
@@ -195,27 +526,80 @@ This component does not handle data fetching. Metadata must be passed as a compl
 
 #### Props
 
-| Prop       | Type   | Required | Description                                                            |
-| ---------- | ------ | -------- | ---------------------------------------------------------------------- |
-| `metadata` | object | ✅ Yes   | An object containing key-value pairs for document metadata. See below. |
+<TableVerticalLeftAlignNoRef
+  fullWidth={false}
+  alt="Props for the Metadata component"
+  headers={[
+    [
+      { value: "Prop" },
+      { value: "Type" },
+      { value: "Required" },
+      { value: "Description" },
+    ],
+  ]}
+  columns={[
+    [{ value: "metadata" }],
+    [{ value: "object" }],
+    [{ value: "Yes" }],
+    [
+      {
+        value:
+          "An object containing key-value pairs for document metadata. See below.",
+      },
+    ],
+  ]}
+/>
 
 The metadata object should be formatted as frontMatter in the `.mdx` file, typically defined at the top of the document.
 
 ##### Expected Metadata Fields
 
-| Key                       | Type              | Description                                        |
-| ------------------------- | ----------------- | -------------------------------------------------- |
-| `reportDate`              | string            | Date the report was finalized                      |
-| `reportType`              | string            | Document type (e.g., Technical Report, User Guide) |
-| `reportTitle`             | string            | Main title of the document                         |
-| `reportSubTitle`          | string (optional) | Optional subtitle or secondary title               |
-| `reportAuthors`           | string \| array   | Author name(s), either as a single string or array |
-| `reportAbstract`          | string            | Summary of the document’s content                  |
-| `reportAcknowledgments`   | string (optional) | Credits for contributions or support               |
-| `reportSubjectTerms`      | string \| array   | Keywords or indexing terms                         |
-| `responsiblePersonName`   | string (optional) | Contact person for the document                    |
-| `responsiblePersonNumber` | string (optional) | Phone number or contact ID                         |
-| `citationGuide`           | string            | How to properly cite the document                  |
+<TableVerticalLeftAlignNoRef
+  fullWidth={false}
+  alt="Metadata keys used in the metadata object"
+  headers={[[{ value: "Key" }, { value: "Type" }, { value: "Description" }]]}
+  columns={[
+    [
+      { value: "reportDate" },
+      { value: "reportType" },
+      { value: "reportTitle" },
+      { value: "reportSubTitle" },
+      { value: "reportAuthors" },
+      { value: "reportAbstract" },
+      { value: "reportAcknowledgments" },
+      { value: "reportSubjectTerms" },
+      { value: "responsiblePersonName" },
+      { value: "responsiblePersonNumber" },
+      { value: "citationGuide" },
+    ],
+    [
+      { value: "string" },
+      { value: "string" },
+      { value: "string" },
+      { value: "string (optional)" },
+      { value: "string | array" },
+      { value: "string" },
+      { value: "string (optional)" },
+      { value: "string | array" },
+      { value: "string (optional)" },
+      { value: "string (optional)" },
+      { value: "string" },
+    ],
+    [
+      { value: "Date the report was finalized" },
+      { value: "Document type (e.g., Technical Report, User Guide)" },
+      { value: "Main title of the document" },
+      { value: "Optional subtitle or secondary title" },
+      { value: "Author name(s), either as a single string or array" },
+      { value: "Summary of the document’s content" },
+      { value: "Credits for contributions or support" },
+      { value: "Keywords or indexing terms" },
+      { value: "Contact person for the document" },
+      { value: "Phone number or contact ID" },
+      { value: "How to properly cite the document" },
+    ],
+  ]}
+/>
 
 :::caution
 The component uses `dangerouslySetInnerHTML` to render all values. Be sure that all strings passed to `metadata` are sanitized or trusted content.
@@ -271,11 +655,36 @@ All equations are rendered with [KaTeX](https://katex.org/), which supports a la
 
 #### Props
 
-| Prop          | Type    | Required | Description                                                                  |
-| ------------- | ------- | -------- | ---------------------------------------------------------------------------- |
-| `equationKey` | string  | ✅ Yes   | Unique key used to match the equation in `counters/{reportId}.json`.         |
-| `equation`    | string  | ✅ Yes   | A valid LaTeX string representing the equation to be rendered.               |
-| `inline`      | boolean | ❌ No    | If `true`, renders the equation inline (default: `false`, renders as block). |
+<TableVerticalLeftAlignNoRef
+  fullWidth={false}
+  alt="Props for the Equation component"
+  headers={[
+    [
+      { value: "Prop" },
+      { value: "Type" },
+      { value: "Required" },
+      { value: "Description" },
+    ],
+  ]}
+  columns={[
+    [{ value: "equationKey" }, { value: "equation" }, { value: "inline" }],
+    [{ value: "string" }, { value: "string" }, { value: "boolean" }],
+    [{ value: "Yes" }, { value: "Yes" }, { value: "No" }],
+    [
+      {
+        value:
+          "Unique key used to match the equation in counters/{reportId}.json.",
+      },
+      {
+        value: "A valid LaTeX string representing the equation to be rendered.",
+      },
+      {
+        value:
+          "If true, renders the equation inline (default: false, renders as block).",
+      },
+    ],
+  ]}
+/>
 
 :::caution
 If `equationKey` is not found in the counters file, the equation will still render but without a number. Check the console for warnings if a number does not appear.
@@ -325,10 +734,30 @@ This component is purely visual. It does **not** manage equation numbering, anch
 
 #### Props
 
-| Prop       | Type    | Required | Description                                                                   |
-| ---------- | ------- | -------- | ----------------------------------------------------------------------------- |
-| `equation` | string  | ✅ Yes   | A LaTeX-compatible string representing the equation.                          |
-| `inline`   | boolean | ❌ No    | If `true`, renders inline; if `false`, renders as a block. Default is `true`. |
+<TableVerticalLeftAlignNoRef
+  fullWidth={false}
+  alt="Props for the EquationRenderer component"
+  headers={[
+    [
+      { value: "Prop" },
+      { value: "Type" },
+      { value: "Required" },
+      { value: "Description" },
+    ],
+  ]}
+  columns={[
+    [{ value: "equation" }, { value: "inline" }],
+    [{ value: "string" }, { value: "boolean" }],
+    [{ value: "Yes" }, { value: "No" }],
+    [
+      { value: "A LaTeX-compatible string representing the equation." },
+      {
+        value:
+          "If true, renders inline; if false, renders as a block. Default is true.",
+      },
+    ],
+  ]}
+/>
 
 :::info
 This component does not fetch or display equation numbers. If you need an equation to be numbered and cross-referenced, use `<Equation />` instead.
@@ -380,9 +809,29 @@ create cross-references.
 
 #### Props
 
-| Prop          | Type   | Required | Description                                                                    |
-| ------------- | ------ | -------- | ------------------------------------------------------------------------------ |
-| `equationKey` | string | ✅ Yes   | Unique identifier used to retrieve the equation number from the counters file. |
+<TableVerticalLeftAlignNoRef
+  fullWidth={false}
+  alt="Props for the EquationNumber component"
+  headers={[
+    [
+      { value: "Prop" },
+      { value: "Type" },
+      { value: "Required" },
+      { value: "Description" },
+    ],
+  ]}
+  columns={[
+    [{ value: "equationKey" }],
+    [{ value: "string" }],
+    [{ value: "Yes" }],
+    [
+      {
+        value:
+          "Unique identifier used to retrieve the equation number from the counters file.",
+      },
+    ],
+  ]}
+/>
 
 :::caution
 If the `equationKey` is not found or the counters file cannot be loaded, the component will fallback to `Loading...`. Console warnings
@@ -426,12 +875,45 @@ This component handles figure **numbering and display**. To insert an inline fig
 
 #### Props
 
-| Prop      | Type   | Required | Description                                                                |
-| --------- | ------ | -------- | -------------------------------------------------------------------------- |
-| `figKey`  | string | ✅ Yes   | Unique identifier for the figure in the counters file                      |
-| `src`     | string | ✅ Yes   | Path to the image file relative to the `/RMC-Software-Documentation/` root |
-| `alt`     | string | ✅ Yes   | Alternative text for the image (used for accessibility and SEO)            |
-| `caption` | string | ✅ Yes   | Text that appears below the figure as its description                      |
+<TableVerticalLeftAlignNoRef
+  fullWidth={false}
+  alt="Props for the Figure component"
+  headers={[
+    [
+      { value: "Prop" },
+      { value: "Type" },
+      { value: "Required" },
+      { value: "Description" },
+    ],
+  ]}
+  columns={[
+    [
+      { value: "figKey" },
+      { value: "src" },
+      { value: "alt" },
+      { value: "caption" },
+    ],
+    [
+      { value: "string" },
+      { value: "string" },
+      { value: "string" },
+      { value: "string" },
+    ],
+    [{ value: "Yes" }, { value: "Yes" }, { value: "Yes" }, { value: "Yes" }],
+    [
+      { value: "Unique identifier for the figure in the counters file" },
+      {
+        value:
+          "Path to the image file relative to the /RMC-Software-Documentation/ root",
+      },
+      {
+        value:
+          "Alternative text for the image (used for accessibility and SEO)",
+      },
+      { value: "Text that appears below the figure as its description" },
+    ],
+  ]}
+/>
 
 :::caution
 If `figKey` is not found or the counters file cannot be loaded, the component will fallback to `Loading...`. Console warnings will be shown to help with debugging.
@@ -472,9 +954,29 @@ numbered image.
 
 #### Props
 
-| Prop  | Type   | Required | Description                                                               |
-| ----- | ------ | -------- | ------------------------------------------------------------------------- |
-| `src` | string | ✅ Yes   | Relative path to the image (from the `/RMC-Software-Documentation/` root) |
+<TableVerticalLeftAlignNoRef
+  fullWidth={false}
+  alt="Props for the FigureNoRef component"
+  headers={[
+    [
+      { value: "Prop" },
+      { value: "Type" },
+      { value: "Required" },
+      { value: "Description" },
+    ],
+  ]}
+  columns={[
+    [{ value: "src" }],
+    [{ value: "string" }],
+    [{ value: "Yes" }],
+    [
+      {
+        value:
+          "Relative path to the image (from the /RMC-Software-Documentation/ root)",
+      },
+    ],
+  ]}
+/>
 
 :::caution
 This component does **not** support `alt` text. If accessibility is a requirement, use the `<img>` tag directly or extend this component.
@@ -513,9 +1015,29 @@ number.
 
 #### Props
 
-| Prop     | Type   | Required | Description                                                       |
-| -------- | ------ | -------- | ----------------------------------------------------------------- |
-| `figKey` | string | ✅ Yes   | Unique key for the figure, matching an entry in the counters file |
+<TableVerticalLeftAlignNoRef
+  fullWidth={false}
+  alt="Props for the FigReference component"
+  headers={[
+    [
+      { value: "Prop" },
+      { value: "Type" },
+      { value: "Required" },
+      { value: "Description" },
+    ],
+  ]}
+  columns={[
+    [{ value: "figKey" }],
+    [{ value: "string" }],
+    [{ value: "Yes" }],
+    [
+      {
+        value:
+          "Unique key for the figure, matching an entry in the counters file",
+      },
+    ],
+  ]}
+/>
 
 :::caution
 If the `figKey` is not found or the counters file fails to load, the output will display `Loading...`. Console warnings will indicate the
@@ -558,11 +1080,36 @@ This component is a layout utility and does not manage routing or version state 
 
 #### Props
 
-| Prop        | Type   | Required | Description                                                                  |
-| ----------- | ------ | -------- | ---------------------------------------------------------------------------- |
-| `link`      | string | ✅ Yes   | The relative path to the parent or target page for navigation                |
-| `linkTitle` | string | ✅ Yes   | The text label for the navigation link (e.g., "Back to Overview")            |
-| `document`  | string | ✅ Yes   | The identifier used by `<VersionSelector />` to determine available versions |
+<TableVerticalLeftAlignNoRef
+  fullWidth={false}
+  alt="Props for the VersionNavigation component"
+  headers={[
+    [
+      { value: "Prop" },
+      { value: "Type" },
+      { value: "Required" },
+      { value: "Description" },
+    ],
+  ]}
+  columns={[
+    [{ value: "link" }, { value: "linkTitle" }, { value: "document" }],
+    [{ value: "string" }, { value: "string" }, { value: "string" }],
+    [{ value: "Yes" }, { value: "Yes" }, { value: "Yes" }],
+    [
+      {
+        value: "The relative path to the parent or target page for navigation",
+      },
+      {
+        value:
+          'The text label for the navigation link (e.g., "Back to Overview")',
+      },
+      {
+        value:
+          "The identifier used by <VersionSelector /> to determine available versions",
+      },
+    ],
+  ]}
+/>
 
 :::caution
 All three props are required. Omitting any of them may result in broken layout or missing navigation elements.
@@ -601,10 +1148,32 @@ This component is purely presentational. It does not conditionally render or val
 
 #### Props
 
-| Prop        | Type   | Required | Description                                                               |
-| ----------- | ------ | -------- | ------------------------------------------------------------------------- |
-| `link`      | string | ✅ Yes   | The relative path to the destination page (e.g., `/docs/project-x/intro`) |
-| `linkTitle` | string | ✅ Yes   | The text displayed next to the arrow (e.g., `Back to Overview`)           |
+<TableVerticalLeftAlignNoRef
+  fullWidth={false}
+  alt="Props for the BackArrowLink component"
+  headers={[
+    [
+      { value: "Prop" },
+      { value: "Type" },
+      { value: "Required" },
+      { value: "Description" },
+    ],
+  ]}
+  columns={[
+    [{ value: "link" }, { value: "linkTitle" }],
+    [{ value: "string" }, { value: "string" }],
+    [{ value: "Yes" }, { value: "Yes" }],
+    [
+      {
+        value:
+          "The relative path to the destination page (e.g., /docs/project-x/intro)",
+      },
+      {
+        value: "The text displayed next to the arrow (e.g., Back to Overview)",
+      },
+    ],
+  ]}
+/>
 
 :::caution
 Make sure `link` is a valid internal route in your Docusaurus project. External URLs will not work properly here.
@@ -644,10 +1213,33 @@ This component renders a **fixed-layout** table. It does not support dynamic sor
 
 #### Props
 
-| Prop      | Type     | Required | Description                                                                |
-| --------- | -------- | -------- | -------------------------------------------------------------------------- |
-| `headers` | string[] | ✅ Yes   | An array of column labels (typically `["Acronym", "Definition"]`)          |
-| `columns` | array[]  | ✅ Yes   | An array of arrays, where each inner array represents one column of values |
+<TableVerticalLeftAlignNoRef
+  fullWidth={false}
+  alt="Props for the AcronymTable component"
+  headers={[
+    [
+      { value: "Prop" },
+      { value: "Type" },
+      { value: "Required" },
+      { value: "Description" },
+    ],
+  ]}
+  columns={[
+    [{ value: "headers" }, { value: "columns" }],
+    [{ value: "string[]" }, { value: "array[]" }],
+    [{ value: "Yes" }, { value: "Yes" }],
+    [
+      {
+        value:
+          'An array of column labels (typically ["Acronym", "Definition"])',
+      },
+      {
+        value:
+          "An array of arrays, where each inner array represents one column of values",
+      },
+    ],
+  ]}
+/>
 
 :::caution
 All columns must have the same number of rows. Empty cells will be padded automatically, but uneven arrays may produce unexpected results.
@@ -702,13 +1294,54 @@ component.
 
 #### Props
 
-| Prop       | Type     | Required | Description                                                              |
-| ---------- | -------- | -------- | ------------------------------------------------------------------------ |
-| `tableKey` | string   | ✅ Yes   | Unique key used to match the table in the `counters.json` file           |
-| `headers`  | string[] | ✅ Yes   | Array of header labels for each row (first column of the table)          |
-| `rows`     | array[]  | ✅ Yes   | 2D array of cell values (one array per row, excluding the header column) |
-| `alt`      | string   | ✅ Yes   | Alternative text for accessibility and screen readers                    |
-| `caption`  | string   | ✅ Yes   | Descriptive text shown under the table number                            |
+<TableVerticalLeftAlignNoRef
+  fullWidth={false}
+  alt="Props for the TableHorizontal component"
+  headers={[
+    [
+      { value: "Prop" },
+      { value: "Type" },
+      { value: "Required" },
+      { value: "Description" },
+    ],
+  ]}
+  columns={[
+    [
+      { value: "tableKey" },
+      { value: "headers" },
+      { value: "rows" },
+      { value: "alt" },
+      { value: "caption" },
+    ],
+    [
+      { value: "string" },
+      { value: "string[]" },
+      { value: "array[]" },
+      { value: "string" },
+      { value: "string" },
+    ],
+    [
+      { value: "Yes" },
+      { value: "Yes" },
+      { value: "Yes" },
+      { value: "Yes" },
+      { value: "Yes" },
+    ],
+    [
+      { value: "Unique key used to match the table in the counters.json file" },
+      {
+        value:
+          "Array of header labels for each row (first column of the table)",
+      },
+      {
+        value:
+          "2D array of cell values (one array per row, excluding the header column)",
+      },
+      { value: "Alternative text for accessibility and screen readers" },
+      { value: "Descriptive text shown under the table number" },
+    ],
+  ]}
+/>
 
 :::caution
 Make sure the number of `headers` matches the number of `rows`. Mismatches will result in misaligned rows or rendering issues.
@@ -761,9 +1394,29 @@ like `<TableHorizontal />` or `<TableVertical />`.
 
 #### Props
 
-| Prop       | Type   | Required | Description                                                            |
-| ---------- | ------ | -------- | ---------------------------------------------------------------------- |
-| `tableKey` | string | ✅ Yes   | Unique key used to locate the table number in the `counters.json` file |
+<TableVerticalLeftAlignNoRef
+  fullWidth={false}
+  alt="Props for the TableNumber component"
+  headers={[
+    [
+      { value: "Prop" },
+      { value: "Type" },
+      { value: "Required" },
+      { value: "Description" },
+    ],
+  ]}
+  columns={[
+    [{ value: "tableKey" }],
+    [{ value: "string" }],
+    [{ value: "Yes" }],
+    [
+      {
+        value:
+          "Unique key used to locate the table number in the counters.json file",
+      },
+    ],
+  ]}
+/>
 
 :::caution
 If tableKey is not found or the counters file cannot be loaded, the component will fallback to `Loading...`. Console warnings will be shown to
@@ -802,14 +1455,52 @@ The table rows are padded automatically if some columns are shorter than others,
 
 #### Props
 
-| Prop           | Type     | Required | Description                                      |
-| -------------- | -------- | -------- | ------------------------------------------------ |
-| `versions`     | string[] | ✅ Yes   | Array of version labels (e.g., `"1.0"`, `"2.1"`) |
-| `dates`        | string[] | ✅ Yes   | Corresponding array of dates for each version    |
-| `descriptions` | string[] | ✅ Yes   | Description of what changed in each version      |
-| `modifiedBy`   | string[] | ✅ Yes   | Who modified the document in each version        |
-| `reviewedBy`   | string[] | ✅ Yes   | Who reviewed each version                        |
-| `approvedBy`   | string[] | ✅ Yes   | Who approved each version                        |
+<TableVerticalLeftAlignNoRef
+  fullWidth={false}
+  alt="Props for the VersionHistoryTable component"
+  headers={[
+    [
+      { value: "Prop" },
+      { value: "Type" },
+      { value: "Required" },
+      { value: "Description" },
+    ],
+  ]}
+  columns={[
+    [
+      { value: "versions" },
+      { value: "dates" },
+      { value: "descriptions" },
+      { value: "modifiedBy" },
+      { value: "reviewedBy" },
+      { value: "approvedBy" },
+    ],
+    [
+      { value: "string[]" },
+      { value: "string[]" },
+      { value: "string[]" },
+      { value: "string[]" },
+      { value: "string[]" },
+      { value: "string[]" },
+    ],
+    [
+      { value: "Yes" },
+      { value: "Yes" },
+      { value: "Yes" },
+      { value: "Yes" },
+      { value: "Yes" },
+      { value: "Yes" },
+    ],
+    [
+      { value: 'Array of version labels (e.g., "1.0", "2.1")' },
+      { value: "Corresponding array of dates for each version" },
+      { value: "Description of what changed in each version" },
+      { value: "Who modified the document in each version" },
+      { value: "Who reviewed each version" },
+      { value: "Who approved each version" },
+    ],
+  ]}
+/>
 
 :::caution
 All arrays must represent parallel data. The table will expand to the longest array and fill empty cells where necessary.
@@ -859,14 +1550,58 @@ This component is ideal for structured engineering, scientific, or technical tab
 
 #### Props
 
-| Prop        | Type      | Required | Description                                                                                                              |
-| ----------- | --------- | -------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `tableKey`  | string    | ✅ Yes   | Unique key used to match the table in the `counters.json` file                                                           |
-| `headers`   | array[][] | ✅ Yes   | Array of header rows, where each row is an array of `{ value, colSpan?, rowSpan? }` objects                              |
-| `columns`   | array[][] | ✅ Yes   | Array of columns, where each column is an array of cell strings or cell objects with `value`, `rowSpan?`, and `colSpan?` |
-| `fullWidth` | boolean   | ❌ No    | Whether to apply full-width table styling (default: `true`)                                                              |
-| `alt`       | string    | ✅ Yes   | Alternative text for accessibility                                                                                       |
-| `caption`   | string    | ✅ Yes   | Descriptive label shown with the table number                                                                            |
+<TableVerticalLeftAlignNoRef
+  fullWidth={false}
+  alt="Props for the TableVertical component"
+  headers={[
+    [
+      { value: "Prop" },
+      { value: "Type" },
+      { value: "Required" },
+      { value: "Description" },
+    ],
+  ]}
+  columns={[
+    [
+      { value: "tableKey" },
+      { value: "headers" },
+      { value: "columns" },
+      { value: "fullWidth" },
+      { value: "alt" },
+      { value: "caption" },
+    ],
+    [
+      { value: "string" },
+      { value: "array[][]" },
+      { value: "array[][]" },
+      { value: "boolean" },
+      { value: "string" },
+      { value: "string" },
+    ],
+    [
+      { value: "Yes" },
+      { value: "Yes" },
+      { value: "Yes" },
+      { value: "No" },
+      { value: "Yes" },
+      { value: "Yes" },
+    ],
+    [
+      { value: "Unique key used to match the table in the counters.json file" },
+      {
+        value:
+          "Array of header rows, where each row is an array of { value, colSpan?, rowSpan? } objects",
+      },
+      {
+        value:
+          "Array of columns, where each column is an array of cell strings or cell objects with value, rowSpan?, and colSpan?",
+      },
+      { value: "Whether to apply full-width table styling (default: true)" },
+      { value: "Alternative text for accessibility" },
+      { value: "Descriptive label shown with the table number" },
+    ],
+  ]}
+/>
 
 :::caution
 All `columns` must be the same length. Use empty strings to pad shorter columns to maintain alignment.
@@ -923,14 +1658,52 @@ This component differs from `<TableVertical />` only in visual alignment. It is 
 
 Identical to `<TableVertical />`:
 
-| Prop        | Type      | Required | Description                                                   |
-| ----------- | --------- | -------- | ------------------------------------------------------------- |
-| `tableKey`  | string    | ✅ Yes   | Key for retrieving table number from the `counters.json` file |
-| `headers`   | array[][] | ✅ Yes   | Header rows with `{ value, colSpan?, rowSpan? }` objects      |
-| `columns`   | array[][] | ✅ Yes   | Column-major data format                                      |
-| `fullWidth` | boolean   | ❌ No    | Enables full-width styling (default: `true`)                  |
-| `alt`       | string    | ✅ Yes   | Alt text for screen readers                                   |
-| `caption`   | string    | ✅ Yes   | Descriptive caption shown with table number                   |
+<TableVerticalLeftAlignNoRef
+  fullWidth={false}
+  alt="Props for the TableVerticalLeftAlignNoRef component"
+  headers={[
+    [
+      { value: "Prop" },
+      { value: "Type" },
+      { value: "Required" },
+      { value: "Description" },
+    ],
+  ]}
+  columns={[
+    [
+      { value: "tableKey" },
+      { value: "headers" },
+      { value: "columns" },
+      { value: "fullWidth" },
+      { value: "alt" },
+      { value: "caption" },
+    ],
+    [
+      { value: "string" },
+      { value: "array[][]" },
+      { value: "array[][]" },
+      { value: "boolean" },
+      { value: "string" },
+      { value: "string" },
+    ],
+    [
+      { value: "Yes" },
+      { value: "Yes" },
+      { value: "Yes" },
+      { value: "No" },
+      { value: "Yes" },
+      { value: "Yes" },
+    ],
+    [
+      { value: "Key for retrieving table number from the counters.json file" },
+      { value: "Header rows with { value, colSpan?, rowSpan? } objects" },
+      { value: "Column-major data format" },
+      { value: "Enables full-width styling (default: true)" },
+      { value: "Alt text for screen readers" },
+      { value: "Descriptive caption shown with table number" },
+    ],
+  ]}
+/>
 
 #### Example Usage
 
@@ -982,9 +1755,29 @@ This component relies on the presence of a JSON object in `versionList.json` whe
 
 #### Props
 
-| Prop       | Type   | Required | Description                                                                |
-| ---------- | ------ | -------- | -------------------------------------------------------------------------- |
-| `document` | string | ✅ Yes   | A unique identifier used to fetch the version list from `versionList.json` |
+<TableVerticalLeftAlignNoRef
+  fullWidth={false}
+  alt="Props for the VersionSelector component"
+  headers={[
+    [
+      { value: "Prop" },
+      { value: "Type" },
+      { value: "Required" },
+      { value: "Description" },
+    ],
+  ]}
+  columns={[
+    [{ value: "document" }],
+    [{ value: "string" }],
+    [{ value: "Yes" }],
+    [
+      {
+        value:
+          "A unique identifier used to fetch the version list from versionList.json",
+      },
+    ],
+  ]}
+/>
 
 :::caution
 If `document` is not provided or not found in the version list, the dropdown will not render and a fallback message will be shown.

@@ -8,14 +8,72 @@ This section describes additional important files in the RMC Software Documentat
 
 ---
 
-## `docusaurus.config.js`
+## docusaurus.config.js
 
 This is the main configuration file for the Docusaurus site.  
 It defines site metadata, theme options, plugins, navigation, and other global settings.
 
 ---
 
-## `LICENSE`
+## tailwind.config.js
+
+This file defines our Tailwind CSS setup for the documentation site. It extends the default Tailwind theme with project-specific
+design tokens and responsive behaviors that align with USACE branding and Groundwork standards.
+
+### Features
+
+#### Dark Mode
+
+This project uses "class" mode with `[data-theme="dark"]` as the selector. This allows dark mode to toggle via Docusaurus' built-in
+theme system.
+
+```js
+darkMode: ["class", '[data-theme="dark"]'];
+```
+
+#### Content Scanning
+
+Tailwind scans `src`, `docs`, `blog`, and `index.html` for class names. This ensures unused styles are purged correctly and all
+Markdown/MDX content is covered.
+
+```js
+content: [
+  "./src/**/*.{js,ts,jsx,tsx}",
+  "./docs/**/*.{js,ts,jsx,tsx,md,mdx}",
+  "./blog/**/*.{js,ts,jsx,tsx,md,mdx}",
+  "./index.html",
+];
+```
+
+#### Theme Extensions
+
+Key design tokens are defined under `theme.extend`:
+
+    - **Font Sizes**: The project uses clamp(...) for fluid, responsive typography. Headings (h1–h6), body text (normal), and other sizes like
+    caption, large, and navbar are all defined for consistency across breakpoints.
+    - **Font Family**: All documentation text uses the `usace` font stack: `Roboto, Arial, Helvetica, sans-serif`.
+    - **Custom Colors**:
+        - Static USACE brand colors (e.g., `usace-box-red`, `gov-banner-gray`)
+        - Navigation and footer-specific colors
+        - CSS variable bindings (e.g., `--font-color`, `--ifm-link-color`) for theme responsiveness
+    - **Grid Utilities**: Adds a custom `1fr-auto` row template for layouts that need a fixed footer
+
+#### Screens (Breakpoints)
+
+The project defines `sm`, `md`, and `lg` explicitly:
+
+    - `sm`: 0px - mobile-first baseline
+    - `md`: 900px - triggers multi-column layouts
+    - `lg`: 1760px - used to cap content width or enable wide layouts
+
+### Tips for developers
+
+- Use the named `fontSize` keys (e.g., `text-normal`, `text-caption`) instead of raw Tailwind sizes for consistency across the site
+- Use CSS variables (e.g., `text-font-color`, `ifm-primary`) to support dark/light theming automatically
+
+---
+
+## LICENSE
 
 This project is licensed under the MIT License © 2025 Risk Management Center.
 
@@ -33,7 +91,7 @@ This project is licensed under the MIT License © 2025 Risk Management Center.
 
 ---
 
-## `.gitignore` and `.gitattributes`
+## .gitignore and .gitattributes
 
 - **`.gitignore`**  
   Specifies files and folders that should be excluded from version control (e.g., `node_modules/`, build artifacts, local environment files).
@@ -43,13 +101,12 @@ This project is licensed under the MIT License © 2025 Risk Management Center.
 
 ---
 
-## `.nojekyll`
+## .nojekyll
 
 This file tells GitHub Pages to bypass Jekyll processing, allowing files and folders that start with an underscore (`_`) to be served.
 
 ---
 
-## `README.md`
+## README.md
 
-Provides an overview of the project, setup instructions, and a summary of the documentation structure.  
-It is intended for developers and contributors working with the repository.
+Provides an overview of the website and a link to this Documentation Guide from the GitHub repository.

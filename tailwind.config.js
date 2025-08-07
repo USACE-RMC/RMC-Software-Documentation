@@ -3,7 +3,7 @@ export default {
   darkMode: ["class", '[data-theme="dark"]'],
   content: [
     "./src/**/*.{js,ts,jsx,tsx}",
-    "./docs/**/*.{js,ts,jsx,tsx,md,mdx}", // ✅ Recursive match for ALL docs content
+    "./docs/**/*.{js,ts,jsx,tsx,md,mdx}",
     "./blog/**/*.{js,ts,jsx,tsx,md,mdx}",
     "./index.html",
   ],
@@ -25,6 +25,12 @@ export default {
         18: "18px",
         20: "20px",
         24: "24px",
+        h1: "clamp(1.5rem, 3vw, 2.25rem)",
+        h2: "clamp(1.25rem, 2.5vw, 1.75rem)",
+        h3: "clamp(1.125rem, 2vw, 1.5rem)",
+        h4: "clamp(1rem, 1.75vw, 1.25rem)",
+        h5: "clamp(0.925rem, 1.5vw, 1.1rem)",
+        h6: "clamp(0.85rem, 1.2vw, 1.0rem)",
         caption: "clamp(0.7rem, 2vw, 0.9rem)",
         normal: "clamp(0.8rem, 2vw, 1.0rem)",
         "content-bubble": "clamp(1.0rem, 2vw, 1.2rem)",
@@ -83,7 +89,7 @@ export default {
     screens: {
       sm: "0px",
       md: "900px",
-      lg: "1761px",
+      lg: "1760px",
     },
   },
   plugins: [require("@tailwindcss/forms")],
