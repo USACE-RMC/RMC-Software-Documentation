@@ -52,21 +52,14 @@ export default function SeismicHazardSuite() {
   const seismicHazardSuite = seismicHazardSuiteDocs.map((doc) => ({
     ...doc,
     icon: addBaseUrl(doc.icon),
-    doc_location: addBaseUrl(
-      `docs/${doc.doc_location}/${
-        latestVersions[doc.doc_location.replace(/^docs\//, "")]
-      }/preface`
-    ),
+    doc_location: addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, "")]}/preface`),
   }));
 
   return (
-    <Layout
-      title="RMC Software Documentation"
-      description="Documentation for RMC Software Packages"
-    >
+    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
       <main>
         <div className="header-container">
-          <h1>RMC Software Documentation</h1>
+          <div className="header-title">RMC Software Documentation</div>
         </div>
         <div className="title-container">
           <div className="title-container-nav-link">

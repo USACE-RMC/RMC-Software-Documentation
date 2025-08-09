@@ -7,7 +7,7 @@ const baseClasses = `
   rounded-md
   font-bold
   text-1-0
-  no-underline
+  !no-underline
   inline-block
   transition-colors
   duration-300
