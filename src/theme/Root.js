@@ -1,7 +1,8 @@
 import React from "react";
+import Root from "@theme-original/Root";
+import SearchBar from "@theme/SearchBar";
 import { CounterProvider } from "../components/Counters";
 import { ReportIdProvider } from "@site/src/contexts/ReportIdContext";
-import Root from "@theme-original/Root";
 import { SiteWrapper } from "@usace/groundwork";
 import "@usace/groundwork/dist/style.css";
 import "../css/custom.css";
@@ -27,7 +28,7 @@ const links = [
 export default function CustomRoot(props) {
   if (theme === "Groundwork") {
     return (
-      <SiteWrapper usaBanner={false} fluidNav={true} subtitle="RMC Software Documentation" links={links}>
+      <SiteWrapper usaBanner={false} fluidNav={true} subtitle="RMC Software Documentation" links={links} navRight={<SearchBar />}>
         <CounterProvider>
           <ReportIdProvider>
             <Root {...props} />

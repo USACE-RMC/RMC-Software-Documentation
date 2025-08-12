@@ -68,6 +68,11 @@ export default {
   ],
 
   themeConfig: {
+    colorMode: {
+      defaultMode: "light",
+      disableSwitch: false,
+      respectPrefersColorScheme: true,
+    },
     navbar: {
       title: "RMC Software Documentation",
       logo: {

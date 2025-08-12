@@ -72,10 +72,7 @@ export default function Home() {
 
   return (
     <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
-      <main>
-        <div className="header-container">
-          <div className="header-title">RMC Software Documentation</div>
-        </div>
+      <main className="main-content-container">
         <p className="welcome-text">
           Welcome to the Risk Management Center software documentation portal.
           <br />
