@@ -11,12 +11,12 @@ from utils.mdx_writer import write_mdx_files
 environment = "development"  # Change to "production" for production environment
 
 # Assign the file path for figures
-FIGSRC = r"figures/toolbox-technical-manuals/seismic-hazard-suite/site-classification/v1.0"
+FIGSRC = r"figures/toolbox-technical-manuals/seismic-hazard-suite/seismic-hazard-curves/v1.0"
 
 # Assign the navigation link, title, and document for the NavContainer component
 NAVLINK = r"/toolboxes/seismic-hazard-suite"
 NAVTITLE = "Seismic Hazard Suite" 
-NAVDOC = r"/toolbox-technical-manuals/seismic-hazard-suite/site-classification"
+NAVDOC = r"/toolbox-technical-manuals/seismic-hazard-suite/seismic-hazard-curves"
 
 # Define paths based on the environment
 if environment == "production":
@@ -26,10 +26,10 @@ if environment == "production":
     MDX_DIR = r"C:\Users\USACE\OneDrive\Documents\GitHub\RMC-Software-Documentation\docs\toolbox-technical-manuals\seismic-hazard-suite\site-classification\v1.0"
 else:
     # Development paths
-    DOCX_PATH = r"D:\Reference Materials\Technical References\RMC Documents\Computer Program Documents\RMC-CPD-2023-01 - RMC Site Classification Toolbox.docx"
+    DOCX_PATH = r"D:\RMC\Toolbox and Software Development\Online Documentation\Documents for Conversion\Phase 1\Toolbox Technical Manuals\RMC-CPD-2023-02 - RMC Seismic Hazard Curves Toolbox.docx"
     BIB_PATH = r"C:\Users\q0rmcacg\OneDrive - US Army Corps of Engineers\Documents\GitHub\RMC-Software-Documentation\static\bibliographies\toolbox-technical-manuals\seismic-hazard-suite\site-classification\v1.0\bib.json"
-    FIGURES_DIR = r"D:\Reference Materials\Technical References\RMC Documents\Computer Program Documents\MDX Conversions\Site Classification\Figures"
-    MDX_DIR = r"D:\Reference Materials\Technical References\RMC Documents\Computer Program Documents\MDX Conversions\Site Classification\MDX"
+    FIGURES_DIR = r"D:\RMC\Toolbox and Software Development\Online Documentation\Documents for Conversion\Phase 1\Test Conversions\Seismic Hazard Curves Toolbox\Figures"
+    MDX_DIR = r"D:\RMC\Toolbox and Software Development\Online Documentation\Documents for Conversion\Phase 1\Test Conversions\Seismic Hazard Curves Toolbox\MDX"
 
 # ---- Constants ----
 DOCX_PATH = DOCX_PATH
