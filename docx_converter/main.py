@@ -8,7 +8,7 @@ from utils.mdx_writer import write_mdx_files
 # ---- User configuration ----
 
 # Set the environment to "production" or "development"
-environment = "development"  # Change to "production" for production environment
+environment = "production"  # Change to "production" for production environment
 
 # Assign the file path for figures
 FIGSRC = r"figures/toolbox-technical-manuals/seismic-hazard-suite/seismic-hazard-curves/v1.0"
@@ -20,16 +20,16 @@ NAVDOC = r"/toolbox-technical-manuals/seismic-hazard-suite/seismic-hazard-curves
 
 # Define paths based on the environment
 if environment == "production":
-    DOCX_PATH = r"C:\Users\USACE\OneDrive\RMC CPDs\RMC-CPD-2023-01 - RMC Site Classification Toolbox.docx"
-    BIB_PATH = r"C:\Users\USACE\OneDrive\Documents\GitHub\RMC-Software-Documentation\static\bibliographies\toolbox-technical-manuals\seismic-hazard-suite\site-classification\v1.0\bib.json"
-    FIGURES_DIR = r"C:\Users\USACE\OneDrive\Documents\GitHub\RMC-Software-Documentation\static\figures\toolbox-technical-manuals\seismic-hazard-suite\site-classification\v1.0"
-    MDX_DIR = r"C:\Users\USACE\OneDrive\Documents\GitHub\RMC-Software-Documentation\docs\toolbox-technical-manuals\seismic-hazard-suite\site-classification\v1.0"
+    DOCX_PATH = r"C:\Technical Documents\RMC-CPD-2023-02 - RMC Seismic Hazard Curves Toolbox.docx"
+    BIB_PATH = r"C:\Git\RMC-Software-Documentation\static\bibliographies\toolbox-technical-manuals\seismic-hazard-suite\seismic-hazard-curves\v1.0\bib.json"
+    FIGURES_DIR = r"C:\Git\RMC-Software-Documentation\static\figures\toolbox-technical-manuals\seismic-hazard-suite\seismic-hazard-curves\v1.0\figures"
+    MDX_DIR = r"C:\Git\RMC-Software-Documentation\docs\toolbox-technical-manuals\seismic-hazard-suite\seismic-hazard-curves\v1.0"
 else:
     # Development paths
-    DOCX_PATH = r"D:\RMC\Toolbox and Software Development\Online Documentation\Documents for Conversion\Phase 1\Toolbox Technical Manuals\RMC-CPD-2023-02 - RMC Seismic Hazard Curves Toolbox.docx"
-    BIB_PATH = r"C:\Users\q0rmcacg\OneDrive - US Army Corps of Engineers\Documents\GitHub\RMC-Software-Documentation\static\bibliographies\toolbox-technical-manuals\seismic-hazard-suite\site-classification\v1.0\bib.json"
-    FIGURES_DIR = r"D:\RMC\Toolbox and Software Development\Online Documentation\Documents for Conversion\Phase 1\Test Conversions\Seismic Hazard Curves Toolbox\Figures"
-    MDX_DIR = r"D:\RMC\Toolbox and Software Development\Online Documentation\Documents for Conversion\Phase 1\Test Conversions\Seismic Hazard Curves Toolbox\MDX"
+    DOCX_PATH = r"C:\Technical Documents\RMC-CPD-2023-02 - RMC Seismic Hazard Curves Toolbox.docx"
+    BIB_PATH = r"C:\Git\RMC-Software-Documentation\static\bibliographies\toolbox-technical-manuals\seismic-hazard-suite\seismic-hazard-curves\v1.0\bib.json"
+    FIGURES_DIR = r"C:\Technical Documents\MDX Conversions\Seismic Hazard Curves\Figures"
+    MDX_DIR = r"C:\Technical Documents\MDX Conversions\Seismic Hazard Curves\MDX"
 
 # ---- Constants ----
 DOCX_PATH = DOCX_PATH
