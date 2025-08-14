@@ -71,7 +71,7 @@ export default {
     colorMode: {
       defaultMode: "light",
       disableSwitch: false,
-      respectPrefersColorScheme: true,
+      respectPrefersColorScheme: false,
     },
     navbar: {
       title: "RMC Software Documentation",

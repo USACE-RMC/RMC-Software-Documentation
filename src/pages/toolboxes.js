@@ -54,9 +54,6 @@ export default function Toolboxes() {
   return (
     <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
       <main>
-        <div className="header-container">
-          <div className="header-title">RMC Software Documentation</div>
-        </div>
         <div className="title-container">
           <div className="title-container-nav-link">
             <Link to={addBaseUrl("/")}>&larr; Home</Link>

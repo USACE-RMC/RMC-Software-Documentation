@@ -3,6 +3,7 @@ import Layout from "@theme/Layout";
 import "../css/custom.css";
 import ContentBoxLarge from "../components/ContentBoxLarge";
 import addBaseUrl from "@docusaurus/useBaseUrl";
+import { Hero } from "@usace/groundwork";
 
 export default function Home() {
   const desktopAppCardData = [
@@ -72,12 +73,13 @@ export default function Home() {
 
   return (
     <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
+      <Hero
+        image={[addBaseUrl("nww-lucky-peak-dam.jpg"), addBaseUrl("taylorsville-SPPRu4Rw.jpg")]}
+        alt={["Lucky Peak Dam", "Taylorsville Dam"]}
+        title="RMC Software Documentation"
+        subtitle="Your hub for comprehensive guides, resources, and support to navigate our powerful tools."
+      />
       <main className="main-content-container">
-        <p className="welcome-text">
-          Welcome to the Risk Management Center software documentation portal.
-          <br />
-          Your hub for comprehensive guides, resources, and support to navigate our powerful tools.
-        </p>
         <ContentBoxLarge contentData={homepageData} />
       </main>
     </Layout>
