@@ -41,7 +41,13 @@ function ThemeToggle() {
       className="h-8 w-8 rounded-md flex items-center justify-center"
       onClick={() => cm.setColorMode(target)}
     >
-      <img src={iconUrl} alt="" aria-hidden="true" className="h-6 w-6" decoding="async" />
+      <img
+        src={iconUrl}
+        alt=""
+        aria-hidden="true"
+        className="h-6 w-6"
+        decoding="async"
+      />
     </button>
   );
 }
@@ -87,8 +93,21 @@ export default function LayoutWrapper({ children, ...rest }) {
       text: "Toolbox Technical Manuals",
       href: toolboxAppHref,
       children: [
-        { id: "internal-erosion-suite", text: "Internal Erosion Suite", href: internalErosionHref },
-        { id: "risk-calculations-suite", text: "Risk Calculations Suite", href: riskCalcHref },
+        {
+          id: "internal-erosion-suite",
+          text: "Internal Erosion Suite",
+          href: internalErosionHref,
+        },
+        {
+          id: "risk-calculations-suite",
+          text: "Risk Calculations Suite",
+          href: riskCalcHref,
+        },
+        {
+          id: "seismic-hazard-suite",
+          text: "Seismic Hazard Suite",
+          href: seismicHref,
+        },
       ],
     },
     {
@@ -102,7 +121,11 @@ export default function LayoutWrapper({ children, ...rest }) {
     if (typeof document === "undefined") return;
 
     // Find the logo anchor specifically
-    const logoAnchor = document.querySelector('header a[href="/"] img[alt="U.S. Army Corps of Engineers"]')?.closest("a");
+    const logoAnchor = document
+      .querySelector(
+        'header a[href="/"] img[alt="U.S. Army Corps of Engineers"]'
+      )
+      ?.closest("a");
 
     if (logoAnchor && logoAnchor.getAttribute("href") !== homeHref) {
       logoAnchor.setAttribute("href", homeHref);
