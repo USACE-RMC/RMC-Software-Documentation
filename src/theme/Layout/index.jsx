@@ -41,13 +41,7 @@ function ThemeToggle() {
       className="h-8 w-8 rounded-md flex items-center justify-center"
       onClick={() => cm.setColorMode(target)}
     >
-      <img
-        src={iconUrl}
-        alt=""
-        aria-hidden="true"
-        className="h-6 w-6"
-        decoding="async"
-      />
+      <img src={iconUrl} alt="" aria-hidden="true" className="h-6 w-6" decoding="async" />
     </button>
   );
 }
@@ -117,15 +111,92 @@ export default function LayoutWrapper({ children, ...rest }) {
     },
   ];
 
+  const USACELinks = [
+    {
+      id: "plainLanguage",
+      text: "Plain Language",
+      href: "https://www.esd.whs.mil/DD/plainlanguage/",
+    },
+    {
+      id: "accessibility",
+      text: "Accessibility",
+      href: "https://dodcio.defense.gov/DoDSection508/Std_Stmt.aspx",
+    },
+    {
+      id: "contact-us",
+      text: "Contact Us",
+      href: "https://www.rmc.usace.army.mil/About-the-Center/Contact/",
+    },
+    {
+      id: "quality-facts",
+      text: "Quality Facts",
+      href: "https://www.usace.army.mil/Resources/Information-Quality-Act/",
+    },
+    {
+      id: "link-disclaimer",
+      text: "Link Disclaimer",
+      href: "https://www.usace.army.mil/Link-Disclaimer/",
+    },
+    {
+      id: "privacy-security",
+      text: "Privacy & Security",
+      href: "https://www.usace.army.mil/Privacy-and-Security/",
+    },
+    {
+      id: "site-map",
+      text: "Site Map",
+      href: "https://www.rmc.usace.army.mil/Site-Index/",
+    },
+    {
+      id: "usa-dot-gov",
+      text: "USA.gov",
+      href: "https://www.usa.gov/",
+    },
+    {
+      id: "no-fear-act",
+      text: "No Fear Act",
+      href: "https://prhome.defense.gov/NoFear/",
+    },
+    {
+      id: "eeo-sharp",
+      text: "EEO & SHARP",
+      href: "https://www.sapr.mil/",
+    },
+    {
+      id: "small-business",
+      text: "Small Business",
+      href: "https://www.usace.army.mil/Business-With-Us/Small-Business/",
+    },
+    {
+      id: "open-government",
+      text: "Open Government",
+      href: "https://open.defense.gov/",
+    },
+  ];
+
+  const externalLinks = [
+    {
+      id: "ig",
+      text: "IG",
+      href: "https://www.usace.army.mil/Who-We-Are/Engineer-Inspector-General/",
+    },
+    {
+      id: "foia",
+      text: "FOIA",
+      href: "https://www.usace.army.mil/Resources/FOIA/",
+    },
+    {
+      id: "isalute",
+      text: "iSalute",
+      href: "https://www.usainscom.army.mil/isalute/",
+    },
+  ];
+
   useEffect(() => {
     if (typeof document === "undefined") return;
 
     // Find the logo anchor specifically
-    const logoAnchor = document
-      .querySelector(
-        'header a[href="/"] img[alt="U.S. Army Corps of Engineers"]'
-      )
-      ?.closest("a");
+    const logoAnchor = document.querySelector('header a[href="/"] img[alt="U.S. Army Corps of Engineers"]')?.closest("a");
 
     if (logoAnchor && logoAnchor.getAttribute("href") !== homeHref) {
       logoAnchor.setAttribute("href", homeHref);
@@ -145,6 +216,12 @@ export default function LayoutWrapper({ children, ...rest }) {
             <SearchBar />
           </div>
         }
+        missionText="Deliver vital engineering solutions, in collaboration with our partners, to secure our Nation, energize our economy, and reduce disaster risk."
+        aboutText="The official website of the Institute for Water Resources, Risk Management Center"
+        usaceLinks={USACELinks}
+        externalLinks={externalLinks}
+        usaceLogo={false}
+        usace250Logo={true}
       >
         {children}
       </SiteWrapper>

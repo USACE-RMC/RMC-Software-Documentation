@@ -7,38 +7,7 @@ import { SiteWrapper } from "@usace/groundwork";
 import "@usace/groundwork/dist/style.css";
 import "../css/custom.css";
 
-// Set theme here: "Original" or "Groundwork"
-const theme = "Original";
-
-const links = [
-  {
-    id: "getting-started",
-    text: "Getting Started",
-    href: "/#/docs",
-    children: [
-      {
-        id: "quick-start",
-        text: "Quick Start Guide",
-        href: "/#/docs/quick-start",
-      },
-    ],
-  },
-];
-
 export default function CustomRoot(props) {
-  if (theme === "Groundwork") {
-    return (
-      <SiteWrapper usaBanner={false} fluidNav={true} subtitle="RMC Software Documentation" links={links} navRight={<SearchBar />}>
-        <CounterProvider>
-          <ReportIdProvider>
-            <Root {...props} />
-          </ReportIdProvider>
-        </CounterProvider>
-      </SiteWrapper>
-    );
-  }
-
-  // Default: Original theme
   return (
     <CounterProvider>
       <ReportIdProvider>

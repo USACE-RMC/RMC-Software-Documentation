@@ -14,12 +14,12 @@ const baseClasses = `
   ease-in-out
   border-none
   cursor-pointer
-  hover:bg-[#6799ab]
+  hover:bg-ifm-primary-lightest
   hover:text-font-color
   hover:no-underline
   disabled:opacity-60
   disabled:cursor-not-allowed
-  dark:hover:bg-[#003e53]
+  dark:hover:bg-[#195d64]
 `;
 
 export default function Button({ children, onClick, href, to, className = "", ...props }) {
