@@ -15,8 +15,8 @@ const EventTreeTOC = () => {
     <div>
       {Object.entries(versionTOC).map(([category, links]) => (
         <details key={category}>
-          <summary className="font-usace text-normal">{category.replace(/-/g, " ")}</summary>
-          <ul className="ml-4">
+          <summary className="font-usace text-normal cursor-pointer mb-2">{category.replace(/-/g, " ")}</summary>
+          <ul className="ml-4 cursor-pointer">
             {links.map(({ label, path }) => (
               <li key={path}>
                 <Link to={path}>{label}</Link>

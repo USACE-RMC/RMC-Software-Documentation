@@ -57,6 +57,8 @@ export default function LayoutWrapper({ children, ...rest }) {
 
   const toolboxAppHref = useBaseUrl("/toolboxes");
   const internalErosionHref = useBaseUrl("/toolboxes/internal-erosion-suite");
+  const bepProgressionHref = useBaseUrl("/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/preface");
+
   const overtoppingHref = useBaseUrl("/toolboxes/overtopping-erosion-suite");
   const riskCalcHref = useBaseUrl("/toolboxes/risk-calculations-suite");
   const riverineHref = useBaseUrl("/toolboxes/rivering-erosion-toolbox");
@@ -91,6 +93,11 @@ export default function LayoutWrapper({ children, ...rest }) {
           id: "internal-erosion-suite",
           text: "Internal Erosion Suite",
           href: internalErosionHref,
+          children: [
+            { id: "bep-progression", text: "Backward Erosion Piping (Progression) Toolbox Technical Manual", href: bepProgressionHref },
+            { id: "bep-progression", text: "Backward Erosion Piping (Progression) Toolbox Technical Manual", href: bepProgressionHref },
+            { id: "bep-progression", text: "Backward Erosion Piping (Progression) Toolbox Technical Manual", href: bepProgressionHref },
+          ],
         },
         {
           id: "risk-calculations-suite",
