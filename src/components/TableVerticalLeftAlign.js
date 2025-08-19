@@ -45,7 +45,7 @@ const TableVerticalLeftAlign = ({ tableKey, headers = [], columns = [], fullWidt
       <div className="table-cap">
         Table {tableInfo.tableNumber}: {caption}
       </div>
-      <table alt={alt} className={`table-base vertical-left-table table-zebra ${widthClass}`}>
+      <table alt={alt} className={`table-base vertical-left-table table-zebra ${widthClass} ${tableKey}`}>
         <thead>
           {headers.map((headerRow, rowIndex) => {
             const rowCells = [];

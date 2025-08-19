@@ -18,7 +18,7 @@ const TableVerticalLeftAlignNoRef = ({
     <div className="table-container">
       <table
         alt={alt}
-        className={`table-base vertical-left-table table-zebra ${widthClass}`}
+        className={`table-base vertical-left-table table-zebra ${widthClass} ${tableKey}`}
       >
         <thead>
           {headers.map((headerRow, rowIndex) => {

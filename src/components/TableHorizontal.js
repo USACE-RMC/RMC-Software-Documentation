@@ -42,7 +42,7 @@ const TableHorizontal = ({ tableKey, headers, rows, alt, caption }) => {
       <div className="table-cap">
         Table {tableInfo.tableNumber}: {caption}
       </div>
-      <table alt={alt} className="table-base horizontal-table table-zebra">
+      <table alt={alt} className={`table-base horizontal-table table-zebra ${widthClass} ${tableKey}`}>
         <tbody>
           {headers.map((header, index) => (
             <tr key={index}>
