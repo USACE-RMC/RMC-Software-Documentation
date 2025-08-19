@@ -39,9 +39,6 @@ export default function LST() {
     <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
       <main>
         <div className="title-container">
-          <div className="title-container-nav-link">
-            <Link to={`${addBaseUrl("web-applications")}`}>&larr; Web Applications</Link>
-          </div>
           <img src={addBaseUrl("img/WebAppFilled.png")}></img>
           <div className="text-container">
             <p className="text-title">Levee Screening Tool</p>

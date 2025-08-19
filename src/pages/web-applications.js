@@ -31,9 +31,6 @@ export default function WebApps() {
     <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
       <main>
         <div className="title-container">
-          <div className="title-container-nav-link">
-            <Link to={addBaseUrl("/")}>&larr; Home</Link>
-          </div>
           <img src={addBaseUrl("img/WebAppFilled.png")}></img>
           <div className="text-container">
             <p className="text-title">Web Applications</p>

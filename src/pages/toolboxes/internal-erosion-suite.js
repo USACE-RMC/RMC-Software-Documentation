@@ -115,9 +115,6 @@ export default function InternalErosionSuite() {
     <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
       <main>
         <div className="title-container">
-          <div className="title-container-nav-link">
-            <Link to={`${addBaseUrl("toolboxes")}`}>&larr; Toolbox Suites</Link>
-          </div>
           <img src={addBaseUrl("img/ToolboxFilled.png")} />
           <div className="text-container">
             <p className="text-title">Internal Erosion Suite</p>

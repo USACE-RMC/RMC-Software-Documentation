@@ -24,8 +24,8 @@ const ContentBubble = ({ icon, doc_location, doc_name, active }) => {
 
   return active ? (
     <a href={doc_location} className={baseClasses}>
-      <div className="mt-[10px]">
-        <img src={icon} className="w-[60px] h-auto" />
+      <div className="mt-0 shrink-0">
+        <img src={icon} className="w-[50px] h-auto" />
       </div>
       <div className="text-ifm-primary">
         <p className="font-usace lg:text-content-bubble no-underline leading-[1.2] mb-0 md:text-normal">{doc_name}</p>
@@ -33,11 +33,11 @@ const ContentBubble = ({ icon, doc_location, doc_name, active }) => {
     </a>
   ) : (
     <div className={`${baseClasses} ${inactiveClasses}`}>
-      <div className="mt-[10px]">
-        <img src={icon} className="w-[60px] h-auto" />
+      <div className="mt-0 shrink-0">
+        <img src={icon} className="w-[50px] h-auto" />
       </div>
       <div className="text-ifm-primary">
-        <p className="font-usace lg:text-content-bubble no-underline leading-[1.2] mb-0 md:text-normal">{doc_name}</p>
+        <p className="font-usace lg:text-content-bubble no-underline leading-[1.2] mb-[10px] md:text-normal">{doc_name}</p>
         <p className="font-usace lg:text-content-bubble no-underline leading-none md:text-normal">Coming soon!</p>
       </div>
     </div>
