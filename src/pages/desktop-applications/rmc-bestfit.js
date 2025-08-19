@@ -39,9 +39,6 @@ export default function BestFit() {
     <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
       <main>
         <div className="title-container">
-          <div className="title-container-nav-link">
-            <Link to={`${addBaseUrl("desktop-applications")}`}>&larr; Desktop Applications</Link>
-          </div>
           <img src={addBaseUrl("img/BestFit.png")}></img>
           <div className="text-container">
             <p className="text-title">RMC BestFit</p>
