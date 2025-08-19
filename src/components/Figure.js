@@ -49,7 +49,7 @@ const Figure = ({ figKey, src, alt, caption, width = "80%" }) => {
       border-y border-border-color"
     >
       <img src={`/RMC-Software-Documentation/${src}`} alt={alt} className="h-auto block" style={{ maxWidth: width }} />
-      <figcaption className="max-w-full font-usace text-caption italic text-left text-gray-500 mt-[1em]">
+      <figcaption className="max-w-full font-usace text-caption italic text-left text-gray-500 dark:text-gray-400 mt-[1em]">
         Figure {figInfo.figNumber}: {caption}
       </figcaption>
     </figure>

@@ -30,7 +30,7 @@ const ContentBubbleLarge = ({ icon, doc_location, doc_name, contentCardData = []
       <div className="flex h-[40%] justify-center">
         <img src={icon} className="w-auto h-full" />
       </div>
-      <div className="text-ifm-primary">
+      <div className="text-font-color">
         <p className="font-usace lg:text-3xl md:text-xlarge sm:text-xlarge text-center no-underline leading-[1.2] mt-5 mb-0">{doc_name}</p>
       </div>
       <div className="w-fit h-[200px] mt-[10px] mb-0 mx-auto flex flex-col items-start">
@@ -44,7 +44,7 @@ const ContentBubbleLarge = ({ icon, doc_location, doc_name, contentCardData = []
       <div className="flex h-[40%] justify-center">
         <img src={icon} alt="icon" className="w-auto h-full" />
       </div>
-      <div className="text-ifm-primary">
+      <div className="text-font-color">
         <p className="font-usace lg:text-3xl md:text-xlarge sm:text-xlarge text-center no-underline leading-[1.2] mt-5 mb-0">{doc_name}</p>
       </div>
       <div className="w-fit h-[200px] mt-[10px] mb-0 mx-auto flex flex-col items-start">

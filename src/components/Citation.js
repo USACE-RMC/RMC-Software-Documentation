@@ -14,7 +14,6 @@ const EMPTY = Object.freeze([]); // stable empty snapshot
 
 function emitIfChanged(docId, changed) {
   if (!changed) return;
-  // Rebuild cached snapshot ONLY when the set has changed
   const set = usedCitations.get(docId);
   snapshots.set(docId, set && set.size ? Array.from(set) : EMPTY);
   listeners.forEach((l) => l());
@@ -26,7 +25,6 @@ function subscribe(listener) {
 }
 
 function getSnapshotFor(docId) {
-  // Return the stable cached array; initialize if missing
   if (!snapshots.has(docId)) snapshots.set(docId, EMPTY);
   return snapshots.get(docId);
 }
@@ -61,7 +59,6 @@ export function resetCitations(docId) {
 }
 
 export function useUsedCitations(docId) {
-  // Important: getSnapshot returns the SAME reference unless store changed
   return useSyncExternalStore(subscribe, () => getSnapshotFor(docId), getServerSnapshot);
 }
 
@@ -78,6 +75,7 @@ const Citation = ({ citationKey }) => {
   const bibFilePath = `${reportPath}/bib.json`;
   const countersFilePath = reportId ? `/RMC-Software-Documentation/counters/${reportId}.json` : null;
 
+  // Number comes from counters (original logic)
   useEffect(() => {
     let isMounted = true;
     const run = async () => {
@@ -97,6 +95,7 @@ const Citation = ({ citationKey }) => {
     };
   }, [citationKey, countersFilePath]);
 
+  // Optional: keep bib lookup (unchanged)
   useEffect(() => {
     let isMounted = true;
     const run = async () => {
@@ -116,7 +115,7 @@ const Citation = ({ citationKey }) => {
     };
   }, [citationKey, bibFilePath]);
 
-  // Register/unregister with the store
+  // Register/unregister with the store (fixes timing issues)
   useEffect(() => {
     if (!citationKey) return;
     addCitation(pathname, citationKey);

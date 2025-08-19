@@ -14,7 +14,7 @@ const CitationFootnote = () => {
   const bibFilePath = `${reportPath}/bib.json`;
   const countersFilePath = reportId ? `/RMC-Software-Documentation/counters/${reportId}.json` : null;
 
-  // Subscribe to the (cached) snapshot for this page
+  // Subscribe to per-page used keys (for filtering to only those used here)
   const usedKeys = useUsedCitations(pathname);
 
   useEffect(() => {
@@ -32,14 +32,15 @@ const CitationFootnote = () => {
         const bibData = await bibRes.json();
         const counters = await countersRes.json();
 
+        // Build entries for only the citations used on this page
         const entries = usedKeys
           .map((citationKey) => {
             const bib = bibData.find((c) => c.citationKey === citationKey) || {};
             const entry = counters?.citations?.[citationKey];
-            return entry ? { ...bib, citationKey, number: entry.citationNumber } : null;
+            return entry ? { ...bib, citationKey, number: entry.citationNumber } : null; // drop if not in counters (matches original)
           })
           .filter(Boolean)
-          .sort((a, b) => a.number - b.number);
+          .sort((a, b) => a.number - b.number); // order by counters number (original logic)
 
         if (isMounted) setCitations(entries);
       } catch (error) {
@@ -66,10 +67,10 @@ const CitationFootnote = () => {
   const formatCitation = (citation) => {
     const { author, year, title, journal, booktitle, report, manual, institution, organization, location, address, volume, edition, pages, doi, url, publisher, entryType } = citation;
 
-    const formatTitle = (title, entryType) => {
-      if (entryType === "inproceedings") return `"${title}",`;
-      if (entryType === "manual") return <i>{`${title},`}</i>;
-      return <i>{`${title},`}</i>;
+    const formatTitle = (t, type) => {
+      if (type === "inproceedings") return `"${t}",`;
+      if (type === "manual") return <i>{`${t},`}</i>;
+      return <i>{`${t},`}</i>;
     };
 
     return (
