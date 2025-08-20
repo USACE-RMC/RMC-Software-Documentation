@@ -1,12 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: ["class", '[data-theme="dark"]'],
-  content: [
-    "./src/**/*.{js,ts,jsx,tsx}",
-    "./docs/**/*.{js,ts,jsx,tsx,md,mdx}",
-    "./blog/**/*.{js,ts,jsx,tsx,md,mdx}",
-    "./index.html",
-  ],
+  content: ["./src/**/*.{js,ts,jsx,tsx}", "./docs/**/*.{js,ts,jsx,tsx,md,mdx}", "./blog/**/*.{js,ts,jsx,tsx,md,mdx}", "./index.html"],
   theme: {
     extend: {
       fontFamily: {
@@ -32,6 +27,7 @@ export default {
         h5: "clamp(0.925rem, 1.5vw, 1.1rem)",
         h6: "clamp(0.85rem, 1.2vw, 1.0rem)",
         caption: "clamp(0.7rem, 2vw, 0.9rem)",
+        footnote: "clamp(0.7rem, 2vw, 0.9rem)",
         normal: "clamp(0.8rem, 2vw, 1.0rem)",
         "content-bubble": "clamp(1.0rem, 2vw, 1.2rem)",
         large: "clamp(1.1rem, 2vw, 1.5rem)",
