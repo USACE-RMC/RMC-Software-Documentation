@@ -4,7 +4,16 @@ import "../css/custom.css";
 import "../css/tables.css";
 import { useReportId } from "../contexts/ReportIdContext";
 
-const TableVertical = ({ tableKey, headers = [], columns = [], alt, caption, colWidths, colAlign, widthMode = "full" }) => {
+const TableVertical = ({
+  tableKey,
+  headers = [],
+  columns = [],
+  alt,
+  caption,
+  colWidths,
+  colAlign,
+  widthMode = "full",
+}) => {
   const [tableInfo, setTableInfo] = useState(null);
   const reportId = useReportId();
 
@@ -59,7 +68,8 @@ const TableVertical = ({ tableKey, headers = [], columns = [], alt, caption, col
   }
 
   // For header alignment with colSpan: use the alignment of the first covered column
-  const headerCellAlign = (startColIndex /* 0-based */) => `var(--a${startColIndex + 1}, left)`;
+  const headerCellAlign = (startColIndex /* 0-based */) =>
+    `var(--a${startColIndex + 1}, left)`;
 
   const skipBodyCells = new Set();
 
@@ -69,7 +79,11 @@ const TableVertical = ({ tableKey, headers = [], columns = [], alt, caption, col
         Table {tableInfo.tableNumber}: {caption}
       </div>
 
-      <table aria-label={alt} className={`table-base table-zebra`} style={styleVars}>
+      <table
+        aria-label={alt}
+        className={`table-base table-zebra`}
+        style={styleVars}
+      >
         {/* Widths via CSS vars (one <col> per data column) */}
         <colgroup>
           {Array.from({ length: colCount }).map((_, i) => (
@@ -87,7 +101,13 @@ const TableVertical = ({ tableKey, headers = [], columns = [], alt, caption, col
                   const { value, colSpan = 1, rowSpan = 1 } = cell;
                   const style = { textAlign: headerCellAlign(cursor) };
                   const th = (
-                    <th key={`header-${rowIndex}-${colIndex}`} colSpan={colSpan > 1 ? colSpan : undefined} rowSpan={rowSpan > 1 ? rowSpan : undefined} className="table-header" style={style}>
+                    <th
+                      key={`header-${rowIndex}-${colIndex}`}
+                      colSpan={colSpan > 1 ? colSpan : undefined}
+                      rowSpan={rowSpan > 1 ? rowSpan : undefined}
+                      className="table-header"
+                      style={style}
+                    >
                       {value}
                     </th>
                   );
@@ -133,7 +153,14 @@ const TableVertical = ({ tableKey, headers = [], columns = [], alt, caption, col
                 }
 
                 return (
-                  <td key={cellKey} className="table-body-cell" style={{ textAlign: `var(--a${colIndex + 1}, left)` }} dangerouslySetInnerHTML={typeof raw === "string" ? renderHTML(raw) : undefined}>
+                  <td
+                    key={cellKey}
+                    className="table-body-cell"
+                    style={{ textAlign: `var(--a${colIndex + 1}, left)` }}
+                    dangerouslySetInnerHTML={
+                      typeof raw === "string" ? renderHTML(raw) : undefined
+                    }
+                  >
                     {typeof raw === "string" ? undefined : raw}
                   </td>
                 );

@@ -30,7 +30,13 @@ function ThemeToggle() {
       className="h-8 w-8 rounded-md flex items-center justify-center"
       onClick={() => cm.setColorMode(target)}
     >
-      <img src={iconUrl} alt="" aria-hidden="true" className="h-6 w-6" decoding="async" />
+      <img
+        src={iconUrl}
+        alt=""
+        aria-hidden="true"
+        className="h-6 w-6"
+        decoding="async"
+      />
     </button>
   );
 }
@@ -61,19 +67,51 @@ export default function LayoutWrapper({ children, ...rest }) {
 
   // Desktop Application Document Links
   // RMC-TotalRisk Documents
-  const trUserGuideHref = useBaseUrl(`/docs/desktop-applications/rmc-totalrisk/users-guide/${latestVersions["desktop-applications/rmc-totalrisk/users-guide"] || "v1.0"}/preface`);
-  const trAppHref = useBaseUrl(`/docs/desktop-applications/rmc-totalrisk/applications-guide/${latestVersions["desktop-applications/rmc-totalrisk/applications-guide"] || "v1.0"}/preface`);
-  const trVerifHref = useBaseUrl(`/docs/desktop-applications/rmc-totalrisk/verification-report/${latestVersions["desktop-applications/rmc-totalrisk/verification-report"] || "v1.0"}/preface`);
+  const trUserGuideHref = useBaseUrl(
+    `/docs/desktop-applications/rmc-totalrisk/users-guide/${
+      latestVersions["desktop-applications/rmc-totalrisk/users-guide"] || "v1.0"
+    }/preface`
+  );
+  const trAppHref = useBaseUrl(
+    `/docs/desktop-applications/rmc-totalrisk/applications-guide/${
+      latestVersions["desktop-applications/rmc-totalrisk/applications-guide"] ||
+      "v1.0"
+    }/preface`
+  );
+  const trVerifHref = useBaseUrl(
+    `/docs/desktop-applications/rmc-totalrisk/verification-report/${
+      latestVersions[
+        "desktop-applications/rmc-totalrisk/verification-report"
+      ] || "v1.0"
+    }/preface`
+  );
 
   // RMC-BestFit Documents
-  const bestFitUserGuideHref = useBaseUrl(`/docs/desktop-applications/rmc-bestfit/users-guide/${latestVersions["desktop-applications/rmc-bestfit/users-guide"] || "v1.0"}/preface`);
+  const bestFitUserGuideHref = useBaseUrl(
+    `/docs/desktop-applications/rmc-bestfit/users-guide/${
+      latestVersions["desktop-applications/rmc-bestfit/users-guide"] || "v1.0"
+    }/preface`
+  );
 
   // RMC-RFA Documents
-  const rfaUserGuideHref = useBaseUrl(`/docs/desktop-applications/rmc-rfa/users-guide/${latestVersions["desktop-applications/rmc-rfa/users-guide"] || "v1.0"}/preface`);
+  const rfaUserGuideHref = useBaseUrl(
+    `/docs/desktop-applications/rmc-rfa/users-guide/${
+      latestVersions["desktop-applications/rmc-rfa/users-guide"] || "v1.0"
+    }/preface`
+  );
 
   // LifeSim Documents
-  const lifeSimUserGuideHref = useBaseUrl(`/docs/desktop-applications/lifesim/users-guide/${latestVersions["desktop-applications/lifesim/users-guide"] || "v1.0"}/preface`);
-  const lifeSimValStudiesHref = useBaseUrl(`/docs/desktop-applications/lifesim/validation-studies/${latestVersions["desktop-applications/lifesim/validation-studies"] || "v1.0"}/preface`);
+  const lifeSimUserGuideHref = useBaseUrl(
+    `/docs/desktop-applications/lifesim/users-guide/${
+      latestVersions["desktop-applications/lifesim/users-guide"] || "v1.0"
+    }/preface`
+  );
+  const lifeSimValStudiesHref = useBaseUrl(
+    `/docs/desktop-applications/lifesim/validation-studies/${
+      latestVersions["desktop-applications/lifesim/validation-studies"] ||
+      "v1.0"
+    }/preface`
+  );
 
   // Toolbox Technical Manuals Sub-Hub Links
   const internalErosionHref = useBaseUrl("/toolboxes/internal-erosion-suite");
@@ -88,33 +126,49 @@ export default function LayoutWrapper({ children, ...rest }) {
   // Internal Erosion Suite Documents
   const bepProgressionHref = useBaseUrl(
     `/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/${
-      latestVersions["toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression"] || "v1.0"
+      latestVersions[
+        "toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression"
+      ] || "v1.0"
     }/preface`
   );
   const continuationHref = useBaseUrl(
     `/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/${
-      latestVersions["toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation"] || "v1.0"
+      latestVersions[
+        "toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation"
+      ] || "v1.0"
     }/preface`
   );
   const SCEHref = useBaseUrl(
     `/docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/${
-      latestVersions["toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation"] || "v1.0"
+      latestVersions[
+        "toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation"
+      ] || "v1.0"
     }/preface`
   );
 
   // Risk Calculations Suite Documents
   const etDatabaseHref = useBaseUrl(
     `/docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/${
-      latestVersions["toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database"] || "v1.0"
+      latestVersions[
+        "toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database"
+      ] || "v1.0"
     }/preface`
   );
 
   // Seismic Hazard Suite Documents
   const siteClassHref = useBaseUrl(
-    `/docs/toolbox-technical-manuals/seismic-hazard-suite/site-classification/${latestVersions["toolbox-technical-manuals/seismic-hazzard-suite/site-classification"] || "v1.0"}/preface`
+    `/docs/toolbox-technical-manuals/seismic-hazard-suite/site-classification/${
+      latestVersions[
+        "toolbox-technical-manuals/seismic-hazzard-suite/site-classification"
+      ] || "v1.0"
+    }/preface`
   );
   const seismicHazardCurvesHref = useBaseUrl(
-    `/docs/toolbox-technical-manuals/seismic-hazard-suite/seismic-hazard-curves/${latestVersions["toolbox-technical-manuals/seismic-hazzard-suite/seismic-hazard-curve"] || "v1.0"}/preface`
+    `/docs/toolbox-technical-manuals/seismic-hazard-suite/seismic-hazard-curves/${
+      latestVersions[
+        "toolbox-technical-manuals/seismic-hazzard-suite/seismic-hazard-curve"
+      ] || "v1.0"
+    }/preface`
   );
 
   // Web Application  Sub-Hub Links
@@ -137,17 +191,42 @@ export default function LayoutWrapper({ children, ...rest }) {
           id: "rmc-totalrisk",
           text: "RMC-TotalRisk",
           href: totalRiskHref,
-          children: [{ id: "tr-users-guide", text: "RMC-TotalRisk User's Guide", href: trUserGuideHref }],
+          children: [
+            {
+              id: "tr-users-guide",
+              text: "RMC-TotalRisk User's Guide",
+              href: trUserGuideHref,
+            },
+          ],
         },
-        { id: "rmc-bestfit", text: "RMC-BestFit", href: bestFitHref, children: [{ id: "bestfit-users-guide", text: "RMC-BestFit User's Guide", href: bestFitUserGuideHref }] },
+        {
+          id: "rmc-bestfit",
+          text: "RMC-BestFit",
+          href: bestFitHref,
+          children: [
+            {
+              id: "bestfit-users-guide",
+              text: "RMC-BestFit User's Guide",
+              href: bestFitUserGuideHref,
+            },
+          ],
+        },
         { id: "rmc-rfa", text: "RMC-RFA", href: rfaHref },
         {
           id: "lifesim",
           text: "LifeSim",
           href: lifeSimHref,
           children: [
-            { id: "lifesim-users-guide", text: "LifeSim User's Guide", href: lifeSimUserGuideHref },
-            { id: "lifesim-validation-studies", text: "LifeSim Validation Studies", href: lifeSimValStudiesHref },
+            {
+              id: "lifesim-users-guide",
+              text: "LifeSim User's Guide",
+              href: lifeSimUserGuideHref,
+            },
+            {
+              id: "lifesim-validation-studies",
+              text: "LifeSim Validation Studies",
+              href: lifeSimValStudiesHref,
+            },
           ],
         },
       ],
@@ -162,24 +241,50 @@ export default function LayoutWrapper({ children, ...rest }) {
           text: "Internal Erosion Suite",
           href: internalErosionHref,
           children: [
-            { id: "bep-progression", text: "Backward Erosion Piping (Progression) Toolbox Technical Manual", href: bepProgressionHref },
-            { id: "continuation", text: "Filter Evaluation (Continuation) Toolbox Technical Manual", href: continuationHref },
-            { id: "soil-contact-erosion", text: "Soil Contact Erosion (Continuation) Toolbox Technical Manual", href: SCEHref },
+            {
+              id: "bep-progression",
+              text: "Backward Erosion Piping (Progression) Toolbox Technical Manual",
+              href: bepProgressionHref,
+            },
+            {
+              id: "continuation",
+              text: "Filter Evaluation (Continuation) Toolbox Technical Manual",
+              href: continuationHref,
+            },
+            {
+              id: "soil-contact-erosion",
+              text: "Soil Contact Erosion (Continuation) Toolbox Technical Manual",
+              href: SCEHref,
+            },
           ],
         },
         {
           id: "risk-calculations-suite",
           text: "Risk Calculations Suite",
           href: riskCalcHref,
-          children: [{ id: "et-database", text: "Typical Event Tree Database", href: etDatabaseHref }],
+          children: [
+            {
+              id: "et-database",
+              text: "Typical Event Tree Database",
+              href: etDatabaseHref,
+            },
+          ],
         },
         {
           id: "seismic-hazard-suite",
           text: "Seismic Hazard Suite",
           href: seismicHref,
           children: [
-            { id: "site-classification", text: "Site Classification Toolbox Technical Manual", href: siteClassHref },
-            { id: "seismic-hazard-curves", text: "Seismic Hazard Curves Toolbox Technical Manual", href: seismicHazardCurvesHref },
+            {
+              id: "site-classification",
+              text: "Site Classification Toolbox Technical Manual",
+              href: siteClassHref,
+            },
+            {
+              id: "seismic-hazard-curves",
+              text: "Seismic Hazard Curves Toolbox Technical Manual",
+              href: seismicHazardCurvesHref,
+            },
           ],
         },
       ],
@@ -276,7 +381,11 @@ export default function LayoutWrapper({ children, ...rest }) {
     if (typeof document === "undefined") return;
 
     // Find the logo anchor specifically
-    const logoAnchor = document.querySelector('header a[href="/"] img[alt="U.S. Army Corps of Engineers"]')?.closest("a");
+    const logoAnchor = document
+      .querySelector(
+        'header a[href="/"] img[alt="U.S. Army Corps of Engineers"]'
+      )
+      ?.closest("a");
 
     if (logoAnchor && logoAnchor.getAttribute("href") !== homeHref) {
       logoAnchor.setAttribute("href", homeHref);
@@ -291,7 +400,7 @@ export default function LayoutWrapper({ children, ...rest }) {
         subtitle="Institute for Water Resources, Risk Management Center Website"
         links={links}
         navRight={
-          <div className="flex items-center gap-2">
+          <div className="ml-20 flex items-center gap-2">
             <ThemeToggle />
             <SearchBar />
           </div>
