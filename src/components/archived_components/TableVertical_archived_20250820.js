@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import "../css/custom.css";
-import "../css/tables.css"; // ✅ Use unified table styles
-import { useReportId } from "../contexts/ReportIdContext";
+import "../css/tables.css";
+import { useReportId } from "../../contexts/ReportIdContext";
 
-const TableVerticalLeftAlign = ({ tableKey, headers = [], columns = [], fullWidth = true, alt, caption }) => {
+const TableVertical = ({ tableKey, headers = [], columns = [], fullWidth = true, alt, caption }) => {
   const [tableInfo, setTableInfo] = useState(null);
   const reportId = useReportId();
 
@@ -37,7 +37,6 @@ const TableVerticalLeftAlign = ({ tableKey, headers = [], columns = [], fullWidt
 
   const rowCount = columns.length > 0 ? columns[0].length : 0;
   const widthClass = fullWidth ? "vertical-table-full" : "vertical-table-partial";
-
   const skipBodyCells = new Set();
 
   return (
@@ -45,7 +44,7 @@ const TableVerticalLeftAlign = ({ tableKey, headers = [], columns = [], fullWidt
       <div className="table-cap">
         Table {tableInfo.tableNumber}: {caption}
       </div>
-      <table alt={alt} className={`table-base vertical-left-table table-zebra ${widthClass} ${tableKey}`}>
+      <table alt={alt} className={`table-base vertical-table table-zebra ${widthClass} ${tableKey}`}>
         <thead>
           {headers.map((headerRow, rowIndex) => {
             const rowCells = [];
@@ -103,4 +102,4 @@ const TableVerticalLeftAlign = ({ tableKey, headers = [], columns = [], fullWidt
   );
 };
 
-export default TableVerticalLeftAlign;
+export default TableVertical;

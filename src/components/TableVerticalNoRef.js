@@ -1,40 +1,8 @@
-import React, { useEffect, useState } from "react";
-import useBaseUrl from "@docusaurus/useBaseUrl";
+import React from "react";
 import "../css/custom.css";
 import "../css/tables.css";
-import { useReportId } from "../contexts/ReportIdContext";
 
-const TableVertical = ({ tableKey, headers = [], columns = [], alt, caption, colWidths, colAlign, widthMode = "full" }) => {
-  const [tableInfo, setTableInfo] = useState(null);
-  const reportId = useReportId();
-
-  useEffect(() => {
-    if (!reportId) return;
-
-    const jsonPath = `/RMC-Software-Documentation/counters/${reportId}.json`;
-
-    const loadCounters = async () => {
-      try {
-        const response = await fetch(jsonPath);
-        if (!response.ok) throw new Error(`Failed to load ${jsonPath}`);
-        const data = await response.json();
-
-        const foundTable = data?.tables?.[tableKey];
-        if (foundTable) {
-          setTableInfo(foundTable);
-        } else {
-          console.warn(`Table key "${tableKey}" not found in ${jsonPath}`);
-        }
-      } catch (error) {
-        console.error("Error loading counters:", error);
-      }
-    };
-
-    loadCounters();
-  }, [reportId, tableKey]);
-
-  if (!tableInfo) return <span>Loading...</span>;
-
+const TableVerticalNoRef = ({ headers = [], columns = [], fullWidth = true, alt, colWidths, colAlign, widthMode = "full" }) => {
   const renderHTML = (content) => ({ __html: content });
 
   const colCount = columns.length ?? 0;
@@ -65,11 +33,7 @@ const TableVertical = ({ tableKey, headers = [], columns = [], alt, caption, col
 
   return (
     <div className="table-container">
-      <div className="table-cap">
-        Table {tableInfo.tableNumber}: {caption}
-      </div>
-
-      <table aria-label={alt} className={`table-base table-zebra`} style={styleVars}>
+      <table aria-label={alt} className="table-base table-zebra" style={styleVars}>
         {/* Widths via CSS vars (one <col> per data column) */}
         <colgroup>
           {Array.from({ length: colCount }).map((_, i) => (
@@ -146,4 +110,4 @@ const TableVertical = ({ tableKey, headers = [], columns = [], alt, caption, col
   );
 };
 
-export default TableVertical;
+export default TableVerticalNoRef;
