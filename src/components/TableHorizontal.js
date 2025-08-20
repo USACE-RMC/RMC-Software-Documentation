@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import useBaseUrl from "@docusaurus/useBaseUrl";
 import "../css/custom.css";
 import "../css/tables.css";
 import { useReportId } from "../contexts/ReportIdContext";
@@ -33,16 +32,23 @@ const TableHorizontal = ({ tableKey, headers, rows, alt, caption }) => {
     loadCounters();
   }, [reportId, tableKey]);
 
-  if (!tableInfo) return <span>Loading...</span>;
-
   const renderHTML = (content) => ({ __html: content });
+
+  const columnCount = 1 + (rows?.[0]?.length ?? 0);
+
+  if (!tableInfo) return <span>Loading...</span>;
 
   return (
     <div className="table-container">
       <div className="table-cap">
         Table {tableInfo.tableNumber}: {caption}
       </div>
-      <table alt={alt} className={`table-base horizontal-table table-zebra ${widthClass} ${tableKey}`}>
+      <table aria-label={alt} className={`table-base horizontal-table table-zebra ${tableKey}`}>
+        <colgroup>
+          {Array.from({ length: columnCount }).map((_, i) => (
+            <col key={i} style={{ width: `var(--c${i + 1}, auto)` }} />
+          ))}
+        </colgroup>
         <tbody>
           {headers.map((header, index) => (
             <tr key={index}>

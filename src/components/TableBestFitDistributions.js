@@ -8,7 +8,7 @@ const TableBestFitDistributions = ({ headerConfig, headers, columns, fullWidth =
 
   return (
     <div className="table-container">
-      <table className={`table-base bestfit-table table-zebra ${widthClass} ${tableKey}`}>
+      <table className={`table-base bestfit-table table-zebra`}>
         <thead>
           <tr>
             {(headerConfig || headers).map((header, index) =>

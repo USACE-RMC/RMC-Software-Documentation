@@ -1,25 +1,15 @@
 import "../css/custom.css";
 import "../css/tables.css";
 
-const TableVerticalLeftAlignNoRef = ({
-  headers = [],
-  columns = [],
-  fullWidth = true,
-  alt,
-}) => {
+const TableVerticalLeftAlignNoRef = ({ headers = [], columns = [], fullWidth = true, alt }) => {
   const rowCount = columns.length > 0 ? columns[0].length : 0;
-  const widthClass = fullWidth
-    ? "vertical-table-full"
-    : "vertical-table-partial";
+  const widthClass = fullWidth ? "vertical-table-full" : "vertical-table-partial";
 
   const skipBodyCells = new Set();
 
   return (
     <div className="table-container">
-      <table
-        alt={alt}
-        className={`table-base vertical-left-table table-zebra ${widthClass} ${tableKey}`}
-      >
+      <table alt={alt} className={`table-base vertical-left-table table-zebra ${widthClass}`}>
         <thead>
           {headers.map((headerRow, rowIndex) => {
             const rowCells = [];
@@ -31,11 +21,7 @@ const TableVerticalLeftAlignNoRef = ({
               const { value, colSpan = 1, rowSpan = 1 } = cell;
 
               rowCells.push(
-                <th
-                  key={`header-${rowIndex}-${colIndex}`}
-                  colSpan={colSpan > 1 ? colSpan : undefined}
-                  rowSpan={rowSpan > 1 ? rowSpan : undefined}
-                >
+                <th key={`header-${rowIndex}-${colIndex}`} colSpan={colSpan > 1 ? colSpan : undefined} rowSpan={rowSpan > 1 ? rowSpan : undefined}>
                   {value}
                 </th>
               );
@@ -53,11 +39,7 @@ const TableVerticalLeftAlignNoRef = ({
 
                 const cell = col[rowIndex];
 
-                if (
-                  typeof cell === "object" &&
-                  cell !== null &&
-                  "value" in cell
-                ) {
+                if (typeof cell === "object" && cell !== null && "value" in cell) {
                   const { value, rowSpan = 1, colSpan = 1 } = cell;
 
                   for (let r = 0; r < rowSpan; r++) {
@@ -69,11 +51,7 @@ const TableVerticalLeftAlignNoRef = ({
                   }
 
                   return (
-                    <td
-                      key={cellKey}
-                      rowSpan={rowSpan > 1 ? rowSpan : undefined}
-                      colSpan={colSpan > 1 ? colSpan : undefined}
-                    >
+                    <td key={cellKey} rowSpan={rowSpan > 1 ? rowSpan : undefined} colSpan={colSpan > 1 ? colSpan : undefined}>
                       {value}
                     </td>
                   );
