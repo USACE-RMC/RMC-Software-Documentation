@@ -36,6 +36,8 @@
   --sidebar-background-color: #f1f2f3;
   --sidebar-text-color: var(--font-color);
   --border-color: #e5e7eb;
+  --ifm-navbar-height: 72px; /* Adjusted for Groundwork header */
+  --ifm-scroll-padding-top: 72px; /* Adjusted for Groundwork header */
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
@@ -63,6 +65,28 @@
   --border-color: #2a2f31;
 }
 
+/* Make flex children shrink instead of forcing the page wider */
+.theme-doc-markdown, /* main markdown container */
+.markdown,
+.container, 
+.row, 
+.col,
+.main-wrapper,
+.theme-doc-markdown > div {
+  min-width: 0; /* critical */
+}
+
+/* Code blocks & inline code shouldn’t widen the page */
+pre,
+code,
+.theme-code-block,
+.theme-code-block pre {
+  max-width: 100%;
+  overflow-x: auto; /* local scroll if needed */
+  white-space: pre-wrap; /* wraps long tokens when allowed */
+  word-break: break-word;
+}
+
 .main-wrapper {
   @apply bg-background-theme text-font-color;
 }
@@ -70,9 +94,14 @@
 /* left sidebar navigation */
 .theme-doc-sidebar-container {
   @apply bg-sidebar-bg;
+  top: var(--ifm-navbar-height);
 }
 
 /* right sidebar navigation*/
+.table-of-contents {
+  top: var(--ifm-navbar-height);
+}
+
 .table-of-contents__link {
   @apply font-usace text-normal text-font-color;
 }
@@ -187,6 +216,10 @@
 
 .container {
   @apply my-0 mx-auto max-w-full pl-10;
+}
+
+.markdown :where(h1, h2, h3, h4, h5, h6)[id] {
+  scroll-margin-top: var(--ifm-navbar-height);
 }
 
 .markdown h1,

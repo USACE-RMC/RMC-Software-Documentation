@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import "../css/custom.css";
 import "../css/tables.css"; // ✅ Use unified table styles
-import { useReportId } from "../contexts/ReportIdContext";
+import { useReportId } from "../../contexts/ReportIdContext";
 
 const TableVerticalLeftAlign = ({ tableKey, headers = [], columns = [], fullWidth = true, alt, caption }) => {
   const [tableInfo, setTableInfo] = useState(null);

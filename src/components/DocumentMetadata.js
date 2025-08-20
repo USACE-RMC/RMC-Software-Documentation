@@ -1,6 +1,6 @@
 import React from "react";
 import "../css/custom.css";
-import "../css/tables.css"; // ✅ unified table styles
+import "../css/tables.css";
 
 const DocumentMetadata = ({ metadata }) => {
   if (!metadata) return null;
@@ -23,6 +23,9 @@ const DocumentMetadata = ({ metadata }) => {
     return { __html: content };
   };
 
+  const COL_WIDTHS = ["22ch", "auto"];
+  const ALIGN = ["center", "left"];
+
   // Create array of [header, value] pairs
   const metadataItems = [
     ["Report Date", reportDate],
@@ -41,12 +44,34 @@ const DocumentMetadata = ({ metadata }) => {
 
   return (
     <div className="table-container">
-      <table className="table-base metadata-table table-zebra">
+      <table className="table-base table-zebra" aria-label="Document metadata">
+        <colgroup>
+          <col style={{ width: COL_WIDTHS[0] }} />
+          <col style={{ width: COL_WIDTHS[1] }} />
+        </colgroup>
+
         <tbody>
-          {filteredItems.map(([header, value], index) => (
-            <tr key={index}>
-              <th dangerouslySetInnerHTML={renderHTML(header)} />
-              <td dangerouslySetInnerHTML={renderHTML(value)} />
+          {filteredItems.map(([header, value], i) => (
+            <tr key={i}>
+              <th
+                className="table-header"
+                style={{
+                  textAlign: ALIGN[0],
+                  minWidth: 0,
+                }}
+                dangerouslySetInnerHTML={renderHTML(header)}
+              />
+              <td
+                className="table-body-cell"
+                style={{
+                  textAlign: ALIGN[1],
+                  minWidth: 0,
+                  overflowWrap: "anywhere",
+                  wordBreak: "break-word",
+                  hyphens: "auto",
+                }}
+                dangerouslySetInnerHTML={renderHTML(value)}
+              />
             </tr>
           ))}
         </tbody>
