@@ -121,7 +121,7 @@ async function imageBlobToPngBlobAny(srcBlob) {
 }
 
 /* ---------- main component ---------- */
-export default function EventTree({ base, text, imgExt = "svg", sheetExt = "xlsm", imgDir = "/event-trees/images", sheetDir = "/event-trees/spreadsheets", width = "100%", pngScale = 4 }) {
+export default function EventTree({ base, text, imgExt = "png", sheetExt = "xlsm", imgDir = "/event-trees/images", sheetDir = "/event-trees/spreadsheets", width = "100%", pngScale = 4 }) {
   if (!base) {
     if (process.env.NODE_ENV !== "production") {
       console.warn("EventTree: 'base' prop is required.");
