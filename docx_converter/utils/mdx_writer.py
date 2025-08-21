@@ -43,8 +43,8 @@ import addBaseUrl from "@docusaurus/useBaseUrl";
     reportAbstract = "Enter report abstract"
     reportSubjectTerms = ["Term 1", "Term 2"]
     responsiblePersonName = "Enter name of responsible person"
-    responsiblePersonNumber = "Enter phone number of responsible person"
-    citationGuide = "A. C. Gohs, <i>RMC Documentation Report</i>, Lakewood, CO: U.S. Army Corps of Engineers, Risk Management Center, 2025. Accesses on <i>{enter current date here}</i>."
+    responsiblePersonNumber = "Enter phone number of responsible person (xxx-xxx-xxxx)"
+    citationGuide = "F. M. Last, <i>RMC Documentation Report</i>, Lakewood, CO: U.S. Army Corps of Engineers, Risk Management Center, 2025. Accessed on <i>{enter current date here}</i>."
 
     doc_info_frontmatter = f"""---
 title: {doc_info_title}

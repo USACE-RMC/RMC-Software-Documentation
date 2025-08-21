@@ -16,7 +16,7 @@ FIGSRC = r"figures/toolbox-technical-manuals/seismic-hazard-suite/seismic-hazard
 # Assign the navigation link, title, and document for the NavContainer component
 NAVLINK = r"/toolboxes/seismic-hazard-suite"
 NAVTITLE = "Seismic Hazard Suite" 
-NAVDOC = r"/toolbox-technical-manuals/seismic-hazard-suite/seismic-hazard-curves"
+NAVDOC = r"toolbox-technical-manuals/seismic-hazard-suite/seismic-hazard-curves"
 
 # Define paths based on the environment
 if environment == "production":
