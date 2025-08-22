@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import "../css/custom.css";
 import { useReportId } from "../contexts/ReportIdContext"; // Import the context hook to retrieve the reportId
 
-const Figure = ({ figKey, src, alt, caption, width = "80%" }) => {
+const Figure = ({ figKey, src, alt, caption, width = "80%", id }) => {
   const [figInfo, setFigInfo] = useState(null);
   const reportId = useReportId(); // Get the reportId from the context
+
+  // If id is not passed, fall back to figKey
+  const figureId = id || figKey;
 
   useEffect(() => {
     if (!reportId) return; // If reportId is not available, don't fetch
@@ -41,6 +44,7 @@ const Figure = ({ figKey, src, alt, caption, width = "80%" }) => {
 
   return (
     <figure
+      id={figureId}
       className="
       w-full
       ml-0 mr-auto my-[1em]
