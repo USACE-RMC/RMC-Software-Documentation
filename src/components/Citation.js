@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useSyncExternalStore } from "react";
-import { useLocation } from "@docusaurus/router";
-import { useReportId } from "../contexts/ReportIdContext";
-import "../css/custom.css";
+import { useLocation } from '@docusaurus/router';
+import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useReportId } from '../contexts/ReportIdContext';
+import '../css/custom.css';
 
 /* -------------------- tiny store (per-doc citations) -------------------- */
 
@@ -65,15 +65,19 @@ export function useUsedCitations(docId) {
 /* ------------------------------ component ------------------------------- */
 
 const Citation = ({ citationKey }) => {
-  const [citationNumber, setCitationNumber] = useState("?");
+  const [citationNumber, setCitationNumber] = useState('?');
   const [citationData, setCitationData] = useState(null);
   const location = useLocation();
   const pathname = location.pathname; // treat as docId
   const reportId = useReportId ? useReportId() : null;
 
-  const reportPath = pathname.replace(/^\/RMC-Software-Documentation\/docs\//, "/RMC-Software-Documentation/bibliographies/").replace(/\/[^/]*$/, "");
+  const reportPath = pathname
+    .replace(/^\/RMC-Software-Documentation\/docs\//, '/RMC-Software-Documentation/bibliographies/')
+    .replace(/\/[^/]*$/, '');
   const bibFilePath = `${reportPath}/bib.json`;
-  const countersFilePath = reportId ? `/RMC-Software-Documentation/counters/${reportId}.json` : null;
+  const countersFilePath = reportId
+    ? `/RMC-Software-Documentation/counters/${reportId}.json`
+    : null;
 
   // Number comes from counters (original logic)
   useEffect(() => {
@@ -86,7 +90,7 @@ const Citation = ({ citationKey }) => {
         const entry = counters?.citations?.[citationKey];
         if (entry && isMounted) setCitationNumber(entry.citationNumber);
       } catch (error) {
-        console.error("Error fetching counters file:", error);
+        console.error('Error fetching counters file:', error);
       }
     };
     run();
@@ -106,7 +110,7 @@ const Citation = ({ citationKey }) => {
         const citation = data.find((c) => c.citationKey === citationKey);
         if (citation && isMounted) setCitationData(citation);
       } catch (error) {
-        console.error("Error fetching bibliography:", error);
+        console.error('Error fetching bibliography:', error);
       }
     };
     run();
@@ -124,7 +128,10 @@ const Citation = ({ citationKey }) => {
 
   return (
     <span className="font-usace text-[inherit]">
-      <a href={`#footnote-${citationKey}`} className="no-underline text-ifm-link hover:text-ifm-link-hover">
+      <a
+        href={`#footnote-${citationKey}`}
+        className="text-ifm-link no-underline hover:text-ifm-link-hover"
+      >
         [{citationNumber}]
       </a>
     </span>

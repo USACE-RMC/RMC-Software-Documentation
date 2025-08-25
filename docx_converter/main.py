@@ -1,6 +1,11 @@
 import os
 from docx import Document
-from utils.helpers import load_citation_map, clear_output_directories, should_reset_figures, confirmation_function
+from utils.helpers import (
+    load_citation_map,
+    clear_output_directories,
+    should_reset_figures,
+    confirmation_function,
+)
 from utils.figures import extract_figure_images
 from utils.docx_processor import process_docx
 from utils.mdx_writer import write_mdx_files
@@ -15,7 +20,7 @@ FIGSRC = r"figures/toolbox-technical-manuals/seismic-hazard-suite/seismic-hazard
 
 # Assign the navigation link, title, and document for the NavContainer component
 NAVLINK = r"/toolboxes/seismic-hazard-suite"
-NAVTITLE = "Seismic Hazard Suite" 
+NAVTITLE = "Seismic Hazard Suite"
 NAVDOC = r"toolbox-technical-manuals/seismic-hazard-suite/seismic-hazard-curves"
 
 # Define paths based on the environment
@@ -52,20 +57,24 @@ if not os.path.isfile(BIB_PATH):
 os.makedirs(FIGURES_DIR, exist_ok=True)
 os.makedirs(MDX_DIR, exist_ok=True)
 
+
 # ---- Main logic ----
 def main():
     confirmation_function()
     reset_figures = should_reset_figures()
-    clear_output_directories({
-        FIGURES_DIR_FIGURES: reset_figures,
-        FIGURES_DIR_INLINE: reset_figures,
-        MDX_DIR: True # Always reset MDX directory
-    })
+    clear_output_directories(
+        {
+            FIGURES_DIR_FIGURES: reset_figures,
+            FIGURES_DIR_INLINE: reset_figures,
+            MDX_DIR: True,  # Always reset MDX directory
+        }
+    )
     inline_image_info = extract_figure_images(DOCX_PATH, FIGURES_DIR, extract_figures=reset_figures)
     citation_map = load_citation_map(BIB_PATH)
     doc = Document(DOCX_PATH)
     sections, figures, tables = process_docx(doc, citation_map, FIGSRC, inline_image_info)
     write_mdx_files(sections, MDX_DIR, NAVLINK, NAVTITLE, NAVDOC)
+
 
 if __name__ == "__main__":
     main()

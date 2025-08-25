@@ -1,5 +1,3 @@
-import React from "react";
-
 const baseClasses = `
   px-4 py-[10px]
   bg-ifm-primary-dark
@@ -22,12 +20,18 @@ const baseClasses = `
   dark:hover:bg-[#195d64]
 `;
 
-export default function Button({ children, onClick, href, to, className = "", ...props }) {
-  const classes = `${baseClasses} ${className}`.replace(/\s+/g, " ");
+export default function Button({ children, onClick, href, to, className = '', ...props }) {
+  const classes = `${baseClasses} ${className}`.replace(/\s+/g, ' ');
 
   if (href || to) {
     return (
-      <a href={href || to} className={classes} target={href ? "_blank" : undefined} rel={href ? "noopener noreferrer" : undefined} {...props}>
+      <a
+        href={href || to}
+        className={classes}
+        target={href ? '_blank' : undefined}
+        rel={href ? 'noopener noreferrer' : undefined}
+        {...props}
+      >
         {children}
       </a>
     );
