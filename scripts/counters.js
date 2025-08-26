@@ -1,10 +1,10 @@
-const fs = require("fs");
-const path = require("path");
-const reportIdMap = require("../src/reportIdMap"); // Importing the map correctly
+const fs = require('fs');
+const path = require('path');
+const reportIdMap = require('../src/reportIdMap'); // Importing the map correctly
 
 // Base paths
-const docsBasePath = path.join(__dirname, "../docs");
-const countersBasePath = path.join(__dirname, "../static/counters");
+const docsBasePath = path.join(__dirname, '../docs');
+const countersBasePath = path.join(__dirname, '../static/counters');
 
 // Ensure the counters directory exists
 if (!fs.existsSync(countersBasePath)) {
@@ -13,7 +13,7 @@ if (!fs.existsSync(countersBasePath)) {
 
 // Function to normalize paths to a consistent format
 function normalizePath(p) {
-  return p.replace(/\\/g, "/"); // Normalize path slashes to forward slashes
+  return p.replace(/\\/g, '/'); // Normalize path slashes to forward slashes
 }
 
 // Recursively find all documents with .mdx files
@@ -25,13 +25,13 @@ function findAllDocumentPaths(dir, results = new Set()) {
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       findAllDocumentPaths(fullPath, results);
-    } else if (entry.name.endsWith(".mdx")) {
+    } else if (entry.name.endsWith('.mdx')) {
       containsMDX = true;
     }
   }
 
   if (containsMDX) {
-    const relativePath = path.relative(docsBasePath, dir).replace(/\\/g, "/");
+    const relativePath = path.relative(docsBasePath, dir).replace(/\\/g, '/');
     results.add(normalizePath(relativePath)); // Normalize path here
   }
 
@@ -48,22 +48,24 @@ function processReport(reportPath, reportId) {
     tables: {},
     equations: {},
     citations: {},
+    videos: {},
   };
 
   let figureCount = 1;
   let tableCount = 1;
   let equationCount = 1;
   let citationCount = 1;
+  let videoCount = 1;
 
-  const files = fs.readdirSync(folder).filter((f) => f.endsWith(".mdx"));
+  const files = fs.readdirSync(folder).filter((f) => f.endsWith('.mdx'));
 
   files.forEach((file) => {
     const filePath = path.join(folder, file);
-    const content = fs.readFileSync(filePath, "utf-8");
+    const content = fs.readFileSync(filePath, 'utf-8');
 
     // Regex for figures
-    for (const match of content.matchAll(/<Figure\s+[^>]*figKey="([^"]+)"/g)) {
-      const figKey = match[1];
+    for (const match of content.matchAll(/<(Figure|GIF)\s+[^>]*figKey="([^"]+)"/g)) {
+      const figKey = match[2];
       counters.figures[figKey] = {
         figNumber: figureCount++,
         parentDocId: reportId,
@@ -73,7 +75,9 @@ function processReport(reportPath, reportId) {
     }
 
     // Regex for tables
-    for (const match of content.matchAll(/<(TableHorizontal|TableVertical|TableVerticalLeftAlign)\s+[^>]*tableKey="([^"]+)"/g)) {
+    for (const match of content.matchAll(
+      /<(TableHorizontal|TableVertical)\s+[^>]*tableKey="([^"]+)"/g,
+    )) {
       const tableKey = match[2];
       counters.tables[tableKey] = {
         tableNumber: tableCount++,
@@ -106,6 +110,17 @@ function processReport(reportPath, reportId) {
           docId: file,
         };
       }
+    }
+
+    // Regex for videos
+    for (const match of content.matchAll(/<Video\s+[^>]*videoKey="([^"]+)"/g)) {
+      const videoKey = match[1];
+      counters.videos[videoKey] = {
+        videoNumber: videoCount++,
+        parentDocId: reportId,
+        parentDocPath: reportPath,
+        docId: file,
+      };
     }
   });
 
