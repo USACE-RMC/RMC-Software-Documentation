@@ -1,10 +1,21 @@
-import React from "react";
+import ThemedImage from '@theme/ThemedImage';
 
-const ContentCard = ({ icon, title }) => {
+const ContentCard = ({ icon, iconLight, iconDark, title }) => {
+  const sources =
+    iconLight || icon ? { light: iconLight ?? icon, dark: iconDark ?? iconLight ?? icon } : null;
+
   return (
-    <div className="flex w-full my-0 mx-auto h-10 mb-[10px] items-center justify-start">
-      <img src={icon} alt="icon" className="h-max-[40px] w-[55px] mr-2 p-[3px] object-contain"></img>
-      <p className="font-usace lg:text-[clamp(1rem,5vw,1.2rem)] md:text-[clamp(0.6rem,2.5vw,1rem)] text-font-color text-left m-0">{title}</p>
+    <div className="mx-auto my-0 mb-[10px] flex h-10 w-full items-center justify-start">
+      {sources ? (
+        <ThemedImage
+          alt="icon"
+          sources={sources}
+          className="h-max-[40px] mr-2 w-[55px] object-contain p-[3px]"
+        />
+      ) : null}
+      <p className="m-0 text-left font-usace text-font-color md:text-[clamp(0.6rem,2.5vw,1rem)] lg:text-[clamp(1rem,5vw,1.2rem)]">
+        {title}
+      </p>
     </div>
   );
 };

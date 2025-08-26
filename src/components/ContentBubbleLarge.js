@@ -1,7 +1,15 @@
-import React from "react";
-import ContentCard from "./ContentCard";
+import ThemedImage from '@theme/ThemedImage';
+import ContentCard from './ContentCard';
 
-const ContentBubbleLarge = ({ icon, doc_location, doc_name, contentCardData = [], active }) => {
+const ContentBubbleLarge = ({
+  icon,
+  iconLight,
+  iconDark,
+  doc_location,
+  doc_name,
+  contentCardData = [],
+  active,
+}) => {
   const baseClasses = `
     flex flex-col h-[550px] items-center p-[25px] gap-[20px] rounded-[8px]
     bg-[#F9F9F9] shadow-[0px_4px_8px_rgba(0,0,0,0.3)]
@@ -25,37 +33,55 @@ const ContentBubbleLarge = ({ icon, doc_location, doc_name, contentCardData = []
     pointer-events-none opacity-50 cursor-not-allowed
   `;
 
-  return active ? (
-    <a href={doc_location} className={baseClasses}>
+  // Build themed sources with graceful fallback to the old `icon`
+  const sources =
+    iconLight || icon ? { light: iconLight ?? icon, dark: iconDark ?? iconLight ?? icon } : null;
+
+  const Image = () =>
+    sources ? (
+      <ThemedImage alt={doc_name} sources={sources} className="h-full w-auto" />
+    ) : (
+      // Shouldn't hit this if icon/iconLight provided, but safe fallback:
+      <div className="h-full w-auto" aria-hidden />
+    );
+
+  const Shell = ({ children, className }) =>
+    active ? (
+      <a href={doc_location} className={className}>
+        {children}
+      </a>
+    ) : (
+      <div className={`${className} ${inactiveClasses}`}>{children}</div>
+    );
+
+  return (
+    <Shell className={baseClasses}>
       <div className="flex h-[40%] justify-center">
-        <img src={icon} className="w-auto h-full" />
+        <Image />
       </div>
       <div className="text-font-color">
-        <p className="font-usace lg:text-3xl md:text-xlarge sm:text-xlarge text-center no-underline leading-[1.2] mt-5 mb-0">{doc_name}</p>
+        <p className="mb-0 mt-5 text-center font-usace leading-[1.2] no-underline sm:text-xlarge md:text-xlarge lg:text-3xl">
+          {doc_name}
+        </p>
       </div>
-      <div className="w-fit h-[200px] mt-[10px] mb-0 mx-auto flex flex-col items-start">
+      <div className="mx-auto mb-0 mt-[10px] flex h-[200px] w-fit flex-col items-start">
         {contentCardData.map((data, index) => (
-          <ContentCard key={index} icon={data.icon} title={data.title} />
+          <ContentCard
+            key={index}
+            // Support ThemedImage for child rows too (see next step)
+            icon={data.icon}
+            iconLight={data.iconLight}
+            iconDark={data.iconDark}
+            title={data.title}
+          />
         ))}
       </div>
-    </a>
-  ) : (
-    <div className={`${baseClasses} ${inactiveClasses}`}>
-      <div className="flex h-[40%] justify-center">
-        <img src={icon} alt="icon" className="w-auto h-full" />
-      </div>
-      <div className="text-font-color">
-        <p className="font-usace lg:text-3xl md:text-xlarge sm:text-xlarge text-center no-underline leading-[1.2] mt-5 mb-0">{doc_name}</p>
-      </div>
-      <div className="w-fit h-[200px] mt-[10px] mb-0 mx-auto flex flex-col items-start">
-        {contentCardData.map((data, index) => (
-          <ContentCard key={index} icon={data.icon} title={data.title} />
-        ))}
-      </div>
-      <div className="font-usace text-xlarge md:text-normal sm:text-normal text-center no-underline text-ifm-primary leading-none">
-        <p>Coming soon!</p>
-      </div>
-    </div>
+      {!active && (
+        <div className="text-center font-usace text-xlarge leading-none text-ifm-primary no-underline sm:text-normal md:text-normal">
+          <p>Coming soon!</p>
+        </div>
+      )}
+    </Shell>
   );
 };
 

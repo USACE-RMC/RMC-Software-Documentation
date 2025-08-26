@@ -1,7 +1,7 @@
-import React from "react";
-import "../css/custom.css";
+import ThemedImage from '@theme/ThemedImage';
+import '../css/custom.css';
 
-const ContentBubble = ({ icon, doc_location, doc_name, active }) => {
+const ContentBubble = ({ icon, iconLight, iconDark, doc_location, doc_name, active }) => {
   const baseClasses = `
     flex h-[105px] items-center px-[15px] py-[10px] gap-[20px] rounded-[8px]
     bg-[#F9F9F9] shadow-[0px_4px_8px_rgba(0,0,0,0.3)]
@@ -22,24 +22,41 @@ const ContentBubble = ({ icon, doc_location, doc_name, active }) => {
     pointer-events-none opacity-50 cursor-not-allowed
   `;
 
-  return active ? (
-    <a href={doc_location} className={baseClasses}>
+  // Build <ThemedImage /> sources, with fallback to legacy `icon`
+  const sources =
+    iconLight || icon ? { light: iconLight ?? icon, dark: iconDark ?? iconLight ?? icon } : null;
+
+  const Icon = () =>
+    sources ? <ThemedImage alt={doc_name} sources={sources} className="h-auto w-[50px]" /> : null;
+
+  const Inner = ({ comingSoon = false }) => (
+    <>
       <div className="mt-0 shrink-0">
-        <img src={icon} className="w-[50px] h-auto" />
+        <Icon />
       </div>
       <div className="text-ifm-primary">
-        <p className="font-usace lg:text-content-bubble no-underline leading-[1.2] mb-0 md:text-normal">{doc_name}</p>
+        <p className="mb-0 font-usace leading-[1.2] no-underline md:text-normal lg:text-content-bubble">
+          {doc_name}
+        </p>
+        {comingSoon && (
+          <>
+            <p className="mb-[10px] font-usace leading-[1.2] no-underline md:text-normal lg:text-content-bubble" />
+            <p className="font-usace leading-none no-underline md:text-normal lg:text-content-bubble">
+              Coming soon!
+            </p>
+          </>
+        )}
       </div>
+    </>
+  );
+
+  return active ? (
+    <a href={doc_location} className={baseClasses}>
+      <Inner />
     </a>
   ) : (
     <div className={`${baseClasses} ${inactiveClasses}`}>
-      <div className="mt-0 shrink-0">
-        <img src={icon} className="w-[50px] h-auto" />
-      </div>
-      <div className="text-ifm-primary">
-        <p className="font-usace lg:text-content-bubble no-underline leading-[1.2] mb-[10px] md:text-normal">{doc_name}</p>
-        <p className="font-usace lg:text-content-bubble no-underline leading-none md:text-normal">Coming soon!</p>
-      </div>
+      <Inner comingSoon />
     </div>
   );
 };
