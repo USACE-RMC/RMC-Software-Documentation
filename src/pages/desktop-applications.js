@@ -1,43 +1,52 @@
-import React from "react";
-import Layout from "@theme/Layout";
-import "../css/custom.css";
-import ContentBox from "../components/ContentBox";
-import addBaseUrl from "@docusaurus/useBaseUrl";
-import Link from "@docusaurus/Link";
+import addBaseUrl from '@docusaurus/useBaseUrl';
+import Layout from '@theme/Layout';
+import ThemedImage from '@theme/ThemedImage';
+import ContentBox from '../components/ContentBox';
+import '../css/custom.css';
 
 export default function DesktopApps() {
   const desktopAppData = [
     {
-      icon: addBaseUrl("img/TotalRisk.png"),
-      doc_location: addBaseUrl("desktop-applications/rmc-totalrisk"),
-      doc_name: "RMC TotalRisk",
+      iconLight: addBaseUrl('img/TotalRisk.png'),
+      doc_location: addBaseUrl('desktop-applications/rmc-totalrisk'),
+      doc_name: 'RMC TotalRisk',
       active: true,
     },
     {
-      icon: addBaseUrl("img/BestFit.png"),
-      doc_location: addBaseUrl("desktop-applications/rmc-bestfit"),
-      doc_name: "RMC BestFit",
+      iconLight: addBaseUrl('img/BestFit.png'),
+      doc_location: addBaseUrl('desktop-applications/rmc-bestfit'),
+      doc_name: 'RMC BestFit',
       active: true,
     },
     {
-      icon: addBaseUrl("img/RFA.png"),
-      doc_location: addBaseUrl("desktop-applications/rmc-rfa"),
-      doc_name: "RMC RFA",
+      iconLight: addBaseUrl('img/RFA.png'),
+      doc_location: addBaseUrl('desktop-applications/rmc-rfa'),
+      doc_name: 'RMC RFA',
       active: false,
     },
     {
-      icon: addBaseUrl("img/LifeSim.png"),
-      doc_location: addBaseUrl("desktop-applications/lifesim"),
-      doc_name: "LifeSim",
+      iconLight: addBaseUrl('img/LifeSim.png'),
+      doc_location: addBaseUrl('desktop-applications/lifesim'),
+      doc_name: 'LifeSim',
       active: true,
     },
   ];
 
   return (
-    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
+    <Layout
+      title="RMC Software Documentation"
+      description="Documentation for RMC Software Packages"
+    >
       <main>
         <div className="title-container">
-          <img src={addBaseUrl("img/DesktopApp.png")}></img>
+          <ThemedImage
+            alt="Desktop Applications"
+            className=""
+            sources={{
+              light: addBaseUrl('img/DesktopAppFilled.png'),
+              dark: addBaseUrl('img/DesktopAppFilledDarkMode.png'),
+            }}
+          />
           <div className="text-container">
             <p className="text-title">Desktop Applications</p>
             <p className="text-description">RMC Desktop Applications</p>

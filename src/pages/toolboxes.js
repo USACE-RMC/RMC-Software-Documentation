@@ -66,7 +66,7 @@ export default function Toolboxes() {
         <div className="title-container">
           <ThemedImage
             alt="Toolboxes"
-            className="" // keep any sizing classes you used on <img>
+            className=""
             sources={{
               light: addBaseUrl('img/ToolboxFilled.png'),
               dark: addBaseUrl('img/ToolboxFilledDarkMode.png'),

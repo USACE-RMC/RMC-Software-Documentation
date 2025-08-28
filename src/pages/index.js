@@ -35,21 +35,25 @@ export default function Home() {
   const webAppCardData = [
     {
       iconLight: addBaseUrl('img/WebApp.png'),
+      iconDark: addBaseUrl('img/WebAppDarkMode.png'),
       title: 'RRFT',
     },
     {
       iconLight: addBaseUrl('img/WebApp.png'),
+      iconDark: addBaseUrl('img/WebAppDarkMode.png'),
       title: 'Levee Screening Tool',
     },
     {
       iconLight: addBaseUrl('img/WebApp.png'),
+      iconDark: addBaseUrl('img/WebAppDarkMode.png'),
       title: 'Dam Screening Tool',
     },
   ];
 
   const homepageData = [
     {
-      iconLight: addBaseUrl('img/DesktopApp.png'),
+      iconLight: addBaseUrl('img/DesktopAppFilled.png'),
+      iconDark: addBaseUrl('img/DesktopAppFilledDarkMode.png'),
       doc_location: addBaseUrl('desktop-applications'),
       doc_name: 'Desktop Applications',
       contentCardData: desktopAppCardData,
@@ -65,6 +69,7 @@ export default function Home() {
     },
     {
       iconLight: addBaseUrl('img/WebAppFilled.png'),
+      iconDark: addBaseUrl('img/WebAppFilledDarkMode.png'),
       doc_location: addBaseUrl('web-applications'),
       doc_name: 'Web Applications',
       contentCardData: webAppCardData,
