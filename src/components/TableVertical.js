@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import "../css/custom.css";
-import "../css/tables.css";
-import { useReportId } from "../contexts/ReportIdContext";
+import { useEffect, useState } from 'react';
+import { useReportId } from '../contexts/ReportIdContext';
+import '../css/custom.css';
+import '../css/tables.css';
 
 const TableVertical = ({
   tableKey,
@@ -14,7 +14,7 @@ const TableVertical = ({
   headerAlign, // e.g., ["center","center","right"] (optional)
   colVAlign, // e.g., ["top","middle","bottom"] for body cells
   headerVAlign, // e.g., ["middle","bottom","middle"] (optional)
-  widthMode = "full", // "full" | "intrinsic"
+  widthMode = 'full', // "full" | "intrinsic"
   footnotes, // Array<string | React.ReactNode>
 }) => {
   const [tableInfo, setTableInfo] = useState(null);
@@ -32,7 +32,7 @@ const TableVertical = ({
         if (foundTable) setTableInfo(foundTable);
         else console.warn(`Table key "${tableKey}" not found in ${jsonPath}`);
       } catch (error) {
-        console.error("Error loading counters:", error);
+        console.error('Error loading counters:', error);
       }
     })();
   }, [reportId, tableKey]);
@@ -42,14 +42,14 @@ const TableVertical = ({
   const renderHTML = (content) => ({ __html: content });
 
   const colCount = columns?.length ?? 0;
-  const rowCount = colCount > 0 ? columns[0]?.length ?? 0 : 0;
+  const rowCount = colCount > 0 ? (columns[0]?.length ?? 0) : 0;
 
   // Build CSS variables for widths & alignments
   const styleVars = {};
   if (Array.isArray(colWidths)) {
     for (let i = 0; i < Math.min(colWidths.length, colCount); i++) {
       const v = colWidths[i];
-      styleVars[`--c${i + 1}`] = typeof v === "number" ? `${v}ch` : v;
+      styleVars[`--c${i + 1}`] = typeof v === 'number' ? `${v}ch` : v;
     }
   }
   if (Array.isArray(colAlign)) {
@@ -72,13 +72,14 @@ const TableVertical = ({
       styleVars[`--hv${i + 1}`] = headerVAlign[i]; // header vertical
     }
   }
-  if (widthMode === "intrinsic") {
-    styleVars["--table-width"] = "max-content";
-    styleVars["--table-display"] = "inline-table";
+  if (widthMode === 'intrinsic') {
+    styleVars['--table-width'] = 'max-content';
+    styleVars['--table-display'] = 'inline-table';
   }
 
   // Header alignment helpers for colSpan
-  const headerTextAlignAt = (zeroBasedCol) => `var(--ha${zeroBasedCol + 1}, var(--a${zeroBasedCol + 1}, left))`;
+  const headerTextAlignAt = (zeroBasedCol) =>
+    `var(--ha${zeroBasedCol + 1}, var(--a${zeroBasedCol + 1}, left))`;
   const headerVertAlignAt = (zeroBasedCol) => `var(--hv${zeroBasedCol + 1}, middle)`; // default header vertical
 
   const skipBodyCells = new Set();
@@ -111,8 +112,17 @@ const TableVertical = ({
                       verticalAlign: headerVertAlignAt(cursor),
                     };
                     const node = (
-                      <th key={`header-${rowIndex}-${colIndex}`} colSpan={colSpan > 1 ? colSpan : undefined} rowSpan={rowSpan > 1 ? rowSpan : undefined} className="table-header" style={thStyle}>
-                        {value}
+                      <th
+                        key={`header-${rowIndex}-${colIndex}`}
+                        colSpan={colSpan > 1 ? colSpan : undefined}
+                        rowSpan={rowSpan > 1 ? rowSpan : undefined}
+                        className="table-header"
+                        style={thStyle}
+                        dangerouslySetInnerHTML={
+                          typeof value === 'string' ? renderHTML(value) : undefined
+                        }
+                      >
+                        {typeof value === 'string' ? undefined : value}
                       </th>
                     );
                     cursor += colSpan;
@@ -132,7 +142,7 @@ const TableVertical = ({
 
                   const raw = col?.[rowIndex];
 
-                  if (raw && typeof raw === "object" && "value" in raw) {
+                  if (raw && typeof raw === 'object' && 'value' in raw) {
                     const { value, rowSpan = 1, colSpan = 1 } = raw;
                     for (let r = 0; r < rowSpan; r++) {
                       for (let c = 0; c < colSpan; c++) {
@@ -165,9 +175,11 @@ const TableVertical = ({
                         textAlign: `var(--a${colIndex + 1}, left)`,
                         verticalAlign: `var(--v${colIndex + 1}, middle)`,
                       }}
-                      dangerouslySetInnerHTML={typeof raw === "string" ? renderHTML(raw) : undefined}
+                      dangerouslySetInnerHTML={
+                        typeof raw === 'string' ? renderHTML(raw) : undefined
+                      }
                     >
-                      {typeof raw === "string" ? undefined : raw}
+                      {typeof raw === 'string' ? undefined : raw}
                     </td>
                   );
                 })}
@@ -178,11 +190,17 @@ const TableVertical = ({
 
         {/* Footnotes block (only if provided and non-empty) */}
         {Array.isArray(footnotes) && footnotes.length > 0 && (
-          <div className="mt-2 leading-snug" style={{ maxWidth: "100%" }}>
-            <ol className="list-none m-0 !pl-[4px] space-y-1">
+          <div className="mt-2 leading-snug" style={{ maxWidth: '100%' }}>
+            <ol className="m-0 list-none space-y-1 !pl-[4px]">
               {footnotes.map((note, idx) => (
                 <li key={idx} className="flex gap-2">
-                  <span className="font-usace text-footnote min-w-0 italic break-words">{typeof note === "string" ? <span dangerouslySetInnerHTML={renderHTML(note)} /> : note}</span>
+                  <span className="min-w-0 break-words font-usace text-footnote italic">
+                    {typeof note === 'string' ? (
+                      <span dangerouslySetInnerHTML={renderHTML(note)} />
+                    ) : (
+                      note
+                    )}
+                  </span>
                 </li>
               ))}
             </ol>

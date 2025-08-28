@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import "../css/custom.css";
-import "../css/tables.css";
-import { useReportId } from "../contexts/ReportIdContext";
+import { useEffect, useState } from 'react';
+import { useReportId } from '../contexts/ReportIdContext';
+import '../css/custom.css';
+import '../css/tables.css';
 
 const TableHorizontal = ({
   tableKey,
@@ -14,7 +14,7 @@ const TableHorizontal = ({
   headerAlign, // ["left"|"center"|"right", ...] for HEADER cells per column (optional; falls back to colAlign)
   colVAlign, // ["top"|"middle"|"bottom", ...] for BODY cells per column
   headerVAlign, // ["top"|"middle"|"bottom", ...] for HEADER cells (optional)
-  widthMode = "full", // "full" | "intrinsic"
+  widthMode = 'full', // "full" | "intrinsic"
   footnotes, // Array<string | React.ReactNode>
 }) => {
   const [tableInfo, setTableInfo] = useState(null);
@@ -32,7 +32,7 @@ const TableHorizontal = ({
         if (foundTable) setTableInfo(foundTable);
         else console.warn(`Table key "${tableKey}" not found in ${jsonPath}`);
       } catch (error) {
-        console.error("Error loading counters:", error);
+        console.error('Error loading counters:', error);
       }
     })();
   }, [reportId, tableKey]);
@@ -49,7 +49,7 @@ const TableHorizontal = ({
   if (Array.isArray(colWidths)) {
     for (let i = 0; i < Math.min(colWidths.length, columnCount); i++) {
       const v = colWidths[i];
-      styleVars[`--c${i + 1}`] = typeof v === "number" ? `${v}ch` : v;
+      styleVars[`--c${i + 1}`] = typeof v === 'number' ? `${v}ch` : v;
     }
   }
   if (Array.isArray(colAlign)) {
@@ -74,9 +74,9 @@ const TableHorizontal = ({
   }
 
   // width mode: full (default) or intrinsic shrink-wrap
-  if (widthMode === "intrinsic") {
-    styleVars["--table-width"] = "max-content";
-    styleVars["--table-display"] = "inline-table";
+  if (widthMode === 'intrinsic') {
+    styleVars['--table-width'] = 'max-content';
+    styleVars['--table-display'] = 'inline-table';
   }
 
   return (
@@ -86,7 +86,11 @@ const TableHorizontal = ({
       </div>
 
       <div className="table-scroller">
-        <table aria-label={alt} className={`table-base horizontal-table table-zebra ${tableKey}`} style={styleVars}>
+        <table
+          aria-label={alt}
+          className={`table-base horizontal-table table-zebra ${tableKey}`}
+          style={styleVars}
+        >
           <colgroup>
             {Array.from({ length: columnCount }).map((_, i) => (
               <col key={i} style={{ width: `var(--c${i + 1}, auto)` }} />
@@ -100,11 +104,15 @@ const TableHorizontal = ({
                 <th
                   className="table-header"
                   style={{
-                    textAlign: "var(--ha1, var(--a1, center))",
-                    verticalAlign: "var(--hv1, middle)",
+                    textAlign: 'var(--ha1, var(--a1, center))',
+                    verticalAlign: 'var(--hv1, middle)',
                   }}
-                  dangerouslySetInnerHTML={renderHTML(header)}
-                />
+                  dangerouslySetInnerHTML={
+                    typeof header === 'string' ? renderHTML(header) : undefined
+                  }
+                >
+                  {typeof header === 'string' ? undefined : header}
+                </th>
                 {/* Data cells to the right */}
                 {rows[rowIdx].map((cell, cellIdx) => {
                   const colIndex = cellIdx + 2; // data columns start at 2
@@ -116,8 +124,12 @@ const TableHorizontal = ({
                         textAlign: `var(--a${colIndex}, center)`,
                         verticalAlign: `var(--v${colIndex}, middle)`,
                       }}
-                      dangerouslySetInnerHTML={renderHTML(cell)}
-                    />
+                      dangerouslySetInnerHTML={
+                        typeof cell === 'string' ? renderHTML(cell) : undefined
+                      }
+                    >
+                      {typeof cell === 'string' ? undefined : cell}
+                    </td>
                   );
                 })}
               </tr>
@@ -127,11 +139,17 @@ const TableHorizontal = ({
 
         {/* Footnotes block (only if provided and non-empty) */}
         {Array.isArray(footnotes) && footnotes.length > 0 && (
-          <div className="mt-2 leading-snug" style={{ maxWidth: "100%" }}>
-            <ol className="list-none m-0 !pl-[4px] space-y-1">
+          <div className="mt-2 leading-snug" style={{ maxWidth: '100%' }}>
+            <ol className="m-0 list-none space-y-1 !pl-[4px]">
               {footnotes.map((note, idx) => (
                 <li key={idx} className="flex gap-2">
-                  <span className="font-usace text-footnote min-w-0 italic break-words">{typeof note === "string" ? <span dangerouslySetInnerHTML={renderHTML(note)} /> : note}</span>
+                  <span className="min-w-0 break-words font-usace text-footnote italic">
+                    {typeof note === 'string' ? (
+                      <span dangerouslySetInnerHTML={renderHTML(note)} />
+                    ) : (
+                      note
+                    )}
+                  </span>
                 </li>
               ))}
             </ol>
