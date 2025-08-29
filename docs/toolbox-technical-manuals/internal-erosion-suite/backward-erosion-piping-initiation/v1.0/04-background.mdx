@@ -1,0 +1,388 @@
+---
+title: "Background"
+---
+
+import Link from "@docusaurus/Link";
+import addBaseUrl from "@docusaurus/useBaseUrl";
+import Citation from "@site/src/components/Citation";
+import CitationFootnote from "@site/src/components/CitationFootnote";
+import Equation from "@site/src/components/Equation";
+import EquationNoRef from "@site/src/components/EquationNoRef";
+import Figure from "@site/src/components/Figure";
+import FigReference from "@site/src/components/FigureReference";
+import NavContainer from "@site/src/components/NavContainer";
+import TableReference from "@site/src/components/TableReference";
+import TableVertical from "@site/src/components/TableVertical";
+import VersionSelector from "@site/src/components/VersionSelector";
+
+<NavContainer 
+  link="\toolboxes\internal-erosion-suite"
+  linkTitle="Internal Erosion Suite"
+  document="toolbox-technical-manuals\internal-erosion-suite\backward-erosion-piping-initiation"
+></NavContainer>
+
+# Background
+
+Backward erosion piping (BEP) is the detachment of soil particles that occurs at a free, unfiltered surface in which the process gradually works its
+way toward the upstream or riverside of the embankment or its foundation until a continuous pipe is formed. Erosion initiates at the landside of a
+levee or the downstream side of a dam through unfiltered seepage exits that may exist due to penetrations or weaknesses in the overlying blanket, such
+ as ditches, animal burrows (such as rodent or crawfish holes), root holes, former sand boils, cracks, or other thin or weak spots. Once erosion
+initiates, the pipe may progress horizontally through the foundation toward the impounded water if hydraulic gradients in the foundation are
+sufficiently high. The hydraulic gradients and flow must remain high near the upstream or riverside tip of the progressing pipe for particles to
+continue eroding. (Note: Floodside, waterside, and riverside are used interchangeably for levees.)
+
+Initiation of BEP involves heave or blowout of the foundation materials at the landside toe of a levee or the downstream toe of a dam. Fluidization or
+ liquefaction occurs near the seepage exit (that is, a zero effective stress condition) in which the sand expands and turns into a fluid state.
+Underseepage analysis methods are used to inform the likelihood of heave/blowout and include Blanket Theory (BT) and finite-element seepage analysis.
+
+This toolbox deterministically and probabilistically assesses the likelihood of initiation of BEP (heave/blowout) using BT and the first-order,
+second-moment (FOSM) method of reliability analysis. Factors leading to initiation of BEP may not be addressed by traditional seepage analysis. This
+is particularly true when dealing with the movement of fine-grained material through the embankment or foundation of a dam or levee. This toolbox also
+ assesses the quantity of flow or seepage using BT. These quantities from BT or finite-element analysis can be used to inform judgment for other nodes
+ in the BEP event tree, such as whether the flow in a pipe is sufficiently high to keep the pipe open for progression, the ability to flood-fight for
+unsuccessful intervention, and the likelihood of breach.
+
+## Blanket Theory
+
+Engineer Manual (EM) 1110-2-1913 (<Citation citationKey="USACE2000" />) provides closed-form BT solutions for seepage pressures and flows beneath
+levees. The solutions were developed for the geology along the Mississippi River, where a pervious stratum is overlaid by a less pervious top stratum
+or blanket. If the top stratum is composed of different soil layers of less pervious materials, the thickness and vertical permeabilities of these
+layers must be transformed into a uniform thickness and vertical permeability.
+
+These solutions were originally developed in Technical Manual (TM) 3-424 (<Citation citationKey="USACE1956" />) and have been used by USACE since
+then in various forms. The solutions use a compilation of existing theories and methods, such as the method of fragments (
+{"\n"}<Citation citationKey="Forchheimer1917" />, <Citation citationKey="Muskat1937" />, <Citation citationKey="Pavlovsky1956" />, and
+{"\n"}<Citation citationKey="Harr1962" />), investigation of Mississippi River levee underseepage (Turnbull and Mansur 1959), and the effects of
+semi-pervious blankets (<Citation citationKey="Bennett1946" /> and <Citation citationKey="Barron1948" />). Engineer Research and Development Center
+(ERDC)/Geotechnical Structures Laboratory (GSL) Technical Report (TR)-18-24 (Brandon et al. 2018) highlighted errors in the BT equations in EM
+1110-2-1913 (<Citation citationKey="USACE2000" />).
+
+:::danger Inline Equation Detected
+Insert `<EquationNoRef />` component(s) to render math in the following paragraph.
+:::
+The fundamental assumption of this method is that equipotential lines at various critical parts of the flow region can be approximated by vertical
+lines that divide the region into sections or fragments. Equipotential lines produced from a finite-element analysis (FEA) are nearly vertical when
+the base width of the impervious levee (<em>L<sub>2</sub></em>) is greater than the thickness of the pervious substratum (<em>d</em>).
+{"\n"}<FigReference figKey="figure-8" /> illustrates the method of fragments, and BT solutions are limited to the case where <EquationNoRef equation="{L_{2}}/d ≥ 1"/><em>L<sub>2</sub>d</em> ≥
+ 1 (<Citation citationKey="Batool2013" />). BT includes closed-form solutions for various blanket conditions to determine an equivalent upstream
+entrance distance (<em>x<sub>1</sub></em>) and/or equivalent downstream exit distance (<em>x<sub>3</sub></em>). Where the blanket is impervious, these
+ distances are equal to the length of the blanket (<em>x<sub>1</sub> </em>= <em>L<sub>1</sub></em> and/or <em>x<sub>3</sub></em> =
+<em>L<sub>3</sub></em>, discussed in the following cases). Where there is no blanket, as in <FigReference figKey="figure-8" />, <em>x<sub>1</sub>
+</em>and/or <em>x<sub>3</sub></em> for a homogeneous, isotropic pervious foundation is equal to 0.43<em>d</em> from the method of fragments.
+
+<Figure
+  figKey="figure-8"
+  src="static\figures\toolbox-technical-manuals\internal-erosion-suite\backward-erosion-piping-initiation\v1.0/figures/figure8.png"
+  alt= "Equipotential lines for levee cross section having L_2/d>1 for Blanket Theory Case 1 (ERDC/GSL TR-18-24)"
+  caption="Equipotential lines for levee cross section having L_2/d>1 for Blanket Theory Case 1 (ERDC/GSL TR-18-24)"
+/>
+
+EM 1110-2-1913 (2000) includes seven standard BT cases. Case 1 is for no top stratum. Cases 2, 3, and 4 are for impervious top stratum conditions.
+Case 2 considers an impervious top stratum on both the riverside and landside of the levee; Case 3 considers an impervious top stratum on only the
+riverside; and Case 4 considers an impervious top stratum on only the landside. Cases 5, 6, and 7 are for semi-pervious top stratum conditions. Case 5
+ considers the presence of a semi-pervious top stratum on only the riverside; Case 6 considers the presence of a semi-pervious top stratum on only the
+ landside; and Case 7 considers a semi-pervious top stratum on both the riverside and landside. Case 8 was reintroduced by ERDC/GSL TR-18-24 (Brandon
+et al. 2018), which adds a partially penetrating seepage barrier to Case 7. ERDC/GSL TR-18-24 (Brandon et al. 2018) provides derivations of the BT
+equations. Some key findings about the applicability of the BT solutions follow:
+
+- The width of the impermeable boundary, which depends on the BT case and boundary condition, must be greater than or equal to the depth or thickness
+of the pervious substratum to ensure horizontal flow in the confined aquifer.
+
+- The ratio of horizontal permeability of the pervious substratum to the vertical permeability of the blanket must be greater than or equal to 10 to
+maintain confined horizontal flow in the pervious substratum and vertical seepage or leakage through the blanket.
+
+- The transition between semi-pervious and impervious blanket behavior occurs at a ratio of horizontal permeability of the pervious stratum to
+vertical permeability of the blanket between 1,000 and 4,000. At permeability ratios in the range of these values, the semi-pervious solutions (Cases
+5, 6, and 7) produce the same values of heads and flows as the impervious solutions (Cases 3, 4, and 2, respectively), and the results of BT agree
+closely with FEA.
+
+- The transformation from a fully pervious to a semi-pervious blanket occurs at a ratio of horizontal permeability of the pervious stratum to vertical
+ permeability of the blanket of about 2. In other words, using the semi-pervious equations produces a more accurate determination of the flow and the
+excess hydraulic head for permeability ratios equal to or greater than 2 as compared to solutions considering the blanket as fully pervious
+(nonexistent). For permeability ratios less than 2, the presence of the blanket may be ignored, and the solutions for cases having no blanket provide
+more accurate results than the solutions for the semi-pervious cases.
+
+To simplify the calculations, the semi-pervious top stratum is replaced by an equivalent impervious top stratum, such that the seepage beneath the
+levee is the same. For Cases 5, 7, and 8, this is accomplished by calculating an equivalent length (<em>x<sub>1</sub></em>) of an impervious top
+stratum for a semi-pervious stratum of length (<em>L<sub>1</sub></em>) on the riverside. For Cases 6, 7, and 8, this is accomplished by calculating an
+ equivalent length (<em>x<sub>3</sub></em>) of an impervious top stratum for a semi-pervious stratum of length (<em>L<sub>3</sub></em>) on the
+landside. The semi-pervious stratum lengths are included with <em>L<sub>2</sub></em><sub> </sub>for the appropriate cases when evaluating the
+fundamental assumption of this method (Batool et al. 2015). ERDC/GSL TR-18-24 (Brandon et al. 2018) provides additional details.
+
+For Cases 1 through 7, there are three zones for the pervious substratum corresponding to the riverside of the riverside levee toe, base width of the
+levee, and landside of the landside levee toe. Due to the presence of the partially penetrating seepage barrier, Case 8 subdivides the middle zone
+(base width of the levee) into two zones: riverside and landside of the seepage barrier. <FigReference figKey="figure-9" /> illustrates these zones
+and the parameters used in BT for Case 8.
+
+<Figure
+  figKey="figure-9"
+  src="static\figures\toolbox-technical-manuals\internal-erosion-suite\backward-erosion-piping-initiation\v1.0/figures/figure9.png"
+  alt="BT parameters for BT Case 8 (adapted from ERDC/GSL TR-18-24)."
+  caption="BT parameters for BT Case 8 (adapted from ERDC/GSL TR-18-24)."
+/>
+
+Since the flow in the pervious substratum is assumed to be horizontal, the hydraulic head loss is linear with horizontal distance, and the excess
+hydraulic head at the landside levee toe (<em>h<sub>o</sub></em>) and at a distance <em>x</em> from the landside levee toe (<em>h<sub>x</sub></em>)
+are obtained by solving similar triangles. The distances used on the riverside (<em>L<sub>1</sub></em> or <em>x<sub>1</sub></em>) and landside
+(<em>L<sub>3</sub></em> or <em>x<sub>3</sub></em>) of the levee depend on the BT case and boundary condition and are discussed for each relevant case
+in subsequent chapters of this document.
+
+## Mississippi Valley Division Design Guidance
+
+The USACE Mississippi Valley Division (MVD) developed design guidance for levee underseepage protection for the Mississippi River and major tributary
+levees. <TableReference tableKey="table-1" />, <TableReference tableKey="table-2" />, and
+
+<TableReference tableKey="table-3" />, from Change 2 of MVD’s Division Regulation (DIVR) 1110-1-400 (<Citation citationKey="USACE1998" />), are
+guides for assessing the riverside and landside blanket vertical permeabilities if site-specific permeability data is not available. However, these
+are suggested design values developed for the Mississippi River alluvial valley. Use care when applying design values to risk assessments or in
+different geologic conditions.
+
+In these tables, the landside blanket vertical permeabilities are less than the riverside blanket vertical permeabilities for the same soil type
+primarily due to cracking in the riverside blanket being repeatedly filled with silt from flood inundation and, to a lesser extent, the impounded
+water pressure on the riverside and cracking in the landside blanket due to seepage uplift.
+
+<TableVertical
+  tableKey="table-1"
+  headers={
+[
+    [
+      { value: "Soil Type", rowSpan: 1, colSpan: 1 },
+      { value: <> Riverside Blanket Thickness, <EquationNoRef equation = "z_{br}"/> (feet)</>, rowSpan: 1, colSpan: 1 },
+      { value: <>Vertical Permeability of Riverside Blanket, <EquationNoRef equation = "k_{v,br}" /> (centimeters/second)</>, rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  columns={
+[
+    [
+      { value: "Silty sand", rowSpan: 2, colSpan: 1 },
+      { value: "Silt and sandy silt", rowSpan: 3, colSpan: 1 },
+      { value: "Clay", rowSpan: 4, colSpan: 1 }
+    ],
+    [
+      { value: "<5", rowSpan: 1, colSpan: 1 },
+      {value: "5 to 10", rowSpan: 1, colSpan: 1},
+      { value: "<5", rowSpan: 1, colSpan: 1},
+      {value: "5 to 10", rowSpan:1, colSpan:1},
+      {value: ">10", rowSpan: 1, colSpan: 1 },
+      { value: "<5", rowSpan: 1, colSpan: 1},
+      {value: "5 to 10", rowSpan:1, colSpan:1},
+      {value:"10 to 15", rowSpan:1, colSpan:1},
+      {value:">15", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "7.0E-04 2.5E-04", rowSpan: 1, colSpan: 1 },
+      { value: "2.0E-04 1.5E-04 1.0E-04", rowSpan: 1, colSpan: 1 },
+      { value: "0.8E-04 0.5E-04 0.2E-04 0.05E-04", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  alt="Suggested design values for riverside blanket permeability."
+  caption="Suggested design values for riverside blanket permeability."
+/>
+
+<TableVertical
+  tableKey="table-2"
+  headers={
+[
+    [
+      { value: "Soil Type", rowSpan: 1, colSpan: 1 },
+      { value: "Landside Blanket Thickness, zbl (feet)", rowSpan: 1, colSpan: 1 },
+      { value: "Vertical Permeability of Landside Blanket, kv,bl (centimeters/second)", rowSpan: 1, colSpan: 1 },
+      { value: "Permeability Ratio, kh,f / kv,bl", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  columns={
+[
+    [
+      { value: "Silty sand", rowSpan: 1, colSpan: 1 },
+      { value: "Silt and sandy silt", rowSpan: 1, colSpan: 1 },
+      { value: "Clay and silty clay", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "<5 5 to 10 >10", rowSpan: 1, colSpan: 1 },
+      { value: "<5 5 to 10 10 to 15 >15", rowSpan: 1, colSpan: 1 },
+      { value: "<5 5 to 10 10 to 15 15 to 20 >20", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "10.0E-0 8.0E-04 6.0E-04", rowSpan: 1, colSpan: 1 },
+      { value: "5.0E-04 4.0E-04 3.0E-04 2.0E-04", rowSpan: 1, colSpan: 1 },
+      { value: "4.0E-04 3.0E-04 1.5E-04 0.5E-04 0.08E-04", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "125 150 200", rowSpan: 1, colSpan: 1 },
+      { value: "250 300 400 600", rowSpan: 1, colSpan: 1 },
+      { value: "250 400 800 2,500 15,000", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  alt="Suggested design values for landside blanket permeability."
+  caption="Suggested design values for landside blanket permeability."
+/>
+
+<TableVertical
+  tableKey="table-3"
+  headers={
+[
+    [
+      { value: "Landside Blanket Thickness, zbl (feet)", rowSpan: 1, colSpan: 1 },
+      { value: "Vertical Permeability of Clay Landside Blanket, kv,bl (centimeter/second)", rowSpan: 1, colSpan: 1 },
+      { value: "Vertical Permeability of Silt Landside Blanket, kv,bl (centimeter/second)", rowSpan: 1, colSpan: 1 },
+      { value: "Vertical Permeability of Silty Sand Landside Blanket, kv,bl (centimeter/second)", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  columns={
+[
+    [
+      { value: "1", rowSpan: 1, colSpan: 1 },
+      { value: "2", rowSpan: 1, colSpan: 1 },
+      { value: "3", rowSpan: 1, colSpan: 1 },
+      { value: "4", rowSpan: 1, colSpan: 1 },
+      { value: "5", rowSpan: 1, colSpan: 1 },
+      { value: "6", rowSpan: 1, colSpan: 1 },
+      { value: "7", rowSpan: 1, colSpan: 1 },
+      { value: "8", rowSpan: 1, colSpan: 1 },
+      { value: "9", rowSpan: 1, colSpan: 1 },
+      { value: "10", rowSpan: 1, colSpan: 1 },
+      { value: "11", rowSpan: 1, colSpan: 1 },
+      { value: "12", rowSpan: 1, colSpan: 1 },
+      { value: "13", rowSpan: 1, colSpan: 1 },
+      { value: "14", rowSpan: 1, colSpan: 1 },
+      { value: "15", rowSpan: 1, colSpan: 1 },
+      { value: "16", rowSpan: 1, colSpan: 1 },
+      { value: "17", rowSpan: 1, colSpan: 1 },
+      { value: "18", rowSpan: 1, colSpan: 1 },
+      { value: "19", rowSpan: 1, colSpan: 1 },
+      { value: "20", rowSpan: 1, colSpan: 1 },
+      { value: "21", rowSpan: 1, colSpan: 1 },
+      { value: "22", rowSpan: 1, colSpan: 1 },
+      { value: "23", rowSpan: 1, colSpan: 1 },
+      { value: "24", rowSpan: 1, colSpan: 1 },
+      { value: "25", rowSpan: 1, colSpan: 1 },
+      { value: "26", rowSpan: 1, colSpan: 1 },
+      { value: "27", rowSpan: 1, colSpan: 1 },
+      { value: "28", rowSpan: 1, colSpan: 1 },
+      { value: "29", rowSpan: 1, colSpan: 1 },
+      { value: "30", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "4.56E-04", rowSpan: 1, colSpan: 1 },
+      { value: "4.30E-04", rowSpan: 1, colSpan: 1 },
+      { value: "4.06E-04", rowSpan: 1, colSpan: 1 },
+      { value: "3.80E-04", rowSpan: 1, colSpan: 1 },
+      { value: "3.57E-04", rowSpan: 1, colSpan: 1 },
+      { value: "3.30E-04", rowSpan: 1, colSpan: 1 },
+      { value: "3.10E-04", rowSpan: 1, colSpan: 1 },
+      { value: "2.88E-04", rowSpan: 1, colSpan: 1 },
+      { value: "2.66E-04", rowSpan: 1, colSpan: 1 },
+      { value: "2.45E-04", rowSpan: 1, colSpan: 1 },
+      { value: "2.25E-04", rowSpan: 1, colSpan: 1 },
+      { value: "2.08E-04", rowSpan: 1, colSpan: 1 },
+      { value: "1.89E-04", rowSpan: 1, colSpan: 1 },
+      { value: "1.72E-04", rowSpan: 1, colSpan: 1 },
+      { value: "1.57E-04", rowSpan: 1, colSpan: 1 },
+      { value: "1.41E-04", rowSpan: 1, colSpan: 1 },
+      { value: "1.28E-04", rowSpan: 1, colSpan: 1 },
+      { value: "1.14E-04", rowSpan: 1, colSpan: 1 },
+      { value: "1.01E-04", rowSpan: 1, colSpan: 1 },
+      { value: "0.90E-04", rowSpan: 1, colSpan: 1 },
+      { value: "0.78E-04", rowSpan: 1, colSpan: 1 },
+      { value: "0.69E-04", rowSpan: 1, colSpan: 1 },
+      { value: "0.60E-04", rowSpan: 1, colSpan: 1 },
+      { value: "0.52E-04", rowSpan: 1, colSpan: 1 },
+      { value: "0.45E-04", rowSpan: 1, colSpan: 1 },
+      { value: "0.38E-04", rowSpan: 1, colSpan: 1 },
+      { value: "0.31E-04", rowSpan: 1, colSpan: 1 },
+      { value: "0.25E-04", rowSpan: 1, colSpan: 1 },
+      { value: "0.20E-04", rowSpan: 1, colSpan: 1 },
+      { value: "0.15E-04", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "5.70E-04", rowSpan: 1, colSpan: 1 },
+      { value: "5.40E-04", rowSpan: 1, colSpan: 1 },
+      { value: "5.10E-04", rowSpan: 1, colSpan: 1 },
+      { value: "4.80E-04", rowSpan: 1, colSpan: 1 },
+      { value: "4.50E-04", rowSpan: 1, colSpan: 1 },
+      { value: "4.25E-04", rowSpan: 1, colSpan: 1 },
+      { value: "4.00E-04", rowSpan: 1, colSpan: 1 },
+      { value: "3.80E-04", rowSpan: 1, colSpan: 1 },
+      { value: "3.60E-04", rowSpan: 1, colSpan: 1 },
+      { value: "3.40E-04", rowSpan: 1, colSpan: 1 },
+      { value: "3.23E-04", rowSpan: 1, colSpan: 1 },
+      { value: "3.10E-04", rowSpan: 1, colSpan: 1 },
+      { value: "2.95E-04", rowSpan: 1, colSpan: 1 },
+      { value: "2.81E-04", rowSpan: 1, colSpan: 1 },
+      { value: "2.70E-04", rowSpan: 1, colSpan: 1 },
+      { value: "2.60E-04", rowSpan: 1, colSpan: 1 },
+      { value: "2.50E-04", rowSpan: 1, colSpan: 1 },
+      { value: "2.40E-04", rowSpan: 1, colSpan: 1 },
+      { value: "2.30E-04", rowSpan: 1, colSpan: 1 },
+      { value: "2.22E-04", rowSpan: 1, colSpan: 1 },
+      { value: "2.14E-04", rowSpan: 1, colSpan: 1 },
+      { value: "2.05E-04", rowSpan: 1, colSpan: 1 },
+      { value: "1.98E-04", rowSpan: 1, colSpan: 1 },
+      { value: "1.90E-04", rowSpan: 1, colSpan: 1 },
+      { value: "1.83E-04", rowSpan: 1, colSpan: 1 },
+      { value: "1.78E-04", rowSpan: 1, colSpan: 1 },
+      { value: "1.71E-04", rowSpan: 1, colSpan: 1 },
+      { value: "1.66E-04", rowSpan: 1, colSpan: 1 },
+      { value: "1.60E-04", rowSpan: 1, colSpan: 1 },
+      { value: "1.56E-04", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "10.50E-04", rowSpan: 1, colSpan: 1 },
+      { value: "10.10E-04", rowSpan: 1, colSpan: 1 },
+      { value: "9.80E-04", rowSpan: 1, colSpan: 1 },
+      { value: "9.40E-04", rowSpan: 1, colSpan: 1 },
+      { value: "9.00E-04", rowSpan: 1, colSpan: 1 },
+      { value: "8.60E-04", rowSpan: 1, colSpan: 1 },
+      { value: "8.30E-04", rowSpan: 1, colSpan: 1 },
+      { value: "8.00E-04", rowSpan: 1, colSpan: 1 },
+      { value: "7.80E-04", rowSpan: 1, colSpan: 1 },
+      { value: "7.55E-04", rowSpan: 1, colSpan: 1 },
+      { value: "7.30E-04", rowSpan: 1, colSpan: 1 },
+      { value: "7.10E-04", rowSpan: 1, colSpan: 1 },
+      { value: "6.95E-04", rowSpan: 1, colSpan: 1 },
+      { value: "6.80E-04", rowSpan: 1, colSpan: 1 },
+      { value: "6.60E-04", rowSpan: 1, colSpan: 1 },
+      { value: "6.50E-04", rowSpan: 1, colSpan: 1 },
+      { value: "6.40E-04", rowSpan: 1, colSpan: 1 },
+      { value: "6.2E-04", rowSpan: 1, colSpan: 1 },
+      { value: "6.10E-04", rowSpan: 1, colSpan: 1 },
+      { value: "6.00E-04", rowSpan: 1, colSpan: 1 },
+      { value: "5.85E-04", rowSpan: 1, colSpan: 1 },
+      { value: "5.80E-04", rowSpan: 1, colSpan: 1 },
+      { value: "5.65E-04", rowSpan: 1, colSpan: 1 },
+      { value: "5.60E-04", rowSpan: 1, colSpan: 1 },
+      { value: "5.45E-04", rowSpan: 1, colSpan: 1 },
+      { value: "5.40E-04", rowSpan: 1, colSpan: 1 },
+      { value: "5.30E-04", rowSpan: 1, colSpan: 1 },
+      { value: "5.20E-04", rowSpan: 1, colSpan: 1 },
+      { value: "5.15E-04", rowSpan: 1, colSpan: 1 },
+      { value: "5.10E-04", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  alt="Suggested vertical permeability of landside blanket."
+  caption="Suggested vertical permeability of landside blanket."
+/>
+
+## Finite Element Analysis
+
+FEA is commonly used to perform seepage analysis using commercial off-the-shelf software like Geostudio’s SEEP/W, provided the model and boundary
+conditions are properly defined. FEA estimates seepage or flows and excess hydraulic heads (and thus, factors of safety against heave/blowout) for
+complex foundation profiles and levee geometries.
+
+Unlike slope stability analysis, there is currently no probabilistic analysis method for finite-element seepage analysis. Any deterministic
+two-dimensional (2D) analytical model can be evaluated probabilistically using first-order, second-moment method of reliability analysis as described
+in Engineer Technical Letter (ETL) 1110-2-561 (2006). USACE has performed probabilistic analysis using this method for many years.
+
+The Taylor series method evaluates the coefficient of variation of the factor of safety (FS) against heave/blowout and computes the lognormal
+reliability index. The reliability index is directly and uniquely related to the probability of unsatisfactory performance. The probability of
+unsatisfactory performance merely indicates the likelihood that an adverse event or condition; in this case, a factor of safety against heave/blowout
+less than 1 occurs. The outcome of these reliability analyses is the probability of the factor of safety against heave/blowout being less than 1. This
+ is undesirable, but it does not automatically result in breach of the dam or levee.
+
+<CitationFootnote />

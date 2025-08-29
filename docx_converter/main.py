@@ -16,25 +16,25 @@ from utils.mdx_writer import write_mdx_files
 environment = "production"  # Change to "production" for production environment
 
 # Assign the file path for figures
-FIGSRC = r"figures/toolbox-technical-manuals/seismic-hazard-suite/seismic-hazard-curves/v1.0"
+FIGSRC = r"static\figures\toolbox-technical-manuals\internal-erosion-suite\backward-erosion-piping-initiation\v1.0"
 
 # Assign the navigation link, title, and document for the NavContainer component
-NAVLINK = r"/toolboxes/seismic-hazard-suite"
-NAVTITLE = "Seismic Hazard Suite"
-NAVDOC = r"toolbox-technical-manuals/seismic-hazard-suite/seismic-hazard-curves"
+NAVLINK = r"\toolboxes\internal-erosion-suite"
+NAVTITLE = "Internal Erosion Suite"
+NAVDOC = r"toolbox-technical-manuals\internal-erosion-suite\backward-erosion-piping-initiation"
 
 # Define paths based on the environment
 if environment == "production":
-    DOCX_PATH = r"C:\Technical Documents\RMC-CPD-2023-02 - RMC Seismic Hazard Curves Toolbox.docx"
-    BIB_PATH = r"C:\Git\RMC-Software-Documentation\static\bibliographies\toolbox-technical-manuals\seismic-hazard-suite\seismic-hazard-curves\v1.0\bib.json"
-    FIGURES_DIR = r"C:\Git\RMC-Software-Documentation\static\figures\toolbox-technical-manuals\seismic-hazard-suite\seismic-hazard-curves\v1.0\figures"
-    MDX_DIR = r"C:\Git\RMC-Software-Documentation\docs\toolbox-technical-manuals\seismic-hazard-suite\seismic-hazard-curves\v1.0"
+    DOCX_PATH = r"C:\Technical Documents\RMC-CPD-2023-05 - RMC Backward Erosion Piping (Initiation) Toolbox.docx"
+    BIB_PATH = r"C:\Git\RMC-Software-Documentation\static\bibliographies\toolbox-technical-manuals\internal-erosion-suite\backward-erosion-piping-initiation\bib.json"
+    FIGURES_DIR = r"C:\Git\RMC-Software-Documentation\static\figures\toolbox-technical-manuals\internal-erosion-suite\backward-erosion-piping-initation\v1.0\figures"
+    MDX_DIR = r"C:\Git\RMC-Software-Documentation\docs\toolbox-technical-manuals\internal-erosion-suite\backward-erosion-piping-initiation\v1.0"
 else:
     # Development paths
-    DOCX_PATH = r"C:\Technical Documents\RMC-CPD-2023-02 - RMC Seismic Hazard Curves Toolbox.docx"
-    BIB_PATH = r"C:\Git\RMC-Software-Documentation\static\bibliographies\toolbox-technical-manuals\seismic-hazard-suite\seismic-hazard-curves\v1.0\bib.json"
-    FIGURES_DIR = r"C:\Technical Documents\MDX Conversions\Seismic Hazard Curves\Figures"
-    MDX_DIR = r"C:\Technical Documents\MDX Conversions\Seismic Hazard Curves\MDX"
+    DOCX_PATH = r"C:\Technical Documents\RMC-CPD-2023-05 - RMC Backward Erosion Piping (Initiation) Toolbox.docx"
+    BIB_PATH = r"C:\Git\RMC-Software-Documentation\static\bibliographies\toolbox-technical-manuals\internal-erosion-suite\backward-erosion-piping-initiation\bib.json"
+    FIGURES_DIR = r"C:\Technical Documents\MDX Conversions\BEP Initiation\Figures"
+    MDX_DIR = r"C:\Technical Documents\MDX Conversions\BEP Initiation\MDX"
 
 # ---- Constants ----
 DOCX_PATH = DOCX_PATH
