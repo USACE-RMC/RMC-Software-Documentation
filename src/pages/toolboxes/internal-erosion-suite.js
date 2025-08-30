@@ -12,7 +12,7 @@ const internalErosionSuite = [
     iconDark: 'img/ToolboxDarkMode.png',
     doc_location: `toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation`,
     doc_name: 'Backward Erosion Piping (Initiation) Toolbox Technical Manual',
-    active: false,
+    active: true,
     draft: true,
   },
   {
