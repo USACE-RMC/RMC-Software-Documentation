@@ -12,7 +12,7 @@ The project includes:
 
 The project is organized to support easy contribution, internal consistency, and extensibility across future RMC documentation needs.
 
-For development standards, file structure, custom components, and styling conventions, please refer to the internal [Documentation Guide](./docs/development/documentation-guide)
+For development standards, file structure, custom components, and styling conventions, please refer to the internal [Documentation Guide](https://usace-rmc.github.io/RMC-Software-Documentation/docs/documentation-guide/introduction/)
 
 The guide includes:
 
