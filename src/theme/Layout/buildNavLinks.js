@@ -67,6 +67,12 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
       ] || 'v1.0'
     }/preface`,
   );
+  const internalInstabilityHref = useBaseUrl(
+    `/docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/${
+      latestVersions['toolbox-technical-manuals/internal-erosion-suite/internal-instability'] ||
+      'v1.0'
+    }/preface`,
+  );
   const SCEHref = useBaseUrl(
     `/docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/${
       latestVersions[
@@ -162,6 +168,11 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
               id: 'continuation',
               text: 'Filter Evaluation (Continuation) Toolbox Technical Manual',
               href: continuationHref,
+            },
+            {
+              id: 'internal-instability',
+              text: 'Internal Instability Toolbox Technical Manual',
+              href: internalInstabilityHref,
             },
             {
               id: 'soil-contact-erosion',
