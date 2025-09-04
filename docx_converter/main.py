@@ -13,7 +13,7 @@ from utils.mdx_writer import write_mdx_files
 # ---- User configuration ----
 
 # Set the environment to "production" or "development"
-environment = "production"  # Change to "production" for production environment
+environment = "development"  # Change to "production" for production environment
 
 # Assign the file path for figures
 FIGSRC = r"figures\toolbox-technical-manuals\internal-erosion-suite\internal-instability\v1.0"
@@ -33,12 +33,10 @@ if environment == "production":
     MDX_DIR = r"C:\GitHub\RMC-Software-Documentation\docs\toolbox-technical-manuals\internal-erosion-suite\internal-instability\v1.0"
 else:
     # Development paths
-    DOCX_PATH = (
-        r"C:\Users\USACE\OneDrive\RMC CPDs\RMC-CPD-2023-10 - RMC Internal Instability Toolbox.docx"
-    )
-    BIB_PATH = r"C:\GitHub\RMC-Software-Documentation\static\bibliographies\toolbox-technical-manuals\internal-erosion-suite\internal-instability\v1.0\bib.json"
-    FIGURES_DIR = r"C:\Users\USACE\OneDrive\RMC CPDs\MDX Conversion\Internal Instability\Figures"
-    MDX_DIR = r"C:\Users\USACE\OneDrive\RMC CPDs\MDX Conversion\Internal Instability\MDX"
+    DOCX_PATH = r"D:\Reference Materials\Technical References\RMC Documents\Computer Program Documents\RMC-CPD-2023-10 - RMC Internal Instability Toolbox.docx"
+    BIB_PATH = r"C:\Users\q0rmcacg\OneDrive - US Army Corps of Engineers\Documents\GitHub\RMC-Software-Documentation\static\bibliographies\toolbox-technical-manuals\internal-erosion-suite\internal-instability\v1.0\bib.json"
+    FIGURES_DIR = r"D:\Reference Materials\Technical References\RMC Documents\Computer Program Documents\MDX Conversions\Internal Instability\Figures"
+    MDX_DIR = r"D:\Reference Materials\Technical References\RMC Documents\Computer Program Documents\MDX Conversions\Internal Instability\MDX"
 
 # ---- Constants ----
 DOCX_PATH = DOCX_PATH
