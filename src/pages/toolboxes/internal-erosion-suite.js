@@ -77,7 +77,7 @@ const internalErosionSuite = [
     iconDark: 'img/ToolboxDarkMode.png',
     doc_location: `toolbox-technical-manuals/internal-erosion-suite/internal-instability`,
     doc_name: 'Internal Instability Toolbox Technical Manual',
-    active: false,
+    active: true,
     draft: true,
   },
   {
