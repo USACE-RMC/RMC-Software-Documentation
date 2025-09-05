@@ -1,10 +1,17 @@
 import string
-from .helpers import generate_slug, sanitize_filename, format_multiline_component, format_paragraph, esacpe_jsx_prop
+from .helpers import (
+    generate_slug,
+    sanitize_filename,
+    format_multiline_component,
+    format_paragraph,
+    esacpe_jsx_prop,
+)
 from .constants import TOP_LEVEL_HEADINGS, STYLE_TO_MD_HEADING
 from .figures import extract_figures, handle_figure_references
 from .tables import extract_tables, handle_table_references
 from .citations import handle_citations
 from .equations import handle_equation_references
+
 
 def process_docx(doc, citation_map, fig_src_path, inline_image_info=None):
     """
@@ -43,18 +50,18 @@ def process_docx(doc, citation_map, fig_src_path, inline_image_info=None):
         if style in TOP_LEVEL_HEADINGS:
             if current_section:
                 sections.append(current_section)
-            if style == 'RMC_Appendix Heading 1':
+            if style == "RMC_Appendix Heading 1":
                 appendix_letter = string.ascii_uppercase[appendix_count]
                 appendix_count += 1
                 slug = generate_slug(text)
                 filename = f"{section_number:02d}-appendix-{sanitize_filename(slug)}.mdx"
                 title = f"Appendix {appendix_letter} - {text}"
                 current_section = {
-                    'title': title,
-                    'style': style,
-                    'content': [],
-                    'filename': filename,
-                    'appendix_letter': appendix_letter,
+                    "title": title,
+                    "style": style,
+                    "content": [],
+                    "filename": filename,
+                    "appendix_letter": appendix_letter,
                 }
             else:
                 title = text
@@ -63,16 +70,16 @@ def process_docx(doc, citation_map, fig_src_path, inline_image_info=None):
                 slug = generate_slug(title)
                 filename = f"{section_number:02d}-{sanitize_filename(slug)}.mdx"
                 current_section = {
-                    'title': title,
-                    'style': style,
-                    'content': [],
-                    'filename': filename,
+                    "title": title,
+                    "style": style,
+                    "content": [],
+                    "filename": filename,
                 }
             section_number += 1
             i += 1
             continue
         elif current_section is not None:
-            if current_section['title'] == 'Preface':
+            if current_section["title"] == "Preface":
                 if "U.S. Army Corps of Engineers" in text:
                     next_texts = []
                     for offset in range(1, 4):
@@ -80,19 +87,19 @@ def process_docx(doc, citation_map, fig_src_path, inline_image_info=None):
                             next_texts.append(doc.paragraphs[i + offset].text.strip())
                         else:
                             next_texts.append("")
-                    if ("Institute for Water Resources" in next_texts[0] and
-                        "Risk Management Center" in next_texts[1]):
+                    if (
+                        "Institute for Water Resources" in next_texts[0]
+                        and "Risk Management Center" in next_texts[1]
+                    ):
                         fixed_text = (
                             "U.S. Army Corps of Engineers\n"
                             "Institute for Water Resources\n"
                             "Risk Management Center\n"
                             "[RMC.software@usace.army.mil](mailto:RMC.software@usace.army.mil)"
                         )
-                        current_section['content'].append({
-                            'text': fixed_text,
-                            'formatted_text': fixed_text,
-                            'style': style
-                        })
+                        current_section["content"].append(
+                            {"text": fixed_text, "formatted_text": fixed_text, "style": style}
+                        )
                         i += 4
                         continue
             if style == "Caption" and text.startswith("Figure"):
@@ -106,11 +113,9 @@ def process_docx(doc, citation_map, fig_src_path, inline_image_info=None):
                         "caption": esacpe_jsx_prop(figure["caption"]),
                     }
                     figure_component = format_multiline_component("Figure", props)
-                    current_section['content'].append({
-                        'text': text,
-                        'formatted_text': figure_component,
-                        'style': style
-                    })
+                    current_section["content"].append(
+                        {"text": text, "formatted_text": figure_component, "style": style}
+                    )
                 else:
                     # Warn and insert a placeholder if no figure image was found
                     warning = (
@@ -118,72 +123,88 @@ def process_docx(doc, citation_map, fig_src_path, inline_image_info=None):
                         f"Figure {figure_number} caption found, but no corresponding image was extracted.\n"
                         f":::\n"
                     )
-                    current_section['content'].append({
-                        'text': text,
-                        'formatted_text': warning,
-                        'style': style
-                    })
+                    current_section["content"].append(
+                        {"text": text, "formatted_text": warning, "style": style}
+                    )
                 figure_index += 1
                 i += 1
                 continue
             if style == "RMC_Table Caption" and text.startswith("Table"):
-                table = tables[table_index]
-                table_type = table["tableType"]
-                if table_type == "TableVertical":
-                    component_name = "TableVertical"
-                    props = {
-                        "tableKey": table["tableKey"],
-                        "headers": table["headers"],
-                        "columns": table.get("data", []),
-                        "alt": esacpe_jsx_prop(table["alt"]),
-                        "caption": esacpe_jsx_prop(table["caption"]),
-                    }
-                elif table_type == "TableHorizontal":
-                    component_name = "TableHorizontal"
-                    props = {
-                        "tableKey": table["tableKey"],
-                        "headers": table["headers"],
-                        "rows": table.get("data", []),
-                        "alt": esacpe_jsx_prop(table["alt"]),
-                        "caption": esacpe_jsx_prop(table["caption"]),
-                    }
-                else:
-                    table_component = f"<!-- Unknown table type: {table_type} -->"
-                    current_section['content'].append({
-                        'text': text,
-                        'formatted_text': table_component,
-                        'style': style
-                    })
-                    table_index += 1
+                if not tables:
+                    # No tables found in the document
+                    warning = f":::info\n" f"No tables were found in the document.\n" f":::\n"
+                    print("No tables were found in the document.")
+                    current_section["content"].append(
+                        {"text": text, "formatted_text": warning, "style": style}
+                    )
                     i += 1
                     continue
-                figure_component = format_multiline_component(component_name, props)
-                warning_text = ""
-                if table.get("hasSpanningCells", False):
-                    warning_text = (
-                        ":::danger\n"
-                        "This table contains cells that span multiple rows or columns. Manually update the React component to properly format the table.\n"
-                        ":::"
+                if table_index < len(tables):
+                    table = tables[table_index]
+                    table_type = table["tableType"]
+                    if table_type == "TableVertical":
+                        component_name = "TableVertical"
+                        props = {
+                            "tableKey": table["tableKey"],
+                            "headers": table["headers"],
+                            "columns": table.get("data", []),
+                            "alt": esacpe_jsx_prop(table["alt"]),
+                            "caption": esacpe_jsx_prop(table["caption"]),
+                        }
+                    elif table_type == "TableHorizontal":
+                        component_name = "TableHorizontal"
+                        props = {
+                            "tableKey": table["tableKey"],
+                            "headers": table["headers"],
+                            "rows": table.get("data", []),
+                            "alt": esacpe_jsx_prop(table["alt"]),
+                            "caption": esacpe_jsx_prop(table["caption"]),
+                        }
+                    else:
+                        table_component = f"<!-- Unknown table type: {table_type} -->"
+                        current_section["content"].append(
+                            {"text": text, "formatted_text": table_component, "style": style}
+                        )
+                        table_index += 1
+                        i += 1
+                        continue
+                    figure_component = format_multiline_component(component_name, props)
+                    warning_text = ""
+                    if table.get("hasSpanningCells", False):
+                        warning_text = (
+                            ":::danger\n"
+                            "This table contains cells that span multiple rows or columns. Manually update the React component to properly format the table.\n"
+                            ":::"
+                        )
+                    if warning_text:
+                        current_section["content"].append(
+                            {
+                                "text": warning_text,
+                                "formatted_text": warning_text,
+                                "style": "Warning",
+                            }
+                        )
+                    current_section["content"].append(
+                        {"text": text, "formatted_text": figure_component, "style": style}
                     )
-                if warning_text:
-                    current_section['content'].append({
-                        'text': warning_text,
-                        'formatted_text': warning_text,
-                        'style': 'Warning'
-                    })
-                current_section['content'].append({
-                    'text': text,
-                    'formatted_text': figure_component,
-                    'style': style
-                })
-                table_index += 1
+                    table_index += 1
+                else:
+                    # Warn and insert a placeholder if no table was found at this index
+                    warning = (
+                        f":::danger\n"
+                        f"Table caption found, but no corresponding table data was extracted.\n"
+                        f":::\n"
+                    )
+                    current_section["content"].append(
+                        {"text": text, "formatted_text": warning, "style": style}
+                    )
                 i += 1
                 continue
             if style == "RMC_Equation":
                 equation_number = equation_index + 1
                 props = {
-                    "equationKey": f'equation-{str(equation_number)}',
-                    "equation": f'INSERT EQUATION HERE IN KaTeX FORMAT',
+                    "equationKey": f"equation-{str(equation_number)}",
+                    "equation": f"INSERT EQUATION HERE IN KaTeX FORMAT",
                 }
                 equation_component = format_multiline_component("Equation", props)
                 placeholder = (
@@ -192,21 +213,17 @@ def process_docx(doc, citation_map, fig_src_path, inline_image_info=None):
                     f"{equation_component}\n\n"
                     f":::"
                 )
-                current_section['content'].append({
-                    'text': text,
-                    'formatted_text': placeholder,
-                    'style': style
-                })
+                current_section["content"].append(
+                    {"text": text, "formatted_text": placeholder, "style": style}
+                )
                 equation_index += 1
                 i += 1
                 continue
             if style == "RMC_Equation Terms":
-                equation_term = f'- {text}'
-                current_section['content'].append({
-                    'text': equation_term,
-                    'formatted_text': equation_term,
-                    'style': style
-                })
+                equation_term = f"- {text}"
+                current_section["content"].append(
+                    {"text": equation_term, "formatted_text": equation_term, "style": style}
+                )
                 i += 1
                 continue
 
@@ -224,11 +241,9 @@ def process_docx(doc, citation_map, fig_src_path, inline_image_info=None):
             formatted_text = handle_figure_references(formatted_text)
             formatted_text = handle_table_references(formatted_text)
             formatted_text = handle_equation_references(formatted_text)
-            current_section['content'].append({
-                'text': text,
-                'formatted_text': formatted_text,
-                'style': style
-            })
+            current_section["content"].append(
+                {"text": text, "formatted_text": formatted_text, "style": style}
+            )
             i += 1
         else:
             i += 1

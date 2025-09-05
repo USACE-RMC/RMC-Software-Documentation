@@ -16,12 +16,12 @@ from utils.mdx_writer import write_mdx_files
 environment = "development"  # Change to "production" for production environment
 
 # Assign the file path for figures
-FIGSRC = r"figures\toolbox-technical-manuals\internal-erosion-suite\internal-instability\v1.0"
+FIGSRC = r"figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0"
 
 # Assign the navigation link, title, and document for the NavContainer component
 NAVLINK = r"\toolboxes\internal-erosion-suite"
 NAVTITLE = "Internal Erosion Suite"
-NAVDOC = r"toolbox-technical-manuals\internal-erosion-suite\internal-instability"
+NAVDOC = r"toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation"
 
 # Define paths based on the environment
 if environment == "production":
@@ -33,10 +33,10 @@ if environment == "production":
     MDX_DIR = r"C:\GitHub\RMC-Software-Documentation\docs\toolbox-technical-manuals\internal-erosion-suite\internal-instability\v1.0"
 else:
     # Development paths
-    DOCX_PATH = r"D:\Reference Materials\Technical References\RMC Documents\Computer Program Documents\RMC-CPD-2023-10 - RMC Internal Instability Toolbox.docx"
-    BIB_PATH = r"C:\Users\q0rmcacg\OneDrive - US Army Corps of Engineers\Documents\GitHub\RMC-Software-Documentation\static\bibliographies\toolbox-technical-manuals\internal-erosion-suite\internal-instability\v1.0\bib.json"
-    FIGURES_DIR = r"D:\Reference Materials\Technical References\RMC Documents\Computer Program Documents\MDX Conversions\Internal Instability\Figures"
-    MDX_DIR = r"D:\Reference Materials\Technical References\RMC Documents\Computer Program Documents\MDX Conversions\Internal Instability\MDX"
+    DOCX_PATH = r"C:\Users\USACE\OneDrive\RMC CPDs\RMC-CPD-2023-08 - RMC Concentrated Leak Erosion (Initiation) Toolbox.docx"
+    BIB_PATH = r"C:\GitHub\RMC-Software-Documentation\static\bibliographies\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\bib.json"
+    FIGURES_DIR = r"C:\Users\USACE\OneDrive\RMC CPDs\MDX Conversion\Concentrated Leak Erosion (Initiation)\Figures"
+    MDX_DIR = r"C:\Users\USACE\OneDrive\RMC CPDs\MDX Conversion\Concentrated Leak Erosion (Initiation)\MDX"
 
 # ---- Constants ----
 DOCX_PATH = DOCX_PATH
