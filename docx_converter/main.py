@@ -13,7 +13,7 @@ from utils.mdx_writer import write_mdx_files
 # ---- User configuration ----
 
 # Set the environment to "production" or "development"
-environment = "development"  # Change to "production" for production environment
+environment = "production"  # Change to "production" for production environment
 
 # Assign the file path for figures
 FIGSRC = r"figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0"
@@ -25,18 +25,16 @@ NAVDOC = r"toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-er
 
 # Define paths based on the environment
 if environment == "production":
-    DOCX_PATH = (
-        r"C:\Users\USACE\OneDrive\RMC CPDs\RMC-CPD-2023-10 - RMC Internal Instability Toolbox.docx"
-    )
-    BIB_PATH = r"C:\GitHub\RMC-Software-Documentation\static\bibliographies\toolbox-technical-manuals\internal-erosion-suite\internal-instability\v1.0\bib.json"
-    FIGURES_DIR = r"C:\GitHub\RMC-Software-Documentation\static\figures\toolbox-technical-manuals\internal-erosion-suite\internal-instability\v1.0"
-    MDX_DIR = r"C:\GitHub\RMC-Software-Documentation\docs\toolbox-technical-manuals\internal-erosion-suite\internal-instability\v1.0"
+    DOCX_PATH = r"C:\Technical Documents\RMC-CPD-2023-08 - RMC Concentrated Leak Erosion (Initiation) Toolbox.docx"
+    BIB_PATH = r"C:\Git\RMC-Software-Documentation\static\bibliographies\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\bib.json"
+    FIGURES_DIR = r"C:\Git\RMC-Software-Documentation\static\figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0"
+    MDX_DIR = r"C:\Git\RMC-Software-Documentation\docs\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0"
 else:
     # Development paths
-    DOCX_PATH = r"C:\Users\USACE\OneDrive\RMC CPDs\RMC-CPD-2023-08 - RMC Concentrated Leak Erosion (Initiation) Toolbox.docx"
-    BIB_PATH = r"C:\GitHub\RMC-Software-Documentation\static\bibliographies\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\bib.json"
-    FIGURES_DIR = r"C:\Users\USACE\OneDrive\RMC CPDs\MDX Conversion\Concentrated Leak Erosion (Initiation)\Figures"
-    MDX_DIR = r"C:\Users\USACE\OneDrive\RMC CPDs\MDX Conversion\Concentrated Leak Erosion (Initiation)\MDX"
+    DOCX_PATH = r"C:\Technical Documents\RMC-CPD-2023-08 - RMC Concentrated Leak Erosion (Initiation) Toolbox.docx"
+    BIB_PATH = r"C:\Git\RMC-Software-Documentation\static\bibliographies\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\bib.json"
+    FIGURES_DIR = r"C:\Technical Documents\MDX Conversions\CLE Initiation\Figures"
+    MDX_DIR = r"C:\Technical Documents\MDX Conversions\CLE Initiation\MDX"
 
 # ---- Constants ----
 DOCX_PATH = DOCX_PATH

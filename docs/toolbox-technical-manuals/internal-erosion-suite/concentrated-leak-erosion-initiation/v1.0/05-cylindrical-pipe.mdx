@@ -1,0 +1,361 @@
+---
+title: "Cylindrical Pipe"
+---
+
+import Link from "@docusaurus/Link";
+import addBaseUrl from "@docusaurus/useBaseUrl";
+import CitationFootnote from "@site/src/components/CitationFootnote";
+import Equation from "@site/src/components/Equation";
+import EquationReference from "@site/src/components/EquationReference";
+import Figure from "@site/src/components/Figure";
+import FigReference from "@site/src/components/FigureReference";
+import NavContainer from "@site/src/components/NavContainer";
+import VersionSelector from "@site/src/components/VersionSelector";
+
+<NavContainer 
+  link="\toolboxes\internal-erosion-suite"
+  linkTitle="Internal Erosion Suite"
+  document="toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation"
+></NavContainer>
+
+# Cylindrical Pipe
+
+## Method of Analysis
+
+In step 1, use the drop-down list to select the method of analysis (probabilistic or deterministic). There are two options for probabilistic analysis.
+ The first performs 1,000 iterations (judged adequate for most applications) without using Palisade’s @RISK software. This provides flexibility if an
+@RISK software license is not available. The second uses @RISK to customize the probabilistic analysis. Use the drop-down list to select Yes if @RISK
+is used and No if @RISK is not used. <FigReference figKey="figure-9" /> through <FigReference figKey="figure-11" /> illustrate the three possible
+scenarios.
+
+<Figure
+  figKey="figure-9"
+  src="figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\figures\figure9.png"
+  alt="Step 1 of Cylindrical Pipe worksheet: Deterministic analysis."
+  caption="Step 1 of Cylindrical Pipe worksheet: Deterministic analysis."
+/>
+
+<Figure
+  figKey="figure-10"
+  src="figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\figures\figure10.png"
+  alt="Step 1 of Cylindrical Pipe worksheet: Probabilistic analysis without using @RISK."
+  caption="Step 1 of Cylindrical Pipe worksheet: Probabilistic analysis without using @RISK."
+/>
+
+<Figure
+  figKey="figure-11"
+  src="figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\figures\figure11.png"
+  alt="Step 1 of Cylindrical Pipe worksheet: Probabilistic analysis using @RISK."
+  caption="Step 1 of Cylindrical Pipe worksheet: Probabilistic analysis using @RISK."
+/>
+
+## Critical Shear Stress and Initial Pipe Diameter
+
+In step 2, input the critical shear stress for the embankment core and initial pipe diameter. The selections in step 1 affect the input for step 2,
+and cells that do not apply have a gray background. These cells are not used in subsequent calculations, even if data is present.
+
+For deterministic analysis, input only the most likely values. The mean values used for subsequent calculations are the most likely (or mode) value.
+{"\n"}<FigReference figKey="figure-12" /> illustrates the deterministic input.
+
+<Figure
+  figKey="figure-12"
+  src="figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\figures\figure12.png"
+  alt="Step 2 of Cylindrical Pipe worksheet: Deterministic analysis."
+  caption="Step 2 of Cylindrical Pipe worksheet: Deterministic analysis."
+/>
+
+For probabilistic analysis without using @RISK, input the minimum and maximum values in addition to the most likely value, and triangular
+distributions represent the random variables. The mean values used in subsequent calculations are the average of the minimum, most likely, and maximum
+ values. <FigReference figKey="figure-13" /> illustrates the probabilistic input without @RISK.
+
+<Figure
+  figKey="figure-13"
+  src="figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\figures\figure13.png"
+  alt="Step 2 of Cylindrical Pipe worksheet: Probabilistic analysis without using @RISK."
+  caption="Step 2 of Cylindrical Pipe worksheet: Probabilistic analysis without using @RISK."
+/>
+
+For probabilistic analysis using @RISK, input the minimum, most likely, and maximum values, and use an @RISK formula for a triangular distribution in
+the third column as a default. Alternatively, input a valid @RISK distribution in lieu of this default formula, and the user-specified input displays
+in the fourth column. The mean values used for subsequent calculations are the means for the @RISK distributions entered in the third column.
+{"\n"}<FigReference figKey="figure-14" /> illustrates the probabilistic input using @RISK.
+
+<Figure
+  figKey="figure-14"
+  src="figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\figures\figure14.png"
+  alt="Step 2 of Cylindrical Pipe worksheet: Probabilistic analysis using @RISK."
+  caption="Step 2 of Cylindrical Pipe worksheet: Probabilistic analysis using @RISK."
+/>
+
+The RMC Erodibility Parameters Toolbox helps estimate the critical shear stress of the embankment core. The toolbox contains empirical relationships
+and published values based on field and laboratory testing. The RMC Concentrated Leak Erosion (Cracking) Toolbox helps estimate the initial pipe
+diameter. Because it is very difficult to predict the initial pipe diameter, sensitivity analysis is recommended.
+
+If using @RISK to perform probabilistic analysis, delete unnecessary calculation worksheets because the simulation is performed for all worksheets in
+the workbook, which is time consuming. If cycling through iterations using @RISK, the displayed results are no longer mean values of the random variables;
+ they are the selected iteration’s values.
+
+The remaining input for step 2 is the base of pipe elevation. When setting up this worksheet, include a headwater partition for the base of pipe
+elevation. The probability of initiation of concentrated leak erosion is zero at and below this elevation.
+
+## Core Geometry
+
+In step 3, the embankment core geometry is defined. Input includes the top of the core elevation, width at the top of the core, and slope data for the
+ core. Slopes are defined by elevation, starting at the top of the core and ending at the base of the embankment. <FigReference figKey="figure-15" />
+ illustrates the core geometry input. Step 4 uses the slopes of the embankment core to calculate the pipe length over which the hydraulic head
+difference occurs. Therefore, the lowest core elevation (minimum z<sub>bot</sub>) must be less than or equal to the base of pipe elevation to compute
+the length. A caution displays with an orange background if the minimum user-specified z<sub>bot</sub> for the upstream or downstream slope of the
+core is greater than base of pipe elevation.
+
+<Figure
+  figKey="figure-15"
+  src="figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\figures\figure15.png"
+  alt="Step 3 of Cylindrical Pipe worksheet: Core geometry."
+  caption="Step 3 of Cylindrical Pipe worksheet: Core geometry."
+/>
+
+## Hydraulic Shear Stress
+
+Step 4 calculates the hydraulic shear stress on the surface of the cylindrical pipe from flow of water in the pipe as shown in
+{"\n"}<EquationReference equationKey="equation-3" />.
+
+:::danger Equation 3 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-3"
+  equation="\tau = \gamma_{W}i\frac{D}{4}"
+/>
+:::
+
+where:
+
+- <em>D</em> = initial diameter of the pipe
+
+The average hydraulic gradient used in <EquationReference equationKey="equation-3" /> is calculated by dividing the net hydraulic head across the
+pipe by the length at the base of the pipe for each defined headwater-tailwater combination.
+
+For a homogenous embankment, the pipe length is measured at the base elevation of the pipe as a straight line from the upstream slope of the
+embankment to the downstream slope. For a zoned embankment where the upstream and downstream zones are very permeable (e.g., rockfill), the pipe
+length is measured as a straight line at the base elevation of the pipe from the upstream slope of the impervious core to the downstream slope of the
+impervious core. Override the formula for pipe length with a user-specified length for embankments with sloping cores, pipe orientations that are not
+perpendicular to the embankment centerline, etc.
+
+The hydraulic shear stress calculated at the bottom of the first table in <FigReference figKey="figure-16" /> is for the mean initial pipe diameter.
+Because some uncertainty is always present regarding the input parameters for this type of analysis, the second table reports the hydraulic shear
+stress using the same hydraulic conditions as the first table but for pipe diameters ranging from 1 millimeter to 150 millimeters. The second table is
+ used in step 6 to estimate the critical pipe diameter.
+
+<Figure
+  figKey="figure-16"
+  src="figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\figures\figure16.png"
+  alt="Step 4 of Cylindrical Pipe worksheet: Hydraulic shear stress."
+  caption="Step 4 of Cylindrical Pipe worksheet: Hydraulic shear stress."
+/>
+
+## Likelihood of Initiation of Concentrated Leak Erosion
+
+Step 5 compares the calculated hydraulic shear stress on the surface of the cylindrical pipe from flow of water in the pipe to the critical shear
+stress for initiation of concentrated leak erosion. The factor of safety (FS) against initiation of concentrated leak erosion is calculated as shown
+in <EquationReference equationKey="equation-4" />.
+
+:::danger Equation 4 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-4"
+  equation="FS=\frac{\tau_{cr}}{\tau}"
+/>
+:::
+
+where:
+
+- <em>&tau;<sub>cr</sub></em>= critical shear stress for initiation of concentrated leak erosion
+- <em>&tau;</em>= hydraulic shear stress on the surface of the cylindrical pipe from flow of water in the pipe
+
+For deterministic analysis, the mean hydraulic shear stress is plotted for each headwater level as a function of pipe diameter and results in a series
+ of straight lines. The mean and mode initial pipe diameter and critical shear stress defined in step 2 are plotted as a point on the chart. When this
+ point plots above the line of the headwater level being considered, the FS is greater than 1, and initiation of concentrated leak erosion is not
+predicted. When this point plots below the line, the FS is less than 1, and initiation is predicted. Cells that do not apply have a gray background.
+{"\n"}<FigReference figKey="figure-17" /> illustrates the graphical output of hydraulic shear stress for deterministic analysis.
+
+<Figure
+  figKey="figure-17"
+  src="figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\figures\figure17.png"
+  alt="Step 5 of Cylindrical Pipe worksheet: Graphical output of hydraulic shear stress for deterministic analysis."
+  caption="Step 5 of Cylindrical Pipe worksheet: Graphical output of hydraulic shear stress for deterministic analysis."
+/>
+
+For probabilistic analysis, a black box is also plotted showing the distribution limits for initial pipe diameter and critical shear stress.
+Initiation is predicted for initial pipe diameter and critical shear stress combinations that plot inside the black box and below the line
+corresponding to the headwater level being evaluated. If cycling through iterations using @RISK, the displayed mean pipe diameter and critical shear
+stress are no longer mean values; they are the selected iteration’s values. <FigReference figKey="figure-18" /> provides an example of the graphical
+output of hydraulic shear stress for probabilistic analysis.
+
+<Figure
+  figKey="figure-18"
+  src="figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\figures\figure18.png"
+  alt="Step 5 of Cylindrical Pipe worksheet: Graphical output of hydraulic shear stress for probabilistic analysis."
+  caption="Step 5 of Cylindrical Pipe worksheet: Graphical output of hydraulic shear stress for probabilistic analysis."
+/>
+
+<FigReference figKey="figure-19" /> illustrates the plot options for this chart. The maximum value for the y-axis (hydraulic shear stress) and maximum
+ value for the x-axis (pipe diameter) are user-specified.
+
+<Figure
+  figKey="figure-19"
+  src="figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\figures\figure19.png"
+  alt="Step 5 of Cylindrical Pipe worksheet: Plot options for hydraulic shear stress."
+  caption="Step 5 of Cylindrical Pipe worksheet: Plot options for hydraulic shear stress."
+/>
+
+For deterministic analysis, the FS is calculated using the most likely values of the random variables and summarized in separate tables. Cells that do
+ not apply have a gray background. For probabilistic analysis, the FS is calculated as described for the deterministic analysis but for the mean
+values of the random variables, and multiple iterations are performed by sampling the distributions in step 6. The probability of initiation is equal
+to the percentage of iterations that resulted in a FS less than 1 [(P(FS < 1)]. For probabilistic analysis performed without using @RISK, 1,000
+iterations are used. For probabilistic analysis using @RISK, the number of iterations is user-specified, and “@RISK” displays in parentheses after the
+ number of iterations for this scenario. If cycling through iterations using @RISK, the displayed results are no longer mean values; they are the
+selected iteration’s values. For deterministic and probabilistic analyses, cells with FS<em> </em>less than 1 have an orange background.
+{"\n"}<FigReference figKey="figure-20" /> illustrates the deterministic tabular output, and <FigReference figKey="figure-21" /> illustrates the
+probabilistic tabular output without using @RISK.
+
+<Figure
+  figKey="figure-20"
+  src="figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\figures\figure20.png"
+  alt="Step 5 of Cylindrical Pipe worksheet: Tabular output of hydraulic shear stress for deterministic analysis."
+  caption="Step 5 of Cylindrical Pipe worksheet: Tabular output of hydraulic shear stress for deterministic analysis."
+/>
+
+<Figure
+  figKey="figure-21"
+  src="figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\figures\figure21.png"
+  alt="Step 5 of Cylindrical Pipe worksheet: Tabular output of hydraulic shear stress for probabilistic analysis without using @RISK."
+  caption="Step 5 of Cylindrical Pipe worksheet: Tabular output of hydraulic shear stress for probabilistic analysis without using @RISK."
+/>
+
+At the end of step 5, summary plots are generated. The first plot is the mean FS against initiation of concentrated leak erosion as a function of
+headwater level. A deterministic analysis uses only the mean critical shear stress and the mean initial pipe diameter. The result is plotted as a blue
+ line, and a gray background is applied to the drop-down list above the plot signifying it does not apply. A horizontal reference line is displayed in
+ black for a FS of 1.0. <FigReference figKey="figure-22" /> illustrates graphical output for deterministic analysis.
+
+<Figure
+  figKey="figure-22"
+  src="figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\figures\figure22.png"
+  alt="Step 5 of Cylindrical Pipe worksheet: Graphical output of factor of safety for deterministic analysis."
+  caption="Step 5 of Cylindrical Pipe worksheet: Graphical output of factor of safety for deterministic analysis."
+/>
+
+For probabilistic analysis, use the drop-down list above the plot to select a critical shear stress other than the mean for the FS calculation.
+Options include the minimum, most likely, and maximum critical shear stress. Additionally, along with the mean initial pipe diameter, the FS against
+for initiation of concentrated leak erosion is plotted for the minimum (green dashed line) and maximum (red dashed line) initial pipe diameter. If
+cycling through iterations using @RISK, the plotted FS is calculated using the hydraulic shear stress for the selected iteration and the critical
+shear stress from the drop-down list. <FigReference figKey="figure-23" /> provides an example of the graphical output for probabilistic analysis.
+
+<Figure
+  figKey="figure-23"
+  src="figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\figures\figure23.png"
+  alt="Step 5 of Cylindrical Pipe worksheet: Graphical output of factor of safety for probabilistic analysis."
+  caption="Step 5 of Cylindrical Pipe worksheet: Graphical output of factor of safety for probabilistic analysis."
+/>
+
+<FigReference figKey="figure-24" /> illustrates the plot options for <FigReference figKey="figure-23" />. The maximum value for the y-axis (FS
+against initiation of concentrated leak erosion) and minimum and maximum values for the x-axis (headwater level) are user-specified. Up to five
+vertical reference elevations can be defined with user-specified labels displayed at the top of the chart.
+
+<Figure
+  figKey="figure-24"
+  src="figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\figures\figure24.png"
+  alt="Step 5 of Cylindrical Pipe worksheet: Plot options for factor of safety."
+  caption="Step 5 of Cylindrical Pipe worksheet: Plot options for factor of safety."
+/>
+
+The second plot is the probability of initiation of concentrated leak erosion as a function of headwater level. For deterministic analysis, a
+probability of initiation of concentrated leak erosion is not calculated, and this plot has a gray background. For probabilistic analysis, the mean
+probability of initiation of concentrated leak erosion displays. If cycling through iterations using @RISK, this plot has a gray background because
+the probability of initiation cannot be calculated from a single iteration. Similarly, this plot has a gray background for deterministic analysis.
+{"\n"}<FigReference figKey="figure-25" /> illustrates the graphical output for probabilistic analysis.
+
+<Figure
+  figKey="figure-25"
+  src="figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\figures\figure25.png"
+  alt="Step 5 of Cylindrical Pipe worksheet: Graphical output of probability of initiation for probabilistic analysis."
+  caption="Step 5 of Cylindrical Pipe worksheet: Graphical output of probability of initiation for probabilistic analysis."
+/>
+
+<FigReference figKey="figure-26" /> illustrates the plot options for this chart. The vertical reference elevations and minimum and maximum values for
+the x-axis (headwater level) are the same as the previous chart. Only the maximum value for the y-axis (probability of initiation of concentrated leak
+ erosion) is user-specified.
+
+<Figure
+  figKey="figure-26"
+  src="figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\figures\figure26.png"
+  alt="Step 5 of Cylindrical Pipe worksheet: Plot options for probability of initiation."
+  caption="Step 5 of Cylindrical Pipe worksheet: Plot options for probability of initiation."
+/>
+
+## Headwater Level for Initiation of Concentrated Leak Erosion
+
+Step 6 calculates the headwater level for initiation of concentrated leak erosion. The results for different combinations of the initial pipe diameter
+ and critical shear stress are linearly interpolated from the tables in step 4. The first table (Distribution) considers the combinations created by
+the distribution input in step 2 and is available only when probabilistic analysis is selected. For deterministic analysis, this table has a gray
+background. The second table (Mean) considers the mean initial pipe diameter and the mean critical shear stress and is available for both
+deterministic and probabilistic analyses. If the critical shear stress is less than the hydraulic shear stress for the minimum specified headwater
+level, the headwater level for initiation so indicates. If the critical shear stress is greater than the hydraulic shear stress for the maximum
+specified headwater level or if the hydraulic shear stress does not increase with an increase in headwater level (e.g., because of an increase in the
+tailwater level), the headwater level for initiation cannot be calculated, and an error displays. For deterministic analysis, the mean value in the
+second table is equal to the most likely (or mode) value. <FigReference figKey="figure-27" /> and <FigReference figKey="figure-28" /> provide
+examples of critical headwater levels for deterministic and probabilistic analyses, respectively.
+
+<Figure
+  figKey="figure-27"
+  src="figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\figures\figure27.png"
+  alt="Step 6 of Cylindrical Pipe worksheet: Critical headwater level for deterministic analysis."
+  caption="Step 6 of Cylindrical Pipe worksheet: Critical headwater level for deterministic analysis."
+/>
+
+<Figure
+  figKey="figure-28"
+  src="figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\figures\figure28.png"
+  alt="Step 6 of Cylindrical Pipe worksheet: Critical headwater level for probabilistic analysis."
+  caption="Step 6 of Cylindrical Pipe worksheet: Critical headwater level for probabilistic analysis."
+/>
+
+## Critical Pipe Diameter for Initiation of Concentrated Leak Erosion
+
+Step 7 calculates the critical pipe diameter for initiation of concentrated leak erosion (<em>D<sub>cr</sub></em>) for each headwater level using
+{"\n"}<EquationReference equationKey="equation-5" />.
+
+:::danger Equation 5 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-5"
+  equation="D_{cr} = \frac{4\tau_c}{i\gamma_W}"
+/>
+:::
+
+This equation was derived by solving <EquationReference equationKey="equation-3" /> for the pipe diameter and setting the hydraulic shear stress
+equal to the critical shear stress.
+
+For deterministic analysis, the calculations for the minimum and maximum critical pipe diameters have a gray background, and the most likely (mode)
+and mean critical pipe diameter are equal at each headwater level evaluated because the mode and mean critical shear stress are equal.
+{"\n"}<FigReference figKey="figure-29" /> provides an example for deterministic analysis.
+
+<Figure
+  figKey="figure-29"
+  src="figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\figures\figure29.png"
+  alt="Step 7 of Cylindrical Pipe worksheet: Deterministic analysis."
+  caption="Step 7 of Cylindrical Pipe worksheet: Deterministic analysis."
+/>
+
+For probabilistic analysis, the critical pipe diameter for each headwater level is calculated using the minimum, most likely (mode), maximum, and mean
+ critical shear stress, where <em>D<sub>cr,min</sub></em><sub> </sub>is based on the minimum <em><sub>c</sub>; D<sub>cr,mode</sub></em> is based on
+the most likely (mode) <em><sub>c</sub></em>;<em> D<sub>cr,max</sub></em> is based on the maximum <em><sub>c</sub></em>; and
+<em>D<sub>cr,mean</sub></em> is based on the mean<em> <sub>c</sub></em>. <FigReference figKey="figure-30" /> provides an example for probabilistic
+analysis.
+
+<Figure
+  figKey="figure-30"
+  src="figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0\figures\figure30.png"
+  alt="Step 7 of Cylindrical Pipe worksheet: Probabilistic analysis."
+  caption="Step 7 of Cylindrical Pipe worksheet: Probabilistic analysis."
+/>
+
+<CitationFootnote />
