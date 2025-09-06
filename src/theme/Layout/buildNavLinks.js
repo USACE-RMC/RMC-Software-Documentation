@@ -60,6 +60,13 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
       ] || 'v1.0'
     }/preface`,
   );
+  const cleInitiationHref = useBaseUrl(
+    `/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/${
+      latestVersions[
+        'toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation'
+      ] || 'v1.0'
+    }/preface`,
+  );
   const continuationHref = useBaseUrl(
     `/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/${
       latestVersions[
@@ -163,6 +170,11 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
               id: 'bep-progression',
               text: 'Backward Erosion Piping (Progression) Toolbox Technical Manual',
               href: bepProgressionHref,
+            },
+            {
+              id: 'cle-initiation',
+              text: 'Concentrated Leak Erosion (Initiation) Toolbox Technical Manual',
+              href: cleInitiationHref,
             },
             {
               id: 'continuation',

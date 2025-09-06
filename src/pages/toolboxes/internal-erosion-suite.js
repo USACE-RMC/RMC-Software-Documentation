@@ -45,7 +45,7 @@ const internalErosionSuite = [
     iconDark: 'img/ToolboxDarkMode.png',
     doc_location: `toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation`,
     doc_name: 'Concentrated Leak Erosion (Initiation) Toolbox Technical Manual',
-    active: false,
+    active: true,
     draft: true,
   },
   {
