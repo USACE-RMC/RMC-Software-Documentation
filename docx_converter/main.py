@@ -13,7 +13,7 @@ from utils.mdx_writer import write_mdx_files
 # ---- User configuration ----
 
 # Set the environment to "production" or "development"
-environment = "production"  # Change to "production" for production environment
+environment = "development"  # Change to "production" for production environment
 
 # Assign the file path for figures
 FIGSRC = r"figures\toolbox-technical-manuals\internal-erosion-suite\concentrated-leak-erosion-initiation\v1.0"
