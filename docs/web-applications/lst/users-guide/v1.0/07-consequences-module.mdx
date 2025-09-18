@@ -1,0 +1,1195 @@
+---
+title: 'Consequences Module'
+---
+
+import Link from "@docusaurus/Link";
+import addBaseUrl from "@docusaurus/useBaseUrl";
+import CitationFootnote from "@site/src/components/CitationFootnote";
+import Equation from "@site/src/components/Equation";
+import EquationNoRef from "@site/src/components/EquationNoRef";
+import Figure from "@site/src/components/Figure";
+import FigureInline from "@site/src/components/FigureInline";
+import FigReference from "@site/src/components/FigureReference";
+import NavContainer from "@site/src/components/NavContainer";
+import TableReference from "@site/src/components/TableReference";
+import TableVertical from "@site/src/components/TableVertical";
+import VersionSelector from "@site/src/components/VersionSelector";
+
+<NavContainer
+link="\web-applications\lst"
+linkTitle="Levee Screening Tool"
+document="web-applications\lst\users-guide"
+
+> </NavContainer>
+
+# Consequences Module
+
+## Module Overview
+
+The Consequences module of the LST estimates loss of life and direct economic damages caused by inundation due to breach or overtopping of a levee.
+
+A critical component of risk analyses is the consequences that could occur from flooding within the system of interest, which in this case includes
+the levee segment being screened. The analysis requires an estimate of the expected consequences for the full range of load conditions that the levee
+may experience. For screening-level risk assessments using the LST, direct life loss and economic damages are estimated. Other consequences that could
+occur (e.g., indirect life loss, economic damages, agriculture) should be discussed outside of the LST application for those rare occasions when they
+may drive system risk.
+
+The consequence estimation method in the LST takes into consideration both who and what are in harm’s way (exposure) as well as how susceptible to
+harm they are (vulnerability). The consequence inputs and results for the LST are all contained in the Consequences module. Readily available data are
+used along with limited analysis to assess the potential consequences related to different flooding scenarios, including:
+
+- Overtopping of a levee segment with breach,
+
+- Overtopping of a levee segment without breach, and
+
+- Breach prior to overtopping of a levee segment.
+
+Consequence estimates focus on loss of life, but also include population at risk (PAR), number of structures, and direct monetary damage estimates to
+structures, contents, and associated vehicles. All necessary information for consequence estimation is retrieved automatically from the National Levee
+Database (NLD), the National Structure Inventory (NSI) 2.0, or provided by the user.
+
+The Consequences module has five tabs:
+
+- Inundation
+
+- Structure Inventory
+
+- LifeSim Compute
+
+- Consequence Results
+
+- Critical Infrastructure
+
+Each tab requires either user input or verification of the default data pulled from the NLD. The results are displayed on the Consequence Results tab.
+
+## Inundation Tab
+
+The LST Inundation module was developed to provide users with an efficient method to model inundation scenarios in leveed areas from breach and/or
+overtopping of levees. The inundation model within the LST is a stream-lined application of the 2-dimensional (2D) engine in HEC-RAS version 6.2.1
+(https://www.hec.usace.army.mil/software/hec-ras/). The risk assessment requires inundation estimates for levee breach and non-breach scenarios, with
+multiple load levels for each scenario. The three scenarios and associated loading levels are:
+
+1. Breach Prior to Overtopping: 50%, 75%, and 100% loading conditions for each breach location.
+
+1. Overtopping with Breach: 100% loading +1, +2, and +3 feet at the anticipated overtopping location.
+
+1. Overtopping without Breach: 100% loading +1, +2, and +3 feet at the anticipated overtopping location.
+
+As shown in <FigReference figKey="figure-28" />, breach prior to overtopping scenarios can be defined for multiple locations along the levee. Those
+locations can then be tied to specific failure modes in the risk analysis. Only one overtopping scenario, with and without breach, is allowed by the
+LST.
+
+<Figure
+  figKey="figure-28"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure28.png"
+  alt="Inundation tab in the Consequences module of LST 2.0."
+  caption="Inundation tab in the Consequences module of LST 2.0."
+/>
+
+The HEC-RAS models can be downloaded for use outside the LST as a starting point for other assessments if desired. Alternatively, if more refined
+HEC-RAS breach models exist for the leveed area, results from those models (in .hdf files) can be uploaded and used for the consequence computations.
+
+### HEC-RAS Model Features
+
+The following section describes the model features generated for use in the LST inundation module. This section is meant for users familiar with
+HEC-RAS breach modeling.
+
+#### 2D flow area for river (i.e., 2D River Area)
+
+The geometry of the River Area is defined by alignment with the levee profile line where length is equal to the maximum breach or overtopping length
+and width is 100’ from the levee towards the river. The River Area includes an inflow boundary condition on the opposite side of the levee profile
+line.
+
+#### 2D flow area for landside (i.e., 2D Modeling Area)
+
+The geometry of the landside of the levee is provided by the LST based on the modeling area. When creating a new screening, the modeling area is
+defined as a clone of the NLD’s leveed area polygon. The modeling area includes an outflow boundary condition that allows floodwaters to exit across
+existing ground. It is important to ensure the leveed area either ties into high ground or a valid outflow location. If high ground is not included
+the water will exit inappropriately and potentially reduce damaging depths.
+
+#### 2D connection for the levee (i.e., 2D Connection)
+
+The geometry of the 2D Levee Connection is provided from the LST based on the levee alignment from the NLD. The levee crest elevation is defined by
+levee crest profile data from the NLD or user. The 2D Levee Connection allows for flow transfer between the River Area and Modeling Area by
+overtopping and/or breach. The 2D connection length is defined as the user entered maximum breach length.
+
+#### Separate Overtopping (Optional)
+
+The geometry of the separate overtopping is provided as a boundary condition line from the LST based on the levee alignment from the NLD, a selected
+overtopping location, and a defined length of overtopping. This is an optional addition to the LST hydraulic analysis and is to be used when
+overtopping is expected elsewhere in the leveed area.
+
+<Figure
+  figKey="figure-29"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure29.png"
+  alt="Feature schematic showing the model setup for HEC-RAS for a riverine scenario in the LST."
+  caption="Feature schematic showing the model setup for HEC-RAS for a riverine scenario in the LST."
+/>
+
+### HEC-RAS 2D Modeling Approach in the LST
+
+A user defined inflow stage hydrograph is applied at the inflow boundary condition of the River Area. Elevation in the river area is set to the toe
+elevation. Flow within the River Area will be transported to the 2D connection and fill so that the specified levee height is reached when the
+hydrograph peak occurs. The 2D connection has a constant elevation equal to the levee height at the user specified breach location and a length equal
+to the maximum breach width parameter. Flow entering the 2D Modeling Area from across the connection travels through the area until it reaches the
+outflow boundary or ponds internally. The 2D flow is modeled using the diffusion wave equation set, which is faster and more stable and is considered
+appropriate for screening purposes. Note that testing of the impact or sensitivity of using the shallow water equation sets is possible through
+downloading the LST model to desktop.
+
+A levee breach is modeled by breaching the Levee Connection at the peak of the stage hydrograph. For breaching prior to overtopping, the breach is
+modeled as a small piping failure and allowed to expand using the simplified physical breach method available in HEC-RAS. The breach is initiated at
+the bottom of the levee, to produce the highest head differential across the levee. For the simplified physical method, erosion curves are specified
+that define the rates of lateral/vertical breach expansion based on breach flow velocities. A breach from overtopping occurs from the top down.
+Overtopping is modeled as weir flow over the connection using the built-in methodology in HEC-RAS.
+
+### Terrain and Land Cover Data
+
+By default, terrain data is downloaded to the LST from the USGS National Elevation Database (NED). The only option currently available to download from
+the USGS is the 7.5-minute (10-meter resolution). Terrain modifications are applied to the default terrain. The levee profile geometry is applied as
+a high ground line modification with width and side slope specified by the optional parameters. The River Area polygon is used as a terrain
+modification which sets all terrain values to the levee toe elevation. The levee toe elevation is sampled from the terrain on the toe side of the
+levee using the <em>Toe Distance</em> parameter.
+
+For situations where inundation results are erroneous due to the low-resolution terrain, users can upload their own terrain to the LST. Like all other
+aspects of the screening effort, a more refined analysis with higher resolution terrain should only be undertaken when the default terrain provides
+erroneous results that cannot support a screening level risk assessment.
+
+Roughness coefficients, which represent the resistance to flow in channels and floodplains, are usually presented in the form of Manning's n values in
+HEC-RAS. For typical 2-dimensional applications of HEC-RAS, Manning’s n values are derived from an understanding of the variations in land cover for
+a given area. For the LST, land cover data is downloaded from the 2016 National Land Cover Database (NLCD), which is translated into Manning’s n
+values using published guidance and the HEC-RAS user’s manual. Users can download the HEC-RAS model from the LST to review the land cover data and
+related Manning’s n values.
+
+### Modeling Area Changes
+
+The modeling area may need to be changed to better capture where water would go in the case of a breach or overtopping without breach event. For
+example, if the modeling area does not tie into high ground, it could be allowing water to leave the system through the outflow boundary that should
+instead be ponding. Below are two ways to change/edit the modeling area:
+
+1. Edit In LST. The modeling area can be edited directly in the LST by clicking on the Draw/Edit Modeling Area icon
+   {"\n"}<FigureInline src="figures\web-applications\lst\users-guide\v1.0/inline-images/inline-e4d9bc60.png" /> in the Map. Once in edit mode, the
+   modeling area can be adjusted by moving, adding, and/or deleting points.
+
+1. Upload Custom Modeling Area. When the changes required are too complex to be done in the LST, the modeling area can be edited or created externally
+   using a GIS software such as ArcGIS Pro® or QGIS®. Commonly, the user will want to download the existing modeling area as a starting point, make
+   edits, then uploaded to the LST.
+
+\*Once a screening is submitted and approved, the modeling area cannot be changed.
+
+<strong>Note: </strong>The leveed area and 2D modeling area are initially assumed to be the same, but the model area can be adjusted in LST. The
+modeling area polygon must adequately capture the maximum possible inundation area. If the modeling area polygon does not cover a region that would
+get inundated from a breach or overtopping event, the user will need to extend the modeling area. Also, some leveed areas in the NLD were created from
+previous HEC-RAS results polygons and have far too much detail to resolve a 2D flow grid, these will need to be simplified.
+
+### Levee Profile
+
+A levee profile, which is the elevation profile for the top of the levee system, is automatically imported from the NLD, see
+{"\n"}<FigReference figKey="figure-30" />. A relatively accurate levee profile is required by the HEC-RAS model to generate reasonable inundation
+results. To review the levee profile, click on the <em>Profile</em> button (<FigReference figKey="figure-28" />). Use the table and associated plot
+to inspect the NLD levee profile for any missing or incorrect points. Missing points will show up as 0. If the entire profile is 0, it means the NLD
+does not contain a levee profile and you should coordinate with the district NLD manager to add one. Modifications to the profile can be made in the
+table manually in the LST ELEVATION column or using the tools described below.
+
+- Use the “INTERPOLATE” function to linearly interpolate values for those that are missing between selected values.
+
+- Use the “ZEROES TO NULLS” option to convert all zero values to null values. Null values will be ignored. The LST inundation process will not run if
+  any levee segments point elevations equal “0” as this signifies missing data.
+
+- Use the “RESET” button to reset the levee elevation profile back to the default values from the NLD Elevation column.
+
+<Figure
+  figKey="figure-30"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure30.png"
+  alt="Levee profile editor in the LST 2.0 Inundation tab."
+  caption="Levee profile editor in the LST 2.0 Inundation tab."
+/>
+
+Note: Consider whether efforts to raise low spots in the levee are likely to be successful. If so, manually adjust the levee profile as necessary to
+reflect the location and magnitude of the raised levee.
+
+### Input Parameters
+
+The required input parameters are almost identical between the breach prior to overtopping and overtopping scenarios.
+
+<Figure
+  figKey="figure-31"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure31.png"
+  alt="Breach prior to overtopping input parameter interface in the LST 2.0."
+  caption="Breach prior to overtopping input parameter interface in the LST 2.0."
+/>
+
+Input parameters for generating hydraulic inundation within the LST 2.0 are detailed below:
+
+#### Toe Distance
+
+The toe distance is the distance from the levee center to the landside toe of the levee. This parameter is essential to capture the landside elevation
+so that the model can properly load the levee to the appropriate % levee height. The toe distance can be estimated using the measure tool
+{"\n"}<FigureInline src="figures\web-applications\lst\users-guide\v1.0/inline-images/inline-9d43ebaf.png" /> in the map or from aerial imagery in
+other applications such as ESRI’s ArcPro® or QGIS®.
+
+#### Breach/Overtopping Location
+
+Any point along the levee segment may be selected for a breach or overtopping location. Select the map icon
+{"\n"}<FigureInline src="figures\web-applications\lst\users-guide\v1.0/inline-images/inline-49be7aeb.png" /> next to the Latitude/Longitude entry box
+to select a breach location on the map (<FigReference figKey="figure-31" />). The selected location will be where breach and/or overtopping will
+initiate. For most screening assessments, a location at the upper end of the segment will provide a reasonable worst case scenario for the prior to
+overtopping and overtopping location and can be used for the full range of performance modes unless better information is available (e.g. known
+incipient overtopping location, known weak point, closure location, etc).
+
+#### Levee Erodibility
+
+The LST uses the simplified physical breach option in HEC-RAS for calculating the levee breach progression rate and ultimate size. HEC-RAS requires
+user-defined values for velocity versus downcutting and widening rates. The LST uses the same approach as the USACE Modeling, Mapping, and Consequence
+Center (MMC) to relate levee soil type to erosion rates (USACE 2022, Robbins and Corcoran). This relationship was derived based on thorough review of
+existing research on the relationship of kd (erodibility factor), soil type, and erosion rates. The ultimate selection of erosion rates depends
+heavily on the Erosion Database described in Briaud et al (2019) NCHRP Research Report 915.
+
+The LST module has four options for levee erodibility, ranging from Extremely Erodible to Moderately Resistant. Select the value that best represents
+the levee in question. If unsure, err on the side of more erodible for screening purposes.
+
+- <strong>Extremely Erodible</strong> uses a kd value that is slightly higher than the mean of all coarse-grained samples in the erosion database,
+  which is likely lowered by samples with appreciable fines. It is slightly more conservative than using the median kd of all poorly graded sands and
+  gravelly sands (SP) samples with kd < 5 (mm/hr)/Pa excluded. This is intended to be an infrequently used upper bound when evidence of a levee
+  consisting of the SP materials is strong.
+
+- <strong>Very Erodible</strong> uses a kd value that is slightly higher than the median kd of all silty sands, sand-silt mixtures (SM) samples in the
+  database with kd < 5 (mm/hr)/Pa excluded. The curve provides good agreement with the mean kd values for embankments composed of inorganic silts and
+  very fine sands (ML) in the database.
+
+- <strong>Erodible</strong> uses a kd value that is slightly less than the median kd of all SM samples in the database and ML samples in the database
+  if values of kd < 5 (mm/hr)/Pa are excluded. It is an intermediate curve located between the proposed "very erodible" and "moderately resistant"
+  curves. It provides good agreement with the mean kd values for embankments composed of clayey sands, sand-clay mixtures (SC), SC-SM, and SW-SM
+  embankment materials in the database.
+
+- <strong>Moderately Resistant</strong> uses a kd value that is slightly higher than the median kd of all inorganic clays of low of medium plasticity
+  (CL), inorganic silts, micaceous or diatomaceous fine sands or silts (MH), and inorganic clays or high plasticity, fat clays (CH) samples in the
+  database (see curve below for zoomed view). The curve represents a lower bound for erosion rates and should only be used when evidence of a
+  well-constructed levee consisting of erosion resistant material is strong.
+
+The following parameters are required for each percentage (%) loading scenario:
+
+- <strong>Max Breach Length: </strong>The Max Breach Length parameter limits the maximum size of the breach, but the final breach length could be much
+  lower depending on the simplified physical breach calculation. By default, the maximum breach length will be set to 500 ft for each % loading
+  scenario. The recommended range based on the modeling approach is 100’ to 1000’. A better estimate of the maximum breach length may be provided by
+  empirical equations or published guidance.
+
+- <strong>Duration of Loading Above Toe:</strong> The Duration of Loading Above Toe parameter (<FigReference figKey="figure-32" />) represents the
+  amount of time, in hours, the water level will exceed the toe of the levee for a given % loading event. Functionally, this parameter provides the base
+  for the inflow stage hydrograph. The duration of loading for an event will vary widely with the river and basin. Hydrologic data (e.g., stream gage
+  data) from events of interest (e.g., near the 50% levee loading) can be used to estimate expected durations for the loadings.
+
+- <strong>Duration of Loading At Peak:</strong> The Duration of Loading At Peak parameter (<FigReference figKey="figure-32" />) represents the amount
+  of time, in hours, that the water stage will stay at the peak level defined by the % loading scenario. Basins with a small drainage area will
+  generally have a much shorter flood duration larger basins. When there are upstream dams present in the basin, flood will be regulated and have longer
+  durations. When stream gage data exists for the rivers that load the levee it can be used to estimate approximate expected load durations for typical
+  flood events that have occurred in the past. When rainfall-runoff model results exist for the basin, they can also be used to inform typical flood
+  durations. Data from nearby gages in similar basins with similar drainage areas may also be used to support a selection of the flood duration for
+  screening. When no gage data or models results exist, an engineering-based approximate duration that accounts for available knowledge of the basin
+  characteristics must be selected.
+
+<Figure
+  figKey="figure-32"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure32.png"
+  alt="Example loading hydrograph in LST 2.0. Two parameters of note are Duration of Loading at Peak and Duration of Loading Above Toe."
+  caption="Example loading hydrograph in LST 2.0. Two parameters of note are Duration of Loading at Peak and Duration of Loading Above Toe."
+/>
+
+#### Separate Overtopping
+
+Situations where overtopping is occurring elsewhere in the modeling area can be simulated in the LST. A levee loaded to the top (100%) at a specified
+breach location may already be overtopping the levee at another lower point. To account for other sources of flow into the modeling area, the user can
+check the box in the Separate Overtopping column (<FigReference figKey="figure-31" />) for the desired percent loading condition. Once the box is
+checked, the Separate Overtopping editor (<FigReference figKey="figure-33" />) can be opened by pressing the edit button
+{"\n"}<FigureInline src="figures\web-applications\lst\users-guide\v1.0/inline-images/inline-548f7ae3.png" />.
+
+The separate overtopping is defined in the HEC-RAS model as a stage hydrograph inflow boundary condition. The parameters used to define the separate
+overtopping are:
+
+- <strong>Separate OT Location</strong> is the user defined location where overtopping flow will be introduced to the modeling area.
+
+- <strong>Separate OT Length</strong> is the length of levee that overtopping will occur on.
+
+- <strong>Separate OT Time Before Peak</strong> is the time, in hours, that overtopping starts relative to the River Area hydrograph peak
+
+- <strong>Separate OT Duration</strong> is the duration, in hours, that overtopping will occur.
+
+- <strong>Separate OT Depth</strong> is the depth of water overtopping the levee. For the inflow stage hydrograph, the stage is calculated based on
+  the depth of overtopping and the top of levee elevation at the user specified location.
+
+<Figure
+  figKey="figure-33"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure33.png"
+  alt="Separate Overtopping Editor in the LST 2.0."
+  caption="Separate Overtopping Editor in the LST 2.0."
+/>
+
+#### Optional parameters
+
+Several optional parameters are provided for advanced control of modeling the inundation. The optional parameters impact the river 2D flow area, the
+landside 2D flow area, and the levee connection. Below are descriptions of each optional parameter:
+
+##### 2D Modeling Area
+
+- Preferred Minimum Cell Size The cell size, in feet, for the 2D flow area within the leveed area. The actual cell size may be slightly larger or
+  smaller to allow for automatic meshing. The default value is 500 ft. For most systems, a cell size of 500 ft in the leveed area should be sufficient
+  for screening-level analyses. However, when there is shallow flooding or steep terrain, smaller cell sizes may be necessary for accurate results.
+  Smaller cell sizes will also result in longer run times. The best way to determine if you need to reduce the cell size is to view the time-lapse
+  depth maps for two indicators: (1) shallow flooding spread out over a large area or (2) fragmented/ discontinuous flooding.
+
+- Maximum Cell Count The maximum number of cells that can occur in the leveed 2D flow area. The actual number of cells used will be calculated based
+  on the cell sizes and 2D flow area size. The default value is 500,000. The default value is set to a sufficiently high number to not limit 2D flow
+  area discretization. Models with high numbers of cells take longer to run. This parameter can be reduced to keep models small.
+
+- Force Run Time After Loading The length of time flooding is modeled after the loading hydrograph is simulated. This value is blank by default. When
+  blank, the program internally calculates the time to model flooding after the loading hydrograph is complete. To determine if this value needs to be
+  adjusted, run the model without specifying this value. After the run, view the time-lapse results and see if the flooding has made its way through
+  the leveed area. If it is desired to extend the modeled time, specify the time in hours to extend the model. This run time can be:
+  - Calculated as an internally calculated time based on leveed area size, land cover, and estimated overland flow velocities.
+
+  - Specified as a user specified time in hours.
+
+- Outflow Normal Depth Slope An outflow boundary condition is placed around the perimeter of the leveed area to allow flooding to exit the leveed area
+  based on the terrain. This is the normal depth slope used in the HEC-RAS model for that normal depth boundary condition. The default value is 0.001.
+  Use the default recommended value unless there is more detailed information to define leveed area outflow hydraulics. Refer to HEC-RAS guidance on
+  normal depth for more information on estimating the parameter.
+
+- Initial Water Surface Elevation Establishes an initial water surface elevation within the 2D Modeling Area at the specified elevation before the
+  loading hydrograph is applied. This option is useful in situations where there are lakes or bodies of water in the leveed area that need to start with
+  water. The default value is blank (None).
+
+##### Levee (Connection)
+
+- Breakline Near Cell Repeats: A breakline is applied along the levee centerline in the 2D grid for the model. The cell size near the breakline is
+  dependent on the “Minimum Breakline Cell Size” parameter. This parameter repeats the specified number of cells at the “Minimum Breakline Cell Size” from
+  the breakline and levee centerline. This allows the model to have more resolution along the levee centerline. For example, if the cell size
+  determined along the breakline is 50 ft, then the cells on both sides of the break line would be 50 ft cells. If the user also entered a Near Repeats
+  of 2, then two additional rows of 50 ft cells would be placed on both sides of the break line. The default value is 2. This value can be increased in
+  improve grid resolution near the breach/overtopping location. If time-lapse depth maps near the breach show pulsing or fragmented flows, then
+  increasing this parameter could help resolve hydraulics.
+
+- Weir Coefficient: Flow over the levee is computed using weir overflow hydraulics in RAS with a connection. RAS calculates connection overflow using
+  this weir coefficient. The default value is 2.0. This coefficient can range from 1.6-2.6 for levees 3 feet or higher above natural ground. More
+  information can be found in the HEC-RAS 2D hydraulic reference manual (USACE, 2016).
+
+- Levee Crest Width: This parameter represents the top width of the levee in feet. HEC-RAS calculates weir overflow using the top width of the levee
+  (i.e., weir width). It also defines the top width of the levee profile terrain modification. The default value is 30 feet. A default value of 30 feet
+  is used, but should be updated based on the actual, flat, top width of the levee. This can be estimated using the measure tool and terrain/aerial
+  imagery.
+
+- Levee Side Slope (H:V): A terrain line modification is applied in RAS along the levee centerline to ensure that the terrain is elevated to the levee
+  profile. This side slope is used in the terrain modification in HEC-RAS. The default value is 3 which provides a 3:1 side slope. If the program fails
+  during terrain generation, the side slope may be too gradual. In such a case, try increasing the side slope to a steeper slope such as 1:1.
+
+##### Breach Options
+
+- Duration Above TOL to Initiate Breach This parameter only applies to overtopping. The breach from overtopping will be delayed by a user specified
+  duration. The default value is zero.
+
+- Initial Breach Width The initial width of the breach. This is required by HEC-RAS to define the initial breach size to simulate the downcutting and
+  widening process in the simplified physical model. For overtopping, it is the starting notch width and for breach prior, it is the initial piping
+  diameter for the piping failure mode in HEC-RAS. The default value is 1 ft. The primary reason to change this parameter is for closure failure modes
+  where the closure never gets set.
+
+### Verifying Reasonable Hydraulic Results
+
+There are multiple tools available to verify that the results make sense. Once the hydraulic data has been computed, results can be visualized on the
+map. Click on the ‘Inundation Models’ button on the upper right side of the map to enable the hydraulic animation. Visually reviewing the hydraulic
+data is a key step in verifying that the results make sense.
+
+The following bullets provide guidelines for determining whether model results are realistic and reasonable:
+
+- Ensure that inundation extents and depths increase as the hydraulic load increases across the different loading scenarios.
+
+- Ensure that inundation extents and depths are larger for scenarios of ‘breach with overtopping’ as opposed to just ‘overtopping’.
+
+### When To Upload HEC-RAS Results from External Model
+
+The LST module is a simplified method to model flooding in the Leveed Area due to levee breach and/or overtopping. Models produced by the LST module
+are not calibrated and caution should be used when interpreting results. The model results produced by the LST module should be reviewed to ensure
+that results are realistic and reasonable.
+
+User 2D RAS models should be uploaded when:
+
+1. A calibrated model is available or a model that has been reviewed/accepted with supporting documentation
+
+1. A model using more detailed or accurate data or methodologies than in the LST is available
+
+1. The simplified approach utilized in the LST is not suitable for modeling the hydrology or hydraulics of the levee system or segment
+
+## Structure Inventory Tab
+
+The Structure Inventory Tab (<FigReference figKey="figure-34" />) is where the structure inventory is defined for the leveed area. A structure
+inventory represents geospatial locations that contain damageable elements, typically a structure such as a home. Structure inventories are required
+by LifeSim to estimate direct economic damage for a flood event and initial population distribution. For more information on the required attributes
+for a structure and how they are used in LifeSim refer to the <em>LifeSim Technical Reference Manual</em> Chapter 4 (USACE 2020). The required steps
+to complete the structure inventory tab are:
+
+1. Review the structure inventory for correctness.
+
+1. Make changes to the inventory as needed.
+
+1. Provide justification for any changes or reasons why nothing was changed in the Comments section.
+
+<Figure
+  figKey="figure-34"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure34.png"
+  alt="Structure Inventory Tab in the Consequences Module of LST 2.0."
+  caption="Structure Inventory Tab in the Consequences Module of LST 2.0."
+/>
+
+### Review Structure Inventory
+
+When a levee screening is created for the first time, the NLD leveed area polygon is downloaded and set as the inundation modeling area. The modeling
+area polygon is then used to download a structure inventory from the National Structure Inventory (NSI) database. The NSI database contains
+information on structure location, building type, population, structure values, foundation height, and other information for residential, commercial,
+industrial, agricultural, public, and private structures across the country. The NSI was originally developed by USACE in coordination with the
+Federal Emergency Management Agency (FEMA). Sources of data used to develop the NSI 2.0 include parcel databases, building footprints, business data,
+Longitudinal Employer-Household Dynamics (LEHD), 2010 U.S. Census Bureau data, and NCES school data.
+
+<strong>Note: </strong>When a screening is initially created, the LST will download data from the most recent version of the NSI. As new versions of
+the NSI become available, existing screenings will not automatically be updated to the latest version. Also, if the modeling area is changed to better
+capture the inundation, the structure inventory will not automatically be updated. Users can update existing screenings to the newest version of the
+NSI using the Sync option described here.
+
+Any adjustments to the modeling area may require new structures to be pulled in from the NSI. It can be useful to model the inundation before working
+on the structure inventory to ensure adequate coverage for the modeling area.
+
+The general workflow to review the structure inventory is as follows:
+
+1. Review the <em>Base Data</em> for overall accuracy within the leveed area. The Base Data contains the total daytime and nighttime population,
+   number of structures, and property value in the leveed area. Egregious errors in the Base Data indicate that the NSI (or currently uploaded structure
+   inventory) will need to be heavily edited or replaced. Comparisons to public data at census tract/city/county scale can highlight large problems
+   quickly.
+
+1. Review the Structure Summary Table and Plots as shown in <FigReference figKey="figure-35" />. The structure summary table contains a summary of
+   the number of structures, population, and economic value categorized by damage category. Ensure that the data is distributed among the damage
+   categories appropriately. For example, if the leveed area is mostly industrial then the number of structures should be much higher for commercial and
+   industrial damage categories and the daytime (working) population should be much higher than the nighttime population. Alternatively, primarily
+   residential areas will usually have a higher nighttime population than daytime. The structure summary plots provide further details on how the number
+   of stories, construction type, and foundation heights are distributed among damage categories. These plots in conjunction with tools such as Google
+   StreetView® can help to quickly identify issues with the structure inventory. For example, if the NSI has most residential structures as 1-story when
+   the majority are multi-story then the LST will likely overestimate life loss.
+
+1. Review the structure inventory geospatially using the map feature. By clicking on “Map”, the structure summary table and plots will be replaced by
+   a map viewer that includes the structure inventory. The map viewer aggregates structure points at higher zoom levels. As you zoom in the structure
+   aggregation is reduced until individual structures are visible. Use the map to review structure locations and attributes. Ideally, structure points
+   should be located near the center of the building footprint. Some location error is acceptable, but it is important that structure point locations
+   reflect appropriate hydraulic conditions (depth, velocity, and arrival time). Location is more important in steeper terrain and near conveyance
+   channels including roads at times.
+
+<Figure
+  figKey="figure-35"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure35.png"
+  alt="Structure summary statistics table and plot."
+  caption="Structure summary statistics table and plot."
+/>
+
+### Edit Structure Inventory
+
+Below are three ways to change/edit the structure inventory from simplest to most arduous:
+
+#### Index Factors.
+
+If the total population or property value is incorrect in the modeling area and the spatial information to correct the issue is not available, index
+factors can be used to increase or decrease the population and structure value data. It is important to note that the index factors will only increase
+or decrease population and values for the existing structures, it will not add new structures or remove existing structures.
+
+Property Value Index Factor
+
+The Property Value Index Factor (PVIF) will increase or decrease the structure, content, and vehicle values for all structures in the inventory by
+multiplying the existing value by the given factor. Use the PVIF to account for changes in property or content value that may have occurred across the
+entire inventory since the last update to the NSI or to modify NSI values based on current information.
+
+:::danger Inline Equation Detected
+Insert `<EquationNoRef />` component(s) to render math in the following paragraph.
+:::
+
+Where:
+
+:::danger Inline Equation Detected
+Insert `<EquationNoRef />` component(s) to render math in the following paragraph.
+:::
+
+:::danger Inline Equation Detected
+Insert `<EquationNoRef />` component(s) to render math in the following paragraph.
+:::
+
+:::danger Inline Equation Detected
+Insert `<EquationNoRef />` component(s) to render math in the following paragraph.
+:::
+
+For example, if all structures have a structure value of $100,000 and content values of $50,000 and a factor of 1.1 is applied then the indexed
+structures will have a structure value of $110,000 and a content value of $55,000.
+
+Population Index Factor (Day and Night)
+
+The Population Index Factors (PIF) increase the total population for day or night by the provided index factor. PIFs can be used to update the NSI
+data if more accurate information is available about population in the leveed area. The population change is then calculated for population over and
+under 65 using the following formula:
+
+:::danger Inline Equation Detected
+Insert `<EquationNoRef />` component(s) to render math in the following paragraph.
+:::
+
+Where:
+
+:::danger Inline Equation Detected
+Insert `<EquationNoRef />` component(s) to render math in the following paragraph.
+:::
+
+:::danger Inline Equation Detected
+Insert `<EquationNoRef />` component(s) to render math in the following paragraph.
+:::
+
+:::danger Inline Equation Detected
+Insert `<EquationNoRef />` component(s) to render math in the following paragraph.
+:::
+
+:::danger Inline Equation Detected
+Insert `<EquationNoRef />` component(s) to render math in the following paragraph.
+:::
+
+If the index factor is greater than 1, the calculated population change is distributed to structures using a weighting scheme defined by each
+structure’s occupancy type. The weights allow population to be distributed in a more realistic manner. The weights used to distribute population can
+be found in <TableReference tableKey="table-4" />-7 of the <em>LifeSim Technical Reference Manual</em> (USACE 2020). If the index factor is less than
+1 then the calculated population change is removed from the structure inventory by removing one-at-a-time from the most populated structures first.
+
+#### Map Editor
+
+The structure inventory can be edited directly in the map window by clicking on the Edit Structure Inventory icon
+{"\n"}<FigureInline src="figures\web-applications\lst\users-guide\v1.0/inline-images/inline-a07b99a1.png" />. Structures can be added, deleted, moved,
+and have their attributes updated. The map editing tools are very useful for making quick changes to the inventory such as moving structures to their
+appropriate locations or adjusting structures attributes such as number of stories, foundation height, value, etc. When the number of changes
+required is large then it may become too time consuming to make the edits through the LST map interface. If this is the case, uploading a custom
+inventory may be the quickest and easiest option. It is important to remember that this is a screening level effort, so a high level of accuracy in
+structure location and value may not be necessary.
+
+#### Upload Custom Inventory
+
+A structure inventory can be uploaded to use in place of the NSI provided through the LST. This feature provides the convenience of making edits in
+more sophisticated GIS packages such as QGIS® and ESRI’s ArcPro®. Cases where a custom inventory may be warranted include adding significant
+development that was not captured in the NSI or uploading an existing structure inventory from a detailed risk assessment. The structure inventory can
+be uploaded as a GeoJSON file or as a shapefile with the appropriate supporting files (.shp, .shx, .dbf, .prj) in a zip archive. Column names and
+data types must reflect NSI conventions. In many cases it will be advantageous to download an existing NSI and use it as a starting point for making a
+custom inventory, this helps to ensure the attribute formatting is correct. <TableReference tableKey="table-2" /> below provides the minimum
+required attributes and their data types for uploading a structure inventory to the LST.
+
+:::danger
+This table contains cells that span multiple rows or columns. Manually update the React component to properly format the table.
+:::
+
+<TableVertical
+tableKey="table-2"
+headers={
+[
+[
+{ value: "Required Columns", rowSpan: 1, colSpan: 1 },
+{ value: "Data Type (*)", rowSpan: 1, colSpan: 1 },
+{ value: "Allowable Input", rowSpan: 1, colSpan: 1 },
+{ value: "Description", rowSpan: 1, colSpan: 1 }
+]
+]
+}
+columns={
+[
+[
+{ value: "pop2amu65", rowSpan: 1, colSpan: 1 },
+{ value: "pop2pmu65", rowSpan: 1, colSpan: 1 },
+{ value: "pop2amo65", rowSpan: 1, colSpan: 1 },
+{ value: "pop2pmo65", rowSpan: 1, colSpan: 1 },
+{ value: "occtype", rowSpan: 1, colSpan: 1 },
+{ value: "st_damcat", rowSpan: 1, colSpan: 1 },
+{ value: "bldgtype", rowSpan: 1, colSpan: 1 },
+{ value: "found_ht", rowSpan: 1, colSpan: 1 },
+{ value: "num_story", rowSpan: 1, colSpan: 1 },
+{ value: "val_struct", rowSpan: 1, colSpan: 1 },
+{ value: "val_cont", rowSpan: 1, colSpan: 1 },
+{ value: "val_vehic", rowSpan: 1, colSpan: 1 },
+{ value: "*Data input is restricted to allowable values only", rowSpan: 1, colSpan: 4 }
+],
+[
+{ value: "Integer", rowSpan: 4, colSpan: 1 },
+null,
+{ value: "Integer", rowSpan: 2, colSpan: 1 },
+null,
+{ value: "String*", rowSpan: 3, colSpan: 1 },
+null,
+{ value: "String*", rowSpan: 1, colSpan: 1 },
+{ value: "Double", rowSpan: 1, colSpan: 1 },
+{ value: "Integer", rowSpan: 1, colSpan: 1 },
+{ value: "Double", rowSpan: 3, colSpan: 1 },
+null,
+{ value: "Double", rowSpan: 1, colSpan: 1 },
+null
+],
+[
+{ value: "", rowSpan: 4, colSpan: 1 },
+null,
+{ value: "", rowSpan: 2, colSpan: 1 },
+null,
+{ value: "HAZUS-MH Occ. types", rowSpan: 1, colSpan: 1 },
+{ value: "RES, COM, IND, PUB", rowSpan: 1, colSpan: 1 },
+{ value: "C, H, M, S, W", rowSpan: 1, colSpan: 1 },
+{ value: "", rowSpan: 5, colSpan: 1 },
+null,
+{ value: "", rowSpan: 3, colSpan: 1 },
+null,
+{ value: "", rowSpan: 1, colSpan: 1 },
+{ value: "*Data input is restricted to allowable values only", rowSpan: 1, colSpan: 2 }
+],
+[
+{ value: "Nighttime population under 65 in structure", rowSpan: 1, colSpan: 1 },
+{ value: "Daytime population under 65 in structure", rowSpan: 1, colSpan: 1 },
+{ value: "Nighttime population over 65 in structure", rowSpan: 1, colSpan: 1 },
+{ value: "Daytime population over 65 in structure", rowSpan: 1, colSpan: 1 },
+{ value: "Occupancy type, designating primary building use (Technical Documentation Link)", rowSpan: 1, colSpan: 1 },
+{ value: "Structure damage category, broad economic sectors (residential, commercial, industrial, public)", rowSpan: 1, colSpan: 1 },
+{ value: "Primary construction materials and methods (reinforced concrete, manufactured home, masonry, steel, wood)", rowSpan: 1, colSpan: 1 },
+{ value: "Foundation height", rowSpan: 1, colSpan: 1 },
+{ value: "Number of stories", rowSpan: 1, colSpan: 1 },
+{ value: "Value of the building", rowSpan: 1, colSpan: 1 },
+{ value: "Value of the contents", rowSpan: 1, colSpan: 1 },
+{ value: "Value of vehicles at the building", rowSpan: 1, colSpan: 1 },
+null
+]
+]
+}
+alt="Required column names, data types, and allowable input for uploading a structure inventory to the LST."
+caption="Required column names, data types, and allowable input for uploading a structure inventory to the LST."
+/>
+
+### Provide Justification
+
+Finally, perhaps the most important step is to justify the structure inventory and modeling area data in the Comments section. The consequence
+specialist on the team should provide information in the comments section detailing any changes that were made to the index factors, structure
+inventory, and modeling area. Some of the more important parameters include the number of structures, structure placement, the population at risk,
+and the value of property. Sources used to verify or update the existing data must be referenced in the comments section.
+
+## LifeSim Compute Tab
+
+After the structure inventory and hydraulic data are ready, consequences can be calculated in the <em>LifeSim Compute</em> tab. The LST uses the
+LifeSim computation engine to compute life loss and economic damages with traffic is not simulated. Life loss on roads is not included in the LST
+consequence estimates. LifeSim is an agent-based computation engine that simulates the warning and evacuation timeline in conjunction with hazard
+(flood) propagation. The LifeSim Compute tab is split into two sections, the top section is where information is entered to help determine the warning
+and evacuation timeline (<FigReference figKey="figure-36" />). The bottom section is where the inundation scenarios are linked to warning parameters
+so LifeSim can be computed (<FigReference figKey="figure-46" />).
+
+### Emergency Preparedness
+
+<Figure
+  figKey="figure-36"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure36.png"
+  alt="Warning and evacuation timeline parameters in the LifeSim Compute Tab in LST 2.0."
+  caption="Warning and evacuation timeline parameters in the LifeSim Compute Tab in LST 2.0."
+/>
+
+The LST relies on four user-supplied parameters to estimate how much of the initial PAR in the leveed area will evacuate before being subjected to the
+flood waters caused by overtopping or breach of the levee; to provide the most accurate responses it may be beneficial to contact the local sponsor
+and/or the local Emergency Management Agency office for their input. Those parameters are described below:
+
+- Evacuation planning,
+
+- Community risk perception,
+
+- Flood warning effectiveness, and
+
+- Hazard advanced notice.
+
+The screener selects a qualitative description from a dropdown list for each parameter. The LST assigns a corresponding quantitative relationship to
+each description and uses that quantitative relationship in the evacuation simulation within LifeSim. More information on the warning and evacuation
+timeline and how it is simulated in LifeSim can be found in the <em>LifeSim 2.0 Technical Reference Manual</em> (USACE 2020).
+
+To complete the emergency preparedness questions in the LifeSim Compute tab, do the following for each question:
+
+1. Select a rating from the drop-down list.
+
+1. Explain the selection in the Comments field.
+
+1. Save your changes.
+
+Information about selecting the correct value for each question is provided below.
+
+#### Evacuation Planning
+
+<Figure
+  figKey="figure-37"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure37.png"
+  alt="Evacuation Planning rating entry and comments in the LST."
+  caption="Evacuation Planning rating entry and comments in the LST."
+/>
+
+Select the rating that best describes the threatened community’s flood emergency evacuation planning. Contact the local emergency management agency
+(EMA) for information about evacuation planning for the community or communities located within the leveed area polygon. Based on the current
+evacuation plan, if any, and other relevant information collected from people familiar with evacuation planning in the area, rate evacuation planning
+using the following guidelines:
+
+- Flood Specific – The local EMA maintains a warning and/or evacuation plan for the community that contains specific information about the content of
+  a message that would be provided in the case of a flood emergency. That content includes a description of the flood threat, specific information on
+  the locations at risk, what actions the public should take and how to take them (which evacuation routes to take), when the at risk population should
+  start and complete those actions, and why taking those actions is a good idea. Also, a recent successful evacuation, regardless of evacuation plan
+  detail, could lead to an acceptable rating.
+
+- All Hazards – The local EMA maintains a warning or evacuation plan for the threatened community, but it does not have message templates or
+  directions that would suggest the information defined under the Acceptable rating would be provided to the public in a timely manner.
+
+- None or Outdated – An evacuation plan does not exist for the threatened community.
+
+- Unknown – It is unknown if an evacuation plan exists. If community risk perception is unknown, then evacuation planning must also be unknown.
+
+#### Community Risk Perception
+
+<Figure
+  figKey="figure-38"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure38.png"
+  alt="Community Risk Perception rating entry and comments in the LST."
+  caption="Community Risk Perception rating entry and comments in the LST."
+/>
+
+Select the rating that best describes the threatened community’s perception of their flood risk relative to the levee system. Discuss this issue with
+people that live in the area or look for local education efforts (i.e., media, EMAs) for information. Rate community risk perception using the
+following guidelines:
+
+- High – Community members are aware that they would be impacted by the flood event and that their lives could be at risk if they did not evacuate.
+  Flooding is often a topic in local media. Local flood agencies routinely provide public education opportunities related to flooding and the role of
+  the levee system. The PAR understands that the flood depths and/or velocities could be severe, and a large portion of the PAR is generally located
+  within short proximity to the hazard source. Holdouts may have opportunity to see destruction (via media or firsthand) and may have time to evacuate
+  after witnessing flooding in their region.
+
+- Medium – The community generally understands that it is vulnerable to flooding, but there is limited pre-event public flood awareness and the role
+  that the levee plays in flood risk management. While flooding may be severe, the PAR may not live within an area where they see the levee regularly,
+  may not understand the flood severity if the levee were to breach or overtop, or may not have the opportunity to respond to environmental cues of the
+  flood’s high consequence potential.
+
+- Low – The community is generally unaware that it could be impacted by the breach or overtopping of a levee. Many may expect flooding to be limited
+  outside their neighborhood or to be a nuisance and not life threatening. They may live far from the hazard source or may live in buildings they
+  believe to be safe from flooding.
+
+- Unknown – It is unknown if the community is aware of their risk due to the target segment or not. If evacuation planning is unknown, then community
+  awareness must also be unknown.
+
+#### Flood Warning Effectiveness
+
+<Figure
+  figKey="figure-39"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure39.png"
+  alt="Flood warning effectiveness rating entry and comments in the LST."
+  caption="Flood warning effectiveness rating entry and comments in the LST."
+/>
+
+Select the rating that best describes the threatened community’s flood warning procedure effectiveness for a levee breach scenario. Contact the EMA
+for information. Rate flood warning effectiveness using the following guidelines:
+
+- Fast – The community’s EMA has a written warning plan and standard operating procedures for issuing warnings. Responsibility for issuing a warning
+  are clearly defined, warning thresholds are in place that relate the flood threat to the recommended public protective action, and SOP drills are
+  regularly conducted. Additionally, the EMA has access to multiple warning systems or channels (e.g., auto-dial telephones, Wireless Emergency Alert,
+  sirens, etc.) that would be used in the case of a major flood event.
+
+- Medium – The community’s EMA has an emergency evacuation plan with general guidance on warning procedures. However, roles are not clearly defined,
+  and SOP drills are not conducted regularly. The warning process relies primarily on emergency responders to spread the warning. The procedures are
+  reviewed and updated at regular intervals.
+
+- Slow – An emergency action plan does not exist or has not been updated at regular intervals. Flood warning procedures do not exist or are outdated.
+
+- Unknown – It is unknown how effective a flood warning will be at alerting the population in the modelling area.
+
+#### Hazard Advanced Notice
+
+<Figure
+  figKey="figure-40"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure40.png"
+  alt="Hazard Advanced Notice rating entry showing comments for an overtopping scenario."
+  caption="Hazard Advanced Notice rating entry showing comments for an overtopping scenario."
+/>
+
+Select the rating that best describes how much advanced notice will be available for the agencies that will be issuing warning message(s) for both
+prior to overtopping and overtopping scenarios. The advanced notice time is relative to the hazard occurrence time. By default, <em>Very Short</em>
+will be selected for breach prior to overtopping scenarios and <em>Long</em> will be selected for overtopping scenarios. Rate hazard advanced notice
+using the following guidelines:
+
+- Very Short – There is little to no advanced notice of the hazard. Uniform Distribution 2 hours prior to hazard occurrence (breach or overtopping) to
+  time of occurrence.
+
+- Short – Uniform Distribution between 2 to 4 hours prior to hazard occurrence.
+
+- Moderate – Uniform Distribution between 4 to 8 hours prior to hazard occurrence.
+
+- Long – Uniform Distribution between 8 to 24 hours prior to hazard occurrence.
+
+- Very Long – Uniform Distribution between 24 to 48 hours prior to hazard occurrence.
+
+### Warning and Evacuation Timeline
+
+Selection of the emergency preparedness parameters in the LST results in functions that are used in the LifeSim computation engine to simulate the
+warning and evacuation process. Those functions are Warning Issuance Delay, First Alert Diffusion, and Protective Action Initiation Delay in LifeSim (
+{"\n"}<FigReference figKey="figure-41" />).
+
+<Figure
+  figKey="figure-41"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure41.png"
+  alt="Conceptual warning and evacuation timeline in LifeSim."
+  caption="Conceptual warning and evacuation timeline in LifeSim."
+/>
+
+#### Warning Issuance Delay
+
+Once the threat is identified and communicated to emergency managers (hazard advanced notice), the agency responsible will issue a warning to the
+public of the impending danger. The warning issuance delay represents the amount of time it takes from when an emergency manager receives notification
+of the imminent hazard to first issuance of a warning/evacuation message to the public. There is uncertainty in how long the delay will be to issue
+and evacuation order. However, existing research on warning issuance delay (<em>Mileti and Sorensen, 2017a</em>) has informed default functions based
+on the readiness of the emergency management agency responsible for issuing warnings to the public. The LST converts the selected rating for
+Evacuation Planning into one of the warning issuance delay functions for use in LifeSim which can be seen in the Warning Issuance Delay plot (
+{"\n"}<FigReference figKey="figure-42" />).
+
+<Figure
+  figKey="figure-42"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure42.png"
+  alt="Warning Issuance Delay plot in the LifeSim Compute tab of the LST. The plot shows the selected delay (All Hazards) in blue and all possible functions (in gray)."
+  caption="Warning Issuance Delay plot in the LifeSim Compute tab of the LST. The plot shows the selected delay (All Hazards) in blue and all possible functions (in gray)."
+/>
+
+#### First Alert (Warning) Diffusion
+
+Once the warning has been publicly issued it takes time for the warning to spread throughout the community. The speed that the warning spreads through
+the community is often called the warning, or first alert, diffusion function. It is the rate at which the community will first be alerted to the
+hazard once the warning has been issued. Existing research on first alert diffusion (<em>Mileti and Sorensen, 2017b</em>) was used to inform the
+default functions for first alert diffusion. The Evacuation Planning ratings in the LST 2.0 (Fast, Medium, Slow) are mapped directly to LifeSim 2.0’s
+default First Alert Diffusion functions (Fast, Moderate, Slow).
+
+<Figure
+  figKey="figure-43"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure43.png"
+  alt="Example first alert function for the “Fast” flood warning effectiveness rating for daytime conditions."
+  caption="Example first alert function for the “Fast” flood warning effectiveness rating for daytime conditions."
+/>
+
+#### Protective Action Initiation Delay
+
+Once an individual, or evacuating group, has received the first alert they are going to take some time before taking protective action and attempting
+to evacuate the area. Some actions taken prior to taking protective action include verifying the threat, collecting personal belongings, contacting
+family and friends, etc. For more information on protective action initiation functions and how they are used in LifeSim, refer to the <em>LifeSim 2.0
+Technical Reference Manual</em> (2020) and <em>Mileti and Sorensen</em> (2017c). The LST 2.0 uses a combination of Evacuation Planning and Community
+Risk Perception to select a protective action initiation function as follows:
+
+Evacuation Planning:
+
+- Flood Specific: preparedness = "High"
+
+- All Hazards: preparedness = "Moderate"
+
+- None or outdated: preparedness = "Low"
+
+- Unknown: preparedness = “Unknown”
+
+Community Risk Perception:
+
+- High: perception = "High"
+
+- Medium: perception = "Moderate"
+
+- Low: perception = "Low"
+
+- Unknown: perception = “Unknown”
+
+Protective Action Initiation Function = "Preparedness: &#123;preparedness&#125; / Perception: &#123;perception&#125;"
+
+<Figure
+  figKey="figure-44"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure44.png"
+  alt="Example protective action initiation function for the &quot;Preparedness: {High} / Perception: {Moderate}&quot; ratings."
+  caption="Example protective action initiation function for the &quot;Preparedness: {High} / Perception: {Moderate}&quot; ratings."
+/>
+
+The Protective Action Initiation plot (<FigReference figKey="figure-45" />) in the LST LifeSim Compute Tab shows a combination of the first alert
+diffusion function and the protective action initiation function to show the percentage (%) of population that will have initiated protective action
+over time once the warning has been issued to the public.
+
+<Figure
+  figKey="figure-45"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure45.png"
+  alt="Protective Action Initiated function based on fast flood warning effectiveness with a flood specific evacuation plan and a community with medium risk perception."
+  caption="Protective Action Initiated function based on fast flood warning effectiveness with a flood specific evacuation plan and a community with medium risk perception."
+/>
+
+### Run LifeSim
+
+Once the emergency preparedness ratings have been set, LifeSim can be computed in the LST for the given hydraulic scenarios. Prior to hitting the Run
+LifeSim button, the inundation scenarios for the risk calculation will need to be finalized and adjusted as needed using the table shown in
+{"\n"}<FigReference figKey="figure-46" />. More information on each column of the table is provided below.
+
+<Figure
+  figKey="figure-46"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure46.png"
+  alt="LifeSim compute options in the LifeSim Compute Tab of LST 2.0."
+  caption="LifeSim compute options in the LifeSim Compute Tab of LST 2.0."
+/>
+
+#### Inundation Name
+
+The “Inundation Name” column shows all the inundation scenarios that have been created in the inundation tab. Each inundation set has three inundation
+scenarios. For breach prior to overtopping the scenarios are 50%, 75%, and 100% load at breach at a specified location. For overtopping the scenarios
+are 100% + 1’, +2’, and +3’ load with and without breach.
+
+#### Last HEC-RAS Run
+
+The “Last HEC-RAS Run” column shows the last date and time that the inundation set was run in HEC-RAS. If an inundation scenario has not been run,
+then the cell will say <em>Not Run</em> and LifeSim cannot be computed with that inundation scenario.
+
+#### Hazard Advance Notice
+
+The “Hazard Advance Notice” column allows the user to set the hazard advance notice independently for each inundation scenario. The hazard advance
+notice will default to the <em>Prior</em> notice for breach prior to overtopping scenarios and to the <em>Overtopping</em> notice for overtopping
+scenarios. However, there may be a need to change the hazard advanced notice for a specific scenario. For example, the 100% loading breach scenario
+may have overtopping occurring at another location along the levee indicating that the overtopping advanced notice would be more appropriate.
+
+#### Last LifeSim Run
+
+The “Last LifeSim Run” column shows the last time that LifeSim was run with the given inundation dataset. If the Last HEC-RAS Run date and time is
+after the Last LifeSim Run date and time then the LifeSim results are out of date and will need to be re-computed.
+
+#### Hazard Occurrence
+
+The “Hazard Occurrence” column allows the user to specify the hazard occurrence time for each inundation scenario. If <em>Auto</em> is checked, then
+the LifeSim computation engine will automatically select the hazard occurrence time as the point in time that water first begins entering the leveed
+area either from overtopping or through the breach. An example of when a user specified hazard occurrence time is required is if a user-uploaded
+HEC-RAS model is used that does not have a levee structure (e.g., lateral structure). In this case, LifeSim will not be able to automatically detect a
+hazard occurrence time. Another example is if the hydraulic model is allowing minimal water into the leveed area prior to the breach causing the
+hazard occurrence time to be earlier than it should.
+
+#### Run LifeSim for this Inundation?
+
+Finally, the “Run LifeSim for this Inundation?” column allows the user to specify which inundation sets to run with LifeSim by checking the box for
+the given row in the table. Multiple inundation sets can be created for various breach locations and inundation parameters. To reduce the
+computational burden, only the final hydraulic inundation datasets can be selected to run LifeSim with for the risk analysis.
+
+#### LifeSim Buttons
+
+Once the appropriate inundation sets have been selected and the hazard advanced notice and occurrence parameters have been set, LifeSim can be
+computed by pressing the <strong>Run LifeSim</strong> button which will place the simulation in a queue. The order that the specified LifeSim
+simulation will be computed is shown by pressing the <strong>LifeSim Queue</strong> button. Once the LifeSim simulation begins, the status/progress of
+the simulation can be seen by pressing the <strong>Status</strong> button. Finally, the <strong>Download</strong> button can be pressed to retrieve
+the LifeSim input data, results, and HEC-RAS inundation models.
+
+<Figure
+  figKey="figure-47"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure47.png"
+  alt="LifeSim Buttons"
+  caption="LifeSim Buttons"
+/>
+
+## Consequence Results Tab
+
+When LifeSim has been computed for a series of inundation scenarios the results can be reviewed in the Consequences Results Tab. The results in this
+tab exist to allow verification that the results make sense. It is expected that the resulting charts and map will be used to both identify issues
+with the assessment to iteratively improve the results and help develop the narrative of what would happen in an inundation event. The consequences
+results tab is split into four sections:
+
+- Consequence Narrative
+
+- Summary Results
+
+- Inundation Group Results
+
+- Loading Scenario Results
+
+LifeSim produces results with uncertainty by sampling multiple uncertain parameters (e.g., warning issuance) iteratively through a Monte Carlo
+simulation. By reviewing the distribution of results provided by LifeSim, important insights can be gained into what parameters are most sensitive to
+results, which should be discussed in the consequence narrative.
+
+### Consequence Narrative
+
+The consequence narrative is where the facilitator provides justification for the consequence estimates calculated by the LST through a narrative of
+“what would happen” in the event of a breach and overtopping event for the levee segment. The consequence narrative is perhaps the most important
+piece of the consequence assessment and must provide meaningful insights into what is driving the consequence estimates. Use the results from the
+consequence results tab in conjunction with the input parameters defined in the Structure Inventory, Inundation, and LifeSim Compute tabs to support
+the narrative. Typical consequence narratives will contain:
+
+- A description of the hydraulic conditions for each unique breach and overtopping location. The description will typically include the depths and
+  velocities that occur at points of interest in the modeling area such as population centers, primary evacuation routes, or critical infrastructure.
+  How long from when a breach or overtopping event occurs will it take for water to reach the first structures and other points of interest. The
+  description may also include a discussion on the expected breach widening rates and final width and their impacts to the inundation.
+
+- A description of the population at risk during the day and night. This description will typically include the location of industrial, commercial,
+  residential, and metro areas that will be inundated by the flood. The types of buildings that are in the modeling area (e.g., number of stories and construction
+  type) and their impact on the estimated life loss. Important seasonal information such as regions with heavy tourism.
+
+- A description of the expected evacuation process. This description will include a summary of expected warning issuance times and population
+  evacuated for overtopping and breach prior to overtopping events. It will also include a discussion of the available evacuation routes.
+
+- Potential regional or national impacts due to critical infrastructure.
+
+Above all, the consequence narrative must support the consequence estimates or identify reasons why the estimates are incorrect and outside the
+capability of the LST, such as traffic congestion concerns.
+
+### Summary Results
+
+The summary results section (<FigReference figKey="figure-48" />) provides tools to visualize and compare results, with uncertainty, for all loading
+conditions among each inundation scenario. Results are displayed as box-and-whisker plots. Box-and-whisker plots show five-number summary results
+(minimum, 25<sup>th</sup> percentile, median, 75<sup>th</sup> percentile, maximum) for the selected consequence metric. The Y-axis is categorized by
+loading condition and the X-axis shows the selected consequence metric in log-scale. The summary results provide a quick way to highlight potential
+issues. For example, if the 50% loading breach scenario has higher life loss and depths than the 75% and 100% loading then there is likely an error in
+the 50% loading scenario. The consequence metrics that can be selected to view summary results are:
+
+- <strong>Life Loss Day</strong> The estimated life loss from a breach or overtopping event occurring during the day.
+
+- <strong>Life Loss Night</strong> The estimated life loss from a breach or overtopping event occurring during the day.
+
+- <strong>Property Damages</strong> The estimated total direct economic damages from a breach or overtopping event.
+
+- <strong>Structures Inundated</strong> The total number of structures that get inundated from a breach or overtopping event.
+
+- <strong>Depth on Structures</strong> The summary statistics for depths that occur on structures from a breach or overtopping event. Structures that
+  do not get inundated are not included in these results.
+
+- <strong>Population At Risk Day</strong> The estimated total population at risk from a breach or overtopping event occurring during the day.
+  Population at Risk is those that would come in direct contact with the water if no evacuation occurred. This value can vary by the time of day when
+  the warning is issued to the public.
+
+- <strong>Population At Risk Night</strong> The estimated total population at risk from a breach or overtopping event occurring during the night.
+  Population at Risk is those that would come in direct contact with the water if no evacuation occurred. This value can vary by the time of day when
+  the warning is issued to the public.
+
+- <strong>Exposed Population Day</strong> The estimated total population exposed to flooding from a breach or overtopping event occurring during the
+  day. Exposed population is those that did not or could not evacuate and are in direct contact with the flood waters.
+
+- <strong>Exposed Population Night</strong> The estimated total population exposed to flooding from a breach or overtopping event occurring during the
+  day. Exposed population is those that did not or could not evacuate and are in direct contact with the flood waters.
+
+<Figure
+  figKey="figure-48"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure48.png"
+  alt="Summary Results section of the Consequence Results Tab in the LST 2.0. Summary results provide a five-number statistical summary for selected consequence metrics for each inundation loading scenario."
+  caption="Summary Results section of the Consequence Results Tab in the LST 2.0. Summary results provide a five-number statistical summary for selected consequence metrics for each inundation loading scenario."
+/>
+
+### Inundation Group Results
+
+The inundation group results section (<FigReference figKey="figure-49" />) provides summary information in table format for a selected inundation
+set. Use the values in the Inundation Group Results table to verify that the results make sense. Some questions to ask include: Is the percentage (%)
+of PAR Exposed higher, lower, or close enough to what is expected? In other words, would you have expected a higher or lower percentage (%) of the PAR
+to take protective action and escape exposure to the flooding? Each loading scenario (e.g., 50%, 75%, and 100%) has the following results available:
+
+- <strong>PAR</strong> (Population at Risk) Median of the total PAR estimates over all Monte Carlo iterations.
+
+- <strong>Exposed Population</strong> Median of the total exposed population estimates over all Monte Carlo iterations.
+
+- <strong>% of PAR Exposed </strong>The percentage of the total PAR that is exposed to flooding. This result is calculated as the exposed population
+  divided by the PAR.
+
+- <strong>Life Loss </strong>The median life loss estimated over all Monte Carlo iterations for the selected inundation scenario.
+
+- <strong>Life Loss (Exposure Weighted) </strong>A life loss estimate that combines the day and night estimates by weighting them. The weights are .55
+  for night and .45 for day. The night is given more weight to support the pattern that people tend to spend more time at home than away.
+
+- <strong>Life Loss as % of PAR</strong> The weighted life loss presented as a percentage of the total PAR. This result is calculated as the weighted
+  life loss divided by the weighted PAR. The weights are .55 for night and .45 for day.
+
+- <strong>Weighted Fatality Rate (% of Exposed PAR) </strong>The weighted fatality rate as a percentage of exposed population. This result is
+  calculated as the weighted life loss divided by the weighted exposed population. The weights are .55 for night and .45 for day.
+
+- <strong>Property Damages </strong>The median total direct property damage estimates for each loading scenario.
+
+- <strong># Structures Inundated </strong>The number of structures that get inundated in each loading scenario. Any structure that has a maximum depth
+  greater than zero is considered inundated.
+
+<Figure
+  figKey="figure-49"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure49.png"
+  alt="Inundation group results section of the Consequences Results Tab in the LST 2.0. Inundation Group Results provide summary results for each loading scenario in an inundation set."
+  caption="Inundation group results section of the Consequences Results Tab in the LST 2.0. Inundation Group Results provide summary results for each loading scenario in an inundation set."
+/>
+
+### Loading Scenario Results
+
+The final section in the Consequences Results Tab is the Loading Scenario Results. The Loading Scenario Results allow users to dig deeper into the
+results for a specific loading scenario. Define which loading scenario to review by selecting the appropriate inundation group and hydraulic loading
+scenario in the upper left of the tab. There are two charts and a map that will be populated with data from the specified loading scenario (
+{"\n"}<FigReference figKey="figure-50" />).
+
+<Figure
+  figKey="figure-50"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure50.png"
+  alt="Loading Scenario Results section of the Consequences Results Tab in the LST 2.0."
+  caption="Loading Scenario Results section of the Consequences Results Tab in the LST 2.0."
+/>
+
+The scatter chart displays life loss sensitivity to either the protective action initiation (PAI) function or the warning issuance time, depending on
+which is selected. A visible relationship between the life loss and the selected uncertain parameter indicates that life loss is sensitive to that
+parameter. As shown in <FigReference figKey="figure-51" /> below, the estimated life loss has a strong correlation to the sampled PAI function.
+
+<Figure
+  figKey="figure-51"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure51.png"
+  alt="Protective action initiation functional sensitivity chart in the Consequence Results Tab of the LST 2.0."
+  caption="Protective action initiation functional sensitivity chart in the Consequence Results Tab of the LST 2.0."
+/>
+
+Alternative to <FigReference figKey="figure-51" />, the estimated life loss does not appear to be sensitive to warning issuance in this example (
+{"\n"}<FigReference figKey="figure-52" />). This could indicate that there is significant advanced warning for the inundation scenario.
+
+<Figure
+  figKey="figure-52"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure52.png"
+  alt="Warning issuance sensitivity chart in the Consequences Results Tab of the LST 2.0."
+  caption="Warning issuance sensitivity chart in the Consequences Results Tab of the LST 2.0."
+/>
+
+The box and whisker chart (<FigReference figKey="figure-53" />) displays, for those that took protective action, the time span between taking
+protective action by departing the structure and water arriving at the structure. This data is represented as box and whiskers because the number of
+evacuees and timing of departure are changing every iteration. Many evacuees that depart within 15 minutes of water arriving indicates that the LST
+may be missing significant life loss estimates on roads. This chart can help support statements in the consequence narrative about potential life loss
+on roads that the LST doesn’t account for.
+
+<Figure
+  figKey="figure-53"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure53.png"
+  alt="Box and Whisker chart of the time span between when evacuation groups depart from their structure and water arriving at the structure in the Consequences Results Tab of the LST 2.0."
+  caption="Box and Whisker chart of the time span between when evacuation groups depart from their structure and water arriving at the structure in the Consequences Results Tab of the LST 2.0."
+/>
+
+Finally, the map displays consequence estimates spatially as a Hex (hexagonal) map along with the base data in the structure inventory tab (
+{"\n"}<FigReference figKey="figure-54" />). Each hexagon in the hex map represents either the average (Max Depth, Flood Arrival) or the aggregate
+(Life Loss, Total Damage) from all structures within the hexagon. Different hex map results can be displayed by clicking on the legend icon in the
+upper right side of the map. Upon zooming in or out new hexagons are calculated and displayed based on the zoom level. In other words, as you zoom in,
+the number of structures in each hexagon is going to decrease showing a different (more refined) distribution of results until individual structure
+points are shown. The hex maps can be a very valuable tool in identifying problem structures where life loss estimates are overestimated (or
+underestimated). For example, with life loss day selected a red hexagon surrounded by green would indicate a hot spot of life loss. Upon zooming in to
+verify the results make sense, the user may discover that the spike in life loss is due to a poorly attributed structure: incorrect structure
+material type, number of stories, occupancy type, etc. The hex maps also help in developing the consequence narrative. They can help in explaining why
+life loss is higher near the breach where depths and velocities are greatest.
+
+<Figure
+  figKey="figure-54"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure54.png"
+  alt="Hex map in the Loading Scenario Results portion of the Consequences Results Tab in LST 2.0 displaying life loss estimates from a breach with 100% loading occurring during the night (2am)."
+  caption="Hex map in the Loading Scenario Results portion of the Consequences Results Tab in LST 2.0 displaying life loss estimates from a breach with 100% loading occurring during the night (2am)."
+/>
+
+## Critical Infrastructure Tab
+
+The Critical Infrastructure tab displays the number of infrastructure facilities, types of facilities, location, and hydraulic characteristics for
+selected loading scenarios in the leveed area. The infrastructure types and numbers are populated automatically from the Homeland Infrastructure
+Foundation-Level Data (HIFLD) Open database. The only user input required is the addition of information in the Comments text box. The consequence
+specialist on the assessment team should review the list of Critical Infrastructure and provide comments as necessary.
+
+- The critical infrastructure table displays for each critical infrastructure point:
+
+- Name of the critical infrastructure
+
+- Category of the critical infrastructure
+
+- Maximum depth that occurred for the given loading scenario
+
+- Maximum velocity that occurred for the given loading scenario
+
+- The arrival time (time span) between hazard occurrence and water first arriving at the critical infrastructure.
+
+The map displays the critical infrastructure points, flood arrival, and max depth hex maps from the Consequences Results Tab, and base levee data.
+
+<Figure
+  figKey="figure-55"
+  src="figures\web-applications\lst\users-guide\v1.0\figures\figure55.png"
+  alt="Critical infrastructure tab in the Consequences module of the LST 2.0."
+  caption="Critical infrastructure tab in the Consequences module of the LST 2.0."
+/>
+
+<CitationFootnote />
