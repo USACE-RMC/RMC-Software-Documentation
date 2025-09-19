@@ -97,15 +97,22 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
   );
 
   const siteClassHref = useBaseUrl(
-    `/docs/toolbox-technical-manuals/seismic-hazard-suite/site-classification/${latestVersions['toolbox-technical-manuals/seismic-hazzard-suite/site-classification'] || 'v1.0'}/preface`,
+    `/docs/toolbox-technical-manuals/seismic-hazard-suite/site-classification/${latestVersions['toolbox-technical-manuals/seismic-hazard-suite/site-classification'] || 'v1.0'}/preface`,
   );
   const seismicHazardCurvesHref = useBaseUrl(
-    `/docs/toolbox-technical-manuals/seismic-hazard-suite/seismic-hazard-curves/${latestVersions['toolbox-technical-manuals/seismic-hazzard-suite/seismic-hazard-curve'] || 'v1.0'}/preface`,
+    `/docs/toolbox-technical-manuals/seismic-hazard-suite/seismic-hazard-curves/${latestVersions['toolbox-technical-manuals/seismic-hazard-suite/seismic-hazard-curve'] || 'v1.0'}/preface`,
   );
 
   const rrftHref = useBaseUrl('/web-applications/rrft');
+  // RRFT document links here
+
   const lstHref = useBaseUrl('/web-applications/lst');
+  const lstUsersGuideHref = useBaseUrl(
+    `/docs/web-applications/lst/users-guide/${latestVersions['web-applications/lst/users-guide'] || 'v1.0'}/preface`,
+  );
+
   const dstHref = useBaseUrl('/web-applications/dst');
+  // DST document links here
 
   return [
     { id: 'home', text: 'Home', href: homeHref },
@@ -220,6 +227,24 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
         },
       ],
     },
-    { id: 'web-applications', text: 'Web Applications', href: webAppHref },
+    {
+      id: 'web-applications',
+      text: 'Web Applications',
+      href: webAppHref,
+      children: [
+        {
+          id: 'lst',
+          text: 'Levee Screening Tool',
+          href: lstHref,
+          children: [
+            {
+              id: 'users-guide',
+              text: 'LST Users Guide',
+              href: lstUsersGuideHref,
+            },
+          ],
+        },
+      ],
+    },
   ];
 }
