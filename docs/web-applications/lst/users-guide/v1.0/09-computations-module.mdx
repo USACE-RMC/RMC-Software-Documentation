@@ -1,21 +1,22 @@
 ---
-title: "Computations Module"
+title: 'Computations Module'
 ---
 
-import NavContainer from "@site/src/components/NavContainer";
-import VersionSelector from "@site/src/components/VersionSelector";
 import Link from "@docusaurus/Link";
 import addBaseUrl from "@docusaurus/useBaseUrl";
 import CitationFootnote from "@site/src/components/CitationFootnote";
 import Figure from "@site/src/components/Figure";
-import TableReference from "@site/src/components/TableReference";
 import FigReference from "@site/src/components/FigureReference";
+import NavContainer from "@site/src/components/NavContainer";
+import TableReference from "@site/src/components/TableReference";
+import VersionSelector from "@site/src/components/VersionSelector";
 
-<NavContainer 
-  link="\web-applications\lst"
-  linkTitle="Levee Screening Tool"
-  document="web-applications\lst\users-guide"
-></NavContainer>
+<NavContainer
+link="/web-applications/lst"
+linkTitle="Levee Screening Tool"
+document="web-applications/lst/users-guide"
+
+> </NavContainer>
 
 # Computations Module
 
@@ -34,7 +35,7 @@ information, is viewable in <FigReference figKey="figure-192" />.
 
 As discussed in Chapter 1 and displayed in <FigReference figKey="figure-193" />, the LST computes three types of risk: levee risk, non-breach risk,
 and flood risk. The term flood risk is used to describe the risk of flooding in the area behind the levee regardless of what led to that flooding. The
- term levee risk is used to refer to the risk due to potential poor performance of the levee itself, which has also been referred to as incremental
+term levee risk is used to refer to the risk due to potential poor performance of the levee itself, which has also been referred to as incremental
 risk historically. Non-breach risk is the risk due to capacity exceedance if the levee was “unbreachable”, meaning the potential for poor performance
 of the existing levee was zero, and the only risk was due to overtopping without breach.
 
@@ -42,14 +43,14 @@ The approach used by the LST to compute levee risk, non-breach risk, and flood r
 described in detail in this chapter:
 
 1. Develop marginal system response probability (SRP) curves for each failure mode as a function of levee height and annual exceedance probability
-(AEP)
+   (AEP)
 
 1. Adjust SRPs to account for dependencies between failure modes
 
 1. Compute annual probability of failure for each failure mode by estimating the area under the adjusted SRP
 
 1. Develop consequence (life loss and property damage) curves for the full range of levee heights and AEP by interpolating from the LifeSim results
-for each failure mode
+   for each failure mode
 
 1. Develop probability weighted consequence curves for the full range of AEPs by multiplying the consequence by probability of failure
 
@@ -65,13 +66,13 @@ for each failure mode
 ## Computational steps in the LST
 
 For the purposes of this module, the various computations that the LST completes have been broken down into “steps”. Each step is described below, and
- the data and/or results from each step can been accessed in the LST by selecting that step from the menu on the left side of the Computations module
+the data and/or results from each step can been accessed in the LST by selecting that step from the menu on the left side of the Computations module
 window.
 
 ### Step 1. Marginal System Response Probabilities (SRPs)
 
 <strong>Note on Annual Exceedance Probability (AEP):</strong> An AEP is always a fraction of one. So, a 0.2 AEP flood has a 20% chance of occurring in
- any given year, and this corresponds to a 5-year recurrence-interval flood.
+any given year, and this corresponds to a 5-year recurrence-interval flood.
 
 The first computational step is deriving marginal system response probabilities as a function of Annual Exceedance Probability (AEP) for each failure
 mode elicited in the Performance Module. Refer to the Performance Module chapter for more information on how data entered by the user in the
@@ -80,13 +81,13 @@ unadjusted SRPs, as they have not been adjusted to account for the influence of 
 
 In Step 1, for a given AEP, the LST interpolates the corresponding levee height from the hazard curve assigned to that failure mode. The probability
 of failure for each levee height is then computed by evaluating the lognormal distribution function using the mean and standard deviations derived from
- the levee loading and incident database. Refer to <TableReference tableKey="table-5" /> of the Performance Module chapter for mean and standard
+the levee loading and incident database. Refer to <TableReference tableKey="table-5" /> of the Performance Module chapter for mean and standard
 deviations for each failure mode. More information on the levee loading and incident database can be found in Appendix A.
 
 The results from Step 1 can be viewed for each failure mode in the Computations tab by checking the box next to Step 1 as shown in
 {"\n"}<FigReference figKey="figure-194" />. For this example, the AEP for loading at the toe of the levee is 0.5, so all AEP values less frequent
 (smaller) than 0.5 have a levee height % greater than 0. That levee height is interpolated from the loading function assigned to the failure mode. The
- overtopping AEP is 0.02, which corresponds to a levee height of 100%. The conditional probability of failure at 100% levee height, in this case
+overtopping AEP is 0.02, which corresponds to a levee height of 100%. The conditional probability of failure at 100% levee height, in this case
 2.250e-2 for the BEP Foundation failure mode, is equal to the elicited values using the event tree approach in the Performance Metric Editor.
 
 In the LST, the % levee height, and the associated probability of failure for AEP of 1 (the top row) will always be 0.
@@ -105,7 +106,7 @@ allowed in the LST would be for a levee that is made up only of a floodwall, so 
 overtopping failure mode). Therefore, the probability of failure given a hazard is a function of multiple failure modes. In the LST, multiple failure
 modes are modeled as a system in series because any one of them will cause failure of the levee and resulting consequences. Failure modes are
 dependent on one another, meaning the occurrence of one will impact the occurrence of another. The LST uses a <em>competing risk model</em> to account
- for dependencies among failure modes and adjust the marginal system response probabilities accordingly.
+for dependencies among failure modes and adjust the marginal system response probabilities accordingly.
 
 A competing risk model implementation represents a combination of two or more failure modes that are “competing” to the end of life of a series
 system. In the context of dam and levee safety, an internal erosion failure mode can be thought of as competing with an overtopping failure mode. In
@@ -113,14 +114,14 @@ this context, a levee can only fail from either internal erosion or overtopping,
 prior to overtopping due to internal erosion can significantly reduce the probability of failure and consequences of an overtopping failure mode.
 
 In Step 2, each marginal system response probability is adjusted using a competing risk model. For a given failure mode and hazard level, the adjusted
- system response probability is equal to the marginal system response probability of that failure mode multiplied by the probability of all the other
+system response probability is equal to the marginal system response probability of that failure mode multiplied by the probability of all the other
 failure modes NOT occurring. In Competing Risk Model vernacular, the adjusted system response curves are called Cumulative Incidence Functions.
 {"\n"}<FigReference figKey="figure-195" /> shows the same failure modes from <FigReference figKey="figure-194" /> after they have been adjusted using
- the competing risk model. Notice the probability of failure for a given levee height is slightly smaller for the adjusted curves.
+the competing risk model. Notice the probability of failure for a given levee height is slightly smaller for the adjusted curves.
 
 Conditional probabilities of failure for an adjusted system response curve will always be less than or equal to the unadjusted (marginal) system
 response. Adjusted system response curves can be summed across failure modes for each AEP to calculate the total conditional probability of failure at
- a given AEP.
+a given AEP.
 
 For more information on the competing risk model, refer to the RMC-TotalRisk manual (Quantitative Risk Analysis with the RMC-TotalRisk Software,
 RMC-TR-2023-XX.)
@@ -136,7 +137,7 @@ RMC-TR-2023-XX.)
 
 The annual probability of failure (APF) represents the likelihood, in any given year, that a levee will fail considering the full range of potential
 loads to which it could be subjected. In Step 3, the APF is computed for each AEP bin, and then summed over all bins to compute the total APF for each
- failure mode. A bin is defined by the upper and lower AEP of each row in the table shown in <FigReference figKey="figure-196" />. In this example,
+failure mode. A bin is defined by the upper and lower AEP of each row in the table shown in <FigReference figKey="figure-196" />. In this example,
 the highlighted AEP bin starts at an AEP of 5.623e-2 and ends at AEP of 4.642e-2.
 
 <Figure
@@ -214,7 +215,7 @@ multiplying the adjusted probability of failure (Step 2) by the associated life 
 ### Step 6. Expected annual consequence
 
 Expected annual consequence, whether it be life loss (EALL) or property damage (EAD), describes the average annual consequences that would be expected
- considering the full range of potential events and their likelihood to occur. It is the long-term average consequence estimate for the assessed
+considering the full range of potential events and their likelihood to occur. It is the long-term average consequence estimate for the assessed
 condition. Expected annual consequence is computed using the same approach as APF in Step 3, except it is the area under the Failure Probability
 Weighted Consequence curve (<FigReference figKey="figure-202" />) from Step 5.
 
