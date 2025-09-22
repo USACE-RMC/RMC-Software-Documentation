@@ -18,7 +18,7 @@ export default function WebApps() {
       iconDark: addBaseUrl('img/WebAppDarkMode.png'),
       doc_location: addBaseUrl('web-applications/lst'),
       doc_name: 'Levee Screening Tool',
-      active: false,
+      active: true,
     },
     {
       iconLight: addBaseUrl('img/WebApp.png'),
