@@ -1,25 +1,13 @@
 import { useId, useMemo, useState } from 'react';
 
 /**
- * StackedCardsTW (simplified)
- * - No indent. Full-width cards.
- * - Styling mirrors RibbonSteps via Tailwind class props.
- * - Cards are expandable ONLY if `content` exists; otherwise static (no arrow/click).
- *
- * API:
- *   items: Array<{ title: string, content?: React.ReactNode }>
- *   autoNumber?: boolean (default false)
- *   numberStyle?: 'decimal'|'upper-alpha'|'lower-alpha'|'upper-roman'|'lower-roman' (default 'decimal')
- *   startAt?: number (default 1)
- *   defaultOpen?: 'none'|'first'|'all'|number[] (default 'none')  // applies only to expandable items
- *   className?: string
- *   boxClass?: string    // matches RibbonSteps
- *   badgeClass?: string  // matches RibbonSteps
- *   panelClass?: string  // content area style
- *   gapClass?: string
- *   fontClass?: string
+ * StackedCardsTW (simplified, fixed)
+ * - Full-width cards.
+ * - Expandable ONLY if `content` exists.
+ * - Number appears ONLY in the circle badge (no inline "1. " before title).
+ * - Title accepts ReactNode (JSX or string).
  */
-export default function StackedCardsTW({
+export default function StackedCards({
   title,
   items = [],
   autoNumber = false,
@@ -27,38 +15,28 @@ export default function StackedCardsTW({
   startAt = 1,
   defaultOpen = 'none',
 
-  // Tailwind class props (intentionally the SAME defaults as your RibbonSteps)
-  boxClass = 'bg-ifm-primary border border-ifm-primary rounded-lg shadow-sm px-3 py-2.5',
+  // Tailwind class props (same look as your RibbonSteps)
+  boxClass = 'bg-ifm-primary-darkest border border-ifm-primary rounded-lg shadow-sm px-3 py-2.5',
   badgeClass = 'bg-ifm-primary border border-border-color rounded-full shadow text-caption font-usace text-font-color-inverse',
-  panelClass = 'rounded-lg border-t text-font-color-inverse border-border-color bg-background-color mt-2 px-3 py-2.5',
-  gapClass = 'mb-2.5',
+  panelClass = 'rounded-lg border-t text-font-color-inverse border-border-color bg-background-color mt-4 px-3 py-2.5',
+  gapClass = '!mb-0',
   fontClass = 'font-usace text-normal text-font-color-inverse',
-
   className = '',
 }) {
   const cid = useId();
 
-  // Mark which items are expandable (have content)
   const withFlags = useMemo(
-    () =>
-      items.map((it) => ({
-        ...it,
-        _expandable: hasContent(it.content),
-      })),
+    () => items.map((it) => ({ ...it, _expandable: hasContent(it.content) })),
     [items],
   );
 
-  // Initial open state (consider only expandable indices)
   const initial = useMemo(() => {
     const expandable = withFlags
       .map((it, idx) => (it._expandable ? idx : null))
       .filter((x) => x !== null);
-
     if (defaultOpen === 'all') return expandable;
     if (defaultOpen === 'first') return expandable.length ? [expandable[0]] : [];
-    if (Array.isArray(defaultOpen)) {
-      return defaultOpen.filter((i) => expandable.includes(i));
-    }
+    if (Array.isArray(defaultOpen)) return defaultOpen.filter((i) => expandable.includes(i));
     return []; // 'none'
   }, [withFlags, defaultOpen]);
 
@@ -66,25 +44,25 @@ export default function StackedCardsTW({
   const toggle = (idx) =>
     setOpen((prev) => (prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]));
 
-  const numbered = (label, idx) =>
-    autoNumber ? `${formatOrdinal(idx + startAt, numberStyle)}. ${label}` : label;
-
   if (!withFlags.length) return null;
 
   return (
     <section className={`not-prose w-full ${className}`} aria-label={title || 'Stacked cards'}>
       {title && <h3 className="mb-3 font-usace text-[20px] font-bold text-font-color">{title}</h3>}
 
-      <ol className="m-0 list-none p-0" style={{ listStyleType: 'none' }} role="list">
+      <ol className="m-0 ml-4 list-none !pl-0" style={{ listStyleType: 'none' }} role="list">
         {withFlags.map((it, i) => {
           const isOpen = open.includes(i);
           const headerId = `${cid}-hdr-${i}`;
           const panelId = `${cid}-pnl-${i}`;
+          const ordinal = formatOrdinal(i + startAt, numberStyle);
+
+          const TitleNode = it.title ?? `Item ${i + 1}`; // ← ReactNode-safe
 
           return (
             <li key={i} className={`relative ${gapClass} list-none`}>
               <div className={`relative ${boxClass}`}>
-                {/* Header / Title row */}
+                {/* Header / Title */}
                 {it._expandable ? (
                   <button
                     id={headerId}
@@ -95,50 +73,33 @@ export default function StackedCardsTW({
                     className="flex w-full items-center justify-between text-left"
                   >
                     <div className="flex min-w-0 items-center gap-3">
-                      {autoNumber && (
-                        <Badge
-                          className={badgeClass}
-                          label={formatOrdinal(i + startAt, numberStyle)}
-                        />
-                      )}
-                      <span className={`${fontClass} min-w-0 truncate`}>
-                        {numbered(it.title || `Item ${i + 1}`, i)}
-                      </span>
+                      {autoNumber && <Badge className={badgeClass} label={ordinal} />}
+                      <span className={`${fontClass} min-w-0 truncate`}>{TitleNode}</span>
                     </div>
                     <Chevron isOpen={isOpen} />
                   </button>
                 ) : (
                   <div id={headerId} className="flex w-full items-center">
                     <div className="flex min-w-0 items-center gap-3">
-                      {autoNumber && (
-                        <Badge
-                          className={badgeClass}
-                          label={formatOrdinal(i + startAt, numberStyle)}
-                        />
-                      )}
-                      <span className={`${fontClass} min-w-0 truncate`}>
-                        {numbered(it.title || `Item ${i + 1}`, i)}
-                      </span>
+                      {autoNumber && <Badge className={badgeClass} label={ordinal} />}
+                      <span className={`${fontClass} min-w-0 truncate`}>{TitleNode}</span>
                     </div>
-                    {/* no chevron, no click */}
                   </div>
                 )}
 
-                {/* Expandable panel */}
+                {/* Panel */}
                 {it._expandable && (
                   <div
                     id={panelId}
                     role="region"
                     aria-labelledby={headerId}
-                    className={`overflow-hidden transition-[max-height] duration-300 ease-in-out ${
-                      isOpen ? 'max-h-[9999px]' : 'max-h-0'
-                    }`}
+                    className={`overflow-hidden transition-[max-height] duration-300 ease-in-out ${isOpen ? 'max-h-[9999px]' : 'max-h-0'}`}
                   >
                     <div
                       className={panelClass}
                       style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
                     >
-                      <div className="prose prose-slate dark:prose-invert max-w-none">
+                      <div className="!not-prose !text-font-color-inverse">
                         {renderContent(it.content)}
                       </div>
                     </div>
@@ -153,10 +114,8 @@ export default function StackedCardsTW({
   );
 }
 
-/* ——— Pieces that mirror RibbonSteps styling ——— */
-
+/* ——— UI bits ——— */
 function Badge({ className, label }) {
-  // Same concept as RibbonSteps' badge: a rounded pill with centered number
   return (
     <span
       aria-hidden="true"
@@ -167,13 +126,10 @@ function Badge({ className, label }) {
     </span>
   );
 }
-
 function Chevron({ isOpen }) {
   return (
     <svg
-      className={`ml-3 h-5 w-5 shrink-0 transition-transform duration-200 ${
-        isOpen ? 'rotate-180' : 'rotate-0'
-      } text-font-color`}
+      className={`ml-3 h-5 w-5 shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : 'rotate-0'} text-font-color-inverse`}
       viewBox="0 0 20 20"
       fill="currentColor"
       aria-hidden="true"
@@ -187,11 +143,11 @@ function Chevron({ isOpen }) {
   );
 }
 
-/* ——— Utilities ——— */
+/* ——— Helpers ——— */
 function hasContent(c) {
   if (c === null || c === undefined) return false;
   if (typeof c === 'string') return c.trim().length > 0;
-  return true;
+  return true; // any ReactNode
 }
 function formatOrdinal(n, style = 'decimal') {
   switch (style) {
@@ -235,15 +191,14 @@ function toRoman(num) {
   ];
   let res = '',
     n = Math.max(1, Math.min(3999, num | 0));
-  for (const [v, sym] of r) {
+  for (const [v, s] of r) {
     while (n >= v) {
-      res += sym;
+      res += s;
       n -= v;
     }
   }
   return res;
 }
 function renderContent(c) {
-  if (typeof c === 'string') return <p>{c}</p>;
-  return c;
+  return c ?? null;
 }
