@@ -26,16 +26,16 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 export default function RibbonSteps({
   steps = [],
   startAt = 1,
-  indentPx = 18,
+  indentPx = 0,
   maxIndentPx,
   bubbleSizePx = 28,
   bubbleGapPx = 10,
   nowrap = false,
 
   // Tailwind class props (customize these)
-  boxClass = 'bg-background-color border border-ifm-primary rounded-lg shadow-sm px-3 py-2.5',
+  boxClass = 'bg-background-color py-1.5',
   badgeClass = 'bg-background-color border border-ifm-primary rounded-full shadow text-caption font-usace text-font-color',
-  gapClass = 'mb-2.5',
+  gapClass = '!mb-0',
   fontClass = 'font-usace text-normal text-font-color',
   className = '',
 }) {
@@ -64,7 +64,11 @@ export default function RibbonSteps({
 
   return (
     <section ref={rootRef} className={`not-prose w-full ${className}`} aria-label="Numbered steps">
-      <ol className="m-0 list-none p-0" style={{ listStyleType: 'none' }} role="list">
+      <ol
+        className="shadown-sm m-0 ml-4 list-none rounded-lg border border-ifm-primary py-2 !pl-4 pr-2"
+        style={{ listStyleType: 'none' }}
+        role="list"
+      >
         {steps.map((title, i) => {
           const n = i + startAt;
           const ml = Math.min(i * indentPx, computedMaxIndent);
