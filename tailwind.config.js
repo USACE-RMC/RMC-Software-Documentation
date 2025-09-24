@@ -91,6 +91,7 @@ export default {
         'tab-hover-color': 'var(--ifm-tab-hover-color)',
         'tab-font-color': 'var(--ifm-tab-font-color)',
         'tab-font-color-inactive': 'var(--ifm-tab-font-color-inactive)',
+        'tab-underline-color': 'var(--ifm-tab-underline-color)',
       },
     },
     screens: {

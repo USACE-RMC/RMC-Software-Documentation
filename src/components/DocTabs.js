@@ -24,10 +24,14 @@ export default function DocTabs({
     'aria-selected:text-tab-font-color ' +
     'aria-selected:shadow-sm ' +
     'aria-selected:font-bold ' +
+    'aria-selected:border-b-4 ' +
+    'aria-selected:border-tab-underline-color ' +
     '[&.tabs__item--active]:bg-tab-color ' +
     '[&.tabs__item--active]:text-tab-font-color ' +
     '[&.tabs__item--active]:shadow-sm ' +
-    '[&.tabs__item--active]:font-bold ',
+    '[&.tabs__item--active]:font-bold ' +
+    '[&.tabs__item--active]:border-b-4 ' +
+    '[&.tabs__item--active]:border-tab-underline-color ',
 
   // Panel below the tabs
   panelClass = 'rounded-b-xl bg-background-color px-4 py-3 text-base text-font-color',

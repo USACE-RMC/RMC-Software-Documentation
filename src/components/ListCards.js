@@ -1,16 +1,16 @@
 import { useId, useMemo, useState } from 'react';
 
 /**
- * StackedCardsTW (simplified, fixed)
+ * ListCards (simplified, fixed)
  * - Full-width cards.
  * - Expandable ONLY if `content` exists.
  * - Number appears ONLY in the circle badge (no inline "1. " before title).
  * - Title accepts ReactNode (JSX or string).
  */
-export default function StackedCards({
+export default function ListCards({
   title,
   items = [],
-  autoNumber = false,
+  autoNumber = true,
   numberStyle = 'decimal',
   startAt = 1,
   defaultOpen = 'none',
