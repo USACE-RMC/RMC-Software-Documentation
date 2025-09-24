@@ -45,7 +45,7 @@ export default function ListBox({
 
   // Tailwind class props (customize these) — unchanged
   boxClass = 'bg-background-color py-1.5',
-  badgeClass = 'bg-background-color border border-ifm-primary rounded-full shadow text-caption font-usace text-font-color',
+  badgeClass = 'bg-ifm-primary rounded-full shadow text-caption font-usace text-font-color-inverse',
   gapClass = '!mb-0',
   fontClass = 'font-usace text-normal text-font-color',
   className = '',
@@ -93,7 +93,7 @@ export default function ListBox({
   return (
     <section ref={rootRef} className={`not-prose w-full ${className}`} aria-label="Numbered items">
       <ol
-        className="m-0 ml-4 list-none rounded-lg border border-ifm-primary py-2 !pl-4 pr-2 shadow-sm"
+        className="m-0 ml-0 list-none rounded-lg border-0 border-ifm-primary py-2 !pl-0 pr-2"
         style={{ listStyleType: 'none' }}
         role="list"
       >
