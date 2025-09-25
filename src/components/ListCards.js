@@ -16,7 +16,7 @@ export default function ListCards({
   defaultOpen = 'none',
 
   // Tailwind class props (same look as your RibbonSteps)
-  boxClass = 'bg-ifm-primary-darkest border border-ifm-primary rounded-lg shadow-sm px-3 py-2.5',
+  boxClass = 'bg-ifm-primary-darker border border-ifm-primary rounded-lg shadow-sm px-3 py-2.5',
   badgeClass = 'bg-ifm-primary border border-border-color rounded-full shadow text-caption font-usace text-font-color-inverse',
   panelClass = 'rounded-lg border-t text-font-color-inverse border-border-color bg-background-color mt-4 px-3 py-2.5',
   gapClass = '!mb-0',
@@ -50,7 +50,7 @@ export default function ListCards({
     <section className={`not-prose w-full ${className}`} aria-label={title || 'Stacked cards'}>
       {title && <h3 className="mb-3 font-usace text-[20px] font-bold text-font-color">{title}</h3>}
 
-      <ol className="m-0 ml-4 list-none !pl-0" style={{ listStyleType: 'none' }} role="list">
+      <ol className="m-0 ml-0 list-none !pl-0" style={{ listStyleType: 'none' }} role="list">
         {withFlags.map((it, i) => {
           const isOpen = open.includes(i);
           const headerId = `${cid}-hdr-${i}`;
