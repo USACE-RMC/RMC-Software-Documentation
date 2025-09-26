@@ -29,7 +29,7 @@ const internalErosionSuite = [
     iconDark: 'img/ToolboxDarkMode.png',
     doc_location: `toolbox-technical-manuals/internal-erosion-suite/breach`,
     doc_name: 'Breach Toolbox Technical Manual',
-    active: false,
+    active: true,
     draft: true,
   },
   {
