@@ -6,7 +6,7 @@ export default function DocTabs({
   items = [],
   defaultValue,
   equalWidth = true,
-  showDividers = false,
+  showDividers = true,
   gap = '',
 
   // Outer card
