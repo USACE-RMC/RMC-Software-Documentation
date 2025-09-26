@@ -13,15 +13,15 @@ from utils.mdx_writer import write_mdx_files
 # ---- User configuration ----
 
 # Set the environment to "production" or "development"
-environment = "development"  # Change to "production" for production environment
+environment = "production"  # Change to "production" for production environment
 
 # Assign the file path for figures
 FIGSRC = r"figures\toolbox-technical-manuals\internal-erosion-suite\breach\v1.0"
 
 # Assign the navigation link, title, and document for the NavContainer component
-NAVLINK = r"\web-applications\lst"  # Use forward slashes "/" for the link
-NAVTITLE = "Levee Screening Tool"
-NAVDOC = r"web-applications\lst\users-guide"  # Use forward slashes "/" for the document path
+NAVLINK = r"/toolbox-technical-manuals/internal-erosion-suite/breach"  # Use forward slashes "/" for the link
+NAVTITLE = "Internal Erosion Suite"
+NAVDOC = r"toolbox-technical-manuals/internal-erosion-suite/breach"  # Use forward slashes "/" for the document path
 
 # Define paths based on the environment
 if environment == "production":
