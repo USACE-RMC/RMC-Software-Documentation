@@ -19,9 +19,9 @@ environment = "production"  # Change to "production" for production environment
 FIGSRC = r"figures\web-applications\lst\users-guide\v1.0"
 
 # Assign the navigation link, title, and document for the NavContainer component
-NAVLINK = r"\web-applications\lst"
+NAVLINK = r"\web-applications\lst"  # Use forward slashes "/" for the link
 NAVTITLE = "Levee Screening Tool"
-NAVDOC = r"web-applications\lst\users-guide"
+NAVDOC = r"web-applications\lst\users-guide"  # Use forward slashes "/" for the document path
 
 # Define paths based on the environment
 if environment == "production":
