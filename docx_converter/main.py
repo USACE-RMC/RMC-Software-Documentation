@@ -16,25 +16,25 @@ from utils.mdx_writer import write_mdx_files
 environment = "production"  # Change to "production" for production environment
 
 # Assign the file path for figures
-FIGSRC = r"figures\toolbox-technical-manuals\internal-erosion-suite\breach\v1.0"
+FIGSRC = r"figures\toolbox-technical-manuals\internal-erosion-suite\pipe-service-life\v1.0"
 
 # Assign the navigation link, title, and document for the NavContainer component
-NAVLINK = r"/toolbox-technical-manuals/internal-erosion-suite/breach"  # Use forward slashes "/" for the link
+NAVLINK = r"/toolbox-technical-manuals/internal-erosion-suite/pipe-service-life"  # Use forward slashes "/" for the link
 NAVTITLE = "Internal Erosion Suite"
-NAVDOC = r"toolbox-technical-manuals/internal-erosion-suite/breach"  # Use forward slashes "/" for the document path
+NAVDOC = r"toolbox-technical-manuals/internal-erosion-suite/pipe-service-life"  # Use forward slashes "/" for the document path
 
 # Define paths based on the environment
 if environment == "production":
-    DOCX_PATH = r"C:\Technical Documents\RMC-CPD-2023-09 - RMC Breach Toolbox.docx"
-    BIB_PATH = r"C:\Git\RMC-Software-Documentation\static\bibliographies\toolbox-technical-manuals\internal-erosion-suite\breach\v1.0\bib.json"
-    FIGURES_DIR = r"C:\Git\RMC-Software-Documentation\static\figures\toolbox-technical-manuals\internal-erosion-suite\breach\v1.0"
-    MDX_DIR = r"C:\Git\RMC-Software-Documentation\docs\toolbox-technical-manuals\internal-erosion-suite\breach\v1.0"
+    DOCX_PATH = r"C:\Technical Documents\RMC-CPD-2023-11 - RMC Pipe Service Life Toolbox.docx"
+    BIB_PATH = r"C:\Git\RMC-Software-Documentation\static\bibliographies\toolbox-technical-manuals\internal-erosion-suite\pipe-service-life\v1.0\bib.json"
+    FIGURES_DIR = r"C:\Git\RMC-Software-Documentation\static\figures\toolbox-technical-manuals\internal-erosion-suite\pipe-service-life\v1.0"
+    MDX_DIR = r"C:\Git\RMC-Software-Documentation\docs\toolbox-technical-manuals\internal-erosion-suite\pipe-service-life\v1.0"
 else:
     # Development paths
-    DOCX_PATH = r"C:\Technical Documents\RMC-CPD-2023-09 - RMC Breach Toolbox.docx"
-    BIB_PATH = r"C:\Git\RMC-Software-Documentation\static\bibliographies\toolbox-technical-manuals\internal-erosion-suite\breach\v1.0\bib.json"
-    FIGURES_DIR = r"C:\Technical Documents\MDX Conversions\Breach\Figures"
-    MDX_DIR = r"C:\Technical Documents\MDX Conversions\Breach\MDX"
+    DOCX_PATH = r"C:\Technical Documents\RMC-CPD-2023-11 - RMC Pipe Service Life Toolbox.docx"
+    BIB_PATH = r"C:\Git\RMC-Software-Documentation\static\bibliographies\toolbox-technical-manuals\internal-erosion-suite\pipe-service-life\v1.0\bib.json"
+    FIGURES_DIR = r"C:\Technical Documents\MDX Conversions\Pipe Service Life\Figures"
+    MDX_DIR = r"C:\Technical Documents\MDX Conversions\Pipe Service Life\MDX"
 
 # ---- Constants ----
 DOCX_PATH = DOCX_PATH

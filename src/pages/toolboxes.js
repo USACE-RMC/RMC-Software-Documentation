@@ -18,7 +18,7 @@ export default function Toolboxes() {
       iconDark: addBaseUrl('img/ToolboxDarkMode.png'),
       doc_location: addBaseUrl('toolboxes/overtopping-erosion-suite'),
       doc_name: 'Overtopping Erosion Suite',
-      active: false,
+      active: true,
     },
     {
       iconLight: addBaseUrl('img/Toolbox.png'),

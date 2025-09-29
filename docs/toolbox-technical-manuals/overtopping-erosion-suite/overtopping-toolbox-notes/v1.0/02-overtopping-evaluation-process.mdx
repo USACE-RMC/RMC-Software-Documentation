@@ -1,0 +1,67 @@
+---
+title: "Overtopping Evaluation Process using WinDAM C"
+---
+
+import Link from "@docusaurus/Link";
+import addBaseUrl from "@docusaurus/useBaseUrl";
+import Citation from "@site/src/components/Citation";
+import CitationFootnote from "@site/src/components/CitationFootnote";
+import Equation from "@site/src/components/Equation";
+import EquationNoRef from "@site/src/components/EquationNoRef";
+import EquationReference from "@site/src/components/EquationReference";
+import Figure from "@site/src/components/Figure";
+import FigReference from "@site/src/components/FigureReference";
+import NavContainer from "@site/src/components/NavContainer";
+import VersionSelector from "@site/src/components/VersionSelector";
+
+<NavContainer 
+  link="/toolboxes/overtopping-erosion-suite"
+  linkTitle="Overtopping Erosion Suite"
+  document="toolbox-technical-manuals/overtopping-erosion-suite/overtopping-toolbox-notes"
+></NavContainer>
+
+# Overtopping Evaluation Process
+
+To inform the evaluation of embankment overtopping performance (i.e., likelihood of failure given the loading), a table (or matrix) of 
+conditional probability of failure (i.e., system response probability, SRP) as a function of erodibility coefficient (<em>k<sub>d</sub></em>) and
+undrained shear strength (<em>s<sub>u</sub></em>) is constructed using WinDAM C. For efficiency, critical shear stress (&tau;<sub>c</sub>) is 
+typically conservatively assumed to be zero, and the other input parameters are modeled as discrete variables. 
+
+If the selected combination of <em>k<sub>d</sub></em> and <em>s<sub>u</sub></em> result in a breach intiation time greater than zero in WinDAM C 
+(i.e., headcut breaches upstream crest regardless of breach size), a value of 1 is entered in the table. Otherwise, a value of 0 for no failure/breach 
+is entered in the table. Users typically quickly get a feel for where failure occurs to focus their efforts and efficiently populate the matrix.
+
+The process is repeated for a series of hydrographs that are scaled so that the peak stage corresponds to the peak overtopping depths of interest
+(e.g., 0.5, 1, 1.5, 2, 3 ft, etc.) to fully assess the system response. The end-product of this phase of the evaluation is a series of system response matrices
+corresponding to the peak overtopping depths of interest. A generic example is shown below.
+
+<Figure
+  figKey="figure-1"
+  src="figures/toolbox-technical-manuals/overtopping-erosion-suite/overtopping-toolbox-notes/v1.0/figure1.png"
+  alt="Overtopping Toolbox Generic Example."
+  caption="Overtopping Toolbox Generic Example."
+/>
+
+The toolbox performs a probabilistic analysis using 1,000 iterations. Values of <em>k<sub>d</sub></em> and <em>s<sub>u</sub></em> are randomly sampled based on a 
+user-specified triangular distribution. The toolbox assumes <em>k<sub>d</sub></em> and <em>s<sub>u</sub></em> have a -1.0 correlation (perfectly negative). This 
+will be conservative.
+
+Although not required to perform a probabilistic analysis, Palisade @RISK software (standalone version or as part of the Palisade DecisionTools Suite) can customize
+the probabilistic analysis. If a probabilistic analysis is selected using @RISK to customize the probabilistic analysis, the minimum, most likely, and maximum values 
+are input, and an @RISK formula for a triangular distribution is used as a default. However, a valid @RISK distribution can be input in lieu of this default formula.
+The correlation matrix named "Corr" must be added to the end of the user-specified input distributions for <em>k<sub>d</sub></em> and <em>s<sub>u</sub></em> using the 
+@RISK RiskCormat property function. Use RiskCormat(Corr,1) for <em>k<sub>d</sub></em> and RiskCormat(Corr,2) for <em>s<sub>u</sub></em>. 
+
+A user-defined function (UDF) performs two-way linear interpolation to obtain the SRP for each iteration (<em>k<sub>d</sub></em> - <em>s<sub>u</sub></em> pair). The 
+iteration results are tabulated, and the average SRP value is calculated as shown in the generic figure below.
+
+<Figure
+  figKey="figure-2"
+  src="figures/toolbox-technical-manuals/overtopping-erosion-suite/overtopping-toolbox-notes/v1.0/figure2.png"
+  alt="Overtopping Toolbox Generic Example Tabulated results."
+  caption="Overtopping Toolbox Generic Example Tabulated results."
+/>
+
+This process is repeated for each peak overtopping depth.
+
+<CitationFootnote />
