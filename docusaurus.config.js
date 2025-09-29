@@ -24,9 +24,6 @@ export default {
   organizationName: 'USACE-RMC', // Your GitHub organization or username
   projectName: 'RMC-Software-Documentation', // Your project name, make sure this matches your GitHub repo name
 
-  // ✅ Enable Mermaid parsing in Markdown/MDX
-  markdown: { mermaid: true },
-
   presets: [
     [
       '@docusaurus/preset-classic',
@@ -45,8 +42,7 @@ export default {
     ],
   ],
 
-  // ✅ Register Mermaid theme alongside your existing theme(s)
-  themes: ['@docusaurus/theme-live-codeblock', '@docusaurus/theme-mermaid'],
+  themes: ['@docusaurus/theme-live-codeblock'],
 
   stylesheets: [
     {
@@ -126,36 +122,6 @@ export default {
       appId: '5IPYQGAW1I',
       apiKey: '797fecb09f4d22f8050f47976027c58c',
       indexName: 'usace-rmcio',
-    },
-
-    // ✅ Mermaid configuration
-    // NOTE: "themeVariables" must live under "options" to pass Docusaurus validation.
-    mermaid: {
-      theme: {
-        light: 'neutral', // pick a light-friendly Mermaid theme
-        dark: 'dark', // and a dark-friendly theme
-      },
-      options: {
-        themeVariables: {
-          // Map to your custom.css palette (light mode)
-          primaryColor: '#1f6f78',
-          primaryTextColor: '#11181c',
-          primaryBorderColor: '#155259',
-          secondaryColor: '#44a8b4',
-          tertiaryColor: '#2f8e99',
-          lineColor: '#155259',
-
-          // Node/cluster defaults
-          nodeTextColor: '#11181c',
-          clusterBkg: '#f9f9f9',
-          clusterBorder: '#e5e7eb',
-          background: '#ffffff',
-          edgeLabelBackground: '#ffffff',
-
-          // Typography
-          fontFamily: 'Roboto, sans-serif',
-        },
-      },
     },
   },
 };
