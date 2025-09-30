@@ -22,7 +22,7 @@ export default function DesktopApps() {
       iconLight: addBaseUrl('img/RFA.png'),
       doc_location: addBaseUrl('desktop-applications/rmc-rfa'),
       doc_name: 'RMC RFA',
-      active: false,
+      active: true,
     },
     {
       iconLight: addBaseUrl('img/LifeSim.png'),
