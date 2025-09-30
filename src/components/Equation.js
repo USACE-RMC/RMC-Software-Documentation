@@ -1,57 +1,43 @@
-import React, { useEffect, useState } from "react";
-import "katex/dist/katex.min.css";
-import { BlockMath, InlineMath } from "react-katex";
-import "../css/custom.css";
-import "../css/equation.css";
-import { useReportId } from "../contexts/ReportIdContext"; // Import the context hook to retrieve the reportId
+import 'katex/dist/katex.min.css';
+import { useEffect, useState } from 'react';
+import { BlockMath, InlineMath } from 'react-katex';
+import { useReportId } from '../contexts/ReportIdContext';
+import '../css/custom.css';
+import '../css/equation.css';
 
-const Equation = ({ equationKey, equation, inline = false }) => {
-  const [equationNumber, setEquationNumber] = useState(null);
-  const reportId = useReportId(); // Get the reportId from the context
+const Equation = ({ equationKey, equation, inline = false, id }) => {
+  const [equationNum, setEquationNum] = useState(null);
+  const reportId = useReportId();
+  const equationId = id || equationKey;
 
   useEffect(() => {
-    if (!reportId) return; // If reportId is not available, don't fetch
-
-    const jsonPath = `/RMC-Software-Documentation/counters/${reportId}.json`; // Use reportId to determine the path
-
-    const loadCounters = async () => {
+    if (!reportId) return;
+    const jsonPath = `/RMC-Software-Documentation/counters/${reportId}.json`;
+    (async () => {
       try {
-        const response = await fetch(jsonPath);
-        if (!response.ok) throw new Error(`Failed to load ${jsonPath}`);
-
-        const data = await response.json();
-        let foundEquation = null;
-        if (data?.equations?.[equationKey]) {
-          foundEquation = data.equations[equationKey];
-        }
-
-        if (foundEquation) {
-          setEquationNumber(foundEquation.equationNumber);
-        } else {
-          console.warn(
-            `Equation key "${equationKey}" not found in ${jsonPath}`
-          );
-        }
-      } catch (error) {
-        console.error("Error loading counters:", error);
+        const res = await fetch(jsonPath);
+        if (!res.ok) throw new Error(`Failed to load ${jsonPath}`);
+        const data = await res.json();
+        const found = data?.equations?.[equationKey] ?? null;
+        if (found) setEquationNum(found.equationNumber);
+        else console.warn(`Equation key "${equationKey}" not found in ${jsonPath}`);
+      } catch (e) {
+        console.error('Error loading counters:', e);
       }
-    };
-
-    loadCounters();
+    })();
   }, [reportId, equationKey]);
 
-  if (equationNumber === null) return <span>Loading...</span>;
+  if (equationNum === null) return <span>Loading...</span>;
 
-  const equationWithoutTag = equation;
-  const equationWithTag = `${equation} \\tag{${equationNumber}}`;
+  const equationWithTag = `${equation} \\tag{${equationNum}}`;
 
   return (
-    <span className="equation-container">
-      {inline ? (
-        <InlineMath math={equationWithoutTag} />
-      ) : (
-        <BlockMath math={equationWithTag} />
-      )}
+    <span
+      id={equationId}
+      className="equation-container scroll-mt-[var(--ifm-navbar-height)]"
+      data-anchor="true"
+    >
+      {inline ? <InlineMath math={equation} /> : <BlockMath math={equationWithTag} />}
     </span>
   );
 };

@@ -1,43 +1,64 @@
-import React, { useEffect, useState } from "react";
-import "../css/custom.css";
-import { useReportId } from "../contexts/ReportIdContext"; // Import the context hook to retrieve the reportId
+import { useEffect, useMemo, useState } from 'react';
+import { useReportId } from '../contexts/ReportIdContext';
+import '../css/custom.css';
+
+const STATIC_BASE = '/RMC-Software-Documentation';
+const DOCS_ROUTE_BASE = '/RMC-Software-Documentation/docs';
+
+const toDocSlug = (docId = '') => docId.replace(/\.mdx$/i, '').replace(/^\d{1,3}-/, '');
 
 const EquationReference = ({ equationKey }) => {
-  const [equationNumber, setEquationNumber] = useState(null);
-  const reportId = useReportId(); // Get the reportId from the context
+  const [equationInfo, setEquationInfo] = useState(null);
+  const reportId = useReportId();
 
   useEffect(() => {
-    if (!reportId) return; // If reportId is not available, don't fetch
-
-    const jsonPath = `/RMC-Software-Documentation/counters/${reportId}.json`; // Use reportId to determine the path
-
-    const loadEquationNumber = async () => {
+    if (!reportId) return;
+    const jsonPath = `${STATIC_BASE}/counters/${reportId}.json`;
+    (async () => {
       try {
-        const response = await fetch(jsonPath);
-        if (!response.ok) throw new Error(`Failed to load ${jsonPath}`);
-
-        const data = await response.json();
-        let foundEquation = null;
-        if (data?.equations?.[equationKey]) {
-          foundEquation = data.equations[equationKey];
-        }
-
-        if (foundEquation) {
-          setEquationNumber(foundEquation.equationNumber);
-        } else {
-          console.warn(`Equation key "${equationKey}" not found in ${jsonPath}`);
-        }
-      } catch (error) {
-        console.error("Error loading counters:", error);
+        const res = await fetch(jsonPath);
+        if (!res.ok) throw new Error(`Failed to load ${jsonPath}`);
+        const data = await res.json();
+        const found = data?.equations?.[equationKey] ?? null;
+        if (found) setEquationInfo(found);
+        else console.warn(`Equation key "${equationKey}" not found in ${jsonPath}`);
+      } catch (e) {
+        console.error('Error loading counters:', e);
       }
-    };
+    })();
+  }, [reportId, equationKey]);
 
-    loadEquationNumber();
-  }, [equationKey]);
+  const targetId = equationKey;
 
-  if (equationNumber === null) return <span>Loading...</span>;
+  const docSlug = useMemo(() => toDocSlug(equationInfo?.docId), [equationInfo?.docId]);
 
-  return <span className="font-usace text-normal">Equation {equationNumber}</span>;
+  const targetDocPath = useMemo(() => {
+    if (!equationInfo?.parentDocPath || !docSlug) return '';
+    return `${DOCS_ROUTE_BASE}/${equationInfo.parentDocPath}/${docSlug}`;
+  }, [equationInfo?.parentDocPath, docSlug]);
+
+  const isSamePage = useMemo(() => {
+    const normalize = (p) => (p?.endsWith('/') ? p.slice(0, -1) : p || '');
+    const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
+    return targetDocPath && normalize(currentPath) === normalize(targetDocPath);
+  }, [targetDocPath]);
+
+  const href = useMemo(() => {
+    if (!equationInfo) return '#';
+    return isSamePage ? `#${targetId}` : `${targetDocPath}#${targetId}`;
+  }, [equationInfo, isSamePage, targetDocPath, targetId]);
+
+  if (!equationInfo) return <span>Loading...</span>;
+
+  return (
+    <a
+      href={href}
+      className="font-usace text-normal"
+      title={`Jump to Equation ${equationInfo.equationNumber}`}
+    >
+      Equation {equationInfo.equationNumber}
+    </a>
+  );
 };
 
 export default EquationReference;
