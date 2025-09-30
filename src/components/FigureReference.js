@@ -1,45 +1,61 @@
-import React, { useEffect, useState } from "react";
-import "../css/custom.css";
-import { useReportId } from "../contexts/ReportIdContext";
+import { useEffect, useMemo, useState } from 'react';
+import { useReportId } from '../contexts/ReportIdContext';
+import '../css/custom.css';
+
+const STATIC_BASE = '/RMC-Software-Documentation'; // for /static assets like /counters
+const DOCS_ROUTE_BASE = '/RMC-Software-Documentation/docs'; // for doc pages
+
+// strip ".mdx" and any leading "digits-" prefix (e.g., "05-schmertmann" -> "schmertmann")
+const toDocSlug = (docId = '') => docId.replace(/\.mdx$/i, '').replace(/^\d{1,3}-/, '');
 
 const FigReference = ({ figKey }) => {
   const [figInfo, setFigInfo] = useState(null);
-  const reportId = useReportId(); // Get the reportId from the context
+  const reportId = useReportId();
 
   useEffect(() => {
-    if (!reportId) return; // If reportId is not available, don't fetch
-
-    const jsonPath = `/RMC-Software-Documentation/counters/${reportId}.json`; // Use reportId to determine the path
-
-    const loadCounters = async () => {
+    if (!reportId) return;
+    const jsonPath = `${STATIC_BASE}/counters/${reportId}.json`;
+    (async () => {
       try {
-        const response = await fetch(jsonPath);
-        if (!response.ok) throw new Error(`Failed to load ${jsonPath}`);
-
-        const data = await response.json();
-
-        // Now we need to find the figure with the matching figKey
-        let foundFig = null;
-        if (data?.figures?.[figKey]) {
-          foundFig = data.figures[figKey];
-        }
-
-        if (foundFig) {
-          setFigInfo(foundFig);
-        } else {
-          console.warn(`Figure key "${figKey}" not found in ${jsonPath}`);
-        }
-      } catch (error) {
-        console.error("Error loading counters:", error);
+        const res = await fetch(jsonPath);
+        if (!res.ok) throw new Error(`Failed to load ${jsonPath}`);
+        const data = await res.json();
+        const found = data?.figures?.[figKey] ?? null;
+        if (found) setFigInfo(found);
+        else console.warn(`Figure key "${figKey}" not found in ${jsonPath}`);
+      } catch (e) {
+        console.error('Error loading counters:', e);
       }
-    };
+    })();
+  }, [reportId, figKey]);
 
-    loadCounters();
-  }, [figKey]); // Re-fetch if figKey changes
+  const targetId = figKey;
 
-  if (!figInfo) return <span>Loading...</span>;
+  const docSlug = useMemo(() => toDocSlug(figInfo?.docId), [figInfo?.docId]);
 
-  return <span className="font-usace text-normal">Figure {figInfo.figNumber}</span>;
+  const targetDocPath = useMemo(() => {
+    if (!figInfo?.parentDocPath || !docSlug) return '';
+    return `${DOCS_ROUTE_BASE}/${figInfo.parentDocPath}/${docSlug}`;
+  }, [figInfo?.parentDocPath, docSlug]);
+
+  const isSamePage = useMemo(() => {
+    const normalize = (p) => (p?.endsWith('/') ? p.slice(0, -1) : p || '');
+    const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
+    return targetDocPath && normalize(currentPath) === normalize(targetDocPath);
+  }, [targetDocPath]);
+
+  const href = useMemo(() => {
+    if (!figInfo) return '#';
+    return isSamePage ? `#${targetId}` : `${targetDocPath}#${targetId}`;
+  }, [figInfo, isSamePage, targetDocPath, targetId]);
+
+  if (!figInfo) return <span>Loading…</span>;
+
+  return (
+    <a href={href} className="font-usace text-normal" title={`Jump to Figure ${figInfo.figNumber}`}>
+      Figure {figInfo.figNumber}
+    </a>
+  );
 };
 
 export default FigReference;

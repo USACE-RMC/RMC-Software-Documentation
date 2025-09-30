@@ -16,9 +16,11 @@ const TableVertical = ({
   headerVAlign, // e.g., ["middle","bottom","middle"] (optional)
   widthMode = 'full', // "full" | "intrinsic"
   footnotes, // Array<string | React.ReactNode>
+  id,
 }) => {
   const [tableInfo, setTableInfo] = useState(null);
   const reportId = useReportId();
+  const tableId = id || tableKey;
 
   useEffect(() => {
     if (!reportId) return;
@@ -85,7 +87,7 @@ const TableVertical = ({
   const skipBodyCells = new Set();
 
   return (
-    <div className="table-container">
+    <div id={tableId} className="table-container" data-anchor="true">
       <div className="table-cap">
         Table {tableInfo.tableNumber}: {caption}
       </div>

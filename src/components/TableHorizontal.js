@@ -16,9 +16,11 @@ const TableHorizontal = ({
   headerVAlign, // ["top"|"middle"|"bottom", ...] for HEADER cells (optional)
   widthMode = 'full', // "full" | "intrinsic"
   footnotes, // Array<string | React.ReactNode>
+  id,
 }) => {
   const [tableInfo, setTableInfo] = useState(null);
   const reportId = useReportId();
+  const tableId = id || tableKey;
 
   useEffect(() => {
     if (!reportId) return;
@@ -80,7 +82,7 @@ const TableHorizontal = ({
   }
 
   return (
-    <div className="table-container">
+    <div id={tableId} className="table-container" data-anchor="true">
       <div className="table-cap">
         Table {tableInfo.tableNumber}: {caption}
       </div>
