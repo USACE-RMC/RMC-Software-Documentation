@@ -6,20 +6,20 @@ import ContentBox from '../../components/ContentBox';
 import '../../css/custom.css';
 
 // Create the list of documents dynamically
-const overtoppingErosionSuite = [
+const overtoppingSuite = [
   {
     iconLight: 'img/Toolbox.png',
     iconDark: 'img/ToolboxDarkMode.png',
-    doc_location: `toolbox-technical-manuals/overtopping-erosion-suite/overtopping-toolbox-notes`,
+    doc_location: `toolbox-technical-manuals/overtopping-suite/overtopping-erosion-toolbox-notes`,
     doc_name: 'Overtopping Toolbox User Notes',
     active: true,
     draft: true,
-  }
+  },
 ];
 
-export const overtoppingErosionSuiteDocs = overtoppingErosionSuite;
+export const overtoppingSuiteDocs = overtoppingSuite;
 
-export default function OvertoppingErosionSuite() {
+export default function OvertoppingSuite() {
   const [latestVersions, setLatestVersions] = useState({});
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function OvertoppingErosionSuite() {
       .catch((error) => console.error('Error loading latest versions:', error));
   }, []);
 
-  const overtoppingErosionSuite = overtoppingErosionSuiteDocs.map((doc) => ({
+  const overtoppingSuite = overtoppingSuiteDocs.map((doc) => ({
     ...doc,
     icon: addBaseUrl(doc.icon),
     iconLight: addBaseUrl(doc.iconLight),
@@ -58,7 +58,7 @@ export default function OvertoppingErosionSuite() {
             <p className="text-description">RMC Toolboxes</p>
           </div>
         </div>
-        <ContentBox contentData={overtoppingErosionSuite} />
+        <ContentBox contentData={overtoppingSuite} />
       </main>
     </Layout>
   );
