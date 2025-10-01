@@ -3,7 +3,7 @@ import ContentBubble from './ContentBubble';
 const ContentBox = ({ contentData }) => {
   return (
     <div className="mx-auto mb-[50px] mt-[25px] w-[70%]">
-      <div className="mb-[25px] flex flex-wrap gap-5">
+      <div className="mb-[25px] flex flex-wrap justify-center gap-5">
         {/* Dynamically render ContentBubble components */}
         {contentData.map((data, index) => (
           <ContentBubble
