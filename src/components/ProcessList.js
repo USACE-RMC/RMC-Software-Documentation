@@ -2,19 +2,22 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 /**
  * ProcessList
- * Ordered steps (1,2,3...) with optional nested sub-steps (a,b,c...) and/or details panel.
+ * Ordered steps (1,2,3...) with optional nested sub-steps (a,b,c...) and/or details panel,
+ * PLUS freeform per-step MDX "freeform" blocks that are indented and not numbered.
  *
  * Unified item API:
  * - string | number  -> { title: string }
- * - { title: ReactNode, child?: ReactNode | Array<ReactNode | string | { title: ReactNode, child?: ... }> }
- *
- * Aliases for back-compat: { content, details, children } are normalized into `child`.
+ * - {
+ *     title: ReactNode,
+ *     child?: ReactNode | Array<ReactNode | string | { title: ReactNode, child?: ... }>, // numbered sub-steps or detail panel
+ *     freeform?: ReactNode | ReactNode[], // NEW: freeform content, indented under the step but not numbered
+ *   }
  */
 export default function ProcessList({
   items = [],
   startAt = 1,
   indentPx = 0,
-  maxIndentPx, // optional hard cap for top-level stagger
+  maxIndentPx,
   bubbleSizePx = 28,
   bubbleGapPx = 10,
   nowrap = false,
@@ -31,9 +34,12 @@ export default function ProcessList({
 
   // Children layout
   childBaseIndentPx = 35,
-  childIndentPx, // defaults to indentPx
-  childMaxIndentPx, // optional cap for child stagger
-  childStartAt = 1, // a,b,c...
+  childIndentPx,
+  childMaxIndentPx,
+  childStartAt = 1,
+
+  // Freeform layout
+  freeBlockClass = 'prose max-w-none',
 }) {
   const rootRef = useRef(null);
   const [containerW, setContainerW] = useState(0);
@@ -42,6 +48,7 @@ export default function ProcessList({
 
   const norm = useMemo(() => normalizeItems(items), [items]);
 
+  // ResizeObserver tracks available container width for indentation calculations
   useEffect(() => {
     if (!rootRef.current) return;
     const ro = new ResizeObserver((entries) => {
@@ -71,14 +78,14 @@ export default function ProcessList({
     >
       {/* Top-level ordered list */}
       <ol
-        className="m-0 ml-0 list-none py-2 !pl-0 pr-2"
+        className="m-0 ml-0 list-none py-0 !pl-0 pr-2"
         style={{ listStyleType: 'none' }}
         role="list"
       >
         {norm.map((node, i) => {
           const n = i + startAt;
           const ml = Math.min(i * indentPx, computedMaxIndent);
-          const width = `calc(100% - ${ml}px)`; // ensure indent never causes page overflow
+          const width = `calc(100% - ${ml}px)`;
           const title = node.title;
 
           const headerGrid = {
@@ -92,16 +99,18 @@ export default function ProcessList({
             minHeight: Math.max(bubbleSizePx + 8, 36),
             boxSizing: 'border-box',
             maxWidth: '100%',
+            minWidth: 0,
           };
 
           const panelId = `proc-${i}-panel`;
           const hasChildPanel = !!node.childPanel;
           const hasChildList = Array.isArray(node.childList) && node.childList.length > 0;
+          const hasFreeform = Array.isArray(node.freeform) && node.freeform.length > 0;
 
           return (
             <li key={i} className={`relative ${gapClass}`}>
+              {/* Step header row */}
               <div className={`relative ${boxClass}`} style={headerGrid}>
-                {/* Badge */}
                 <span
                   aria-hidden="true"
                   className={`inline-flex items-center justify-center ${badgeClass}`}
@@ -110,13 +119,12 @@ export default function ProcessList({
                   {n}
                 </span>
                 <span aria-hidden="true" />
-                {/* Title */}
                 <span className={`${fontClass} min-w-0 break-words`} title={String(title)}>
                   {title}
                 </span>
               </div>
 
-              {/* Optional details panel if child is a single node */}
+              {/* Details panel */}
               {hasChildPanel && (
                 <>
                   <button
@@ -144,7 +152,7 @@ export default function ProcessList({
                 </>
               )}
 
-              {/* Optional sub-steps if child is an array (wrapped in its own <ol> to keep valid nesting) */}
+              {/* Sub-steps */}
               {hasChildList && (
                 <ChildGroup
                   parentIndex={i}
@@ -165,6 +173,16 @@ export default function ProcessList({
                   setOpenChild={setOpenChild}
                   detailButtonClass={detailButtonClass}
                   detailPanelClass={detailPanelClass}
+                  freeBlockClass={freeBlockClass}
+                />
+              )}
+
+              {/* Freeform MDX blocks */}
+              {hasFreeform && (
+                <FreeBlocks
+                  blocks={node.freeform}
+                  indent={ml + bubbleSizePx + bubbleGapPx}
+                  freeBlockClass={freeBlockClass}
                 />
               )}
             </li>
@@ -175,6 +193,7 @@ export default function ProcessList({
   );
 }
 
+/* -------------------- Sub-step (ChildGroup) -------------------- */
 function ChildGroup({
   parentIndex,
   items,
@@ -194,6 +213,7 @@ function ChildGroup({
   setOpenChild,
   detailButtonClass,
   detailPanelClass,
+  freeBlockClass,
 }) {
   const computedChildMaxIndent = useMemo(() => {
     if (!items.length) return 0;
@@ -206,18 +226,20 @@ function ChildGroup({
   return (
     <ol className="m-0 list-none p-0" style={{ listStyleType: 'none' }} role="list">
       {items.map((child, j) => {
-        const label = toAlpha(startAt + j).toLowerCase(); // a,b,c...
+        const label = toAlpha(startAt + j).toLowerCase();
         const mlStagger = Math.min(j * indentPx, computedChildMaxIndent);
         const ml = baseIndentPx + mlStagger;
-        const width = `calc(100% - ${ml}px)`; // ensure indent never causes page overflow
+        const width = `calc(100% - ${ml}px)`;
         const panelKey = `${parentIndex}-${j}`;
         const panelId = `proc-child-${panelKey}`;
 
         const hasChildPanel = !!child.childPanel;
         const hasChildList = Array.isArray(child.childList) && child.childList.length > 0;
+        const hasFreeform = Array.isArray(child.freeform) && child.freeform.length > 0;
 
         return (
           <li key={`child-${j}`} className={`relative ${gapClass}`}>
+            {/* Sub-step header row */}
             <div
               className={`relative ${boxClass}`}
               style={{
@@ -231,6 +253,7 @@ function ChildGroup({
                 minHeight: Math.max(bubbleSizePx + 8, 36),
                 boxSizing: 'border-box',
                 maxWidth: '100%',
+                minWidth: 0,
               }}
             >
               <span
@@ -246,7 +269,7 @@ function ChildGroup({
               </span>
             </div>
 
-            {/* Optional details for sub-step */}
+            {/* Sub-step detail panel */}
             {hasChildPanel && (
               <>
                 <button
@@ -274,7 +297,7 @@ function ChildGroup({
               </>
             )}
 
-            {/* Optional third level (rare) */}
+            {/* Nested sub-steps */}
             {hasChildList && (
               <ChildGroup
                 parentIndex={`${parentIndex}-${j}`}
@@ -295,6 +318,16 @@ function ChildGroup({
                 setOpenChild={setOpenChild}
                 detailButtonClass={detailButtonClass}
                 detailPanelClass={detailPanelClass}
+                freeBlockClass={freeBlockClass}
+              />
+            )}
+
+            {/* Freeform blocks under sub-step */}
+            {hasFreeform && (
+              <FreeBlocks
+                blocks={child.freeform}
+                indent={ml + bubbleSizePx + bubbleGapPx}
+                freeBlockClass={freeBlockClass}
               />
             )}
           </li>
@@ -304,26 +337,63 @@ function ChildGroup({
   );
 }
 
-/* ------- normalization helpers (shared shape) ------- */
+/* -------------------- Freeform Blocks -------------------- */
+function FreeBlocks({ blocks, indent, freeBlockClass }) {
+  const ml = indent;
+  const width = `calc(100% - ${ml}px)`;
+  const list = Array.isArray(blocks) ? blocks : [blocks];
+
+  return (
+    <div
+      className={`mt-2 ${freeBlockClass}`}
+      style={{
+        marginLeft: ml,
+        width,
+        boxSizing: 'border-box',
+        maxWidth: `calc(100% - ${ml}px)`,
+        minWidth: 0,
+      }}
+    >
+      {list.map((node, idx) => (
+        <div key={idx} className="mb-3 last:mb-0">
+          {node}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* -------------------- Normalization Helpers -------------------- */
 function normalizeItems(items) {
   return (items || []).map(normalizeNode);
 }
+
 function normalizeNode(it) {
   if (typeof it === 'string' || typeof it === 'number') {
     return { title: String(it) };
   }
   const title = it?.title ?? '';
-  // Prefer `child`; accept aliases for back-compat.
-  const rawChild = it?.child ?? it?.content ?? it?.details ?? it?.children;
+  const rawChild = it?.child;
+  const rawFree = it?.freeform;
+
+  const out = { title };
+
+  // child (sub-steps or detail panel)
   if (Array.isArray(rawChild)) {
-    return { title, childList: rawChild.map(normalizeNode) };
+    out.childList = rawChild.map(normalizeNode);
   } else if (rawChild !== undefined && rawChild !== null) {
-    return { title, childPanel: rawChild };
+    out.childPanel = rawChild;
   }
-  return { title };
+
+  // freeform blocks
+  if (rawFree !== undefined && rawFree !== null) {
+    out.freeform = Array.isArray(rawFree) ? rawFree : [rawFree];
+  }
+
+  return out;
 }
 
-/* helpers */
+/* -------------------- Helpers -------------------- */
 function toAlpha(n) {
   let s = '',
     x = n;

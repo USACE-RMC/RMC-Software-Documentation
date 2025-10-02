@@ -44,7 +44,7 @@ export default function LayoutWrapper({ children, ...rest }) {
         subtitle="Institute for Water Resources, Risk Management Center Website"
         links={links}
         navRight={
-          <div className="ml-[60px] flex items-center gap-2">
+          <div className="ml-[20px] flex items-center gap-2">
             <ThemeToggle />
             <SearchBar />
           </div>

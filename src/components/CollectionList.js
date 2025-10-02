@@ -19,18 +19,18 @@ export default function CollectionList({
   defaultOpen = 'none', // 'none' | 'first' | 'all' | number[] (indices)
   showExpandAll = false,
 
-  /* ── STACK styles (your originals; unchanged) ─────────────────────────────────── */
+  /* ── STACK styles (originals; kept) ─────────────────────────────────── */
   boxExpandableClass = 'bg-ifm-primary-darker border border-ifm-primary rounded-lg shadow-sm px-3 py-2.5 hover:bg-ifm-primary hover:ring-1 hover:ring-white/30 transition',
   boxStaticClass = 'bg-ifm-primary-darker border border-border-color rounded-lg shadow-sm px-3 py-2.5 opacity-95',
   badgeClass = 'bg-ifm-primary border border-border-color rounded-full shadow text-caption font-usace text-font-color-inverse',
   fontClass = 'font-usace text-normal text-font-color-inverse',
-  panelClass = 'rounded-lg border-t text-font-color-inverse border-border-color bg-background-color mt-4 px-3 py-2.5',
+  panelClass = 'prose text-font-color-inverse max-w-none rounded-lg border-t border-border-color bg-background-color mt-4 px-3 py-2.5',
   chipDetailsClass = 'ml-2 text-xs rounded-full px-2 py-0.5 bg-white/20 text-font-color-inverse',
   headerButtonClass = 'flex w-full items-center justify-between text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 rounded-md',
   gapClass = '!mb-0',
   className = '',
 
-  /* ── GRID variant controls (left intact) ───────────────────────────────── */
+  /* ── GRID variant controls ───────────────────────────────── */
   layout = 'stack',
   columns = { base: 1, sm: 2, md: 4, xl: 4 },
 
@@ -43,8 +43,8 @@ export default function CollectionList({
   gridHeaderDisabledClass = 'grid w-full grid-cols-[1fr_auto_1fr] items-center',
 
   gridCenterTitleWrapClass = 'flex min-w-0 flex-1 items-center justify-center px-1 text-center',
-  gridTitleInnerClass = 'flex items-center justify-center gap-3',
-  gridFontClass = 'font-usace text-normal text-font-color-inverse whitespace-normal break-words',
+  gridTitleInnerClass = 'flex items-center justify-center gap-3 min-w-0',
+  gridFontClass = 'font-usace text-normal text-font-color-inverse whitespace-normal break-words min-w-0',
 
   gridRightControlsClass = 'flex items-center gap-2 justify-self-end self-center',
   gridChipDetailsClass = 'ml-2 text-xs rounded-full px-2 py-0.5 bg-white/20 text-font-color-inverse',
@@ -91,8 +91,8 @@ export default function CollectionList({
   if (!withFlags.length) return null;
 
   return (
-    <section className={`not-prose w-full ${className}`} aria-label={title || 'Collection list'}>
-      <div className="mb-3 flex items-center justify-between">
+    <section className={`w-full ${className}`} aria-label={title || 'Collection list'}>
+      <div className="not-prose mb-3 flex items-center justify-between">
         {title && <h3 className="font-usace text-[20px] font-bold text-font-color">{title}</h3>}
         {showExpandAll && expandableIdxs.length > 1 && (
           <div className="flex items-center gap-2">
@@ -131,7 +131,7 @@ export default function CollectionList({
             const hasDetails = it._expandable;
 
             const CenterTitle = (
-              <div className={`${gridCenterTitleWrapClass} ${gridTileMinHClass}`}>
+              <div className={`not-prose ${gridCenterTitleWrapClass} ${gridTileMinHClass}`}>
                 <div className={gridTitleInnerClass}>
                   {autoNumber && ordinal && <Badge className={badgeClass} label={ordinal} />}
                   <span className={gridFontClass}>{it.title ?? `Item ${i + 1}`}</span>
@@ -140,7 +140,7 @@ export default function CollectionList({
             );
 
             const RightControls = hasDetails ? (
-              <div className={gridRightControlsClass}>
+              <div className={`not-prose ${gridRightControlsClass}`}>
                 <span className={gridChipDetailsClass} aria-hidden="true">
                   {isOpen ? 'Hide' : 'View more'}
                 </span>
@@ -153,7 +153,7 @@ export default function CollectionList({
             return (
               <div key={i} className="list-none" role="listitem">
                 <div
-                  className={`min-w-0 ${hasDetails ? gridTileExpandableClass : gridTileStaticClass}`}
+                  className={`not-prose min-w-0 ${hasDetails ? gridTileExpandableClass : gridTileStaticClass}`}
                 >
                   {hasDetails ? (
                     <button
@@ -164,7 +164,6 @@ export default function CollectionList({
                       onClick={() => toggle(i)}
                       className={`min-w-0 ${gridHeaderButtonClass}`}
                     >
-                      {/* left ghost cell to keep title truly centered */}
                       <span aria-hidden="true" />
                       {CenterTitle}
                       {RightControls}
@@ -194,7 +193,7 @@ export default function CollectionList({
                         className={panelClass}
                         style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
                       >
-                        <div className="!not-prose !text-font-color-inverse">{renderChild(it)}</div>
+                        {renderChild(it)}
                       </div>
                     </div>
                   )}
@@ -214,7 +213,7 @@ export default function CollectionList({
             const hasDetails = it._expandable;
 
             const Left = (
-              <div className="flex min-w-0 flex-1 items-start gap-3">
+              <div className="not-prose flex min-w-0 flex-1 items-start gap-3">
                 {autoNumber && ordinal && <Badge className={badgeClass} label={ordinal} />}
                 <span className={`${fontClass} min-w-0 whitespace-normal break-words`}>
                   {it.title ?? `Item ${i + 1}`}
@@ -223,7 +222,7 @@ export default function CollectionList({
             );
 
             const RightExpandable = (
-              <div className="flex items-center gap-2 self-start">
+              <div className="not-prose flex items-center gap-2 self-start">
                 <span className={chipDetailsClass} aria-hidden="true">
                   {isOpen ? 'Hide' : 'View more'}
                 </span>
@@ -233,7 +232,7 @@ export default function CollectionList({
 
             return (
               <li key={i} className={`relative ${gapClass} list-none`}>
-                <div className={hasDetails ? boxExpandableClass : boxStaticClass}>
+                <div className={`${hasDetails ? boxExpandableClass : boxStaticClass}`}>
                   {hasDetails ? (
                     <button
                       id={headerId}
@@ -269,7 +268,7 @@ export default function CollectionList({
                         className={panelClass}
                         style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
                       >
-                        <div className="!not-prose !text-font-color-inverse">{renderChild(it)}</div>
+                        {renderChild(it)}
                       </div>
                     </div>
                   )}
@@ -316,9 +315,12 @@ function Chevron({ isOpen, className = 'text-font-color-inverse' }) {
 function renderChild(node) {
   if (Array.isArray(node.childList) && node.childList.length) {
     return (
-      <ul className="ml-4 list-disc">
+      <ul>
         {node.childList.map((c, idx) => (
-          <li key={idx}>{c.title}</li>
+          <li key={idx}>
+            {c.title}
+            {renderChild(c)}
+          </li>
         ))}
       </ul>
     );
@@ -342,8 +344,7 @@ function normalizeNode(it) {
   return { title };
 }
 function hasContent(c) {
-  // kept for legacy but now unused in normalization flow
-  if (c === null || c === undefined) return false;
+  if (c == null) return false;
   if (typeof c === 'string') return c.trim().length > 0;
   return true;
 }
@@ -397,7 +398,7 @@ function toRoman(num) {
   return res;
 }
 
-/* Tailwind-safe grid column classes (unchanged) */
+/* Tailwind-safe grid column classes */
 const COLS = {
   base: {
     1: 'grid-cols-1',

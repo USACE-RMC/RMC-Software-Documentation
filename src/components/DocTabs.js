@@ -35,7 +35,7 @@ export default function DocTabs({
     '[&.tabs__item--active]:border-tab-underline-color ',
 
   // Panel below the tabs
-  panelClass = 'rounded-b-xl bg-background-color px-4 py-3 text-base text-font-color',
+  panelClass = 'min-w-0 rounded-b-xl bg-background-color px-4 py-3 text-base text-font-color',
 }) {
   const norm = useMemo(() => normalizeTabs(items), [items]);
 
