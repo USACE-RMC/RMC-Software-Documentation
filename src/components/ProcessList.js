@@ -32,7 +32,7 @@ export default function ProcessList({
   childBadgeClass = 'border border-ifm-primary text-caption font-usace text-ifm-primary bg-transparent rounded-full', // outlined chip
   gapClass = '!mb-0',
   fontClass = 'font-usace text-normal text-font-color',
-  detailButtonClass = 'mt-2 text-sm underline hover:no-underline',
+  detailButtonClass = 'mt-2 text-sm underline hover:no-underline text-ifm-link hover:text-ifm-link-hover',
   detailPanelClass = 'mt-2 rounded border border-border-color p-3 text-sm',
   className = '',
 
