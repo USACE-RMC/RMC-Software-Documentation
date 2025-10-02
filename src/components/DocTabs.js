@@ -1,10 +1,11 @@
 // DocTabs.jsx
 import TabItem from '@theme/TabItem';
 import Tabs from '@theme/Tabs';
+import React, { useMemo } from 'react';
 
 export default function DocTabs({
-  items = [],
-  defaultValue,
+  items = [], // 'Title' | { title, child?, value?, label? }
+  defaultValue, // string (value) or number (index)
   equalWidth = true,
   showDividers = true,
   gap = '',
@@ -36,14 +37,22 @@ export default function DocTabs({
   // Panel below the tabs
   panelClass = 'rounded-b-xl bg-background-color px-4 py-3 text-base text-font-color',
 }) {
-  if (!items.length) return null;
+  const norm = useMemo(() => normalizeTabs(items), [items]);
 
-  const widthCls = equalWidth ? 'flex-1 w-full' : 'flex-none';
+  if (!norm.length) return null;
+
+  const widthCls = equalWidth ? 'flex-1' : 'flex-none';
+
+  // Allow defaultValue as index or value
+  const resolvedDefault =
+    typeof defaultValue === 'number'
+      ? norm[Math.max(0, Math.min(norm.length - 1, defaultValue))]?.value
+      : (defaultValue ?? norm[0].value);
 
   return (
     <div className={`not-prose ${containerClass}`}>
-      <Tabs className={`${tabListClass} ${gap}`} defaultValue={defaultValue}>
-        {items.map((it) => (
+      <Tabs className={`${tabListClass} ${gap}`} defaultValue={resolvedDefault}>
+        {norm.map((it) => (
           <TabItem
             key={it.value}
             value={it.value}
@@ -59,10 +68,104 @@ export default function DocTabs({
                 .join(' '),
             }}
           >
-            <div className={panelClass}>{it.content}</div>
+            <div className={panelClass}>{renderChild(it)}</div>
           </TabItem>
         ))}
       </Tabs>
     </div>
   );
+}
+
+/* ---------------- helpers (unified item API) ---------------- */
+
+function normalizeTabs(items) {
+  const used = new Set();
+  return (items || []).map((raw, idx) => {
+    // normalize title/child (same rules you use elsewhere)
+    const node = normalizeNode(raw);
+
+    // label: prefer explicit label (string), else try title text, else "Tab N"
+    const labelText =
+      typeof raw?.label === 'string' ? raw.label : toPlainText(node.title) || `Tab ${idx + 1}`;
+
+    // value: prefer explicit value (string); else slug from label; ensure unique
+    const base = typeof raw?.value === 'string' ? raw.value : slug(labelText) || `tab-${idx + 1}`;
+    const value = uniqueValue(base, used, idx);
+
+    return { ...node, label: labelText, value };
+  });
+}
+
+function normalizeNode(it) {
+  // primitives → { title }
+  if (typeof it === 'string' || typeof it === 'number') {
+    return { title: String(it) };
+  }
+
+  const title = it?.title ?? '';
+
+  // Prefer `child`; accept aliases for back-compat
+  const rawChild = it?.child ?? it?.content ?? it?.details ?? it?.children;
+
+  if (Array.isArray(rawChild)) {
+    // array can be strings/nodes or nested objects; normalize each to { title, child? }
+    return { title, childList: rawChild.map(innerNormalize) };
+  } else if (rawChild !== undefined && rawChild !== null) {
+    // single node → panel content
+    return { title, childPanel: rawChild };
+  }
+
+  return { title };
+}
+
+function innerNormalize(x) {
+  if (typeof x === 'string' || typeof x === 'number' || React.isValidElement(x)) {
+    return { title: x };
+  }
+  // support nested { title, child } objects
+  const title = x?.title ?? '';
+  const rawChild = x?.child ?? x?.content ?? x?.details ?? x?.children;
+  if (Array.isArray(rawChild)) return { title, childList: rawChild.map(innerNormalize) };
+  if (rawChild !== undefined && rawChild !== null) return { title, childPanel: rawChild };
+  return { title };
+}
+
+function renderChild(node) {
+  if (Array.isArray(node.childList) && node.childList.length) {
+    return (
+      <ul className="ml-4 list-disc">
+        {node.childList.map((c, i) => (
+          <li key={i}>
+            {c.title}
+            {/* nested lists will also render */}
+            {renderChild(c)}
+          </li>
+        ))}
+      </ul>
+    );
+  }
+  return node.childPanel ?? null;
+}
+
+function toPlainText(maybeNode) {
+  // Tab labels in Docusaurus are best as strings. If you pass a ReactNode as title,
+  // we fall back to plain "Tab N". This helper tries a few simple stringy cases.
+  if (typeof maybeNode === 'string') return maybeNode;
+  if (typeof maybeNode === 'number') return String(maybeNode);
+  return ''; // complex React nodes → caller can pass `label` explicitly if needed
+}
+
+function slug(s) {
+  return String(s || '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^\p{Letter}\p{Number}]+/gu, '-')
+    .replace(/^-+|-+$/g, '');
+}
+function uniqueValue(base, used, idx) {
+  let v = base || `tab-${idx + 1}`;
+  let n = 1;
+  while (used.has(v)) v = `${base}-${++n}`;
+  used.add(v);
+  return v;
 }

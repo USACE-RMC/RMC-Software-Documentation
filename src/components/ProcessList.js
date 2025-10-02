@@ -2,20 +2,13 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 /**
  * ProcessList
- * Ordered steps (1,2,3...) with optional nested sub-steps (a,b,c...) and optional details panels.
+ * Ordered steps (1,2,3...) with optional nested sub-steps (a,b,c...) and/or details panel.
  *
- * items: Array<
- *   string |
- *   {
- *     title: React.ReactNode,
- *     details?: React.ReactNode,           // optional expandable panel for the step
- *     children?: Array<string | { title: React.ReactNode, details?: React.ReactNode }>
- *   }
- * >
+ * Unified item API:
+ * - string | number  -> { title: string }
+ * - { title: ReactNode, child?: ReactNode | Array<ReactNode | string | { title: ReactNode, child?: ... }> }
  *
- * Visual options:
- * - showSpine: draw a subtle vertical line behind badges to telegraph "sequence"
- * - indentPx / childBaseIndentPx / childIndentPx: staggering controls (kept simple & safe)
+ * Aliases for back-compat: { content, details, children } are normalized into `child`.
  */
 export default function ProcessList({
   items = [],
@@ -29,7 +22,7 @@ export default function ProcessList({
   // Tailwind class props (overridable)
   boxClass = 'bg-background-color py-1.5',
   badgeClass = 'bg-ifm-primary rounded-full shadow text-caption font-usace text-font-color-inverse',
-  childBadgeClass = 'border border-ifm-primary text-caption font-usace text-ifm-primary bg-transparent rounded-full', // outlined chip
+  childBadgeClass = 'border border-ifm-primary text-caption font-usace text-ifm-primary bg-transparent rounded-full',
   gapClass = '!mb-0',
   fontClass = 'font-usace text-normal text-font-color',
   detailButtonClass = 'mt-2 text-sm underline hover:no-underline text-ifm-link hover:text-ifm-link-hover',
@@ -47,19 +40,7 @@ export default function ProcessList({
   const [openIdx, setOpenIdx] = useState(-1);
   const [openChild, setOpenChild] = useState({}); // key: `${i}-${j}` => boolean
 
-  const norm = useMemo(
-    () =>
-      (items || []).map((s) =>
-        typeof s === 'string' || typeof s === 'number'
-          ? { title: String(s) }
-          : {
-              title: s?.title ?? '',
-              details: s?.details,
-              children: Array.isArray(s?.children) ? s.children : undefined,
-            },
-      ),
-    [items],
-  );
+  const norm = useMemo(() => normalizeItems(items), [items]);
 
   useEffect(() => {
     if (!rootRef.current) return;
@@ -75,7 +56,7 @@ export default function ProcessList({
     if (!norm.length) return 0;
     if (typeof maxIndentPx === 'number') return Math.max(0, maxIndentPx);
     const totalDesired = indentPx * (norm.length - 1);
-    const widthGuard = Math.max(0, Math.floor(containerW * 0.4)); // keep ≥60% width usable
+    const widthGuard = Math.max(0, Math.floor(containerW * 0.4)); // keep ≥60% usable width
     return Math.min(totalDesired, widthGuard);
   }, [norm, indentPx, maxIndentPx, containerW]);
 
@@ -88,30 +69,34 @@ export default function ProcessList({
       className={`not-prose relative w-full ${className}`}
       aria-label="Process list"
     >
+      {/* Top-level ordered list */}
       <ol
         className="m-0 ml-0 list-none py-2 !pl-0 pr-2"
-        style={{ listStyleType: 'none', paddingInlineStart: 0, marginInlineStart: 0 }}
+        style={{ listStyleType: 'none' }}
         role="list"
       >
         {norm.map((node, i) => {
           const n = i + startAt;
           const ml = Math.min(i * indentPx, computedMaxIndent);
-          const width = `calc(100% - ${computedMaxIndent}px)`;
+          const width = `calc(100% - ${ml}px)`; // ensure indent never causes page overflow
           const title = node.title;
-          const hasDetails = !!node.details;
 
           const headerGrid = {
             marginLeft: ml,
             width,
             display: 'grid',
-            gridTemplateColumns: `${bubbleSizePx}px ${bubbleGapPx}px 1fr`,
+            gridTemplateColumns: `${bubbleSizePx}px ${bubbleGapPx}px minmax(0,1fr)`,
             alignItems: 'center',
             whiteSpace: nowrap ? 'nowrap' : 'normal',
             overflowX: nowrap ? 'auto' : 'visible',
             minHeight: Math.max(bubbleSizePx + 8, 36),
+            boxSizing: 'border-box',
+            maxWidth: '100%',
           };
 
           const panelId = `proc-${i}-panel`;
+          const hasChildPanel = !!node.childPanel;
+          const hasChildList = Array.isArray(node.childList) && node.childList.length > 0;
 
           return (
             <li key={i} className={`relative ${gapClass}`}>
@@ -126,13 +111,13 @@ export default function ProcessList({
                 </span>
                 <span aria-hidden="true" />
                 {/* Title */}
-                <span className={`${fontClass} min-w-0`} title={String(title)}>
+                <span className={`${fontClass} min-w-0 break-words`} title={String(title)}>
                   {title}
                 </span>
               </div>
 
-              {/* Details toggle + panel */}
-              {hasDetails && (
+              {/* Optional details panel if child is a single node */}
+              {hasChildPanel && (
                 <>
                   <button
                     type="button"
@@ -148,18 +133,22 @@ export default function ProcessList({
                     id={panelId}
                     hidden={openIdx !== i}
                     className={detailPanelClass}
-                    style={{ marginLeft: ml + bubbleSizePx + bubbleGapPx }}
+                    style={{
+                      marginLeft: ml + bubbleSizePx + bubbleGapPx,
+                      boxSizing: 'border-box',
+                      maxWidth: `calc(100% - ${ml + bubbleSizePx + bubbleGapPx}px)`,
+                    }}
                   >
-                    {node.details}
+                    {node.childPanel}
                   </div>
                 </>
               )}
 
-              {/* Children (a,b,c...) */}
-              {Array.isArray(node.children) && node.children.length > 0 && (
+              {/* Optional sub-steps if child is an array (wrapped in its own <ol> to keep valid nesting) */}
+              {hasChildList && (
                 <ChildGroup
                   parentIndex={i}
-                  items={node.children}
+                  items={node.childList}
                   startAt={childStartAt}
                   containerW={containerW}
                   baseIndentPx={ml + childBaseIndentPx}
@@ -215,21 +204,17 @@ function ChildGroup({
   }, [items, indentPx, maxIndentPx, containerW]);
 
   return (
-    <>
+    <ol className="m-0 list-none p-0" style={{ listStyleType: 'none' }} role="list">
       {items.map((child, j) => {
         const label = toAlpha(startAt + j).toLowerCase(); // a,b,c...
-        const childNode =
-          typeof child === 'string' || typeof child === 'number'
-            ? { title: String(child) }
-            : child || {};
-        const childTitle = childNode.title ?? '';
-        const hasDetails = !!childNode.details;
-
         const mlStagger = Math.min(j * indentPx, computedChildMaxIndent);
         const ml = baseIndentPx + mlStagger;
-        const width = `calc(100% - ${computedChildMaxIndent + (baseIndentPx - (parentIndex ? 0 : 0))}px)`;
+        const width = `calc(100% - ${ml}px)`; // ensure indent never causes page overflow
         const panelKey = `${parentIndex}-${j}`;
         const panelId = `proc-child-${panelKey}`;
+
+        const hasChildPanel = !!child.childPanel;
+        const hasChildList = Array.isArray(child.childList) && child.childList.length > 0;
 
         return (
           <li key={`child-${j}`} className={`relative ${gapClass}`}>
@@ -239,11 +224,13 @@ function ChildGroup({
                 marginLeft: ml,
                 width,
                 display: 'grid',
-                gridTemplateColumns: `${bubbleSizePx}px ${bubbleGapPx}px 1fr`,
+                gridTemplateColumns: `${bubbleSizePx}px ${bubbleGapPx}px minmax(0,1fr)`,
                 alignItems: 'center',
                 whiteSpace: nowrap ? 'nowrap' : 'normal',
                 overflowX: nowrap ? 'auto' : 'visible',
                 minHeight: Math.max(bubbleSizePx + 8, 36),
+                boxSizing: 'border-box',
+                maxWidth: '100%',
               }}
             >
               <span
@@ -254,12 +241,13 @@ function ChildGroup({
                 {label}
               </span>
               <span aria-hidden="true" />
-              <span className={`${fontClass} min-w-0`} title={String(childTitle)}>
-                {childTitle}
+              <span className={`${fontClass} min-w-0 break-words`} title={String(child.title)}>
+                {child.title}
               </span>
             </div>
 
-            {hasDetails && (
+            {/* Optional details for sub-step */}
+            {hasChildPanel && (
               <>
                 <button
                   type="button"
@@ -275,17 +263,64 @@ function ChildGroup({
                   id={panelId}
                   hidden={!openChild[panelKey]}
                   className={detailPanelClass}
-                  style={{ marginLeft: ml + bubbleSizePx + bubbleGapPx }}
+                  style={{
+                    marginLeft: ml + bubbleSizePx + bubbleGapPx,
+                    boxSizing: 'border-box',
+                    maxWidth: `calc(100% - ${ml + bubbleSizePx + bubbleGapPx}px)`,
+                  }}
                 >
-                  {childNode.details}
+                  {child.childPanel}
                 </div>
               </>
+            )}
+
+            {/* Optional third level (rare) */}
+            {hasChildList && (
+              <ChildGroup
+                parentIndex={`${parentIndex}-${j}`}
+                items={child.childList}
+                startAt={startAt}
+                containerW={containerW}
+                baseIndentPx={ml + 24}
+                indentPx={indentPx}
+                maxIndentPx={maxIndentPx}
+                bubbleSizePx={bubbleSizePx}
+                bubbleGapPx={bubbleGapPx}
+                nowrap={nowrap}
+                boxClass={boxClass}
+                badgeClass={badgeClass}
+                gapClass={gapClass}
+                fontClass={fontClass}
+                openChild={openChild}
+                setOpenChild={setOpenChild}
+                detailButtonClass={detailButtonClass}
+                detailPanelClass={detailPanelClass}
+              />
             )}
           </li>
         );
       })}
-    </>
+    </ol>
   );
+}
+
+/* ------- normalization helpers (shared shape) ------- */
+function normalizeItems(items) {
+  return (items || []).map(normalizeNode);
+}
+function normalizeNode(it) {
+  if (typeof it === 'string' || typeof it === 'number') {
+    return { title: String(it) };
+  }
+  const title = it?.title ?? '';
+  // Prefer `child`; accept aliases for back-compat.
+  const rawChild = it?.child ?? it?.content ?? it?.details ?? it?.children;
+  if (Array.isArray(rawChild)) {
+    return { title, childList: rawChild.map(normalizeNode) };
+  } else if (rawChild !== undefined && rawChild !== null) {
+    return { title, childPanel: rawChild };
+  }
+  return { title };
 }
 
 /* helpers */
