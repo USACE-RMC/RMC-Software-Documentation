@@ -92,7 +92,7 @@ export default function CollectionList({
 
   return (
     <section className={`w-full ${className}`} aria-label={title || 'Collection list'}>
-      <div className="not-prose mb-3 flex items-center justify-between">
+      <div className="not-prose flex items-center justify-between">
         {title && <h3 className="font-usace text-[20px] font-bold text-font-color">{title}</h3>}
         {showExpandAll && expandableIdxs.length > 1 && (
           <div className="flex items-center gap-2">
@@ -204,7 +204,11 @@ export default function CollectionList({
         </div>
       ) : (
         /* ───────────────────────── STACK LAYOUT ───────────────────────── */
-        <ol className="m-0 ml-0 list-none !pl-0" style={{ listStyleType: 'none' }} role="list">
+        <ol
+          className="m-0 !my-0 ml-0 list-none !pl-0"
+          style={{ listStyleType: 'none' }}
+          role="list"
+        >
           {withFlags.map((it, i) => {
             const isOpen = open.includes(i);
             const headerId = `${cid}-hdr-${i}`;
