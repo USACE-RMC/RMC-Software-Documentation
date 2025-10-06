@@ -9,8 +9,15 @@ import { useEffect, useMemo, useRef, useState } from 'react';
  * - string | number  -> { title: string }
  * - {
  *     title: ReactNode,
- *     child?: ReactNode | Array<ReactNode | string | { title: ReactNode, child?: ... }>, // numbered sub-steps or detail panel
- *     freeform?: ReactNode | ReactNode[], // NEW: freeform content, indented under the step but not numbered
+ *     // CHILDREN BEHAVIOR CHANGE:
+ *     // - Array => renders a,b,c... sub-steps (unchanged)
+ *     // - Single value => NOW also renders as a single sub-step (lettered with bubble)
+ *     // To render a collapsible details panel, pass `details` (or `panel` / `childPanel`)
+ *     child?: ReactNode | Array<ReactNode | string | { title: ReactNode, child?: ... }>,
+ *     details?: ReactNode, // (optional) explicit details panel
+ *     panel?: ReactNode,   // (alias)
+ *     childPanel?: ReactNode, // (alias)
+ *     freeform?: ReactNode | ReactNode[], // freeform content under the step (indented, not numbered)
  *   }
  */
 export default function ProcessList({
@@ -33,7 +40,7 @@ export default function ProcessList({
   className = '',
 
   // Children layout
-  childBaseIndentPx = 35,
+  childBaseIndentPx = 15,
   childIndentPx,
   childMaxIndentPx,
   childStartAt = 1,
@@ -48,7 +55,7 @@ export default function ProcessList({
 
   const norm = useMemo(() => normalizeItems(items), [items]);
 
-  // ResizeObserver tracks available container width for indentation calculations
+  // Track available container width for indentation calculations
   useEffect(() => {
     if (!rootRef.current) return;
     const ro = new ResizeObserver((entries) => {
@@ -124,7 +131,7 @@ export default function ProcessList({
                 </span>
               </div>
 
-              {/* Details panel */}
+              {/* Details panel (explicit only via details/panel/childPanel) */}
               {hasChildPanel && (
                 <>
                   <button
@@ -269,7 +276,7 @@ function ChildGroup({
               </span>
             </div>
 
-            {/* Sub-step detail panel */}
+            {/* Sub-step detail panel (explicit) */}
             {hasChildPanel && (
               <>
                 <button
@@ -368,21 +375,50 @@ function normalizeItems(items) {
   return (items || []).map(normalizeNode);
 }
 
+// Decide whether a value looks like a "node-ish" item you want to render as a sub-step
+function isRenderableChildNode(v) {
+  if (v === null || v === undefined) return false;
+  // strings/numbers => yes
+  if (typeof v === 'string' || typeof v === 'number') return true;
+  // objects with a title => yes
+  if (typeof v === 'object' && 'title' in v) return true;
+  // any React element is an object with $$typeof; treat as a node with that element as title
+  if (typeof v === 'object') return true;
+  return false;
+}
+
 function normalizeNode(it) {
   if (typeof it === 'string' || typeof it === 'number') {
     return { title: String(it) };
   }
+
   const title = it?.title ?? '';
   const rawChild = it?.child;
   const rawFree = it?.freeform;
 
+  // explicit details panel (preferred) with aliases for convenience
+  const rawDetails = it?.details ?? it?.panel ?? it?.childPanel;
+
   const out = { title };
 
-  // child (sub-steps or detail panel)
+  // details panel only if explicitly provided
+  if (rawDetails !== undefined && rawDetails !== null) {
+    out.childPanel = rawDetails;
+  }
+
+  // child (sub-steps)
+  // - Array => map to childList
+  // - Single value => NOW coerced into a single-item childList
   if (Array.isArray(rawChild)) {
     out.childList = rawChild.map(normalizeNode);
-  } else if (rawChild !== undefined && rawChild !== null) {
-    out.childPanel = rawChild;
+  } else if (isRenderableChildNode(rawChild)) {
+    // If caller passed a raw ReactNode/string/number/object, wrap as a single sub-step
+    // If it's a plain ReactNode (no title), use it as the title for that sub-step.
+    if (typeof rawChild === 'object' && rawChild && 'title' in rawChild) {
+      out.childList = [normalizeNode(rawChild)];
+    } else {
+      out.childList = [normalizeNode({ title: rawChild })];
+    }
   }
 
   // freeform blocks
