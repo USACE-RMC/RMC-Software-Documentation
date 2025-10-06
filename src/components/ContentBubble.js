@@ -34,7 +34,7 @@ const ContentBubble = ({ icon, iconLight, iconDark, doc_location, doc_name, acti
       <div className="mt-0 shrink-0">
         <Icon />
       </div>
-      <div className="text-ifm-primary">
+      <div className="text-font-color">
         <p className="mb-0 font-usace leading-[1.2] no-underline md:text-normal lg:text-content-bubble">
           {doc_name}
         </p>
