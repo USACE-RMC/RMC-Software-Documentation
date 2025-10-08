@@ -495,65 +495,173 @@ landside 2D flow area, and the levee connection. Below are descriptions of each 
 
 ##### 2D Modeling Area
 
-- Preferred Minimum Cell Size The cell size, in feet, for the 2D flow area within the leveed area. The actual cell size may be slightly larger or
-  smaller to allow for automatic meshing. The default value is 500 ft. For most systems, a cell size of 500 ft in the leveed area should be sufficient
-  for screening-level analyses. However, when there is shallow flooding or steep terrain, smaller cell sizes may be necessary for accurate results.
-  Smaller cell sizes will also result in longer run times. The best way to determine if you need to reduce the cell size is to view the time-lapse
-  depth maps for two indicators: (1) shallow flooding spread out over a large area or (2) fragmented/ discontinuous flooding.
-
-- Maximum Cell Count The maximum number of cells that can occur in the leveed 2D flow area. The actual number of cells used will be calculated based
-  on the cell sizes and 2D flow area size. The default value is 500,000. The default value is set to a sufficiently high number to not limit 2D flow
-  area discretization. Models with high numbers of cells take longer to run. This parameter can be reduced to keep models small.
-
-- Force Run Time After Loading The length of time flooding is modeled after the loading hydrograph is simulated. This value is blank by default. When
-  blank, the program internally calculates the time to model flooding after the loading hydrograph is complete. To determine if this value needs to be
-  adjusted, run the model without specifying this value. After the run, view the time-lapse results and see if the flooding has made its way through
-  the leveed area. If it is desired to extend the modeled time, specify the time in hours to extend the model. This run time can be:
-  - Calculated as an internally calculated time based on leveed area size, land cover, and estimated overland flow velocities.
-
-  - Specified as a user specified time in hours.
-
-- Outflow Normal Depth Slope An outflow boundary condition is placed around the perimeter of the leveed area to allow flooding to exit the leveed area
-  based on the terrain. This is the normal depth slope used in the HEC-RAS model for that normal depth boundary condition. The default value is 0.001.
-  Use the default recommended value unless there is more detailed information to define leveed area outflow hydraulics. Refer to HEC-RAS guidance on
-  normal depth for more information on estimating the parameter.
-
-- Initial Water Surface Elevation Establishes an initial water surface elevation within the 2D Modeling Area at the specified elevation before the
-  loading hydrograph is applied. This option is useful in situations where there are lakes or bodies of water in the leveed area that need to start with
-  water. The default value is blank (None).
+<CollectionList
+  items={[
+    {
+      title: 'Preferred Minimum Cell Size',
+      child: (
+        <>
+          The cell size, in feet, for the 2D flow area within the leveed area. The actual cell size
+          may be slightly larger or smaller to allow for automatic meshing. The default value is 500
+          ft. For most systems, a cell size of 500 ft in the leveed area should be sufficient for
+          screening-level analyses. However, when there is shallow flooding or steep terrain,
+          smaller cell sizes may be necessary for accurate results. Smaller cell sizes will also
+          result in longer run times. The best way to determine if you need to reduce the cell size
+          is to view the time-lapse depth maps for two indicators: (1) shallow flooding spread out
+          over a large area or (2) fragmented/ discontinuous flooding.
+        </>
+      ),
+    },
+    {
+      title: 'Maximum Cell Count',
+      child: (
+        <>
+          The maximum number of cells that can occur in the leveed 2D flow area. The actual number
+          of cells used will be calculated based on the cell sizes and 2D flow area size. The
+          default value is 500,000. The default value is set to a sufficiently high number to not
+          limit 2D flow area discretization. Models with high numbers of cells take longer to run.
+          This parameter can be reduced to keep models small.
+        </>
+      ),
+    },
+    {
+      title: 'Force Run Time After Loading',
+      child: (
+        <>
+          <p>
+            The length of time flooding is modeled after the loading hydrograph is simulated. This
+            value is blank by default. When blank, the program internally calculates the time to
+            model flooding after the loading hydrograph is complete. To determine if this value
+            needs to be adjusted, run the model without specifying this value. After the run, view
+            the time-lapse results and see if the flooding has made its way through the leveed area.
+            If it is desired to extend the modeled time, specify the time in hours to extend the
+            model. This run time can be:
+          </p>
+          <ul className="mt-2 list-inside list-disc">
+            <li>
+              Calculated as an internally calculated time based on leveed area size, land cover, and
+              estimated overland flow velocities
+            </li>
+            <li>Specified as a user specified time in hours</li>
+          </ul>
+        </>
+      ),
+    },
+    {
+      title: 'Outflow Normal Depth Slope',
+      child: (
+        <>
+          An outflow boundary condition is placed around the perimeter of the leveed area to allow
+          flooding to exit the leveed area based on the terrain. This is the normal depth slope used
+          in the HEC-RAS model for that normal depth boundary condition. The default value is 0.001.
+          Use the default recommended value unless there is more detailed information to define
+          leveed area outflow hydraulics. Refer to HEC-RAS guidance on normal depth for more
+          information on estimating the parameter.
+        </>
+      ),
+    },
+    {
+      title: 'Initial Water Surface Elevation',
+      child: (
+        <>
+          Establishes an initial water surface elevation within the 2D Modeling Area at the
+          specified elevation before the loading hydrograph is applied. This option is useful in
+          situations where there are lakes or bodies of water in the leveed area that need to start
+          with water. The default value is blank (None).
+        </>
+      ),
+    },
+  ]}
+/>
 
 ##### Levee (Connection)
 
-- Breakline Near Cell Repeats: A breakline is applied along the levee centerline in the 2D grid for the model. The cell size near the breakline is
-  dependent on the “Minimum Breakline Cell Size” parameter. This parameter repeats the specified number of cells at the “Minimum Breakline Cell Size” from
-  the breakline and levee centerline. This allows the model to have more resolution along the levee centerline. For example, if the cell size
-  determined along the breakline is 50 ft, then the cells on both sides of the break line would be 50 ft cells. If the user also entered a Near Repeats
-  of 2, then two additional rows of 50 ft cells would be placed on both sides of the break line. The default value is 2. This value can be increased in
-  improve grid resolution near the breach/overtopping location. If time-lapse depth maps near the breach show pulsing or fragmented flows, then
-  increasing this parameter could help resolve hydraulics.
-
-- Weir Coefficient: Flow over the levee is computed using weir overflow hydraulics in RAS with a connection. RAS calculates connection overflow using
-  this weir coefficient. The default value is 2.0. This coefficient can range from 1.6-2.6 for levees 3 feet or higher above natural ground. More
-  information can be found in the HEC-RAS 2D hydraulic reference manual (USACE, 2016).
-
-- Levee Crest Width: This parameter represents the top width of the levee in feet. HEC-RAS calculates weir overflow using the top width of the levee
-  (i.e., weir width). It also defines the top width of the levee profile terrain modification. The default value is 30 feet. A default value of 30 feet
-  is used, but should be updated based on the actual, flat, top width of the levee. This can be estimated using the measure tool and terrain/aerial
-  imagery.
-
-- Levee Side Slope (H:V): A terrain line modification is applied in RAS along the levee centerline to ensure that the terrain is elevated to the levee
-  profile. This side slope is used in the terrain modification in HEC-RAS. The default value is 3 which provides a 3:1 side slope. If the program fails
-  during terrain generation, the side slope may be too gradual. In such a case, try increasing the side slope to a steeper slope such as 1:1.
+<CollectionList
+  items={[
+    {
+      title: 'Breakline Near Cell Repeats',
+      child: (
+        <>
+          A breakline is applied along the levee centerline in the 2D grid for the model. The cell
+          size near the breakline is dependent on the “Minimum Breakline Cell Size” parameter. This
+          parameter repeats the specified number of cells at the “Minimum Breakline Cell Size” from
+          the breakline and levee centerline. This allows the model to have more resolution along
+          the levee centerline. For example, if the cell size determined along the breakline is 50
+          ft, then the cells on both sides of the break line would be 50 ft cells. If the user also
+          entered a Near Repeats of 2, then two additional rows of 50 ft cells would be placed on
+          both sides of the break line. The default value is 2. This value can be increased in
+          improve grid resolution near the breach/overtopping location. If time-lapse depth maps
+          near the breach show pulsing or fragmented flows, then increasing this parameter could
+          help resolve hydraulics.
+        </>
+      ),
+    },
+    {
+      title: 'Weir Coefficient',
+      child: (
+        <>
+          Flow over the levee is computed using weir overflow hydraulics in RAS with a connection.
+          RAS calculates connection overflow using this weir coefficient. The default value is 2.0.
+          This coefficient can range from 1.6-2.6 for levees 3 feet or higher above natural ground.
+          More information can be found in the HEC-RAS 2D hydraulic reference manual (USACE, 2016).
+        </>
+      ),
+    },
+    {
+      title: 'Levee Crest Width',
+      child: (
+        <>
+          This parameter represents the top width of the levee in feet. HEC-RAS calculates weir
+          overflow using the top width of the levee (i.e., weir width). It also defines the top
+          width of the levee profile terrain modification. The default value is 30 feet. A default
+          value of 30 feet is used, but should be updated based on the actual, flat, top width of
+          the levee. This can be estimated using the measure tool and terrain/aerial imagery.
+        </>
+      ),
+    },
+    {
+      title: 'Levee Side Slope (H:V)',
+      child: (
+        <>
+          A terrain line modification is applied in RAS along the levee centerline to ensure that
+          the terrain is elevated to the levee profile. This side slope is used in the terrain
+          modification in HEC-RAS. The default value is 3 which provides a 3:1 side slope. If the
+          program fails during terrain generation, the side slope may be too gradual. In such a
+          case, try increasing the side slope to a steeper slope such as 1:1.
+        </>
+      ),
+    },
+  ]}
+/>
 
 ##### Breach Options
 
-- Duration Above TOL to Initiate Breach This parameter only applies to overtopping. The breach from overtopping will be delayed by a user specified
-  duration. The default value is zero.
-
-- Initial Breach Width The initial width of the breach. This is required by HEC-RAS to define the initial breach size to simulate the downcutting and
-  widening process in the simplified physical model. For overtopping, it is the starting notch width and for breach prior, it is the initial piping
-  diameter for the piping failure mode in HEC-RAS. The default value is 1 ft. The primary reason to change this parameter is for closure failure modes
-  where the closure never gets set.
+<CollectionList
+  items={[
+    {
+      title: 'Duration Above TOL to Initiate Breach',
+      child: (
+        <>
+          This parameter only applies to overtopping. The breach from overtopping will be delayed by
+          a user specified duration. The default value is zero.
+        </>
+      ),
+    },
+    {
+      title: 'Initiatl Breach Width',
+      child: (
+        <>
+          The initial width of the breach. This is required by HEC-RAS to define the initial breach
+          size to simulate the downcutting and widening process in the simplified physical model.
+          For overtopping, it is the starting notch width and for breach prior, it is the initial
+          piping diameter for the piping failure mode in HEC-RAS. The default value is 1 ft. The
+          primary reason to change this parameter is for closure failure modes where the closure
+          never gets set.
+        </>
+      ),
+    },
+  ]}
+/>
 
 ### Verifying Reasonable Hydraulic Results
 
@@ -718,184 +826,203 @@ The general workflow to review the structure inventory is as follows:
 
 Below are three ways to change/edit the structure inventory from simplest to most arduous:
 
-#### Index Factors.
+<ProcessList
+  items={[
+    {
+      title: 'Index Factors',
+      freeform: (
+        <>
+          <p>
+            If the total population or property value is incorrect in the modeling area and the spatial information to correct the issue is not available, index
+            factors can be used to increase or decrease the population and structure value data. It is important to note that the index factors will only increase
+            or decrease population and values for the existing structures, it will not add new structures or remove existing structures.
+          </p>
 
-If the total population or property value is incorrect in the modeling area and the spatial information to correct the issue is not available, index
-factors can be used to increase or decrease the population and structure value data. It is important to note that the index factors will only increase
-or decrease population and values for the existing structures, it will not add new structures or remove existing structures.
+          <CollectionList
+            items={[
+              {
+                title: 'Property Value Index Factor',
+                child: (
+                  <>
+                    <p>
+                      The Property Value Index Factor (PVIF) will increase or decrease the structure, content, and vehicle values for all structures in the inventory by
+                      multiplying the existing value by the given factor. Use the PVIF to account for changes in property or content value that may have occurred across the
+                      entire inventory since the last update to the NSI or to modify NSI values based on current information.
+                    </p>
 
-Property Value Index Factor
+                    <Equation equationKey="pvif" equation="IV_i = PVIF * V_i" />
 
-The Property Value Index Factor (PVIF) will increase or decrease the structure, content, and vehicle values for all structures in the inventory by
-multiplying the existing value by the given factor. Use the PVIF to account for changes in property or content value that may have occurred across the
-entire inventory since the last update to the NSI or to modify NSI values based on current information.
+                    <p>Where:</p>
 
-:::danger Inline Equation Detected
-Insert `<EquationNoRef />` component(s) to render math in the following paragraph.
-:::
+                    <ul className="!mt-2 !list-inside !list-disc">
+                      <li><EquationNoRef equation="IV_i"/> = Indexed structure, content, or vehicle value asigned to structure i</li>
+                      <li><EquationNoRef equation="V_i"/> = Original structure, content, or vehicle value assigned to structure i</li>
+                      <li><EquationNoRef equation="PVIF"/> = Property Value Index Factor</li>
+                    </ul>
 
-Where:
+                    <p>
+                      For example, if all structures have a structure value of $100,000 and content values of $50,000 and a factor of 1.1 is applied then the indexed
+                      structures will have a structure value of $110,000 and a content value of $55,000.
+                    </p>
+                  </>
+                ),
+              },
+              {
+                title: 'Population Index Factor (Day and Night)',
+                child: (
+                  <>
+                    <p>
+                      The Population Index Factors (PIF) increase the total population for day or night by the provided index factor. PIFs can be used to update the NSI
+                      data if more accurate information is available about population in the leveed area. The population change is then calculated for population over and
+                      under 65 using the following formula:
+                    </p>
 
-:::danger Inline Equation Detected
-Insert `<EquationNoRef />` component(s) to render math in the following paragraph.
-:::
+                    <Equation equationKey="population-change" equation="PC_\alpha = \left| [PIF_t \times P_\alpha - P_\alpha] \right|" />
 
-:::danger Inline Equation Detected
-Insert `<EquationNoRef />` component(s) to render math in the following paragraph.
-:::
+                    <p>Where:</p>
 
-:::danger Inline Equation Detected
-Insert `<EquationNoRef />` component(s) to render math in the following paragraph.
-:::
+                    <ul className="!mt-2 !list-inside !list-disc">
+                      <li><EquationNoRef equation="\alpha" /> = Age category, either under 65 or over 65</li>
+                      <li><EquationNoRef equation="PC_\alpha"/> = Population change for age category <EquationNoRef equation="\alpha"/></li>
+                      <li><EquationNoRef equation="PIF_t"/> = Population Index Factor for time of day category <EquationNoRef equation="t"/></li>
+                      <li><EquationNoRef equation="P_\alpha"/> = Total population for age category <EquationNoRef equation="\alpha"/></li>
+                    </ul>
 
-For example, if all structures have a structure value of $100,000 and content values of $50,000 and a factor of 1.1 is applied then the indexed
-structures will have a structure value of $110,000 and a content value of $55,000.
+                    <p>
+                      If the index factor is greater than 1, the calculated population change is distributed to structures using a weighting scheme defined by each
+                      structure’s occupancy type. The weights allow population to be distributed in a more realistic manner. The weights used to distribute population can
+                      be found in Table 4-7 of the <em>LifeSim Technical Reference Manual</em> (USACE 2020). If the index factor is less than
+                      1 then the calculated population change is removed from the structure inventory by removing one-at-a-time from the most populated structures first.
+                    </p>
+                  </>
+                ),
+              },
+            ]}
+          />
+        </>
+      ),
+    },
+    {
+      title: 'Map Editor',
+      freeform: (
+        <>
+          The structure inventory can be edited directly in the map window by clicking on the Edit Structure Inventory icon
+          {'\n'}
+          <FigureInline src="figures/web-applications/lst/users-guide/v1.0/inline-images/inline-a07b99a1.png" />
+          . Structures can be added, deleted, moved,
+          and have their attributes updated. The map editing tools are very useful for making quick changes to the inventory such as moving structures to their
+          appropriate locations or adjusting structures attributes such as number of stories, foundation height, value, etc. When the number of changes
+          required is large then it may become too time consuming to make the edits through the LST map interface. If this is the case, uploading a custom
+          inventory may be the quickest and easiest option. It is important to remember that this is a screening level effort, so a high level of accuracy in
+          structure location and value may not be necessary.
+        </>
+      ),
+    },
+    {
+      title: 'Upload Custom Inventory',
+      freeform: (
+        <>
+          A structure inventory can be uploaded to use in place of the NSI provided through the LST. This feature provides the convenience of making edits in
+          more sophisticated GIS packages such as QGIS® and ESRI’s ArcPro®. Cases where a custom inventory may be warranted include adding significant
+          development that was not captured in the NSI or uploading an existing structure inventory from a detailed risk assessment. The structure inventory can
+          be uploaded as a GeoJSON file or as a shapefile with the appropriate supporting files (.shp, .shx, .dbf, .prj) in a zip archive. Column names and
+          data types must reflect NSI conventions. In many cases it will be advantageous to download an existing NSI and use it as a starting point for making a
+          custom inventory, this helps to ensure the attribute formatting is correct. <TableReference tableKey="table-2" /> below provides the minimum
+          required attributes and their data types for uploading a structure inventory to the LST.
 
-Population Index Factor (Day and Night)
+          <TableVertical
+            tableKey="table-2"
+            headers={[
+              [
+                { value: 'Required Columns', rowSpan: 1, colSpan: 1 },
+                { value: 'Data Type (*)', rowSpan: 1, colSpan: 1 },
+                { value: 'Allowable Input', rowSpan: 1, colSpan: 1 },
+                { value: 'Description', rowSpan: 1, colSpan: 1 },
+              ],
+            ]}
+            columns={[
+              [
+                { value: 'pop2amu65', rowSpan: 1, colSpan: 1 },
+                { value: 'pop2pmu65', rowSpan: 1, colSpan: 1 },
+                { value: 'pop2amo65', rowSpan: 1, colSpan: 1 },
+                { value: 'pop2pmo65', rowSpan: 1, colSpan: 1 },
+                { value: 'occtype', rowSpan: 1, colSpan: 1 },
+                { value: 'st_damcat', rowSpan: 1, colSpan: 1 },
+                { value: 'bldgtype', rowSpan: 1, colSpan: 1 },
+                { value: 'found_ht', rowSpan: 1, colSpan: 1 },
+                { value: 'num_story', rowSpan: 1, colSpan: 1 },
+                { value: 'val_struct', rowSpan: 1, colSpan: 1 },
+                { value: 'val_cont', rowSpan: 1, colSpan: 1 },
+                { value: 'val_vehic', rowSpan: 1, colSpan: 1 },
+              ],
+              [
+                { value: 'Integer', rowSpan: 4, colSpan: 1 },
+                null,
+                { value: 'Integer', rowSpan: 2, colSpan: 1 },
+                null,
+                { value: 'String*', rowSpan: 3, colSpan: 1 },
+                null,
+                { value: 'String*', rowSpan: 1, colSpan: 1 },
+                { value: 'Double', rowSpan: 1, colSpan: 1 },
+                { value: 'Integer', rowSpan: 1, colSpan: 1 },
+                { value: 'Double', rowSpan: 3, colSpan: 1 },
+                null,
+                { value: 'Double', rowSpan: 1, colSpan: 1 },
+                null,
+              ],
+              [
+                { value: '', rowSpan: 4, colSpan: 1 },
+                null,
+                { value: '', rowSpan: 2, colSpan: 1 },
+                null,
+                { value: 'HAZUS-MH Occ. types', rowSpan: 1, colSpan: 1 },
+                { value: 'RES, COM, IND, PUB', rowSpan: 1, colSpan: 1 },
+                { value: 'C, H, M, S, W', rowSpan: 1, colSpan: 1 },
+                { value: '', rowSpan: 5, colSpan: 1 },
+                null,
+                { value: '', rowSpan: 3, colSpan: 1 },
+                null,
+                { value: '', rowSpan: 1, colSpan: 1 },
+              ],
+              [
+                { value: 'Nighttime population under 65 in structure', rowSpan: 1, colSpan: 1 },
+                { value: 'Daytime population under 65 in structure', rowSpan: 1, colSpan: 1 },
+                { value: 'Nighttime population over 65 in structure', rowSpan: 1, colSpan: 1 },
+                { value: 'Daytime population over 65 in structure', rowSpan: 1, colSpan: 1 },
+                {
+                  value: <>Occupancy type, designating primary building (use <a href="https://www.hec.usace.army.mil/confluence/nsi/technicalreferences/latest/technical-documentation#id-.TechnicalDocumentationv2022-OccupancyType" target="_blank" rel="noopener noreferrer">Technical Documentation Link</a>)</>,
+                  rowSpan: 1,
+                  colSpan: 1,
+                },
+                {
+                  value:
+                    'Structure damage category, broad economic sectors (residential, commercial, industrial, public)',
+                  rowSpan: 1,
+                  colSpan: 1,
+                },
+                {
+                  value:
+                    <>Primary construction materials and methods (reinforced <u>c</u>oncrete, manufactured <u>h</u>ome, <u>m</u>asonry, <u>s</u>teel, <u>w</u>ood)</>,
+                  rowSpan: 1,
+                  colSpan: 1,
+                },
+                { value: 'Foundation height', rowSpan: 1, colSpan: 1 },
+                { value: 'Number of stories', rowSpan: 1, colSpan: 1 },
+                { value: 'Value of the building', rowSpan: 1, colSpan: 1 },
+                { value: 'Value of the contents', rowSpan: 1, colSpan: 1 },
+                { value: 'Value of vehicles at the building', rowSpan: 1, colSpan: 1 },
+                null,
+              ],
+            ]}
+            alt="Required column names, data types, and allowable input for uploading a structure inventory to the LST."
+            caption="Required column names, data types, and allowable input for uploading a structure inventory to the LST."
+            footnotes={["*Data input is restricted to allowable values only"]}
+          />
+        </>
+      ),
+    },
 
-The Population Index Factors (PIF) increase the total population for day or night by the provided index factor. PIFs can be used to update the NSI
-data if more accurate information is available about population in the leveed area. The population change is then calculated for population over and
-under 65 using the following formula:
-
-:::danger Inline Equation Detected
-Insert `<EquationNoRef />` component(s) to render math in the following paragraph.
-:::
-
-Where:
-
-:::danger Inline Equation Detected
-Insert `<EquationNoRef />` component(s) to render math in the following paragraph.
-:::
-
-:::danger Inline Equation Detected
-Insert `<EquationNoRef />` component(s) to render math in the following paragraph.
-:::
-
-:::danger Inline Equation Detected
-Insert `<EquationNoRef />` component(s) to render math in the following paragraph.
-:::
-
-:::danger Inline Equation Detected
-Insert `<EquationNoRef />` component(s) to render math in the following paragraph.
-:::
-
-If the index factor is greater than 1, the calculated population change is distributed to structures using a weighting scheme defined by each
-structure’s occupancy type. The weights allow population to be distributed in a more realistic manner. The weights used to distribute population can
-be found in <TableReference tableKey="table-4" />-7 of the <em>LifeSim Technical Reference Manual</em> (USACE 2020). If the index factor is less than
-1 then the calculated population change is removed from the structure inventory by removing one-at-a-time from the most populated structures first.
-
-#### Map Editor
-
-The structure inventory can be edited directly in the map window by clicking on the Edit Structure Inventory icon
-{"\n"}<FigureInline src="figures\web-applications\lst\users-guide\v1.0/inline-images/inline-a07b99a1.png" />. Structures can be added, deleted, moved,
-and have their attributes updated. The map editing tools are very useful for making quick changes to the inventory such as moving structures to their
-appropriate locations or adjusting structures attributes such as number of stories, foundation height, value, etc. When the number of changes
-required is large then it may become too time consuming to make the edits through the LST map interface. If this is the case, uploading a custom
-inventory may be the quickest and easiest option. It is important to remember that this is a screening level effort, so a high level of accuracy in
-structure location and value may not be necessary.
-
-#### Upload Custom Inventory
-
-A structure inventory can be uploaded to use in place of the NSI provided through the LST. This feature provides the convenience of making edits in
-more sophisticated GIS packages such as QGIS® and ESRI’s ArcPro®. Cases where a custom inventory may be warranted include adding significant
-development that was not captured in the NSI or uploading an existing structure inventory from a detailed risk assessment. The structure inventory can
-be uploaded as a GeoJSON file or as a shapefile with the appropriate supporting files (.shp, .shx, .dbf, .prj) in a zip archive. Column names and
-data types must reflect NSI conventions. In many cases it will be advantageous to download an existing NSI and use it as a starting point for making a
-custom inventory, this helps to ensure the attribute formatting is correct. <TableReference tableKey="table-2" /> below provides the minimum
-required attributes and their data types for uploading a structure inventory to the LST.
-
-:::danger
-This table contains cells that span multiple rows or columns. Manually update the React component to properly format the table.
-:::
-
-<TableVertical
-  tableKey="table-2"
-  headers={[
-    [
-      { value: 'Required Columns', rowSpan: 1, colSpan: 1 },
-      { value: 'Data Type (*)', rowSpan: 1, colSpan: 1 },
-      { value: 'Allowable Input', rowSpan: 1, colSpan: 1 },
-      { value: 'Description', rowSpan: 1, colSpan: 1 },
-    ],
-  ]}
-  columns={[
-    [
-      { value: 'pop2amu65', rowSpan: 1, colSpan: 1 },
-      { value: 'pop2pmu65', rowSpan: 1, colSpan: 1 },
-      { value: 'pop2amo65', rowSpan: 1, colSpan: 1 },
-      { value: 'pop2pmo65', rowSpan: 1, colSpan: 1 },
-      { value: 'occtype', rowSpan: 1, colSpan: 1 },
-      { value: 'st_damcat', rowSpan: 1, colSpan: 1 },
-      { value: 'bldgtype', rowSpan: 1, colSpan: 1 },
-      { value: 'found_ht', rowSpan: 1, colSpan: 1 },
-      { value: 'num_story', rowSpan: 1, colSpan: 1 },
-      { value: 'val_struct', rowSpan: 1, colSpan: 1 },
-      { value: 'val_cont', rowSpan: 1, colSpan: 1 },
-      { value: 'val_vehic', rowSpan: 1, colSpan: 1 },
-      { value: '*Data input is restricted to allowable values only', rowSpan: 1, colSpan: 4 },
-    ],
-    [
-      { value: 'Integer', rowSpan: 4, colSpan: 1 },
-      null,
-      { value: 'Integer', rowSpan: 2, colSpan: 1 },
-      null,
-      { value: 'String*', rowSpan: 3, colSpan: 1 },
-      null,
-      { value: 'String*', rowSpan: 1, colSpan: 1 },
-      { value: 'Double', rowSpan: 1, colSpan: 1 },
-      { value: 'Integer', rowSpan: 1, colSpan: 1 },
-      { value: 'Double', rowSpan: 3, colSpan: 1 },
-      null,
-      { value: 'Double', rowSpan: 1, colSpan: 1 },
-      null,
-    ],
-    [
-      { value: '', rowSpan: 4, colSpan: 1 },
-      null,
-      { value: '', rowSpan: 2, colSpan: 1 },
-      null,
-      { value: 'HAZUS-MH Occ. types', rowSpan: 1, colSpan: 1 },
-      { value: 'RES, COM, IND, PUB', rowSpan: 1, colSpan: 1 },
-      { value: 'C, H, M, S, W', rowSpan: 1, colSpan: 1 },
-      { value: '', rowSpan: 5, colSpan: 1 },
-      null,
-      { value: '', rowSpan: 3, colSpan: 1 },
-      null,
-      { value: '', rowSpan: 1, colSpan: 1 },
-      { value: '*Data input is restricted to allowable values only', rowSpan: 1, colSpan: 2 },
-    ],
-    [
-      { value: 'Nighttime population under 65 in structure', rowSpan: 1, colSpan: 1 },
-      { value: 'Daytime population under 65 in structure', rowSpan: 1, colSpan: 1 },
-      { value: 'Nighttime population over 65 in structure', rowSpan: 1, colSpan: 1 },
-      { value: 'Daytime population over 65 in structure', rowSpan: 1, colSpan: 1 },
-      {
-        value: 'Occupancy type, designating primary building use (Technical Documentation Link)',
-        rowSpan: 1,
-        colSpan: 1,
-      },
-      {
-        value:
-          'Structure damage category, broad economic sectors (residential, commercial, industrial, public)',
-        rowSpan: 1,
-        colSpan: 1,
-      },
-      {
-        value:
-          'Primary construction materials and methods (reinforced concrete, manufactured home, masonry, steel, wood)',
-        rowSpan: 1,
-        colSpan: 1,
-      },
-      { value: 'Foundation height', rowSpan: 1, colSpan: 1 },
-      { value: 'Number of stories', rowSpan: 1, colSpan: 1 },
-      { value: 'Value of the building', rowSpan: 1, colSpan: 1 },
-      { value: 'Value of the contents', rowSpan: 1, colSpan: 1 },
-      { value: 'Value of vehicles at the building', rowSpan: 1, colSpan: 1 },
-      null,
-    ],
-  ]}
-  alt="Required column names, data types, and allowable input for uploading a structure inventory to the LST."
-  caption="Required column names, data types, and allowable input for uploading a structure inventory to the LST."
+]}
 />
 
 ### Provide Justification
