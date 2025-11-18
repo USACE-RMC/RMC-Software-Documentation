@@ -6,6 +6,8 @@ import Link from "@docusaurus/Link";
 import addBaseUrl from "@docusaurus/useBaseUrl";
 import Citation from "@site/src/components/Citation";
 import CitationFootnote from "@site/src/components/CitationFootnote";
+import Equation from "@site/src/components/Equation";
+import EquationNoRef from "@site/src/components/EquationNoRef";
 import Figure from "@site/src/components/Figure";
 import FigReference from "@site/src/components/FigureReference";
 import NavContainer from "@site/src/components/NavContainer";
@@ -73,7 +75,7 @@ A new project can also be created by clicking the *New Project* button in the To
   figKey="figure-37"
   src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure37.png"
   alt="Location of New Project button in the tool bar."
-  caption="Location of New Prohect button in the tool bar."
+  caption="Location of New Project button in the tool bar."
 />
 
 The user is required to enter a name, select a unit system, and determine a project location. Adding a description of the study is optional,
@@ -457,7 +459,7 @@ Bulletin 17C *Guidelines for Determining Flood Flow Frequency, and Engineering M
 - You must enter a name, all names are limited to 50 characters and cannot include the any special characters [!”#$%&’()*+,\./:;< = >? @^`{}~].
 - Descriptions have no special character restrictions, and allow for up to 2,000 characters, allowing a user to provide significant detail for any project component.
 
-2. ** Parameters**
+2. **Parameters**
 - Select a Probability Distribution.
 - Enter distribution parameters as mean of log, standard deviation of log, and skew of log.
 -  Enter the equivalent years of record.
@@ -511,27 +513,28 @@ the current version of RMC-RFA all probability distributions require input param
   caption="Probability distributions for volume frequency curve."
 />
 
-**Note on Selecting a Probability Distribution**
+**Note on Selecting a Probability Distribution**:
+
 In general, follow the guidance outlined in the USACE hydrologic hazard assessment methodology document An Inflow Volume-Based Approach to Estimating Stage-Frequency Curves
 for Dams, Bulletin 17C Guidelines for Determining Flood Flow Frequency, and Engineering Manual (EM) 1110-2-1415 Hydrologic Frequency Analysis. USACE recommends using the Log
 Pearson Type III for flow frequency. However, there are cases where a user will want to evaluate the sensitivity associated with selecting a different model. General guidance for
 distribution selection is provided below and summarized from Predictive Hydrology: A Frequency Analysis Approach by Meylan et al.
 
-- Log Normal: Many probability distributions can be transformed by replacing the variate with its logarithmic value. The annual maximum flow series are typically not represented well by
+- <u>Log Normal</u>: Many probability distributions can be transformed by replacing the variate with its logarithmic value. The annual maximum flow series are typically not represented well by
 the Normal distribution. The data is skewed to right because flows are only positive in magnitude (whereas a Normal distribution will include negative flows). When the data is leftbounded
 (cannot be less than zero) and positively skewed, a logarithmic transformation of the data may allow the use of the Log Normal distribution. It can be argued that the
 occurrence of a flood results from the combination of a large number of multiplying factors (Chow, 1954). Therefore, the central limit theorem leads to the conclusion that annual
 maximum flows follow a Log Normal distribution because the product of n variables yields to the sum of n logarithms.
 
-- Log Gumbel: This is a two-parameter distribution in the generalized extreme value family (EV Type 1). The Gumbel distribution is a particular case of the GEV where γ = 0 (See
+- <u>Log Gumbel</u>: This is a two-parameter distribution in the generalized extreme value family (EV Type 1). The Gumbel distribution is a particular case of the GEV where γ = 0 (See
 section on GEV below). Peak and short duration flood events It is widely used due to its ease of use.
 
-- Log Pearson Type III (LPIII): This distribution is also called the three-parameter Gamma distribution. Since 1967, the US water Resource Council has recommended and required the
+- <u>Log Pearson Type III (LPIII)</u>: This distribution is also called the three-parameter Gamma distribution. Since 1967, the US water Resource Council has recommended and required the
 use of LPIII distributions for all US flow frequency analysis for flood insurance purposes. This distribution is flexible and usually applied to volumes corresponding to annual maximum
 floods. However, it should be noted that the volumes are not maximum values in the statistical sense since peak floods that are lower but of longer duration can still produce larger
 volumes.
 
-- Generalized Extreme Value (GEV): This is a flexible three-parameter distribution in the Extreme Value family that combines the Gumbel, Frechet and Weibull distribution. From the
+- <u>Generalized Extreme Value (GEV)</u>: This is a flexible three-parameter distribution in the Extreme Value family that combines the Gumbel, Frechet and Weibull distribution. From the
 standpoint of the asymptotic theory, the GEV represents the distribution of the maximum of n random variables, and is often considered the most appropriate for modeling flow
 frequency.
 
@@ -706,6 +709,1171 @@ paste into or edit the table data.
   src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure78.png"
   alt="Tabular results for flood events used in computed flood seasonality."
   caption="Tabular results for flood events used in computed flood seasonality."
+/>
+
+##### Plot
+
+The default plot in the Flood Seasonality analysis is the relative frequency of events versus the month the event occurs. This plot has all of the sam e features discussed in Chart Features.
+
+<Figure
+  figKey="figure-79"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure79.png"
+  alt="Plot for flood seasonality."
+  caption="Plot for flood seasonality."
+/>
+
+Right click on the plot and a context menu will appear as shown in the figure below.
+
+<Figure
+  figKey="figure-80"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure80.png"
+  alt="Context menu for flood seasonality plot."
+  caption="Context menu for flood seasonality plot."
+/>
+
+The user can choose to plot the seasonality as a cumulative relative frequency plot.
+
+<Figure
+  figKey="figure-81"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure81.png"
+  alt="Cumulative relative frequency plot."
+  caption="Cumulative relative frequency plot."
+/>
+
+### Reservoir Starting Stage Duration
+
+Stage duration curves represent the percent of time during which specified reservoir stages are exceeded at a given location. Ordinarily, daily variations in 
+stages are inconsequential, so duration curves are typically developed using daily average stages. *Reservoir starting stage duration* curves represent the percent of time
+during which antecedent reservoir stages are exceeded. Starting stage duration curves are developed by first filtering observed daily average stage data so that the record 
+only contains typical starting stages based on a pool change threshold. Then, the filtered record is sorted by month or season. The filtering of the stage data is performed
+to avoid a certain degree of "double counting" of flood events.
+
+In RMC-RFA, reservoir starting stage duration curves are used to derive reservoir stage-frequency curves by combining the annual exceedance probability of the inflow flood event
+with the probability of the stage prior to the flood event.
+
+<Figure
+  figKey="figure-82"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure82.png"
+  alt="Reservoir starting stage duration window."
+  caption="Reservoir starting stage duration window."
+/>
+
+1. **Name & Description**
+- You must enter a name, all names are limited to 50 characters and cannot include the any special characters [!”#$%&’()*+,\./:;< = >? @^`{}~].
+- Descriptions have no special character restrictions, and allow for up to 2,000 characters, allowing a user to provide significant detail for any project component.
+
+2. **Parameters**
+- Select a stage gage to use in the analysis.
+- Enter the pool change threshold and the typical high pool duration. See the Parameters section for details.
+- After the parameters are entered, click the compute button.
+
+3. **Tabular Results**
+- After computing, the Tabular Results will be populated.
+4. **Plot**
+- After computing, the Plot will be generated.
+
+<Figure
+  figKey="figure-83"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure83.png"
+  alt="Reservoir starting stage duration after computing for Sayer's Dam."
+  caption="Reservoir starting stage duration after computing for Sayer's Dam."
+/>
+
+#### Parameters
+
+The following parameters need to be determined before computing reservoir starting stage duration:
+- Stage Gage
+- Pool Change Threshold
+- Typical High Pool Duration
+
+<Figure
+  figKey="figure-84"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure84.png"
+  alt="Parameters for reservoir starting stage duration."
+  caption="Parameters for reservoir starting stage duration."
+/>
+
+##### Pool Change Threshold
+
+The pool change threshold represents the maximum rate of rise of the pool per day. It will allow the starting pool elevation to be populated from daily elevations that are theorized to occur
+prior to any given flood event by essentially deleting all stage hydrographs that rise or fall faster than the entered threshold. If a large threshold value is chosen, you may artificially drive
+your starting pool too high as it takes in to account flood events where stages tend to rise quickly. An appropriate pool change threshold can by determined by visual inspection of a stage
+hydrograph from a normal rainfall year; i.e., a year where the reservoir was operated normally because there was no significant flood events.
+
+First, inspect the period of record. Choose a year without a significant event and inspect the stage hydrograph from that year. You can then estimate the rate of pool change per day from
+the hydrograph. It may be beneficial to review several normal years and take an average daily rate of rise. The normal rate of rise can be compared to a hydrograph from an event year
+where the stage should be rising much faster.
+
+For example, the Joseph Foster Sayers Dam stage hydrograph below is taken from the spring of 1999, a normal precipitation year. The rate of rise per day is shown in below. The
+maximum rate of rise is about 2 feet. After repeating this process for the years 2000 and 2001, also years with normal rainfall, it is determined that approximately 2 feet is indeed a good
+estimation for maximum normal rate of rise for this project.
+
+<Figure
+  figKey="figure-85"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure85.png"
+  alt="Joseph Foster Sayers Dam Hydrograph for the Spring of 1999."
+  caption="Joseph Foster Sayers Dam Hydrograph for the Spring of 1999."
+/>
+
+<Figure
+  figKey="figure-85"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure85.png"
+  alt="Joseph Foster Sayers Dam Hydrograph for the Spring of 1999."
+  caption="Joseph Foster Sayers Dam Hydrograph for the Spring of 1999."
+/>
+
+<TableVertical
+  tableKey="table-1"
+  headers={
+  [
+    [
+      { value: "Ordinate", rowSpan: 1, colSpan: 1},
+      { value: "Date", rowSpan: 1, colSpan: 1 },
+      { value: "Stage (ft)", rowSpan: 1, colSpan: 1 },
+      { value: "Rate of Change", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  columns={
+  [
+    [
+      {value: "17", rowSpan: 1, colSpan: 1},
+      {value: "18", rowSpan: 1, colSpan: 1},
+      {value: "19", rowSpan: 1, colSpan: 1},
+      {value:"20", rowSpan: 1, colSpan: 1},
+      {value:"21", rowSpan: 1, colSpan: 1},
+      {value:"22", rowSpan: 1, colSpan: 1},
+      {value:"23", rowSpan: 1, colSpan: 1},
+      {value:"24", rowSpan: 1, colSpan: 1},
+      {value:"25", rowSpan: 1, colSpan: 1},
+      {value:"26", rowSpan: 1, colSpan: 1},
+      {value:"27", rowSpan: 1, colSpan: 1},
+      {value:"28", rowSpan: 1, colSpan: 1},
+      {value:"29", rowSpan: 1, colSpan: 1}
+    ],
+    [
+      {value: "30Mar1999", rowSpan: 1, colSpan: 1},
+      {value: "31Mar1999", rowSpan: 1, colSpan: 1},
+      {value: "01Apr1999", rowSpan: 1, colSpan: 1},
+      {value: "02Apr1999", rowSpan: 1, colSpan: 1},
+      {value: "03Apr1999", rowSpan: 1, colSpan: 1},
+      {value: "04Apr1999", rowSpan: 1, colSpan: 1},
+      {value: "05Apr1999", rowSpan: 1, colSpan: 1},
+      {value: "06Apr1999", rowSpan: 1, colSpan: 1},
+      {value: "07Apr1999", rowSpan: 1, colSpan: 1},
+      {value: "08Apr1999", rowSpan: 1, colSpan: 1},
+      {value: "09Apr1999", rowSpan: 1, colSpan: 1},
+      {value: "10Apr1999", rowSpan: 1, colSpan: 1},
+      {value: "11Apr1999", rowSpan: 1, colSpan: 1}
+    ],
+    [
+      {value: "616.25", rowSpan: 1, colSpan: 1},
+      {value: "616.42", rowSpan: 1, colSpan: 1},
+      {value: "616.63", rowSpan: 1, colSpan: 1},
+      {value: "616.81", rowSpan: 1, colSpan: 1},
+      {value: "616.90", rowSpan: 1, colSpan: 1},
+      {value: "616.97", rowSpan: 1, colSpan: 1},
+      {value: "617.05", rowSpan: 1, colSpan: 1},
+      {value: "617.21", rowSpan: 1, colSpan: 1},
+      {value: "617.45", rowSpan: 1, colSpan: 1},
+      {value: "617.69", rowSpan: 1, colSpan: 1},
+      {value: "618.56", rowSpan: 1, colSpan: 1},
+      {value: "620.50", rowSpan: 1, colSpan: 1},
+      {value: "621.39", rowSpan: 1, colSpan: 1}
+    ],
+    [
+      {value: "0.172", rowSpan: 1, colSpan: 1},
+      {value: "0.210", rowSpan: 1, colSpan: 1},
+      {value: "0.180", rowSpan: 1, colSpan: 1},
+      {value: "0.086", rowSpan: 1, colSpan: 1},
+      {value: "0.074", rowSpan: 1, colSpan: 1},
+      {value: "0.076", rowSpan: 1, colSpan: 1},
+      {value: "0.162", rowSpan: 1, colSpan: 1},
+      {value: "0.240", rowSpan: 1, colSpan: 1},
+      {value: "0.240", rowSpan: 1, colSpan: 1},
+      {value: "0.876", rowSpan: 1, colSpan: 1},
+      {value: "1.938", rowSpan: 1, colSpan: 1},
+      {value: "0.892", rowSpan: 1, colSpan: 1},
+      {value: "0.720" , rowSpan: 1, colSpan: 1}
+    ]
+]
+  }
+  alt="Rate of Change in Stage for Spring of 1999."
+  caption="Rate of Change in Stage for Spring of 1999."
+/>
+
+As you can see in the figure below, the hydrograph taken from the September 2004 shows a much faster rate of rise, consistent with a flood event. Sensitivity 
+runs should be made to determine the appropriate threshold that meets the above criteria.
+
+<Figure
+  figKey="figure-86"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure86.png"
+  alt="Joseph Foster Sayers Dam Stage Hydrograph for the Fall of 2004."
+  caption="Joseph Foster Sayers Dam Stage Hydrograph for the Fall of 2004."
+/>
+
+<TableVertical
+  tableKey="table-1"
+  headers={
+  [
+    [
+      { value: "Ordinate", rowSpan: 1, colSpan: 1},
+      { value: "Date", rowSpan: 1, colSpan: 1 },
+      { value: "Stage (ft)", rowSpan: 1, colSpan: 1 },
+      { value: "Rate of Change", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  columns={
+  [
+    [
+      {value: "17", rowSpan: 1, colSpan: 1},
+      {value: "18", rowSpan: 1, colSpan: 1},
+      {value: "19", rowSpan: 1, colSpan: 1},
+      {value:"20", rowSpan: 1, colSpan: 1}
+    ],
+    [
+      {value: "16Sep2004", rowSpan: 1, colSpan: 1},
+      {value: "17Sep2004", rowSpan: 1, colSpan: 1},
+      {value: "18Sep2004", rowSpan: 1, colSpan: 1},
+      {value: "19Sep2004", rowSpan: 1, colSpan: 1},
+      {value: "20Sep2004", rowSpan: 1, colSpan: 1}
+    ],
+    [
+      {value: "629.14", rowSpan: 1, colSpan: 1},
+      {value: "630.97", rowSpan: 1, colSpan: 1},
+      {value: "644.51", rowSpan: 1, colSpan: 1},
+      {value: "647.26", rowSpan: 1, colSpan: 1},
+      {value: "647.53", rowSpan: 1, colSpan: 1}
+    ],
+    [
+      {value: "1.830", rowSpan: 1, colSpan: 1},
+      {value: "13.535", rowSpan: 1, colSpan: 1},
+      {value: "2.755", rowSpan: 1, colSpan: 1},
+      {value: "0.270", rowSpan: 1, colSpan: 1},
+      {value: "-0.675", rowSpan: 1, colSpan: 1}
+    ]
+ ] }
+  alt="Rate of Change in Stage for Fall of 2004."
+  caption="Rate of Change in Stage for Fall of 2004."
+/>
+
+*Note*: Setting the pool change threshold to zero will result in no filtered stage gage date: i.e., stage duration curves will be constructed from the full period of record.
+
+##### Typical High Pool Duration
+
+Similar to the Pool Change Threshold, the high pool duration is another parameter used to filter out large events for the purpose of distilling the record to only the typical starting pool
+elevations. It too can be determined by visual inspection. In this case, chose an event stage hydrograph and visually inspect how many days the high pool typically lasts. Again, it may be
+beneficial to analyze several event hydrographs, if they are available, and take an average of the high pool durations.
+
+#### Tabular Results
+
+The Tabular Results are provided in two sections:
+1. Stage Data Table
+2. Tabular Results
+
+##### Stage Data Table
+
+The raw stage gage data along with the filtered *starting stage* data are reported in the Stage Data Table as shown below.
+
+<Figure
+  figKey="figure-87"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure87.png"
+  alt="Stage data table for reservoir starting stage duration."
+  caption="Stage data table for reservoir starting stage duration."
+/>
+
+Right click on the Stage Data Table and a context menu will appear as shown in the figure below. 
+
+<Figure
+  figKey="figure-88"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure88.png"
+  alt="Context menu for stage data table for reservoir starting stage duration."
+  caption="Context menu for stage data table for reservoir starting stage duration."
+/>
+
+##### Tabular Results
+
+Reservoir starting stage duration curves are provided in the Tabular Results tab as shown below.
+
+<Figure
+  figKey="figure-89"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure89.png"
+  alt="Tabular results for reservoir starting stage duration curves."
+  caption="Tabular results for reservoir starting stage duration curves."
+/>
+
+Right click on the Tabular Results and a context menu will appear as shown in the figure below.
+
+<Figure
+  figKey="figure-90"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure90.png"
+  alt="Context menu for tabular results for reservoir starting stage duration curves."
+  caption="Context menu for tabular results for reservoir starting stage duration curves."
+/>
+
+The user can choose to *Allow Manual Data Entry*, which will enable the user to edit the duration curves as shown below. This option is included in RMC-RFA 
+so that users can use starting duration estimates developed external of RMC-RFA.
+
+<Figure
+  figKey="figure-91"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure91.png"
+  alt="Allow manual data entry for reservoir starting stage duration curves."
+  caption="Allow manual data entry for reservoir starting stage duration curves."
+/>
+
+#### Plot
+
+There are two plots provided in a reservoir stage duration analysis (both plots have all of the same features discussed in Chart Features):
+1. Stage Gage 
+2. Duration Curves
+
+The Stage Gage plot illustrates the effect of the selected filtering Parameters as shown below.
+
+<Figure
+  figKey="figure-92"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure92.png"
+  alt="Stage gage plot for reservoir starting stage duration."
+  caption="Stage gage plot for reservoir starting stage duration."
+/>
+
+The Duration Curves plot illustrates the resulting starting stage duration curves as shown below.
+
+<Figure
+  figKey="figure-93"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure93.png"
+  alt="Duration curves plot for reservoir starting stage duration."
+  caption="Duration curves plot for reservoir starting stage duration."
+/>
+
+### Empirical Frequency Curve
+
+For the evaluation of hydrologic hazards, an extreme-value series of annual maximum discharges or stages can be generated from the observed period of record. An empirical frequency
+is constructed by the ranking annual maximum data in descending order, assigning the data a plotting position, and then plotting the data on a probability plot.
+
+<Figure
+  figKey="figure-94"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure94.png"
+  alt="Empirical frequency curve window."
+  caption="Empirical frequency curve window."
+/>
+
+1. **Name & Description**
+- You must enter a name, all names are limited to 50 characters and cannot include the the any special characters [!”#$%&’()*+,\./:;< = >? @^`{}~].
+- Descriptions have no special character restrictions, and allow for up to 2,000 characters, allowing a user to provide significant detail for any project component.
+
+2. **Parameters**
+- Select a stage gage to use in the analysis.
+- Enter the duration, and select a plotting position and year specification. See the Parameters section for details.
+- After the parameters are entered, click the compute button.
+
+3. **Tabular Results**
+- After computing, the Tabular Results will be populated.
+
+4. **Plot**
+- After computing, the Plot will be generated.
+
+<Figure
+  figKey="figure-95"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure95.png"
+  alt="Empirical frequency curve after computing for Sayer's Dam."
+  caption="Empirical frequency curve after computing for Sayer's Dam."
+/>
+
+#### Parameters
+
+The following parameters need to be determined before computing empirical frequency curve:
+- Gage Type (either Discharge or Stage)
+- Gage
+- Duration
+- Plotting Position formula
+- Year Specification
+
+<Figure
+  figKey="figure-96"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure96.png"
+  alt="Parameters for empirical frequency curve."
+  caption="Parameters for empirical frequency curve."
+/>
+
+##### Duration
+
+Annual maximum values will extracted for the specified duration. If a discharge gage representing inflow to the reservoir is selected, then the duration could be the critical inflow duration,
+which is defined as the inflow duration that results in the highest water surface elevations for the reservoir of interest. Whereas, if the discharge gage represents outflow, the specified
+duration could be the duration likely to cause spillway erosion. If a stage gage is selected, the duration should be set to 1 in order to capture peak stages for comparison in a Simulation.
+
+##### Plotting Position Formulas
+
+There are a number of plotting position formulas for the estimation of empirical frequency. The formulas compute the exceedance probability of a data point based on the rank of the data
+point in a sample of a given size. Among different formulas, the differences in estimated exceedance frequency for each data point is minor for ranks of 3 and lower (the third largest value
+and all smaller values.) For the largest observation in the set (rank 1) the difference can be quite large.
+
+In RMC-RFA, there are three plotting positions available for selection in the empirical frequency curve analysis:
+1. Weibull (A and B = 0), which is the default
+2. Median (A and N = 0.3) 
+3. Hazen (A and B = 0.5)
+
+<Figure
+  figKey="figure-97"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure97.png"
+  alt="Plotting position formulas in RMC-RFA."
+  caption="Plotting position formulas in RMC-RFA."
+/>
+
+The HEC-SSP user's manual provides a great summary of plotting positions as shown below:
+
+<Figure
+  figKey="figure-98"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure98.png"
+  alt="Example from HEC-SSP User's Manual."
+  caption="Example from HEC-SSP User's Manual."
+/>
+
+##### Year Specification
+
+This option allows the user to define the beginning and ending date for the analysis year for ranking data. These dates are used for extracting annual maximum discharges or stages. It is
+important to choose a year specification that captures all flood events from a specific hydrologic regime. For example, if the flood season typically occurs in the spring and summer, then a
+calendar year (starts Jan 1) specification would sufficiently capture those events. However, if the flood season occurs in the fall and winter, then a water year (starts Oct 1) specification
+would better capture those events.
+
+In RMC-RFA, there are two year specifications available for selection in the empirical frequency curve analysis:
+1. Water Year (starts Oct 1), which is the default
+2. Calendar Year (starts Jan 1)
+
+<Figure
+  figKey="figure-99"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure99.png"
+  alt="Year specifications in RMC-RFA."
+  caption="Year specifications in RMC-RFA."
+/>
+
+#### Tabular Results
+
+Right click on the Tabular Results and a context menu will appear as shown in the figure below. The user can select all, copy, and copy with table headers. However, the user cannot
+paste into or edit the table data.
+
+<Figure
+  figKey="figure-100"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure100.png"
+  alt="Tabular results for empirical frequency curve."
+  caption="Tabular results for empirical frequency curve."
+/>
+
+#### Plot
+
+The plot in the Flood Seasonality analysis is the relative frequency of events versus the month the event occurs. This plot has all of the same features discussed in Chart Features.
+
+<Figure
+  figKey="figure-101"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure101.png"
+  alt="Plot for empirical frequency curve."
+  caption="Plot for empirical frequency curve."
+/>
+
+## Reservoir Models
+
+A reservoir routing model is used to determine pool stages and discharges by routing a flood hydrograph through the reservoir pool and outlets. The reservoir routing model includes
+characteristics of the reservoir, such as the stage-storage relationship, and information about physical structures, like spillways and other outlets. These regulating outlets are commonly
+simplified within a stage-storage-discharge relationship.
+
+RMC-RFA allows a user to create more than one reservoir model, if desired, allowing the user to look at routing results using different operational scenarios. For example, the user could
+create one stage-storage-discharge function associated with spillway operations only, and a second corresponding to spillway operations and gate operations. This would allow
+comparison of simulation with and without gates operable.
+
+<Figure
+  figKey="figure-102"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure102.png"
+  alt="Reservoir model window."
+  caption="Reservoir model window."
+/>
+
+<Figure
+  figKey="figure-103"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure103.png"
+  alt="Reservoir model window with reservoir features selected."
+  caption="Reservoir model window with reservoir features selected."
+/>
+
+1. **Name & Description**
+- You must enter a name, all names are limited to 50 characters and cannot include the any special characters [!”#$%&’()*+,\./:;< = >? @^`{}~].
+- Descriptions have no special character restrictions, and allow for up to 2,000 characters, allowing a user to provide significant detail for any project component.
+
+2. **Reservoir Data: Stage-Storage-Discharge Function**
+- Enter the stage, storage, and associated discharge into the table. See Stage-Storage-Discharge Function.
+
+3. **Reservoir Data: Reservoir Features**
+- Click on the next tab in reservoir data 
+- Enter the top of dam, spillway, and inflow design flood stage.
+
+4. **Plot**
+- After entering the reservoir data, the Plot will be generated.
+
+<Figure
+  figKey="figure-104"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure104.png"
+  alt="Reservoir model for Sayer's Dam."
+  caption="Reservoir model for Sayer's Dam."
+/>
+
+### Stage-Storage-Discharge Function
+
+#### Modified Puls Routing
+
+Reservoir routing in RMC-RFA is based on a "hydrologic method", which is concentrated on the concept of storage for the flood water and does not directly include 
+effects of resistance to the flow. The routing of a flood by using a hydrologic method in a given reservoir is based on the continuity equation which equates the rate 
+of change of the storage, <EquationNoRef equation = "\frac{dS}{dt}" /> in the reservoir to the difference between the inflow, <em>I</em>, and outflow, <em>O</em>:
+
+<Equation
+  equationKey="equation-1"
+  equation="\frac{dS}{dt} = I - O" 
+/>
+
+Specifically, RMC-RFA uses a finite difference approximation of the continuity equation called the Modified Puls routing method, also known as storage routing or level-pool routing.
+Using a simple backward differencing scheme and rearranging the continuity equation to isolate the unknown values gives:
+
+<Equation
+ equationKey="equation-2"
+ equation="\left(\frac{S_{t}}{dt} + \frac{O_{t}}{2}\right) = \left(\frac{I_{t-1} + I_{t}}{2}\right) + \left(\frac{S_{t-1}}{dt} - \frac{O_{t-1}}{2}\right)" 
+/>
+
+Where <EquationNoRef equation = "I_{t-1}"/> and <em>I</em> = inflow hydrograph ordinates at times <EquationNoRef equation = "t-1"/> and <EquationNoRef equation = "t"/>, respectively; 
+<EquationNoRef equation = "O_{t-1}"/> and <em>O</em> = outflow hydrograph ordinates at times <EquationNoRef equation = "t-1"/> and <EquationNoRef equation = "t"/>, respectively; 
+<EquationNoRef equation = "S_{t-1}"/> and <em>S</em> = storage in the reservoir at times <EquationNoRef equation = "t-1"/> and <EquationNoRef equation = "t"/>, respectively;
+
+The Modified Puls method has some limitations, which includes among others rivers with significant backwater effects, tributary inflows, and flat to mild channel slopes. If the dam being
+assessed has a long and narrow reservoir or has a potential for significant backwater effects, the the Modified Puls routing method included in RMC-RFA may not provide accurate results
+for peak stage.
+
+#### Stage versus Storage Volume
+
+A stage versus storage relationship (also referred to as a stage-storage function) relates water surface elevation to the volume of water stored. It provides a geometric description of the
+reservoir that is used during routing to determine the rise or fall of the water surface elevation given a change in the volume of stored water. In most cases, a stage-storage curve will be
+provided in the project water control manual or can be attained from the dam owner, such as the Corps District. In some cases, the water control manual will only provide a stage-area
+relationship, which can also be used to develop a stage-storage relationship.
+
+#### Stage versus Discharge
+
+A stage versus discharge relationship (also referred to as a stage-discharge function) relates water surface elevation to the required discharge associated with the outlet works, spillway or
+overtopping. Stage-discharge information will be provided in the project water control manual. The stage-discharge relationship should encompass any releases from the dam, including
+outlet works, spillways, and overtopping if necessary. Overtopping discharges should be included in the stage-discharge relationship in order to properly capture extreme flood events
+that result in overtopping. For additional details on stage versus storage and stage versus discharge, refer to "*An Inflow Volume-Based Approach to Estimating Stage-Frequency Curves
+for Dams*" 
+
+<Figure
+  figKey="figure-105"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure105.png"
+  alt="Reservoir data table fitted out for Sayer's Dam."
+  caption="Reservoir data table fitted out for Sayer's Dam."
+/>
+
+**Note**: In the stage-storage-discharge table, the user can add rows, insert rows, delete rows, select all, copy, copy with table headers and paste by right clicking within the table.
+
+<Figure
+  figKey="figure-106"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure106.png"
+  alt="Options available when right clicking within stage-storage-discharge table."
+  caption="Options available when right clicking within stage-storage-discharge table."
+/>
+
+### Reservoir Features
+
+Enter the stage for the top of dam, spillway, and inflow design flood. These reservoir features are used as reference points to aid with interpretation of simulation results.
+
+<Figure
+  figKey="figure-107"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure107.png"
+  alt="Reservoir features for Sayer's Dam."
+  caption="Reservoir features for Sayer's Dam."
+/>
+
+#### Plot
+
+The default plot in the **Reservoir Model** is the stage-storage-discharge curve. It also displays the Reservoir Features. This plot has all of the same features discussed in Chart Features.
+
+<Figure
+  figKey="figure-108"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure108.png"
+  alt="Default plot, stage versus storage."
+  caption="Default plot, stage versus storage."
+/>
+
+Right clicking within the plot allows the user to select the stage-discharge function plot.
+
+<Figure
+  figKey="figure-109"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure109.png"
+  alt="Right clicking within the plot allows the user to switch displayed plots."
+  caption="Right clicking within the plot allows the user to switch displayed plots."
+/>
+
+<Figure
+  figKey="figure-110"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure110.png"
+  alt="Stage versus discharge plot."
+  caption="Stage versus discharge plot."
+/>
+
+## Simulations
+
+Simulations incorporate the input data, analyses, and reservoir models in order to perform the stochastic simulation.
+
+<Figure
+  figKey="figure-111"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure111.png"
+  alt="Simulation window."
+  caption="Simulation window."
+/>
+
+1. **Name & Description**
+- You must enter a name, all names are limited to 50 characters and cannot include the any special characters [!”#$%&’()*+,\./:;< = >? @^`{}~].
+- Descriptions have no special character restrictions, and allow for up to 2,000 characters, allowing a user to provide significant detail for any project component.
+
+2. **Simulation Parameters**
+- Enter all required Simulation Parameters.
+- After entering all required information hit *Simulate* button. 
+- The project willl automatically save any changes and begin the simulation . If the simulation does not begin, check the message window for any window for any warnings indicating 
+why the simulation was not successful.
+- While a simiulation is being performed, the user can cancel the simulation at any time using the *Cancel* button.
+- While the simulation is being performed, a progress bar appears to the left of the simulate button showing the progress of the simulation.
+- When simulation is complete the following image will appear: 
+
+<Figure
+  figKey="figure-112"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure112.png"
+  alt="Simulation complete window."
+  caption="Simulation complete window."
+/>
+
+3. **Tabular Results**
+- Tabular Results are generated after a simulation. Click on the *Tabular Results* tab to display these results.
+
+4. **Plots**
+- Plots are generated after a simulation. There are four main categories of plots: Frequency Curve Plots, Simulated Input Plots, Sensitivity Plots, and Routed Hydrograph Plots.
+
+<Figure
+  figKey="figure-113"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure113.png"
+  alt="Simulation window after simulating for Sayer's Dam."
+  caption="Simulation window after simulating for Sayer's Dam."
+/>
+
+### Simulation Parameters
+
+<Figure
+  figKey="figure-114"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure114.png"
+  alt="Simulation parameters main window."
+  caption="Simulation parameters main window."
+/>
+
+1. **Input Parameters**
+- Select a volume frequency curve, a flood seasonality analysis, a starting stage duration analysis, and a reservoir model analysis. For details see Input Parameters.
+- Select which inflow hydrographs to include in the simulation and assign them a weight.
+
+2. **Simulation Settings**
+- Select the Simulations Settings tab.
+- Select a Simulation type.
+- Enter the Routing Options: the routing time window in days and the routing time step.
+- Select Sampling Options: the Number of Realizations, Skip Inflow Events With AEP, and PRNG Seed. 
+
+<Figure
+  figKey="figure-115"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure115.png"
+  alt="Simulation settings tab."
+  caption="Simulation settings tab."
+/>
+
+3. **Output Options**
+- Select the Output Options tab.
+- Determine which Frequency Curves you would like the simulation to create.
+- Set an Uncertainty Bound.
+
+<Figure
+  figKey="figure-116"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure116.png"
+  alt="Output options tab."
+  caption="Output options tab."
+/>
+
+#### Input Parameters
+
+Input Parameters is where the user selects the parameters to be used in a simulation.
+
+<Figure
+  figKey="figure-117"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure117.png"
+  alt="Input parameters tab."
+  caption="Input parameters tab."
+/>
+
+The Statistical Parameters are the Volume Frequency Curve, Flood Seasonality Analysis, and the Starting Stage Duration Analysis. The drop down menu associated with each of these
+items will show the names of the analyses performed under the analyses tab. Reservoir Model allows the user to select one of the reservoir models they have created. Selecting a
+reservoir model will populate the plot with the dam features. Finally the user choses which Inflow Hydrograph to use for the simulation, and assigns the inflow hydrograph a weight to
+influence how often it is used in the simulation. You can perform a simulation with as little as one inflow hydrograph.
+
+The weight assigned to each inflow hydrograph determines how often that particular hydrograph will be sampled in the simulation. The weighting needs to be numeric. The weights do not
+need to sum to 1. Instead, the weights are normalized at the start of the simulation. For example if you have two hydrographs, and assign one a weight of 1 and the second a weight of 2,
+then the first hydrograph will be sampled 1/3 of the time, and the second hydrograph will be sampled 2/3 of the time.
+
+**Note**: RMC-RFA will scale the input hydrograph shape to match the sampled inflow volume based on the selected critical duration defined in the Volume Frequency Curve input.
+
+#### Simulation Settings
+
+Simulation settings determine the simulation type, routing options, and sampling options and has a large influence on how long the simulation will take to perform.
+- Simulation Type 
+- Routing Options
+- Sampling Options
+
+<Figure
+  figKey="figure-118"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure118.png"
+  alt="Simulation settings tab."
+  caption="Simulation settings tab."
+/>
+
+##### Simulation Type
+
+Three options are available for simulation type:
+- Simulate Full Uncertainty
+- Simulate Expected Frequency Curve Only
+- Simulate Median Frequency Curve Only
+
+For rapid sesnsitivity analysis, the user should select either *Simulate Expected Frequency Curve Only* or *Simulate Median Frequency Curve Only* as run times are much shorter.
+*Simulate Full Uncertainty* will have teh longest run time, as it calculates the Median Curve, Expected Curve, and Uncertainty Bounds.
+
+##### Routing Options
+
+*Routing Time Window (DAYS)*: This indicates the number of days to route the simulation. This value should be at least as long as the critical inflow duration defined by the Volume
+Frequency Curve input. The routing time window needs to be long enough to ensure the reservoir stage has had enough time to crest.
+
+*Routing Time Step*: A drop down menu, allowing the user to choose from the following simulation time steps: 15-min, 1-Hr, 6-Hr, and 1-Day. The routing time step chosen will affect the
+simulation run time (e.g., a simulation with a 15-Min time step will take about four times longer than a simulation with a 1-Hr time step).
+
+<Figure
+  figKey="figure-119"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure119.png"
+  alt="Routing options tab."
+  caption="Routing options tab."
+/>
+
+##### Sampling Options
+
+- Number of Realizations
+- Skip Inflow Events 
+- PRNG Seed
+
+<Figure
+  figKey="figure-120"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure120.png"
+  alt="Sampling options tab."
+  caption="Sampling options tab."
+/>
+
+###### Number of Realizations
+
+This is a drop down menu, allowing the user to choose the number of realizations to perform in the simulation. The number of realization options can be seen in the figure below.
+
+<Figure
+  figKey="figure-121"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure121.png"
+  alt="Number of realizations options."
+  caption="Number of realizations options."
+/>
+
+The number of realizations should be chosen with consideration of run time, accuracy, and project needs. Often, a user will run the simulation with a smaller number of realizations at first
+in order to ensure that the simulation configuration is running stable and producing reasonable results. It is recommended that final simulations use 1,000 realizations or more. This will
+produce accurate uncertainty bounds while also having manageable run times.
+
+###### Skip Inflow Events With AEP
+
+The skip inflow option allows the user to skip inflow events with an annual exceedance probability greater than the value selected in the drop down menu, which is shown in the figure below: 
+
+<Figure
+  figKey="figure-122"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure122.png"
+  alt="Skip inflow events with options."
+  caption="Skip inflow events with options."
+/>
+
+The skip inflow option, similar to number of realizations, should be chosen with consideration of simulation run time, accuracy, and project needs. If reservoir frequency relationships are
+only needed for extreme events, then it is recommended that a skip option of 0.10 is used. This will reduce run times while still producing accurate results for exceedance probabilities less
+than or equal to 0.10 (10-yr return period).
+
+###### PRNG Seed
+
+A seed is a number used to initialize the pseudorandom number generator (PRNG) in the stochastic simulation. The "auto" setting creates a default seed of 12345. The user can define a
+new PRNG seed if desired. The seed is used to initialize the PRNG sequence of random numbers. The same seed will always produce the exact same sequence of random numbers,
+thus producing the same simulation results (i.e., the seed ensures repeatability of results).
+
+<Figure
+  figKey="figure-123"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure123.png"
+  alt="PRNG seed options."
+  caption="PRNG seed options."
+/>
+
+#### Output Options
+
+- Frequency Curves
+- Uncertainty bounds
+
+<Figure
+  figKey="figure-124"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure124.png"
+  alt="Output options tab."
+  caption="Output options tab."
+/>
+
+##### Frequency Curves
+
+The user can select which frequency curves the simulation should develop. There are three options:
+- Stage-Frequency Curve (this is the default)
+- Peak Discharge-Frequency Curve
+- Discharge-Duration-Frequency Curve
+   - This option requires a duration to be set. The RMC-RFA simulation framework relies on the critical duration. As such, discharge-duration-frequency curves will be more accurate for 
+   durations at least as long as the critical inflow duration.
+
+Reservoir discharge-frequency relationships are often useful for assessing spillway erosion failure modes. For details on the plots created with each of these options see Frequency Curve Plots.
+
+##### Uncertainty Bounds
+
+RMC-RFA has three options availble for uncertainty limits during the simulation. The user should select one from the drop-down menu. 90% bounds are the default.
+
+<Figure
+  figKey="figure-125"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure125.png"
+  alt="Uncertainty bounds tab."
+  caption="Uncertainty bounds tab."
+/>
+
+### Tabular Results
+
+*Tabular Results* displays the results for each realization and event simulated. The user can sort by any table header, by right clicking on the table header and selecting either 
+*Sort Ascending* or *Sort Descending*.
+
+<Figure
+  figKey="figure-126"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure126.png"
+  alt="Tabular results Sorting Options from Table Header."
+  caption="Tabular results Sorting Options from Table Header."
+/>
+
+The user can also chose to *Sort Results By: Realization* or *All Realizations*. When the results are sorted by *Realization*, the arrows at the top of the window allow for scrolling through the different realizations.
+
+### Plot
+
+<Figure
+  figKey="figure-127"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure127.png"
+  alt="Plots main window."
+  caption="Plots main window."
+/>
+
+1. **Frequency Curve Plots**
+2. **Simulated Input Plots**
+3. **Sensitivity Plots**
+4. **Routed Hydrograph Plots**
+
+#### Frequency Curve Plots
+
+Three Frequency Curve Plots are availabe:
+- Stage-Frequency Curve
+- Peak Discharge-Frequency Curve
+- Discharge-Duration-Frequency Curve
+
+<Figure
+  figKey="figure-128"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure128.png"
+  alt="Frequency curve plot main window."
+  caption="Frequency curve plot main window."
+/>
+
+The stage-frequency curve is the default curve developed following a simulation. In order to output the peak-discharge-frequency curve and the discharge-duration-frequency curve these
+need to be selected in Output Options.
+
+Additionally, Empirical Frequency Curves calculated in the Analyses can be displayed on the same plot as the frequency curve as shown below:
+
+<Figure
+  figKey="figure-129"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure129.png"
+  alt="Frequency curve with empirical frequency curve displayed."
+  caption="Frequency curve with empirical frequency curve displayed."
+/>
+
+##### Stage-Frequency Curve
+
+This plot is the default created with each simulation. Depending on the options selected, it shows the reservoir features, the median curve, the expected curve, and the uncertainty
+bounds. This plot has all of the same features discussed in Chart Features.
+
+<Figure
+  figKey="figure-130"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure130.png"
+  alt="Stage-Frequency Curve for Sayer's Dam, with 1,000 realizations, skip inflow events with AEP > .10 and 90% uncertainty bounds."
+  caption="Stage-Frequency Curve for Sayer's Dam, with 1,000 realizations, skip inflow events with AEP > .10 and 90% uncertainty bounds."
+/>
+
+##### Peak Discharge-Frequency Curve
+
+This is the peak discharge-frequency curve. It shows the median curve, expected curve, and uncertainty bounds. This plot has all of the same features discussed in Chart Features. 
+
+<Figure
+  figKey="figure-131"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure131.png"
+  alt="Peak Discharge-Frequency Curve for Sayer's Dam, with 1,000 realizations, skip inflow events with AEP > .10 and 90% uncertainty bounds."
+  caption="Peak Discharge-Frequency Curve for Sayer's Dam, with 1,000 realizations, skip inflow events with AEP > .10 and 90% uncertainty bounds."
+/>
+
+##### Discharge-Duration-Frequency Curve
+
+This is the discharge-duration-frequency plot. It shows the median curve, expected curve, and uncertainty bounds for a specified duration. This plot has all of the same features discussed
+in Chart Features.
+
+<Figure
+  figKey="figure-132"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure132.png"
+  alt="Discharge-Duration-Frequency Curve for Sayer's Dam, with 1,000 realizations, skip inflow events with AEP > .10 and 90% uncertainty bounds, 2 day duration."
+  caption="Discharge-Duration-Frequency Curve for Sayer's Dam, with 1,000 realizations, skip inflow events with AEP > .10 and 90% uncertainty bounds, 2 day duration."
+/>  
+
+##### Results Empirical Frequency Curve
+
+This option allows the user to display an empirical frequency curve along with the simulated curves. Stage is available for the Stage-Frequency plot, whereas Discharge is available for the
+Peak Discharge-Frequency plot and the Discharge-Duration-Frequency plot. This plot has all of the same features discussed in Chart Features.
+
+<Figure
+  figKey="figure-133"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure133.png"
+  alt="Stage-Frequency Curve with Stage Empirical Frequency Curve selected."
+  caption="Stage-Frequency Curve with Stage Empirical Frequency Curve selected."
+/>
+
+##### Tabular Output
+
+Tabular output for each of the Frequency Curve Plots can be accessed with the tabular button. Whichever plot is displayed when the button is selected is tabulated. Once the tabular output window pops up, the user can right click within the window, and Select All, Copy and Copy
+with Table Headers.
+
+<Figure
+  figKey="figure-134"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure134.png"
+  alt="Tabular output for Stage-Frequency Curve."
+  caption="Tabular output for Stage-Frequency Curve."
+/>
+
+#### Simulated Input Plots
+
+<Figure
+  figKey="figure-135"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure135.png"
+  alt="Input Parameter drop down."
+  caption="Input Parameter drop down."
+/>
+
+The following Simulated Input Plots are available:
+- Volume Frequency Curve
+- Volume Frequency Curve Parameters
+   - Mean
+   - Standard Deviation
+   - Skew 
+- Flood Seasonality
+- Starting Stage Duration
+- Inflow Hydrographs
+
+The Simulated Input Plots compare the user defined parameters to the bootstrap sampled parameters used in the simulation for each realization. The user can scroll through the
+parameters for each realization using the arrows at the top of the window. 
+
+##### Volume Frequency Curve
+
+The Volume-Frequency Curve plot displays the user-defined curve inflow volume-frequency curve compared to the bootstrapped curve and bootstrapped sample for a particular
+realization. It also shows the 90% confidence bounds. This plot has all of the same features discussed in Chart Features.
+
+<Figure
+  figKey="figure-136"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure136.png"
+  alt="Simulated input plot, Volume-Frequency Curve."
+  caption="Simulated input plot, Volume-Frequency Curve."
+/>
+
+##### Volume Frequency Curve Parameters
+
+Volume Frequency Curve Parameters has three variable options:
+- Mean
+- Standard Deviation
+- Skew
+
+This plot illustrates the knowledge uncertainty in the form of sampling error for the mean, standard deviation, and skew. 
+
+###### Mean
+
+Volume Frequency Curve Parameters Mean plot displays the relative frequency of the mean (of log) compared to the user-defined mean and 90% confidence intervals. This plot has all of
+the same features discussed in Chart Features.
+
+<Figure
+  figKey="figure-137"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure137.png"
+  alt="Volume Frequency Curve Parameters, Mean plot."
+  caption="Volume Frequency Curve Parameters, Mean plot."
+/>
+
+###### Standard Deviation
+
+Standard Deviation plot displays the relative frequency of the standard deviation (of log) compared to the user-defined standard deviation and 90% confidence intervals. This plot has all of
+the same features discussed in Chart Features.
+
+<Figure
+  figKey="figure-138"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure138.png"
+  alt="Volume Frequency Curve Parameters, Standard Deviation plot."
+  caption="Volume Frequency Curve Parameters, Standard Deviation plot."
+/>
+
+###### Skew
+
+Skew plot displays the relative frequency of the skew (of log) compared to the user-defined skew and 90% confidence intervals. This plot has all of the same features discussed in Chart
+Features.
+
+<Figure
+  figKey="figure-139"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure139.png"
+  alt="Volume Frequency Curve Parameters, Skew plot."
+  caption="Volume Frequency Curve Parameters, Skew plot."
+/>
+
+##### Flood Seasonality
+
+The Flood Seasonality plot shows the relative frequency of events versus month for each realization. It displays the user-defined flood seasonality compared to the simulated seasonality.
+This plot has all of the same features discussed in Chart Features.
+
+<Figure
+  figKey="figure-140"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure140.png"
+  alt="Simulated input plot, Flood Seasonality."
+  caption="Simulated input plot, Flood Seasonality."
+/>
+
+##### Starting Stage Duration
+
+The Starting Stage Duration plot shows the stage versus the percent of time exceeded for each realization by month. It displays the user-defined starting stage duration to the simulated
+starting stage duration. This plot has all of the same features discussed in Chart Features.
+
+<Figure
+  figKey="figure-141"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure141.png"
+  alt="Simulated Input Parameters, Starting Stage Duration for the Month of April."
+  caption="Simulated Input Parameters, Starting Stage Duration for the Month of April."
+/>
+
+##### Inflow Hydrographs
+
+The Inflow Hydrograph plot shows the relative frequency of each inflow hydrograph in the simulation by realization. It displays the user-defined inflow hydrograph frequency to the inflow
+hydrograph frequency. This plot has all of the same features discussed in Chart Features
+
+<Figure
+  figKey="figure-142"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure142.png"
+  alt="Simulated Input Parameters, Inflow Hydrographs."
+  caption="Simulated Input Parameters, Inflow Hydrographs."
+/>
+
+#### Sensitivity Plots
+
+<Figure
+  figKey="figure-143"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure143.png"
+  alt="Sensitivity plots drop-down."
+  caption="Sensitivity plots drop-down."
+/>
+
+The following Sensitivity Plots are available:
+- Inflow Volume -vs- Peak Stage
+- Starting Stage -vs- Peak Stage
+- Flood Season -vs- Peak Stage
+- Inflow Hydrograph -vs- Peak Stage
+
+The Sensitivity plots are calculated for each realization. The user can scroll through each realization using the arrows at the top of the window.
+
+##### Inflow Volume -vs- Peak Stage
+
+The Inflow Volume -vs- Peak Stage plot displays the sampled inflow volume versus the peak stage for each realization. It displays the Spearman Correlation and the Pearson Correlation.
+This plot has all of the same features discussed in Chart Features.
+
+<Figure
+  figKey="figure-144"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure144.png"
+  alt="Sensitivity Plot, Inflow Volume vs. Peak Stage."
+  caption="Sensitivity Plot, Inflow Volume vs. Peak Stage."
+/>
+
+##### Starting Stage -vs- Peak Stage
+
+The Starting Stage -vs- Peak Stage plot displays the sampled starting stage versus the peak stage for each realization. It displays the Spearman Correlation and the Pearson Correlation.
+This plot has all of the same features discussed in Chart Features.
+
+<Figure
+  figKey="figure-145"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure145.png"
+  alt="Sensitivity Plot, Starting Stage vs. Peak Stage."
+  caption="Sensitivity Plot, Starting Stage vs. Peak Stage."
+/>
+
+##### Flood Season -vs- Peak Stage
+
+The Flood Season -vs- Peak Stage plot displays the sampled month versus the peak stage for each realization in the form of a box and whisker plot. This plot has all of the same features
+discussed in Chart Features.
+
+<Figure
+  figKey="figure-146"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure146.png"
+  alt="Sensitivity Plot, Flood Season vs. Peak Stage."
+  caption="Sensitivity Plot, Flood Season vs. Peak Stage."
+/>
+
+The box and whisker plot provides a seven number summary, where the two points represent the min and max, the whiskers represent the 5th and 95th percentiles, the box bottom and
+top represent the 25th and 75th percentiles respectively, and the dashed line represents the median.
+
+##### Inflow Hydrograph -vs- Peak Stage
+
+The Inflow Hydrograph -vs- Peak Stage plot displays the sampled inflow hydrograph versus the peak stage for each realization in the form of a box and whisker plot. This plot has all of
+the same features discussed in Chart Features.
+
+<Figure
+  figKey="figure-147"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure147.png"
+  alt="Sensitivity Plot, Inflow Hydrograph vs. Peak Stage."
+  caption="Sensitivity Plot, Inflow Hydrograph vs. Peak Stage."
+/>
+
+The box and whisker plot provides a seven number summary, where the two points represent the min and max, the whiskers represent the 5th and 95th percentiles, the box bottom and
+top represent the 25th and 75th percentiles respectively, and the dashed line represents the median.
+
+#### Routed Hydrograph Plots
+
+Routed Hydrograph plots displays the inflow hydrograph routed through the reservoir model for each realization. It shows the inflow hydrograph, discharge, stage, and reservoir features.
+This plot has all of the same features discussed in Chart Features.
+
+<Figure
+  figKey="figure-148"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure148.png"
+  alt="Routed Hydrograph plot."
+  caption="Routed Hydrograph plot."
+/>
+
+##### Tabular Output
+
+Tabular output for each routed hydrograph plot can be accessed by hitting the tabular output button . Once the tabular output window opens, the user can select all, copy and copy
+with table headers by right clicking within the table.
+
+<Figure
+  figKey="figure-149"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure149.png"
+  alt="Location of Tabular Output button."
+  caption="Location of Tabular Output button."
+/>
+
+<Figure
+  figKey="figure-150"
+  src="figures/desktop-applications/rmc-rfa/users-guide/v1.0/figures/figure150.png"
+  alt="Routed Inflow Hydrograph, Tabular Output."
+  caption="Routed Inflow Hydrograph, Tabular Output."
 />
 
 <CitationFootnote/>
