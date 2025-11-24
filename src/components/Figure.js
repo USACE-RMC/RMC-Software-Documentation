@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import "../css/custom.css";
-import { useReportId } from "../contexts/ReportIdContext"; // Import the context hook to retrieve the reportId
+import { useEffect, useState } from 'react';
+import { useReportId } from '../contexts/ReportIdContext'; // Import the context hook to retrieve the reportId
+import '../css/custom.css';
 
-const Figure = ({ figKey, src, alt, caption, width = "80%", id }) => {
+const Figure = ({ figKey, src, alt, caption, width = '80%', id }) => {
   const [figInfo, setFigInfo] = useState(null);
   const reportId = useReportId(); // Get the reportId from the context
 
@@ -33,7 +33,7 @@ const Figure = ({ figKey, src, alt, caption, width = "80%", id }) => {
           console.warn(`Figure key "${figKey}" not found in ${jsonPath}`);
         }
       } catch (error) {
-        console.error("Error loading counters:", error);
+        console.error('Error loading counters:', error);
       }
     };
 
@@ -45,15 +45,15 @@ const Figure = ({ figKey, src, alt, caption, width = "80%", id }) => {
   return (
     <figure
       id={figureId}
-      className="
-      w-full
-      ml-0 mr-auto my-[1em]
-      py-5
-      justify-items-start
-      border-y border-border-color"
+      className="my-[1em] ml-0 mr-auto w-full justify-items-start border-y border-border-color py-5"
     >
-      <img src={`/RMC-Software-Documentation/${src}`} alt={alt} className="h-auto block" style={{ maxWidth: width }} />
-      <figcaption className="max-w-full font-usace text-caption italic text-left text-gray-500 dark:text-gray-400 mt-[1em]">
+      <img
+        src={`/RMC-Software-Documentation/${src}`}
+        alt={alt}
+        className="block h-auto bg-white"
+        style={{ maxWidth: width }}
+      />
+      <figcaption className="mt-[1em] max-w-full text-left font-usace text-caption italic text-gray-500 dark:text-gray-400">
         Figure {figInfo.figNumber}: {caption}
       </figcaption>
     </figure>
