@@ -43,8 +43,8 @@
 
 ## File: 04-background.mdx
 
-### Issue 1: Wetted Perimeter Symbol
-- **Location:** Equation 1 and Equation 2
+### Issue 1: Wetted Perimeter Symbol (Equation 1)
+- **Location:** Equation 1
 - **Category:** Equation
 - **Severity:** Major
 - **Problem:** Equations use `P_W` but variable is defined as `P_w` in text/PDF.
@@ -52,18 +52,72 @@
 - **Fix Applied:** No
 - **Human Verification Required:** Yes
 
+### Issue 2: Wetted Perimeter Symbol (Equation 2)
+- **Location:** Equation 2
+- **Category:** Equation
+- **Severity:** Major
+- **Problem:** Equations use `P_W` but variable is defined as `P_w` in text/PDF.
+- **Recommended Fix:** Update to `P_w` if consistent with PDF symbols.
+- **Fix Applied:** No
+- **Human Verification Required:** Yes
+
+### Issue 3: Missing Raw Citation Text
+- **Location:** Paragraph referencing probability tables
+- **Category:** Citation
+- **Severity:** Major
+- **Problem:** PDF cites "Fell et al. (2008)" for the probability tables, but MDX has only `<Citation citationKey="Fell2008" />` with no raw reference text.
+- **Recommended Fix:** Add the raw reference text (e.g., "Fell et al. (2008)") adjacent to the `<Citation>` component.
+- **Fix Applied:** No
+- **Human Verification Required:** No
+
+### Issue 4: Missing Citation Component in Figure Caption
+- **Location:** Figure 8 caption
+- **Category:** Citation
+- **Severity:** Major
+- **Problem:** Caption includes "Fell et al. 2015" but no `<Citation>` component is present in the caption.
+- **Recommended Fix:** Add `<Citation citationKey="Fell2015" />` in the caption text alongside the author-year.
+- **Fix Applied:** No
+- **Human Verification Required:** No
+
 ---
 
 ## File: 05-cylindrical-pipe.mdx
 
-### Issue 1: Unit Weight Symbol Casing
-- **Location:** Equation 3 and Equation 5
+### Issue 1: Unit Weight Symbol Casing (Equation 3)
+- **Location:** Equation 3
 - **Category:** Equation
 - **Severity:** Major
 - **Problem:** Equations use `\gamma_{W}` (uppercase) instead of `\gamma_{w}`.
 - **Recommended Fix:** Confirm PDF symbol casing and update if needed.
 - **Fix Applied:** No
 - **Human Verification Required:** Yes
+
+### Issue 2: Unit Weight Symbol Casing (Equation 5)
+- **Location:** Equation 5
+- **Category:** Equation
+- **Severity:** Major
+- **Problem:** Equations use `\gamma_{W}` (uppercase) instead of `\gamma_{w}`.
+- **Recommended Fix:** Confirm PDF symbol casing and update if needed.
+- **Fix Applied:** No
+- **Human Verification Required:** Yes
+
+### Issue 3: "Where" Term Prefix Formatting (Equation 3)
+- **Location:** Equation 3 where block
+- **Category:** MDX
+- **Severity:** Minor
+- **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
+- **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
+- **Fix Applied:** No
+- **Human Verification Required:** No
+
+### Issue 4: "Where" Term Prefix Formatting (Equation 4)
+- **Location:** Equation 4 where block
+- **Category:** MDX
+- **Severity:** Minor
+- **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
+- **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
+- **Fix Applied:** No
+- **Human Verification Required:** No
 
 ---
 
@@ -78,21 +132,39 @@
 - **Fix Applied:** No
 - **Human Verification Required:** No
 
-### Issue 2: Unit Weight Symbol Casing
-- **Location:** Equation 6 and Equation 7
+### Issue 2: Unit Weight Symbol Casing (Equation 6)
+- **Location:** Equation 6
 - **Category:** Equation
 - **Severity:** Major
 - **Problem:** Equations use `\gamma_{W}` (uppercase) instead of `\gamma_{w}`.
 - **Recommended Fix:** Confirm PDF symbol casing and update if needed.
 - **Fix Applied:** No
 - **Human Verification Required:** Yes
+
+### Issue 3: Unit Weight Symbol Casing (Equation 7)
+- **Location:** Equation 7
+- **Category:** Equation
+- **Severity:** Major
+- **Problem:** Equations use `\gamma_{W}` (uppercase) instead of `\gamma_{w}`.
+- **Recommended Fix:** Confirm PDF symbol casing and update if needed.
+- **Fix Applied:** No
+- **Human Verification Required:** Yes
+
+### Issue 4: "Where" Term Prefix Formatting (Equation 6)
+- **Location:** Equation 6 where block
+- **Category:** MDX
+- **Severity:** Minor
+- **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
+- **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
+- **Fix Applied:** No
+- **Human Verification Required:** No
 
 ---
 
 ## File: 07-vertical-rectangular-crack.mdx
 
-### Issue 1: Unit Weight Symbol Casing
-- **Location:** Equation 8 and Equation 9
+### Issue 1: Unit Weight Symbol Casing (Equation 8)
+- **Location:** Equation 8
 - **Category:** Equation
 - **Severity:** Major
 - **Problem:** Equations use `\gamma_{W}` (uppercase) instead of `\gamma_{w}`.
@@ -100,12 +172,39 @@
 - **Fix Applied:** No
 - **Human Verification Required:** Yes
 
+### Issue 2: Unit Weight Symbol Casing (Equation 9)
+- **Location:** Equation 9
+- **Category:** Equation
+- **Severity:** Major
+- **Problem:** Equations use `\gamma_{W}` (uppercase) instead of `\gamma_{w}`.
+- **Recommended Fix:** Confirm PDF symbol casing and update if needed.
+- **Fix Applied:** No
+- **Human Verification Required:** Yes
+
+### Issue 3: Missing Citation Component in Figure Caption
+- **Location:** Figure 35 caption
+- **Category:** Citation
+- **Severity:** Major
+- **Problem:** Caption includes "Foster et al. 2002" but no `<Citation>` component is present in the caption.
+- **Recommended Fix:** Add `<Citation citationKey="Foster2002" />` in the caption text alongside the author-year.
+- **Fix Applied:** No
+- **Human Verification Required:** No
+
 ---
 
 ## File: 08-vertical-triangular-crack.mdx
 
-### Issue 1: Unit Weight Symbol Casing
-- **Location:** Equation 10 and Equation 11
+### Issue 1: Unit Weight Symbol Casing (Equation 10)
+- **Location:** Equation 10
+- **Category:** Equation
+- **Severity:** Major
+- **Problem:** Equations use `\gamma_{W}` (uppercase) instead of `\gamma_{w}`.
+- **Recommended Fix:** Confirm PDF symbol casing and update if needed.
+- **Fix Applied:** No
+- **Human Verification Required:** Yes
+
+### Issue 2: Unit Weight Symbol Casing (Equation 11)
+- **Location:** Equation 11
 - **Category:** Equation
 - **Severity:** Major
 - **Problem:** Equations use `\gamma_{W}` (uppercase) instead of `\gamma_{w}`.
@@ -123,6 +222,15 @@
 - **Severity:** Minor
 - **Problem:** "Fell et. al." includes an extra period after "et"; PDF uses "Fell et al."
 - **Recommended Fix:** Remove the extra period.
+- **Fix Applied:** No
+- **Human Verification Required:** No
+
+### Issue 2: Missing Citation Component in Figure Caption
+- **Location:** Figure 42 caption
+- **Category:** Citation
+- **Severity:** Major
+- **Problem:** Caption includes "Fell et al. (2008)" but no `<Citation>` component is present in the caption.
+- **Recommended Fix:** Add `<Citation citationKey="Fell2008" />` in the caption text alongside the author-year.
 - **Fix Applied:** No
 - **Human Verification Required:** No
 
@@ -148,16 +256,25 @@
 - **Fix Applied:** No
 - **Human Verification Required:** Yes
 
-### Issue 3: Corrupted Tau Symbol in Text
-- **Location:** Two "Solving Equation..." sentences
+### Issue 3: Corrupted Tau Symbol in Text (Sentence 1)
+- **Location:** First "Solving Equation..." sentence
 - **Category:** Text
 - **Severity:** Major
-- **Problem:** Tau symbol in text appears corrupted in two sentences.
+- **Problem:** Tau symbol in text appears corrupted in the first sentence.
 - **Recommended Fix:** Restore correct tau symbol in text.
 - **Fix Applied:** No
 - **Human Verification Required:** Yes
 
-### Issue 4: Stray Brace in Tau Symbol
+### Issue 4: Corrupted Tau Symbol in Text (Sentence 2)
+- **Location:** Second "Solving Equation..." sentence
+- **Category:** Text
+- **Severity:** Major
+- **Problem:** Tau symbol in text appears corrupted in the second sentence.
+- **Recommended Fix:** Restore correct tau symbol in text.
+- **Fix Applied:** No
+- **Human Verification Required:** Yes
+
+### Issue 5: Stray Brace in Tau Symbol
 - **Location:** Equation A-94 sentence
 - **Category:** Equation
 - **Severity:** Major
@@ -166,14 +283,122 @@
 - **Fix Applied:** No
 - **Human Verification Required:** Yes
 
-### Issue 5: Wetted Perimeter Symbol Casing
-- **Location:** Multiple equations using `P_W`
+### Issue 6: Wetted Perimeter Symbol Casing (Equation A-6)
+- **Location:** Equation A-6 (equation-17)
 - **Category:** Equation
 - **Severity:** Major
-- **Problem:** Inconsistent `P_W` vs `P_w` notation for wetted perimeter.
-- **Recommended Fix:** Confirm correct casing per PDF and update consistently.
+- **Problem:** Equation uses `P_W` but variable is defined as `P_w` in text/PDF.
+- **Recommended Fix:** Update to `P_w` if consistent with PDF symbols.
 - **Fix Applied:** No
 - **Human Verification Required:** Yes
+
+### Issue 7: Wetted Perimeter Symbol Casing (Equation A-20)
+- **Location:** Equation A-20 (equation-31)
+- **Category:** Equation
+- **Severity:** Major
+- **Problem:** Equation uses `P_W` but variable is defined as `P_w` in text/PDF.
+- **Recommended Fix:** Update to `P_w` if consistent with PDF symbols.
+- **Fix Applied:** No
+- **Human Verification Required:** Yes
+
+### Issue 8: Wetted Perimeter Symbol Casing (Equation A-38)
+- **Location:** Equation A-38 (equation-49)
+- **Category:** Equation
+- **Severity:** Major
+- **Problem:** Equation uses `P_W` but variable is defined as `P_w` in text/PDF.
+- **Recommended Fix:** Update to `P_w` if consistent with PDF symbols.
+- **Fix Applied:** No
+- **Human Verification Required:** Yes
+
+### Issue 9: Wetted Perimeter Symbol Casing (Equation A-64)
+- **Location:** Equation A-64 (equation-75)
+- **Category:** Equation
+- **Severity:** Major
+- **Problem:** Equation uses `P_W` but variable is defined as `P_w` in text/PDF.
+- **Recommended Fix:** Update to `P_w` if consistent with PDF symbols.
+- **Fix Applied:** No
+- **Human Verification Required:** Yes
+
+### Issue 10: "Where" Term Prefix Formatting (Equation A-1)
+- **Location:** Equation A-1 where block (equation-12)
+- **Category:** MDX
+- **Severity:** Minor
+- **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
+- **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
+- **Fix Applied:** No
+- **Human Verification Required:** No
+
+### Issue 11: "Where" Term Prefix Formatting (Equation A-6)
+- **Location:** Equation A-6 where block (equation-17)
+- **Category:** MDX
+- **Severity:** Minor
+- **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
+- **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
+- **Fix Applied:** No
+- **Human Verification Required:** No
+
+### Issue 12: "Where" Term Prefix Formatting (Equation A-15)
+- **Location:** Equation A-15 where block (equation-26)
+- **Category:** MDX
+- **Severity:** Minor
+- **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
+- **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
+- **Fix Applied:** No
+- **Human Verification Required:** No
+
+### Issue 13: "Where" Term Prefix Formatting (Equation A-20)
+- **Location:** Equation A-20 where block (equation-31)
+- **Category:** MDX
+- **Severity:** Minor
+- **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
+- **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
+- **Fix Applied:** No
+- **Human Verification Required:** No
+
+### Issue 14: "Where" Term Prefix Formatting (Equation A-35)
+- **Location:** Equation A-35 where block (equation-46)
+- **Category:** MDX
+- **Severity:** Minor
+- **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
+- **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
+- **Fix Applied:** No
+- **Human Verification Required:** No
+
+### Issue 15: "Where" Term Prefix Formatting (Equation A-38)
+- **Location:** Equation A-38 where block (equation-49)
+- **Category:** MDX
+- **Severity:** Minor
+- **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
+- **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
+- **Fix Applied:** No
+- **Human Verification Required:** No
+
+### Issue 16: "Where" Term Prefix Formatting (Equation A-55)
+- **Location:** Equation A-55 where block (equation-66)
+- **Category:** MDX
+- **Severity:** Minor
+- **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
+- **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
+- **Fix Applied:** No
+- **Human Verification Required:** No
+
+### Issue 17: "Where" Term Prefix Formatting (Equation A-64)
+- **Location:** Equation A-64 where block (equation-75)
+- **Category:** MDX
+- **Severity:** Minor
+- **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
+- **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
+- **Fix Applied:** No
+- **Human Verification Required:** No
+
+### Issue 18: "Where" Term Prefix Formatting (Equation A-66)
+- **Location:** Equation A-66 where block (equation-77)
+- **Category:** MDX
+- **Severity:** Minor
+- **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
+- **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
+- **Fix Applied:** No
+- **Human Verification Required:** No
 
 ---
 
