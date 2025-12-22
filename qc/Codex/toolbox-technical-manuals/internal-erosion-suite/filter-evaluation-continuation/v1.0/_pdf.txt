@@ -1,0 +1,1838 @@
+RMC Filter Evaluation
+(Continuation) Toolbox
+2
+
+RMC Internal Erosion Suite
+RMC-CPD-2023-04
+January 2024
+
+Cover Photo: Construction of Seven Oaks Dam in San Bernadino County, California (source unknown).
+
+RMC Filter Evaluation (Continuation)
+Toolbox
+RMC Internal Erosion Suite
+RMC-CPD-2023-04
+January 2024
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+REPORT DOCUMENTATION PAGE
+1. REPORT DATE
+
+2. REPORT TYPE
+
+3. DATES COVERED
+START DATE
+
+END DATE
+
+Jan 2024
+
+Computer Program Document
+
+N/A
+
+N/A
+
+4. TITLE AND SUBTITLE
+
+RMC Filter Evaluation (Continuation) Toolbox: RMC Internal Erosion Suite
+5a. CONTRACT NUMBER
+
+5b. GRANT NUMBER
+
+5c. PROGRAM ELEMENT NUMBER
+
+N/A
+
+N/A
+
+N/A
+
+5d. PROJECT NUMBER
+
+5e. TASK NUMBER
+
+5f. WORK UNIT NUMBER
+
+N/A
+
+N/A
+
+N/A
+
+6. AUTHOR(S)
+
+Adam Gohs, Risk Management Center
+8. PERFORMING ORGANIZATION
+REPORT NUMBER
+
+7. PERFORMING ORGANIZATION NAME(S) AND ADDRESS(ES)
+
+Risk Management Center
+12596 West Bayaud Ave. Suite 400
+Lakewood, CO 80228
+
+RMC-CPD-2023-04
+
+9. SPONSORING/MONITORING AGENCY NAME(S) AND ADDRESS(ES)
+
+Risk Management Center
+12596 West Bayaud Ave. Suite 400
+Lakewood, CO 80228
+
+10. SPONSOR/MONITOR’S
+ACRONYM(S)
+
+11. SPONSOR/MONITOR’S
+REPORT NUMBER(S)
+
+CEIWR-RMC
+
+RMC-CPD-2023-04
+
+12. DISTRIBUTION/AVAILABILITY STATEMENT
+
+Approved for public release; distribution is unlimited.
+13. SUPPLEMENTARY NOTES
+
+N/A
+14. ABSTRACT
+
+The spreadsheet tools contained in this toolbox assess the particle retention and permeability criteria for filter materials. It includes modern
+no-erosion filter design criteria, the Foster and Fell (2001) method for filters that do not meet modern filter design criteria, and the Fell et al.
+(2008) method for “continuing erosion” condition for constricted exits.
+
+15. SUBJECT TERMS
+
+Internal erosion, continuation, filter evaluation, filter design criteria
+16. SECURITY CLASSIFICATION OF:
+a. REPORT
+b. ABSTRACT
+
+c. THIS PAGE
+
+U
+
+U
+
+U
+
+17. LIMITATION OF ABSTRACT
+
+18. NUMBER OF PAGES
+
+UU
+
+43
+
+19a. NAME OF RESPONSIBLE PERSON
+
+19b. PHONE NUMBER (Include area code)
+
+Tim O’Leary
+
+(502) 315-6599
+
+STANDARD FORM 298 (REF 5/2020)
+
+Page 1 of 1
+
+Prescribed by ANSI Std Z39.18
+PREVIOUS EDITION IS OBSOLETE
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+PREPARED
+The results, findings, and recommendations provided in this document are technically sound and
+consistent with current Corps of Engineers practice.
+Adam Gohs, Risk Management Center
+
+REVIEWED
+This report has been checked and reviewed and is believed to be in accordance with the standards of the
+profession.
+Tim O’Leary, Risk Management Center
+
+APPROVED
+Nate Snorteland, Risk Management Center
+
+USACE Dam and Levee Safety Programs
+
+i
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+TABLE OF CONTENTS
+1.
+
+INTRODUCTION ............................................................................................................................... 1
+
+2.
+
+TERMS AND CONDITIONS FOR USE .......................................................................................... 2
+2.1. Terms and Conditions for Use of Institute for Water Resources Software .................................. 2
+2.2. Waiver of Warranty ...................................................................................................................... 2
+2.3. Limitation of Liability .................................................................................................................. 3
+2.4. Indemnity ...................................................................................................................................... 3
+
+3.
+
+GENERAL OVERVIEW ................................................................................................................... 4
+3.1. Getting Started .............................................................................................................................. 4
+3.2. Organization ................................................................................................................................. 4
+
+4.
+
+BACKGROUND ................................................................................................................................. 7
+
+5.
+
+FILTER GRADATION ...................................................................................................................... 9
+5.1. Filter Gradation............................................................................................................................. 9
+5.2. Filter Gradation After Segregation or Washout .......................................................................... 11
+
+6.
+
+BASE GRADATION ........................................................................................................................ 12
+6.1. Base Soil Gradation .................................................................................................................... 12
+6.2. Needs Assessment for Regrading ............................................................................................... 12
+6.3. Base Soil Gradation After Regrading ......................................................................................... 13
+
+7.
+
+DESIGN FOR PARTICLE RETENTION ..................................................................................... 16
+7.1. Base Soil Characterization.......................................................................................................... 16
+7.2. Filter Material Characterization .................................................................................................. 16
+7.3. Particle Retention Criterion ........................................................................................................ 17
+
+8.
+
+FOSTER AND FELL ........................................................................................................................ 19
+8.1. Base Soil Characterization.......................................................................................................... 20
+8.2. Filter Material Characterization .................................................................................................. 21
+8.3. No-Erosion Boundary ................................................................................................................. 21
+8.4. Continuing Erosion Boundary .................................................................................................... 22
+8.5. Excessive Erosion Boundary ...................................................................................................... 22
+8.6. Likelihood of Erosion ................................................................................................................. 24
+
+9.
+
+SUMMARY PLOT............................................................................................................................ 27
+
+10. CONSTRICTED EXIT ..................................................................................................................... 29
+USACE Dam and Levee Safety Programs
+
+ii
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+10.1. Base Soil Characterization.......................................................................................................... 29
+10.2. Open Joint, Defect, or Crack Characterization ........................................................................... 29
+10.3. Likelihood of Continuation......................................................................................................... 30
+11. PERMEABILITY ............................................................................................................................. 32
+11.1. Base Soil Characterization.......................................................................................................... 32
+11.2. Filter Material Characterization .................................................................................................. 32
+11.3. Permeability Criterion ................................................................................................................ 32
+12. REFERENCES .................................................................................................................................. 34
+
+LIST OF FIGURES
+Figure 1. Security warning message bars with the “Enable Content” option to enable macros. .................. 4
+Figure 2. Calculation worksheet heading. ..................................................................................................... 5
+Figure 3. Headwater and tailwater input: NAVD88. .................................................................................... 5
+Figure 4. Headwater and tailwater input: NGVD29. .................................................................................... 5
+Figure 5. Headwater and tailwater input: User-specified datum................................................................... 6
+Figure 6. Example of step banner. ................................................................................................................ 6
+Figure 7. Example of option banner.............................................................................................................. 6
+Figure 8. Schematic of filter providing particle retention (FEMA 2011). .................................................... 7
+Figure 9. Filter Gradation worksheet: Gradation input. ................................................................................ 9
+Figure 10. Filter gradation worksheet: Summary of particle-size analysis. ................................................ 10
+Figure 11. Event tree considerations for segregation or washout of finer fraction. .................................... 11
+Figure 12. Step 2 of Base Gradation worksheet: Conditions informing regrading. .................................... 12
+Figure 13. Step 2 of Base Gradation worksheet: Needs assessment for regrading. .................................... 13
+Figure 14. Step 3 of Base Gradation worksheet: No regrading. ................................................................. 13
+Figure 15. Step 3 of base gradation worksheet: Regrading on No. 4 sieve. ............................................... 13
+Figure 16. Step 3 of Base Gradation worksheet: Regrading on missing sieve size for gap-graded soils. .. 14
+Figure 17. Example regrading calculation on No. 4 sieve (United States Bureau of Reclamation [USBR]
+2011). ............................................................................................................................................. 14
+Figure 18. Step 3 of Base Gradation worksheet: Regraded base soil gradation. ........................................ 15
+Figure 19. Step 1 of Particle Retention worksheet: Base soil characterization........................................... 16
+Figure 20. Step 2 of Particle Retention worksheet: Filter material characterization. ................................. 16
+Figure 21. Step 3 of Particle Retention worksheet: Particle retention criterion not met............................. 17
+Figure 22. Step 3 of Particle Retention worksheet: Particle retention criterion met. .................................. 18
+
+USACE Dam and Levee Safety Programs
+
+iii
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+Figure 23. Conceptual erosion boundaries of continuing erosion filter test behavior (adapted from Foster
+and Fell 2001). ............................................................................................................................... 19
+Figure 24. Example of representative gradation curves. ............................................................................. 20
+Figure 25. Step 1 of Foster and Fell worksheet: Base soil characterization. .............................................. 21
+Figure 26. Step 2 of Foster and Fell worksheet: Filter material characterization. ...................................... 21
+Figure 27. Step 3 of Foster and Fell worksheet: No-erosion boundary. ..................................................... 22
+Figure 28. Step 4 of Foster and Fell worksheet: Continuing erosion boundary.......................................... 22
+Figure 29. Excessive erosion boundary (adapted from Fell et al. 2008). .................................................... 23
+Figure 30. Step 4 of Foster and Fell worksheet: Excessive erosion boundary............................................ 23
+Figure 31. Step 6 of Foster and Fell worksheet: Erosion boundaries for representative base soil gradation.
+....................................................................................................................................................... 25
+Figure 32. Step 6 of Foster and Fell worksheet: Estimated probability of continuing erosion. .................. 26
+Figure 33. Step 6 of Foster and Fell worksheet: Probability of each erosion condition. ............................ 26
+Figure 34. Summary Plot worksheet. .......................................................................................................... 28
+Figure 35. Step 1 of Constricted Exit worksheet: Base soil characterization. ............................................ 29
+Figure 36. Step 2 of Constricted Exit worksheet: Effective opening size................................................... 29
+Figure 37. Step 2 of Constricted Exit worksheet: Plot options. .................................................................. 30
+Figure 38. Step 3 of Constricted Exit worksheet: Probability of continuing erosion. ................................ 31
+Figure 39. Step 1 of Permeability worksheet: Base soil characterization. .................................................. 32
+Figure 40. Step 2 of Permeability worksheet: Filter material characterization. .......................................... 32
+Figure 41. Step 3 of Permeability worksheet: Primary permeability criteria not met. ............................... 33
+Figure 42. Step 3 of Permeability worksheet: Primary permeability criteria met....................................... 33
+
+LIST OF TABLES
+Table 1. Probability of continuing erosion for gradation finer than continuing erosion boundary. ............ 25
+Table 2. Probability of continuing erosion for joint/defect opening size (Fell and Foster 2023). .............. 30
+
+APPENDIXES
+APPENDIX A. ACRONYM LIST........................................................................................................... 35
+
+USACE Dam and Levee Safety Programs
+
+iv
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+1. Introduction
+The Risk Management Center (RMC) of the U.S. Army Corps of Engineers (USACE) has developed a
+suite of Microsoft Excel spreadsheets to support risk assessments for dam and levee safety. Each analysis
+suite is composed of multiple toolboxes (Microsoft Excel workbooks), and each toolbox contains multiple
+spreadsheet tools or calculation worksheets (Microsoft Excel worksheets). The RMC Filter Evaluation
+(Continuation) Toolbox is part of the RMC Internal Erosion Suite.
+The information from these spreadsheet tools, along with other pertinent information, informs judgment
+when developing a list of more and less likely factors and estimating probabilities. USACE best practice
+for estimating probabilities is to use the best available and multiple methods, but all final probabilities are
+estimated using team elicitation based on the totality and strength of the evidence.
+The RMC continuously works to improve the performance of RMC software; report possible bugs
+directly to the RMC at the address listed below. Ideally, report suspected errors in written form with a
+description of the problem and the steps that lead to its occurrence. Suggestions for improvement are also
+welcomed.
+U.S. Army Corps of Engineers
+Institute for Water Resources
+Risk Management Center
+RMC.software@usace.army.mil
+
+USACE Dam and Levee Safety Programs
+
+1
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+2. Terms and Conditions for Use
+By using Institute for Water Resources (IWR) software, users voluntarily accept the following terms and
+conditions. Users that do not agree to these terms and conditions should uninstall the IWR software and
+return any program materials to IWR and its technical centers. If users downloaded the software and do
+not have disk media, delete all copies and cease using the software.
+
+2.1.
+
+Terms and Conditions for Use of Institute for Water
+Resources Software
+
+The United States Government, U.S. Army Corps of Engineers, Institute for Water Resources (“IWR”),
+and IWR’s technical centers including the Risk Management Center (“RMC”) and Hydrologic
+Engineering Center (“HEC”) grant to the user the rights to install “IWR Software” (either from a disk
+copy obtained from IWR and IWR’s technical centers, a distributor or another user or by downloading it
+from a network) and to use, copy and/or distribute copies of the IWR Software to other users, subject to
+the following Terms and Conditions of Use:
+•
+
+All copies of the IWR Software received or reproduced by or for user pursuant to the authority of this
+Terms and Conditions of Use will be and remain the property of IWR.
+
+•
+
+User may reproduce and distribute the IWR Software provided that the recipient agrees to the Terms
+and Conditions for Use noted herein.
+
+•
+
+IWR and IWR’s technical centers are solely responsible for the content of the IWR Software. The
+IWR Software may not be modified, abridged, decompiled, disassembled, unobfuscated or reverse
+engineered. The user is solely responsible for the content, interactions, and effects of any and all
+amendments, if present, whether they be extension modules, language resource bundles, scripts, or
+any other amendment.
+
+•
+
+The name of the IWR Software must not be used to endorse or promote products derived from the
+IWR Software. Products derived from the IWR Software may not be called the IWR Software nor
+may any part of the IWR Software name appear within the name of derived products.
+
+•
+
+No part of this Terms and Conditions for Use may be modified, deleted or obliterated from the IWR
+Software.
+
+•
+
+No part of the IWR Software may be exported or re-exported in contravention of U.S. export laws or
+regulations.
+
+2.2.
+
+Waiver of Warranty
+
+THE UNITED STATES GOVERNMENT AND ITS AGENCIES, OFFICIALS, REPRESENTATIVES,
+AND EMPLOYEES, INCLUDING ITS CONTRACTORS AND SUPPLIERS PROVIDE THE IWR
+SOFTWARE “AS IS,” WITHOUT ANY WARRANTY OR CONDITION, EXPRESS, IMPLIED OR
+STATUTORY, AND SPECIFICALLY DISCLAIM ANY IMPLIED WARRANTIES OF TITLE,
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT.
+Depending on state law, the foregoing disclaimer may not apply to you, and you may also have other
+legal rights that vary from state to state.
+USACE Dam and Levee Safety Programs
+
+2
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+2.3.
+
+Limitation of Liability
+
+IN NO EVENT SHALL THE UNITED STATES GOVERNMENT AND ITS AGENCIES, OFFICIALS,
+REPRESENTATIVES, AND EMPLOYEES, INCLUDING ITS CONTRACTORS AND SUPPLIERS,
+BE LIABLE FOR LOST PROFITS OR ANY SPECIAL, INCIDENTAL OR CONSEQUENTIAL
+DAMAGES ARISING OUT OF OR IN CONNECTION WITH USE OF THE IWR SOFTWARE
+REGARDLESS OF CAUSE, INCLUDING NEGLIGENCE. THE UNITED STATES
+GOVERNMENT’S LIABILITY, AND THE LIABILITY OF ITS AGENCIES, OFFICIALS,
+REPRESENTATIVES, AND EMPLOYEES, INCLUDING ITS CONTRACTORS AND SUPPLIERS,
+TO YOU OR ANY THIRD PARTIES IN ANY CIRCUMSTANCE IS LIMITED TO THE
+REPLACEMENT OF CERTIFIED COPIES OF THE IWR SOFTWARE WITH IDENTIFIED ERRORS
+CORRECTED. Depending on state law, the above limitation or exclusion may not apply to you.
+
+2.4.
+
+Indemnity
+
+As a voluntary user of the IWR Software you agree to indemnify and hold the United States Government,
+and its agencies, officials, representatives, and employees, including its contractors and suppliers,
+harmless from any claim or demand, including reasonable attorneys’ fees, made by any third party due to
+or arising out of your use of the IWR Software or breach of this Agreement or your violation of any law
+or the rights of a third party.
+
+USACE Dam and Levee Safety Programs
+
+3
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+3. General Overview
+3.1.
+
+Getting Started
+
+Copy or download the toolbox file to the computer. To open the toolbox file, either:
+•
+
+Find the file on the computer and double-click it. This opens the file in Microsoft Excel.
+
+•
+
+Open Microsoft Excel and use the application to open the file: Once Microsoft Excel is open, go to
+the File menu at the top of the window and select Open.
+
+The toolbox is an Excel binary workbook (.xlsb) that uses macros. You may need to enable the macros,
+either before opening the file or by clicking “Enable Content” in the yellow Security Warning message
+bar with a shield icon that appears after the file is opened. The actual message in the message bar will
+vary depending on the computer’s settings and installed add-ins. Figure 1 displays examples of different
+wordings that may appear in the message bar.
+
+Figure 1. Security warning message bars with the “Enable Content” option to enable macros.
+
+3.2.
+
+Organization
+
+Although the toolbox does not provide a calculation cover sheet, adding one is strongly recommended. A
+calculation cover sheet captures project information, a description and purpose of the calculation, the
+assumptions for critical input parameters, a summary of the major conclusion and results, and a revision
+history.
+Each toolbox has a similar appearance and organizational structure:
+•
+
+The first worksheet, About, summarizes the purpose of the toolbox and gives contact information for
+the RMC software development team.
+
+•
+
+The second worksheet, Terms and Conditions, contains the terms and conditions for use of the
+toolbox (IWR software).
+
+•
+
+The third worksheet, Version History, contains the revision history. Semantic versioning is used in
+the format of MAJOR.MINOR.PATCH:
+−
+
+MAJOR – significant worksheet changes not compatible with previous versions.
+
+−
+
+MINOR – additional features or enhancements that do not fundamentally change the calculations.
+
+−
+
+PATCH – backward-compatible bug fixes.
+
+USACE Dam and Levee Safety Programs
+
+4
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+•
+
+The fourth worksheet, References, lists the references cited for each calculation worksheet.
+
+The workbook and worksheets are not protected to prevent unwanted changes. However, because the
+toolbox has user-defined functions (UDFs) and subroutines in Visual Basic, you cannot directly copy
+worksheets to another workbook without potentially losing functionality. A note in a bold red font at the
+upper right margin indicates if the selected worksheet includes such features.
+At the top of each calculation worksheet, input information for the preparer and checker for quality
+control (QC) documentation and the calculation title in case multiple copies of the worksheet are created
+for different analysis scenarios (Figure 2). The footer of each calculation worksheet contains the version
+number, which can be cross-referenced with the revision history on the third worksheet.
+Prepared by:
+Checked by:
+Calculation Title:
+
+Office:
+Office:
+
+Date:
+Date:
+
+Figure 2. Calculation worksheet heading.
+User-specified input includes values and selections from drop-down lists. User input cells are light
+yellow, and these cells are unprotected. When cells use drop-down lists, a note in blue font in the right
+margin of the row alerts the user to use the drop-down list. Conditional formatting applies a gray
+background to cells that are not based on a user selection. When a user-specified value or calculated value
+is outside of acceptable ranges, the cell is orange to indicate caution to the user.
+All units for user-specified input values are clearly labeled. Most user-specified input values use English
+units. However, values may be in metric where metric units are more common in practice (e.g., particle
+size in millimeters or permeability in centimeters per second). The toolbox may convert English units to
+metric units to perform some calculations or if required for a specific formula based on the reference
+material for the equation.
+If the calculation worksheet is a function of headwater level, up to seven headwater and tailwater levels
+may be specified at the top of the worksheet. Tailwater may be required to calculate the net hydraulic
+head and hydraulic gradient. Specify the elevation datum by selecting one of three options from the dropdown list: ft-NAVD88, ft-NGVD29, and Other. The two datum selections include English units of length
+(feet). If Other is selected, provide a user-specified datum along with feet (e.g., ft-MSL [Mean Sea
+Level]). Figure 3 through Figure 5 illustrate the three possible scenarios.
+Elevation datum
+HW (ft)
+TW (ft)
+
+ft-NAVD88
+195.5
+184.0
+
+201.6
+184.0
+
+◄ Use drop-down list.
+
+Specify datum
+213.5
+184.0
+
+218.9
+184.0
+
+223.0
+184.0
+
+234.0
+184.0
+
+239.0
+184.0
+
+◄ Headwater level, HW (ft-NAVD88)
+◄ Tailwater level, TW (ft-NAVD88)
+
+Figure 3. Headwater and tailwater input: NAVD88.
+Elevation datum
+HW (ft)
+TW (ft)
+
+ft-NGVD29
+195.5
+184.0
+
+201.6
+184.0
+
+◄ Use drop-down list.
+
+Specify datum
+213.5
+184.0
+
+218.9
+184.0
+
+223.0
+184.0
+
+234.0
+184.0
+
+239.0
+184.0
+
+◄ Headwater level, HW (ft-NGVD29)
+◄ Tailwater level, TW (ft-NGVD29)
+
+Figure 4. Headwater and tailwater input: NGVD29.
+
+USACE Dam and Levee Safety Programs
+
+5
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+Elevation datum
+HW (ft)
+TW (ft)
+
+Other
+195.5
+184.0
+
+201.6
+184.0
+
+Specify datum
+213.5
+184.0
+
+218.9
+184.0
+
+◄ Use drop-down list.
+
+ft-MSL
+223.0
+184.0
+
+234.0
+184.0
+
+239.0
+184.0
+
+◄ Headwater level, HW (ft-MSL)
+◄ Tailwater level, TW (ft-MSL)
+
+Figure 5. Headwater and tailwater input: User-specified datum.
+Most calculation worksheets break down complex analysis into computational steps following a logical
+sequence (Figure 6). Some simpler worksheets do not have steps. Generally, different methodologies are
+unique worksheets. Some worksheets may include multiple methodologies, which are labeled as options
+(Figure 7).
+Step 1: Select the method of analysis
+
+Figure 6. Example of step banner.
+
+Figure 7. Example of option banner.
+Some calculation worksheets can perform either a deterministic or probabilistic analysis. Although not
+required to perform a probabilistic analysis, Palisade @RISK software (standalone version or as part of
+the Palisade DecisionTools Suite) can customize the probabilistic analysis. A note appears in a bold red
+font at the upper right-hand margin of a calculation worksheet indicating if this feature is included with
+the toolbox.
+User notes generally appear in the right margin of each calculation worksheet. Some notes are in blue or
+red font for heightened awareness. These notes include references to source materials for equations,
+figures, tables, pages, etc. If the RMC modified the source material, the reference citation says “adapted
+from” instead of “from.”
+Tabular and/or graphical summaries are generally the primary output of the toolbox. The UDFs in the
+PlotScale module change the minimum and maximum values of the x-axis and y-axis for charts. If the
+calculation worksheet is a function of headwater level, you can define up to five headwater levels of
+interest and plot them as vertical reference lines. By selecting the chart and then selecting the Filter icon
+to display the filter pane, you can choose which data series to display. This is useful when computing the
+results from multiple methodologies, but not all are applicable or desired to display.
+
+USACE Dam and Levee Safety Programs
+
+6
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+4. Background
+Once erosion initiates, it continues unless the eroding forces are reduced or migrating eroded particles are
+impeded. Continuation is the phase of internal erosion where the relationship of the particle-size
+distribution between the base soil (core) and the filters or adjacent materials controls whether erosion will
+continue.
+Filters are designed to prevent particle movement from intergranular seepage flow where defects are
+present in a base soil or seepage water flows through pore spaces of a soil mass in an embankment or
+foundation. A properly designed filter prevents movement of base soils by seepage forces at a discharge
+face. The filter supports the discharge face such that bridging between closely spaced contact points
+prevents any movement of base soil particles into the filter. The filter is also sufficiently coarse to allow
+seepage water to escape freely. Figure 8 illustrates how the filter, in contact with the soil discharge face,
+supports and prevents soil movement.
+
+Figure 8. Schematic of filter providing particle retention (FEMA 2011).
+The Federal Emergency Management Agency (FEMA) (2011) defines a filter as a soil gradation that
+meets both particle retention and drainage criteria. The term drain refers to a soil gradation that is
+typically a second stage to the first-stage filter and conveys larger amounts of seepage. This toolbox
+assesses the particle retention and permeability criteria of filters to inform the likelihood of continuation
+of erosion. The procedures for evaluating particle retention can be for single-stage and multi-stage filters.
+
+USACE Dam and Levee Safety Programs
+
+7
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+For multi-stage filters, repeat the procedure for each zone boundary progressing from the finest to the
+coarsest-grained filter material.
+In their published literature, Terzaghi and Sherard used a lowercase “d” to represent the particle size
+(diameter) of the base soil and an uppercase “D” for the particle size (diameter) of the filter material. This
+nomenclature is still commonly used but can be confusing when designing or evaluating two-stage filters
+since the filter from the first stage becomes the base for the second stage. Therefore, the toolbox uses the
+following nomenclature:
+•
+
+DXXY, where D = particle size (diameter)
+
+•
+
+XX = percentage passing by weight of particles finer than D
+
+•
+
+Y = material designation (either B = base, F = first-stage filter, E = second-stage envelope, or other
+drainage element).
+
+USACE Dam and Levee Safety Programs
+
+8
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+5. Filter Gradation
+This worksheet performs a particle-size analysis of the filter material.
+
+5.1.
+
+Filter Gradation
+
+The input includes sieve size (inches or sieve number), particle size (mm) for hydrometer analysis, and
+percent finer (by weight) for representative coarse and fine gradations of the filter material.
+Use the drop-down list to select the sieve size that defines the gradation of the filter material. Coarse sieve
+designations range from 12 inches to 0.25 inch, and standard sieve designations range from No. 3½ to No.
+200. The particle size (D) in millimeters is automatically populated if a sieve size is selected. If a
+hydrometer (sedimentation) analysis was performed on the fine-grained portion of the filter material (i.e.,
+passing the No. 200 sieve), select “Hydrometer” from the drop-down list for sieve size, and input
+user-specified particle sizes. Particle sizes from sieve or hydrometer analysis must be in descending order.
+The user-specified percent finer (by weight) for the filter material gradation (F) is the percentage of
+material passing each sieve size or percentage of particles finer than the diameter given by Stokes’ Law
+for hydrometer analysis. The input must be a decimal number consisting of a whole number and a
+fractional part (e.g., 100.0 for 100.0 percent passing, 25.5 for 25.5 percent passing). Cells that do not
+apply or do not require user-specified input have a gray background. Figure 9 is an example of the
+gradation input.
+
+Figure 9. Filter Gradation worksheet: Gradation input.
+
+USACE Dam and Levee Safety Programs
+
+9
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+Figure 10 is an example of the summary of the particle-size analysis for the user-specified gradations. The
+gravel percentage (including coarse and fine gravel percentages), sand percentage (including coarse,
+medium, and fine sand percentages), fines content (FC) (including estimated silt and clay percentages),
+coefficient of uniformity (Cu) and coefficient of curvature (Cc) for the coarsest and finest filter material
+are calculated according to the Unified Soil Classification System (American Society of Testing and
+Materials [ASTM] D2487). An average percentage is also calculated.
+The coefficient of uniformity (Cu) is calculated as in Equation 1.
+𝐶𝑢 =
+
+𝐷60
+𝐷10
+
+(1)
+
+where:
+D10 = particle-size diameter corresponding to 10 percent passing on the cumulative
+particle-size distribution curve
+D60 = particle-size diameter corresponding to 60 percent passing on the cumulative
+particle-size distribution curve
+The coefficient of curvature (Cc) is calculated as in Equation 2.
+(𝐷 )2
+
+𝐶𝑐 = 𝐷 30𝐷
+
+10 60
+
+(2)
+
+where:
+D30 = particle-size diameter corresponding to 30 percent passing on the cumulative
+particle-size distribution curve
+If a gradation does not specify the particle size corresponding to 10 percent passing, 30 percent passing,
+or 60 percent passing, Cu and Cc are not calculated.
+
+Figure 10. Filter gradation worksheet: Summary of particle-size analysis.
+
+USACE Dam and Levee Safety Programs
+
+10
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+5.2.
+
+Filter Gradation After Segregation or Washout
+
+The filter material may be susceptible to segregation or internal instability. Segregation is the tendency of
+large particles in a given mass of aggregate to gather together when the material is loaded, transported, or
+otherwise disturbed.
+Segregation can cause pockets of coarse zones that may not be filter-compatible with the material being
+protected. FEMA (2011) provides filter design guidance to limit segregation potential based on the
+maximum D90F and the minimum D10F. This segregation criteria consider only the design gradation, and
+the potential for segregation during storing, hauling, dumping, spreading, and compacting must also be
+considered, which is more subjective and relies on indirect evidence such as construction photographs.
+Internal instability describes the loss of soil particles because of seepage. Finer particles in the soil can
+move within the soil mass under the forces imposed on the particles by seepage flow. Gap-graded or
+broadly graded soils are examples of internally unstable soils. The RMC Internal Instability Toolbox
+assesses the susceptibility of the filter material to internal instability. Soils which are susceptible to
+internal instability are also susceptible to segregation.
+Segregation and internal instability result in a coarser filter. Figure 11 illustrates an event tree node that
+can be added to explicitly consider the likelihood of the filter being segregated or internally unstable
+during a risk assessment. The particle retention evaluation must consider two gradations of the filter
+material. Perform the first evaluation using the original or stable gradation and perform the second
+evaluation using the adjusted gradation after segregation or washout of the erodible finer fraction.
+
+Figure 11. Event tree considerations for segregation or washout of finer fraction.
+
+USACE Dam and Levee Safety Programs
+
+11
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+6. Base Gradation
+This worksheet performs a particle-size analysis of the original base soil gradation and, if necessary, the
+regraded base soil.
+
+6.1.
+
+Base Soil Gradation
+
+In step 1, the gradation input and particle-size analysis for the base soil is the same as the filter material
+detailed.
+
+6.2.
+
+Needs Assessment for Regrading
+
+Sherard and Dunnigan (1989) developed the concept of a mathematical adjustment or regrading the base
+soil to a maximum particle size of 4.75 mm (100 percent passing the No. 4 sieve) for soils with gravels
+and to correct for broadly graded soils. Broadly graded soils can be internally unstable, where the finer
+particles can move internally within a matrix of larger particles, and regrading corrects for this
+phenomenon. Permitting the inclusion of gravel within a base soil gradation leads to a large D85B and
+subsequently, a large D15F. Since gravel particles do not have any particle retention capability in broadly
+graded soils, the resulting filter gradation is too coarse to provide particle retention of the finer fraction of
+the base soil.
+Step 2 performs a needs assessment for regrading the base soil using a series of questions about various
+base soil characteristics. Use the drop-down list to assess whether the base soil is gap-graded, because a
+visual examination of the shape of the gradation curve and judgment are required. Base soils containing
+particles larger than the No. 4 sieve, having FC less than 15 percent, and being broadly graded are
+evaluated based on the particle-size analysis in step 1. Broadly graded soils are defined by ASTM D2487
+as having 1 ≤ Cc ≤ 3 and having Cu ≥ 6 for sands or Cu ≥ 4 for gravels. The evaluation of broadly graded
+soils may be inconclusive if Cu and Cc are not calculated because D10B or D30B are not available, for
+example. For that scenario, manually extrapolate the gradation curve and externally calculate Cu and Cc.
+Use the drop-down list for the final assessment for whether the base soil is broadly graded. Figure 12 is
+an example of the responses to the questions about conditions informing regrading.
+
+Figure 12. Step 2 of Base Gradation worksheet: Conditions informing regrading.
+Based on the responses to the questions, the needs assessment evaluation sequence is as follows:
+1.
+
+If the base soil is gap-graded, it must be regraded on the particle size (closest sieve) that is missing.
+
+USACE Dam and Levee Safety Programs
+
+12
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+2.
+
+If the base soil does not contain particles larger than the No. 4 sieve, regrading is not necessary.
+
+3.
+
+If the base soil contains particles larger than the No. 4 sieve, it must be regraded to 100 percent
+passing the No. 4 sieve, unless it has FC less than 15 percent and is not broadly graded.
+
+Figure 13 is an example of the summary of the needs assessment results.
+
+Figure 13. Step 2 of Base Gradation worksheet: Needs assessment for regrading.
+
+6.3.
+
+Base Soil Gradation After Regrading
+
+In step 3, the method of computational regrading is based on the results in step 2. If regrading is not
+required, “N/A” displays. If the base soil is gap-graded, use the drop-down list to select the sieve size
+closest to the upper size where the gradation curve has a point of inflection, and the corresponding
+particle size displays. Cells that do not apply have a gray background. A particle size of 4.75 mm displays
+if regrading on the No. 4 sieve is required. Figure 14 through Figure 16 illustrate the three possible
+scenarios.
+Step 3: Regrade the base soil, if necessary
+Method of Computational Regrading
+Missing sieve size for gap-graded soils
+(i.e., sieve closest to upper size where
+gradation curve has a point of inflection)
+Maximum particle size for regrading
+
+Coarse
+
+Fine
+
+N/A
+
+N/A
+
+Figure 14. Step 3 of Base Gradation worksheet: No regrading.
+Step 3: Regrade the base soil, if necessary
+Method of Computational Regrading
+Missing sieve size for gap-graded soils
+(i.e., sieve closest to upper size where
+gradation curve has a point of inflection)
+Maximum particle size for regrading
+
+Coarse
+
+Fine
+
+4.75
+
+4.75
+
+Figure 15. Step 3 of base gradation worksheet: Regrading on No. 4 sieve.
+
+USACE Dam and Levee Safety Programs
+
+13
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+Step 3: Regrade the base soil, if necessary
+Method of Computational Regrading
+Missing sieve size for gap-graded soils
+(i.e., sieve closest to upper size where
+gradation curve has a point of inflection)
+Maximum particle size for regrading
+
+Coarse
+No. 16
+
+Fine
+
+1.18
+
+N/A
+
+Figure 16. Step 3 of Base Gradation worksheet:
+Regrading on missing sieve size for gap-graded soils.
+If regrading is required, the base soil is regraded to the appropriate maximum particle size. For Regrade
+the base soil to 100 percent passing the No. 4 sieve, the percentage passing each sieve size of the original
+base soil is divided by the percentage passing the No. 4 sieve of the original base soil, multiplied by 100
+percent, as shown in Figure 17. The procedure for regrading a gap-graded base soil is the same, except to
+regrade on the particle size that is missing instead of the No. 4 sieve.
+
+Figure 17. Example regrading calculation on No. 4 sieve
+(United States Bureau of Reclamation [USBR] 2011).
+Figure 18 is an example gradation of the regraded base soil. If regrading is not required, the gradation
+from step 1 displays and is used for calculations on subsequent worksheets where gradations after
+regrading are required input. The summary of the particle-size analysis for the regraded base soil is the
+same as the filter material, except Cu and Cc are not calculated for the regraded base soil.
+
+USACE Dam and Levee Safety Programs
+
+14
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+Figure 18. Step 3 of Base Gradation worksheet: Regraded base soil gradation.
+
+USACE Dam and Levee Safety Programs
+
+15
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+7. Design for Particle Retention
+Modern filter design criteria for particle retention are based on providing a no-erosion condition. The
+no-erosion condition occurs when a filter material is sufficiently fine to seal with no erosion, or
+practically no erosion, of the base material. This worksheet assesses the particle retention criterion for no
+erosion and helps to screen potential failure modes if no erosion is expected. If a filter fails the no-erosion
+screening, the other erosion boundaries using the Foster and Fell (2001) method described in section 8 are
+evaluated to assess how much erosion is required for self-filtering to occur and whether it can be
+tolerated.
+
+7.1.
+
+Base Soil Characterization
+
+Step 1 characterizes the base soil. The fines content (FC), or percent passing the No. 200 sieve size by
+weight, of the finest base soil after regrading (if applicable) is obtained from the Base Gradation
+worksheet, where it is interpolated using a logarithmic scale for particle size and linear scale for percent
+passing. The base soil category (BSC) is assigned based on the FC of the finest base soil after regrading
+(if applicable). Use the drop-down list to select whether the base soil is non-dispersive or dispersive.
+Figure 19 is an example of step 1.
+
+Figure 19. Step 1 of Particle Retention worksheet: Base soil characterization.
+
+7.2.
+
+Filter Material Characterization
+
+Step 2 characterizes the filter material. The coarsest D15F is obtained from the Filter Gradation worksheet,
+where it is interpolated using a logarithmic scale for particle size and linear scale for percent passing.
+Figure 20 is an example of step 2.
+
+Figure 20. Step 2 of Particle Retention worksheet: Filter material characterization.
+
+USACE Dam and Levee Safety Programs
+
+16
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+7.3.
+
+Particle Retention Criterion
+
+Sherard et al. (1984) and Foster and Fell (2000) show that the measurable property of the filter that best
+defines its particle retention capability is the D15 of the filter (D15F). Research also shows that the
+correlation between D15F and the d85 of the base soil being protected by the filter (D85B) provides the best
+correlation for successful particle retention.
+Sherard and Dunnigan (1985) developed the No-Erosion Filter (NEF) test to find the ratio of D15F and
+D85B that establishes a no-erosion condition for non-dispersive base soils. Additional research by Foster
+and Fell (2001) at the University of New South Wales (UNSW) helped in developing the no-erosion
+condition for dispersive base soils. The results of the NEF and UNSW tests were used to develop the
+modern filter design criteria for particle retention in FEMA (2011).
+Step 3 evaluates the no-erosion particle retention criterion by comparing the coarsest D15F to the
+maximum allowable D15F based on the BSC and knowing whether the base soil is non-dispersive or
+dispersive. The criteria are a function of D85B and FC, as shown in Figure 21 and Figure 22. If the
+coarsest D15F is less than or equal to the maximum allowable D15F, “Meets” displays next to the
+calculation. If the criterion is not met, “Fails” displays next to the calculation. A green background
+displays if the particle retention criterion is met, and an orange background displays if the particle
+retention criterion is not met.
+Based on the particle retention criterion, a statement appears after the calculations indicating if the filter
+material satisfies the no-erosion particle retention criterion or is too coarse to satisfy the no-erosion
+particle retention criterion. If the particle retention criterion for no erosion is not met, use the Foster and
+Fell (2001) method to further evaluate the effectiveness of the filter material for particle retention. Figure
+21 and Figure 22 are examples of the two possible scenarios for the no-erosion particle retention criterion.
+
+Figure 21. Step 3 of Particle Retention worksheet: Particle retention criterion not met.
+
+USACE Dam and Levee Safety Programs
+
+17
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+Figure 22. Step 3 of Particle Retention worksheet: Particle retention criterion met.
+
+USACE Dam and Levee Safety Programs
+
+18
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+8. Foster and Fell
+Many existing embankment dams have filter or transition zones coarser than required by modern filter
+design criteria. Foster and Fell (2001) indicated that filter materials could be coarser than those resulting
+from the no-erosion particle retention criterion but still prevent continuous erosion of the base material.
+For risk assessments of existing embankment dams, it is necessary to evaluate the likelihood of
+continuation of erosion when such filters are present.
+Foster and Fell (2001) developed the continuing erosion filter (CEF) test by modifying the NEF test to
+evaluate filter performance in terms of how much erosion is required to seal the filter material. The
+concept of erosion boundaries was developed to describe the filter behavior.
+•
+
+No-erosion (NE) condition occurs when the filter material seals with no erosion or very little erosion
+of the base material. The increase in leakage flows is so small that it is likely undetectable. Filters
+designed and constructed according to modern filter design criteria satisfy the NE condition as
+described in section 7.
+
+•
+
+Some erosion (SE) condition occurs when “some” erosion of the base soil occurs, but the filter
+quickly seals after particles of the base material clog the surface of the filter.
+
+•
+
+Excessive erosion (EE) condition occurs when “excessive” erosion of the base soil occurs, allowing
+large increases in leakage flow before the filter seals. The extent of erosion is sufficient to damage the
+embankment.
+
+•
+
+Continuing erosion (CE) occurs when the filter is too coarse to allow the eroded base materials to seal
+the filter, allowing unrestricted or continuous erosion of the base soil and leakage flows.
+
+Figure 23 conceptually shows these erosion boundaries from CEF test behavior.
+
+Figure 23. Conceptual erosion boundaries of continuing erosion filter test behavior
+(adapted from Foster and Fell 2001).
+
+USACE Dam and Levee Safety Programs
+
+19
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+Applying these methods correctly requires understanding the context from which each method was
+developed, as laboratory test conditions may vary from field conditions. The filter evaluation relies
+heavily on the research of Foster and Fell (2001) to determine NE, SE, EE, and CE boundaries for the
+base soil. These erosion conditions were derived from CEF tests, which consisted of a vertically
+downward flow regime using very high water pressures (i.e., full tap pressure of 300 kPa) and a
+preformed hole. Therefore, the results are likely conservative.
+
+8.1.
+
+Base Soil Characterization
+
+Step 1 characterizes the base soil after regrading (if applicable). Due to the large variability of base soil
+gradations that may be encountered in practice, gradation test data may include statistical results that are
+not representative of in situ conditions. FEMA (2011) discusses selecting the representative base soil
+gradation, and the RMC Soil Classification Toolbox can be used to plot all base soil gradations to help the
+evaluation. While the range or envelope of base soil gradations are input on the Base Gradation
+worksheet, use the drop-down list to specify the percentage (N) of those gradations considered
+representative of the base soil gradation for subsequent calculations.
+For each input sieve size, the range or envelope of the corresponding percent finer is proportioned to
+obtain the finer (100% − N)∕2 of the base soil gradations and the coarser (100% − N)∕2 of the base soil
+gradations. The average gradation is also obtained for each input sieve size for the range or envelope of
+the corresponding percent finer. Alternatively, input the representative base soil gradation directly on the
+Base Gradation worksheet and use a value of 100 percent for N, so no further adjustment is made. Fell et
+al. (2008) recommended selecting representative gradations of the regraded base soil (if applicable),
+which are indicative of the finer 5 percent of base soil gradations, average gradation, and coarser 5
+percent of base soil gradations (i.e., the representative base soil gradation represents N = 90 percent of all
+gradation tests). Selecting the representative base soil gradation is illustrated in Figure 24.
+
+Figure 24. Example of representative gradation curves.
+
+USACE Dam and Levee Safety Programs
+
+20
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+The D95B, D90B, D85B, FC, and fine-to-medium sand content (fm) of the representative base soil gradation
+are interpolated using a logarithmic scale for particle size and linear scale for percent passing. For the
+Foster and Fell (2001) method, the fine-to-medium sand content of the base soil is defined as the
+percentage between 1.18 mm and 0.075 mm, whereas ASTM D2487 defines fine-to-medium sand as the
+percentage of soil particles between 2.00 mm and 0.075 mm. Use the drop-down list to select whether the
+base soil is non-dispersive or dispersive. Figure 25 is an example of step 1.
+
+Figure 25. Step 1 of Foster and Fell worksheet: Base soil characterization.
+
+8.2.
+
+Filter Material Characterization
+
+Step 2 characterizes the filter material. The range of D95F is obtained from the Filter Gradation
+worksheet, where it is interpolated using a logarithmic scale for particle size and linear scale for percent
+passing. Figure 26 is an example of step 2.
+
+Figure 26. Step 2 of Foster and Fell worksheet: Filter material characterization.
+
+8.3.
+
+No-Erosion Boundary
+
+Step 3 evaluates the no-erosion boundary [(D15F)NE] for the representative base soil gradations after
+regrading (if applicable), based on the BSC and whether the base soil is non-dispersive or dispersive. The
+criteria are the same as the no-erosion criteria on the Particle Retention worksheet and are a function of
+D85B and FC as shown in Figure 27.
+
+USACE Dam and Levee Safety Programs
+
+21
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+Figure 27. Step 3 of Foster and Fell worksheet: No-erosion boundary.
+
+8.4.
+
+Continuing Erosion Boundary
+
+Step 4 evaluates the continuing erosion boundary [(D15F)CE] from Foster and Fell (2001) for the
+representative base soil gradations after regrading (if applicable), based on D95B using the criterion shown
+in Figure 28. If a continuing erosion condition is met for the representative base soil gradation, the other
+erosion boundary is not assessed.
+
+Figure 28. Step 4 of Foster and Fell worksheet: Continuing erosion boundary.
+
+8.5.
+
+Excessive Erosion Boundary
+
+Step 5 evaluates the excessive erosion boundary [(D15F)EE] from Foster and Fell (2001) for the
+representative base soil gradations after regrading (if applicable), based on D95B, D90B, D85B, FC, and fm
+and whether the base soil is non-dispersive or dispersive, using the criteria shown in Figure 29. The
+criterion for D95B greater than 2 mm and FC greater than 35 percent was obtained by a curve fit to the
+
+USACE Dam and Levee Safety Programs
+
+22
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+0.25-g/cm2 contour of erosion loss from CEF tests from Foster and Fell (2001), as recommended by Fell
+et al. (2008) (see Figure 30).
+
+Figure 29. Excessive erosion boundary (adapted from Fell et al. 2008).
+Step 5: Assess the excessive erosion boundary for the representative base soil after regrading
+
+A
+
+Base Soil
+D95B ≤ 0.3 mm
+
+B
+
+0.3 mm < D95B ≤ 2 mm
+
+D15F > 9(D90B)
+
+C
+
+D95B > 2 mm and
+FC ≤ 15%
+
+D15F > 9(D85B)
+
+D
+
+D95B > 2 mm and
+15% < FC ≤ 35%
+
+E
+
+D95B > 2 mm and
+FC > 35%
+
+Representative Gradation
+Coarse
+Average
+Fine
+
+Criteria for Excessive Erosion Boundary
+D15F > 9(D95B)
+
+D15 F > 2.5 (4(D85 B) – 0.7)
+
+35 – FC
+20
+
++ 0.7
+
+D15F > 0.34(1.07)f m
+(i.e., D15F value for erosion loss of 0.25g/cm 2 in the CEF test)
+
+D95B (mm)
+
+FC (%)
+
+Base Soil
+
+0.350
+0.140
+0.072
+
+84.4
+90.0
+95.6
+
+B
+A
+A
+
+(D15F)EE (mm)
+1.166
+1.259
+0.650
+
+Figure 30. Step 4 of Foster and Fell worksheet: Excessive erosion boundary.
+
+USACE Dam and Levee Safety Programs
+
+23
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+8.6.
+
+Likelihood of Erosion
+
+Step 6 compares the erosion boundaries for the representative base soil gradation after regrading (if
+applicable) against the range of D15F (example provided in Figure 31). The ranges of the erosion
+boundaries for the coarse base soil gradation, average base soil gradation, and fine base soil gradation
+display as green, blue, and red horizontal lines, respectively. The range for the CE and NE categories
+extends infinitely beyond their respective boundaries. The erosion boundaries for each representative base
+soil gradation display as short vertical lines of the same color as the horizontal lines, and the erosion
+categories are labeled between the boundaries. The range of D15F displays as vertical black lines that
+intersect these erosion categories.
+The proportions of the filter material gradation that fall into the CE, EE, and SE categories are calculated
+for each of the representative base soil gradations after regrading (if applicable) and are summarized in a
+table. It is possible for the EE boundary to be the same as the CE boundary. For those scenarios, there is
+no proportion for EE, and only SE displays. The sum of the proportions must be 100 percent. Fell et al.
+(2008) recommended estimating the proportions for CE, EE, and SE and then calculating the proportion
+of the filter material gradation finer than the NE category as in Equations 3, 4, and 5.
+𝑃𝑁𝐸,𝑐𝑜𝑎𝑟𝑠𝑒 = 1 − 𝑃𝐶𝐸,𝑐𝑜𝑎𝑟𝑠𝑒 − 𝑃𝐸𝐸,𝑐𝑜𝑎𝑟𝑠𝑒 − 𝑃𝑆𝐸,𝑐𝑜𝑎𝑟𝑠𝑒
+
+(3)
+
+𝑃𝑁𝐸,𝑎𝑣𝑒𝑟𝑎𝑔𝑒 = 1 − 𝑃𝐶𝐸,𝑎𝑣𝑒𝑟𝑎𝑔𝑒 − 𝑃𝐸𝐸,𝑎𝑣𝑒𝑟𝑎𝑔𝑒 − 𝑃𝑆𝐸,𝑎𝑣𝑒𝑟𝑎𝑔𝑒
+
+(4)
+
+𝑃𝑁𝐸,𝑓𝑖𝑛𝑒 = 1 − 𝑃𝐶𝐸,𝑓𝑖𝑛𝑒 − 𝑃𝐸𝐸,𝑓𝑖𝑛𝑒 − 𝑃𝑆𝐸,𝑓𝑖𝑛𝑒
+
+(5)
+
+where:
+PNE = proportion of the filter material gradation finer than the NE category
+PSE = proportion of the filter material gradation for the SE category
+PEE = proportion of the filter material gradation for the EE category
+PCE = proportion of the filter material gradation coarser than the CE category
+
+USACE Dam and Levee Safety Programs
+
+24
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+Figure 31. Step 6 of Foster and Fell worksheet:
+Erosion boundaries for representative base soil gradation.
+If the range of D15F does not fall into the CE category (i.e., the gradation of the filter material is finer than
+the CE boundary), the proportion of the gradation within the CE category is 0 percent. Fell et al. (2008)
+suggested a procedure to account for the possibility of the gradations being coarser than indicated by the
+available information, which depends on how much finer the gradations are than the CE boundary. In this
+procedure, the minimum PCE is based on the ratio of the coarsest D15F to the (D15F)CE. Intermediate
+values are interpolated using a z-variate scale for probability and linear scale for the ratio D15F∕(D15F)CE
+(see Table 1).
+Table 1.
+Probability of continuing erosion for gradation finer than continuing erosion boundary.
+0.1
+
+D15F∕(D15F)CE
+Minimum PCE
+
+0.0001
+
+USACE Dam and Levee Safety Programs
+
+0.2
+0.001
+
+0.5
+0.01
+
+1.0
+0.1
+
+25
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+Use the drop-down list to select the method of analysis as shown in Figure 32. Cells that do not apply if
+this method is not selected have a gray background.
+
+Figure 32. Step 6 of Foster and Fell worksheet: Estimated probability of continuing erosion.
+The probabilities of NE, SE, EE, and CE are estimated by weighting the proportions of NE, SE, EE, and
+CE for each representative base soil gradation by the percentage of the representative base soil gradation
+(i.e., the sum of the products of the percentage of each representative base soil gradation and the
+proportions of NE, SE, EE, and CE for each representative base soil gradation) as shown in Figure 33.
+
+Figure 33. Step 6 of Foster and Fell worksheet: Probability of each erosion condition.
+
+USACE Dam and Levee Safety Programs
+
+26
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+9. Summary Plot
+This worksheet summarizes the particle retention evaluation on a cumulative particle-size plot showing
+the filter gradation, base soil gradation after regrading (if applicable), representative base soil gradation
+after regrading (if applicable), and the NE, EE, and CE boundaries for the coarse, average, and fine
+representative base soil gradations. There are no user-specified inputs or calculations on this worksheet.
+Figure 34 is an example of a Summary Plot worksheet. The solid black lines represent filter gradation,
+and the dashed black lines represent base soil gradation after regrading (if applicable). The representative
+coarse base soil gradation, representative average base soil gradation, and representative fine base soil
+gradation are displayed as green, blue, and solid red lines, respectively. If N is equal to 100 percent, the
+representative coarse and fine base soil gradations overlay the base soil gradation envelope after regrading
+(if applicable). If N is less than 100 percent, the representative coarse and fine base soil gradations plot
+within the base soil gradation envelope after regrading (if applicable).
+The ranges of the erosion boundaries for the coarse base soil gradation and fine base soil gradation are
+displayed as green and red horizontal lines, respectively. The ranges for the CE and NE categories extend
+infinitely beyond their respective boundaries. The erosion boundaries for coarse base soil gradation and
+fine base soil gradation are shown as short vertical lines of the same color as the horizontal lines, and the
+erosion categories are labeled between the boundaries. The erosion boundaries for the average base soil
+gradation are shown as short blue vertical lines along the same horizontal axis as the coarse base soil
+gradation.
+
+USACE Dam and Levee Safety Programs
+
+27
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+Figure 34. Summary Plot worksheet.
+
+USACE Dam and Levee Safety Programs
+
+28
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+10. Constricted Exit
+Constricted, or non-erodible, exits consist of open joints, defects, or cracks in conduits, drains, walls, or
+rock. For erosion to continue, the opening size must be sufficient for the adjacent base soil particles to
+pass through it. This worksheet assesses the joint/defect opening size that allows erosion to continue.
+
+10.1. Base Soil Characterization
+Step 1 characterizes the base material. The range of D95B of the base soil adjacent to the open joint,
+defect, or crack is obtained from the Base Gradation worksheet, where the finest and coarsest D95B of the
+adjacent base soil after regrading (if applicable) are interpolated using a logarithmic scale for particle size
+and linear scale for percent passing. Figure 35 is an example of step 1.
+
+Figure 35. Step 1 of Constricted Exit worksheet: Base soil characterization.
+
+10.2. Open Joint, Defect, or Crack Characterization
+Step 2 characterizes the open joint, defect, or crack, and the joint/defect opening size (JOS) is input. The
+user-specified JOS and range of D95B of the adjacent base soil are portrayed on a cumulative particle-size
+plot to visually compare their relative sizes, as shown in Figure 36. The y-axis (percent passing by
+weight) is truncated at 90 percent passing since only the particle-size diameter corresponding to 95
+percent passing is used in the evaluation. The size of the open joint, defect, or crack is depicted with a
+vertical back line at the JOS and horizontal lines that extend infinitely smaller since a logarithmic scale is
+used. The range of D95B displays as a red horizontal line.
+Step 2: Assess the opening size of the open joint, defect, or crack
+
+Percentage Passing
+
+Joint/defect opening size, JOS
+
+10 mm
+
+100
+JOS
+Range of D95B
+
+95
+0.425
+
+0.066
+
+90
+100
+
+10
+
+1
+
+0.1
+
+0.01
+
+Particle Size (mm)
+
+Figure 36. Step 2 of Constricted Exit worksheet: Effective opening size.
+
+USACE Dam and Levee Safety Programs
+
+29
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+The plot options for this chart are illustrated in Figure 37. The minimum and maximum values for the
+x-axis (particle size) are user-specified.
+
+Figure 37. Step 2 of Constricted Exit worksheet: Plot options.
+
+10.3. Likelihood of Continuation
+Step 3 estimates the probability of continuing erosion (PCE) using the procedure of Fell and Foster (2023).
+The JOS that allows continuing erosion of the adjacent base soil (JOSCE) is between D95B and 3D95B.
+Sherard et al. (1984) concluded that uniform filters act similar to laboratory sieves with an opening sieve
+size approximately equal to D15F∕9. The D95B criterion assumes the Foster and Fell (2001) continuing
+erosion criterion (see section 8.4) applies to erosion into an open joint, defect, or crack, and the crack
+width is equivalent to the filter opening size of the voids between the particles in a filter. The 3D95B
+criterion is based on the JOS for cement grout to penetrate and flow along the opening of joints in rock.
+The probabilities shown in Table 2 considered these limits. In the table, PCE is a function the ratio of the
+JOS to the finest D95B of the adjacent base soil after regrading (if applicable). If JOS∕D95B is less than
+0.4, zero is displayed. If JOS∕D95B is greater than or equal to 0.4 and less than 0.5, “<0.0001” is
+displayed. Intermediate values between 0.5 and 3.0 are interpolated using a z-variate scale for probability
+and a linear scale for the ratio JOS∕D95B.
+Table 2.
+Probability of continuing erosion for joint/defect opening size (Fell and Foster 2023).
+< 0.4
+
+JOS∕D95B
+PCE
+
+0
+
+0.5
+0.0001
+
+0.75
+0.001
+
+1.0
+0.1
+
+≥ 3.0
+
+2.0
+0.5
+
+0.9
+
+According to Fell and Foster (2023), these probabilities apply to erosion into open defects in the
+foundation and conduits or walls with steady flow conditions. Use higher probabilities for erosion into
+open defects in conduits or walls with dynamic flow conditions.
+If the coarsest D95B of the adjacent base soil after regrading is less than or equal to the JOS (coarsest D95B
+≤ JOS), the proportion of the D95B finer than the JOS is 100 percent. If the finest D95B of the adjacent
+base soil after regrading is greater than or equal to the JOS (finest D95B ≥ JOS), the proportion of the D95B
+finer than the JOS is 0 percent. If the coarsest D95B of the adjacent base soil after regrading (if applicable)
+is greater than the JOS and the finest D95B after regrading (if applicable) is less than the JOS, the
+proportion of the D95B finer than the JOS is calculated as in Equation 6. Figure 38 is an example of step 3.
+log10 (𝐽𝑂𝑆)−log10 (𝑓𝑖𝑛𝑒𝑠𝑡 𝐷95 𝐵)
+(𝑐𝑜𝑎𝑟𝑠𝑒𝑠𝑡
+𝐷95 𝐵)−log10 (𝑓𝑖𝑛𝑒𝑠𝑡 𝐷95 𝐵)
+10
+
+𝑃𝐶𝐸 = log
+
+USACE Dam and Levee Safety Programs
+
+(6)
+
+30
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+Step 3: Estimate the likelihood of continuation
+< 0.4
+
+0.5
+
+0.75
+
+1.0
+
+2.0
+
+≥ 3.0
+
+0
+
+0.0001
+
+0.001
+
+0.1
+
+0.5
+
+0.9
+
+JOS / D95B
+
+PCE
+
+Coarsest D95B after regrading (if applicable)
+
+23.53
+
+9.00E-01
+
+Finest D95B after regrading (if applicable)
+
+152.63
+
+9.00E-01
+
+JOS / D95B
+PCE
+
+Probability of continuing erosion, P CE
+
+According to Fell and Foster (2023), Table 2 applies to erosion into open defects in the foundation and
+conduits or walls with steady flow conditions. Use higher probabilities for erosion into open defects in
+conduits or walls with dynamic flow conditions
+If coarsest D95B after regrading (if applicable) ≤ JOS, proportion of D95B finer than JOS is 100 percent.
+If coarsest D95B after regrading (if applicable) > JOS and finest D95B after regrading (if applicable) < JOS,
+proportion of D95B finer than JOS is
+
+log10 (JOS) − log10 (finest D95 B)
+x100%
+log10 (coarsest D95 B) − log10 (finest D95 B)
+
+If finest D95B after regrading (if applicable) ≥ JOS, proportion of D95B finer than JOS is 0 percent.
+Proportion of D95B finer than JOS
+
+100.0 percent
+
+Note: Probabilities obtained from this method should not be used directly in risk assessments.
+Rather, the values should be used to help develop a list of more and less likely factors.
+
+Figure 38. Step 3 of Constricted Exit worksheet: Probability of continuing erosion.
+
+USACE Dam and Levee Safety Programs
+
+31
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+11. Permeability
+This worksheet assesses whether the filter material meets the drainage criterion for permeability. It
+requires no user-specified input. Permeability is directly proportional to the square of the effective
+particle size with all other factors being equal. Typically, the permeability of a filter should be at least 16
+to 25 times that of the base material. This criterion is generally met if D15F is larger than 4 to 5 times
+D15B. In some very broadly graded base soils, this requirement may be difficult to meet.
+
+11.1. Base Soil Characterization
+Step 1 characterizes the base soil. FEMA (2011) indicates the coarsest D15B before regrading is used to
+evaluate permeability requirements. Step 1 obtains the coarsest D15B before regrading from the Base
+Gradation worksheet, where it is interpolated using a logarithmic scale for particle size and linear scale
+for percent passing. Figure 39 is an example of step 1.
+
+Figure 39. Step 1 of Permeability worksheet: Base soil characterization.
+
+11.2. Filter Material Characterization
+Step 2 characterizes the filter material. The finest D15F is obtained from the Filter Gradation worksheet,
+where it is interpolated using a logarithmic scale for particle size and linear scale for percent passing.
+Figure 40 is an example of step 2.
+
+Figure 40. Step 2 of Permeability worksheet: Filter material characterization.
+
+11.3. Permeability Criterion
+The criterion for permeability is that the filter material has a minimum D15F that is an integer multiplier
+of the coarsest D15B before regrading but not less than 0.1 mm. USACE Engineer Manual (EM) 1110-21901 (2005) requires a multiplier of 3 to 5. However, USBR (2011) and National Resources Conservation
+Service (NRCS) (2017) require a multiplier of 5, which is considered the primary criterion on this
+worksheet. The minimum D15F of the filter material is calculated as in Equation 7.
+𝐷15 𝐹 ≥ 5(𝐷15 𝐵) but not less than 0.1 mm
+
+USACE Dam and Levee Safety Programs
+
+(7)
+
+32
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+where:
+D15F = particle-size diameter of the filter material corresponding to 15 percent passing on
+the cumulative particle-size distribution curve
+D15B = particle-size diameter of the base soil corresponding to 15 percent passing on the
+cumulative particle-size distribution curve before regrading
+Step 3 evaluates the permeability criterion for integer multipliers ranging from 3 to 5. If the criterion is
+met, “Meets” displays next to the calculation. If the criterion is not met, “Fails” displays next to the
+calculation. A green background displays if the criterion is met, and an orange background displays if the
+criterion is not met. Based on the primary criterion using a multiplier of 5, a statement appears after the
+set of calculations indicating whether the filter material is sufficiently permeable to perform the required
+drainage function. Examples of the two possible scenarios for the primary filter criterion are shown in
+Figure 41 and Figure 42.
+
+Figure 41. Step 3 of Permeability worksheet: Primary permeability criteria not met.
+
+Figure 42. Step 3 of Permeability worksheet: Primary permeability criteria met.
+
+USACE Dam and Levee Safety Programs
+
+33
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+12. References
+ASTM International (2017). ASTM D2487-17, Standard practice for classification of soils for
+engineering purposes (Unified Soil Classification System). American Society for Testing and
+Materials International. https://doi.org/10.1520/D2487-17.
+Federal Emergency Management Agency. (2011). Filters for embankment dams: Best practices for design
+and construction. https://www.fema.gov/sites/default/files/202008/filters_embankment_dams_update.pdf.
+Fell, R. and Foster, M.A. (2023). Update of the Unified Method for Estimating Probabilities of Failure by
+Internal Erosion and Piping. Proceedings, Australian National Committee on Large Dams
+(ANCOLD), Cairns, Australia.
+Fell, R., Foster, M.A., Cyganiewicz, J., Sills, G.L., Vroman, N.D., and Davidson, R.R. (2008). Risk
+analysis for dam safety: A unified method for estimating probabilities of failure of embankment
+dams by internal erosion and piping guidance document (UNICIV Report No. R-446) (Version:
+Delta). University of New South Wales, Sydney, Australia.
+http://vm.civeng.unsw.edu.au/uniciv/R-446.pdf.
+Foster, M.A. and Fell, R. (2001). Assessing embankment dam filters that do not satisfy design criteria.
+Journal of Geotechnical and Geoenvironmental Engineering, 127(5), 398–407.
+https://doi.org/10.1061/(ASCE)1090-0241(2001)127:5(398).
+Sherard, J.L. and Dunnigan, L.P. (1985). Filters and leakage control in embankment dams. Seepage and
+Leakage from Dams and Impoundments. American Society of Engineers Symposium. Denver,
+CO. https://cedb.asce.org/CEDBsearch/record.jsp?dockey=0044481.
+Sherard, J.L. and Dunnigan, L.P. (1989). Critical filters for impervious soils. Journal of Geotechnical
+Engineering, 115(7), 927–947. https://doi.org/10.1061/(ASCE)0733-9410(1989)115:7(927).
+Sherard, J.L., Dunnigan, L.P., and Talbot, J.R. (1984). Basic properties of sand and gravel filters. Journal
+of Geotechnical Engineering, 110(6), 684–700. https://doi.org/10.1061/(ASCE)07339410(1984)110:6(684).
+U.S. Army Corps of Engineers. (2005). Seepage analysis and control (Engineer Manual [EM] 1110-21901).
+https://www.publications.usace.army.mil/portals/76/publications/engineermanuals/em_1110-21901.pdf.
+U.S. Bureau of Reclamation. (2011). Chapter 5: Protective filters. Embankment dams (Design Standards
+[DS] No. 13). https://www.usbr.gov/tsc/techreferences/designstandardsdatacollectionguides/finalds-pdfs/DS13-5.pdf.
+U.S. Department of Agriculture. (2017). Chapter 26: Gradation design of sand and gravel filters. Part
+633, Soils Engineering, National Engineering Handbook.
+https://directives.sc.egov.usda.gov/41384.wba.
+
+USACE Dam and Levee Safety Programs
+
+34
+
+RMC Filter Evaluation (Continuation) Toolbox
+RMC Internal Erosion Suite
+
+Appendix A. Acronym List
+BSC
+
+Base Soil Category
+
+CE
+
+Continuing Erosion
+
+CEF
+
+Continuing Erosion Filter
+
+CPD
+
+Computer Program Document
+
+EE
+
+Excessive Erosion
+
+FC
+
+Fines Content
+
+FEMA
+
+Federal Emergency Management Agency
+
+fm
+
+Fine-to-Medium
+
+HEC
+
+Hydrologic Engineering Center
+
+HW
+
+Headwater
+
+IWR
+
+Institute for Water Resources
+
+JOS
+
+Joint/Defect Opening Size
+
+NAVD88
+
+North American Vertical Datum of 1988
+
+NE
+
+No Erosion
+
+NEF
+
+No-Erosion Filter
+
+NGVD29
+
+National Geodetic Vertical Datum of 1929
+
+NRCS
+
+National Resources Conservation Service
+
+QC
+
+Quality Control
+
+RMC
+
+Risk Management Center
+
+SE
+
+Some Erosion
+
+UDF
+
+User-Defined Function
+
+UNSW
+
+University of New South Wales
+
+U.S.
+
+United States
+
+USACE
+
+United States Army Corps of Engineers
+
+USBR
+
+United States Bureau of Reclamation
+
+USDA
+
+United States Department of Agriculture
+
+USACE Dam and Levee Safety Programs
+
+35
+
+
