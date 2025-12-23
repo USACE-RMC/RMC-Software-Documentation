@@ -1,4 +1,4 @@
-Ôªø# QC Prompt Template
+# QC Prompt Template
 
 ## Purpose
 
@@ -18,13 +18,13 @@ GOAL
 Perform a comprehensive QC review by comparing the authoritative SOURCE PDF against the generated MDX documentation pages, and log findings without editing MDX files. Only update QC outputs.
 
 SCOPE
-Compare SOURCE PDF ‚Üí MDX for:
+Compare SOURCE PDF -> MDX for:
 
 1. Text: spelling/typos, punctuation, missing/extra words, heading mismatches, ordering, formatting.
 2. Figures & captions: correct components, placement, caption text matches PDF.
 3. Equations: correct components, numbering/keys, accurate content; if ambiguous, flag for human verification.
 4. Tables: correct components, cell text, merged rows/cols, headerConfig usage.
-5. Citations: raw author‚Äëyear text + `<Citation citationKey="...">` must both appear where references occur (including figure/table captions). Citation keys must match `citationKey` values in `<BIB_JSON_PATH>`.
+5. Citations: raw author-year text + `<Citation citationKey="...">` must both appear where references occur (including figure/table captions). Citation keys must match `citationKey` values in `<BIB_JSON_PATH>`.
 6. MDX correctness: JSX validity, consistent formatting, link/anchor correctness.
 
 INPUT PATHS
@@ -53,7 +53,7 @@ REPORT FORMAT
   - Severity (Blocker/Major/Minor)
   - Problem
   - Recommended Fix
-  - Fix Applied (always ‚ÄúNo‚Äù unless explicitly requested)
+  - Fix Applied (always ìNoî unless explicitly requested)
   - Human Verification Required (Yes/No)
 - Keep issues in file order.
 - Do NOT group issues. Every issue must be individual (per equation, per sentence, per caption, etc.).
@@ -61,17 +61,20 @@ REPORT FORMAT
 SPECIAL QC RULES (MUST APPLY)
 
 1. Preface rule:
-   - Always keep ‚ÄúPreface‚Äù as ‚ÄúPreface.‚Äù Do NOT recommend changing it to ‚ÄúIntroduction,‚Äù even if the PDF uses ‚ÄúIntroduction.‚Äù
+   - Always keep ìPrefaceî as ìPreface.î Do NOT recommend changing it to ìIntroduction,î even if the PDF uses ìIntroduction.î
 2. Citation rule:
-   - If PDF shows author‚Äëyear text (e.g., ‚ÄúFell et al. (2008)‚Äù), MDX must include:
-     a) the raw author‚Äëyear text, and
+   - If PDF shows author-year text (e.g., ìFell et al. (2008)î), MDX must include:
+     a) the raw author-year text, and
      b) a `<Citation citationKey="...">` with a key from `<BIB_JSON_PATH>`.
    - If one is missing, log an issue.
    - Check both body text and figure/table captions.
-3. Equation ‚Äúwhere‚Äù block formatting rule:
+3. Equation ìwhereî block formatting rule:
    - Canonical format: blockquote lines with `> ` prefix and **double space** at line end (except last line).
-   - If a ‚Äúwhere‚Äù block uses bullets (`- Term`) or lacks `> ` prefix/double spaces, log an issue.
-4. No code edits:
+   - If a ìwhereî block uses bullets (`- Term`) or lacks `> ` prefix/double spaces, log an issue.
+4. Deep-dive requirement for tables and equations:
+   - Tables: verify every cell value, header text, row/column ordering, merged cells, unit formatting, and headerConfig settings against the PDF; log an issue for any mismatch or omission.
+   - Equations: verify every symbol, operator, sub/superscript, constant, unit, numbering, and stated variable definition against the PDF; confirm the equation is mathematically and visually consistent with the source, and log an issue for any discrepancy.
+5. No code edits:
    - Only modify QC report and QC CSV.
 
 PROCESS REQUIREMENTS
@@ -89,3 +92,8 @@ BEGIN
 2. Enumerate MDX files in the folder.
 3. Review the entire document set against the PDF.
 4. Write/update QC report and QC CSV with the required format and rules.
+
+
+
+
+
