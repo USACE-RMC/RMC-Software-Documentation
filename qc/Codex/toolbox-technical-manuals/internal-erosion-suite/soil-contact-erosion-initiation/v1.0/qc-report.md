@@ -1,12 +1,17 @@
 # QC Report
 
 Source PDF: static/source-documents/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/RMC-CPD-2023-03 - RMC Soil Contact Erosion (Initiation) Toolbox.pdf
-Review Date: 2025-12-22
+Review Date: 2025-12-28
 Reviewer: Codex
 
 ## File: 04-background.mdx
 
+
+
+
+
 ### Issue 1: Missing author-year text for Brauns 1985
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/04-background.mdx:32
 Category: Citation
 Severity: Major
@@ -16,6 +21,7 @@ Fix Applied: No
 Human Verification Required: No
 
 ### Issue 2: Missing author-year text for Robbins and Griffiths 2018
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/04-background.mdx:33
 Category: Citation
 Severity: Major
@@ -25,6 +31,7 @@ Fix Applied: No
 Human Verification Required: No
 
 ### Issue 3: Missing citation component in Figure 8 caption
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/04-background.mdx:42
 Category: Citation
 Severity: Major
@@ -34,6 +41,7 @@ Fix Applied: No
 Human Verification Required: No
 
 ### Issue 4: Missing author-year text for Guidoux et al. 2010
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/04-background.mdx:51
 Category: Citation
 Severity: Major
@@ -43,6 +51,7 @@ Fix Applied: No
 Human Verification Required: No
 
 ### Issue 5: Missing author-year text for Brauns 1985
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/04-background.mdx:52
 Category: Citation
 Severity: Major
@@ -52,6 +61,7 @@ Fix Applied: No
 Human Verification Required: No
 
 ### Issue 6: Missing author-year text for Brauns 1985
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/04-background.mdx:53
 Category: Citation
 Severity: Major
@@ -61,6 +71,7 @@ Fix Applied: No
 Human Verification Required: No
 
 ### Issue 7: Missing author-year text for Guidoux et al. 2010
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/04-background.mdx:54
 Category: Citation
 Severity: Major
@@ -70,6 +81,7 @@ Fix Applied: No
 Human Verification Required: No
 
 ### Issue 8: Missing author-year text for Guidoux et al. 2010
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/04-background.mdx:64
 Category: Citation
 Severity: Major
@@ -79,6 +91,7 @@ Fix Applied: No
 Human Verification Required: No
 
 ### Issue 9: Missing author-year text for Brauns 1985
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/04-background.mdx:64
 Category: Citation
 Severity: Major
@@ -89,7 +102,12 @@ Human Verification Required: No
 
 ## File: 05-gradation.mdx
 
+
+
+
+
 ### Issue 10: Missing author-year text for Guidoux et al. 2010
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/05-gradation.mdx:26
 Category: Citation
 Severity: Major
@@ -99,6 +117,7 @@ Fix Applied: No
 Human Verification Required: No
 
 ### Issue 11: Missing author-year text for Brauns 1985
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/05-gradation.mdx:27
 Category: Citation
 Severity: Major
@@ -109,7 +128,12 @@ Human Verification Required: No
 
 ## File: 06-guidoux-et-al-method.mdx
 
+
+
+
+
 ### Issue 12: Missing citation component in Figure 14 caption
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/06-guidoux-et-al-method.mdx:34
 Category: Citation
 Severity: Major
@@ -119,6 +143,7 @@ Fix Applied: No
 Human Verification Required: No
 
 ### Issue 13: Missing author-year text for Guidoux et al. 2010
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/06-guidoux-et-al-method.mdx:71
 Category: Citation
 Severity: Major
@@ -128,6 +153,7 @@ Fix Applied: No
 Human Verification Required: No
 
 ### Issue 14: Missing author-year text for Guidoux et al. 2010
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/06-guidoux-et-al-method.mdx:117
 Category: Citation
 Severity: Major
@@ -137,6 +163,7 @@ Fix Applied: No
 Human Verification Required: No
 
 ### Issue 15: Missing author-year text for Guidoux et al. 2010
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/06-guidoux-et-al-method.mdx:200
 Category: Citation
 Severity: Major
@@ -146,6 +173,7 @@ Fix Applied: No
 Human Verification Required: No
 
 ### Issue 16: Missing author-year text for Brauns 1985
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/06-guidoux-et-al-method.mdx:201
 Category: Citation
 Severity: Major
@@ -155,6 +183,7 @@ Fix Applied: No
 Human Verification Required: No
 
 ### Issue 17: Missing author-year text for Guidoux et al. 2010
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/06-guidoux-et-al-method.mdx:202
 Category: Citation
 Severity: Major
@@ -164,6 +193,7 @@ Fix Applied: No
 Human Verification Required: No
 
 ### Issue 18: Missing author-year text for Guidoux et al. 2010
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/06-guidoux-et-al-method.mdx:206
 Category: Citation
 Severity: Major
@@ -173,6 +203,7 @@ Fix Applied: No
 Human Verification Required: No
 
 ### Issue 19: Missing author-year text for Guidoux et al. 2010
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/06-guidoux-et-al-method.mdx:209
 Category: Citation
 Severity: Major
@@ -182,6 +213,7 @@ Fix Applied: No
 Human Verification Required: No
 
 ### Issue 20: Missing author-year text for Kozeny 1953
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/06-guidoux-et-al-method.mdx:211
 Category: Citation
 Severity: Major
@@ -192,7 +224,12 @@ Human Verification Required: No
 
 ## File: 07-brauns-method.mdx
 
+
+
+
+
 ### Issue 21: Missing citation component in Figure 37 caption
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/07-brauns-method.mdx:33
 Category: Citation
 Severity: Major
@@ -202,6 +239,7 @@ Fix Applied: No
 Human Verification Required: No
 
 ### Issue 22: Missing author-year text for Brauns 1985
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/v1.0/07-brauns-method.mdx:128
 Category: Citation
 Severity: Major

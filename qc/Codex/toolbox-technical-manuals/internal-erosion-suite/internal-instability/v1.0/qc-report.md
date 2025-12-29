@@ -1,7 +1,7 @@
 # QC Report
 
 Source PDF: static/source-documents/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/RMC-CPD-2023-10 - RMC Internal Instability Toolbox.pdf
-Review Date: 2025-12-22
+Review Date: 2025-12-28
 Reviewer: Codex
 
 ## File: 04-background.mdx
@@ -89,21 +89,21 @@ Recommended Fix: Update the sentence to Sherard (1979) and keep <Citation citati
 Fix Applied: No
 Human Verification Required: No
 
-### Issue 10: Missing author-year text for Fell et al. (2008)
-Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/06-screening.mdx:49
-Category: Citation
-Severity: Major
-Problem: The PDF uses Fell et al. (2008), but the MDX only includes a <Citation> without the author-year text.
-Recommended Fix: Update the sentence to Fell et al. (2008) and keep <Citation citationKey="Fell2008" />.
-Fix Applied: No
-Human Verification Required: No
-
-### Issue 11: Figure 18 caption missing citation
+### Issue 10: Figure 18 caption missing citation
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/06-screening.mdx:43
 Category: Citation
 Severity: Major
 Problem: The PDF Figure 18 caption includes author-year text, but the MDX caption lacks the required <Citation>.
 Recommended Fix: Add <Citation citationKey="Sherard1979" /> to the Figure 18 caption (keep the existing author-year text).
+Fix Applied: No
+Human Verification Required: No
+
+### Issue 11: Missing author-year text for Fell et al. (2008)
+Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/06-screening.mdx:49
+Category: Citation
+Severity: Major
+Problem: The PDF uses Fell et al. (2008), but the MDX only includes a <Citation> without the author-year text.
+Recommended Fix: Update the sentence to Fell et al. (2008) and keep <Citation citationKey="Fell2008" />.
 Fix Applied: No
 Human Verification Required: No
 
@@ -127,7 +127,16 @@ Recommended Fix: Update the sentence to Burenkova (1993) and keep <Citation cita
 Fix Applied: No
 Human Verification Required: No
 
-### Issue 14: Figure 20 caption missing citation
+### Issue 14: Equation 4 denominator mismatch (D10 vs D15)
+Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/07-burenkova-method.mdx:31
+Category: Equation
+Severity: Major
+Problem: The PDF shows h'' = D90/D15, but the MDX equation uses D90/D10 in Equation 4.
+Recommended Fix: Update Equation 4 to h'' = D90/D15 (change D_{10} to D_{15}).
+Fix Applied: No
+Human Verification Required: No
+
+### Issue 15: Figure 20 caption missing citation
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/07-burenkova-method.mdx:54
 Category: Citation
 Severity: Major
@@ -138,7 +147,7 @@ Human Verification Required: No
 
 ## File: 08-modified-burenkova-method.mdx
 
-### Issue 15: Missing author-year text for Burenkova (1993)
+### Issue 16: Missing author-year text for Burenkova (1993)
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/08-modified-burenkova-method.mdx:24
 Category: Citation
 Severity: Major
@@ -147,7 +156,7 @@ Recommended Fix: Update the sentence to Burenkova (1993) and keep <Citation cita
 Fix Applied: No
 Human Verification Required: No
 
-### Issue 16: Missing author-year text for Wan and Fell (2008)
+### Issue 17: Missing author-year text for Wan and Fell (2008)
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/08-modified-burenkova-method.mdx:28
 Category: Citation
 Severity: Major
@@ -156,7 +165,7 @@ Recommended Fix: Update the sentence to Wan and Fell (2008) and keep <Citation c
 Fix Applied: No
 Human Verification Required: No
 
-### Issue 17: Missing author-year text for Burenkova (1993)
+### Issue 18: Missing author-year text for Burenkova (1993)
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/08-modified-burenkova-method.mdx:28
 Category: Citation
 Severity: Major
@@ -165,7 +174,7 @@ Recommended Fix: Update the sentence to Burenkova (1993) and keep <Citation cita
 Fix Applied: No
 Human Verification Required: No
 
-### Issue 18: Missing author-year text for Burenkova (1993)
+### Issue 19: Missing author-year text for Burenkova (1993)
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/08-modified-burenkova-method.mdx:48
 Category: Citation
 Severity: Major
@@ -174,34 +183,7 @@ Recommended Fix: Update the sentence to Burenkova (1993) and keep <Citation cita
 Fix Applied: No
 Human Verification Required: No
 
-### Issue 19: Missing author-year text for Wan and Fell (2008)
-Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/08-modified-burenkova-method.mdx:69
-Category: Citation
-Severity: Major
-Problem: The PDF uses Wan and Fell (2008), but the MDX only includes a <Citation> without the author-year text.
-Recommended Fix: Update the sentence to Wan and Fell (2008) and keep <Citation citationKey="Wan2008" />.
-Fix Applied: No
-Human Verification Required: No
-
-### Issue 20: Missing author-year text for Burenkova (1993)
-Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/08-modified-burenkova-method.mdx:91
-Category: Citation
-Severity: Major
-Problem: The PDF uses Burenkova (1993) in this sentence, but the MDX only includes a <Citation> without the author-year text.
-Recommended Fix: Update the sentence to Burenkova (1993) and keep <Citation citationKey="Burenkova1993" />.
-Fix Applied: No
-Human Verification Required: No
-
-### Issue 21: Missing author-year text for Burenkova (1993)
-Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/08-modified-burenkova-method.mdx:123
-Category: Citation
-Severity: Major
-Problem: The PDF uses Burenkova (1993) in this sentence, but the MDX only includes a <Citation> without the author-year text.
-Recommended Fix: Update the sentence to Burenkova (1993) and keep <Citation citationKey="Burenkova1993" />.
-Fix Applied: No
-Human Verification Required: No
-
-### Issue 22: Figure 24 caption missing citation
+### Issue 20: Figure 24 caption missing citation
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/08-modified-burenkova-method.mdx:57
 Category: Citation
 Severity: Major
@@ -210,7 +192,7 @@ Recommended Fix: Add <Citation citationKey="Wan2004" /> to the Figure 24 caption
 Fix Applied: No
 Human Verification Required: No
 
-### Issue 23: Figure 25 caption missing citation
+### Issue 21: Figure 25 caption missing citation
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/08-modified-burenkova-method.mdx:65
 Category: Citation
 Severity: Major
@@ -219,9 +201,36 @@ Recommended Fix: Add <Citation citationKey="Wan2004" /> to the Figure 25 caption
 Fix Applied: No
 Human Verification Required: No
 
+### Issue 22: Missing author-year text for Wan and Fell (2008)
+Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/08-modified-burenkova-method.mdx:69
+Category: Citation
+Severity: Major
+Problem: The PDF uses Wan and Fell (2008), but the MDX only includes a <Citation> without the author-year text.
+Recommended Fix: Update the sentence to Wan and Fell (2008) and keep <Citation citationKey="Wan2008" />.
+Fix Applied: No
+Human Verification Required: No
+
+### Issue 23: Missing author-year text for Burenkova (1993)
+Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/08-modified-burenkova-method.mdx:91
+Category: Citation
+Severity: Major
+Problem: The PDF uses Burenkova (1993) in this sentence, but the MDX only includes a <Citation> without the author-year text.
+Recommended Fix: Update the sentence to Burenkova (1993) and keep <Citation citationKey="Burenkova1993" />.
+Fix Applied: No
+Human Verification Required: No
+
+### Issue 24: Missing author-year text for Burenkova (1993)
+Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/08-modified-burenkova-method.mdx:123
+Category: Citation
+Severity: Major
+Problem: The PDF uses Burenkova (1993) in this sentence, but the MDX only includes a <Citation> without the author-year text.
+Recommended Fix: Update the sentence to Burenkova (1993) and keep <Citation citationKey="Burenkova1993" />.
+Fix Applied: No
+Human Verification Required: No
+
 ## File: 09-alternative-method.mdx
 
-### Issue 24: Figure 28 caption missing citation
+### Issue 25: Figure 28 caption missing citation
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/09-alternative-method.mdx:40
 Category: Citation
 Severity: Major
@@ -232,7 +241,7 @@ Human Verification Required: No
 
 ## File: 10-modified-kenney-and-lau-method.mdx
 
-### Issue 25: Missing author-year text for Kezdi (1979)
+### Issue 26: Missing author-year text for Kezdi (1979)
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/10-modified-kenney-and-lau-method.mdx:25
 Category: Citation
 Severity: Major
@@ -241,7 +250,7 @@ Recommended Fix: Update the sentence to Kezdi (1979) and keep <Citation citation
 Fix Applied: No
 Human Verification Required: No
 
-### Issue 26: Missing author-year text for Kenney and Lau (1985, 1986)
+### Issue 27: Missing author-year text for Kenney and Lau (1985, 1986)
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/10-modified-kenney-and-lau-method.mdx:25
 Category: Citation
 Severity: Major
@@ -250,7 +259,7 @@ Recommended Fix: Update the sentence to Kenney and Lau (1985, 1986) and keep <Ci
 Fix Applied: No
 Human Verification Required: No
 
-### Issue 27: Missing author-year text for Li and Fannin (2008)
+### Issue 28: Missing author-year text for Li and Fannin (2008)
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/10-modified-kenney-and-lau-method.mdx:26
 Category: Citation
 Severity: Major
@@ -259,34 +268,7 @@ Recommended Fix: Update the sentence to Li and Fannin (2008) and keep <Citation 
 Fix Applied: No
 Human Verification Required: No
 
-### Issue 28: Missing author-year text for Kenney and Lau (1985, 1986)
-Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/10-modified-kenney-and-lau-method.mdx:47
-Category: Citation
-Severity: Major
-Problem: The PDF uses Kenney and Lau (1985, 1986) here, but the MDX only includes <Citation> tags without the author-year text.
-Recommended Fix: Update the sentence to Kenney and Lau (1985, 1986) and keep <Citation citationKey="Kenney1985" /> and <Citation citationKey="Kenney1986" />.
-Fix Applied: No
-Human Verification Required: No
-
-### Issue 29: Missing author-year text for Li and Fannin (2008)
-Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/10-modified-kenney-and-lau-method.mdx:87
-Category: Citation
-Severity: Major
-Problem: The PDF uses Li and Fannin (2008) here, but the MDX only includes a <Citation> without the author-year text.
-Recommended Fix: Update the sentence to Li and Fannin (2008) and keep <Citation citationKey="Li2008" />.
-Fix Applied: No
-Human Verification Required: No
-
-### Issue 30: Missing author-year text for Li and Fannin (2008)
-Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/10-modified-kenney-and-lau-method.mdx:115
-Category: Citation
-Severity: Major
-Problem: The PDF uses Li and Fannin (2008) here, but the MDX only includes a <Citation> without the author-year text.
-Recommended Fix: Update the sentence to Li and Fannin (2008) and keep <Citation citationKey="Li2008" />.
-Fix Applied: No
-Human Verification Required: No
-
-### Issue 31: Figure 32 caption missing citation
+### Issue 29: Figure 32 caption missing citation
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/10-modified-kenney-and-lau-method.mdx:43
 Category: Citation
 Severity: Major
@@ -295,12 +277,30 @@ Recommended Fix: Add <Citation citationKey="Li2008" /> to the Figure 32 caption 
 Fix Applied: No
 Human Verification Required: No
 
-### Issue 32: Figure 33 caption missing citation
+### Issue 30: Missing author-year text for Kenney and Lau (1985, 1986)
+Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/10-modified-kenney-and-lau-method.mdx:47
+Category: Citation
+Severity: Major
+Problem: The PDF uses Kenney and Lau (1985, 1986) here, but the MDX only includes <Citation> tags without the author-year text.
+Recommended Fix: Update the sentence to Kenney and Lau (1985, 1986) and keep <Citation citationKey="Kenney1985" /> and <Citation citationKey="Kenney1986" />.
+Fix Applied: No
+Human Verification Required: No
+
+### Issue 31: Figure 33 caption missing citation
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/10-modified-kenney-and-lau-method.mdx:77
 Category: Citation
 Severity: Major
 Problem: The PDF Figure 33 caption includes author-year text, but the MDX caption lacks the required <Citation>.
 Recommended Fix: Add <Citation citationKey="Kenney1985" /> and <Citation citationKey="Kenney1986" /> to the Figure 33 caption (keep the existing author-year text).
+Fix Applied: No
+Human Verification Required: No
+
+### Issue 32: Missing author-year text for Li and Fannin (2008)
+Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/10-modified-kenney-and-lau-method.mdx:87
+Category: Citation
+Severity: Major
+Problem: The PDF uses Li and Fannin (2008) here, but the MDX only includes a <Citation> without the author-year text.
+Recommended Fix: Update the sentence to Li and Fannin (2008) and keep <Citation citationKey="Li2008" />.
 Fix Applied: No
 Human Verification Required: No
 
@@ -322,9 +322,18 @@ Recommended Fix: Add <Citation citationKey="Li2008" /> to the Figure 35 caption 
 Fix Applied: No
 Human Verification Required: No
 
+### Issue 35: Missing author-year text for Li and Fannin (2008)
+Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/10-modified-kenney-and-lau-method.mdx:115
+Category: Citation
+Severity: Major
+Problem: The PDF uses Li and Fannin (2008) here, but the MDX only includes a <Citation> without the author-year text.
+Recommended Fix: Update the sentence to Li and Fannin (2008) and keep <Citation citationKey="Li2008" />.
+Fix Applied: No
+Human Verification Required: No
+
 ## File: 11-mechanism-and-amount-of-erosion.mdx
 
-### Issue 35: Missing author-year text for Douglas et al. (2019)
+### Issue 36: Missing author-year text for Douglas et al. (2019)
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/11-mechanism-and-amount-of-erosion.mdx:26
 Category: Citation
 Severity: Major
@@ -333,7 +342,7 @@ Recommended Fix: Update the sentence to Douglas et al. (2019) and keep <Citation
 Fix Applied: No
 Human Verification Required: No
 
-### Issue 36: Missing author-year text for United States Society on Dams (2021)
+### Issue 37: Missing author-year text for United States Society on Dams (2021)
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/11-mechanism-and-amount-of-erosion.mdx:32
 Category: Citation
 Severity: Major
@@ -342,7 +351,7 @@ Recommended Fix: Update the text to United States Society on Dams (2021) and kee
 Fix Applied: No
 Human Verification Required: No
 
-### Issue 37: Missing author-year text for Douglas et al. (2019)
+### Issue 38: Missing author-year text for Douglas et al. (2019)
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/11-mechanism-and-amount-of-erosion.mdx:38
 Category: Citation
 Severity: Major
@@ -351,7 +360,7 @@ Recommended Fix: Update the sentence to Douglas et al. (2019) and keep <Citation
 Fix Applied: No
 Human Verification Required: No
 
-### Issue 38: Table 1 caption missing citation
+### Issue 39: Table 1 caption missing citation
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/11-mechanism-and-amount-of-erosion.mdx:77
 Category: Citation
 Severity: Major
@@ -360,7 +369,7 @@ Recommended Fix: Add <Citation citationKey="Douglas2019" /> to the Table 1 capti
 Fix Applied: No
 Human Verification Required: No
 
-### Issue 39: Figure 41 caption missing citation
+### Issue 40: Figure 41 caption missing citation
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/11-mechanism-and-amount-of-erosion.mdx:93
 Category: Citation
 Severity: Major
@@ -369,7 +378,7 @@ Recommended Fix: Add <Citation citationKey="Douglas2019" /> to the Figure 41 cap
 Fix Applied: No
 Human Verification Required: No
 
-### Issue 40: Missing author-year text for Douglas et al. (2019)
+### Issue 41: Missing author-year text for Douglas et al. (2019)
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/11-mechanism-and-amount-of-erosion.mdx:100
 Category: Citation
 Severity: Major
@@ -378,7 +387,7 @@ Recommended Fix: Update the sentence to Douglas et al. (2019) and keep <Citation
 Fix Applied: No
 Human Verification Required: No
 
-### Issue 41: Missing author-year text for Douglas et al. (2019)
+### Issue 42: Missing author-year text for Douglas et al. (2019)
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/11-mechanism-and-amount-of-erosion.mdx:104
 Category: Citation
 Severity: Major
@@ -387,7 +396,7 @@ Recommended Fix: Update the sentence to Douglas et al. (2019) and keep <Citation
 Fix Applied: No
 Human Verification Required: No
 
-### Issue 42: Missing author-year text for Wan and Fell (2004)
+### Issue 43: Missing author-year text for Wan and Fell (2004)
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/11-mechanism-and-amount-of-erosion.mdx:105
 Category: Citation
 Severity: Major
@@ -396,7 +405,7 @@ Recommended Fix: Update the sentence to Wan and Fell (2004) and keep <Citation c
 Fix Applied: No
 Human Verification Required: No
 
-### Issue 43: Missing author-year text for Douglas et al. (2019)
+### Issue 44: Missing author-year text for Douglas et al. (2019)
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/v1.0/11-mechanism-and-amount-of-erosion.mdx:106
 Category: Citation
 Severity: Major

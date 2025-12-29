@@ -7,7 +7,7 @@ This file provides a standard prompt to run a comprehensive QC review of MDX doc
 ## Directions for Use
 
 1. Copy the prompt below into a new Codex chat.
-2. Replace all placeholder paths (e.g., <PDF_PATH>) with actual file paths.
+2. Provide only the document path root (the folder under `docs/` that contains `vX.Y/00-document-info.mdx`).
 3. Submit the prompt to Codex and wait for the QC outputs to be generated.
 
 ---
@@ -27,12 +27,39 @@ Compare SOURCE PDF -> MDX for:
 5. Citations: raw author-year text + `<Citation citationKey="...">` must both appear where references occur (including figure/table captions). Citation keys must match `citationKey` values in `<BIB_JSON_PATH>`.
 6. MDX correctness: JSX validity, consistent formatting, link/anchor correctness.
 
-INPUT PATHS
+INPUTS (PATHS ARE DERIVED)
 
-- SOURCE PDF (authoritative): <PDF_PATH>
-- 00-DOCUMENT-INFO.MDX file path for QC: <MDX_FILE_PATH>
-  - This is the first MDX file in the review folder. Use this to locate and find the other documents for review.
-- Bibliography file (citation keys): <BIB_JSON_PATH>
+- Document root (under `docs/`): <DOC_ROOT>
+  - Example: `docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression`
+  - The version folder is inferred by finding the `vX.Y/00-document-info.mdx` inside this root.
+
+PATH DERIVATION RULES (MUST FOLLOW)
+
+1. MDX folder:
+   - Find the first `00-document-info.mdx` under `<DOC_ROOT>` and use its parent folder as `MDX_DIR`.
+   - `MDX_FILE_PATH = {MDX_DIR}/00-document-info.mdx`.
+2. Version token:
+   - The version is the folder name containing `00-document-info.mdx` (e.g., `v1.0`).
+3. SOURCE PDF:
+   - Replace the `docs/` prefix with `static/source-documents/` and use the same path from `<DOC_ROOT>` plus the version folder.
+   - The PDF is the only `.pdf` file in that folder.
+4. Bibliography file:
+   - Replace the `docs/` prefix with `static/bibliographies/` and use the same path from `<DOC_ROOT>` plus the version folder.
+   - The bibliography is the only `bib.json` in that folder.
+5. QC output base path:
+   - Replace the `docs/` prefix with `qc/Codex/` and use the same path from `<DOC_ROOT>` plus the version folder.
+   - `QC_FILE_PATH = qc/Codex/<DOC_ROOT without docs prefix>/<version>`
+EXAMPLE (BACKWARD-EROSION-PIPING-PROGRESSION)
+
+DOC_ROOT
+- docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression
+
+Resolved paths
+- MDX_FILE_PATH: docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/00-document-info.mdx
+- SOURCE PDF: static/source-documents/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/RMC-CPD-2023-06 - RMC Backward Erosion Piping (Progression) Toolbox.pdf
+- BIB_JSON_PATH: static/bibliographies/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/bib.json
+- QC_FILE_PATH: qc/Codex/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0
+
 
 OUTPUTS (NO MDX CHANGES)
 
@@ -74,8 +101,24 @@ SPECIAL QC RULES (MUST APPLY)
 4. Deep-dive requirement for tables and equations:
    - Tables: verify every cell value, header text, row/column ordering, merged cells, unit formatting, and headerConfig settings against the PDF; log an issue for any mismatch or omission.
    - Equations: verify every symbol, operator, sub/superscript, constant, unit, numbering, and stated variable definition against the PDF; confirm the equation is mathematically and visually consistent with the source, and log an issue for any discrepancy.
-5. No code edits:
+5. Full-review requirement (no sampling):
+   - Review every page and every element (all text, tables, equations, figures, captions, headings, and lists). Do not skip sections.
+6. Precision requirement:
+   - Verify every numeric value, unit, symbol, sub/superscript, and label against the PDF. Log any mismatch, even if minor.
+7. Figures and tables completeness:
+   - Confirm every figure/table present in the PDF appears in MDX with correct placement and all captions/labels match exactly.
+8. Citation placement requirement:
+   - Ensure citations are present at every occurrence in the PDF (including captions) and not just once per section.
+9. Version history caution:
+   - Treat Version History as controlled content; only flag mismatches that are clearly documented in the PDF. If uncertain, mark Human Verification Required = Yes.
+10. No code edits:
    - Only modify QC report and QC CSV.
+11. Exclusions:
+   - Do not log issues about cover photo captions/credits.
+   - Do not log issues about PREPARED/REVIEWED/APPROVED signature blocks or statements.
+   - Do not log issues about missing <Citation> components in abstracts or Document Info/Version History sections.
+   - Do not log issues about phone number formatting in Document Info.
+   - Never recommend removing 00-document-info.mdx or 00-version-history.mdx files.
 
 PROCESS REQUIREMENTS
 
@@ -88,8 +131,8 @@ DELIVERABLES
 
 BEGIN
 
-1. Identify the PDF path, MDX folder, and bib.json path.
-2. Enumerate MDX files in the folder.
+1. Resolve `MDX_FILE_PATH`, `SOURCE PDF`, `BIB_JSON_PATH`, and `QC_FILE_PATH` using the derivation rules above.
+2. Enumerate MDX files in `MDX_DIR`.
 3. Review the entire document set against the PDF.
 4. Write/update QC report and QC CSV with the required format and rules.
 

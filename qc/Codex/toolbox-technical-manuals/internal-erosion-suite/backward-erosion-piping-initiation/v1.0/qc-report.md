@@ -1,7 +1,7 @@
 # QC Report
 
 Source PDF: static/source-documents/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation/v1.0/RMC-CPD-2023-05 - RMC Backward Erosion Piping (Initiation) Toolbox.pdf
-Review Date: 2025-12-22
+Review Date: 2025-12-28
 Reviewer: Codex
 
 ## File: 00-document-info.mdx
@@ -10,8 +10,8 @@ Reviewer: Codex
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation/v1.0/00-document-info.mdx:7
 Category: Text
 Severity: Minor
-Problem: The PDF shows "Tim O’Leary, Risk Management Center" but the MDX has "Tim  O'Leary, Risk Management Center" (extra space and apostrophe style mismatch).
-Recommended Fix: Update the author string to "Tim O’Leary, Risk Management Center".
+Problem: The PDF shows "Tim O'Leary, Risk Management Center" but the MDX has "Tim  O'Leary, Risk Management Center" (extra space and apostrophe style mismatch).
+Recommended Fix: Update the author string to "Tim O'Leary, Risk Management Center".
 Fix Applied: No
 Human Verification Required: No
 
@@ -98,9 +98,18 @@ Recommended Fix: Update the Table 2 soil type label to "Clay and silty clay".
 Fix Applied: No
 Human Verification Required: No
 
+### Issue 11: Extra subscript formatting in L2 reference
+Location: docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation/v1.0/04-background.mdx:111
+Category: MDX
+Severity: Minor
+Problem: The MDX renders "_L<sub>2</sub>_<sub> </sub>for" with an extra subscript tag, but the PDF text reads "L2 for the appropriate cases" without the extra formatting.
+Recommended Fix: Replace "_L<sub>2</sub>_<sub> </sub>for" with "_L<sub>2</sub>_ for" to match the PDF.
+Fix Applied: No
+Human Verification Required: No
+
 ## File: 05-blanket-theory-transformation.mdx
 
-### Issue 11: Figure 11 caption and alt text typo
+### Issue 12: Figure 11 caption and alt text typo
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation/v1.0/05-blanket-theory-transformation.mdx:99
 Category: Figure
 Severity: Minor

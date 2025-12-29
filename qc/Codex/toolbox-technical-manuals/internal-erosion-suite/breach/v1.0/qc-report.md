@@ -1,34 +1,13 @@
-﻿# QC Report
+# QC Report
 
 Source PDF: static/source-documents/toolbox-technical-manuals/internal-erosion-suite/breach/v1.0/RMC-CPD-2023-09 - RMC Breach Toolbox.pdf
-Review Date: 2025-12-22
+Review Date: 2025-12-28
 Reviewer: Codex
-
-## File: 00-document-info.mdx
-
-### Issue 1: Missing prepared/reviewed/approved statements
-Location: docs/toolbox-technical-manuals/internal-erosion-suite/breach/v1.0/00-document-info.mdx:28
-Category: Text
-Severity: Major
-Problem: The PDF front matter includes Prepared/Reviewed/Approved statements with names (Damon Amlung, Tim O'Leary, and Nate Snorteland), but the MDX set does not include this content.
-Recommended Fix: Add a front-matter section (e.g., below Document Information) with the Prepared/Reviewed/Approved statements and names exactly as shown in the PDF.
-Fix Applied: No
-Human Verification Required: No
-
-## File: 00-version-history.mdx
-
-### Issue 2: Extra version history page not in PDF
-Location: docs/toolbox-technical-manuals/internal-erosion-suite/breach/v1.0/00-version-history.mdx:15
-Category: Text
-Severity: Major
-Problem: The PDF does not include a Version History section/page, but the MDX includes a Version History page with a table (version 1.0, December 2025, etc.).
-Recommended Fix: Remove this MDX page or replace it with content that appears in the PDF; confirm with the source owner if a Version History page is intended.
-Fix Applied: No
-Human Verification Required: Yes
 
 ## File: 04-background.mdx
 
-### Issue 3: "mass wasting" text does not match PDF
+### Issue 1: "mass wasting" text does not match PDF
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/breach/v1.0/04-background.mdx:37
 Category: Text
 Severity: Minor
@@ -39,7 +18,8 @@ Human Verification Required: Yes
 
 ## File: 05-gross-enlargement.mdx
 
-### Issue 4: Figure 9 caption missing citation component
+### Issue 2: Figure 9 caption missing citation component
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/breach/v1.0/05-gross-enlargement.mdx:150
 Category: Citation
 Severity: Major
@@ -50,7 +30,8 @@ Human Verification Required: No
 
 ## File: 06-unraveling.mdx
 
-### Issue 5: Missing period at end of opening sentence
+### Issue 3: Missing period at end of opening sentence
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/breach/v1.0/06-unraveling.mdx:25
 Category: Text
 Severity: Minor
@@ -59,11 +40,44 @@ Recommended Fix: Add a period at the end of the sentence.
 Fix Applied: No
 Human Verification Required: No
 
-### Issue 6: Equation 15 slope symbol uses zero instead of letter o
+### Issue 4: Equation 15 slope symbol uses zero instead of letter o
+
 Location: docs/toolbox-technical-manuals/internal-erosion-suite/breach/v1.0/06-unraveling.mdx:78
 Category: Equation
 Severity: Major
-Problem: The PDF equation uses S_o (letter o) for slope, but the MDX equation uses S_0 (zero) in Equation 15.
-Recommended Fix: Change S_{0} to S_{o} in Equation 15.
+Problem: The PDF equation uses S*o (letter o) for slope, but the MDX equation uses S_0 (zero) in Equation 15.
+Recommended Fix: Change S*{0} to S\_{o} in Equation 15.
+Fix Applied: No
+Human Verification Required: No
+
+## File: 07-sinkhole.mdx
+
+### Issue 5: Figure 22 caption uses "phi" text instead of Greek phi symbol
+
+Location: docs/toolbox-technical-manuals/internal-erosion-suite/breach/v1.0/07-sinkhole.mdx:67
+Category: Figure
+Severity: Minor
+Problem: The PDF Figure 22 caption uses the Greek phi symbol (&#x03C6;) in Nc&phi; and &phi;, but the MDX caption/alt text uses the literal text "phi".
+Recommended Fix: Replace "phi" with the Greek phi symbol using &phi; in the Figure 22 alt/caption (e.g., N<sub>c&phi;</sub> and &phi;).
+Fix Applied: No
+Human Verification Required: No
+
+### Issue 6: Table 2 caption uses "phi" text instead of Greek phi symbol
+
+Location: docs/toolbox-technical-manuals/internal-erosion-suite/breach/v1.0/07-sinkhole.mdx:181
+Category: Table
+Severity: Minor
+Problem: The PDF Table 2 caption uses the Greek phi symbol (&#x03C6;) in N_c&phi;,cr, but the MDX caption/alt text uses the literal text "phi".
+Recommended Fix: Replace "phi" with the Greek phi symbol using &phi; in the Table 2 alt/caption (e.g., N<sub>c&phi;,cr</sub>).
+Fix Applied: No
+Human Verification Required: No
+
+### Issue 7: Table 3 caption uses "phi" text instead of Greek phi symbol
+
+Location: docs/toolbox-technical-manuals/internal-erosion-suite/breach/v1.0/07-sinkhole.mdx:316
+Category: Table
+Severity: Minor
+Problem: The PDF Table 3 caption uses the Greek phi symbol (&#x03C6;) in N_c'&phi;',cr, but the MDX caption/alt text uses the literal text "phi".
+Recommended Fix: Replace "phi" with the Greek phi symbol using &phi; in the Table 3 alt/caption (e.g., N<sub>c'&phi;',cr</sub>).
 Fix Applied: No
 Human Verification Required: No

@@ -60,16 +60,12 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
   /* Internal Erosion Suite document links (third level) */
   const bepInitiationHref = useBaseUrl(
     `/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation/${
-      latestVersions[
-        'toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation'
-      ] || 'v1.0'
+      latestVersions['toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation'] || 'v1.0'
     }/preface`,
   );
   const bepProgressionHref = useBaseUrl(
     `/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/${
-      latestVersions[
-        'toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression'
-      ] || 'v1.0'
+      latestVersions['toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression'] || 'v1.0'
     }/preface`,
   );
   const breachHref = useBaseUrl(
@@ -79,22 +75,17 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
   );
   const cleInitiationHref = useBaseUrl(
     `/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/${
-      latestVersions[
-        'toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation'
-      ] || 'v1.0'
+      latestVersions['toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation'] || 'v1.0'
     }/preface`,
   );
   const continuationHref = useBaseUrl(
     `/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/${
-      latestVersions[
-        'toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation'
-      ] || 'v1.0'
+      latestVersions['toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation'] || 'v1.0'
     }/preface`,
   );
   const internalInstabilityHref = useBaseUrl(
     `/docs/toolbox-technical-manuals/internal-erosion-suite/internal-instability/${
-      latestVersions['toolbox-technical-manuals/internal-erosion-suite/internal-instability'] ||
-      'v1.0'
+      latestVersions['toolbox-technical-manuals/internal-erosion-suite/internal-instability'] || 'v1.0'
     }/preface`,
   );
   const pipeServiceLifeHref = useBaseUrl(
@@ -104,27 +95,21 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
   );
   const SCEHref = useBaseUrl(
     `/docs/toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation/${
-      latestVersions[
-        'toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation'
-      ] || 'v1.0'
+      latestVersions['toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation'] || 'v1.0'
     }/preface`,
   );
 
   /* Overtopping Suite document links (third level) */
   const otErosionToolboxNotesHref = useBaseUrl(
     `/docs/toolbox-technical-manuals/overtopping-suite/overtopping-erosion-toolbox-notes/${
-      latestVersions[
-        'toolbox-technical-manuals/overtopping-suite/overtopping-erosion-toolbox-notes'
-      ] || 'v1.0'
+      latestVersions['toolbox-technical-manuals/overtopping-suite/overtopping-erosion-toolbox-notes'] || 'v1.0'
     }/preface`,
   );
 
   /* Risk Calculations Suite document links (third level) */
   const etDatabaseHref = useBaseUrl(
     `/docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/${
-      latestVersions[
-        'toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database'
-      ] || 'v1.0'
+      latestVersions['toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database'] || 'v1.0'
     }/preface`,
   );
 
@@ -274,9 +259,7 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
           id: 'risk-calculations-suite',
           text: 'Risk Calculations Suite',
           href: riskCalcHref,
-          children: [
-            { id: 'et-database', text: 'Typical Event Tree Database', href: etDatabaseHref },
-          ],
+          children: [{ id: 'et-database', text: 'Typical Event Tree Database', href: etDatabaseHref }],
         },
         {
           id: 'seismic-hazard-suite',
@@ -284,14 +267,14 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
           href: seismicHref,
           children: [
             {
-              id: 'site-classification',
-              text: 'Site Classification Toolbox Technical Manual',
-              href: siteClassHref,
-            },
-            {
               id: 'seismic-hazard-curves',
               text: 'Seismic Hazard Curves Toolbox Technical Manual',
               href: seismicHazardCurvesHref,
+            },
+            {
+              id: 'site-classification',
+              text: 'Site Classification Toolbox Technical Manual',
+              href: siteClassHref,
             },
           ],
         },
