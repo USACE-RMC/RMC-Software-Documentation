@@ -13,8 +13,9 @@ Category: Text
 Severity: Minor
 Problem: The PDF heading uses "using" in lowercase, but the MDX heading capitalizes it as "Using".
 Recommended Fix: Change the heading to "Overtopping Evaluation Process using WinDAM C".
-Fix Applied: No
+Fix Applied: Yes
 Human Verification Required: No
+Addressed: [x]
 
 ### Issue 2: Hyphen spacing mismatch in kd-su pair
 
@@ -23,5 +24,6 @@ Category: Text
 Severity: Minor
 Problem: The PDF uses "kd-su pair" without spaces, but the MDX shows "kd - su pair" with spaces around the hyphen.
 Recommended Fix: Change the phrase to "kd-su pair" to match the PDF.
-Fix Applied: No
+Fix Applied: Yes
 Human Verification Required: No
+Addressed: [x]
