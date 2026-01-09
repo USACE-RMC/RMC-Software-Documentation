@@ -12,11 +12,11 @@
  * Each section is clearly marked below.
  */
 
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
-const DOCS_DIR = path.join(__dirname, "..", "docs");
-const SIDEBAR_PATH = path.join(__dirname, "..", "sidebars.js");
+const DOCS_DIR = path.join(__dirname, '..', 'docs');
+const SIDEBAR_PATH = path.join(__dirname, '..', 'sidebars.js');
 
 /* --- Utility Functions (Standard Logic) --- */
 
@@ -27,7 +27,7 @@ function walkDir(dir) {
     const filePath = path.join(dir, file.name);
     if (file.isDirectory()) {
       results = results.concat(walkDir(filePath));
-    } else if (file.name.endsWith(".mdx")) {
+    } else if (file.name.endsWith('.mdx')) {
       results.push(filePath);
     }
   });
@@ -35,18 +35,16 @@ function walkDir(dir) {
 }
 
 function titleCase(str) {
-  return str.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+  return str.replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 function camelCase(str) {
-  return str
-    .replace(/[-_](.)/g, (_, group1) => group1.toUpperCase())
-    .replace(/^(.)/, (_, group1) => group1.toLowerCase());
+  return str.replace(/[-_](.)/g, (_, group1) => group1.toUpperCase()).replace(/^(.)/, (_, group1) => group1.toLowerCase());
 }
 
 function getFrontmatterTitle(filePath) {
   try {
-    const content = fs.readFileSync(filePath, "utf8");
+    const content = fs.readFileSync(filePath, 'utf8');
     const match = content.match(/^\s*---\s*([\s\S]*?)\s*---/);
     if (match) {
       const frontmatter = match[1];
@@ -62,15 +60,15 @@ function getFrontmatterTitle(filePath) {
 }
 
 function getFallbackLabel(filename) {
-  if (filename.includes("appendix")) {
+  if (filename.includes('appendix')) {
     const appendixMatch = filename.match(/appendix-([a-zA-Z0-9\-]+)/);
     if (appendixMatch) {
-      return `Appendix ${titleCase(appendixMatch[1].replace(/-/g, " "))}`;
+      return `Appendix ${titleCase(appendixMatch[1].replace(/-/g, ' '))}`;
     }
-    return "Appendix";
+    return 'Appendix';
   }
-  const parts = filename.replace(".mdx", "").split("-");
-  return titleCase(parts.slice(1).join(" "));
+  const parts = filename.replace('.mdx', '').split('-');
+  return titleCase(parts.slice(1).join(' '));
 }
 
 /* --- Custom Logic: LifeSim Validation Studies Sidebar --- */
@@ -78,61 +76,61 @@ function generateSidebarForLifeSimValidationStudies(versionPath, relativePath) {
   // No double nesting: return the items array directly
   return [
     {
-      type: "category",
-      label: "Document Information",
+      type: 'category',
+      label: 'Document Information',
       collapsible: true,
       collapsed: true,
       items: [
         {
-          type: "doc",
+          type: 'doc',
           id: `${relativePath}/document-info`,
-          label: "Document Information",
+          label: 'Document Information',
         },
         {
-          type: "doc",
+          type: 'doc',
           id: `${relativePath}/version-history`,
-          label: "Version History",
+          label: 'Version History',
         },
       ],
     },
-    { type: "doc", id: `${relativePath}/preface`, label: "Preface" },
+    { type: 'doc', id: `${relativePath}/preface`, label: 'Preface' },
     {
-      type: "category",
-      label: "Studies",
+      type: 'category',
+      label: 'Studies',
       collapsible: true,
       collapsed: false,
       items: [
-        { type: "doc", id: `${relativePath}/brumadinho`, label: "Brumadinho" },
-        { type: "doc", id: `${relativePath}/johnstown`, label: "Johnstown" },
-        { type: "doc", id: `${relativePath}/joso`, label: "Jōsō" },
+        { type: 'doc', id: `${relativePath}/brumadinho`, label: 'Brumadinho' },
+        { type: 'doc', id: `${relativePath}/johnstown`, label: 'Johnstown' },
+        { type: 'doc', id: `${relativePath}/joso`, label: 'Jōsō' },
         {
-          type: "doc",
+          type: 'doc',
           id: `${relativePath}/katrina-east-bowl`,
-          label: "Katrina - East Bowl",
+          label: 'Katrina - East Bowl',
         },
         {
-          type: "doc",
+          type: 'doc',
           id: `${relativePath}/kelly-barnes`,
-          label: "Kelly Barnes",
+          label: 'Kelly Barnes',
         },
-        { type: "doc", id: `${relativePath}/malpasset`, label: "Malpasset" },
+        { type: 'doc', id: `${relativePath}/malpasset`, label: 'Malpasset' },
         {
-          type: "doc",
+          type: 'doc',
           id: `${relativePath}/midland-dams`,
-          label: "Midland Dams",
+          label: 'Midland Dams',
         },
-        { type: "doc", id: `${relativePath}/oroville`, label: "Oroville" },
-        { type: "doc", id: `${relativePath}/teton`, label: "Teton" },
+        { type: 'doc', id: `${relativePath}/oroville`, label: 'Oroville' },
+        { type: 'doc', id: `${relativePath}/teton`, label: 'Teton' },
       ],
     },
-    { type: "doc", id: `${relativePath}/references`, label: "References" },
+    { type: 'doc', id: `${relativePath}/references`, label: 'References' },
   ];
 }
 
 /* --- Custom Logic: Event Tree Database Sidebar --- */
 
 function generateSidebarForEventTree(versionPath, relativePath) {
-  const files = fs.readdirSync(versionPath).filter((f) => f.endsWith(".mdx"));
+  const files = fs.readdirSync(versionPath).filter((f) => f.endsWith('.mdx'));
   files.sort();
 
   const infoItems = [];
@@ -140,50 +138,50 @@ function generateSidebarForEventTree(versionPath, relativePath) {
   const majorCategories = {};
 
   files.forEach((file) => {
-    const fileBase = file.replace(/\.mdx$/, "");
+    const fileBase = file.replace(/\.mdx$/, '');
     const fullPath = path.join(versionPath, file);
     // Strip all leading NN- patterns for doc ID
-    const strippedBase = fileBase.replace(/^(\d{2,3}-)+/, "");
+    const strippedBase = fileBase.replace(/^(\d{2,3}-)+/, '');
     const fileId = `${relativePath}/${strippedBase}`;
     const label = getFrontmatterTitle(fullPath) || titleCase(strippedBase);
-    const docItem = { type: "doc", id: fileId, label };
+    const docItem = { type: 'doc', id: fileId, label };
 
     // Document Information
-    if (file === "00-document-info.mdx" || file === "00-version-history.mdx") {
+    if (file === '00-document-info.mdx' || file === '00-version-history.mdx') {
       infoItems.push(docItem);
       return;
     }
 
     // Standalone top-level docs
-    if (file === "01-preface.mdx" || file === "02-table-of-contents.mdx") {
+    if (file === '01-preface.mdx' || file === '02-table-of-contents.mdx') {
       topLevelDocs.push(docItem);
       return;
     }
 
     // Major category: 3-digit number, dash, then anything (e.g., 030-major-category)
     const majorCatMatch = fileBase.match(/^(\d{3})-(.+)$/);
-    if (majorCatMatch && majorCatMatch[1][2] === "0") {
+    if (majorCatMatch && majorCatMatch[1][2] === '0') {
       const majorNum = majorCatMatch[1];
       majorCategories[majorNum] = {
-        type: "category",
+        type: 'category',
         label,
         collapsible: true,
         collapsed: true,
         items: [],
-        link: { type: "doc", id: fileId },
+        link: { type: 'doc', id: fileId },
       };
       return;
     }
 
     // Sub-item: 3-digit number, dash, then anything (e.g., 031-event-tree)
     const subItemMatch = fileBase.match(/^(\d{3})-(.+)$/);
-    if (subItemMatch && subItemMatch[1][2] !== "0") {
+    if (subItemMatch && subItemMatch[1][2] !== '0') {
       // Place under the corresponding major category (e.g., 031 -> 030)
-      const majorNum = subItemMatch[1].slice(0, 2) + "0";
+      const majorNum = subItemMatch[1].slice(0, 2) + '0';
       if (!majorCategories[majorNum]) {
         // If the major category doc doesn't exist, create a placeholder
         majorCategories[majorNum] = {
-          type: "category",
+          type: 'category',
           label: `Category ${majorNum}`,
           collapsible: true,
           collapsed: true,
@@ -207,8 +205,8 @@ function generateSidebarForEventTree(versionPath, relativePath) {
 
   if (infoItems.length) {
     sidebar.push({
-      type: "category",
-      label: "Document Information",
+      type: 'category',
+      label: 'Document Information',
       collapsible: true,
       collapsed: true,
       items: infoItems,
@@ -223,11 +221,8 @@ function generateSidebarForEventTree(versionPath, relativePath) {
 
 /* --- Custom Logic: RMC-TotalRisk Applications Guide Sidebar --- */
 
-function generateSidebarForRmcTotalRiskApplicationsGuide(
-  versionPath,
-  relativePath
-) {
-  const files = fs.readdirSync(versionPath).filter((f) => f.endsWith(".mdx"));
+function generateSidebarForRmcTotalRiskApplicationsGuide(versionPath, relativePath) {
+  const files = fs.readdirSync(versionPath).filter((f) => f.endsWith('.mdx'));
   files.sort();
 
   const documentInfoDocs = [];
@@ -236,19 +231,19 @@ function generateSidebarForRmcTotalRiskApplicationsGuide(
   const exampleDocs = [];
 
   files.forEach((file) => {
-    const fileBase = file.replace(".mdx", "").replace(/^\d+-/, "");
+    const fileBase = file.replace('.mdx', '').replace(/^\d+-/, '');
     const fullPath = path.join(versionPath, file);
     const label = getFrontmatterTitle(fullPath) || getFallbackLabel(file);
     const id = `${relativePath}/${fileBase}`;
 
-    if (file.startsWith("00-")) {
-      documentInfoDocs.push({ type: "doc", id, label });
-    } else if (file === "01-preface.mdx") {
-      prefaceDoc = { type: "doc", id, label };
-    } else if (file === "02-hydrologic-risk-analysis.mdx") {
+    if (file.startsWith('00-')) {
+      documentInfoDocs.push({ type: 'doc', id, label });
+    } else if (file === '01-preface.mdx') {
+      prefaceDoc = { type: 'doc', id, label };
+    } else if (file === '02-hydrologic-risk-analysis.mdx') {
       hydrologicDoc = { id, label };
-    } else if (file.startsWith("03-")) {
-      exampleDocs.push({ type: "doc", id, label });
+    } else if (file.startsWith('03-')) {
+      exampleDocs.push({ type: 'doc', id, label });
     }
   });
 
@@ -256,8 +251,8 @@ function generateSidebarForRmcTotalRiskApplicationsGuide(
 
   if (documentInfoDocs.length) {
     customStructure.push({
-      type: "category",
-      label: "Document Information",
+      type: 'category',
+      label: 'Document Information',
       collapsible: true,
       collapsed: true,
       items: documentInfoDocs,
@@ -268,9 +263,9 @@ function generateSidebarForRmcTotalRiskApplicationsGuide(
 
   if (hydrologicDoc) {
     customStructure.push({
-      type: "category",
-      label: hydrologicDoc.label || "Hydrologic Risk Analysis",
-      link: { type: "doc", id: hydrologicDoc.id },
+      type: 'category',
+      label: hydrologicDoc.label || 'Hydrologic Risk Analysis',
+      link: { type: 'doc', id: hydrologicDoc.id },
       collapsible: true,
       collapsed: false,
       items: exampleDocs,
@@ -282,35 +277,24 @@ function generateSidebarForRmcTotalRiskApplicationsGuide(
 
 /* --- Standard Logic: Default Sidebar for Most Documents --- */
 
-function generateSidebarForVersion(
-  versionPath,
-  relativePath,
-  docGroup,
-  folderName
-) {
+function generateSidebarForVersion(versionPath, relativePath, docGroup, folderName) {
   // CUSTOM LOGIC: Event Tree Database
-  if (folderName === "typical-event-tree-database") {
+  if (folderName === 'typical-event-tree-database') {
     return generateSidebarForEventTree(versionPath, relativePath);
   }
 
   // CUSTOM LOGIC: RMC-TotalRisk Applications Guide
-  if (docGroup === "rmc-totalrisk" && folderName === "applications-guide") {
-    return generateSidebarForRmcTotalRiskApplicationsGuide(
-      versionPath,
-      relativePath
-    );
+  if (docGroup === 'rmc-totalrisk' && folderName === 'applications-guide') {
+    return generateSidebarForRmcTotalRiskApplicationsGuide(versionPath, relativePath);
   }
 
   // CUSTOM LOGIC: LifeSim Validation Studies
-  if (docGroup === "lifesim" && folderName === "validation-studies") {
-    return generateSidebarForLifeSimValidationStudies(
-      versionPath,
-      relativePath
-    );
+  if (docGroup === 'lifesim' && folderName === 'validation-studies') {
+    return generateSidebarForLifeSimValidationStudies(versionPath, relativePath);
   }
 
   // STANDARD LOGIC: All other documents
-  const files = fs.readdirSync(versionPath).filter((f) => f.endsWith(".mdx"));
+  const files = fs.readdirSync(versionPath).filter((f) => f.endsWith('.mdx'));
   files.sort();
 
   const infoItems = [];
@@ -318,16 +302,16 @@ function generateSidebarForVersion(
   const appendixItems = [];
 
   files.forEach((file) => {
-    const fileBase = file.replace(".mdx", "").replace(/^\d+-/, "");
+    const fileBase = file.replace('.mdx', '').replace(/^\d+-/, '');
     const filePath = `${relativePath}/${fileBase}`;
     const fullPath = path.join(versionPath, file);
     const label = getFrontmatterTitle(fullPath) || getFallbackLabel(file);
 
-    const docItem = { type: "doc", id: filePath, label };
+    const docItem = { type: 'doc', id: filePath, label };
 
-    if (file.startsWith("00-")) {
+    if (file.startsWith('00-')) {
       infoItems.push(docItem);
-    } else if (file.toLowerCase().includes("appendix")) {
+    } else if (file.toLowerCase().includes('appendix')) {
       appendixItems.push(docItem);
     } else {
       mainItems.push(docItem);
@@ -338,8 +322,8 @@ function generateSidebarForVersion(
 
   if (infoItems.length) {
     sidebar.push({
-      type: "category",
-      label: "Document Information",
+      type: 'category',
+      label: 'Document Information',
       collapsible: true,
       collapsed: true,
       items: infoItems,
@@ -348,8 +332,8 @@ function generateSidebarForVersion(
 
   if (mainItems.length) {
     sidebar.push({
-      type: "category",
-      label: "Main Report",
+      type: 'category',
+      label: 'Main Report',
       collapsible: true,
       collapsed: false,
       items: mainItems,
@@ -358,8 +342,8 @@ function generateSidebarForVersion(
 
   if (appendixItems.length) {
     sidebar.push({
-      type: "category",
-      label: "Appendices",
+      type: 'category',
+      label: 'Appendices',
       collapsible: true,
       collapsed: true,
       items: appendixItems,
@@ -372,72 +356,52 @@ function generateSidebarForVersion(
 /* --- Custom Logic: Documentation Guide Sidebar --- */
 
 function generateDocumentationGuideSidebar() {
-  const guideDir = path.join(DOCS_DIR, "00-documentation-guide");
+  const guideDir = path.join(DOCS_DIR, '00-documentation-guide');
   if (!fs.existsSync(guideDir)) return null;
 
   const mainIds = [
-    "00-introduction",
-    "01-getting-started",
-    "02-versioning-system",
-    "03-project-structure",
-    "11-creating-editing-pages",
-    "12-react-components",
-    "13-search",
+    '00-introduction',
+    '01-getting-started',
+    '02-versioning-system',
+    '03-project-structure',
+    '04-docx-converter',
+    '05-build-process-overview',
+    '06-creating-editing-pages',
+    '07-react-components',
+    '08-quick-reference',
+    '09-troubleshooting-faq',
   ];
-  const subIds = [
-    "04-docx_converter",
-    "05-docs-folder",
-    "06-scripts",
-    "07-src-folder",
-    "08-static-folder",
-    "09-sidebars",
-    "10-other-files",
-  ];
+  const appendixIds = ['10-appendix-a-source-code-structure', '11-appendix-b-search-configuration'];
 
   const files = fs
     .readdirSync(guideDir)
-    .filter((f) => f.endsWith(".mdx"))
+    .filter((f) => f.endsWith('.mdx'))
     .sort();
 
   function getLabel(fileBase) {
     const fullPath = path.join(guideDir, `${fileBase}.mdx`);
-    return (
-      getFrontmatterTitle(fullPath) || titleCase(fileBase.replace(/^\d+-/, ""))
-    );
+    return getFrontmatterTitle(fullPath) || titleCase(fileBase.replace(/^\d+-/, ''));
   }
-
-  // Build sub-items for Project Structure
-  const projectStructureSubItems = subIds
-    .filter((id) => files.includes(`${id}.mdx`))
-    .map((id) => ({
-      type: "doc",
-      id: `documentation-guide/${id.replace(/^\d+-/, "")}`,
-      label: getLabel(id),
-    }));
 
   // Build main sidebar items
   const items = [];
   mainIds.forEach((id) => {
     if (!files.includes(`${id}.mdx`)) return;
-    if (id === "03-project-structure") {
-      items.push({
-        type: "category",
-        label: getLabel(id),
-        link: {
-          type: "doc",
-          id: `documentation-guide/${id.replace(/^\d+-/, "")}`,
-        },
-        collapsible: false,
-        collapsed: false,
-        items: projectStructureSubItems,
-      });
-    } else {
-      items.push({
-        type: "doc",
-        id: `documentation-guide/${id.replace(/^\d+-/, "")}`,
-        label: getLabel(id),
-      });
-    }
+    items.push({
+      type: 'doc',
+      id: `documentation-guide/${id.replace(/^\d+-/, '')}`,
+      label: getLabel(id),
+    });
+  });
+
+  // Add appendices
+  appendixIds.forEach((id) => {
+    if (!files.includes(`${id}.mdx`)) return;
+    items.push({
+      type: 'doc',
+      id: `documentation-guide/${id}`,
+      label: getLabel(id),
+    });
   });
 
   return items;
@@ -447,26 +411,24 @@ function generateDocumentationGuideSidebar() {
 
 function generateSidebars() {
   const sidebarContent = {};
-  const versions = walkDir(DOCS_DIR).filter((filePath) =>
-    /\bv\d+\.\d+\b/.test(filePath)
-  );
+  const versions = walkDir(DOCS_DIR).filter((filePath) => /\bv\d+\.\d+\b/.test(filePath));
 
   versions.forEach((filePath) => {
     const versionDir = path.dirname(filePath);
-    const relPath = path.relative(DOCS_DIR, versionDir).replace(/\\/g, "/");
+    const relPath = path.relative(DOCS_DIR, versionDir).replace(/\\/g, '/');
 
     const versionMatch = relPath.match(/(.*)\/(v\d+\.\d+)$/);
     if (!versionMatch) return;
 
     const docPath = versionMatch[1];
     const version = versionMatch[2];
-    const docParts = docPath.split("/");
+    const docParts = docPath.split('/');
     const docGroup = docParts[1]; // e.g., "rmc-totalrisk"
     const folderName = docParts[docParts.length - 1]; // e.g., "applications-guide"
 
     const groupCamel = camelCase(docGroup);
     const folderCamel = camelCase(folderName);
-    const versionFormatted = version.replace(/\./g, "_");
+    const versionFormatted = version.replace(/\./g, '_');
     const sidebarKey = `${groupCamel}${folderCamel}_${versionFormatted}`;
 
     const documentName = titleCase(folderName);
@@ -474,12 +436,7 @@ function generateSidebars() {
     // Only create if not already present
     if (!sidebarContent[sidebarKey]) {
       sidebarContent[sidebarKey] = {
-        [documentName]: generateSidebarForVersion(
-          path.join(DOCS_DIR, relPath),
-          relPath,
-          docGroup,
-          folderName
-        ),
+        [documentName]: generateSidebarForVersion(path.join(DOCS_DIR, relPath), relPath, docGroup, folderName),
       };
     }
   });
@@ -488,7 +445,7 @@ function generateSidebars() {
   const docGuideSidebar = generateDocumentationGuideSidebar();
   if (docGuideSidebar) {
     sidebarContent.documentationGuide = {
-      "Documentation Guide": docGuideSidebar,
+      'Documentation Guide': docGuideSidebar,
     };
   }
 
@@ -501,16 +458,13 @@ function writeSidebarFile() {
   const sidebars = generateSidebars();
 
   const sidebarEntries = Object.entries(sidebars)
-    .map(
-      ([key, value]) =>
-        `  ${key}: ${JSON.stringify(value, null, 2).replace(/\n/g, "\n  ")}`
-    )
-    .join(",\n");
+    .map(([key, value]) => `  ${key}: ${JSON.stringify(value, null, 2).replace(/\n/g, '\n  ')}`)
+    .join(',\n');
 
   const output = `module.exports = {\n${sidebarEntries}\n};\n`;
 
-  fs.writeFileSync(SIDEBAR_PATH, output, "utf8");
-  console.log("✅ sidebars.js has been generated correctly.");
+  fs.writeFileSync(SIDEBAR_PATH, output, 'utf8');
+  console.log('✅ sidebars.js has been generated correctly.');
 }
 
 writeSidebarFile();

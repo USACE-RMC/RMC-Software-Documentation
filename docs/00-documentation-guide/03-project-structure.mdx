@@ -4,50 +4,658 @@ title: Project Structure
 
 # Project Structure
 
-The RMC Software Documentation project follows this structure:
+Understanding the project structure is essential for contributing to the RMC Software Documentation project. This guide organizes the project folders into **three tiers** based on how contributors interact with them:
+
+- ✅ **Tier 1: Active Contribution Areas** - Files and folders you'll work with regularly
+- 📖 **Tier 2: Reference Areas** - Resources you'll use but not modify
+- ⛔ **Tier 3: Off-Limits Areas** - Auto-generated files and build artifacts you should never touch
+
+---
+
+## Project Structure Overview
 
 ```
 RMC-SOFTWARE-DOCUMENTATION/
-    build/                          # Generated static files after building for production
-    docs/                           # Documentation files
-        00-documentation-guide/     # Documentation guide for the project
-        desktop-applications/       # Documentation for desktop applications
-        toolbox-technical-manuals/  # Documentation for technical manuals
-        web-applications/           # Documentation for web applications
-    docx_converter/                 # DOCX to MDX converter
-    node_modules/                   # Installed dependencies
-    scripts/                        # Custom scripts
-        counters.js                 # Script for handling counters in the documentation
-        generateEventTreeTOC.js     # Script for generating a custom table of context for the RMC Typical Event Tree Database
-        generateReportIdMap.js      # Script for generating a report ID map for code automation
-        generateSidebars.js         # Script to automatically build sidebars.js for the Docusaurus project
-        versions.js                 # Script to aid in version control
-    src/                            # Source code for custom components and pages
-        components/                 # Custom React components
-        contexts/                   # Context files
-        css/                        # Custom CSS files
-        pages/                      # Custom pages
-        theme/                      # Custom theme files
-        draftDocs.js                # Aggregates all document entries marked as draft
-        reportIdMap.js              # Report ID file automatically built and updated by the generateReportIdMap.js file
-    static/                         # Static files like images, fonts, etc.
-        bibliographies/             # Bibliographies for citation and reference management
-        counters/                   # Static files related to counters
-        figures/                    # Figures for the documentation
-        fonts/                      # Custom fonts
-        img/                        # Images for the website
-        versions/                   # JSON files for version control
-    .gitattributes
-    .gitignore                      # Git ignore file for the project
-    .nojekyll
-    docusaurus.config.js            # Main configuration file for Docusaurus
-    LICENSE                         # License file
-    package-lock.json               # Lock file for npm dependencies
-    package.json                    # Project metadata and dependencies
-    postcss.config.js               # Configuration for PostCSS
-    README.md                       # This file
-    sidebars.js                     # Sidebar configuration for navigation
-    tailwind.config.js              # Configuration for Tailwind CSS
+├── docs/                           ✅ YOU WORK HERE - Write MDX documentation
+├── static/
+│   ├── figures/                    ✅ YOU WORK HERE - Add documentation images
+│   ├── bibliographies/             ✅ YOU WORK HERE - Manage citations
+│   ├── source-documents/           ✅ YOU WORK HERE - Store original files
+│   ├── counters/                   ⛔ DON'T TOUCH - Auto-generated numbering
+│   ├── versions/                   ⛔ DON'T TOUCH - Auto-generated version data
+│   ├── fonts/                      📖 REFERENCE ONLY
+│   └── img/                        📖 REFERENCE ONLY - Site-wide images
+├── src/
+│   ├── components/                 📖 REFERENCE ONLY - React components to use
+│   ├── css/                        📖 REFERENCE ONLY - Styling
+│   ├── pages/                      📖 REFERENCE ONLY - Landing pages
+│   ├── data/                       ⛔ DON'T TOUCH - Auto-generated
+│   └── reportIdMap.js              ⛔ DON'T TOUCH - Auto-generated
+├── scripts/                        📖 REFERENCE ONLY - Build automation
+├── docx_converter/                 📖 REFERENCE ONLY - Conversion utility
+├── .docusaurus/                    ⛔ DON'T TOUCH - Build cache
+├── build/                          ⛔ DON'T TOUCH - Production build
+├── node_modules/                   ⛔ DON'T TOUCH - Dependencies
+├── docusaurus.config.js            📖 REFERENCE ONLY - Site configuration
+├── package.json                    📖 REFERENCE ONLY - Project dependencies
+├── sidebars.js                     ⛔ DON'T TOUCH - Auto-generated sidebar
+└── [other config files]            📖 REFERENCE ONLY - Project setup
 ```
 
-Use the sidebar to explore the differen project folders and files in detail.
+---
+
+## ✅ Tier 1: Active Contribution Areas
+
+These are the primary areas where you'll create and edit content.
+
+### `docs/` - Documentation Content
+
+**Purpose:** Contains all `.mdx` documentation files organized by application type, software, and version.
+
+**Structure:**
+
+```
+docs/
+├── 00-documentation-guide/         # This guide
+├── desktop-applications/           # Desktop software docs
+│   ├── lifesim/
+│   │   ├── users-guide/
+│   │   │   ├── v1.0/              # Version-specific content
+│   │   │   │   ├── 00-document-info.mdx
+│   │   │   │   ├── 00-version-history.mdx
+│   │   │   │   ├── 01-preface.mdx
+│   │   │   │   └── ...
+│   │   │   └── v1.1/              # Newer version
+│   │   └── validation-studies/
+│   ├── rmc-bestfit/
+│   ├── rmc-rfa/
+│   └── rmc-totalrisk/
+├── toolbox-technical-manuals/      # Excel toolbox manuals
+│   ├── internal-erosion-suite/
+│   ├── overtopping-suite/
+│   ├── risk-calculations-suite/
+│   └── seismic-hazard-suite/
+└── web-applications/               # Web app docs
+    ├── dst/
+    ├── lst/
+    └── rrft/
+```
+
+**Folder Hierarchy:**
+
+1. **Hub** - Application type (desktop-applications, toolbox-technical-manuals, web-applications)
+2. **Sub-Hub** - Individual software/tool (lifesim, rmc-rfa, internal-erosion-suite)
+3. **Document** - Document title (users-guide, validation-studies, backward-erosion-piping-progression)
+4. **Version** - Version folder (v1.0, v1.1, v2.0)
+5. **Chapters** - Individual `.mdx` files (00-document-info.mdx, 01-preface.mdx, etc.)
+
+**Naming Convention for Chapter Files:**
+
+Every chapter follows this pattern: `##-chapter-name.mdx`
+
+- `##` - Two-digit prefix determining sidebar order (00, 01, 02, etc.)
+- `chapter-name` - Lowercase with hyphens (preface, methodology, results)
+- `.mdx` - File extension
+
+**Required Files:**
+
+Every document must include:
+
+1. **`00-document-info.mdx`** - First chapter, contains metadata using `<DocumentMetadata />` component
+2. **`00-version-history.mdx`** - Second chapter, version history using `<TableVersionHistory />` component
+
+**Standard Document Structure:**
+
+- **Document Information** (sidebar collapsed by default)
+  - `00-document-info.mdx`
+  - `00-version-history.mdx`
+
+- **Main Report** (sidebar expanded by default)
+  - `01-preface.mdx` (always first chapter of main report)
+  - `02-chapter-title.mdx`
+  - `03-chapter-title.mdx`
+  - `04-methodology.mdx`
+  - `05-results.mdx`
+
+- **Appendices** (sidebar collapsed by default)
+  - `06-appendix-acronyms.mdx`
+  - `07-appendix-analysis.mdx`
+  - `08-appendix-calculations.mdx`
+
+:::warning Important
+
+The numeric prefix determines sidebar order. If you number chapters out of sequence (e.g., 01, 02, 05, 03), the sidebar will display them in numeric order, not the order you intended.
+
+:::
+
+**Example: Adding a New Chapter**
+
+If you want to add a new chapter between existing chapters 03 and 04:
+
+1. Rename existing `04-` files to `05-`, `05-` to `06-`, etc.
+2. Create your new chapter as `04-new-chapter.mdx`
+3. The sidebar will automatically update on next build
+
+**When to Create a New Version Folder:**
+
+Create a new version folder (e.g., `v1.1`) when:
+- Making significant changes to existing documentation
+- Releasing updated software with new features
+- Correcting substantial errors or outdated information
+
+:::tip
+
+For minor typos or small clarifications, edit the existing version. For major updates, create a new version folder and copy all chapter files from the previous version before making changes.
+
+:::
+
+---
+
+### `static/figures/` - Documentation Images
+
+**Purpose:** Store all images, diagrams, screenshots, and figures used in documentation.
+
+**Structure:**
+
+The folder structure **mirrors** the `docs/` folder:
+
+```
+static/
+└── figures/
+    ├── desktop-applications/
+    │   └── lifesim/
+    │       └── users-guide/
+    │           └── v1.0/
+    │               ├── conceptual-diagram.png
+    │               ├── user-interface.png
+    │               └── workflow-chart.png
+    ├── toolbox-technical-manuals/
+    │   └── internal-erosion-suite/
+    │       └── backward-erosion-piping-progression/
+    │           └── v1.1/
+    │               ├── methodology-flowchart.png
+    │               └── results-graph.png
+    └── documentation-guide/
+        ├── node-download.png
+        └── edit-env-variables.png
+```
+
+**Best Practices:**
+
+- **File naming:** Use descriptive names (e.g., `user-interface-main-window.png` not `fig1.png`)
+- **File formats:** PNG for screenshots/diagrams, JPG for photos, SVG for scalable graphics
+- **File size:** Optimize images before adding (aim for < 500KB per image)
+- **Organization:** Always place images in the folder matching your document path
+
+**Referencing Figures in MDX:**
+
+```jsx
+import Figure from '@site/src/components/Figure';
+
+<Figure
+  figureKey="fig-workflow"
+  src="/figures/desktop-applications/lifesim/users-guide/v1.0/workflow-chart.png"
+  alt="LifeSim workflow diagram"
+  caption="Figure shows the overall workflow for LifeSim analysis"
+  width="80%"
+/>
+```
+
+---
+
+### `static/bibliographies/` - Citation Files
+
+**Purpose:** Store bibliography data for citations in documentation.
+
+**Structure:**
+
+The folder structure **mirrors** the `docs/` folder:
+
+```
+static/
+└── bibliographies/
+    ├── desktop-applications/
+    │   └── rmc-totalrisk/
+    │       └── users-guide/
+    │           └── v1.0/
+    │               └── bib.json
+    └── toolbox-technical-manuals/
+        └── internal-erosion-suite/
+            └── backward-erosion-piping-progression/
+                └── v1.0/
+                    └── bib.json
+```
+
+**File Format:**
+
+Each `bib.json` file contains an array of citation objects following the [IEEE style guide](https://docs.google.com/document/d/1OalFYqVfxKKMelF79U3B93SjmIEiTnJC12wPJrKeSDM/edit?tab=t.0):
+
+```json
+[
+  {
+    "citationKey": "Beard1960",
+    "entryType": "article",
+    "author": ["L. R. Beard"],
+    "year": 1960,
+    "title": "Probability Estimates Based on Small Normal-Distribution Samples",
+    "journal": "Journal of Geophysical Research"
+  },
+  {
+    "citationKey": "BobeeAshkar1991",
+    "entryType": "book",
+    "author": ["B. Bobee", "F. Ashkar"],
+    "year": 1991,
+    "title": "The Gamma Family and Derived Distributions Applied in Hydrology",
+    "address": "Littleton, CO",
+    "institution": "Water Resources Publications"
+  }
+]
+```
+
+**Using Citations in MDX:**
+
+```jsx
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import Bibliography from '@site/src/components/Bibliography';
+
+// Inline citation
+The method was developed by Beard <Citation citationKey="Beard1960" />.
+
+// Citation footnote at end of page
+<CitationFootnote />
+
+// Full bibliography (usually in appendix)
+<Bibliography />
+```
+
+:::warning
+
+Bibliography files must be created **before** building the documentation. If referenced citation keys don't exist in `bib.json`, the build will fail or citations won't render correctly.
+
+:::
+
+---
+
+### `static/source-documents/` - Original Source Files
+
+**Purpose:** Store original Word documents, PDFs, and other source materials.
+
+**Structure:**
+
+Organize by software/document type:
+
+```
+static/
+└── source-documents/
+    ├── lifesim-users-guide-v1.0.docx
+    ├── rmc-rfa-technical-manual-v2.1.pdf
+    └── internal-erosion-suite/
+        ├── backward-erosion-piping-v1.0.docx
+        └── concentrated-leak-erosion-v1.1.docx
+```
+
+**Purpose:**
+
+- Archive original documents for reference
+- Source material for MDX conversion using `docx_converter`
+- Historical record of documentation evolution
+
+---
+
+## 📖 Tier 2: Reference Areas
+
+These resources are important to understand but you generally won't modify them.
+
+### `src/components/` - React Components
+
+**Purpose:** Custom React components you can use in your MDX documentation.
+
+**Location:** `c:\GitHub\RMC-Software-Documentation\src\components\`
+
+**Available Components:**
+
+Over 30 custom components are available including:
+
+- **Figures:** `Figure`, `FigureInline`, `FigureReference`
+- **Tables:** `TableVertical`, `TableHorizontal`, `TableReference`
+- **Equations:** `Equation`, `EquationReference`
+- **Citations:** `Citation`, `Bibliography`
+- **Content Organization:** `DocTabs`, `ProcessList`, `CollectionList`
+- **Multimedia:** `Video`, `VideoReference`
+- **Navigation:** `Button`, `NavLink`
+
+For complete documentation, see [React Components](./07-react-components.mdx).
+
+---
+
+### `scripts/` - Build Automation
+
+**Purpose:** Automated scripts that run during `npm start` and `npm run build`.
+
+**Key Scripts:**
+
+1. **`generateSidebars.js`** - Creates sidebar navigation from folder structure
+2. **`counters.js`** - Generates figure/table/equation numbering
+3. **`versions.js`** - Creates version metadata for version selector
+4. **`generateReportIdMap.js`** - Maps document paths to unique IDs
+5. **`generateEventTreeTOC.js`** - Builds event tree table of contents
+
+**When Scripts Run:**
+
+These scripts execute automatically every time you run:
+```powershell
+npm start   # Runs all scripts, then starts dev server
+npm run build   # Runs all scripts, then builds for production
+```
+
+**What Contributors Need to Know:**
+
+You don't need to understand how these scripts work. Just know that they:
+- Automatically generate the sidebar navigation
+- Assign sequential numbers to figures, tables, and equations
+- Detect all available document versions
+- Update internal references and mappings
+
+:::info
+
+If you see files like `sidebars.js`, `static/counters/`, or `static/versions/` appear after running `npm start`, these are auto-generated. Don't edit them manually - they'll be overwritten on the next build.
+
+:::
+
+---
+
+### `docx_converter/` - Word Document Conversion
+
+**Purpose:** Python utility to convert Word documents (following RMC template) into MDX format.
+
+**What It Does:**
+
+- Extracts text, headings, and formatting from `.docx` files
+- Converts figures into `<Figure>` components
+- Converts tables into `<TableVertical>` or `<TableHorizontal>` components
+- Extracts equations and converts to LaTeX format
+- Processes citations and creates `bib.json` files
+- Generates properly formatted MDX files with correct component imports
+
+For detailed usage instructions, see [DOCX Converter](./04-docx-converter.mdx).
+
+---
+
+### Configuration Files
+
+**Key Files You Should Be Aware Of:**
+
+- **`docusaurus.config.js`** - Main site configuration (URL, title, search, analytics)
+- **`package.json`** - Project dependencies and npm scripts
+- **`tailwind.config.js`** - Styling and theming configuration
+- **`.gitignore`** - Files excluded from version control
+
+**What Contributors Need to Know:**
+
+These files configure the project but are rarely modified. If you need to change site-wide settings, consult with a site administrator.
+
+---
+
+## ⛔ Tier 3: Off-Limits Areas
+
+**Never edit these files or folders directly.** They are auto-generated and will be overwritten.
+
+### `sidebars.js` - Auto-Generated Navigation
+
+**Generated by:** `scripts/generateSidebars.js`
+
+**Purpose:** Defines the sidebar navigation structure for Docusaurus.
+
+**Why You Shouldn't Edit It:**
+
+This file is completely auto-generated from your folder structure. Any manual edits will be lost the next time you run `npm start` or `npm build`.
+
+**How to Change Sidebar:**
+
+To change the sidebar, modify your folder and file structure in `docs/`. The sidebar will automatically update to reflect your changes.
+
+---
+
+### `static/counters/` - Auto-Generated Numbering
+
+**Generated by:** `scripts/counters.js`
+
+**Purpose:** JSON files storing sequential numbers for figures, tables, equations, and videos in each document.
+
+**Example:** `static/counters/lifesim-users-guide-v1-0.json`
+
+**Why You Shouldn't Edit It:**
+
+The counters script scans all your MDX files and assigns sequential numbers automatically. Manual edits will be overwritten and could break cross-references.
+
+**How Numbering Works:**
+
+1. Script scans all MDX files for components with unique keys (e.g., `figureKey="fig-workflow"`)
+2. Assigns sequential numbers in order of appearance
+3. Stores mappings in JSON files
+4. Components use these mappings to display correct numbers
+
+---
+
+### `static/versions/` - Auto-Generated Version Data
+
+**Generated by:** `scripts/versions.js`
+
+**Purpose:** JSON files for version management and search indexing.
+
+**Files:**
+
+- `latestVersions.json` - Latest version of each document
+- `versionList.json` - All versions of each document
+- `algoliaCrawlerVersions.json` - Search crawler configuration
+
+**Why You Shouldn't Edit It:**
+
+The versions script automatically detects all version folders in `docs/` and generates this data. It's regenerated on every build.
+
+---
+
+### `src/reportIdMap.js` - Auto-Generated Mappings
+
+**Generated by:** `scripts/generateReportIdMap.js`
+
+**Purpose:** Maps document paths to unique report IDs used internally for numbering and references.
+
+**Why You Shouldn't Edit It:**
+
+This file is auto-generated from your folder structure and is regenerated on every build.
+
+---
+
+### `.docusaurus/` - Build Cache
+
+**Purpose:** Docusaurus internal cache directory.
+
+**Why You Shouldn't Edit It:**
+
+This folder contains temporary build files and cached data. It's automatically created and managed by Docusaurus.
+
+**When to Delete It:**
+
+If you experience strange build issues, you can safely delete this folder and run:
+
+```powershell
+npm run clear   # Clears the cache
+npm start       # Rebuilds cache and starts dev server
+```
+
+---
+
+### `build/` - Production Build Output
+
+**Purpose:** Contains the final static HTML, CSS, and JavaScript files for deployment.
+
+**Generated by:** `npm run build`
+
+**Why You Shouldn't Edit It:**
+
+This folder is the compiled output of your documentation. Any edits will be overwritten on the next build. To change the live site, edit source files in `docs/` and rebuild.
+
+---
+
+### `node_modules/` - Dependencies
+
+**Purpose:** Contains all installed npm packages and dependencies.
+
+**Generated by:** `npm install`
+
+**Why You Shouldn't Edit It:**
+
+This folder contains third-party libraries managed by npm. Never edit files here directly. It can be safely deleted and regenerated by running `npm install`.
+
+---
+
+## Decision Trees for Common Tasks
+
+### "Where should I put my new document?"
+
+**Step 1:** Determine the application type (hub):
+- Desktop software (exe/installer) → `desktop-applications/`
+- Excel-based toolbox → `toolbox-technical-manuals/`
+- Web-based tool → `web-applications/`
+
+**Step 2:** Find or create the software folder (sub-hub):
+- Software already exists? → Use existing folder
+- New software? → Create new folder with lowercase-hyphenated name
+
+**Step 3:** Find or create the document folder:
+- Document type already exists? → Use existing folder
+- New document type? → Create new folder with descriptive name
+
+**Step 4:** Create or use version folder:
+- First version? → Create `v1.0/`
+- Updating existing? → Create next version `v1.1`, `v2.0`, etc.
+
+**Step 5:** Create your MDX files:
+- Start with `00-document-info.mdx` and `00-version-history.mdx`
+- Add chapters: `01-preface.mdx`, `02-chapter.mdx`, etc.
+
+**Example:**
+
+New LifeSim validation study (version 1.0):
+
+```
+docs/desktop-applications/lifesim/validation-studies/v1.0/
+├── 00-document-info.mdx
+├── 00-version-history.mdx
+├── 01-preface.mdx
+└── ...
+```
+
+---
+
+### "Where should I put my images?"
+
+Create a folder path in `static/figures/` that **exactly matches** your document path.
+
+**Document path:**
+```
+docs/desktop-applications/lifesim/users-guide/v1.0/
+```
+
+**Image path:**
+```
+static/figures/desktop-applications/lifesim/users-guide/v1.0/
+```
+
+Place all images for that document in this folder.
+
+---
+
+### "Where should I put my bibliography file?"
+
+Create a folder path in `static/bibliographies/` that **exactly matches** your document path, and name the file `bib.json`.
+
+**Document path:**
+```
+docs/desktop-applications/lifesim/users-guide/v1.0/
+```
+
+**Bibliography path:**
+```
+static/bibliographies/desktop-applications/lifesim/users-guide/v1.0/bib.json
+```
+
+---
+
+## Common Questions
+
+### Can I create new React components?
+
+**For beginner contributors:** No. Use the existing components documented in [React Components](./07-react-components.mdx).
+
+**For advanced contributors:** Coordinate with site administrators before creating custom components. This requires understanding React, JSX, and Tailwind CSS.
+
+### Can I modify the sidebar structure?
+
+Yes! The sidebar is automatically generated from your folder structure. To change it:
+
+1. Rename or reorganize folders in `docs/`
+2. Renumber file prefixes to change order
+3. Run `npm start` - the sidebar updates automatically
+
+**Don't** edit `sidebars.js` directly - it will be overwritten.
+
+### What if I see a file not listed here?
+
+If you encounter files or folders not mentioned in this guide:
+- Check if they're in `.gitignore` (likely auto-generated)
+- Consult with site administrators before modifying
+- When in doubt, don't edit it
+
+### How do I know if a file is auto-generated?
+
+Check `.gitignore` at the project root. If a file or folder is listed there, it's auto-generated and shouldn't be manually edited.
+
+Common auto-generated files:
+- `sidebars.js`
+- `src/reportIdMap.js`
+- `src/data/`
+- `static/counters/`
+- `static/versions/`
+- `.docusaurus/`
+- `build/`
+- `node_modules/`
+
+---
+
+## Summary: What Should Contributors Touch?
+
+### ✅ Frequently Edit
+
+- MDX files in `docs/`
+- Images in `static/figures/`
+- Citation files in `static/bibliographies/`
+
+### 📖 Read and Reference
+
+- React components in `src/components/`
+- Configuration files (`docusaurus.config.js`, `package.json`)
+- Build scripts in `scripts/`
+
+### ⛔ Never Edit
+
+- `sidebars.js`
+- `src/reportIdMap.js`
+- `static/counters/`
+- `static/versions/`
+- `.docusaurus/`
+- `build/`
+- `node_modules/`
+
+---
+
+## Next Steps
+
+Now that you understand the project structure, you're ready to start creating content:
+
+- **Create MDX documents:** See [Creating and Editing Pages](./06-creating-editing-pages.mdx)
+- **Use React components:** See [React Components](./07-react-components.mdx)
+- **Convert Word documents:** See [DOCX Converter](./04-docx-converter.mdx)
+- **Manage versions:** See [Versioning System](./02-versioning-system.mdx)

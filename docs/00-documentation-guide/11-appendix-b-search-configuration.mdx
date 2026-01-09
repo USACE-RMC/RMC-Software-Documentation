@@ -1,0 +1,757 @@
+---
+title: 'Appendix B: Search Configuration'
+sidebar_label: 'Appendix B: Search'
+---
+
+# Appendix B: Search Configuration
+
+:::warning Administrator-Level Topic
+This appendix is intended for **site administrators only** who need to configure or troubleshoot the Algolia search integration.
+
+**Contributors writing documentation do NOT need to read this section.** The search functionality works automatically once configured, and no contributor action is required.
+:::
+
+---
+
+## Overview
+
+The RMC Software Documentation site uses **Algolia DocSearch**, a powerful hosted search engine that provides instant, full-text search results. Algolia is specifically designed for documentation websites and integrates seamlessly with Docusaurus.
+
+**Key Features:**
+- Full-text search across all pages
+- Version-aware search results
+- Instant results as you type
+- Keyboard shortcuts (Ctrl+K)
+- Mobile-friendly search interface
+- Relevance-based ranking
+
+---
+
+## How Algolia Search Works
+
+### Architecture
+
+```
+┌─────────────────────┐
+│  Documentation Site │
+│  (Docusaurus)       │
+└──────────┬──────────┘
+           │
+           │ 1. Algolia Crawler
+           │    scans site regularly
+           ↓
+┌─────────────────────┐
+│  Algolia Backend    │
+│  - Stores index     │
+│  - Processes queries│
+│  - Returns results  │
+└──────────┬──────────┘
+           │
+           │ 2. Search API
+           │    returns results
+           ↓
+┌─────────────────────┐
+│  Search Bar         │
+│  (User Interface)   │
+└─────────────────────┘
+```
+
+### Process Flow
+
+1. **Crawling:**
+   - Algolia's crawler automatically scans your deployed site
+   - Crawls at regular intervals (typically weekly)
+   - Follows all links and reads page content
+   - Respects `robots.txt` and meta tags
+
+2. **Indexing:**
+   - Extracted content stored in Algolia's search index
+   - Content categorized by type (title, heading, content, etc.)
+   - Version information preserved
+   - Metadata indexed for filtering
+
+3. **Searching:**
+   - User types query in search bar
+   - Query sent to Algolia API
+   - Results ranked by relevance
+   - Displayed instantly in dropdown
+
+4. **Navigation:**
+   - User clicks result
+   - Navigates directly to page/section
+   - Highlighting shows where match occurred
+
+---
+
+## Configuration in Docusaurus
+
+### docusaurus.config.js Setup
+
+The Algolia integration is configured in the `themeConfig.algolia` section of `docusaurus.config.js`.
+
+**Current Configuration:**
+
+```javascript title="docusaurus.config.js"
+module.exports = {
+  // ...other config
+  themeConfig: {
+    algolia: {
+      // Application ID (from Algolia dashboard)
+      appId: "5IPYQGAW1I",
+
+      // Public API Key (safe to commit)
+      apiKey: "797fecb09f4d22f8050f47976027c58c",
+
+      // Index name (from Algolia dashboard)
+      indexName: "usace-rmcio",
+
+      // Optional: enable search context
+      contextualSearch: true,
+
+      // Optional: search parameters
+      searchParameters: {
+        facetFilters: [],
+      },
+
+      // Optional: disable search page (use modal instead)
+      searchPagePath: false,
+    },
+  },
+};
+```
+
+### Configuration Options
+
+**Required Fields:**
+
+| Field | Description | Example |
+|-------|-------------|---------|
+| `appId` | Algolia application ID | `"5IPYQGAW1I"` |
+| `apiKey` | Public search-only API key | `"797fecb09f4..."` |
+| `indexName` | Name of Algolia index | `"usace-rmcio"` |
+
+**Optional Fields:**
+
+| Field | Description | Default |
+|-------|-------------|---------|
+| `contextualSearch` | Enable version/language faceting | `false` |
+| `searchParameters` | Custom Algolia search parameters | `{}` |
+| `searchPagePath` | Path to search page (false to disable) | `'search'` |
+| `placeholder` | Search input placeholder text | `'Search docs...'` |
+
+**Advanced Options:**
+
+```javascript
+algolia: {
+  // ...required fields
+
+  // Contextual search for versioned docs
+  contextualSearch: true,
+
+  // Custom search parameters
+  searchParameters: {
+    facetFilters: ['version:1.0', 'language:en'],
+    hitsPerPage: 10,
+  },
+
+  // Custom CSS for search UI
+  externalUrlRegex: 'external\\.com|domain\\.com',
+
+  // Replace search results URL
+  replaceSearchResultPathname: {
+    from: '/docs/',
+    to: '/documentation/',
+  },
+}
+```
+
+---
+
+## Algolia Dashboard Setup
+
+### Creating an Algolia Account
+
+1. **Sign Up:**
+   - Visit [algolia.com](https://www.algolia.com/)
+   - Create account or sign in
+   - Choose DocSearch plan (free for open-source)
+
+2. **Create Application:**
+   - From dashboard, create new application
+   - Choose closest data center region
+   - Note your Application ID
+
+3. **Create Index:**
+   - Create new index for your site
+   - Name it descriptively (e.g., `usace-rmcio`)
+   - Note the index name
+
+4. **Get API Keys:**
+   - Navigate to API Keys section
+   - Copy **Search-Only API Key** (public, safe to commit)
+   - **NEVER** share Admin API Key publicly
+
+### Configuring DocSearch Crawler
+
+**DocSearch Program (Recommended for Open Source):**
+
+1. **Apply for DocSearch:**
+   - Visit [docsearch.algolia.com/apply](https://docsearch.algolia.com/apply/)
+   - Submit your documentation site
+   - Wait for approval (typically 1-2 weeks)
+   - Algolia provides free crawling for open-source projects
+
+2. **Receive Configuration:**
+   - Algolia team provides crawler configuration
+   - Crawler runs automatically on their schedule
+   - You receive index name and API credentials
+
+**Self-Hosted Crawler (Alternative):**
+
+If you can't use DocSearch program, run your own crawler:
+
+1. **Install Crawler:**
+   ```bash
+   npm install -g @algolia/crawler
+   ```
+
+2. **Create Crawler Config:**
+   ```json title="crawler-config.json"
+   {
+     "index_name": "usace-rmcio",
+     "start_urls": ["https://usace-rmc.github.io/RMC-Software-Documentation/"],
+     "sitemap_urls": ["https://usace-rmc.github.io/RMC-Software-Documentation/sitemap.xml"],
+     "selectors": {
+       "lvl0": {
+         "selector": ".menu__link--active",
+         "global": true
+       },
+       "lvl1": "article h1",
+       "lvl2": "article h2",
+       "lvl3": "article h3",
+       "lvl4": "article h4",
+       "text": "article p, article li"
+     }
+   }
+   ```
+
+3. **Run Crawler:**
+   ```bash
+   # Set environment variables
+   export ALGOLIA_APP_ID="your-app-id"
+   export ALGOLIA_API_KEY="your-admin-key"
+
+   # Run crawler
+   algolia-crawler crawl crawler-config.json
+   ```
+
+---
+
+## Version-Aware Search
+
+### How Versions Are Handled
+
+The RMC Software Documentation site uses version folders (`v1.0`, `v1.1`, etc.) that need to be indexed separately.
+
+**Version Metadata Generation:**
+
+The `scripts/versions.js` script generates JSON files to help Algolia understand document versions:
+
+**Generated Files:**
+```
+static/
+└── versions/
+    ├── lifesim-versions.json
+    ├── watersim-versions.json
+    └── ...
+```
+
+**Example Version File:**
+```json
+{
+  "software": "lifesim",
+  "versions": ["v1.0", "v1.1", "v2.0"],
+  "defaultVersion": "v2.0",
+  "latestVersion": "v2.0"
+}
+```
+
+### Contextual Search Configuration
+
+To enable version-aware search, use `contextualSearch: true`:
+
+```javascript
+algolia: {
+  contextualSearch: true,
+  // This enables automatic faceting by version
+}
+```
+
+**How It Works:**
+1. Algolia detects version from URL path
+2. Applies facet filter to show only current version results
+3. User can toggle to search all versions
+
+**User Experience:**
+- By default, search shows results from current version only
+- "Search in all versions" toggle allows searching across all versions
+- Results indicate which version they're from
+
+---
+
+## Crawler Selectors
+
+### Understanding Selectors
+
+Selectors tell the crawler which parts of your pages to index and how to categorize them.
+
+**Docusaurus Default Selectors:**
+
+```json
+{
+  "selectors": {
+    "lvl0": {
+      "selector": ".menu__link--sublist.menu__link--active",
+      "global": true
+    },
+    "lvl1": "article h1",
+    "lvl2": "article h2",
+    "lvl3": "article h3",
+    "lvl4": "article h4",
+    "lvl5": "article h5",
+    "text": "article p, article li, article td"
+  }
+}
+```
+
+**Selector Levels:**
+- `lvl0`: Typically the documentation category (from sidebar)
+- `lvl1`: Page title (H1)
+- `lvl2-5`: Subheadings (H2-H5)
+- `text`: Body content (paragraphs, lists, tables)
+
+### Customizing Selectors
+
+**Example: Add Figure Captions to Index:**
+
+```json
+{
+  "selectors": {
+    // ...default selectors
+    "text": "article p, article li, article td, figcaption"
+  }
+}
+```
+
+**Example: Exclude Draft Content:**
+
+```json
+{
+  "selectors": {
+    // ...
+  },
+  "selectors_exclude": [
+    ".draft-watermark",
+    "[data-draft='true']"
+  ]
+}
+```
+
+---
+
+## Search UI Customization
+
+### Theme Override
+
+The search bar can be customized by swizzling the SearchBar theme component:
+
+```bash
+npm run swizzle @docusaurus/theme-classic SearchBar -- --wrap
+```
+
+**Custom Search Bar Component:**
+```javascript title="src/theme/SearchBar/index.js"
+import React from 'react';
+import SearchBar from '@theme-original/SearchBar';
+
+export default function SearchBarWrapper(props) {
+  return (
+    <div className="custom-search-wrapper">
+      <SearchBar {...props} />
+    </div>
+  );
+}
+```
+
+### Custom Styling
+
+**Global CSS:**
+```css title="src/css/custom.css"
+/* Search modal */
+.DocSearch-Modal {
+  --docsearch-primary-color: #0078d4;
+  --docsearch-text-color: #1c1e21;
+}
+
+/* Search input */
+.DocSearch-Input {
+  font-size: 16px;
+}
+
+/* Search results */
+.DocSearch-Hit {
+  padding: 12px;
+}
+```
+
+**Theme CSS Variables:**
+```css
+:root {
+  --docsearch-primary-color: var(--ifm-color-primary);
+  --docsearch-text-color: var(--ifm-font-color-base);
+  --docsearch-spacing: 12px;
+  --docsearch-container-background: rgba(0, 0, 0, 0.5);
+}
+```
+
+---
+
+## Indexing and Reindexing
+
+### Automatic Reindexing
+
+**DocSearch Program:**
+- Algolia crawls your site weekly (default)
+- Happens automatically after initial setup
+- No action required from administrators
+
+**Webhook Triggers:**
+- Configure webhook to trigger crawl on deploy
+- Ensures index updates immediately after new content
+- Set up in Algolia dashboard → Crawler → Webhooks
+
+### Manual Reindexing
+
+**From Algolia Dashboard:**
+1. Navigate to your application
+2. Go to Crawler section
+3. Click "Restart Crawling"
+4. Wait for completion (usually 5-15 minutes)
+
+**Using API:**
+```bash
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_CRAWLER_USER_ID:YOUR_CRAWLER_API_KEY" \
+  "https://crawler.algolia.com/api/1/crawlers/YOUR_CRAWLER_ID/reindex"
+```
+
+### Verifying Index
+
+**Check Index Content:**
+1. Go to Algolia dashboard
+2. Select your index
+3. Browse → View all records
+4. Verify recent content appears
+5. Check record count is reasonable
+
+**Test Search:**
+1. Search for recently added content
+2. Verify results appear
+3. Check version filtering works
+4. Test ranking relevance
+
+---
+
+## Troubleshooting Search Issues
+
+### Search Bar Not Appearing
+
+**Possible Causes:**
+1. Missing configuration in `docusaurus.config.js`
+2. Invalid API credentials
+3. Theme override issue
+
+**Solutions:**
+1. Verify `themeConfig.algolia` is properly configured
+2. Check API key and app ID are correct
+3. Restart dev server: `npm start`
+4. Clear cache: `rm -rf .docusaurus && npm start`
+
+### No Search Results
+
+**Possible Causes:**
+1. Index is empty (not crawled yet)
+2. Crawler configuration incorrect
+3. Site not publicly accessible
+4. Crawler blocked by robots.txt
+
+**Solutions:**
+1. Check index in Algolia dashboard for records
+2. Trigger manual crawl
+3. Verify site is deployed and publicly accessible
+4. Check `robots.txt` allows crawling:
+   ```
+   User-agent: Algolia Crawler
+   Allow: /
+   ```
+
+### Outdated Results
+
+**Possible Causes:**
+1. Crawler hasn't run since content update
+2. Cache not cleared
+
+**Solutions:**
+1. Trigger manual reindex in Algolia dashboard
+2. Wait for next automatic crawl (weekly)
+3. Configure post-deploy webhook to trigger crawl
+
+### Version Filter Not Working
+
+**Possible Causes:**
+1. `contextualSearch` not enabled
+2. Version metadata not generated
+3. URLs don't contain version information
+
+**Solutions:**
+1. Enable contextual search:
+   ```javascript
+   algolia: {
+     contextualSearch: true,
+   }
+   ```
+2. Run version script: `npm run versions`
+3. Verify URLs include version: `/lifesim/v1.0/page`
+
+### Search Ranking Issues
+
+**Possible Causes:**
+1. Default ranking may not fit your content
+2. Selectors capturing too much irrelevant content
+
+**Solutions:**
+1. Adjust ranking formula in Algolia dashboard:
+   - Ranking → Custom Ranking
+   - Prioritize title matches over content matches
+2. Refine selectors to exclude noise
+3. Use `searchableAttributes` to prioritize fields:
+   ```json
+   "searchableAttributes": [
+     "unordered(hierarchy.lvl0)",
+     "unordered(hierarchy.lvl1)",
+     "unordered(hierarchy.lvl2)",
+     "unordered(hierarchy.lvl3)",
+     "content"
+   ]
+   ```
+
+---
+
+## Security Best Practices
+
+### API Key Management
+
+:::danger Critical Security
+**NEVER commit or expose your Admin API Key in:**
+- Git repositories (including private repos)
+- Client-side code
+- Configuration files
+- Log files
+- Error messages
+:::
+
+**Safe API Keys:**
+- ✅ **Search-Only API Key** - Safe for public repos
+- ✅ Used in `docusaurus.config.js`
+- ✅ Can be committed to version control
+
+**Unsafe API Keys:**
+- ⛔ **Admin API Key** - Full read/write access
+- ⛔ NEVER commit to repos
+- ⛔ NEVER use in client-side code
+- ⛔ Store in environment variables only
+
+### Environment Variables
+
+**For Build Scripts Using Admin Key:**
+
+```bash title=".env.local (NEVER commit this file)"
+ALGOLIA_ADMIN_KEY=your-admin-api-key-here
+```
+
+**In Build Script:**
+```javascript
+const adminKey = process.env.ALGOLIA_ADMIN_KEY;
+
+if (!adminKey) {
+  throw new Error('ALGOLIA_ADMIN_KEY environment variable not set');
+}
+```
+
+**In .gitignore:**
+```
+.env.local
+.env.*.local
+```
+
+### Restricting API Key
+
+**In Algolia Dashboard:**
+1. Go to API Keys
+2. Create custom search key if needed
+3. Restrict by:
+   - Referer (your domain only)
+   - IP address (if applicable)
+   - Rate limits
+   - Valid duration
+
+---
+
+## Performance Optimization
+
+### Index Size
+
+**Monitor Index Size:**
+- Large indexes (>100k records) may have slower search
+- Check dashboard for record count
+- Consider splitting into multiple indexes if needed
+
+**Reduce Index Size:**
+1. Exclude unnecessary content:
+   ```json
+   "selectors_exclude": [
+     ".no-index",
+     "footer",
+     ".sidebar"
+   ]
+   ```
+
+2. Limit text content:
+   ```json
+   "recordExtractor": ({ helpers }) => {
+     return helpers.docsearch({
+       maxContentLength: 500 // characters
+     });
+   }
+   ```
+
+### Query Performance
+
+**Frontend Optimizations:**
+- Debounce search input (built into DocSearch)
+- Limit results per page (default: 10)
+- Cache recent searches client-side
+
+**Algolia Settings:**
+1. Enable typo tolerance (default)
+2. Configure ranking formula
+3. Set appropriate `hitsPerPage`
+4. Use optional words for better results
+
+---
+
+## Advanced Features
+
+### Faceted Search
+
+**Enable Facets:**
+```javascript
+algolia: {
+  searchParameters: {
+    facetFilters: ['language:en', 'version:2.0'],
+    facets: ['software', 'version'],
+  },
+}
+```
+
+**Use Cases:**
+- Filter by software package
+- Filter by documentation version
+- Filter by content type
+
+### Analytics
+
+**Enable Search Analytics:**
+1. Go to Algolia dashboard
+2. Navigate to Analytics
+3. View search metrics:
+   - Top searches
+   - No results searches
+   - Click-through rate
+   - Search latency
+
+**Use Analytics To:**
+- Identify missing content (searches with no results)
+- Improve ranking (low click-through terms)
+- Understand user behavior
+
+### A/B Testing
+
+**Test Search Configurations:**
+1. Create multiple indices with different configs
+2. Split traffic between indices
+3. Measure performance metrics
+4. Implement winning configuration
+
+---
+
+## Additional Resources
+
+### Official Documentation
+
+- [Docusaurus Search Docs](https://docusaurus.io/docs/search)
+- [Algolia DocSearch Docs](https://docsearch.algolia.com/)
+- [Algolia API Reference](https://www.algolia.com/doc/api-reference/)
+- [Algolia Crawler Docs](https://www.algolia.com/doc/tools/crawler/getting-started/overview/)
+
+### Community Resources
+
+- [Docusaurus Discord](https://discord.gg/docusaurus)
+- [Algolia Community Forum](https://discourse.algolia.com/)
+- [DocSearch GitHub Discussions](https://github.com/algolia/docsearch/discussions)
+
+### Tutorials
+
+- [Setting Up DocSearch](https://docsearch.algolia.com/docs/what-is-docsearch)
+- [Customizing Search UI](https://docsearch.algolia.com/docs/styling)
+- [Running Your Own Crawler](https://docsearch.algolia.com/docs/legacy/run-your-own)
+
+---
+
+## Summary
+
+**Key Points for Administrators:**
+
+1. **Configuration:**
+   - Set up in `docusaurus.config.js`
+   - Requires app ID, search API key, and index name
+   - Enable `contextualSearch` for version-aware search
+
+2. **Crawler:**
+   - Apply for free DocSearch program (recommended)
+   - Or run your own crawler
+   - Crawls weekly by default
+
+3. **Security:**
+   - Only use Search-Only API key in code
+   - Never expose Admin API key
+   - Restrict keys by domain
+
+4. **Maintenance:**
+   - Monitor index via Algolia dashboard
+   - Trigger manual reindex after major content updates
+   - Review analytics for search improvements
+
+5. **Troubleshooting:**
+   - Verify configuration is correct
+   - Check index has records
+   - Ensure crawler can access site
+   - Test with different queries
+
+**For Contributors:**
+The search functionality works automatically. No contributor action is required - just write documentation and it will be searchable!
+
+---
+
+**Questions about search configuration?** Contact the site maintainer or Algolia support for assistance.

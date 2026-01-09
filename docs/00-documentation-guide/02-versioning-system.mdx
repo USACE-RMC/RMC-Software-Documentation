@@ -4,28 +4,352 @@ title: Versioning System
 
 # Versioning System
 
-To maintain clarity and transparency in the evolution of online documentation, the RMC Software Documentation site uses a structured versioning system that distinguishes between significant updates and smaller changes. The versioning format follows a **Major.Minor** structure:
+The RMC Software Documentation site uses a structured versioning system to maintain clarity and transparency as documentation evolves. This system helps both contributors and readers track significant updates to documentation over time.
 
-## Major Versions (X.0)
+## Version Format: Major.Minor
 
-A major version update indicates significant changes to the book, typically involving updates, additions, or restructuring of entire chapters. These updates may reflect new content, substantial revisions, or major reorganization to enhance the book's structure or scope.
+All documentation versions follow a **Major.Minor** structure (e.g., `v1.0`, `v1.1`, `v2.0`).
 
-## Minor Versions (X.Y)
+---
 
-A minor version update denotes changes to specific sections within a chapter. These changes might include:
+## When to Create a New Version
 
-- Expanding a section with new material
+### Major Version (X.0)
+
+Create a new major version when making significant changes:
+
+**Indicators for Major Version:**
+
+- Adding or removing entire chapters
+- Major restructuring of document organization
+- Updating documentation for new software major release
+- Substantial rewrites affecting multiple chapters
+- Significant changes to document scope or audience
+
+**Examples:**
+
+- `v1.0` → `v2.0`: Software updated from version 1.x to 2.x with new features
+- `v1.0` → `v2.0`: Added three new chapters covering new functionality
+- `v1.0` → `v2.0`: Completely restructured user guide organization
+
+### Minor Version (X.Y)
+
+Create a new minor version for targeted updates:
+
+**Indicators for Minor Version:**
+
+- Expanding existing sections with new material
 - Rewriting sections for improved clarity
-- Adding new subsections or examples to an existing chapter
+- Adding new subsections or examples to existing chapters
+- Updating screenshots or figures for minor software updates
+- Adding new procedures or workflows
 
-## Excluded Changes
+**Examples:**
 
-Typos, grammatical corrections, formatting adjustments, or other minor editorial edits that do not materially affect the book's content or structure are not reflected in the versioning system.
+- `v1.0` → `v1.1`: Updated Chapter 3 with expanded troubleshooting section
+- `v1.1` → `v1.2`: Added new examples to installation guide
+- `v1.2` → `v1.3`: Rewrote data import procedures for clarity
 
-## Version Numbering Example
+### Updates Without New Version
 
-- **1.0:** Initial release or major update to chapters
-- **1.1:** Update to a section in Chapter 1
-- **2.0:** Addition of a new chapter or major overhaul of an existing chapter
+Some changes don't require a new version:
 
-By adhering to this system, readers can easily track and identify substantive updates to the document's content while avoiding confusion
+**No Version Change Needed:**
+
+- Fixing typos or grammatical errors
+- Correcting broken links
+- Formatting adjustments
+- Minor word changes for clarity
+- Updating contact information
+- Fixing image alignment or sizing
+
+**Key Principle:** If the change doesn't affect the user's understanding or use of the software, it typically doesn't need a new version.
+
+---
+
+## Version Folder Structure
+
+Each version is stored in its own folder within the documentation structure:
+
+```
+docs/
+└── software-name/
+    ├── v1.0/              ← Version folder
+    │   ├── 01-intro.mdx
+    │   ├── 02-install.mdx
+    │   └── 03-usage.mdx
+    ├── v1.1/              ← New minor version
+    │   ├── 01-intro.mdx
+    │   ├── 02-install.mdx
+    │   └── 03-usage.mdx   (updated content)
+    └── v2.0/              ← New major version
+        ├── 01-intro.mdx
+        ├── 02-install.mdx
+        ├── 03-usage.mdx
+        └── 04-advanced.mdx  (new chapter)
+```
+
+**Key Points:**
+
+- Each version folder contains a complete copy of all documentation files
+- Users can switch between versions using the version selector
+- All versions remain accessible on the site
+- Older versions are preserved for users on older software versions
+
+---
+
+## How to Create a New Version
+
+### Step 1: Determine Version Number
+
+**Decision Tree:**
+
+1. **Is this a new document?**
+   - Use `v1.0` for the first version of a new document
+
+2. **Are you adding/removing chapters?**
+   - Yes → Major version (e.g., `v1.0` → `v2.0`)
+   - No → Continue to next question
+
+3. **Are you significantly rewriting multiple chapters?**
+   - Yes → Major version
+   - No → Minor version (e.g., `v1.0` → `v1.1`)
+
+### Step 2: Copy Existing Version Folder
+
+**Using Command Line:**
+
+```bash
+# Copy most recent version to new version
+cp -r docs/software-name/v1.0 docs/software-name/v1.1
+
+# Windows PowerShell:
+Copy-Item -Recurse docs/software-name/v1.0 docs/software-name/v1.1
+```
+
+**Using File Explorer:**
+
+1. Navigate to `docs/software-name/`
+2. Copy the most recent version folder (e.g., `v1.0`)
+3. Paste and rename to new version (e.g., `v1.1`)
+
+### Step 3: Update Content in New Version
+
+1. Make your changes in the **new version folder** only
+2. Leave the old version folder unchanged
+3. Update relevant files (chapters, images, etc.)
+
+**Example:**
+
+```
+docs/
+└── lifesim/
+    ├── v1.0/              ← Don't touch
+    │   └── 03-usage.mdx   (original content)
+    └── v1.1/              ← Edit here
+        └── 03-usage.mdx   (updated content)
+```
+
+### Step 4: Update Images/Assets
+
+If adding new images for the new version:
+
+1. Create version-specific folder:
+
+   ```
+   static/
+   └── figures/
+       └── software-name/
+           ├── v1.0/      ← Old version images
+           └── v1.1/      ← New version images
+   ```
+
+2. Update image paths in MDX files:
+   ```mdx
+   <Figure
+     src="/figures/software-name/v1.1/new-screenshot.png"
+     ...
+   />
+   ```
+
+### Step 5: Restart Development Server
+
+After creating a new version folder, restart the development server to trigger automatic version detection:
+
+```bash
+# Stop the server (if running)
+Ctrl + C
+
+# Start the server
+npm start
+```
+
+**What Happens Automatically:**
+
+- Build scripts detect the new version folder
+- Version metadata is generated in `static/versions/`
+- Version selector dropdown is updated
+- Default version is set
+
+:::info
+All necessary scripts run automatically during `npm start` or `npm run build`. You never need to run scripts manually.
+:::
+
+### Step 6: Verify New Version
+
+1. **Start Development Server:**
+
+   ```bash
+   npm start
+   ```
+
+2. **Check Version Selector:**
+   - Look for dropdown in top navigation
+   - Verify new version appears in list
+   - Click to switch between versions
+
+3. **Test Content:**
+   - Browse new version pages
+   - Verify images load correctly
+   - Check all links work
+   - Test cross-references
+
+### Step 7: Commit Changes
+
+```bash
+# Stage all changes
+git add .
+
+# Commit with descriptive message
+git commit -m "Add v1.1 documentation with updated usage guide"
+
+# Push to remote
+git push origin main
+```
+
+---
+
+## Version Selector for Users
+
+The version selector appears in the top navigation bar, allowing users to switch between documentation versions.
+
+**How It Works:**
+
+- Automatically populated from version folders
+- Shows all available versions for that documentation
+- Preserves current page when switching (if page exists in both versions)
+- Redirects to homepage if page doesn't exist in selected version
+
+**Default Version:**
+
+- Latest version is set as default for new visitors
+- Last selected version remembered in browser
+
+---
+
+## Best Practices
+
+### When to Version
+
+**DO create a new version when:**
+
+- Software has a new release you're documenting
+- Making changes users need to be aware of
+- Content changes significantly affect user workflows
+- Adding substantial new information
+
+**DON'T create a new version when:**
+
+- Fixing typos or minor errors
+- Adjusting formatting
+- Making editorial improvements
+- Updating links
+
+### Naming Consistency
+
+**Required Format:**
+
+- Use lowercase `v` prefix: `v1.0`, `v2.1`
+- Always include minor version: `v1.0` not `v1`
+- Match software version when applicable
+
+**Don't Use:**
+
+- `version-1.0`, `1.0`, `V1.0`, `ver1.0`
+
+### Version History Table
+
+**Requirement:**
+
+All documentation **must** include a version history table at the beginning of the document. This table tracks all versions and changes over time.
+
+```mdx
+import TableVersionHistory from '@site/src/components/TableVersionHistory';
+
+<TableVersionHistory
+  versionHistoryKey="lifesim-history"
+  header={['Version', 'Date', 'Description']}
+  data={[
+    ['1.1', '2024-03-15', 'Updated usage guide with new import features'],
+    ['1.0', '2024-01-10', 'Initial release'],
+  ]}
+/>
+```
+
+---
+
+## Troubleshooting Versions
+
+### New Version Not Appearing
+
+**Solutions:**
+
+1. Verify folder structure: `docs/software-name/vX.Y/`
+2. Restart dev server: Stop (Ctrl+C) and `npm start`
+3. Clear cache: `rm -rf .docusaurus` then `npm start`
+
+### Version Selector Not Working
+
+**Check:**
+
+- Version metadata files exist in `static/versions/`
+- Folder names follow format: `v1.0`, `v1.1`, etc.
+- Each version folder contains at least one `.mdx` file
+
+**Fix:**
+
+```bash
+# Stop the server (Ctrl+C) and restart
+npm start
+```
+
+### Wrong Default Version
+
+**Solution:**
+
+- Default version is typically the highest version number
+- To change: Modify version detection script (advanced, contact site administrator)
+
+---
+
+## Summary
+
+**Quick Reference:**
+
+| Action                            | Version Change |
+| --------------------------------- | -------------- |
+| Fix typo                          | None           |
+| Expand section with examples      | Minor (X.Y)    |
+| Add new chapter                   | Major (X.0)    |
+| Rewrite multiple chapters         | Major (X.0)    |
+| Update for software patch release | Minor (X.Y)    |
+| Update for software major release | Major (X.0)    |
+
+**Remember:**
+
+- Each version is a complete copy in its own folder
+- All scripts run automatically during `npm start` or `npm run build`
+- Old versions remain accessible to users
+- Match software versions when documenting software releases
+
+For more details on the build process and automation scripts, see [Build Process Overview](./05-build-process-overview.mdx).

@@ -1,0 +1,1283 @@
+---
+title: Creating and Editing Pages
+sidebar_label: Creating and Editing Pages
+---
+
+import FigureNoRef from '@site/src/components/FigureNoRef';
+
+# Creating and Editing Pages
+
+This comprehensive guide covers everything you need to know about creating and editing documentation pages using MDX (Markdown + JSX). Whether you're a complete beginner or have some experience, this guide will help you master the fundamentals of writing documentation for the RMC Software Documentation project.
+
+---
+
+## What is MDX?
+
+**MDX** is a file format that combines:
+
+- **Markdown** - A simple, human-readable syntax for formatting text
+- **JSX** - React component syntax that lets you embed interactive elements
+
+**Why MDX?**
+- Write most content in simple Markdown (headings, lists, bold, italic)
+- Insert React components when you need advanced features (figures, tables, equations)
+- Best of both worlds: simplicity + power
+
+**File Extension:** All documentation pages use the `.mdx` extension
+
+---
+
+## Creating Your First MDX File
+
+### Step 1: Determine Location
+
+First, figure out where your new file should go in the `docs/` folder. See [Project Structure](./03-project-structure.mdx) for guidance on folder organization.
+
+**Example path for a new chapter:**
+```
+docs/desktop-applications/lifesim/users-guide/v1.0/05-new-chapter.mdx
+```
+
+### Step 2: Create the File
+
+In Visual Studio Code:
+
+1. Navigate to the appropriate folder in the Explorer sidebar
+2. Right-click on the folder
+3. Select **"New File"**
+4. Name it following the convention: `##-chapter-name.mdx`
+   - `##` - Two-digit number for ordering (e.g., `05`)
+   - `chapter-name` - Lowercase with hyphens (e.g., `new-chapter`)
+   - `.mdx` - File extension
+
+### Step 3: Add Front Matter
+
+Every MDX file should start with **front matter** - metadata wrapped in triple dashes:
+
+```mdx
+---
+title: Chapter Title
+---
+```
+
+The `title` appears in:
+- Browser tab
+- Search results
+- Page metadata
+
+### Step 4: Add Content
+
+Start writing your content using Markdown and JSX:
+
+```mdx
+---
+title: Methodology
+---
+
+# Methodology
+
+This chapter describes the analytical methodology used in the assessment.
+
+## Overview
+
+The analysis follows a three-step process...
+```
+
+### Step 5: Import Components (If Needed)
+
+If you'll use React components, import them at the top (after front matter):
+
+```mdx
+---
+title: Results
+---
+
+import Figure from '@site/src/components/Figure';
+import TableVertical from '@site/src/components/TableVertical';
+import Equation from '@site/src/components/Equation';
+
+# Results
+
+Content goes here...
+```
+
+---
+
+## Front Matter Reference
+
+Front matter is YAML-formatted metadata at the beginning of your MDX file.
+
+### Basic Front Matter
+
+Most pages only need a title:
+
+```mdx
+---
+title: Preface
+---
+```
+
+### Extended Front Matter (Document Info Pages)
+
+The `00-document-info.mdx` file uses extended front matter for the `<DocumentMetadata>` component:
+
+```mdx
+---
+reportDate: November 2023
+reportType: Computer Program Document
+reportTitle: RMC Backward Erosion Piping (Progression) Toolbox
+reportSubTitle: RMC Internal Erosion Suite
+reportAuthors: ["Tim O'Leary, Risk Management Center"]
+reportAbstract: The spreadsheet tools contained in this toolbox deterministically and probabilistically assess the likelihood of backward erosion piping progression using the adjusted Schmertmann (2000) method and the adjusted calculation rule of Sellmeijer et al. (2011).
+reportSubjectTerms: ["Internal erosion", "backward erosion piping", "Schmertmann", "Sellmeijer"]
+responsiblePersonName: Tim O'Leary
+responsiblePersonNumber: 502-315-6599
+---
+
+import DocumentMetadata from '@site/src/components/DocumentMetadata';
+
+<DocumentMetadata />
+```
+
+### Available Front Matter Fields
+
+| Field | Type | Description | Example |
+|-------|------|-------------|---------|
+| `title` | String | Page title (required) | `"Methodology"` |
+| `sidebar_label` | String | Override sidebar text | `"Method"` |
+| `reportDate` | String | Document date | `"November 2023"` |
+| `reportType` | String | Document type | `"User's Guide"` |
+| `reportTitle` | String | Full document title | `"LifeSim User's Guide"` |
+| `reportSubTitle` | String | Subtitle | `"Version 1.0"` |
+| `reportAuthors` | Array | List of authors | `["Author Name"]` |
+| `reportAbstract` | String | Document summary | `"This guide..."` |
+| `reportSubjectTerms` | Array | Keywords | `["topic1", "topic2"]` |
+
+---
+
+## Markdown Syntax Guide
+
+Markdown is the foundation of your content. Here's a comprehensive reference.
+
+### Headings
+
+Use `#` symbols to create headings. More `#` means lower level:
+
+```md
+# Heading 1 (H1)
+## Heading 2 (H2)
+### Heading 3 (H3)
+#### Heading 4 (H4)
+##### Heading 5 (H5)
+###### Heading 6 (H6)
+```
+
+**Best Practices:**
+- Use only ONE H1 (`#`) per page - this is your main title
+- Use H2 (`##`) for major sections
+- Use H3 (`###`) for subsections
+- Don't skip levels (don't go from H2 to H4)
+- Headings automatically appear in the table of contents
+
+**Example Structure:**
+```md
+# Main Title (H1)
+
+## Introduction (H2)
+
+### Background (H3)
+
+### Objectives (H3)
+
+## Methodology (H2)
+
+### Data Collection (H3)
+
+### Analysis Approach (H3)
+```
+
+---
+
+### Text Formatting
+
+#### Basic Formatting
+
+```md
+**Bold text**
+*Italic text*
+***Bold and italic text***
+~~Strikethrough text~~
+`Inline code`
+```
+
+**Renders as:**
+- **Bold text**
+- *Italic text*
+- ***Bold and italic text***
+- ~~Strikethrough text~~
+- `Inline code`
+
+#### HTML Formatting
+
+You can also use HTML tags for additional formatting:
+
+```html
+<b>Bold</b>
+<strong>Strong (bold)</strong>
+<i>Italic</i>
+<em>Emphasis (italic)</em>
+<u>Underline</u>
+<sub>Subscript</sub>
+<sup>Superscript</sup>
+<mark>Highlighted text</mark>
+<small>Small text</small>
+```
+
+**When to use HTML instead of Markdown:**
+- Subscripts and superscripts (H<sub>2</sub>O, x<sup>2</sup>)
+- Underlined text
+- Combining formats not supported by Markdown
+
+**Example:**
+```md
+The chemical formula for water is H<sub>2</sub>O.
+
+Einstein's famous equation is E=mc<sup>2</sup>.
+```
+
+---
+
+### Paragraphs and Line Breaks
+
+#### Paragraphs
+
+Separate paragraphs with a blank line:
+
+```md
+This is the first paragraph.
+
+This is the second paragraph.
+```
+
+#### Line Breaks
+
+**Method 1:** End a line with two spaces
+```md
+Line one
+Line two
+```
+
+**Method 2:** Use `<br />` tag
+```md
+Line one<br />
+Line two
+```
+
+**Method 3:** Use `<p>` tags
+```html
+<p>First paragraph</p>
+<p>Second paragraph</p>
+```
+
+---
+
+### Lists
+
+#### Unordered (Bullet) Lists
+
+Use `-`, `*`, or `+`:
+
+```md
+- Item 1
+- Item 2
+- Item 3
+  - Nested item 3.1
+  - Nested item 3.2
+    - Deeply nested 3.2.1
+- Item 4
+```
+
+**Renders as:**
+- Item 1
+- Item 2
+- Item 3
+  - Nested item 3.1
+  - Nested item 3.2
+    - Deeply nested 3.2.1
+- Item 4
+
+#### Ordered (Numbered) Lists
+
+Use numbers followed by periods:
+
+```md
+1. First item
+2. Second item
+3. Third item
+   1. Nested item 3.1
+   2. Nested item 3.2
+4. Fourth item
+```
+
+**Renders as:**
+1. First item
+2. Second item
+3. Third item
+   1. Nested item 3.1
+   2. Nested item 3.2
+4. Fourth item
+
+**Pro Tip:** You can use `1.` for all items and Markdown will auto-number:
+
+```md
+1. First item
+1. Second item
+1. Third item
+```
+
+This still renders as 1, 2, 3. Useful if you need to reorder items later!
+
+#### Mixed Lists
+
+Combine ordered and unordered lists:
+
+```md
+1. First step
+   - Substep A
+   - Substep B
+2. Second step
+   - Substep A
+   - Substep B
+```
+
+#### Task Lists
+
+Create checkboxes with `- [ ]` and `- [x]`:
+
+```md
+- [x] Completed task
+- [ ] Incomplete task
+- [ ] Another incomplete task
+```
+
+**Renders as:**
+- [x] Completed task
+- [ ] Incomplete task
+- [ ] Another incomplete task
+
+---
+
+### Links
+
+#### External Links
+
+```md
+[Link text](https://example.com)
+[Link with title](https://example.com "Hover text")
+```
+
+**Example:**
+```md
+Visit the [USACE website](https://www.usace.army.mil/) for more information.
+```
+
+#### Internal Links (Within Documentation)
+
+Link to other pages in your documentation:
+
+```md
+[Project Structure](./03-project-structure.mdx)
+[React Components](./07-react-components.mdx)
+```
+
+**Relative path rules:**
+- `./` - Same folder
+- `../` - Parent folder
+- `../../` - Two levels up
+
+**Example paths:**
+```md
+[Sibling page](./02-versioning-system.mdx)
+[Parent folder page](../users-guide/v1.0/01-preface.mdx)
+```
+
+#### Anchor Links (Within Same Page)
+
+Link to headings on the same page:
+
+```md
+[Jump to Methodology](#methodology)
+```
+
+**Rules:**
+- Use `#` followed by heading text
+- Convert to lowercase
+- Replace spaces with hyphens
+- Remove special characters
+
+**Examples:**
+```md
+## Data Analysis Results
+[Link to section](#data-analysis-results)
+
+## 4.2 Model Validation
+[Link to section](#42-model-validation)
+```
+
+#### Reference-Style Links
+
+Define links once, use multiple times:
+
+```md
+[Link 1][ref1]
+[Link 2][ref1]
+
+[ref1]: https://example.com "Link title"
+```
+
+---
+
+### Images
+
+#### Inline Images (Markdown)
+
+Basic image syntax:
+
+```md
+![Alt text](path/to/image.png)
+![Alt text](path/to/image.png "Title text")
+```
+
+**However, for documentation, use React components instead!**
+
+#### Images with Figure Component (Recommended)
+
+For numbered figures with captions:
+
+```jsx
+import Figure from '@site/src/components/Figure';
+
+<Figure
+  figureKey="fig-workflow"
+  src="/figures/desktop-applications/lifesim/users-guide/v1.0/workflow.png"
+  alt="LifeSim workflow diagram"
+  caption="Overall workflow for LifeSim analysis"
+  width="80%"
+/>
+```
+
+**Benefits:**
+- Automatic figure numbering
+- Professional captions
+- Cross-references
+- Consistent styling
+
+See [React Components](./07-react-components.mdx) for full documentation.
+
+---
+
+### Blockquotes
+
+Create blockquotes with `>`:
+
+```md
+> This is a blockquote.
+> It can span multiple lines.
+```
+
+**Renders as:**
+
+> This is a blockquote.
+> It can span multiple lines.
+
+#### Nested Blockquotes
+
+```md
+> First level
+>> Second level
+>>> Third level
+```
+
+#### Blockquotes with Other Elements
+
+```md
+> ### Heading in Blockquote
+>
+> - List item 1
+> - List item 2
+>
+> Regular text in blockquote.
+```
+
+---
+
+### Horizontal Rules
+
+Create dividers with three or more hyphens, asterisks, or underscores:
+
+```md
+---
+***
+___
+```
+
+All render as:
+
+---
+
+**Use horizontal rules to:**
+- Separate major sections
+- Create visual breaks
+- Divide content thematically
+
+---
+
+### Tables
+
+#### Basic Markdown Tables
+
+```md
+| Header 1 | Header 2 | Header 3 |
+|----------|----------|----------|
+| Row 1A   | Row 1B   | Row 1C   |
+| Row 2A   | Row 2B   | Row 2C   |
+```
+
+**Renders as:**
+
+| Header 1 | Header 2 | Header 3 |
+|----------|----------|----------|
+| Row 1A   | Row 1B   | Row 1C   |
+| Row 2A   | Row 2B   | Row 2C   |
+
+#### Column Alignment
+
+Use colons in the separator line:
+
+```md
+| Left | Center | Right |
+|:-----|:------:|------:|
+| L1   | C1     | R1    |
+| L2   | C2     | R2    |
+```
+
+**Alignment:**
+- `:---` - Left align
+- `:---:` - Center align
+- `---:` - Right align
+
+#### Complex Tables (Use React Components)
+
+For tables with:
+- Cell spanning (rowspan/colspan)
+- Complex formatting
+- Automatic numbering
+- Better styling
+
+Use `<TableVertical>` or `<TableHorizontal>` components. See [React Components](./07-react-components.mdx).
+
+---
+
+### Code Blocks
+
+#### Inline Code
+
+Wrap with single backticks:
+
+```md
+Use the `npm start` command to run the development server.
+```
+
+**Renders as:** Use the `npm start` command to run the development server.
+
+#### Fenced Code Blocks
+
+Wrap with triple backticks:
+
+````md
+```
+function hello() {
+  console.log("Hello, world!");
+}
+```
+````
+
+#### Syntax Highlighting
+
+Specify language after opening backticks:
+
+````md
+```javascript
+function hello() {
+  console.log("Hello, world!");
+}
+```
+````
+
+**Supported languages:**
+- `javascript` / `js`
+- `python` / `py`
+- `java`
+- `cpp` / `c`
+- `bash` / `shell`
+- `json`
+- `markdown` / `md`
+- `html`
+- `css`
+- `sql`
+- And many more!
+
+#### Code Block with Title
+
+````md
+```javascript title="example.js"
+function greet(name) {
+  return `Hello, ${name}!`;
+}
+```
+````
+
+#### Highlighting Lines
+
+Highlight specific lines with `{line-numbers}`:
+
+````md
+```javascript {2-3}
+function hello() {
+  console.log("This line is highlighted");
+  console.log("This line too");
+  console.log("This line is not");
+}
+```
+````
+
+#### Line Numbers
+
+Show line numbers with `showLineNumbers`:
+
+````md
+```python showLineNumbers
+def calculate_area(radius):
+    pi = 3.14159
+    return pi * radius ** 2
+```
+````
+
+---
+
+### Mathematical Equations
+
+This project supports LaTeX math equations through KaTeX.
+
+#### Inline Math
+
+Wrap with single `$`:
+
+```md
+The equation $E = mc^2$ is Einstein's famous formula.
+```
+
+**Renders as:** The equation $E = mc^2$ is Einstein's famous formula.
+
+#### Display Math (Block)
+
+Wrap with double `$$`:
+
+```md
+$$
+x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+$$
+```
+
+**Renders as:**
+
+```math
+x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+```
+
+#### Numbered Equations (Use Component)
+
+For automatic equation numbering and cross-references:
+
+```jsx
+import Equation from '@site/src/components/Equation';
+
+<Equation
+  equationKey="eq-quadratic"
+  equation="\frac{-b \pm \sqrt{b^2 - 4ac}}{2a}"
+/>
+```
+
+**LaTeX Syntax Quick Reference:**
+
+| Symbol | LaTeX | Symbol | LaTeX |
+|--------|-------|--------|-------|
+| α | `\alpha` | β | `\beta` |
+| γ | `\gamma` | Δ | `\Delta` |
+| ∑ | `\sum` | ∫ | `\int` |
+| √ | `\sqrt{x}` | ∞ | `\infty` |
+| ≤ | `\leq` | ≥ | `\geq` |
+| ± | `\pm` | × | `\times` |
+
+For full LaTeX reference, see [KaTeX documentation](https://katex.org/docs/supported.html).
+
+---
+
+### Admonitions (Callout Boxes)
+
+Docusaurus provides built-in admonitions for important notes:
+
+#### Types
+
+**Note:**
+```md
+:::note
+This is a note admonition.
+:::
+```
+
+**Tip:**
+```md
+:::tip
+This is a helpful tip!
+:::
+```
+
+**Info:**
+```md
+:::info
+This is informational content.
+:::
+```
+
+**Warning:**
+```md
+:::warning
+This is a warning - be careful!
+:::
+```
+
+**Danger:**
+```md
+:::danger
+This is dangerous - proceed with caution!
+:::
+```
+
+#### Custom Titles
+
+```md
+:::tip Best Practice
+Always test your changes locally before committing!
+:::
+```
+
+#### Nested Content
+
+```md
+:::warning Important
+This admonition contains:
+
+- Multiple paragraphs
+- Lists
+- **Formatted text**
+
+And other Markdown elements.
+:::
+```
+
+---
+
+## MDX-Specific Features
+
+MDX extends Markdown with JSX (React) capabilities.
+
+### Importing Components
+
+Import React components at the top of your file (after front matter):
+
+```jsx
+---
+title: Results
+---
+
+import Figure from '@site/src/components/Figure';
+import TableVertical from '@site/src/components/TableVertical';
+import Equation from '@site/src/components/Equation';
+import Citation from '@site/src/components/Citation';
+```
+
+**Import syntax:**
+```jsx
+import ComponentName from '@site/src/components/ComponentName';
+```
+
+**The `@site` alias** refers to the project root, so you don't need relative paths.
+
+### Using Components
+
+Once imported, use components with JSX syntax:
+
+```jsx
+<Figure
+  figureKey="fig-1"
+  src="/figures/path/to/image.png"
+  alt="Description"
+  caption="Figure caption text"
+/>
+```
+
+**Key differences from HTML:**
+- Self-closing tags must end with ` />`
+- Props use camelCase (`figureKey` not `figure-key`)
+- String props use quotes: `alt="text"`
+- Boolean props: `autoNumber={true}` or just `autoNumber`
+
+### JSX Expressions
+
+Embed JavaScript expressions with `{}`:
+
+```jsx
+The current year is {new Date().getFullYear()}.
+```
+
+**Use cases:**
+- Dynamic values
+- Conditional rendering
+- Simple calculations
+
+**Example:**
+```jsx
+{true && <p>This paragraph will render</p>}
+{false && <p>This paragraph won't render</p>}
+```
+
+### Comments in MDX
+
+#### Markdown Comments (Don't use)
+
+```md
+<!-- This HTML comment is visible in MDX -->
+```
+
+#### JSX Comments (Use these)
+
+```jsx
+{/* This comment is hidden in MDX */}
+```
+
+**When to use comments:**
+- Leave notes for other contributors
+- Temporarily disable content
+- Explain complex logic
+
+---
+
+## Best Practices
+
+### Document Structure
+
+Every document should follow this structure:
+
+```md
+---
+title: Chapter Title
+---
+
+import [Components] from [Paths];
+
+# Chapter Title (H1)
+
+Brief introduction paragraph.
+
+## First Major Section (H2)
+
+Content...
+
+### Subsection (H3)
+
+Content...
+
+## Second Major Section (H2)
+
+Content...
+
+## Summary (H2)
+
+Conclusion...
+```
+
+### Naming Conventions
+
+#### File Names
+
+- Use lowercase letters
+- Separate words with hyphens
+- Include two-digit prefix
+- Use `.mdx` extension
+
+**Examples:**
+- ✅ `01-preface.mdx`
+- ✅ `04-methodology.mdx`
+- ✅ `10-appendix-acronyms.mdx`
+- ❌ `Chapter1.mdx`
+- ❌ `04_Methodology.mdx`
+
+#### Component Keys
+
+Use descriptive, unique keys:
+
+- Figures: `figureKey="fig-workflow"`
+- Tables: `tableKey="table-results"`
+- Equations: `equationKey="eq-quadratic"`
+
+**Format:** `type-description` in kebab-case
+
+### Cross-Referencing
+
+#### Link to Figures
+
+```jsx
+See <FigureReference figureKey="fig-workflow" /> for the analysis workflow.
+```
+
+#### Link to Tables
+
+```jsx
+<TableReference tableKey="table-results" /> shows the final results.
+```
+
+#### Link to Equations
+
+```jsx
+Using <EquationReference equationKey="eq-quadratic" />, we can solve...
+```
+
+### Accessibility
+
+#### Alt Text for Images
+
+Always provide descriptive alt text:
+
+```jsx
+<Figure
+  figureKey="fig-1"
+  src="/figures/workflow.png"
+  alt="Flowchart showing three steps: data input, analysis, and output generation"
+  caption="Analysis workflow"
+/>
+```
+
+**Alt text should:**
+- Describe the content of the image
+- Be concise but complete
+- Not include "image of" or "picture of"
+
+#### Heading Hierarchy
+
+Maintain proper heading levels:
+
+```md
+✅ Correct:
+# Title (H1)
+## Section (H2)
+### Subsection (H3)
+
+❌ Incorrect:
+# Title (H1)
+### Subsection (H3)  ← Skipped H2!
+```
+
+#### Link Text
+
+Use descriptive link text:
+
+```md
+✅ Good: [Download the LifeSim User's Guide](link)
+❌ Bad: [Click here](link)
+```
+
+### Writing Style
+
+#### Be Concise
+
+```md
+✅ Good: The model calculates risk using frequency and consequence data.
+❌ Wordy: The model performs calculations that determine the risk by utilizing both frequency information and consequence data.
+```
+
+#### Use Active Voice
+
+```md
+✅ Active: The software analyzes the data.
+❌ Passive: The data is analyzed by the software.
+```
+
+#### Define Acronyms
+
+```md
+First use: Risk Management Center (RMC)
+Subsequent: RMC
+```
+
+### Version Control
+
+#### Minor Edits
+
+Edit existing files directly for:
+- Typo fixes
+- Small clarifications
+- Updated links
+- Minor formatting
+
+#### Major Updates
+
+Create new version folder for:
+- New software features
+- Restructured content
+- Significant additions
+- Major corrections
+
+**Process:**
+1. Create new version folder (e.g., `v1.1/`)
+2. Copy all files from previous version
+3. Make your changes
+4. Update version history
+
+---
+
+## Common Patterns and Examples
+
+### Example 1: Creating a New Chapter from Scratch
+
+**File:** `docs/desktop-applications/lifesim/users-guide/v1.0/05-validation.mdx`
+
+```mdx
+---
+title: Model Validation
+---
+
+import Figure from '@site/src/components/Figure';
+import TableVertical from '@site/src/components/TableVertical';
+import Citation from '@site/src/components/Citation';
+
+# Model Validation
+
+This chapter presents the validation studies performed to verify the accuracy and reliability of the LifeSim model.
+
+## Overview
+
+Model validation is essential to ensure that simulation results accurately represent real-world conditions <Citation citationKey="Smith2020" />.
+
+## Validation Approach
+
+The validation process followed these steps:
+
+1. **Historical data collection** - Gathered data from past events
+2. **Model calibration** - Adjusted parameters to match observations
+3. **Sensitivity analysis** - Tested model response to parameter variations
+
+### Historical Data
+
+<TableVertical
+  tableKey="table-validation-data"
+  alt="Historical validation data"
+  headers={[[
+    { value: 'Event' },
+    { value: 'Date' },
+    { value: 'Observed Value' },
+    { value: 'Modeled Value' }
+  ]]}
+  columns={[
+    [{ value: 'Event A' }, { value: 'Event B' }, { value: 'Event C' }],
+    [{ value: '2015' }, { value: '2017' }, { value: '2019' }],
+    [{ value: '125' }, { value: '234' }, { value: '189' }],
+    [{ value: '122' }, { value: '238' }, { value: '191' }]
+  ]}
+  caption="Comparison of observed and modeled values"
+/>
+
+## Results
+
+<Figure
+  figureKey="fig-validation"
+  src="/figures/desktop-applications/lifesim/users-guide/v1.0/validation-results.png"
+  alt="Scatter plot comparing observed versus modeled values with best-fit line"
+  caption="Validation results showing strong agreement between observed and modeled values"
+  width="80%"
+/>
+
+The validation results demonstrate excellent agreement between model predictions and historical observations.
+
+## Summary
+
+The validation studies confirm that LifeSim produces accurate and reliable results across a range of scenarios.
+```
+
+### Example 2: Adding Figures with Cross-References
+
+```mdx
+---
+title: Results
+---
+
+import Figure from '@site/src/components/Figure';
+import FigureReference from '@site/src/components/FigureReference';
+
+# Results
+
+## Workflow Diagram
+
+<Figure
+  figureKey="fig-workflow"
+  src="/figures/workflow.png"
+  alt="Flowchart showing analysis steps"
+  caption="Analysis workflow diagram"
+/>
+
+## Output Visualization
+
+<Figure
+  figureKey="fig-output"
+  src="/figures/output.png"
+  alt="Graph showing results over time"
+  caption="Model output results"
+/>
+
+## Discussion
+
+The analysis follows the workflow shown in <FigureReference figureKey="fig-workflow" />. Results are visualized in <FigureReference figureKey="fig-output" />, demonstrating clear trends over the simulation period.
+```
+
+### Example 3: Using Equations
+
+```mdx
+---
+title: Methodology
+---
+
+import Equation from '@site/src/components/Equation';
+import EquationReference from '@site/src/components/EquationReference';
+
+# Methodology
+
+## Risk Calculation
+
+Risk is calculated as the product of probability and consequence, as shown in <EquationReference equationKey="eq-risk" />:
+
+<Equation
+  equationKey="eq-risk"
+  equation="R = P \times C"
+/>
+
+Where:
+- $R$ = Risk
+- $P$ = Probability of event
+- $C$ = Consequence of event
+
+For multiple events, total risk is the sum of individual risks as defined in <EquationReference equationKey="eq-total-risk" />:
+
+<Equation
+  equationKey="eq-total-risk"
+  equation="R_{total} = \sum_{i=1}^{n} P_i \times C_i"
+/>
+```
+
+### Example 4: Managing Citations
+
+```mdx
+---
+title: Literature Review
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+
+# Literature Review
+
+## Background
+
+The original methodology was developed by Smith <Citation citationKey="Smith2015" />. Subsequent improvements were made by Jones and colleagues <Citation citationKey="Jones2018" /> <Citation citationKey="JonesSmith2020" />.
+
+## Current Approach
+
+The current approach integrates these earlier methods <Citation citationKey="Smith2015" /> <Citation citationKey="Jones2018" /> with modern computational techniques.
+
+<CitationFootnote />
+```
+
+---
+
+## Troubleshooting Common Issues
+
+### Build Errors
+
+**Problem:** MDX file causes build to fail
+
+**Solutions:**
+- Check for unclosed components: `<Figure />` not `<Figure>`
+- Verify all imports are correct
+- Check for unescaped special characters
+- Review error message carefully - it usually indicates the line number
+
+### Broken Links
+
+**Problem:** Links don't work or return 404
+
+**Solutions:**
+- Use relative paths: `./file.mdx` not just `file`
+- Include `.mdx` extension
+- Check capitalization matches exactly
+- Verify file actually exists at that path
+
+### Images Not Displaying
+
+**Problem:** Images don't appear
+
+**Solutions:**
+- Check path starts with `/figures/` (note the leading slash)
+- Verify image exists in `static/figures/` folder
+- Check filename matches exactly (case-sensitive)
+- Ensure image file format is supported (PNG, JPG, SVG)
+
+### Component Import Errors
+
+**Problem:** "Component is not defined"
+
+**Solutions:**
+- Add import statement at top of file
+- Check component name matches exactly (case-sensitive)
+- Verify path is correct: `@site/src/components/ComponentName`
+- Check component actually exists
+
+### Incorrect Numbering
+
+**Problem:** Figure/table/equation numbers are wrong
+
+**Solutions:**
+- Run `npm run counters` to regenerate numbering
+- Ensure each component has a unique key
+- Check that keys don't conflict across pages
+
+### Sidebar Not Updating
+
+**Problem:** New file doesn't appear in sidebar
+
+**Solutions:**
+- Run `npm run sidebars` to regenerate
+- Check file is in correct location
+- Verify filename follows naming convention
+- Restart dev server (`npm start`)
+
+---
+
+## Next Steps
+
+Now that you understand how to create and edit MDX pages, you're ready to:
+
+1. **Explore React Components** - See [React Components](./07-react-components.mdx) for the complete component library
+2. **Review Examples** - Browse existing documentation in `docs/` for real-world examples
+3. **Convert Documents** - Use the [DOCX Converter](./04-docx-converter.mdx) to convert Word files
+4. **Quick Reference** - Bookmark [Quick Reference](./08-quick-reference.mdx) for fast lookups
+
+**Ready to start writing? Create your first MDX file and test it locally with `npm start`!**

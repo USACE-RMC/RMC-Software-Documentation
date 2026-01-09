@@ -1,0 +1,642 @@
+---
+title: Build Process Overview
+sidebar_label: Build Process
+---
+
+# Build Process Overview
+
+## What Happens Behind the Scenes
+
+When you run `npm start` or `npm run build`, a series of automated scripts work behind the scenes to prepare your documentation for display. This guide explains what's happening so you understand the "magic" - but **you don't need to modify anything described here**. These processes are fully automated.
+
+:::info For Contributors
+
+**You don't need to understand the technical details of these scripts to contribute documentation.** This section is provided for transparency and troubleshooting. Focus on creating great content - the automation handles the rest!
+
+:::
+
+---
+
+## The Build Workflow
+
+### When You Run `npm start`
+
+Here's what happens step-by-step:
+
+```
+npm start
+    ↓
+1. Generate Report ID Map
+    ↓
+2. Generate Sidebars
+    ↓
+3. Generate Counters
+    ↓
+4. Generate Versions
+    ↓
+5. Generate Event Tree TOC
+    ↓
+6. Start Docusaurus Dev Server
+    ↓
+Site available at http://localhost:3000
+```
+
+Each step is essential for the documentation site to function correctly.
+
+---
+
+## The Five Automation Scripts
+
+### 1. Report ID Map Generator
+
+**Script:** `scripts/generateReportIdMap.js`
+
+**What it does:**
+- Scans the entire `docs/` folder structure
+- Creates a unique ID for each documentation set
+- Maps folder paths to report IDs
+
+**Output:** `src/reportIdMap.js` (auto-generated)
+
+**Example mapping:**
+```
+docs/desktop-applications/lifesim/users-guide/v1.0/
+    ↓
+lifesim-users-guide-v1-0
+```
+
+**Why it matters:**
+- Report IDs are used by all other scripts to track documents
+- Enables automatic numbering and cross-referencing
+- Keeps internal organization consistent
+
+**What you need to know:**
+- Never edit `src/reportIdMap.js` directly
+- The script creates IDs automatically from your folder structure
+- IDs are used internally - you'll rarely see them
+
+---
+
+### 2. Sidebar Generator
+
+**Script:** `scripts/generateSidebars.js`
+
+**What it does:**
+- Scans `docs/` folder structure
+- Reads front matter from each `.mdx` file
+- Builds hierarchical navigation structure
+- Determines collapsed/expanded state
+- Orders items based on numeric prefixes
+
+**Output:** `sidebars.js` (auto-generated)
+
+**How it works:**
+
+**Folder structure:**
+```
+docs/
+├── desktop-applications/
+│   ├── lifesim/
+│   │   └── users-guide/
+│   │       └── v1.0/
+│   │           ├── 00-document-info.mdx
+│   │           ├── 01-preface.mdx
+│   │           └── 02-introduction.mdx
+```
+
+**Becomes sidebar:**
+```
+Desktop Applications (expanded)
+  └── LifeSim (collapsed)
+      └── User's Guide v1.0 (collapsed)
+          ├── Document Information (collapsed)
+          │   ├── Document Info
+          │   └── Version History
+          ├── Main Report (expanded)
+          │   ├── Preface
+          │   └── Introduction
+```
+
+**Sidebar rules:**
+- Files starting with `00-` go into "Document Information" (collapsed)
+- Files starting with `01-99` go into "Main Report" (expanded)
+- Appendix detection is based on file content
+- Items are sorted numerically by prefix
+
+**What you need to know:**
+- Never edit `sidebars.js` directly - it will be overwritten
+- Use numeric prefixes (`01-`, `02-`, etc.) to control order
+- The `title` from front matter becomes the sidebar label
+- Run `npm start` to regenerate sidebar after structural changes
+
+---
+
+### 3. Counters Generator
+
+**Script:** `scripts/counters.js`
+
+**What it does:**
+- Scans all `.mdx` files in each document
+- Finds components with unique keys:
+  - `<Figure figureKey="...">`
+  - `<TableVertical tableKey="...">`
+  - `<Equation equationKey="...">`
+  - `<Citation citationKey="...">`
+- Assigns sequential numbers to each type
+- Stores mappings in JSON files
+
+**Output:** `static/counters/<report-id>.json` (one per document)
+
+**Example counter file:**
+```json
+{
+  "figures": {
+    "fig-workflow": {
+      "figNumber": 1,
+      "parentDocId": "lifesim-users-guide-v1-0",
+      "docId": "02-methodology.mdx"
+    },
+    "fig-results": {
+      "figNumber": 2,
+      "parentDocId": "lifesim-users-guide-v1-0",
+      "docId": "03-results.mdx"
+    }
+  },
+  "tables": {
+    "table-parameters": {
+      "tableNumber": 1,
+      "parentDocId": "lifesim-users-guide-v1-0",
+      "docId": "02-methodology.mdx"
+    }
+  },
+  "equations": {
+    "eq-risk": {
+      "equationNumber": 1,
+      "parentDocId": "lifesim-users-guide-v1-0",
+      "docId": "02-methodology.mdx"
+    }
+  }
+}
+```
+
+**How numbering works:**
+1. Script reads files in alphabetical order (01-, 02-, 03-, ...)
+2. Encounters first `<Figure figureKey="fig-workflow">` → assigns Figure 1
+3. Encounters second `<Figure figureKey="fig-results">` → assigns Figure 2
+4. Tables, equations, and citations are numbered separately
+
+**What you need to know:**
+- Always use unique keys for each component
+- Numbers are assigned automatically based on order of appearance
+- If numbering seems wrong, run `npm run counters` to regenerate
+- Cross-references work because keys map to numbers
+
+---
+
+### 4. Versions Generator
+
+**Script:** `scripts/versions.js`
+
+**What it does:**
+- Scans all documents for version folders (`v1.0`, `v1.1`, `v2.0`, etc.)
+- Determines the latest version for each document
+- Creates version lists for version selector dropdown
+- Generates configuration for Algolia search crawler
+
+**Output:** Three JSON files in `static/versions/`
+
+1. **`latestVersions.json`** - Maps each document to its latest version
+   ```json
+   {
+     "lifesim-users-guide": "v1.1",
+     "rmc-rfa-users-guide": "v2.0"
+   }
+   ```
+
+2. **`versionList.json`** - All available versions per document
+   ```json
+   {
+     "lifesim-users-guide": ["v1.0", "v1.1"],
+     "rmc-rfa-users-guide": ["v1.0", "v1.5", "v2.0"]
+   }
+   ```
+
+3. **`algoliaCrawlerVersions.json`** - Search indexing configuration
+
+**What you need to know:**
+- Latest version is displayed by default when users visit a document
+- Version selector dropdown is populated automatically
+- Simply create new version folders (`v1.1`, `v2.0`) - the script detects them
+- Versions are sorted semantically (v1.9 comes before v1.10)
+
+---
+
+### 5. Event Tree TOC Generator
+
+**Script:** `scripts/generateEventTreeTOC.js`
+
+**What it does:**
+- Specialized script for the RMC Typical Event Tree Database document
+- Scans event tree documentation folders
+- Groups files into categories based on numeric prefixes
+- Builds a table of contents structure
+
+**Output:** `src/data/eventTreeToc.json`
+
+**What you need to know:**
+- Only relevant if working on the Event Tree Database document
+- Most contributors won't interact with this script
+- Runs automatically during build process
+
+---
+
+## What Gets Generated (Don't Edit These!)
+
+These files and folders are created automatically by the scripts above:
+
+### Auto-Generated Files
+
+| File/Folder | Generated By | Purpose |
+|-------------|--------------|---------|
+| `sidebars.js` | generateSidebars.js | Navigation structure |
+| `src/reportIdMap.js` | generateReportIdMap.js | Document ID mappings |
+| `static/counters/*.json` | counters.js | Figure/table/equation numbering |
+| `static/versions/*.json` | versions.js | Version management |
+| `src/data/eventTreeToc.json` | generateEventTreeTOC.js | Event tree navigation |
+| `.docusaurus/` | Docusaurus | Build cache |
+| `build/` | Docusaurus | Production output |
+
+### How to Tell If a File is Auto-Generated
+
+Check `.gitignore` in the project root. If a file is listed there, it's auto-generated and shouldn't be manually edited.
+
+**Common auto-generated patterns:**
+```
+sidebars.js
+src/reportIdMap.js
+src/data/
+static/counters/
+static/versions/
+.docusaurus/
+build/
+node_modules/
+```
+
+---
+
+## The Docusaurus Build Process
+
+After the five scripts complete, Docusaurus takes over:
+
+### Development Mode (`npm start`)
+
+1. **Pre-build phase:**
+   - Runs all 5 automation scripts
+   - Validates configuration
+   - Loads plugins
+
+2. **Build phase:**
+   - Compiles MDX files to React components
+   - Processes CSS and Tailwind utilities
+   - Optimizes images
+   - Generates routes
+
+3. **Dev server:**
+   - Starts local server on port 3000
+   - Enables hot reload (changes appear automatically)
+   - Provides error messages in browser
+
+4. **Watch mode:**
+   - Monitors files for changes
+   - Recompiles changed files
+   - Updates browser automatically
+
+### Production Mode (`npm run build`)
+
+1. **Pre-build phase:**
+   - Runs all 5 automation scripts
+   - Validates all links and references
+   - Checks for broken assets
+
+2. **Build phase:**
+   - Compiles all MDX to static HTML
+   - Minifies CSS and JavaScript
+   - Optimizes and compresses images
+   - Generates sitemap
+   - Creates search index
+
+3. **Output:**
+   - Static files in `build/` folder
+   - Ready for deployment to GitHub Pages
+   - No server required (static site)
+
+---
+
+## When Scripts Run
+
+### Automatically
+
+Scripts run automatically during:
+
+```bash
+npm start      # Runs all 5 scripts, then starts dev server
+npm run build  # Runs all 5 scripts, then builds for production
+```
+
+### Manually (If Needed)
+
+You can run individual scripts if needed:
+
+```bash
+npm run counters    # Regenerate figure/table/equation numbers
+npm run sidebars    # Regenerate sidebar navigation
+npm run versions    # Regenerate version data
+npm run report-map  # Regenerate report ID mappings
+```
+
+**When to run manually:**
+- Troubleshooting numbering issues
+- Sidebar not updating after structural changes
+- Testing without full rebuild
+
+---
+
+## Common Scenarios
+
+### Scenario 1: I Added a New Chapter
+
+**What happens automatically:**
+1. Next `npm start` runs `generateSidebars.js`
+2. New file is detected and added to sidebar
+3. Numeric prefix determines position
+4. Front matter `title` becomes sidebar label
+
+**You don't need to:**
+- Edit `sidebars.js`
+- Run any commands manually
+- Restart server (hot reload handles it)
+
+---
+
+### Scenario 2: Figure Numbers Are Wrong
+
+**What to do:**
+
+1. Check that each figure has a unique `figureKey`
+2. Verify files are numbered correctly (`01-`, `02-`, `03-`)
+3. Run `npm run counters` to regenerate
+4. Refresh browser
+
+**What's happening:**
+- Counters are generated in file order
+- Duplicate keys cause issues
+- Out-of-order files result in unexpected numbering
+
+---
+
+### Scenario 3: Created New Version Folder
+
+**What happens automatically:**
+1. Next `npm start` runs `versions.js`
+2. New version is detected
+3. Version selector dropdown is updated
+4. Latest version determination is updated
+
+**You don't need to:**
+- Edit any version files
+- Manually update version dropdowns
+- Configure anything
+
+---
+
+### Scenario 4: Build Fails with "Cannot find module"
+
+**Possible causes:**
+1. Missing import in MDX file
+2. Component doesn't exist
+3. Typo in component name
+4. Cache corruption
+
+**Solutions:**
+```bash
+npm run clear     # Clear Docusaurus cache
+npm start         # Rebuild from scratch
+```
+
+---
+
+## Understanding Build Output
+
+### Terminal Output During `npm start`
+
+You'll see output like this:
+
+```
+> npm run report-map && npm run sidebars && ...
+
+[Report Map] Scanning docs folder...
+[Report Map] Generated mappings for 45 documents
+[Report Map] ✓ src/reportIdMap.js
+
+[Sidebars] Scanning docs folder...
+[Sidebars] Generated sidebar with 12 categories
+[Sidebars] ✓ sidebars.js
+
+[Counters] Scanning docs folder...
+[Counters] Processing lifesim-users-guide-v1-0...
+[Counters]   - 15 figures
+[Counters]   - 8 tables
+[Counters]   - 12 equations
+[Counters] ✓ Generated 45 counter files
+
+[Versions] Scanning for version folders...
+[Versions] Found 73 versions across 45 documents
+[Versions] ✓ Generated version files
+
+[Docusaurus] Starting development server...
+[Docusaurus] Compiled successfully!
+[Docusaurus] ✓ http://localhost:3000
+```
+
+**What each message means:**
+- ✓ = Success
+- Numbers indicate how many items were processed
+- "Compiled successfully!" means site is ready
+- URL indicates where to view the site
+
+### Build Errors
+
+If you see errors, read the message carefully:
+
+**Example error:**
+```
+ERROR in ./docs/desktop-applications/lifesim/users-guide/v1.0/03-methodology.mdx
+Module not found: Can't resolve '@site/src/components/Figre'
+```
+
+**How to read it:**
+- **File location:** `docs/.../03-methodology.mdx`
+- **Problem:** Can't resolve component
+- **Issue:** Typo in import (`Figre` should be `Figure`)
+
+---
+
+## Performance Notes
+
+### Build Times
+
+Typical build times on modern hardware:
+
+- **`npm start` (first run):** 20-60 seconds
+  - 5-10 seconds for automation scripts
+  - 15-50 seconds for Docusaurus compilation
+
+- **`npm start` (subsequent):** 5-15 seconds
+  - Docusaurus uses cached builds
+  - Only changed files are recompiled
+
+- **`npm run build`:** 1-3 minutes
+  - Full production build
+  - All optimizations applied
+  - No caching used
+
+### Hot Reload Speed
+
+When editing files with dev server running:
+- MDX content changes: ~1-2 seconds
+- Component changes: ~2-5 seconds
+- Configuration changes: Requires restart
+
+---
+
+## Optimization Tips
+
+### Faster Development
+
+**Use selective script execution:**
+```bash
+# Only regenerate counters
+npm run counters && npm start
+
+# Only regenerate sidebars
+npm run sidebars && npm start
+```
+
+**Clear cache if issues:**
+```bash
+npm run clear
+npm start
+```
+
+### Faster Builds
+
+**Production builds are slower but create optimized sites:**
+- Only build for production when ready to deploy
+- Use `npm start` for development (much faster)
+
+---
+
+## Configuration Files (Reference Only)
+
+These files configure the build process but are rarely modified:
+
+### `docusaurus.config.js`
+
+**Purpose:** Main site configuration
+
+**Contains:**
+- Site URL and base path
+- Theme configuration
+- Plugin settings
+- Navigation bar setup
+- Footer configuration
+- Search integration (Algolia)
+- Analytics setup (Google)
+
+**When to modify:** Coordinate with site administrators
+
+---
+
+### `package.json`
+
+**Purpose:** Project dependencies and scripts
+
+**Contains:**
+- List of all npm packages used
+- Script definitions (`start`, `build`, `deploy`)
+- Node.js version requirements
+- Project metadata
+
+**When to modify:** Adding new dependencies (rare for contributors)
+
+---
+
+### `tailwind.config.js`
+
+**Purpose:** Styling configuration
+
+**Contains:**
+- Custom color definitions
+- Font configurations
+- Breakpoint settings
+- Tailwind utility extensions
+- Dark mode configuration
+
+**When to modify:** Coordinate with site administrators for styling changes
+
+---
+
+## Summary
+
+### What You Should Remember
+
+✅ **Automation handles everything:**
+- Sidebar generation
+- Figure/table/equation numbering
+- Version management
+- Navigation structure
+
+✅ **Run `npm start` and it just works:**
+- All scripts run automatically
+- Dev server starts
+- Changes reload automatically
+
+✅ **Never edit auto-generated files:**
+- `sidebars.js`
+- `src/reportIdMap.js`
+- `static/counters/`
+- `static/versions/`
+
+✅ **Focus on content:**
+- Write MDX files
+- Add images
+- Use components
+- Let automation handle the rest
+
+### What You Don't Need to Know
+
+❌ **How scripts are implemented**
+❌ **JavaScript/Node.js programming**
+❌ **Docusaurus internals**
+❌ **Build optimization details**
+
+### When to Think About Build Process
+
+Only when:
+- Troubleshooting errors
+- Numbering isn't working correctly
+- Sidebar isn't updating
+- Need to understand what files are auto-generated
+
+---
+
+## Next Steps
+
+Now that you understand what happens behind the scenes:
+
+- **Continue creating content:** [Creating and Editing Pages](./06-creating-editing-pages.mdx)
+- **Use React components:** [React Components](./07-react-components.mdx)
+- **Convert Word documents:** [DOCX Converter](./04-docx-converter.mdx)
+- **Quick troubleshooting:** [Troubleshooting & FAQ](./09-troubleshooting-faq.mdx)
+
+**Remember:** Understanding the build process is helpful but not required. Focus on creating great documentation - the automation takes care of everything else!
