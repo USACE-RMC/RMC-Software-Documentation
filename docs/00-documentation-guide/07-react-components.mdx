@@ -1,0 +1,1619 @@
+---
+title: React Components Reference
+sidebar_label: React Components
+---
+
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+# React Components Reference
+
+## Introduction
+
+This comprehensive guide documents all React components available for use in your MDX documentation. Components are organized by category to help you quickly find the right tool for your needs.
+
+### What Are React Components?
+
+**React components** are reusable UI elements that you can insert into your MDX files. They handle complex layouts, automatic numbering, and consistent styling without requiring you to write HTML or CSS.
+
+**Benefits:**
+- ✅ Automatic numbering (figures, tables, equations, videos)
+- ✅ Cross-referencing between elements
+- ✅ Consistent formatting across all documentation
+- ✅ Professional appearance
+- ✅ Responsive design (works on all screen sizes)
+
+### How to Use Components
+
+**Basic workflow:**
+
+1. **Import** the component at the top of your MDX file
+2. **Use** the component with JSX syntax
+3. **Configure** with props (properties)
+
+**Example:**
+
+```jsx
+---
+title: My Chapter
+---
+
+import Figure from '@site/src/components/Figure';
+
+# My Chapter
+
+<Figure
+  figureKey="fig-workflow"
+  src="/figures/my-document/workflow.png"
+  alt="Workflow diagram"
+  caption="Overall analysis workflow"
+  width="80%"
+/>
+```
+
+---
+
+## Component Categories
+
+Components are organized into these categories:
+
+- **[Document Metadata](#document-metadata)** - Document info and version history
+- **[Figures & Images](#figures--images)** - Numbered figures, inline images, references
+- **[Tables](#tables)** - Various table layouts and references
+- **[Equations](#equations)** - LaTeX equations with automatic numbering
+- **[Citations](#citations)** - Bibliography and citation management
+- **[Content Organization](#content-organization)** - Tabs, lists, processes
+- **[Multimedia](#multimedia)** - Videos with captions
+- **[Navigation](#navigation)** - Buttons, links, containers
+- **[Specialized](#specialized)** - Event trees and domain-specific components
+
+---
+
+## Quick Component Selector
+
+**Need to display an image?**
+- Numbered figure with caption → [`<Figure>`](#figure)
+- Unnumbered inline image → [`<FigureInline>`](#figureinline)
+- Simple image, no caption → [`<FigureNoRef>`](#figurenoref)
+
+**Need to create a table?**
+- Standard columnar table → [`<TableVertical>`](#tablevertical)
+- Row-based table → [`<TableHorizontal>`](#tablehorizontal)
+- Simple two-column list → [`<TableAcronyms>`](#tableacronyms)
+
+**Need to show a process?**
+- Step-by-step procedure → [`<ProcessList>`](#processlist)
+- Expandable grouped items → [`<CollectionList>`](#collectionlist)
+- Tabbed alternatives → [`<DocTabs>`](#doctabs)
+
+**Need to add equations?**
+- Numbered equation → [`<Equation>`](#equation)
+- Unnumbered equation → [`<EquationNoRef>`](#equationnoref)
+- Inline equation badge → [`<EquationChip>`](#equationchip)
+
+---
+
+## Document Metadata
+
+### DocumentMetadata
+
+**Purpose:** Displays report metadata in a professional table format at the beginning of documents.
+
+**When to use:**
+- `00-document-info.mdx` files
+- Beginning of technical reports
+- Any document requiring formal metadata
+
+**Import:**
+```jsx
+import DocumentMetadata from '@site/src/components/DocumentMetadata';
+```
+
+**Usage:**
+```jsx
+---
+reportDate: November 2023
+reportType: User's Guide
+reportTitle: LifeSim Life Safety Model
+reportSubTitle: Version 1.0
+reportAuthors: ["John Doe, Risk Management Center", "Jane Smith, RMC"]
+reportAbstract: This guide provides instructions for using LifeSim software...
+reportSubjectTerms: ["life safety", "dam failure", "risk analysis"]
+responsiblePersonName: John Doe
+responsiblePersonNumber: 555-0100
+---
+
+import DocumentMetadata from '@site/src/components/DocumentMetadata';
+
+<DocumentMetadata />
+```
+
+**Props:** None - reads from front matter
+
+**Front Matter Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `reportDate` | String | Publication date |
+| `reportType` | String | Document type (User's Guide, Technical Manual, etc.) |
+| `reportTitle` | String | Full document title |
+| `reportSubTitle` | String | Subtitle or version |
+| `reportAuthors` | Array | List of author names |
+| `reportAbstract` | String | Document summary |
+| `reportSubjectTerms` | Array | Keywords/topics |
+| `responsiblePersonName` | String | Point of contact |
+| `responsiblePersonNumber` | String | Contact phone number |
+
+---
+
+### TableVersionHistory
+
+**Purpose:** Displays document version history in a formatted table.
+
+**When to use:**
+- `00-version-history.mdx` files
+- Tracking document revisions
+
+**Import:**
+```jsx
+import TableVersionHistory from '@site/src/components/TableVersionHistory';
+```
+
+**Usage:**
+```jsx
+<TableVersionHistory
+  versionHistory={[
+    {
+      version: '1.0',
+      date: 'November 2023',
+      changes: 'Initial release',
+      author: 'J. Doe',
+      reviewer: 'J. Smith',
+      approver: 'A. Manager'
+    },
+    {
+      version: '1.1',
+      date: 'March 2024',
+      changes: 'Updated methodology section, added new examples',
+      author: 'J. Doe',
+      reviewer: 'J. Smith',
+      approver: 'A. Manager'
+    }
+  ]}
+/>
+```
+
+**Props:**
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `versionHistory` | Array | Yes | Array of version objects |
+
+**Version Object Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `version` | String | Version number (e.g., "1.0") |
+| `date` | String | Release date |
+| `changes` | String | Description of changes |
+| `author` | String | Document author |
+| `reviewer` | String | Technical reviewer |
+| `approver` | String | Approving authority |
+
+---
+
+## Figures & Images
+
+### Figure
+
+**Purpose:** Numbered figure with caption and automatic cross-referencing.
+
+⭐ **MOST COMMONLY USED COMPONENT**
+
+**When to use:**
+- Any diagram, chart, or image that needs a figure number
+- Images that will be referenced from text
+- Professional documentation figures
+
+**Import:**
+```jsx
+import Figure from '@site/src/components/Figure';
+```
+
+**Basic Usage:**
+```jsx
+<Figure
+  figureKey="fig-workflow"
+  src="/figures/desktop-applications/lifesim/users-guide/v1.0/workflow.png"
+  alt="Flowchart showing three-step analysis process"
+  caption="LifeSim analysis workflow"
+/>
+```
+
+**Advanced Usage:**
+```jsx
+<Figure
+  figureKey="fig-results"
+  src="/figures/my-software/results-graph.png"
+  alt="Bar chart comparing model results across three scenarios"
+  caption="Comparison of model results for baseline, alternative A, and alternative B scenarios"
+  width="90%"
+  credit="Source: USACE Risk Management Center (2024)"
+/>
+```
+
+**Props:**
+
+| Prop | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `figureKey` | String | Yes | - | Unique identifier for numbering and cross-refs |
+| `src` | String | Yes | - | Image path (relative to static folder) |
+| `alt` | String | Yes | - | Accessibility description |
+| `caption` | String | Yes | - | Figure caption text |
+| `width` | String | No | `"80%"` | Display width |
+| `credit` | String | No | - | Image source/credit line |
+
+**Tips:**
+- Use descriptive `figureKey` values: `fig-workflow`, `fig-results-1`
+- Always start paths with `/figures/`
+- Write detailed `alt` text for accessibility
+- Keep captions concise but descriptive
+
+**Common Mistakes:**
+- ❌ Forgetting leading slash: `figures/image.png`
+- ✅ Correct: `/figures/image.png`
+- ❌ Duplicate `figureKey` values
+- ✅ Each figure needs unique key
+
+---
+
+### FigureReference
+
+**Purpose:** Creates cross-references to numbered figures.
+
+**When to use:**
+- Referencing figures from body text
+- Creating figure call-outs
+
+**Import:**
+```jsx
+import FigureReference from '@site/src/components/FigureReference';
+```
+
+**Usage:**
+```jsx
+The analysis workflow is shown in <FigureReference figureKey="fig-workflow" />.
+
+See <FigureReference figureKey="fig-results" /> for detailed results.
+```
+
+**Props:**
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `figureKey` | String | Yes | Must match a Figure's figureKey |
+
+**Output:** Renders as clickable link: "Figure 1", "Figure 2", etc.
+
+---
+
+### FigureInline
+
+**Purpose:** Unnumbered inline image with caption (no figure number).
+
+**When to use:**
+- Supporting images that don't need numbering
+- Decorative or supplementary images
+- Tutorial screenshots
+
+**Import:**
+```jsx
+import FigureInline from '@site/src/components/FigureInline';
+```
+
+**Usage:**
+```jsx
+<FigureInline
+  src="/figures/tutorial/screenshot-1.png"
+  alt="Screenshot of software main window"
+  caption="The main interface window"
+  width="70%"
+/>
+```
+
+**Props:**
+
+| Prop | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `src` | String | Yes | - | Image path |
+| `alt` | String | Yes | - | Accessibility description |
+| `caption` | String | No | - | Optional caption text |
+| `width` | String | No | `"80%"` | Display width |
+
+---
+
+### FigureNoRef
+
+**Purpose:** Simple image display without caption or numbering.
+
+**When to use:**
+- Quick image insertion
+- Screenshots in tutorials
+- Images that don't need captions
+
+**Import:**
+```jsx
+import FigureNoRef from '@site/src/components/FigureNoRef';
+```
+
+**Usage:**
+```jsx
+<FigureNoRef
+  src="/figures/icons/warning-icon.png"
+  alt="Warning icon"
+  width="100px"
+/>
+```
+
+**Props:**
+
+| Prop | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `src` | String | Yes | - | Image path |
+| `alt` | String | Yes | - | Accessibility description |
+| `width` | String | No | `"80%"` | Display width |
+| `background` | String | No | `"filled"` | `"filled"` or `"transparent"` |
+
+---
+
+## Tables
+
+### TableVertical
+
+**Purpose:** Standard columnar table with automatic numbering.
+
+⭐ **MOST COMMONLY USED TABLE COMPONENT**
+
+**When to use:**
+- Standard data tables
+- Comparison tables
+- Results tables
+- Most tabular data
+
+**Import:**
+```jsx
+import TableVertical from '@site/src/components/TableVertical';
+```
+
+**Basic Usage:**
+```jsx
+<TableVertical
+  tableKey="table-parameters"
+  alt="Model input parameters"
+  headers={[[
+    { value: 'Parameter' },
+    { value: 'Value' },
+    { value: 'Units' }
+  ]]}
+  columns={[
+    [
+      { value: 'Population' },
+      { value: 'Flow Rate' },
+      { value: 'Duration' }
+    ],
+    [
+      { value: '10,000' },
+      { value: '5,000' },
+      { value: '24' }
+    ],
+    [
+      { value: 'people' },
+      { value: 'cfs' },
+      { value: 'hours' }
+    ]
+  ]}
+  caption="Model input parameters"
+/>
+```
+
+**Props:**
+
+| Prop | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `tableKey` | String | Yes | - | Unique identifier |
+| `alt` | String | Yes | - | Accessibility description |
+| `headers` | Array | Yes | - | Array of header row arrays |
+| `columns` | Array | Yes | - | Array of column arrays |
+| `caption` | String | Yes | - | Table caption |
+| `widthMode` | String | No | `"full"` | `"full"`, `"intrinsic"`, or `"responsive"` |
+| `leftAlignHeaders` | Boolean | No | `false` | Left-align header text |
+
+**Advanced Features:**
+
+**Cell Spanning:**
+```jsx
+headers={[[
+  { value: 'Name' },
+  { value: 'Statistics', colSpan: 2 } // Spans 2 columns
+]]}
+```
+
+**Row Spanning:**
+```jsx
+columns={[
+  [
+    { value: 'Category A', rowSpan: 2 }, // Spans 2 rows
+    { value: 'Item 1' },
+    { value: 'Item 2' }
+  ]
+]}
+```
+
+---
+
+### TableReference
+
+**Purpose:** Cross-references to numbered tables.
+
+**When to use:**
+- Referencing tables from text
+
+**Import:**
+```jsx
+import TableReference from '@site/src/components/TableReference';
+```
+
+**Usage:**
+```jsx
+Input parameters are listed in <TableReference tableKey="table-parameters" />.
+```
+
+**Props:**
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableKey` | String | Yes | Must match a table's tableKey |
+
+---
+
+### TableHorizontal
+
+**Purpose:** Row-based table where each row represents a record.
+
+**When to use:**
+- Entity descriptions
+- Feature comparisons
+- Record-based data
+
+**Import:**
+```jsx
+import TableHorizontal from '@site/src/components/TableHorizontal';
+```
+
+**Usage:**
+```jsx
+<TableHorizontal
+  tableKey="table-software-comparison"
+  alt="Software feature comparison"
+  rows={[
+    {
+      header: 'Software A',
+      data: ['Windows', 'Yes', '< 1 hour']
+    },
+    {
+      header: 'Software B',
+      data: ['Windows, Mac', 'No', '2-3 hours']
+    }
+  ]}
+  columnHeaders={['Platform', 'Open Source', 'Runtime']}
+  caption="Comparison of software features"
+/>
+```
+
+**Props:**
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableKey` | String | Yes | Unique identifier |
+| `alt` | String | Yes | Accessibility description |
+| `rows` | Array | Yes | Array of row objects |
+| `columnHeaders` | Array | Yes | Column header labels |
+| `caption` | String | Yes | Table caption |
+
+---
+
+### TableAcronyms
+
+**Purpose:** Two-column table specifically for acronyms and abbreviations.
+
+**When to use:**
+- Appendix for acronyms
+- Abbreviation lists
+
+**Import:**
+```jsx
+import TableAcronyms from '@site/src/components/TableAcronyms';
+```
+
+**Usage:**
+```jsx
+<TableAcronyms
+  acronyms={[
+    { acronym: 'USACE', definition: 'U.S. Army Corps of Engineers' },
+    { acronym: 'RMC', definition: 'Risk Management Center' },
+    { acronym: 'DST', definition: 'Dam Safety Toolbox' }
+  ]}
+/>
+```
+
+**Props:**
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `acronyms` | Array | Yes | Array of `{acronym, definition}` objects |
+
+---
+
+### TableVerticalLeftAlign
+
+**Purpose:** Left-aligned variant of TableVertical.
+
+**When to use:**
+- Tables with long text entries
+- Text-heavy tables
+
+**Usage:** Same as TableVertical with left-aligned content.
+
+---
+
+## Equations
+
+### Equation
+
+**Purpose:** Numbered LaTeX equation with automatic numbering.
+
+⭐ **MOST COMMONLY USED EQUATION COMPONENT**
+
+**When to use:**
+- Mathematical formulas that need numbering
+- Equations referenced from text
+
+**Import:**
+```jsx
+import Equation from '@site/src/components/Equation';
+```
+
+**Basic Usage:**
+```jsx
+<Equation
+  equationKey="eq-risk"
+  equation="R = P \times C"
+/>
+```
+
+**Advanced Usage:**
+```jsx
+<Equation
+  equationKey="eq-quadratic"
+  equation="\frac{-b \pm \sqrt{b^2 - 4ac}}{2a}"
+/>
+```
+
+**Complex Example:**
+```jsx
+<Equation
+  equationKey="eq-total-risk"
+  equation="R_{total} = \sum_{i=1}^{n} P_i \times C_i"
+/>
+```
+
+**Props:**
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `equationKey` | String | Yes | Unique identifier |
+| `equation` | String | Yes | LaTeX equation string |
+
+**LaTeX Quick Reference:**
+
+| Symbol | LaTeX | Symbol | LaTeX |
+|--------|-------|--------|-------|
+| Fraction | `\frac{a}{b}` | Square root | `\sqrt{x}` |
+| Summation | `\sum_{i=1}^{n}` | Integral | `\int_a^b` |
+| Greek α | `\alpha` | Greek β | `\beta` |
+| Subscript | `x_i` | Superscript | `x^2` |
+| ≤ | `\leq` | ≥ | `\geq` |
+| × | `\times` | ÷ | `\div` |
+
+---
+
+### EquationReference
+
+**Purpose:** Cross-references to numbered equations.
+
+**When to use:**
+- Referencing equations from text
+
+**Import:**
+```jsx
+import EquationReference from '@site/src/components/EquationReference';
+```
+
+**Usage:**
+```jsx
+Using <EquationReference equationKey="eq-risk" />, we calculate total risk.
+```
+
+**Props:**
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `equationKey` | String | Yes | Must match an Equation's equationKey |
+
+---
+
+### EquationNoRef
+
+**Purpose:** Unnumbered LaTeX equation (display only).
+
+**When to use:**
+- Supporting equations without numbering
+- Equation examples
+
+**Import:**
+```jsx
+import EquationNoRef from '@site/src/components/EquationNoRef';
+```
+
+**Usage:**
+```jsx
+<EquationNoRef equation="E = mc^2" />
+```
+
+**Props:**
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `equation` | String | Yes | LaTeX equation string |
+
+---
+
+### EquationChip
+
+**Purpose:** Inline badge/chip for short equations or variable names.
+
+**When to use:**
+- Inline variable references
+- Short formulas in text
+- Mathematical notation badges
+
+**Import:**
+```jsx
+import EquationChip from '@site/src/components/EquationChip';
+```
+
+**Usage:**
+```jsx
+The variable <EquationChip>$P$</EquationChip> represents probability, while <EquationChip>$C$</EquationChip> represents consequence.
+```
+
+**Props:**
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `children` | ReactNode | Yes | Content to display (typically LaTeX in $...$) |
+
+---
+
+## Citations
+
+### Citation
+
+**Purpose:** Inline citation reference.
+
+**When to use:**
+- Citing sources in text
+- Referencing bibliography entries
+
+**Import:**
+```jsx
+import Citation from '@site/src/components/Citation';
+```
+
+**Usage:**
+```jsx
+The methodology was developed by Smith <Citation citationKey="Smith2020" />.
+
+Multiple authors have studied this topic <Citation citationKey="Jones2018" /> <Citation citationKey="Brown2019" />.
+```
+
+**Props:**
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `citationKey` | String | Yes | Must match key in bib.json |
+
+**Output:** Renders as: [1], [2], etc. (clickable)
+
+---
+
+### CitationFootnote
+
+**Purpose:** Displays list of citations used on current page.
+
+**When to use:**
+- End of each page with citations
+- Before full bibliography
+
+**Import:**
+```jsx
+import CitationFootnote from '@site/src/components/CitationFootnote';
+```
+
+**Usage:**
+```jsx
+## References
+
+<CitationFootnote />
+```
+
+**Props:** None
+
+---
+
+### Bibliography
+
+**Purpose:** Full bibliography listing all references.
+
+**When to use:**
+- References appendix
+- End of document
+
+**Import:**
+```jsx
+import Bibliography from '@site/src/components/Bibliography';
+```
+
+**Usage:**
+```jsx
+## Appendix: Bibliography
+
+<Bibliography />
+```
+
+**Props:** None - automatically loads from bib.json
+
+---
+
+## Content Organization
+
+### ProcessList
+
+**Purpose:** Step-by-step numbered procedures with optional sub-steps.
+
+**When to use:**
+- Installation instructions
+- Workflows
+- Procedures
+- Multi-step tutorials
+
+**Import:**
+```jsx
+import ProcessList from '@site/src/components/ProcessList';
+```
+
+**Basic Usage:**
+```jsx
+<ProcessList
+  items={[
+    { title: 'Install Python 3.8 or later' },
+    { title: 'Download the software package' },
+    { title: 'Run the installer' }
+  ]}
+/>
+```
+
+**With Sub-steps:**
+```jsx
+<ProcessList
+  items={[
+    {
+      title: 'Prepare your environment',
+      child: [
+        { title: 'Install Node.js' },
+        { title: 'Install VS Code' },
+        { title: 'Clone repository' }
+      ]
+    },
+    {
+      title: 'Configure settings',
+      child: [
+        { title: 'Edit config file' },
+        { title: 'Set environment variables' }
+      ]
+    },
+    { title: 'Run the application' }
+  ]}
+/>
+```
+
+**With Details Panels:**
+```jsx
+<ProcessList
+  items={[
+    {
+      title: 'Install dependencies',
+      details: (
+        <>
+          <p>Run the following command:</p>
+          <code>npm install</code>
+        </>
+      )
+    }
+  ]}
+/>
+```
+
+**Props:**
+
+| Prop | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `items` | Array | Yes | - | Array of step objects |
+| `startAt` | Number | No | `1` | Starting number |
+| `indentPx` | Number | No | `0` | Indent per level (px) |
+| `bubbleSizePx` | Number | No | `28` | Size of numbered bubbles |
+| `nowrap` | Boolean | No | `false` | Prevent text wrapping |
+
+**Item Object:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `title` | String/ReactNode | Step text |
+| `child` | Array | Sub-steps (a, b, c...) |
+| `details` | ReactNode | Expandable details panel |
+| `freeform` | ReactNode | Un-numbered content block |
+
+---
+
+### DocTabs
+
+**Purpose:** Tabbed content panels.
+
+**When to use:**
+- Multi-platform instructions
+- Alternative methods
+- Version comparisons
+- OS-specific guidance
+
+**Import:**
+```jsx
+import DocTabs from '@site/src/components/DocTabs';
+```
+
+**Usage:**
+```jsx
+<DocTabs
+  items={[
+    {
+      title: 'Windows',
+      label: 'Windows',
+      child: (
+        <>
+          <p>Installation instructions for Windows:</p>
+          <ol>
+            <li>Download the .exe installer</li>
+            <li>Run the installer</li>
+            <li>Follow the prompts</li>
+          </ol>
+        </>
+      )
+    },
+    {
+      title: 'macOS',
+      label: 'macOS',
+      child: (
+        <>
+          <p>Installation instructions for macOS:</p>
+          <ol>
+            <li>Download the .dmg file</li>
+            <li>Open the disk image</li>
+            <li>Drag to Applications</li>
+          </ol>
+        </>
+      )
+    },
+    {
+      title: 'Linux',
+      label: 'Linux',
+      child: (
+        <>
+          <p>Installation instructions for Linux:</p>
+          <code>sudo apt install software-name</code>
+        </>
+      )
+    }
+  ]}
+  defaultValue={0}
+/>
+```
+
+**Props:**
+
+| Prop | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `items` | Array | Yes | - | Array of tab objects |
+| `defaultValue` | Number/String | No | `0` | Default tab (index or value) |
+| `equalWidth` | Boolean | No | `true` | Equal-width tabs |
+| `showDividers` | Boolean | No | `true` | Show dividers between tabs |
+
+**Tab Object:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `title` | String | Tab title (internal) |
+| `label` | String | Tab display label |
+| `value` | String | Tab value (optional) |
+| `child` | ReactNode | Tab content |
+
+---
+
+### CollectionList
+
+**Purpose:** Grouped expandable items with optional numbering.
+
+**When to use:**
+- FAQs
+- Feature lists
+- Expandable groups
+- Card-based navigation
+
+**Import:**
+```jsx
+import CollectionList from '@site/src/components/CollectionList';
+```
+
+**Basic Usage:**
+```jsx
+<CollectionList
+  title="Frequently Asked Questions"
+  items={[
+    {
+      title: 'What is LifeSim?',
+      child: 'LifeSim is a life safety model for dam failure consequence estimation.'
+    },
+    {
+      title: 'What platforms are supported?',
+      child: 'LifeSim runs on Windows 10 and later.'
+    }
+  ]}
+  defaultOpen="first"
+/>
+```
+
+**With Numbered Items:**
+```jsx
+<CollectionList
+  title="Software Features"
+  items={[
+    {
+      title: 'Hydraulic Routing',
+      child: 'Advanced flood wave propagation modeling'
+    },
+    {
+      title: 'Population Analysis',
+      child: 'Detailed population-at-risk calculations'
+    },
+    {
+      title: 'Evacuation Modeling',
+      child: 'Time-dependent evacuation simulations'
+    }
+  ]}
+  autoNumber={true}
+  numberStyle="decimal"
+  showExpandAll={true}
+/>
+```
+
+**Grid Layout:**
+```jsx
+<CollectionList
+  title="Software Modules"
+  items={[...]}
+  layout="grid"
+  columns={{ base: 1, sm: 2, md: 3, xl: 4 }}
+/>
+```
+
+**Props:**
+
+| Prop | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `title` | String | No | - | List title |
+| `items` | Array | Yes | - | Array of item objects |
+| `startAt` | Number | No | `1` | Starting number |
+| `autoNumber` | Boolean | No | `false` | Enable numbering |
+| `numberStyle` | String | No | `"decimal"` | `"decimal"`, `"upper-alpha"`, `"lower-alpha"`, `"upper-roman"`, `"lower-roman"` |
+| `defaultOpen` | String/Array | No | `"none"` | `"none"`, `"first"`, `"all"`, or array of indices |
+| `showExpandAll` | Boolean | No | `false` | Show expand/collapse all buttons |
+| `layout` | String | No | `"stack"` | `"stack"` or `"grid"` |
+| `columns` | Object | No | - | Grid columns: `{ base, sm, md, xl }` |
+
+---
+
+### CategoryList
+
+**Purpose:** Navigation tiles or menu items.
+
+**When to use:**
+- Landing pages
+- Category navigation
+- Feature selection
+
+**Import:**
+```jsx
+import CategoryList from '@site/src/components/CategoryList';
+```
+
+**Usage:**
+```jsx
+<CategoryList
+  items={[
+    {
+      title: 'Desktop Applications',
+      description: 'Software tools for desktop analysis',
+      href: '/docs/desktop-applications'
+    },
+    {
+      title: 'Web Applications',
+      description: 'Online analysis tools',
+      href: '/docs/web-applications'
+    },
+    {
+      title: 'Technical Manuals',
+      description: 'Documentation and guides',
+      href: '/docs/technical-manuals'
+    }
+  ]}
+  variant="accentTiles"
+  columns={{ base: 1, md: 2, xl: 3 }}
+/>
+```
+
+**Props:**
+
+| Prop | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `items` | Array | Yes | - | Array of item objects |
+| `variant` | String | No | `"accentTiles"` | `"accentTiles"`, `"pills"`, or `"menu"` |
+| `columns` | Object | No | - | Grid columns |
+
+**Item Object:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `title` | String | Item title |
+| `description` | String | Description text (optional) |
+| `href` | String | Link URL (optional) |
+| `onClick` | Function | Click handler (optional) |
+| `icon` | String | Icon path (optional) |
+| `badge` | String | Badge text (optional) |
+
+---
+
+## Multimedia
+
+### Video
+
+**Purpose:** Numbered video component with automatic numbering.
+
+**When to use:**
+- Tutorial videos
+- Demonstration videos
+- Multimedia documentation
+
+**Import:**
+```jsx
+import Video from '@site/src/components/Video';
+```
+
+**Basic Usage:**
+```jsx
+<Video
+  videoKey="video-tutorial"
+  caption="Software installation tutorial"
+  src="/videos/installation-tutorial.mp4"
+  poster="/videos/installation-poster.jpg"
+  width="90%"
+/>
+```
+
+**Multiple Sources:**
+```jsx
+<Video
+  videoKey="video-demo"
+  caption="Feature demonstration"
+  sources={[
+    { src: '/videos/demo.mp4', type: 'video/mp4' },
+    { src: '/videos/demo.webm', type: 'video/webm' }
+  ]}
+  poster="/videos/demo-poster.jpg"
+  controls={true}
+/>
+```
+
+**With Captions:**
+```jsx
+<Video
+  videoKey="video-presentation"
+  caption="Conference presentation"
+  src="/videos/presentation.mp4"
+  trackSrc="/videos/presentation-captions.vtt"
+  trackLang="en"
+  trackLabel="English"
+/>
+```
+
+**Props:**
+
+| Prop | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `videoKey` | String | Yes | - | Unique identifier |
+| `caption` | String | Yes | - | Video caption |
+| `poster` | String | No | - | Poster image path |
+| `src` | String | No | - | Single video source |
+| `sources` | Array | No | `[]` | Multiple sources `[{src, type}]` |
+| `width` | String | No | `"80%"` | Display width |
+| `controls` | Boolean | No | `true` | Show video controls |
+| `autoPlay` | Boolean | No | `false` | Auto-play on load |
+| `loop` | Boolean | No | `false` | Loop playback |
+| `muted` | Boolean | No | Auto | Mute audio (auto=true if autoPlay) |
+| `playsInline` | Boolean | No | `true` | iOS inline playback |
+| `preload` | String | No | `"metadata"` | Preload strategy |
+| `trackSrc` | String | No | - | VTT captions file |
+| `trackLang` | String | No | `"en"` | Caption language |
+| `trackLabel` | String | No | `"English"` | Caption label |
+| `credit` | String | No | - | Video source/credit |
+
+---
+
+### VideoReference
+
+**Purpose:** Cross-references to numbered videos.
+
+**When to use:**
+- Referencing videos from text
+
+**Import:**
+```jsx
+import VideoReference from '@site/src/components/VideoReference';
+```
+
+**Usage:**
+```jsx
+See <VideoReference videoKey="video-tutorial" /> for installation instructions.
+```
+
+**Props:**
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `videoKey` | String | Yes | Must match a Video's videoKey |
+
+---
+
+## Navigation
+
+### Button
+
+**Purpose:** Styled button or link.
+
+**When to use:**
+- Call-to-action links
+- Navigation buttons
+- Download buttons
+
+**Import:**
+```jsx
+import Button from '@site/src/components/Button';
+```
+
+**Link Button:**
+```jsx
+<Button href="/docs/getting-started">
+  Get Started
+</Button>
+```
+
+**External Link:**
+```jsx
+<Button href="https://example.com">
+  Visit Website
+</Button>
+```
+
+**Click Handler:**
+```jsx
+<Button onClick={() => alert('Clicked!')}>
+  Click Me
+</Button>
+```
+
+**Props:**
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `children` | ReactNode | Yes | Button text/content |
+| `href` | String | No | Link URL (renders as `<a>`) |
+| `to` | String | No | Internal link (alias for href) |
+| `onClick` | Function | No | Click handler (renders as `<button>`) |
+| `className` | String | No | Additional CSS classes |
+
+---
+
+### NavLink
+
+**Purpose:** Styled navigation link with arrow.
+
+**When to use:**
+- Section navigation
+- Related page links
+
+**Import:**
+```jsx
+import NavLink from '@site/src/components/NavLink';
+```
+
+**Usage:**
+```jsx
+<NavLink href="/docs/next-chapter">
+  Continue to Next Chapter →
+</NavLink>
+```
+
+**Props:**
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `href` | String | Yes | Link URL |
+| `children` | ReactNode | Yes | Link text |
+
+---
+
+### NavContainer
+
+**Purpose:** Navigation layout with version selector.
+
+**When to use:**
+- Page navigation sections
+- Version-aware navigation
+
+**Import:**
+```jsx
+import NavContainer from '@site/src/components/NavContainer';
+```
+
+**Usage:**
+```jsx
+<NavContainer
+  navLink="../"
+  navTitle="User's Guide"
+  navDoc="lifesim-users-guide"
+>
+  <p>Navigation content here</p>
+</NavContainer>
+```
+
+**Props:**
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `navLink` | String | Yes | Parent link URL |
+| `navTitle` | String | Yes | Navigation title |
+| `navDoc` | String | Yes | Document identifier |
+| `children` | ReactNode | Yes | Navigation content |
+
+---
+
+### VersionSelector
+
+**Purpose:** Dropdown for switching document versions.
+
+**When to use:**
+- Included automatically in NavContainer
+- Rarely used standalone
+
+**Import:**
+```jsx
+import VersionSelector from '@site/src/components/VersionSelector';
+```
+
+**Usage:** Typically used internally by NavContainer.
+
+---
+
+## Specialized
+
+### EventTree
+
+**Purpose:** Interactive event tree diagrams with download capabilities.
+
+**When to use:**
+- Risk analysis event trees
+- Fault tree diagrams
+- Decision trees
+
+**Import:**
+```jsx
+import EventTree from '@site/src/components/EventTree';
+```
+
+**Usage:**
+```jsx
+<EventTree
+  base="generic-internal-erosion"
+  text="Generic Internal Erosion Event Tree"
+  imgDir="/event-trees/v1.0/"
+  sheetDir="/event-trees/v1.0/"
+  width="100%"
+/>
+```
+
+**Features:**
+- Copy to clipboard
+- Download as PNG
+- Download spreadsheet
+
+**Props:**
+
+| Prop | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `base` | String | Yes | - | Base filename (without extension) |
+| `text` | String | No | Auto | Display text |
+| `imgExt` | String | No | `"png"` | Image file extension |
+| `sheetExt` | String | No | `"xlsm"` | Spreadsheet extension |
+| `imgDir` | String | No | - | Image directory path |
+| `sheetDir` | String | No | - | Spreadsheet directory path |
+| `width` | String | No | `"100%"` | Display width |
+| `pngScale` | Number | No | `4` | PNG export scale factor |
+
+---
+
+### ContentBubble & ContentBox
+
+**Purpose:** Dashboard navigation cards.
+
+**When to use:**
+- Landing pages
+- Software selection dashboards
+
+**Import:**
+```jsx
+import ContentBubble from '@site/src/components/ContentBubble';
+import ContentBox from '@site/src/components/ContentBox';
+```
+
+**ContentBubble Usage:**
+```jsx
+<ContentBubble
+  iconLight="/img/software-icon-light.svg"
+  iconDark="/img/software-icon-dark.svg"
+  doc_location="/docs/software/users-guide"
+  doc_name="Software Name"
+  active={true}
+/>
+```
+
+**ContentBox Usage:**
+```jsx
+<ContentBox
+  contentData={[
+    {
+      iconLight: '/img/icon1-light.svg',
+      iconDark: '/img/icon1-dark.svg',
+      doc_location: '/docs/app1',
+      doc_name: 'Application 1',
+      active: true
+    },
+    {
+      iconLight: '/img/icon2-light.svg',
+      iconDark: '/img/icon2-dark.svg',
+      doc_location: '/docs/app2',
+      doc_name: 'Application 2',
+      active: false
+    }
+  ]}
+/>
+```
+
+**ContentBubble Props:**
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `iconLight` | String | Yes | Light theme icon path |
+| `iconDark` | String | Yes | Dark theme icon path |
+| `doc_location` | String | Yes | Link destination |
+| `doc_name` | String | Yes | Display name |
+| `active` | Boolean | No | If false, shows "Coming soon" |
+
+**ContentBox Props:**
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentData` | Array | Yes | Array of ContentBubble data objects |
+
+---
+
+## Component Best Practices
+
+### General Guidelines
+
+**Always provide required props:**
+```jsx
+✅ Good:
+<Figure
+  figureKey="fig-1"
+  src="/figures/image.png"
+  alt="Detailed description"
+  caption="Informative caption"
+/>
+
+❌ Bad:
+<Figure src="/figures/image.png" />  // Missing required props
+```
+
+**Use unique keys:**
+```jsx
+✅ Good:
+<Figure figureKey="fig-workflow" ... />
+<Figure figureKey="fig-results" ... />
+
+❌ Bad:
+<Figure figureKey="fig-1" ... />
+<Figure figureKey="fig-1" ... />  // Duplicate key!
+```
+
+**Write descriptive alt text:**
+```jsx
+✅ Good:
+alt="Bar chart comparing baseline, alternative A, and alternative B scenarios"
+
+❌ Bad:
+alt="Chart"
+alt="Figure 1"
+```
+
+### Accessibility
+
+**All images need alt text:**
+- Describe what's shown in the image
+- Don't say "image of" or "picture of"
+- Be specific and concise
+
+**Use semantic structure:**
+- Headings in logical order
+- Proper table markup
+- Meaningful link text
+
+### Performance
+
+**Optimize images:**
+- Keep file sizes reasonable (< 500KB each)
+- Use appropriate formats (PNG for diagrams, JPG for photos)
+- Compress images before adding
+
+**Lazy loading:**
+- Images and videos load automatically as needed
+- No action required from contributors
+
+### Common Mistakes
+
+**Forgetting imports:**
+```jsx
+❌ Error: Component not defined
+// Forgot to import Figure
+
+✅ Fix:
+import Figure from '@site/src/components/Figure';
+```
+
+**Wrong path format:**
+```jsx
+❌ Bad:
+src="figures/image.png"  // Missing leading slash
+src="../figures/image.png"  // Relative path
+
+✅ Good:
+src="/figures/desktop-applications/software/v1.0/image.png"
+```
+
+**Mismatched keys:**
+```jsx
+❌ Bad:
+<Figure figureKey="fig-workflow" ... />
+...
+<FigureReference figureKey="fig-workflo" />  // Typo!
+
+✅ Good:
+<Figure figureKey="fig-workflow" ... />
+...
+<FigureReference figureKey="fig-workflow" />
+```
+
+---
+
+## Troubleshooting
+
+### Component Not Rendering
+
+**Problem:** Component doesn't appear on page.
+
+**Solutions:**
+1. Check import statement is correct
+2. Verify all required props are provided
+3. Check for typos in component name
+4. Look in browser console for error messages
+
+### Numbers Are Wrong
+
+**Problem:** Figure/table/equation numbers are incorrect.
+
+**Solutions:**
+1. Run `npm run counters` to regenerate numbering
+2. Check for duplicate keys
+3. Verify files are numbered correctly (`01-`, `02-`, etc.)
+4. Restart dev server
+
+### Cross-References Broken
+
+**Problem:** References show "???" or don't link.
+
+**Solutions:**
+1. Ensure referenced key exists
+2. Check for typos in keys
+3. Run counters script
+4. Verify component is on a page that's been processed
+
+### Images Not Displaying
+
+**Problem:** Images show broken icon.
+
+**Solutions:**
+1. Check path starts with `/figures/`
+2. Verify image exists at specified path
+3. Check filename matches exactly (case-sensitive)
+4. Ensure image format is supported (PNG, JPG, SVG)
+
+---
+
+## Quick Reference Table
+
+| Need to... | Use Component | Import |
+|-----------|---------------|--------|
+| Show numbered figure | `<Figure>` | `@site/src/components/Figure` |
+| Reference a figure | `<FigureReference>` | `@site/src/components/FigureReference` |
+| Show numbered table | `<TableVertical>` | `@site/src/components/TableVertical` |
+| Show numbered equation | `<Equation>` | `@site/src/components/Equation` |
+| Add citation | `<Citation>` | `@site/src/components/Citation` |
+| Step-by-step process | `<ProcessList>` | `@site/src/components/ProcessList` |
+| Tabbed content | `<DocTabs>` | `@site/src/components/DocTabs` |
+| Expandable list | `<CollectionList>` | `@site/src/components/CollectionList` |
+| Video with caption | `<Video>` | `@site/src/components/Video` |
+| Navigation button | `<Button>` | `@site/src/components/Button` |
+| Document metadata | `<DocumentMetadata>` | `@site/src/components/DocumentMetadata` |
+
+---
+
+## Next Steps
+
+Now that you understand the available components:
+
+1. **Practice:** Try using components in a test MDX file
+2. **Explore:** Look at existing documentation for real-world examples
+3. **Experiment:** Test different props and configurations
+4. **Reference:** Bookmark this page for quick lookup
+
+**Related guides:**
+- [Creating and Editing Pages](./06-creating-editing-pages.mdx) - MDX syntax and structure
+- [Project Structure](./03-project-structure.mdx) - Where to place images and files
+- [Quick Reference](./08-quick-reference.mdx) - Common patterns cheat sheet
+
+**Need help?** See [Troubleshooting & FAQ](./09-troubleshooting-faq.mdx) for solutions to common issues.

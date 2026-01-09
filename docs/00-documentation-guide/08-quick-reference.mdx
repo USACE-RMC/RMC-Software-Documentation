@@ -1,0 +1,774 @@
+---
+title: Quick Reference
+sidebar_label: Quick Reference
+---
+
+# Quick Reference
+
+This page provides quick access to commonly used commands, syntax, and solutions for everyday documentation tasks.
+
+---
+
+## Common Tasks Cheat Sheet
+
+### Starting the Development Server
+
+```bash
+npm start
+```
+
+Opens the site at `http://localhost:3000` with live reload.
+
+### Building for Production
+
+```bash
+npm run build
+```
+
+Creates production-ready static files in the `build/` folder.
+
+### Running Build Scripts
+
+```bash
+# Regenerate all build artifacts
+npm run counters    # Update figure/table/equation numbers
+npm run sidebars    # Regenerate sidebar navigation
+npm run versions    # Update version metadata
+```
+
+### Adding a New Document
+
+1. Navigate to the appropriate version folder (e.g., `docs/lifesim/v1.0/`)
+2. Create a new `.mdx` file with prefix: `01-my-new-document.mdx`
+3. Add front matter:
+   ```mdx
+   ---
+   title: My New Document
+   ---
+   ```
+4. Write your content using Markdown and React components
+5. Save the file - sidebar updates automatically
+
+### Adding a New Software Manual
+
+1. Create folder structure:
+   ```
+   docs/
+   └── my-software/
+       ├── v1.0/
+       │   ├── 01-introduction.mdx
+       │   └── 02-getting-started.mdx
+       └── category.json
+   ```
+
+2. Create `category.json`:
+   ```json
+   {
+     "label": "My Software",
+     "position": 3
+   }
+   ```
+
+3. Run sidebar script:
+   ```bash
+   npm run sidebars
+   ```
+
+### Inserting a Figure
+
+```mdx
+import Figure from '@site/src/components/Figure';
+
+<Figure
+  figureKey="my-figure"
+  caption="This is my figure caption"
+  src="/figures/my-software/v1.0/my-image.png"
+  alt="Description of image"
+/>
+```
+
+**Reference the figure:**
+```mdx
+import FigureReference from '@site/src/components/FigureReference';
+
+As shown in <FigureReference figureKey="my-figure" />, the process...
+```
+
+### Creating a Table
+
+```mdx
+import TableVertical from '@site/src/components/TableVertical';
+
+<TableVertical
+  tableKey="my-table"
+  caption="Table caption here"
+  header={['Column 1', 'Column 2', 'Column 3']}
+  data={[
+    ['Row 1 Col 1', 'Row 1 Col 2', 'Row 1 Col 3'],
+    ['Row 2 Col 1', 'Row 2 Col 2', 'Row 2 Col 3'],
+  ]}
+/>
+```
+
+### Adding an Equation
+
+```mdx
+import Equation from '@site/src/components/Equation';
+
+<Equation
+  equationKey="my-equation"
+  caption="Caption for equation"
+  equation="E = mc^2"
+/>
+```
+
+**Reference the equation:**
+```mdx
+import EquationReference from '@site/src/components/EquationReference';
+
+As shown in <EquationReference equationKey="my-equation" />, energy equals...
+```
+
+### Adding Citations
+
+```mdx
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+
+This is cited text <Citation citationKey="smith2020" />.
+
+At the end of the page:
+<CitationFootnote />
+```
+
+### Cross-Referencing
+
+```mdx
+See [Chapter 3: Installation](./03-installation.mdx) for details.
+
+See [Introduction](../01-introduction.mdx#overview) for the overview section.
+```
+
+---
+
+## File Naming Conventions
+
+### Document Files
+
+| Pattern | Example | Purpose |
+|---------|---------|---------|
+| `00-` to `99-` | `01-introduction.mdx` | Chapter ordering prefix |
+| Kebab-case | `03-getting-started.mdx` | Lowercase with hyphens |
+| `.mdx` extension | `04-configuration.mdx` | MDX format required |
+
+### Image Files
+
+| Pattern | Example | Purpose |
+|---------|---------|---------|
+| Descriptive names | `workflow-diagram.png` | Clear purpose |
+| Version-specific paths | `/figures/lifesim/v1.0/` | Organized by version |
+| Supported formats | `.png`, `.jpg`, `.svg`, `.gif` | Standard web formats |
+
+### Component Keys
+
+| Pattern | Example | Purpose |
+|---------|---------|---------|
+| Unique within document | `figureKey="installation-screen"` | No duplicates in same file |
+| Descriptive | `tableKey="performance-metrics"` | Clear identification |
+| Kebab-case | `equationKey="flood-frequency"` | Consistent formatting |
+
+### Folder Structure
+
+```
+docs/
+└── software-name/
+    ├── category.json        # Required for navigation
+    ├── v1.0/                # Version folder
+    │   ├── 01-intro.mdx
+    │   └── 02-chapter.mdx
+    └── v1.1/                # New version folder
+        ├── 01-intro.mdx
+        └── 02-chapter.mdx
+```
+
+---
+
+## Markdown Syntax Cheat Sheet
+
+### Headings
+
+```markdown
+# Heading 1 (Page Title - use once)
+## Heading 2 (Major sections)
+### Heading 3 (Subsections)
+#### Heading 4 (Minor subsections)
+##### Heading 5 (Rarely used)
+###### Heading 6 (Rarely used)
+```
+
+### Text Formatting
+
+```markdown
+**Bold text**
+*Italic text*
+***Bold and italic***
+~~Strikethrough~~
+`Inline code`
+Subscript: H<sub>2</sub>O
+Superscript: x<sup>2</sup>
+```
+
+### Lists
+
+```markdown
+<!-- Unordered list -->
+- Item 1
+- Item 2
+  - Nested item 2a
+  - Nested item 2b
+- Item 3
+
+<!-- Ordered list -->
+1. First item
+2. Second item
+3. Third item
+
+<!-- Task list -->
+- [ ] Incomplete task
+- [x] Completed task
+```
+
+### Links
+
+```markdown
+[Link text](https://example.com)
+[Internal link](./other-page.mdx)
+[Section link](#heading-id)
+[Link with title](https://example.com "Tooltip text")
+```
+
+### Images
+
+```markdown
+![Alt text](/path/to/image.png)
+![Alt text with title](/path/to/image.png "Image title")
+```
+
+### Blockquotes
+
+```markdown
+> This is a blockquote
+> It can span multiple lines
+
+> Blockquotes can contain **formatting**
+> - And lists
+> - Like this
+```
+
+### Code Blocks
+
+````markdown
+```javascript
+// Syntax-highlighted code block
+function example() {
+  console.log("Hello, world!");
+}
+```
+
+```python
+# Python example
+def greet(name):
+    print(f"Hello, {name}!")
+```
+
+```bash
+# Command line
+npm install
+npm start
+```
+````
+
+### Tables
+
+```markdown
+| Header 1 | Header 2 | Header 3 |
+|----------|----------|----------|
+| Cell 1   | Cell 2   | Cell 3   |
+| Cell 4   | Cell 5   | Cell 6   |
+
+<!-- Alignment -->
+| Left | Center | Right |
+|:-----|:------:|------:|
+| L1   | C1     | R1    |
+| L2   | C2     | R2    |
+```
+
+### Horizontal Rules
+
+```markdown
+---
+***
+___
+```
+
+### Math (LaTeX)
+
+```markdown
+Inline math: $E = mc^2$
+
+Display math:
+$$
+\int_{a}^{b} f(x) \, dx
+$$
+```
+
+---
+
+## Component Quick Reference
+
+### Most Commonly Used
+
+| Component | Import | Common Use |
+|-----------|--------|------------|
+| **Figure** | `import Figure from '@site/src/components/Figure';` | Numbered figures with captions |
+| **FigureReference** | `import FigureReference from '@site/src/components/FigureReference';` | Reference figures in text |
+| **TableVertical** | `import TableVertical from '@site/src/components/TableVertical';` | Standard data tables |
+| **TableReference** | `import TableReference from '@site/src/components/TableReference';` | Reference tables in text |
+| **Equation** | `import Equation from '@site/src/components/Equation';` | Numbered LaTeX equations |
+| **EquationReference** | `import EquationReference from '@site/src/components/EquationReference';` | Reference equations in text |
+| **Citation** | `import Citation from '@site/src/components/Citation';` | Inline citations |
+| **ProcessList** | `import ProcessList from '@site/src/components/ProcessList';` | Step-by-step procedures |
+
+### By Category
+
+**Document Metadata:**
+- `DocumentMetadata` - Report metadata tables
+- `TableVersionHistory` - Version history tables
+
+**Figures & Images:**
+- `Figure` - Numbered figures with captions
+- `FigureReference` - Cross-references to figures
+- `FigureInline` - Unnumbered inline images
+- `FigureNoRef` - Simple image display
+
+**Tables:**
+- `TableVertical` - Standard columnar tables
+- `TableReference` - Cross-references to tables
+- `TableHorizontal` - Row-based tables
+- `TableAcronyms` - Two-column acronym lists
+- `TableVerticalLeftAlign` - Left-aligned variant
+
+**Equations:**
+- `Equation` - Numbered LaTeX equations
+- `EquationReference` - Cross-references to equations
+- `EquationNoRef` - Unnumbered equations
+- `EquationChip` - Inline equation badges
+
+**Citations:**
+- `Citation` - Inline citation markers
+- `CitationFootnote` - Page-level citation list
+- `Bibliography` - Full bibliography
+
+**Content Organization:**
+- `ProcessList` - Step-by-step procedures
+- `DocTabs` - Tabbed content panels
+- `CollectionList` - Expandable grouped items
+- `CategoryList` - Navigation tiles/menus
+
+**Multimedia:**
+- `Video` - Numbered video embeds
+- `VideoReference` - Cross-references to videos
+
+**Navigation:**
+- `Button` - Styled buttons and links
+- `NavLink` - Styled navigation links
+- `NavContainer` - Navigation layout
+- `VersionSelector` - Version dropdown
+
+**Specialized:**
+- `EventTree` - Event tree diagrams with download
+- `ContentBubble` / `ContentBox` - Dashboard cards
+
+---
+
+## Front Matter Quick Reference
+
+### Common Fields
+
+```mdx
+---
+title: Page Title                    # Required
+sidebar_label: Short Title           # Optional - shorter sidebar name
+sidebar_position: 2                  # Optional - override file prefix ordering
+description: Page description        # Optional - for SEO
+keywords: [keyword1, keyword2]       # Optional - for SEO
+hide_table_of_contents: false        # Optional - hide right sidebar TOC
+---
+```
+
+### Advanced Fields
+
+```mdx
+---
+id: custom-id                        # Optional - custom URL slug
+slug: /custom-path                   # Optional - custom URL path
+tags: [tutorial, advanced]           # Optional - tag system
+draft: false                         # Optional - exclude from production
+unlisted: false                      # Optional - exclude from sidebar but accessible via URL
+custom_edit_url: https://...         # Optional - custom edit link
+---
+```
+
+---
+
+## Troubleshooting Quick Fixes
+
+### Build Won't Start
+
+**Error:** `npm start` fails
+
+**Solutions:**
+```bash
+# Clear cache and rebuild
+rm -rf .docusaurus
+rm -rf node_modules
+npm install
+npm start
+
+# Windows PowerShell:
+Remove-Item -Recurse -Force .docusaurus
+Remove-Item -Recurse -Force node_modules
+npm install
+npm start
+```
+
+### Images Not Showing
+
+**Problem:** Image not displaying on page
+
+**Solutions:**
+1. Check path starts with `/figures/` not `figures/`
+2. Verify file exists in `static/figures/` folder
+3. Check file extension matches (`.png` vs `.PNG`)
+4. Clear browser cache (Ctrl+Shift+R / Cmd+Shift+R)
+
+### Numbering Wrong
+
+**Problem:** Figure/table/equation numbers are incorrect
+
+**Solution:**
+```bash
+npm run counters
+```
+
+This regenerates all numbering based on current document structure.
+
+### Sidebar Not Updating
+
+**Problem:** New document doesn't appear in sidebar
+
+**Solution:**
+```bash
+npm run sidebars
+```
+
+This regenerates the sidebar configuration from your document structure.
+
+### Component Import Error
+
+**Error:** `Module not found: Can't resolve '@site/src/components/Figure'`
+
+**Solutions:**
+1. Check import path is correct: `@site/src/components/ComponentName`
+2. Verify component name matches exactly (case-sensitive)
+3. Restart dev server: Stop (Ctrl+C) and run `npm start` again
+
+### Changes Not Appearing
+
+**Problem:** Saved changes don't show in browser
+
+**Solutions:**
+1. Check terminal for build errors
+2. Hard refresh browser (Ctrl+Shift+R / Cmd+Shift+R)
+3. Restart dev server
+4. Clear `.docusaurus` cache:
+   ```bash
+   rm -rf .docusaurus
+   npm start
+   ```
+
+### Cross-Reference Broken
+
+**Problem:** FigureReference/TableReference shows error
+
+**Solutions:**
+1. Verify `figureKey` / `tableKey` matches exactly
+2. Check both components are in same document
+3. Run counters script: `npm run counters`
+4. Restart dev server
+
+### Git Push Rejected
+
+**Error:** `! [rejected] main -> main (fetch first)`
+
+**Solution:**
+```bash
+# Pull latest changes first
+git pull origin main
+
+# Resolve any conflicts, then push
+git push origin main
+```
+
+---
+
+## Common Patterns
+
+### Adding a New Chapter
+
+1. Determine next chapter number (e.g., `05-`)
+2. Create file: `docs/software/v1.0/05-my-chapter.mdx`
+3. Add front matter:
+   ```mdx
+   ---
+   title: My Chapter Title
+   ---
+   ```
+4. Save - sidebar updates automatically
+
+### Moving/Renaming a Document
+
+1. Rename file in VS Code or file explorer
+2. Update any internal links pointing to old filename
+3. Run sidebar script: `npm run sidebars`
+
+### Creating a New Version
+
+1. Copy version folder:
+   ```bash
+   cp -r docs/software/v1.0 docs/software/v1.1
+   ```
+
+2. Update documents in new version folder
+
+3. Run version script:
+   ```bash
+   npm run versions
+   ```
+
+### Converting from Word
+
+1. Ensure DOCX uses RMC template
+2. Prepare bibliography JSON file
+3. Run converter in development mode:
+   ```bash
+   python scripts/convert_DOCX_MDX/main.py
+   ```
+4. Review output in `docs/` folder
+5. Make manual adjustments as needed
+
+### Creating Step-by-Step Instructions
+
+```mdx
+import ProcessList from '@site/src/components/ProcessList';
+
+<ProcessList
+  items={[
+    'First step description',
+    {
+      title: 'Second step with sub-steps',
+      child: [
+        'Sub-step a',
+        'Sub-step b',
+        'Sub-step c'
+      ]
+    },
+    'Third step description'
+  ]}
+/>
+```
+
+### Creating Tabbed Content
+
+```mdx
+import DocTabs from '@site/src/components/DocTabs';
+
+<DocTabs
+  items={[
+    {
+      title: 'Windows',
+      child: 'Installation instructions for Windows...'
+    },
+    {
+      title: 'Mac',
+      child: 'Installation instructions for Mac...'
+    },
+    {
+      title: 'Linux',
+      child: 'Installation instructions for Linux...'
+    }
+  ]}
+/>
+```
+
+### Creating Expandable FAQ
+
+```mdx
+import CollectionList from '@site/src/components/CollectionList';
+
+<CollectionList
+  title="Frequently Asked Questions"
+  items={[
+    {
+      title: 'How do I install the software?',
+      details: 'Follow the installation guide in Chapter 2...'
+    },
+    {
+      title: 'What are the system requirements?',
+      details: 'You need Windows 10 or later, 8GB RAM...'
+    }
+  ]}
+/>
+```
+
+---
+
+## Keyboard Shortcuts
+
+### VS Code
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl+S` / `Cmd+S` | Save file |
+| `Ctrl+P` / `Cmd+P` | Quick file open |
+| `Ctrl+Shift+F` / `Cmd+Shift+F` | Search across all files |
+| `Ctrl+/` / `Cmd+/` | Toggle comment |
+| `Alt+Up/Down` / `Option+Up/Down` | Move line up/down |
+| `Ctrl+D` / `Cmd+D` | Select next occurrence |
+
+### Browser
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl+R` / `Cmd+R` | Refresh page |
+| `Ctrl+Shift+R` / `Cmd+Shift+R` | Hard refresh (clear cache) |
+| `Ctrl+F` / `Cmd+F` | Find on page |
+| `F12` | Open developer tools |
+
+### Terminal
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl+C` | Stop running process |
+| `Ctrl+L` / `Cmd+K` | Clear terminal |
+| `Up Arrow` | Previous command |
+| `Tab` | Autocomplete |
+
+---
+
+## Useful Commands
+
+### npm Scripts
+
+```bash
+npm start              # Start dev server
+npm run build          # Build for production
+npm run serve          # Serve production build locally
+npm run counters       # Update figure/table/equation numbers
+npm run sidebars       # Regenerate sidebar navigation
+npm run versions       # Update version metadata
+npm run deploy         # Deploy to production (admin only)
+```
+
+### Git Commands
+
+```bash
+git status             # Check current status
+git add .              # Stage all changes
+git commit -m "msg"    # Commit with message
+git push               # Push to remote
+git pull               # Pull from remote
+git log                # View commit history
+git diff               # View changes
+```
+
+### File Operations
+
+```bash
+# Create directory
+mkdir my-folder
+
+# Copy file
+cp source.mdx destination.mdx
+
+# Move/rename file
+mv old-name.mdx new-name.mdx
+
+# Delete file
+rm file.mdx
+
+# Delete directory
+rm -rf directory-name
+```
+
+---
+
+## Where to Find More Information
+
+| Topic | Documentation |
+|-------|--------------|
+| **Getting Started** | [Getting Started Guide](./01-getting-started.mdx) |
+| **Project Structure** | [Project Structure](./03-project-structure.mdx) |
+| **Writing MDX** | [Creating and Editing Pages](./06-creating-editing-pages.mdx) |
+| **Components** | [React Components Reference](./07-react-components.mdx) |
+| **Build Process** | [Build Process Overview](./05-build-process-overview.mdx) |
+| **DOCX Conversion** | [DOCX Converter](./04-docx-converter.mdx) |
+| **Troubleshooting** | [Troubleshooting FAQ](./09-troubleshooting-faq.mdx) |
+| **Versioning** | [Versioning System](./02-versioning-system.mdx) |
+
+---
+
+## Quick Decision Trees
+
+### Which component should I use?
+
+**For images:**
+- Need caption and number? → `Figure`
+- Just display image? → `FigureInline` or `FigureNoRef`
+
+**For tables:**
+- Standard data table? → `TableVertical`
+- Row-based comparison? → `TableHorizontal`
+- Acronym list? → `TableAcronyms`
+
+**For equations:**
+- Need to reference later? → `Equation`
+- One-time display? → `EquationNoRef`
+- Inline variable? → `EquationChip` or inline LaTeX `$x$`
+
+**For organizing content:**
+- Step-by-step process? → `ProcessList`
+- Multiple alternatives? → `DocTabs`
+- Optional details? → `CollectionList`
+
+**For navigation:**
+- Dashboard tiles? → `ContentBubble` or `CategoryList`
+- Button/link? → `Button` or `NavLink`
+
+### Where should I put my file?
+
+**New document:**
+→ `docs/software-name/version/##-filename.mdx`
+
+**New image:**
+→ `static/figures/software-name/version/filename.png`
+
+**New bibliography:**
+→ `static/bibliographies/software-name/version/bibliography.json`
+
+**Source document:**
+→ `static/source-documents/software-name/version/original.docx`
+
+---
+
+This quick reference provides fast access to the most common tasks and syntax. For detailed explanations and advanced usage, refer to the full documentation guides linked above.

@@ -1,0 +1,710 @@
+---
+title: 'Appendix A: Source Code Structure'
+sidebar_label: 'Appendix A: Source Code'
+---
+
+# Appendix A: Source Code Structure
+
+:::warning Advanced Topic
+This appendix is intended for **advanced users, developers, and site administrators** who need to understand or modify the underlying source code structure.
+
+**Contributors writing documentation do NOT need to read this section.** All necessary information for contributing MDX documentation is covered in the main guide.
+:::
+
+---
+
+## Overview
+
+The `src/` folder contains all source code for custom React components, styles, pages, and theme files used in the RMC Software Documentation project. This folder is part of the project's **⛔ Off-Limits Areas** for regular contributors.
+
+**Directory Structure:**
+```
+src/
+├── components/      → React components used in MDX
+├── contexts/        → React context for state management
+├── css/             → Global stylesheets
+├── data/            → Build-generated data files
+├── pages/           → Custom web pages (homepage, hubs)
+├── theme/           → Docusaurus theme overrides
+├── draftDocs.js     → Draft document tracking
+└── reportIdMap.js   → Auto-generated ID mappings
+```
+
+---
+
+## Components Directory
+
+**Location:** `src/components/`
+
+Contains all custom React components used throughout the documentation site. These components are imported and used within MDX files by contributors.
+
+### Component Categories
+
+**Document Metadata:**
+- `DocumentMetadata.js`
+- `TableVersionHistory.js`
+
+**Figures & Images:**
+- `Figure.js`
+- `FigureReference.js`
+- `FigureInline.js`
+- `FigureNoRef.js`
+
+**Tables:**
+- `TableVertical.js`
+- `TableVerticalLeftAlign.js`
+- `TableVerticalNoRef.js`
+- `TableHorizontal.js`
+- `TableAcronyms.js`
+- `TableReference.js`
+
+**Equations:**
+- `Equation.js`
+- `EquationNoRef.js`
+- `EquationReference.js`
+- `EquationChip.js`
+
+**Citations:**
+- `Citation.js`
+- `CitationFootnote.js`
+- `Bibliography.js`
+
+**Content Organization:**
+- `ProcessList.js` - Step-by-step procedures
+- `DocTabs.js` - Tabbed content panels
+- `CollectionList.js` - Expandable grouped items
+- `CategoryList.js` - Navigation tiles/menus
+
+**Multimedia:**
+- `Video.js` - Numbered video embeds
+- `VideoReference.js` - Video cross-references
+
+**Navigation:**
+- `Button.js`
+- `NavLink.js`
+- `NavContainer.js`
+- `VersionSelector.js`
+
+**Specialized:**
+- `EventTree.js` - Event tree diagrams with download
+- `ContentBubble.js` / `ContentBox.js` - Dashboard cards
+
+### Component Architecture
+
+**Common Patterns:**
+
+1. **Automatic Numbering:**
+   - Components like `Figure`, `TableVertical`, `Equation`, `Video` use automatic numbering
+   - Numbers stored in JSON counter files in `static/counters/`
+   - Updated by `scripts/counters.js` script
+
+2. **Cross-Referencing:**
+   - Reference components (`FigureReference`, `TableReference`, etc.) link to numbered items
+   - Use React Context to share data between components
+   - Require matching keys between item and reference
+
+3. **Styling:**
+   - Primarily use Tailwind CSS utility classes
+   - Props allow customization (colors, sizes, alignment)
+   - Support light/dark themes via CSS variables
+
+**Creating New Components:**
+
+:::danger Site Administrators Only
+Only experienced React developers and site administrators should create or modify components. Improper changes can break the entire documentation site.
+:::
+
+**Requirements for New Components:**
+- Must be compatible with Docusaurus MDX processing
+- Must support server-side rendering (SSR)
+- Should use Tailwind CSS for styling consistency
+- Must be documented in [React Components Reference](./07-react-components.mdx)
+- Should follow existing naming and API conventions
+
+**Testing New Components:**
+1. Create component file in `src/components/`
+2. Test in isolation with simple MDX file
+3. Verify SSR compatibility (test production build)
+4. Add TypeScript/PropTypes for prop validation
+5. Document all props and usage examples
+6. Test with different themes (light/dark)
+7. Verify accessibility (keyboard navigation, screen readers)
+
+---
+
+## Contexts Directory
+
+**Location:** `src/contexts/`
+
+Contains React Context files for state management and sharing data across components.
+
+### ReportIdContext.js
+
+**Purpose:** Provides report ID information to components that need it.
+
+**Usage in Components:**
+```javascript
+import { useReportId } from '@site/src/contexts/ReportIdContext';
+
+function MyComponent() {
+  const reportId = useReportId();
+  // Use reportId for component logic
+}
+```
+
+**How It Works:**
+1. `reportIdMap.js` (auto-generated) contains mappings of document paths to report IDs
+2. Context provider wraps the entire site via Docusaurus plugin
+3. Components access report ID via `useReportId()` hook
+4. Used for automatic counter numbering scoped to documents
+
+**Modifying Context:**
+
+Only modify if adding new context providers or changing report ID logic. Requires understanding of React Context API and Docusaurus plugin system.
+
+---
+
+## CSS Directory
+
+**Location:** `src/css/`
+
+The RMC Software Documentation site primarily uses [Tailwind CSS](https://tailwindcss.com/) for styling. However, some global styles require traditional CSS files.
+
+### Global Style Files
+
+**custom.css**
+
+Contains global styles applied across the entire site:
+- CSS variable definitions for theming
+- Base element styles (body, html)
+- Utility classes not covered by Tailwind
+- Print styles
+- Overrides for Docusaurus default styles
+
+**Key CSS Variables:**
+```css
+:root {
+  --ifm-color-primary: #0078D4;
+  --ifm-font-family-base: 'Roboto', sans-serif;
+  /* ...and more theme variables */
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #4DABF7;
+  /* Dark theme overrides */
+}
+```
+
+**equation.css**
+
+Global styles for equation components:
+- KaTeX equation rendering styles
+- Equation numbering appearance
+- Equation caption formatting
+- Equation reference link styles
+
+**tables.css**
+
+Global styles for table components:
+- Table border and spacing
+- Header row styling
+- Alternating row colors
+- Responsive table behavior
+- Table caption formatting
+
+### Tailwind CSS Integration
+
+**Configuration:** `tailwind.config.js` (root directory)
+
+**Custom Theme Extensions:**
+```javascript
+// Example from tailwind.config.js
+theme: {
+  extend: {
+    colors: {
+      'ifm-primary': 'var(--ifm-color-primary)',
+      // Custom colors
+    },
+    fontFamily: {
+      'usace': ['Roboto', 'sans-serif'],
+    }
+  }
+}
+```
+
+**Using Tailwind in Components:**
+```javascript
+<div className="flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-800">
+  <h2 className="text-2xl font-bold text-primary">Title</h2>
+</div>
+```
+
+**Resources:**
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [Tailwind CSS Cheat Sheet](https://nerdcave.com/tailwind-cheat-sheet)
+
+:::danger Style Modifications
+**Do not modify global CSS files or Tailwind configuration unless you are a site administrator.** Improper changes can break styling across the entire site.
+
+For component-specific styles, prefer Tailwind utility classes or component-level CSS-in-JS.
+:::
+
+---
+
+## Data Directory
+
+**Location:** `src/data/`
+
+Contains JSON files generated during the build process.
+
+### Event Tree Data
+
+The primary use case is for the RMC Typical Event Tree Database document, which requires structured data for rendering event trees.
+
+**File:** `eventTreeData.json` (or similar)
+
+**Generated By:** Event tree processing scripts during build
+
+**Used By:** `EventTree` component for rendering interactive event tree diagrams
+
+:::info Auto-Generated
+Files in this directory are typically auto-generated and should not be manually edited.
+:::
+
+---
+
+## Pages Directory
+
+**Location:** `src/pages/`
+
+Contains custom web pages that are not part of the documentation structure. These pages have their own routes and do not follow the versioned documentation pattern.
+
+### Homepage
+
+**File:** `index.js` or `index.jsx`
+
+**Route:** `https://your-site.com/`
+
+The main landing page for the RMC Software Documentation website.
+
+**Typical Contents:**
+- Welcome message
+- Featured documentation
+- Quick links to software manuals
+- Search functionality
+- Recent updates or announcements
+
+### Hub and Sub-Hub Pages
+
+Additional pages for organizing documentation sections:
+
+**Examples:**
+- `software-hub.js` - Landing page for software documentation
+- `guides-hub.js` - Landing page for user guides
+- `about.js` - About page
+- `404.js` - Custom 404 error page
+
+**Page Structure:**
+```javascript
+import React from 'react';
+import Layout from '@theme/Layout';
+
+export default function MyPage() {
+  return (
+    <Layout title="Page Title" description="Page description">
+      <main>
+        <h1>Page Content</h1>
+        {/* Page components and content */}
+      </main>
+    </Layout>
+  );
+}
+```
+
+**Routing:**
+- Files in `src/pages/` automatically become routes
+- `index.js` → `/`
+- `about.js` → `/about`
+- `subfolder/page.js` → `/subfolder/page`
+
+**Adding New Pages:**
+
+1. Create `.js` or `.jsx` file in `src/pages/`
+2. Use Layout component for consistent header/footer
+3. Add page to navigation if needed (modify `docusaurus.config.js`)
+4. Build and test: `npm run build && npm run serve`
+
+:::info Growing Pages
+This directory continues to grow as the site expands with new hubs and navigation pages.
+:::
+
+---
+
+## Theme Directory
+
+**Location:** `src/theme/`
+
+Docusaurus uses a theme system called "Swizzling" that allows overriding default theme components with custom implementations.
+
+### What is Theme Swizzling?
+
+**Swizzling** lets you customize or replace any component from the default Docusaurus theme by creating a file with the same name in `src/theme/`.
+
+**Swizzle Levels:**
+- **Safe:** Docusaurus guarantees API stability
+- **Unsafe:** Component may change in future Docusaurus versions
+
+**Command to Swizzle:**
+```bash
+npm run swizzle @docusaurus/theme-classic ComponentName
+```
+
+### Current Theme Overrides
+
+**DocItem Theme Component**
+
+**File:** `src/theme/DocItem/index.js` or similar
+
+**Purpose:** Override the default documentation page wrapper to add DRAFT watermark functionality.
+
+**Custom Functionality:**
+- Checks if current document is marked as `draft: true` in front matter
+- Applies watermark overlay for draft documents
+- Preserves all default DocItem behavior
+
+**How It Works:**
+```javascript
+import { useDoc } from '@docusaurus/theme-common';
+import draftDocs from '@site/src/draftDocs';
+
+export default function DocItem(props) {
+  const { metadata } = useDoc();
+  const isDraft = draftDocs.includes(metadata.id);
+
+  return (
+    <div>
+      {isDraft && <DraftWatermark />}
+      <OriginalDocItem {...props} />
+    </div>
+  );
+}
+```
+
+**SearchBar Theme Component**
+
+**File:** `src/theme/SearchBar/index.js` or similar
+
+**Purpose:** Replace default search bar with custom Algolia search integration.
+
+**Custom Functionality:**
+- Integrates with Algolia DocSearch API
+- Applies custom styling matching site theme
+- Adds search result categorization
+- Implements keyboard shortcuts (Ctrl+K)
+
+**Configuration:**
+- Algolia credentials in `docusaurus.config.js`
+- Custom search styling in component
+- See [Appendix B: Search Configuration](./appendix-b-search-configuration.mdx)
+
+### Creating New Theme Overrides
+
+:::warning Advanced Customization
+Only swizzle theme components if absolutely necessary. Theme overrides can break during Docusaurus updates and require maintenance.
+:::
+
+**Best Practices:**
+1. Check if your goal can be achieved without swizzling (custom components, plugins, CSS)
+2. Prefer "safe" swizzles over "unsafe" when possible
+3. Document all customizations
+4. Test thoroughly after Docusaurus updates
+5. Minimize changes to original theme component code
+
+**Resources:**
+- [Docusaurus Swizzling Guide](https://docusaurus.io/docs/swizzling)
+- [Theme Component List](https://docusaurus.io/docs/api/themes/configuration)
+
+---
+
+## draftDocs.js
+
+**Location:** `src/draftDocs.js`
+
+**Purpose:** Aggregates all documents marked with `draft: true` in their front matter and exports an array of draft document IDs.
+
+**Generated By:** Build process (may be manual or scripted)
+
+**Used By:** `DocItem` theme component to determine whether to display DRAFT watermark
+
+**Example Structure:**
+```javascript
+// draftDocs.js
+const draftDocs = [
+  'lifesim/v1.0/05-advanced-features',
+  'watersim/v2.0/03-calibration',
+  // ...more draft document IDs
+];
+
+export default draftDocs;
+```
+
+**How Documents Are Identified:**
+- Document with front matter `draft: true` gets added to array
+- Array contains base paths (no file extension)
+- Theme component checks if current page matches any draft path
+
+**Updating Draft List:**
+
+Depending on implementation, this may be:
+- Auto-generated during build
+- Manually updated by site administrators
+- Generated by a dedicated script
+
+Check with site maintainers for the specific update process.
+
+---
+
+## reportIdMap.js
+
+**Location:** `src/reportIdMap.js`
+
+**Purpose:** Auto-generated file that maps documentation base paths (including version) to unique report IDs.
+
+:::danger Auto-Generated File
+**Do not edit this file manually.** It is automatically regenerated by the `generateReportIdMap.js` script.
+:::
+
+**Generated By:** `scripts/generateReportIdMap.js`
+
+**When Generated:**
+- Before each build (`npm run build`)
+- Manually via `npm run build` (which runs all pre-build scripts)
+
+**Example Structure:**
+```javascript
+// reportIdMap.js
+const reportIdMap = {
+  'lifesim/v1.0': 'lifesim-v10',
+  'lifesim/v1.1': 'lifesim-v11',
+  'watersim/v2.0': 'watersim-v20',
+  // ...more mappings
+};
+
+export default reportIdMap;
+```
+
+**How It's Used:**
+1. **ReportIdContext** provides current document's report ID
+2. **Counter Components** use report ID to scope numbering (e.g., Figure 1 in lifesim-v10, Figure 1 in lifesim-v11)
+3. **Counter Files** organized by report ID: `static/counters/lifesim-v10-counters.json`
+
+**Mapping Rules:**
+- Each version folder gets unique report ID
+- Format: `{software}-{version}` with special characters removed
+- Ensures figure/table/equation numbers are independent per version
+
+**Regenerating Map:**
+
+If you add new version folders or documentation:
+```bash
+# Regenerate all build artifacts
+npm run build
+```
+
+The report ID map will be automatically updated as part of the build process.
+
+---
+
+## Technical Architecture Notes
+
+### Build Process Integration
+
+The `src/` folder is integrated into the Docusaurus build process:
+
+1. **Pre-Build Scripts:**
+   - Generate `reportIdMap.js`
+   - Update counter files
+   - Generate sidebar configuration
+
+2. **Build Phase:**
+   - Webpack bundles all components
+   - Tailwind processes utility classes
+   - CSS files compiled and minified
+   - React components optimized and split
+
+3. **Post-Build:**
+   - Static HTML generated for all pages
+   - Components hydrated on client side
+   - Service worker generated (if enabled)
+
+### Component Development Workflow
+
+For site administrators adding new components:
+
+1. **Design Component API:**
+   - Determine required and optional props
+   - Design consistent with existing components
+   - Consider accessibility requirements
+
+2. **Implement Component:**
+   - Create file in `src/components/`
+   - Use Tailwind for styling
+   - Add prop validation (PropTypes or TypeScript)
+   - Support light/dark themes
+
+3. **Test Component:**
+   - Create test MDX file
+   - Test in development: `npm start`
+   - Test production build: `npm run build && npm run serve`
+   - Verify SSR compatibility
+   - Test on different screen sizes
+
+4. **Document Component:**
+   - Add to [React Components Reference](./07-react-components.mdx)
+   - Include all props with types and defaults
+   - Provide usage examples
+   - Note any special considerations
+
+5. **Deploy:**
+   - Commit to repository
+   - Update deployment
+   - Announce new component to contributors
+
+### State Management
+
+Current state management approach:
+
+**React Context:**
+- Used for report ID sharing
+- Minimal context to avoid re-render issues
+- Provided at app root level
+
+**Component State:**
+- Local state with `useState` for component-specific needs
+- Keep state close to where it's used
+- Avoid prop drilling with composition
+
+**External State:**
+- Counter files (JSON) for figure/table/equation numbers
+- Bibliography files (JSON) for citations
+- Configuration files (JS) for site settings
+
+### Performance Considerations
+
+**Code Splitting:**
+- Components automatically split by Webpack
+- Lazy loading for heavy components (if implemented)
+- Tree shaking removes unused code
+
+**CSS Optimization:**
+- Tailwind purges unused styles in production
+- Global CSS minimized
+- Critical CSS inlined for faster first paint
+
+**Image Optimization:**
+- Images should be properly sized before adding
+- Use appropriate formats (PNG for screenshots, JPG for photos, SVG for graphics)
+- Consider lazy loading for many images
+
+---
+
+## When to Modify Source Code
+
+### Contributors: NEVER
+
+Regular documentation contributors should **never** need to modify anything in the `src/` folder.
+
+**If You Think You Need To:**
+- Review existing components - one likely already does what you need
+- Check component props for customization options
+- Ask site administrators for help
+
+### Site Administrators: RARELY
+
+Even administrators should modify source code sparingly:
+
+**Good Reasons to Modify:**
+- Adding genuinely new functionality not possible with existing components
+- Fixing bugs in existing components
+- Updating for major Docusaurus version changes
+- Performance optimizations
+
+**Bad Reasons to Modify:**
+- Making one-off customizations (use props instead)
+- Styling changes (use Tailwind classes or global CSS)
+- Adding content (use MDX files, not components)
+
+### Testing Requirements
+
+**Before Committing Source Code Changes:**
+
+- [ ] Component renders correctly in development
+- [ ] Production build succeeds: `npm run build`
+- [ ] Component works in production: `npm run serve`
+- [ ] No console errors or warnings
+- [ ] Accessible via keyboard navigation
+- [ ] Works with light and dark themes
+- [ ] Responsive on mobile/tablet/desktop
+- [ ] Documentation updated in components guide
+- [ ] Changes committed with clear description
+- [ ] Tested by at least one other person
+
+---
+
+## Additional Resources
+
+### Docusaurus Documentation
+
+- [Docusaurus Official Docs](https://docusaurus.io/docs)
+- [Docusaurus Swizzling](https://docusaurus.io/docs/swizzling)
+- [Docusaurus Plugin Development](https://docusaurus.io/docs/api/plugin-methods)
+
+### React Resources
+
+- [React Documentation](https://react.dev/)
+- [React Hooks](https://react.dev/reference/react)
+- [React Context](https://react.dev/learn/passing-data-deeply-with-context)
+
+### Styling Resources
+
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [Tailwind CSS Cheat Sheet](https://nerdcave.com/tailwind-cheat-sheet)
+- [CSS Custom Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/--*)
+
+### Build Tools
+
+- [Webpack Documentation](https://webpack.js.org/concepts/)
+- [Babel Documentation](https://babeljs.io/docs/)
+- [npm Scripts](https://docs.npmjs.com/cli/v8/using-npm/scripts)
+
+---
+
+## Summary
+
+The `src/` folder contains the technical foundation of the RMC Software Documentation site:
+
+**Key Directories:**
+- `components/` - React components for use in MDX
+- `css/` - Global stylesheets
+- `pages/` - Custom web pages
+- `theme/` - Docusaurus theme overrides
+- `contexts/` - React context providers
+
+**Auto-Generated Files:**
+- `reportIdMap.js` - Document ID mappings
+- `draftDocs.js` - Draft document tracking (may be manual)
+
+**Important Principles:**
+- Contributors don't need to touch this folder
+- Only administrators should modify source code
+- Changes require thorough testing
+- Document all customizations
+
+**For More Information:**
+- Component usage: [React Components Reference](./07-react-components.mdx)
+- Build process: [Build Process Overview](./05-build-process-overview.mdx)
+- Project structure: [Project Structure](./03-project-structure.mdx)
+
+---
+
+**Questions about source code structure?** Contact site administrators or maintainers for guidance.
