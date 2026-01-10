@@ -1,0 +1,1062 @@
+---
+title: 'Creating a New Document: Complete Walkthrough'
+sidebar_label: 'Creating New Documents'
+---
+
+import ProcessList from '@site/src/components/ProcessList';
+
+# Creating a New Document: Complete Walkthrough
+
+This comprehensive guide walks you through the entire process of creating new documentation from start to finish, including folder setup, content creation, testing, and administrator coordination.
+
+## Quick Step Flow
+
+Click a step to jump to the detailed section.
+
+<ProcessList
+  startAt={0}
+  items={[
+    {
+      title: (
+        <span className="flex w-full items-center justify-between gap-4">
+          <span>Pre-Flight Checklist</span>
+          <a className="text-ifm-link underline hover:no-underline" href="#pre-flight-checklist">
+            Go to checklist
+          </a>
+        </span>
+      ),
+    },
+    {
+      title: (
+        <span className="flex w-full items-center justify-between gap-4">
+          <span>Step 1: Determine Folder Location</span>
+          <a className="text-ifm-link underline hover:no-underline" href="#step-1-determine-folder-location">
+            Go to Step 1
+          </a>
+        </span>
+      ),
+    },
+    {
+      title: (
+        <span className="flex w-full items-center justify-between gap-4">
+          <span>Step 2: Create Folder Structure</span>
+          <a className="text-ifm-link underline hover:no-underline" href="#step-2-create-folder-structure">
+            Go to Step 2
+          </a>
+        </span>
+      ),
+    },
+    {
+      title: (
+        <span className="flex w-full items-center justify-between gap-4">
+          <span>Step 3: Add Supporting Assets</span>
+          <a className="text-ifm-link underline hover:no-underline" href="#step-3-add-supporting-assets">
+            Go to Step 3
+          </a>
+        </span>
+      ),
+    },
+    {
+      title: (
+        <span className="flex w-full items-center justify-between gap-4">
+          <span>Step 4: Create MDX Files</span>
+          <a className="text-ifm-link underline hover:no-underline" href="#step-4-create-mdx-files">
+            Go to Step 4
+          </a>
+        </span>
+      ),
+    },
+    {
+      title: (
+        <span className="flex w-full items-center justify-between gap-4">
+          <span>Step 5: Test Your Documentation</span>
+          <a className="text-ifm-link underline hover:no-underline" href="#step-5-test-your-documentation">
+            Go to Step 5
+          </a>
+        </span>
+      ),
+    },
+    {
+      title: (
+        <span className="flex w-full items-center justify-between gap-4">
+          <span>Step 6: Contact Site Administrator</span>
+          <a className="text-ifm-link underline hover:no-underline" href="#step-6-contact-site-administrator">
+            Go to Step 6
+          </a>
+        </span>
+      ),
+    },
+  ]}
+/>
+
+---
+
+## Overview
+
+This walkthrough applies to **all new document creation**, whether you're using the DOCX converter or creating MDX files manually.
+
+**Important:** Even when using the DOCX converter (Chapter 05), you'll still need to follow most of these steps. The converter automates MDX file creation from Word documents, but you're still responsible for:
+
+- Creating all folder structures
+- Adding bibliography files
+- Adding source documents for archiving
+- Handling videos/GIFs manually (converter doesn't extract these)
+- Coordinating with site administrators
+- Testing and deployment
+
+**When to use this guide:**
+
+- Creating documentation for new software
+- Adding a new document type for existing software (e.g., adding validation-studies to software that only has users-guide)
+- Creating a new version of existing documentation (v1.1, v2.0, etc.)
+
+---
+
+## Pre-Flight Checklist
+
+Before you begin, gather and prepare the following:
+
+**Required Information:**
+
+- [ ] Software name and type determined
+- [ ] Document type selected (users-guide, validation-studies, applications-guide, etc.)
+- [ ] Version number decided (v1.0, v1.1, v2.0, etc.)
+
+**Source Materials:**
+
+- [ ] Source document gathered (Word doc, PDF, or other reference material if any)
+- [ ] List of figures/images compiled
+- [ ] Bibliography/references collected
+- [ ] Videos/GIFs identified (if applicable)
+
+**Decision Point:**
+
+- [ ] Determined creation method:
+  - Using DOCX converter (for Word documents) → See Chapter 05 for converter instructions
+  - Manual MDX creation (for hand-authored documentation) → Follow all steps in this guide
+
+:::tip Time Estimate
+
+**New document from scratch:** 4-8 hours depending on complexity
+**New version from existing:** 2-4 hours
+**Using DOCX converter:** Reduces MDX creation time by 50-75%
+
+:::
+
+---
+
+## Step 1: Determine Folder Location
+
+Before creating any folders, you need to determine exactly where your documentation belongs in the project structure.
+
+### Decision Process
+
+**Question 1: What type of application/software is this?**
+
+- **Desktop software (exe/installer)** → `desktop-applications/`
+- **Web-based tool or application** → `web-applications/`
+- **Excel-based toolbox/calculator** → `toolbox-technical-manuals/`
+
+**Question 2: What is the folder hierarchy for your application type?**
+
+:::note Hierarchy Differences
+
+The folder structure differs based on application type:
+
+**Desktop and Web Applications:**
+
+```
+application type → software name → document type → version
+```
+
+**Toolbox Technical Manuals:**
+
+```
+application type → suite name → tool/document name → version
+```
+
+Toolbox manuals have an extra level because they document **suites** of related tools.
+:::
+
+### Examples
+
+**Example 1: Desktop Application**
+
+```
+Software: Dam Analyzer (new desktop application)
+Document: Users Guide
+Version: 1.0
+
+Path: docs/desktop-applications/dam-analyzer/users-guide/v1.0/
+```
+
+**Example 2: Web Application**
+
+```
+Software: Risk Calculator (new web app)
+Document: Users Guide
+Version: 1.0
+
+Path: docs/web-applications/risk-calculator/users-guide/v1.0/
+```
+
+**Example 3: Toolbox Technical Manual**
+
+```
+Suite: seismic-hazard-suite (existing)
+Tool: peak-ground-acceleration (new tool in the suite)
+Version: 1.0
+
+Path: docs/toolbox-technical-manuals/seismic-hazard-suite/peak-ground-acceleration/v1.0/
+```
+
+**Need help?** Reference the decision tree in [Chapter 03: Project Structure](./03-project-structure.mdx) for more detailed guidance.
+
+---
+
+## Step 2: Create Folder Structure
+
+You need to create folders in **five different locations** that all mirror each other.
+
+:::warning Critical Requirement
+
+All five folder structures must **match exactly**. The paths must be identical except for the root folder (docs/ vs. static/figures/ vs. static/videos/ vs. static/bibliographies/ vs. static/source-documents/).
+
+:::
+
+### For Desktop and Web Applications
+
+```bash
+# Example: New desktop application "dam-analyzer" users guide v1.0
+
+# 1. Create docs folder
+docs/desktop-applications/dam-analyzer/users-guide/v1.0/
+
+# 2. Create figures folder (mirrors docs structure)
+static/figures/desktop-applications/dam-analyzer/users-guide/v1.0/
+
+# 3. Create videos folder if needed (mirrors docs structure)
+static/videos/desktop-applications/dam-analyzer/users-guide/v1.0/
+
+# 4. Create bibliographies folder (mirrors docs structure)
+static/bibliographies/desktop-applications/dam-analyzer/users-guide/v1.0/
+
+# 5. Create source-documents folder (mirrors docs structure)
+static/source-documents/desktop-applications/dam-analyzer/users-guide/v1.0/
+```
+
+### For Toolbox Technical Manuals
+
+```bash
+# Example: New tool "peak-ground-acceleration" in seismic-hazard-suite v1.0
+
+# 1. Create docs folder (note the extra suite level)
+docs/toolbox-technical-manuals/seismic-hazard-suite/peak-ground-acceleration/v1.0/
+
+# 2. Create figures folder
+static/figures/toolbox-technical-manuals/seismic-hazard-suite/peak-ground-acceleration/v1.0/
+
+# 3. Create videos folder if needed
+static/videos/toolbox-technical-manuals/seismic-hazard-suite/peak-ground-acceleration/v1.0/
+
+# 4. Create bibliographies folder
+static/bibliographies/toolbox-technical-manuals/seismic-hazard-suite/peak-ground-acceleration/v1.0/
+
+# 5. Create source-documents folder
+static/source-documents/toolbox-technical-manuals/seismic-hazard-suite/peak-ground-acceleration/v1.0/
+```
+
+### Key Points
+
+- **Naming convention:** Use lowercase with hyphens (e.g., `dam-analyzer`, not `Dam_Analyzer` or `DamAnalyzer`)
+- **Version format:** Always `v` + major.minor (e.g., `v1.0`, `v1.1`, `v2.0`)
+- **Videos folder:** Only create if your document contains videos/GIFs
+- **Source-documents folder:** Optional but highly recommended for archiving original files
+
+:::tip Folder Creation
+
+You can create folders using your file explorer, IDE, or command line. All parent folders will be created automatically as needed.
+
+:::
+
+---
+
+## Step 3: Add Supporting Assets
+
+This step can happen at different times depending on your workflow:
+
+- **Before creating MDX** (recommended for organization)
+- **During MDX creation** (as you reference assets in your writing)
+- **After initial MDX creation** (during revision and refinement)
+
+Choose the timing that works best for you.
+
+### 3a. Add Figures and Images
+
+**Copy images to the figures folder** you created in Step 2.
+
+**Figure Naming Standards:**
+
+You must choose one of two approved naming conventions for your document:
+
+**Standard A: Sequential Generic** (Typical for DOCX converter)
+
+- **figKey:** `figure-1`, `figure-2`, `figure-3`, etc.
+- **Filename:** `figure1.png`, `figure2.png`, `figure3.png`, etc.
+- **When to use:** Documents converted from Word, or when you prefer numbered organization
+- **Inserting figures:** Use letter suffixes (e.g., `figure-24a` between 24 and 25)
+
+**Standard B: Descriptive Semantic** (Optional for hand-authored)
+
+- **figKey:** `fig-menu-screenshot`, `fig-workflow-diagram`, etc.
+- **Filename:** `menu-screenshot.png`, `workflow-diagram.png`, etc.
+- **When to use:** Hand-authored documentation where semantic names improve maintainability
+- **Inserting figures:** Just add new descriptive name, no renumbering needed
+
+:::warning Consistency Required
+
+**Pick one standard and use it throughout your entire document.** Do not mix conventions.
+
+See [Chapter 03: Project Structure - Figure Naming Standards](./03-project-structure.mdx#figure-naming-standards) for complete details.
+
+:::
+
+### 3b. Add Videos and GIFs
+
+**Copy video files to the videos folder** you created in Step 2.
+
+- Supported formats: `.mp4`, `.webm`, `.gif`
+- Name videos descriptively: `workflow-demonstration.mp4`, `menu-navigation.gif`
+- **Important:** Videos and GIFs must be added manually - the DOCX converter does not extract these
+
+### 3c. Create Bibliography File
+
+**Create `bib.json` in the bibliographies folder** you created in Step 2.
+
+:::tip Do This Early
+
+Create the bibliography file **before writing MDX if possible**. It's much easier to reference citations as you write than to go back and add them later.
+
+:::
+
+**Using AI to Speed Up Creation:**
+
+Creating `bib.json` files manually is time-consuming. AI can help:
+
+1. Find an example `bib.json` from an existing document in this project
+2. Copy your references from your source document
+3. Provide both to an AI (Claude, ChatGPT, etc.) with a prompt like:
+
+```
+I need to create a bib.json file for my documentation project. Here's an example
+showing the required format:
+
+[paste example bib.json]
+
+Here are the references from my document:
+
+[paste your bibliography]
+
+Please create a bib.json file following the exact format, ensuring all citation
+keys are unique and formatted correctly.
+```
+
+4. **Review the AI output carefully**:
+   - [ ] Citation keys are unique
+   - [ ] Author names, years, titles are accurate
+   - [ ] All required fields present
+   - [ ] Valid JSON format (no trailing commas, proper quotes)
+   - [ ] IEEE style compliance
+
+**Example bib.json locations to reference:**
+
+- `static/bibliographies/desktop-applications/rmc-totalrisk/users-guide/v1.0/bib.json`
+- `static/bibliographies/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/bib.json`
+
+See [Chapter 03: Project Structure - Creating bib.json with AI](./03-project-structure.mdx#creating-bibjson-files-with-ai-assistance) for detailed instructions.
+
+### 3d. Add Source Documents
+
+**Copy source files to the source-documents folder** you created in Step 2.
+
+- Original Word documents (`.docx`)
+- PDFs
+- Spreadsheets or other reference materials
+
+This step is optional but highly recommended for:
+
+- Archiving original materials
+- Future updates and revisions
+- QA verification
+- Historical reference
+
+---
+
+## Step 4: Create MDX Files
+
+Now you're ready to create the actual documentation content.
+
+### Option A: Using DOCX Converter (Recommended for Word Documents)
+
+If you have a Word document, use the DOCX converter to automatically generate MDX files.
+
+**See [Chapter 05: DOCX Converter](./05-docx-converter.mdx) for complete instructions.**
+
+The converter will create:
+
+- `00-document-info.mdx`
+- `00-version-history.mdx`
+- `01-preface.mdx` (automatically renames "Introduction" if needed)
+- All chapter files with proper numbering
+
+**After conversion:**
+
+- [ ] Verify all file names follow conventions
+- [ ] Check that `01-preface.mdx` has title "Preface"
+- [ ] Review figure references for correctness
+- [ ] Add any missing videos/GIFs manually
+
+### Option B: Manual MDX Creation
+
+If creating documentation from scratch without a Word document, create MDX files manually.
+
+**Required Files (in order):**
+
+**1. `00-document-info.mdx`**
+
+Basic template:
+
+```mdx
+---
+title: 'Document Information'
+---
+
+import DocumentMetadata from '@site/src/components/DocumentMetadata';
+
+# Document Information
+
+<DocumentMetadata
+  documentType="Users Guide"
+  softwareName="Dam Analyzer"
+  version="1.0"
+  date="January 2026"
+  authors={['Author Name', 'Another Author']}
+  prepared="US Army Corps of Engineers"
+/>
+```
+
+**2. `00-version-history.mdx`**
+
+Basic template:
+
+```mdx
+---
+title: 'Version History'
+---
+
+import TableVersionHistory from '@site/src/components/TableVersionHistory';
+
+# Version History
+
+<TableVersionHistory
+  versions={[
+    {
+      version: '1.0',
+      date: 'January 2026',
+      description: 'Initial release',
+    },
+  ]}
+/>
+```
+
+**3. `01-preface.mdx`**
+
+:::warning CRITICAL: Preface Requirement
+
+**File name:** `01-preface.mdx`
+**Title in file:** `Preface`
+
+The first chapter of the main report **must always** be named `01-preface.mdx` with the title "Preface" - even if your source document calls it "Introduction" or something else.
+
+**Why:** Ensures consistency across all documents and is required for automatic sidebar generation.
+
+**Exception:** If you absolutely need a different first chapter title, contact a site administrator **before** creating your document.
+
+:::
+
+Basic template:
+
+```mdx
+---
+title: 'Preface'
+---
+
+# Preface
+
+This document provides...
+
+[Your preface content here]
+```
+
+**4. Additional Chapter Files**
+
+Create files numbered `02-`, `03-`, `04-`, etc.:
+
+```
+02-introduction.mdx
+03-methodology.mdx
+04-results.mdx
+05-conclusions.mdx
+06-appendix-acronyms.mdx
+07-appendix-references.mdx
+```
+
+**File naming pattern:** `##-chapter-name.mdx`
+
+- `##` = Two-digit number (01, 02, 03, etc.)
+- `chapter-name` = Lowercase with hyphens
+
+**For MDX syntax and component usage:** See [Chapter 07: Creating and Editing Pages](./07-creating-editing-pages.mdx)
+
+### Checkpoint: After Creating MDX Files
+
+Verify the following before proceeding:
+
+- [ ] All three required files exist (`00-document-info.mdx`, `00-version-history.mdx`, `01-preface.mdx`)
+- [ ] File names follow exact naming convention (lowercase, hyphens, no spaces)
+- [ ] `01-preface.mdx` has title "Preface" (no exceptions without admin approval)
+- [ ] Chapter numbering is sequential with no gaps
+- [ ] Front matter is complete in all files (title, proper YAML format)
+- [ ] No typos in file paths or component imports
+
+---
+
+## Step 5: Test Your Documentation
+
+Before contacting administrators or finalizing your work, test everything locally.
+
+### Local Testing Steps
+
+```bash
+# 1. Run the development server
+npm start
+```
+
+This will:
+
+- Generate the sidebar automatically
+- Build counter files for figure/table/equation numbering
+- Start a local web server (usually at `http://localhost:3000`)
+
+**Wait for the build to complete** (you'll see "Compiled successfully" message).
+
+### What to Test
+
+**2. Navigate to your new document**
+
+- Open your browser to the local server URL
+- Find your document in the sidebar
+- Click to open it
+
+**Check:**
+
+- [ ] Sidebar appears and shows your document
+- [ ] All chapters are listed in the sidebar
+- [ ] Chapter order is correct
+- [ ] Sidebar sections collapse/expand properly
+
+**3. Click through each chapter**
+
+**Check:**
+
+- [ ] All pages load without errors
+- [ ] Figures display correctly
+- [ ] Figure numbers are sequential and correct
+- [ ] Citations render properly (if applicable)
+- [ ] Internal links work
+- [ ] No missing images or broken references
+- [ ] Videos/GIFs play correctly (if applicable)
+
+**4. Check the browser console**
+
+Open Developer Tools (F12) and check for:
+
+- [ ] No red error messages
+- [ ] No build warnings
+- [ ] No "404 Not Found" errors for images or assets
+
+### Common Issues and Solutions
+
+**Issue: Sidebar doesn't show my document**
+
+- **Solution:** Check that folder structure matches exactly across docs/ and static/ folders
+- Verify version folder exists and is named correctly (v1.0, not v1.0.0 or 1.0)
+
+**Issue: Figures not displaying**
+
+- **Solution:** Verify `src` paths in Figure components point to correct location
+- Check that image files actually exist in static/figures/ folder
+- Ensure file extensions match (`.png` vs `.PNG`)
+
+**Issue: Citations not rendering**
+
+- **Solution:** Ensure `bib.json` exists in correct bibliographies folder
+- Validate JSON syntax (no trailing commas, proper quotes)
+- Check that citation keys match between MDX and bib.json
+
+**Issue: Wrong chapter order in sidebar**
+
+- **Solution:** Check numeric prefixes on files - sidebar orders by number
+- Ensure all files have two-digit prefixes (01, 02, not 1, 2)
+
+**Issue: Build errors or warnings**
+
+- **Solution:** Read the error message carefully
+- Check front matter YAML syntax
+- Verify all component imports are correct
+- Look for typos in file names or paths
+
+---
+
+## Step 6: Contact Site Administrator
+
+Once your documentation is created and tested locally, coordinate with a site administrator for deployment and any special requirements.
+
+### When to Contact Administrators
+
+You should contact a site administrator in these situations:
+
+#### 1. New Software Product Requiring Navigation Links
+
+**When:** You're adding a completely new software product (not just a new document for existing software)
+
+**Why:** Administrator needs to add links to homepage or main navigation menus
+
+**Provide:**
+
+- Software name
+- Application type (desktop/web/toolbox)
+- Preferred display name for navigation
+- Brief description of the software
+
+#### 2. Custom Sidebar Configuration Requirements
+
+**When:** Your document requires exceptions to standard rules (like non-Preface first chapter)
+
+**Why:** Custom sidebar configuration needs to be created manually
+
+**Important:** Contact administrator **BEFORE** creating your document if you know you need exceptions
+
+**Provide:**
+
+- Specific requirements (what needs to be different)
+- Clear justification for the exception
+- Proposed alternative approach
+
+#### 3. Deployment Coordination
+
+**When:** Always - for every new document
+
+**Why:** Administrator handles deployment, coordinates timing, marks drafts
+
+**Provide:**
+
+- Target deployment date
+- Any timing constraints or dependencies
+- Whether document should initially be marked as DRAFT
+- Software release dependencies (if applicable)
+
+#### 4. New Component or Feature Requests
+
+**When:** Standard components don't meet your documentation needs
+
+**Why:** Custom React components require development by administrators
+
+**Provide:**
+
+- Description of needed functionality
+- Examples of what you're trying to accomplish
+- Visual mockups or references (if available)
+
+### What to Include in Your Message
+
+Use this template when contacting administrators:
+
+```
+Subject: New Documentation: [Software Name] [Document Type]
+
+Hello,
+
+I've created new documentation and need administrator assistance:
+
+**Document Details:**
+- Software: [software name]
+- Document Type: [users-guide, validation-studies, etc.]
+- Location: docs/[full-path-to-document]/
+- Version: v1.0
+
+**Administrator Tasks Needed:**
+☐ Homepage/navigation links for new software
+☐ Custom sidebar configuration (explain why)
+☐ Deployment coordination (specify timing)
+☐ Mark as DRAFT initially (if applicable)
+☐ New component request (describe need)
+
+**Deployment Timing:**
+[Target date or "Ready when convenient" or specific constraints]
+
+**Additional Context:**
+[Any relevant details, deadlines, special considerations, or questions]
+
+**Testing Status:**
+- Local testing completed successfully
+- All figures display correctly
+- No console errors
+- Ready for QA review
+
+Thank you!
+[Your name]
+```
+
+### Administrator Response Timeline
+
+Typical response times:
+
+- **Simple deployment:** 1-2 business days
+- **Navigation links:** 2-3 business days
+- **Custom sidebar:** 3-5 business days
+- **New components:** 1-2 weeks (development required)
+
+Plan accordingly when working with deadlines.
+
+---
+
+## Complete Examples
+
+### Example 1: New Desktop Application Users Guide
+
+**Scenario:** Creating users guide for new desktop application called "Dam Safety Tool" version 1.0
+
+**Step-by-Step:**
+
+**1. Determine Location**
+
+- Application type: Desktop → `desktop-applications/`
+- Software name: `dam-safety-tool`
+- Document type: `users-guide`
+- Version: `v1.0`
+- **Full path:** `docs/desktop-applications/dam-safety-tool/users-guide/v1.0/`
+
+**2. Create Folders**
+
+```bash
+docs/desktop-applications/dam-safety-tool/users-guide/v1.0/
+static/figures/desktop-applications/dam-safety-tool/users-guide/v1.0/
+static/videos/desktop-applications/dam-safety-tool/users-guide/v1.0/
+static/bibliographies/desktop-applications/dam-safety-tool/users-guide/v1.0/
+static/source-documents/desktop-applications/dam-safety-tool/users-guide/v1.0/
+```
+
+**3. Add Assets**
+
+- Copy 45 PNG screenshots to figures folder
+- Copy 3 demo videos (MP4) to videos folder
+- Create bib.json with 12 references using AI assistance
+- Copy original Word document to source-documents folder
+
+**4. Create MDX** (Using DOCX converter)
+
+- Run converter on source Word document
+- Converter creates 8 chapter files automatically
+- Review and verify all files
+
+**5. Test Locally**
+
+- Run `npm start`
+- Navigate to document in browser
+- Verify all 45 figures display
+- Test video playback
+- Check citations render correctly
+- No console errors
+
+**6. Contact Administrator**
+
+```
+Subject: New Documentation: Dam Safety Tool Users Guide
+
+Hello,
+
+I've created new documentation for a new desktop application.
+
+**Document Details:**
+- Software: Dam Safety Tool
+- Document Type: users-guide
+- Location: docs/desktop-applications/dam-safety-tool/users-guide/v1.0/
+- Version: v1.0
+
+**Administrator Tasks Needed:**
+☑ Homepage/navigation links for new software
+☐ Custom sidebar configuration
+☑ Deployment coordination - ready ASAP
+☑ Mark as DRAFT initially until software is released
+☐ New component request
+
+**Deployment Timing:**
+Software releases March 2026, but documentation can go live as DRAFT now
+for internal review.
+
+**Testing Status:**
+- Local testing completed successfully
+- All 45 figures display correctly
+- 3 videos play correctly
+- No console errors
+- Ready for QA review
+
+Thank you!
+```
+
+### Example 2: New Toolbox Technical Manual
+
+**Scenario:** Adding new tool "Seepage Analysis" to existing seismic-hazard-suite
+
+**Step-by-Step:**
+
+**1. Determine Location**
+
+- Application type: Toolbox → `toolbox-technical-manuals/`
+- Suite name: `seismic-hazard-suite` (existing)
+- Tool name: `seepage-analysis` (new)
+- Version: `v1.0`
+- **Full path:** `docs/toolbox-technical-manuals/seismic-hazard-suite/seepage-analysis/v1.0/`
+
+**2. Create Folders**
+
+```bash
+docs/toolbox-technical-manuals/seismic-hazard-suite/seepage-analysis/v1.0/
+static/figures/toolbox-technical-manuals/seismic-hazard-suite/seepage-analysis/v1.0/
+static/bibliographies/toolbox-technical-manuals/seismic-hazard-suite/seepage-analysis/v1.0/
+static/source-documents/toolbox-technical-manuals/seismic-hazard-suite/seepage-analysis/v1.0/
+```
+
+(No videos folder - not needed for this document)
+
+**3. Add Assets**
+
+- Copy 15 PNG diagrams to figures folder
+- Create bib.json with 8 references
+- Copy Excel tool to source-documents folder
+
+**4. Create MDX** (Manual creation - no Word document)
+
+- Create 00-document-info.mdx with DocumentMetadata
+- Create 00-version-history.mdx with initial v1.0 entry
+- Create 01-preface.mdx
+- Create 4 more chapter files (02-05)
+- Reference figures and citations throughout
+
+**5. Test Locally**
+
+- Run `npm start`
+- Navigate to seismic-hazard-suite in sidebar
+- Verify new tool appears under the suite
+- Test all chapters load
+- Verify figure numbering
+- No console errors
+
+**6. Contact Administrator**
+
+```
+Subject: New Documentation: Seepage Analysis Technical Manual
+
+Hello,
+
+I've added a new tool to the existing seismic-hazard-suite.
+
+**Document Details:**
+- Suite: seismic-hazard-suite (existing)
+- Tool: seepage-analysis (new)
+- Document Type: technical manual
+- Location: docs/toolbox-technical-manuals/seismic-hazard-suite/seepage-analysis/v1.0/
+- Version: v1.0
+
+**Administrator Tasks Needed:**
+☐ Homepage/navigation links (not needed - suite already exists)
+☐ Custom sidebar configuration
+☑ Deployment coordination - ready when convenient
+☐ Mark as DRAFT
+☐ New component request
+
+**Deployment Timing:**
+Ready for deployment anytime. No dependencies.
+
+**Testing Status:**
+- Local testing completed successfully
+- All 15 figures display correctly
+- No console errors
+- Ready for deployment
+
+Thank you!
+```
+
+### Example 3: New Version of Existing Document
+
+**Scenario:** Creating v1.1 of LifeSim Users Guide (updating existing v1.0)
+
+**Step-by-Step:**
+
+**1. Determine Location**
+
+- Use existing path structure: `docs/desktop-applications/lifesim/users-guide/`
+- Add new version folder: `v1.1`
+- **Full path:** `docs/desktop-applications/lifesim/users-guide/v1.1/`
+
+**2. Copy from Previous Version**
+
+```bash
+# Copy entire v1.0 folder to v1.1
+cp -r docs/desktop-applications/lifesim/users-guide/v1.0/ docs/desktop-applications/lifesim/users-guide/v1.1/
+
+# Copy figures
+cp -r static/figures/desktop-applications/lifesim/users-guide/v1.0/ static/figures/desktop-applications/lifesim/users-guide/v1.1/
+
+# Copy bibliographies
+cp -r static/bibliographies/desktop-applications/lifesim/users-guide/v1.0/ static/bibliographies/desktop-applications/lifesim/users-guide/v1.1/
+
+# Copy videos if they exist
+cp -r static/videos/desktop-applications/lifesim/users-guide/v1.0/ static/videos/desktop-applications/lifesim/users-guide/v1.1/
+```
+
+**3. Update Version-Specific Content**
+
+- Edit `00-document-info.mdx` - change version to "1.1"
+- Edit `00-version-history.mdx` - add new entry for v1.1 with changes
+- Update any version-specific screenshots or references
+- Make content changes for the new version
+
+**4. Test Locally**
+
+- Run `npm start`
+- Navigate to LifeSim in sidebar
+- Verify both v1.0 and v1.1 appear in version selector
+- Switch between versions to ensure both work
+- Test new/modified content in v1.1
+
+**5. Contact Administrator**
+
+```
+Subject: New Version: LifeSim Users Guide v1.1
+
+Hello,
+
+I've created v1.1 of the LifeSim Users Guide.
+
+**Document Details:**
+- Software: LifeSim (existing)
+- Document Type: users-guide (existing)
+- Location: docs/desktop-applications/lifesim/users-guide/v1.1/
+- Version: v1.1 (new version of existing document)
+
+**Administrator Tasks Needed:**
+☐ Homepage/navigation links (already exists)
+☐ Custom sidebar configuration
+☑ Deployment coordination - coordinate with software release
+☐ Mark as DRAFT
+☐ New component request
+
+**Deployment Timing:**
+LifeSim v1.1 software releases February 15, 2026.
+Documentation should go live the same day.
+
+**Changes in v1.1:**
+- Updated Chapter 4 with new analysis features
+- Added 5 new screenshots for new features
+- Updated bibliography with 2 new references
+- Minor corrections throughout
+
+**Testing Status:**
+- Local testing completed successfully
+- Version selector works correctly between v1.0 and v1.1
+- All new figures display correctly
+- No console errors
+- Ready for deployment
+
+Thank you!
+```
+
+---
+
+## Quick Reference Checklist
+
+Use this scannable checklist to ensure you've completed all steps:
+
+### Pre-Creation
+
+- [ ] Source materials gathered
+- [ ] Folder location determined
+- [ ] Document type selected
+- [ ] Version number decided
+- [ ] Creation method chosen (DOCX converter vs. manual)
+
+### Folder Structure
+
+- [ ] Created docs folder: `docs/[application-type]/[software]/[document-type]/[version]/`
+- [ ] Created figures folder: `static/figures/[matching-path]/`
+- [ ] Created videos folder (if needed): `static/videos/[matching-path]/`
+- [ ] Created bibliographies folder: `static/bibliographies/[matching-path]/`
+- [ ] Created source-documents folder: `static/source-documents/[matching-path]/`
+
+### Supporting Assets
+
+- [ ] Copied images to figures folder
+- [ ] Selected figure naming standard (A or B)
+- [ ] Copied videos/GIFs to videos folder (if applicable)
+- [ ] Created bib.json in bibliographies folder (if citations needed)
+- [ ] Copied source files to source-documents folder
+
+### MDX Files
+
+- [ ] Created `00-document-info.mdx` with DocumentMetadata
+- [ ] Created `00-version-history.mdx` with TableVersionHistory
+- [ ] Created `01-preface.mdx` with title "Preface"
+- [ ] Created additional chapter files with proper numbering
+- [ ] All file names use lowercase with hyphens
+- [ ] Front matter complete in all files
+
+### Testing
+
+- [ ] Ran `npm start` without errors
+- [ ] Sidebar generates correctly
+- [ ] All chapters appear in correct order
+- [ ] Clicked through every chapter
+- [ ] All figures display properly
+- [ ] Videos/GIFs play correctly (if applicable)
+- [ ] Citations render correctly (if applicable)
+- [ ] No console errors in browser developer tools
+- [ ] Internal links work
+
+### Finalization
+
+- [ ] Contacted administrator with deployment details
+- [ ] Specified administrator tasks needed:
+  - [ ] Navigation links (if new software)
+  - [ ] Custom sidebar (if exceptions needed)
+  - [ ] Deployment coordination and timing
+  - [ ] DRAFT marking (if not ready for public)
+  - [ ] Component requests (if needed)
+- [ ] Committed changes to repository (after admin approval)
+- [ ] Documented any special configurations
+
+---
+
+## Next Steps
+
+After completing this walkthrough:
+
+- **If using DOCX converter:** See [Chapter 05: DOCX Converter](./05-docx-converter.mdx) for conversion instructions
+- **For MDX syntax help:** See [Chapter 07: Creating and Editing Pages](./07-creating-editing-pages.mdx)
+- **For component usage:** See [Chapter 08: React Components Reference](./08-react-components.mdx)
+- **If problems occur:** See [Chapter 10: Troubleshooting and FAQ](./10-troubleshooting-faq.mdx)
+
+---
+
+**Questions?** Contact site administrators or refer to the other chapters in this documentation guide for detailed information on specific topics.

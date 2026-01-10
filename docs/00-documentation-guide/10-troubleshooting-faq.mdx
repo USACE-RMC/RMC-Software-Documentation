@@ -16,6 +16,7 @@ This comprehensive guide addresses common issues, errors, and frequently asked q
 **Problem:** Running `node --version` returns "command not found" or "not recognized"
 
 **Symptoms:**
+
 ```bash
 'node' is not recognized as an internal or external command
 ```
@@ -27,114 +28,8 @@ This comprehensive guide addresses common issues, errors, and frequently asked q
    - Choose version 18.0 or later
    - Run installer with default settings
 
-2. **Check PATH (Windows):**
-   - Open Command Prompt as Administrator
-   - Run: `setx PATH "%PATH%;C:\Program Files\nodejs"`
-   - Restart terminal and try again
-
-3. **Check PATH (Mac/Linux):**
-   ```bash
-   echo $PATH
-   # Should include node installation directory
-
-   # Add to PATH if needed (add to ~/.bashrc or ~/.zshrc):
-   export PATH="/usr/local/bin:$PATH"
-   ```
-
-4. **USG Computers:**
-   - Request administrator privileges from IT
-   - Or use portable Node.js version
-   - See [Getting Started Guide](./01-getting-started.mdx#usg-specific-instructions)
-
----
-
-### npm Install Fails
-
-**Problem:** `npm install` command fails with errors
-
-**Common Errors:**
-
-#### Error: EACCES Permission Denied
-
-**Solution (Mac/Linux):**
-```bash
-# Fix npm permissions
-sudo chown -R $USER:$GROUP ~/.npm
-sudo chown -R $USER:$GROUP ~/.config
-
-# Try install again
-npm install
-```
-
-**Solution (Windows):**
-- Run Command Prompt or PowerShell as Administrator
-- Navigate to project directory
-- Run `npm install`
-
-#### Error: Network/Proxy Issues
-
-**Symptoms:**
-```
-npm ERR! network request to https://registry.npmjs.org failed
-```
-
-**Solutions:**
-
-1. **Check internet connection**
-2. **Configure proxy (if on corporate network):**
-   ```bash
-   npm config set proxy http://proxy.company.com:8080
-   npm config set https-proxy http://proxy.company.com:8080
-   ```
-
-3. **Clear npm cache:**
-   ```bash
-   npm cache clean --force
-   npm install
-   ```
-
-#### Error: Incompatible Node Version
-
-**Symptoms:**
-```
-npm ERR! engine Unsupported engine
-```
-
-**Solution:**
-- Update Node.js to version 18.0 or later
-- Check version: `node --version`
-- Download latest LTS from [nodejs.org](https://nodejs.org/)
-
----
-
-### Permission Errors on USG Computers
-
-**Problem:** Installation blocked by security policies
-
-**Symptoms:**
-- Installation wizards won't run
-- "Administrator privileges required" errors
-- Blocked by antivirus/security software
-
-**Solutions:**
-
-1. **Request IT Support:**
-   - Submit ticket for Node.js installation
-   - Request version 18.0 or later
-   - Mention it's for official USACE project
-
-2. **Use Portable Versions:**
-   - Download portable Node.js (no installation required)
-   - Extract to user directory (e.g., `C:\Users\YourName\nodejs\`)
-   - Add to PATH manually
-
-3. **Use VS Code Terminal:**
-   - VS Code may have different permissions
-   - Try running npm commands from integrated terminal
-
-4. **Alternative: Use Virtual Machine:**
-   - Request VM with developer tools
-   - Install all dependencies in VM environment
+2. **Verify Node.js is in PATH (Windows):**
+   - See [Getting Started Guide](./01-getting-started.mdx#installing-node.js)
 
 ---
 
@@ -154,16 +49,18 @@ SyntaxError: /path/to/file.mdx: Unexpected token (15:8)
   14 |
 > 15 | <Figure
      |         ^
-  16 |   figureKey="my-figure"
+  16 |   figKey="my-figure"
 ```
 
 **Key Information:**
+
 1. **File path:** Where the error occurred
 2. **Line number:** `(15:8)` means line 15, column 8
 3. **Error type:** `SyntaxError` indicates what went wrong
 4. **Context:** Shows surrounding code
 
 **Common Causes:**
+
 - Missing closing tags
 - Mismatched quotes
 - Invalid component props
@@ -178,6 +75,7 @@ SyntaxError: /path/to/file.mdx: Unexpected token (15:8)
 #### Symptom: Port Already in Use
 
 **Error:**
+
 ```
 Error: listen EADDRINUSE: address already in use :::3000
 ```
@@ -185,6 +83,7 @@ Error: listen EADDRINUSE: address already in use :::3000
 **Solutions:**
 
 **Option 1 - Kill Process (Windows):**
+
 ```bash
 # Find process using port 3000
 netstat -ano | findstr :3000
@@ -194,12 +93,14 @@ taskkill /PID <PID> /F
 ```
 
 **Option 2 - Kill Process (Mac/Linux):**
+
 ```bash
 # Find and kill process on port 3000
 lsof -ti:3000 | xargs kill -9
 ```
 
 **Option 3 - Use Different Port:**
+
 ```bash
 # Start on different port
 PORT=3001 npm start
@@ -210,6 +111,7 @@ PORT=3001 npm start
 **Solutions:**
 
 1. **Clear Cache:**
+
    ```bash
    # Remove cache directory
    rm -rf .docusaurus
@@ -222,6 +124,7 @@ PORT=3001 npm start
    ```
 
 2. **Reinstall Dependencies:**
+
    ```bash
    rm -rf node_modules package-lock.json
    npm install
@@ -255,6 +158,7 @@ PORT=3001 npm start
    - Save file: `Ctrl+S` / `Cmd+S`
 
 4. **Clear Cache and Restart:**
+
    ```bash
    # Stop server (Ctrl+C)
    rm -rf .docusaurus
@@ -283,6 +187,7 @@ PORT=3001 npm start
    - Disable browser extensions
 
 3. **Check File Watcher Limits (Linux):**
+
    ```bash
    # Increase file watcher limit
    echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
@@ -308,16 +213,19 @@ PORT=3001 npm start
 #### Internal MDX Links
 
 **Incorrect:**
+
 ```mdx
 [Chapter 3](03-installation.mdx)
 ```
 
 **Correct:**
+
 ```mdx
 [Chapter 3](./03-installation.mdx)
 ```
 
 **Key Points:**
+
 - Always use `./` prefix for same-directory links
 - Use `../` for parent directory
 - Include `.mdx` extension
@@ -326,11 +234,13 @@ PORT=3001 npm start
 #### Link to Specific Section
 
 **Format:**
+
 ```mdx
 [See Overview](./01-introduction.mdx#overview)
 ```
 
 **Anchor ID Rules:**
+
 - Heading text converted to lowercase
 - Spaces become hyphens
 - Special characters removed
@@ -339,6 +249,7 @@ PORT=3001 npm start
 #### External Links
 
 **Verify:**
+
 - URL is complete: `https://example.com` not `example.com`
 - URL is accessible (not behind firewall)
 - URL hasn't changed or been removed
@@ -354,16 +265,19 @@ PORT=3001 npm start
 #### Check File Path
 
 **Incorrect:**
+
 ```mdx
 <Figure src="figures/lifesim/image.png" ... />
 ```
 
 **Correct:**
+
 ```mdx
 <Figure src="/figures/lifesim/v1.0/image.png" ... />
 ```
 
 **Key Points:**
+
 - Path must start with `/`
 - Path is relative to `static/` folder
 - Include version folder: `v1.0`, `v1.1`, etc.
@@ -378,6 +292,7 @@ PORT=3001 npm start
 #### Check File Extension
 
 **Common Issues:**
+
 - File is `.PNG` but code says `.png` (case matters on Linux)
 - File is `.jpg` but code says `.jpeg` or vice versa
 
@@ -386,12 +301,14 @@ PORT=3001 npm start
 #### Check Image Format
 
 **Supported formats:**
+
 - `.png` (preferred for screenshots/diagrams)
 - `.jpg` / `.jpeg` (preferred for photos)
 - `.svg` (preferred for vector graphics)
 - `.gif` (for animations)
 
 **Unsupported formats:**
+
 - `.bmp`, `.tiff`, `.webp` (convert to supported format)
 
 #### Clear Browser Cache
@@ -410,42 +327,53 @@ PORT=3001 npm start
 **Symptom:** Component shows as plain text like `<Figure ...>`
 
 **Solution:**
+
 ```mdx
 // Add at top of file:
 import Figure from '@site/src/components/Figure';
 
 // Then use in document:
+
 <Figure src="/figures/..." ... />
 ```
 
 #### Incorrect Import Path
 
 **Incorrect:**
+
 ```mdx
 import Figure from 'src/components/Figure';
 import Figure from './components/Figure';
+
+;
 ```
 
 **Correct:**
+
 ```mdx
 import Figure from '@site/src/components/Figure';
+
+;
 ```
 
 #### Component Name Typo
 
 **Check:**
+
 - Spelling: `Figure` not `figure` or `Figures`
 - Case sensitivity: `TableVertical` not `tableVertical`
-- Exact name from [Components Reference](./07-react-components.mdx)
+- Exact name from [Components Reference](./08-react-components.mdx)
 
 #### Self-Closing Tag Error
 
 **Incorrect:**
+
 ```mdx
 <Figure src="/figures/image.png" caption="My caption">
 ```
 
 **Correct:**
+
 ```mdx
 <Figure src="/figures/image.png" caption="My caption" />
 ```
@@ -455,14 +383,16 @@ import Figure from '@site/src/components/Figure';
 #### Missing Required Props
 
 **Error Message Example:**
+
 ```
-Warning: Failed prop type: The prop `figureKey` is marked as required in `Figure`
+Warning: Failed prop type: The prop `figKey` is marked as required in `Figure`
 ```
 
 **Solution:** Add all required props listed in error message
 
 **Check Requirements:**
-- See [React Components Reference](./07-react-components.mdx)
+
+- See [React Components Reference](./08-react-components.mdx)
 - Each component documentation lists required props
 
 ---
@@ -474,6 +404,7 @@ Warning: Failed prop type: The prop `figureKey` is marked as required in `Figure
 #### Module Not Found
 
 **Error:**
+
 ```
 Module not found: Can't resolve '@site/src/components/Figure'
 ```
@@ -481,13 +412,14 @@ Module not found: Can't resolve '@site/src/components/Figure'
 **Solutions:**
 
 1. **Check Import Path:**
+
    ```mdx
    // Must use @site prefix:
    import Figure from '@site/src/components/Figure';
    ```
 
 2. **Verify Component Name:**
-   - Check [Components Reference](./07-react-components.mdx)
+   - Check [Components Reference](./08-react-components.mdx)
    - Ensure exact spelling and capitalization
 
 3. **Restart Dev Server:**
@@ -499,11 +431,13 @@ Module not found: Can't resolve '@site/src/components/Figure'
 #### Can't Resolve Image Path
 
 **Error:**
+
 ```
 Module not found: Can't resolve './image.png'
 ```
 
 **Solution:**
+
 - Use absolute path from `static/`: `/figures/software/v1.0/image.png`
 - Don't use relative paths like `./image.png` in component props
 
@@ -518,19 +452,18 @@ Module not found: Can't resolve './image.png'
 **Cause:** Counter cache is out of date
 
 **Solution:**
-```bash
-# Regenerate all numbers
-npm run counters
 
+Stop the dev server and restart it. This will trigger the counters script to run and update figure numbers.
+
+```bash
 # Restart dev server
 # Stop with Ctrl+C
 npm start
 ```
 
 **Prevention:**
-- Run `npm run counters` after adding/removing figures
-- Run before committing changes
-- Automated in production build
+
+- Always restart the dev server after adding/removing figures
 
 ---
 
@@ -543,15 +476,19 @@ npm start
 #### Mismatched Keys
 
 **Check:**
+
 ```mdx
 // Figure definition
-<Figure figureKey="installation-screen" ... />
+
+<Figure figKey="installation-screen" ... />
 
 // Reference MUST use exact same key
-<FigureReference figureKey="installation-screen" />
+
+<FigureReference figKey="installation-screen" />
 ```
 
 **Common Mistakes:**
+
 - Typos: `installation-screen` vs `installation-scren`
 - Case differences: `myFigure` vs `myfigure`
 - Extra/missing hyphens
@@ -561,223 +498,27 @@ npm start
 **Problem:** Referencing figure from different file
 
 **Solution:** Cross-document references not supported
+
 - Move figure to same document
 - Or describe verbally: "See Figure 3 in Chapter 2"
-
-#### Counter Cache Out of Date
-
-**Solution:**
-```bash
-npm run counters
-```
-
----
 
 ### Equation Numbering Issues
 
 **Problem:** Equation numbers reset or duplicate
 
 **Same Solutions as Figure Numbers:**
-1. Run counters script: `npm run counters`
+
 2. Check for duplicate `equationKey` values
 3. Restart dev server
 
 **Verify Unique Keys:**
+
 - Each equation needs unique `equationKey` within document
 - Use descriptive names: `flow-rate-formula` not `equation1`
 
 ---
 
-## Git and Version Control
-
-### Merge Conflicts
-
-**Problem:** Git reports conflicts after pull
-
-**Error:**
-```
-CONFLICT (content): Merge conflict in docs/lifesim/v1.0/03-chapter.mdx
-```
-
-**Solution Steps:**
-
-1. **Open Conflicted File:**
-   - VS Code highlights conflicts
-   - Look for conflict markers:
-   ```
-   <<<<<<< HEAD
-   Your changes
-   =======
-   Incoming changes
-   >>>>>>> branch-name
-   ```
-
-2. **Resolve Conflict:**
-   - Decide which version to keep
-   - Or combine both versions
-   - Remove conflict markers (`<<<<<<<`, `=======`, `>>>>>>>`)
-
-3. **Mark as Resolved:**
-   ```bash
-   git add docs/lifesim/v1.0/03-chapter.mdx
-   ```
-
-4. **Complete Merge:**
-   ```bash
-   git commit -m "Resolved merge conflict in chapter 3"
-   ```
-
-**Prevention:**
-- Pull frequently: `git pull` before starting work
-- Commit often to avoid large conflicts
-- Communicate with team about who's editing what
-
----
-
-### Uncommitted Changes
-
-**Problem:** Can't switch branches or pull due to uncommitted changes
-
-**Error:**
-```
-error: Your local changes to the following files would be overwritten
-```
-
-**Solutions:**
-
-**Option 1 - Commit Changes:**
-```bash
-git add .
-git commit -m "Description of changes"
-git pull
-```
-
-**Option 2 - Stash Changes (Save for Later):**
-```bash
-# Save changes temporarily
-git stash
-
-# Pull updates
-git pull
-
-# Restore your changes
-git stash pop
-```
-
-**Option 3 - Discard Changes:**
-```bash
-# WARNING: This permanently deletes your changes
-git reset --hard
-git pull
-```
-
----
-
-### Push Rejected
-
-**Problem:** Can't push commits to remote
-
-**Error:**
-```
-! [rejected] main -> main (fetch first)
-```
-
-**Cause:** Remote has commits you don't have locally
-
-**Solution:**
-```bash
-# Pull remote changes
-git pull origin main
-
-# Resolve any conflicts (see above)
-
-# Push again
-git push origin main
-```
-
----
-
-### Accidentally Committed Wrong Files
-
-**Problem:** Committed build files or sensitive data
-
-**Solution (Before Pushing):**
-```bash
-# Undo last commit, keep changes
-git reset --soft HEAD~1
-
-# Or undo last commit, discard changes
-git reset --hard HEAD~1
-```
-
-**Solution (After Pushing):**
-```bash
-# Remove file from tracking
-git rm --cached path/to/file
-
-# Commit the removal
-git commit -m "Remove build files from tracking"
-
-# Update .gitignore to prevent future commits
-echo "build/" >> .gitignore
-git add .gitignore
-git commit -m "Update .gitignore"
-
-# Push changes
-git push
-```
-
----
-
 ## Common Questions
-
-### How do I create a new software manual?
-
-**Step-by-Step:**
-
-1. **Create Folder Structure:**
-   ```
-   docs/
-   └── my-software/
-       ├── v1.0/
-       │   ├── 01-introduction.mdx
-       │   ├── 02-getting-started.mdx
-       │   └── 03-user-guide.mdx
-       └── category.json
-   ```
-
-2. **Create category.json:**
-   ```json
-   {
-     "label": "My Software",
-     "position": 3,
-     "collapsible": true,
-     "collapsed": false
-   }
-   ```
-
-3. **Create First Document:**
-   ```mdx
-   ---
-   title: Introduction
-   ---
-
-   # My Software
-
-   Welcome to My Software documentation...
-   ```
-
-4. **Run Sidebar Script:**
-   ```bash
-   npm run sidebars
-   ```
-
-5. **Verify:**
-   - Start dev server: `npm start`
-   - Check sidebar for new manual
-   - Browse pages
-
----
 
 ### How do I update existing documentation?
 
@@ -796,6 +537,7 @@ git push
 **For Major Updates (New Version):**
 
 1. Create new version folder:
+
    ```bash
    cp -r docs/my-software/v1.0 docs/my-software/v1.1
    ```
@@ -803,6 +545,7 @@ git push
 2. Update files in new version (`v1.1/`)
 
 3. Run version script:
+
    ```bash
    npm run versions
    ```
@@ -816,18 +559,21 @@ See [Versioning System](./02-versioning-system.mdx) for details.
 ### When should I create a new version?
 
 **Create New Version When:**
+
 - Software has new major/minor release
 - Significant functionality changes
 - Documentation structure changes substantially
 - Need to maintain old docs while updating
 
 **Update Existing Version When:**
+
 - Fixing typos or errors
 - Adding clarifications
 - Updating screenshots for same version
 - Minor content additions
 
 **Version Numbering:**
+
 - Major changes: `v1.0` → `v2.0`
 - Minor updates: `v1.0` → `v1.1`
 - Match software version numbers when possible
@@ -839,18 +585,21 @@ See [Versioning System](./02-versioning-system.mdx) for details.
 **Short Answer:** Not recommended for contributors
 
 **Why:**
+
 - Requires React/JavaScript expertise
 - Needs component file creation in `src/components/`
 - Must integrate with build system
 - Can break builds if not done correctly
 
 **Alternative:**
+
 - Use existing components (31 available)
 - Request new component from maintainers
 - Use HTML/CSS for simple customization
 
 **If You Must:**
-1. See [Appendix A: Source Code Structure](./appendix-a-source-code-structure.mdx)
+
+1. See [Appendix A: Source Code Structure](./11-appendix-a-source-code-structure.mdx)
 2. Test thoroughly
 3. Document component for others
 4. Submit for review before committing
@@ -860,59 +609,26 @@ See [Versioning System](./02-versioning-system.mdx) for details.
 ### How do I add custom CSS?
 
 **For Inline Styling:**
+
 ```mdx
-<div style={{padding: '20px', backgroundColor: '#f0f0f0'}}>
-  Custom styled content
-</div>
+<div style={{ padding: '20px', backgroundColor: '#f0f0f0' }}>Custom styled content</div>
 ```
 
 **For Reusable Classes:**
 Not recommended for contributors - requires modifying build system
 
 **Best Practice:**
+
 - Use existing component props for styling
 - Most components have className props for customization
 - Use Tailwind utility classes when available
 
 ---
 
-### Why are my Markdown tables not showing?
-
-**Common Issue:** Pipes need proper alignment
-
-**Incorrect:**
-```markdown
-|Header 1|Header 2|Header 3|
-|---|---|---|
-|Cell 1|Cell 2|Cell 3|
-```
-
-**Correct:** Add spaces around pipes
-```markdown
-| Header 1 | Header 2 | Header 3 |
-|----------|----------|----------|
-| Cell 1   | Cell 2   | Cell 3   |
-```
-
-**Alternative:** Use TableVertical component for complex tables:
-```mdx
-import TableVertical from '@site/src/components/TableVertical';
-
-<TableVertical
-  tableKey="my-table"
-  caption="Table caption"
-  header={['Header 1', 'Header 2', 'Header 3']}
-  data={[
-    ['Cell 1', 'Cell 2', 'Cell 3']
-  ]}
-/>
-```
-
----
-
 ### How do I embed a video?
 
 **Using Video Component:**
+
 ```mdx
 import Video from '@site/src/components/Video';
 
@@ -926,6 +642,7 @@ import Video from '@site/src/components/Video';
 ```
 
 **Using HTML:**
+
 ```mdx
 <video controls width="100%">
   <source src="/videos/tutorial.mp4" type="video/mp4" />
@@ -934,6 +651,7 @@ import Video from '@site/src/components/Video';
 ```
 
 **For YouTube:**
+
 ```mdx
 <iframe
   width="560"
@@ -941,8 +659,8 @@ import Video from '@site/src/components/Video';
   src="https://www.youtube.com/embed/VIDEO_ID"
   frameborder="0"
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-  allowfullscreen>
-</iframe>
+  allowfullscreen
+></iframe>
 ```
 
 ---
@@ -952,6 +670,7 @@ import Video from '@site/src/components/Video';
 **For Files in static/ folder:**
 
 1. Place file in `static/downloads/` or similar:
+
    ```
    static/
    └── downloads/
@@ -964,13 +683,11 @@ import Video from '@site/src/components/Video';
    ```
 
 **Using Button Component:**
+
 ```mdx
 import Button from '@site/src/components/Button';
 
-<Button
-  href="/downloads/user-manual.pdf"
-  download="user-manual.pdf"
->
+<Button href="/downloads/user-manual.pdf" download="user-manual.pdf">
   Download User Manual (PDF)
 </Button>
 ```
@@ -987,13 +704,14 @@ import Button from '@site/src/components/Button';
 
 2. **Algolia Not Configured:**
    - Search requires Algolia setup (admin-level)
-   - See [Appendix B: Search Configuration](./appendix-b-search-configuration.mdx)
+   - See [Appendix B: Search Configuration](./12-appendix-b-search-configuration.mdx)
 
 3. **Recently Added Content:**
    - Search index updates periodically
    - New content may take 24 hours to appear in search
 
 **For Contributors:**
+
 - Use browser find (Ctrl+F / Cmd+F) in development
 - Use table of contents to navigate
 - Search works in deployed production site
@@ -1003,6 +721,7 @@ import Button from '@site/src/components/Button';
 ### How do I handle special characters?
 
 **In Markdown:**
+
 ```markdown
 Use backslash to escape: \* \[ \] \{ \}
 
@@ -1010,18 +729,15 @@ For literal HTML: &lt; &gt; &amp;
 ```
 
 **In Component Props:**
+
 ```mdx
-<Figure
-  caption="Energy (E = mc²) equation"
-  alt="Screenshot showing &quot;Settings&quot; menu"
-/>
+<Figure caption="Energy (E = mc²) equation" alt='Screenshot showing "Settings" menu' />
 ```
 
 **In LaTeX Equations:**
+
 ```mdx
-<Equation
-  equation="\text{Special characters: } \$ \% \# \& \{ \}"
-/>
+<Equation equation="\text{Special characters: } \$ \% \# \& \{ \}" />
 ```
 
 ---
@@ -1031,9 +747,12 @@ For literal HTML: &lt; &gt; &amp;
 **Yes, but with considerations:**
 
 **Supported:**
+
 ```mdx
 <div className="custom-class">
-  <p>Paragraph with <strong>bold text</strong></p>
+  <p>
+    Paragraph with <strong>bold text</strong>
+  </p>
   <ul>
     <li>List item</li>
   </ul>
@@ -1041,12 +760,14 @@ For literal HTML: &lt; &gt; &amp;
 ```
 
 **Key Points:**
+
 - Use `className` not `class`
 - Use `htmlFor` not `for`
 - Use camelCase props: `onClick`, `onChange`
 - Self-close tags: `<br />`, `<img />`
 
 **Best Practice:**
+
 - Prefer Markdown syntax when possible
 - Use HTML for complex layouts
 - Use React components for interactive elements
@@ -1054,35 +775,6 @@ For literal HTML: &lt; &gt; &amp;
 ---
 
 ## Performance Issues
-
-### Build Takes Too Long
-
-**Problem:** `npm run build` takes several minutes
-
-**Expected Behavior:**
-- Large documentation sites take 2-5 minutes to build
-- This is normal for production builds
-
-**If Unusually Slow:**
-
-1. **Check System Resources:**
-   - Close unnecessary applications
-   - Check RAM usage (build needs ~4GB)
-   - Check CPU usage
-
-2. **Clear Caches:**
-   ```bash
-   rm -rf .docusaurus node_modules
-   npm install
-   npm run build
-   ```
-
-3. **Check for Large Files:**
-   - Large images (>2MB) slow builds
-   - Compress images before adding
-   - Use appropriate formats (PNG for screenshots, JPG for photos)
-
----
 
 ### Dev Server Sluggish
 
@@ -1095,12 +787,14 @@ For literal HTML: &lt; &gt; &amp;
    - Disable browser extensions
 
 2. **Restart Dev Server:**
+
    ```bash
    # Stop (Ctrl+C)
    npm start
    ```
 
 3. **Clear Cache:**
+
    ```bash
    rm -rf .docusaurus
    npm start
@@ -1117,11 +811,13 @@ For literal HTML: &lt; &gt; &amp;
 ### Where to Report Bugs
 
 **For Documentation Content Issues:**
+
 - Open issue on GitHub repository
 - Include page URL or file path
 - Describe the problem clearly
 
 **For Build/Technical Issues:**
+
 - Check this troubleshooting guide first
 - Search existing GitHub issues
 - Create new issue with:
@@ -1133,20 +829,19 @@ For literal HTML: &lt; &gt; &amp;
 ### Who to Contact
 
 **For RMC Software Documentation:**
-- Project maintainers: [List contact info]
-- Team lead: [Name/email]
-- IT support: [For access/permission issues]
+
+- Site administrator: [Adam Gohs](mailto:adam.c.gohs@usace.army.mil)
 
 ### Additional Resources
 
-| Resource | Link |
-|----------|------|
-| **Docusaurus Docs** | [docusaurus.io/docs](https://docusaurus.io/docs) |
-| **MDX Docs** | [mdxjs.com/docs](https://mdxjs.com/docs/) |
-| **React Docs** | [react.dev](https://react.dev/) |
-| **Markdown Guide** | [markdownguide.org](https://www.markdownguide.org/) |
-| **Git Docs** | [git-scm.com/doc](https://git-scm.com/doc) |
-| **Node.js Docs** | [nodejs.org/docs](https://nodejs.org/docs/) |
+| Resource            | Link                                                |
+| ------------------- | --------------------------------------------------- |
+| **Docusaurus Docs** | [docusaurus.io/docs](https://docusaurus.io/docs)    |
+| **MDX Docs**        | [mdxjs.com/docs](https://mdxjs.com/docs/)           |
+| **React Docs**      | [react.dev](https://react.dev/)                     |
+| **Markdown Guide**  | [markdownguide.org](https://www.markdownguide.org/) |
+| **Git Docs**        | [git-scm.com/doc](https://git-scm.com/doc)          |
+| **Node.js Docs**    | [nodejs.org/docs](https://nodejs.org/docs/)         |
 
 ---
 
@@ -1174,6 +869,6 @@ For literal HTML: &lt; &gt; &amp;
 **Still Having Issues?**
 
 1. Review the [Getting Started Guide](./01-getting-started.mdx)
-2. Check the [Quick Reference](./08-quick-reference.mdx)
+2. Check the [Quick Reference](./09-quick-reference.mdx)
 3. Search the [GitHub Issues](https://github.com/USACE-RMC/RMC-Software-Documentation/issues)
 4. Contact project maintainers with detailed error information

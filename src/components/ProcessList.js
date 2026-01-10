@@ -43,7 +43,6 @@ export default function ProcessList({
   childBaseIndentPx = 15,
   childIndentPx,
   childMaxIndentPx,
-  childStartAt = 1,
 
   // Freeform layout
   freeBlockClass = 'prose max-w-none',
@@ -100,7 +99,7 @@ export default function ProcessList({
             width,
             display: 'grid',
             gridTemplateColumns: `${bubbleSizePx}px ${bubbleGapPx}px minmax(0,1fr)`,
-            alignItems: 'center',
+            alignItems: 'start',
             whiteSpace: nowrap ? 'nowrap' : 'normal',
             overflowX: nowrap ? 'auto' : 'visible',
             minHeight: Math.max(bubbleSizePx + 8, 36),
@@ -164,7 +163,7 @@ export default function ProcessList({
                 <ChildGroup
                   parentIndex={i}
                   items={node.childList}
-                  startAt={childStartAt}
+                  level={1}
                   containerW={containerW}
                   baseIndentPx={ml + childBaseIndentPx}
                   indentPx={childIndent}
@@ -204,7 +203,7 @@ export default function ProcessList({
 function ChildGroup({
   parentIndex,
   items,
-  startAt,
+  level = 1,
   containerW,
   baseIndentPx,
   indentPx,
@@ -233,7 +232,7 @@ function ChildGroup({
   return (
     <ol className="m-0 list-none p-0" style={{ listStyleType: 'none' }} role="list">
       {items.map((child, j) => {
-        const label = toAlpha(startAt + j).toLowerCase();
+        const label = formatChildLabel(level, j);
         const mlStagger = Math.min(j * indentPx, computedChildMaxIndent);
         const ml = baseIndentPx + mlStagger;
         const width = `calc(100% - ${ml}px)`;
@@ -254,7 +253,7 @@ function ChildGroup({
                 width,
                 display: 'grid',
                 gridTemplateColumns: `${bubbleSizePx}px ${bubbleGapPx}px minmax(0,1fr)`,
-                alignItems: 'center',
+                alignItems: 'start',
                 whiteSpace: nowrap ? 'nowrap' : 'normal',
                 overflowX: nowrap ? 'auto' : 'visible',
                 minHeight: Math.max(bubbleSizePx + 8, 36),
@@ -309,7 +308,7 @@ function ChildGroup({
               <ChildGroup
                 parentIndex={`${parentIndex}-${j}`}
                 items={child.childList}
-                startAt={startAt}
+                level={level + 1}
                 containerW={containerW}
                 baseIndentPx={ml + 24}
                 indentPx={indentPx}
@@ -439,4 +438,35 @@ function toAlpha(n) {
     x = Math.floor(x / 26);
   }
   return s || 'A';
+}
+function toRoman(num) {
+  const r = [
+    [1000, 'M'],
+    [900, 'CM'],
+    [500, 'D'],
+    [400, 'CD'],
+    [100, 'C'],
+    [90, 'XC'],
+    [50, 'L'],
+    [40, 'XL'],
+    [10, 'X'],
+    [9, 'IX'],
+    [5, 'V'],
+    [4, 'IV'],
+    [1, 'I'],
+  ];
+  let res = '',
+    n = Math.max(1, Math.min(3999, num | 0));
+  for (const [v, s] of r)
+    while (n >= v) {
+      res += s;
+      n -= v;
+    }
+  return res;
+}
+function formatChildLabel(level, index) {
+  const cycle = (level - 1) % 3;
+  if (cycle === 0) return toAlpha(index + 1).toLowerCase();
+  if (cycle === 1) return toRoman(index + 1).toLowerCase();
+  return String(index + 1);
 }
