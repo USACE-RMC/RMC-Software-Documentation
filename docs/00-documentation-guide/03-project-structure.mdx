@@ -71,7 +71,16 @@ docs/
 │   ├── rmc-rfa/
 │   └── rmc-totalrisk/
 ├── toolbox-technical-manuals/      # Excel toolbox manuals
-│   ├── internal-erosion-suite/
+│   ├── internal-erosion-suite/     # Suite grouping
+│   │   ├── backward-erosion-piping-initiation/
+│   │   │   └── v1.0/              # Version-specific content
+│   │   │       ├── 00-document-info.mdx
+│   │   │       ├── 00-version-history.mdx
+│   │   │       ├── 01-preface.mdx
+│   │   │       └── ...
+│   │   ├── breach/
+│   │   ├── concentrated-leak-erosion-cracking/
+│   │   └── ...
 │   ├── overtopping-suite/
 │   ├── risk-calculations-suite/
 │   └── seismic-hazard-suite/
@@ -83,11 +92,29 @@ docs/
 
 **Folder Hierarchy:**
 
-1. **Hub** - Application type (desktop-applications, toolbox-technical-manuals, web-applications)
-2. **Sub-Hub** - Individual software/tool (lifesim, rmc-rfa, internal-erosion-suite)
-3. **Document** - Document title (users-guide, validation-studies, backward-erosion-piping-progression)
-4. **Version** - Version folder (v1.0, v1.1, v2.0)
-5. **Chapters** - Individual `.mdx` files (00-document-info.mdx, 01-preface.mdx, etc.)
+The folder structure differs depending on the application type:
+
+**For Desktop and Web Applications:**
+
+1. **Application Type** - desktop-applications, web-applications
+2. **Software Name** - lifesim, rmc-rfa, dst, lst
+3. **Document Type** - users-guide, validation-studies, applications-guide
+4. **Version** - v1.0, v1.1, v2.0
+5. **Chapter Files** - 00-document-info.mdx, 01-preface.mdx, etc.
+
+**For Toolbox Technical Manuals:**
+
+1. **Application Type** - toolbox-technical-manuals
+2. **Suite Name** - internal-erosion-suite, overtopping-suite, risk-calculations-suite
+3. **Tool/Document Name** - backward-erosion-piping-initiation, breach, concentrated-leak-erosion-cracking
+4. **Version** - v1.0, v1.1, v2.0
+5. **Chapter Files** - 00-document-info.mdx, 01-preface.mdx, etc.
+
+:::note Structural Difference
+
+Toolbox technical manuals have an additional organizational level because they document **suites** of related tools (e.g., internal-erosion-suite, overtopping suite, risk calculations suite), whereas desktop and web applications document individual standalone software products.
+
+:::
 
 **Naming Convention for Chapter Files:**
 
@@ -103,6 +130,28 @@ Every document must include:
 
 1. **`00-document-info.mdx`** - First chapter, contains metadata using `<DocumentMetadata />` component
 2. **`00-version-history.mdx`** - Second chapter, version history using `<TableVersionHistory />` component
+3. **`01-preface.mdx`** - Third chapter (first chapter of main report)
+
+:::warning CRITICAL: First Chapter Must Be Preface
+
+**File name:** `01-preface.mdx`
+**Title in file:** `Preface`
+
+The first chapter of the main report **must always** be named `01-preface.mdx` with the title "Preface" - even if your source document's first chapter is titled "Introduction," "Overview," or something else.
+
+**Why this requirement exists:**
+
+- **Consistency:** Ensures all documents follow the same structure
+- **Automation:** The automatic sidebar generation script expects this naming convention
+- **Navigation:** Users can reliably find introductory content in the same place across all documents
+
+**Converting from source documents:**
+If your source document has "Introduction" as the first chapter, rename it to "Preface" when creating the MDX file. The content can remain the same - only the title changes.
+
+**Exception process:**
+If your specific document absolutely requires a different first chapter title (must be a compelling, case-specific reason), contact a site administrator **before** creating the document. A custom sidebar configuration may be created, but this requires administrator approval and coordination.
+
+:::
 
 **Standard Document Structure:**
 
@@ -139,6 +188,7 @@ If you want to add a new chapter between existing chapters 03 and 04:
 **When to Create a New Version Folder:**
 
 Create a new version folder (e.g., `v1.1`) when:
+
 - Making significant changes to existing documentation
 - Releasing updated software with new features
 - Correcting substantial errors or outdated information
@@ -180,26 +230,69 @@ static/
         └── edit-env-variables.png
 ```
 
-**Best Practices:**
+**Figure Naming Standards:**
 
-- **File naming:** Use descriptive names (e.g., `user-interface-main-window.png` not `fig1.png`)
+This project uses **two approved naming conventions**. Choose the standard that fits your workflow:
+
+**Standard A: Sequential Generic** (Recommended for DOCX conversions)
+
+- **figureKey:** `figure-1`, `figure-2`, `figure-3`, etc.
+- **Filename:** `figure1.png`, `figure2.png`, `figure3.png`, etc.
+- **When to use:** Documents converted from Word using the DOCX converter
+- **Alignment:** figureKey and filename match numerically
+- **Handling insertions:** Use letter suffixes (e.g., insert `figure-24a.png` with `figureKey="figure-24a"` between figures 24 and 25)
+
+**Example:**
+
+```jsx
+<Figure
+  figureKey="figure-42"
+  src="/figures/desktop-applications/lifesim/users-guide/v1.0/figure42.png"
+  alt="Study Menu - Destination Data"
+  caption="Study Menu - Destination Data"
+/>
+```
+
+**Standard B: Descriptive Semantic** (Optional for hand-authored documentation)
+
+- **figureKey:** `fig-menu-screenshot`, `fig-workflow-diagram`, `fig-settings-dialog`, etc.
+- **Filename:** `menu-screenshot.png`, `workflow-diagram.png`, `settings-dialog.png`, etc.
+- **When to use:** Hand-authored documentation where semantic names improve maintainability
+- **Alignment:** figureKey and filename match conceptually (filename is a slug of the figureKey)
+- **Handling insertions:** Add new descriptive name; no renumbering needed
+
+**Example:**
+
+```jsx
+<Figure
+  figureKey="fig-workflow-diagram"
+  src="/figures/desktop-applications/lifesim/users-guide/v1.0/workflow-diagram.png"
+  alt="LifeSim workflow diagram"
+  caption="Figure shows the overall workflow for LifeSim analysis"
+/>
+```
+
+:::warning Consistency Required
+
+**DO NOT mix naming conventions within a single document.** Pick Standard A or Standard B and use it consistently throughout the entire document.
+
+Never use arbitrary or inconsistent naming. Always follow Standard A or Standard B completely.
+
+:::
+
+**Additional Best Practices:**
+
 - **File formats:** PNG for screenshots/diagrams, JPG for photos, SVG for scalable graphics
 - **File size:** Optimize images before adding (aim for < 500KB per image)
 - **Organization:** Always place images in the folder matching your document path
 
-**Referencing Figures in MDX:**
+**How Figure Numbering Works:**
 
-```jsx
-import Figure from '@site/src/components/Figure';
+Figure display numbering (e.g., "Figure 1", "Figure 2") is **automatically generated** at build time based on the order of `<Figure>` components in your MDX files, not the file names or figureKey values. This means:
 
-<Figure
-  figureKey="fig-workflow"
-  src="/figures/desktop-applications/lifesim/users-guide/v1.0/workflow-chart.png"
-  alt="LifeSim workflow diagram"
-  caption="Figure shows the overall workflow for LifeSim analysis"
-  width="80%"
-/>
-```
+- You don't need to renumber files when adding or removing figures
+- The figure file name can be `figure42`, but the displayed number might be "Figure 38" depending on position in the document
+- File names and figKey values are for organization and reference only
 
 ---
 
@@ -251,6 +344,44 @@ Each `bib.json` file contains an array of citation objects following the [IEEE s
   }
 ]
 ```
+
+**Creating bib.json Files with AI Assistance:**
+
+Creating `bib.json` files manually can be time-consuming. AI language models can significantly speed up this process:
+
+**Recommended Workflow:**
+
+1. **Gather your references** from your source document (bibliography section, reference list, etc.)
+2. **Find an example bib.json file** from an existing document in this project to use as a template
+3. **Provide both to an AI LLM** (like Claude, ChatGPT, etc.) with a prompt such as:
+
+   > "I need to create a bib.json file for my documentation project. Here's an example bib.json file from the project showing the required format:
+   >
+   > [paste example bib.json]
+   >
+   > Here are the references from my document that need to be converted:
+   >
+   > [paste your bibliography/reference list]
+   >
+   > Please create a bib.json file following the exact format of the example, ensuring all citation keys are unique and formatted correctly."
+
+4. **Review the AI-generated output** carefully:
+   - Verify citation keys are unique and follow naming conventions
+   - Check that author names, years, and titles are accurate
+   - Ensure all required fields are present for each entry type
+   - Confirm formatting matches the IEEE style guide
+
+5. **Save the file** to the appropriate location in `static/bibliographies/`
+
+**Example bib.json locations to reference:**
+- `static/bibliographies/desktop-applications/rmc-totalrisk/users-guide/v1.0/bib.json`
+- `static/bibliographies/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/bib.json`
+
+:::tip AI Time Saver
+
+Using AI to generate `bib.json` files can reduce what might take hours of manual formatting to just minutes. However, always review the output carefully - AI can make mistakes with names, dates, or formatting.
+
+:::
 
 **Using Citations in MDX:**
 
@@ -344,6 +475,7 @@ For complete documentation, see [React Components](./07-react-components.mdx).
 **When Scripts Run:**
 
 These scripts execute automatically every time you run:
+
 ```powershell
 npm start   # Runs all scripts, then starts dev server
 npm run build   # Runs all scripts, then builds for production
@@ -352,6 +484,7 @@ npm run build   # Runs all scripts, then builds for production
 **What Contributors Need to Know:**
 
 You don't need to understand how these scripts work. Just know that they:
+
 - Automatically generate the sidebar navigation
 - Assign sequential numbers to figures, tables, and equations
 - Detect all available document versions
@@ -515,24 +648,29 @@ This folder contains third-party libraries managed by npm. Never edit files here
 
 ### "Where should I put my new document?"
 
-**Step 1:** Determine the application type (hub):
+**Step 1:** Determine the application type:
+
 - Desktop software (exe/installer) → `desktop-applications/`
 - Excel-based toolbox → `toolbox-technical-manuals/`
 - Web-based tool → `web-applications/`
 
-**Step 2:** Find or create the software folder (sub-hub):
+**Step 2:** Find or create the software folder:
+
 - Software already exists? → Use existing folder
 - New software? → Create new folder with lowercase-hyphenated name
 
 **Step 3:** Find or create the document folder:
+
 - Document type already exists? → Use existing folder
 - New document type? → Create new folder with descriptive name
 
 **Step 4:** Create or use version folder:
+
 - First version? → Create `v1.0/`
 - Updating existing? → Create next version `v1.1`, `v2.0`, etc.
 
 **Step 5:** Create your MDX files:
+
 - Start with `00-document-info.mdx` and `00-version-history.mdx`
 - Add chapters: `01-preface.mdx`, `02-chapter.mdx`, etc.
 
@@ -555,11 +693,13 @@ docs/desktop-applications/lifesim/validation-studies/v1.0/
 Create a folder path in `static/figures/` that **exactly matches** your document path.
 
 **Document path:**
+
 ```
 docs/desktop-applications/lifesim/users-guide/v1.0/
 ```
 
 **Image path:**
+
 ```
 static/figures/desktop-applications/lifesim/users-guide/v1.0/
 ```
@@ -573,11 +713,13 @@ Place all images for that document in this folder.
 Create a folder path in `static/bibliographies/` that **exactly matches** your document path, and name the file `bib.json`.
 
 **Document path:**
+
 ```
 docs/desktop-applications/lifesim/users-guide/v1.0/
 ```
 
 **Bibliography path:**
+
 ```
 static/bibliographies/desktop-applications/lifesim/users-guide/v1.0/bib.json
 ```
@@ -605,6 +747,7 @@ Yes! The sidebar is automatically generated from your folder structure. To chang
 ### What if I see a file not listed here?
 
 If you encounter files or folders not mentioned in this guide:
+
 - Check if they're in `.gitignore` (likely auto-generated)
 - Consult with site administrators before modifying
 - When in doubt, don't edit it
@@ -614,6 +757,7 @@ If you encounter files or folders not mentioned in this guide:
 Check `.gitignore` at the project root. If a file or folder is listed there, it's auto-generated and shouldn't be manually edited.
 
 Common auto-generated files:
+
 - `sidebars.js`
 - `src/reportIdMap.js`
 - `src/data/`

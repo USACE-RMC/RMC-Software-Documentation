@@ -399,7 +399,7 @@ function generateDocumentationGuideSidebar() {
     if (!files.includes(`${id}.mdx`)) return;
     items.push({
       type: 'doc',
-      id: `documentation-guide/${id}`,
+      id: `documentation-guide/${id.replace(/^\d+-/, '')}`,
       label: getLabel(id),
     });
   });
