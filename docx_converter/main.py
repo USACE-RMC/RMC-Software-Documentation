@@ -10,30 +10,60 @@ from utils.figures import extract_figure_images
 from utils.docx_processor import process_docx
 from utils.mdx_writer import write_mdx_files
 
-# ---- User configuration ----
+# ==================== USER CONFIGURATION ====================
+# Configure these variables before running the converter
 
-# Set the environment to "production" or "development"
-environment = "production"  # Change to "production" for production environment
+# ---- Environment Setting ----
+# Set to "development" for testing (outputs to temporary location)
+# Set to "production" for final conversion (outputs directly to docs/ and static/)
+environment = "development"  # ALWAYS start with "development" to test first!
 
-# Assign the file path for figures
-FIGSRC = r"figures\toolbox-technical-manuals\internal-erosion-suite\pipe-service-life\v1.0"
+# ---- Figure Path Configuration ----
+# FIGSRC: File path used in <Figure> component src attributes in the generated MDX files.
+# This path will have figure filenames appended (e.g., "/figures/path/to/figure-1.png").
+# Must use forward slashes "/" and match the final location in static/figures/.
+# Example: "figures/desktop-applications/your-software/users-guide/v1.0"
+FIGSRC = r"figures/toolbox-technical-manuals/internal-erosion-suite/pipe-service-life/v1.0"
 
-# Assign the navigation link, title, and document for the NavContainer component
-NAVLINK = r"/toolbox-technical-manuals/internal-erosion-suite/pipe-service-life"  # Use forward slashes "/" for the link
+# ---- Navigation Component Configuration ----
+# These variables configure the NavContainer component shown at the top of each MDX page.
+# NAVLINK: The URL destination when users click the back arrow (e.g., "../" or "/path/to/parent")
+# NAVTITLE: The display text shown in the navigation link (e.g., "User's Guide")
+# NAVDOC: Document identifier used to fetch available versions from versionList.json
+#         (e.g., "desktop-applications/your-software/users-guide")
+NAVLINK = r"/toolbox-technical-manuals/internal-erosion-suite/pipe-service-life"
 NAVTITLE = "Internal Erosion Suite"
-NAVDOC = r"toolbox-technical-manuals/internal-erosion-suite/pipe-service-life"  # Use forward slashes "/" for the document path
+NAVDOC = r"toolbox-technical-manuals/internal-erosion-suite/pipe-service-life"
 
-# Define paths based on the environment
+# ---- File Path Configuration ----
+# Set these paths for both development and production environments.
+
 if environment == "production":
+    # PRODUCTION ENVIRONMENT - outputs directly to final locations
+    # DOCX_PATH: Full path to the source Word document
     DOCX_PATH = r"C:\Technical Documents\RMC-CPD-2023-11 - RMC Pipe Service Life Toolbox.docx"
+
+    # BIB_PATH: Full path to the bib.json bibliography file
     BIB_PATH = r"C:\Git\RMC-Software-Documentation\static\bibliographies\toolbox-technical-manuals\internal-erosion-suite\pipe-service-life\v1.0\bib.json"
+
+    # FIGURES_DIR: Directory where extracted figures will be saved
     FIGURES_DIR = r"C:\Git\RMC-Software-Documentation\static\figures\toolbox-technical-manuals\internal-erosion-suite\pipe-service-life\v1.0"
+
+    # MDX_DIR: Directory where generated MDX files will be saved
     MDX_DIR = r"C:\Git\RMC-Software-Documentation\docs\toolbox-technical-manuals\internal-erosion-suite\pipe-service-life\v1.0"
+
 else:
-    # Development paths
+    # DEVELOPMENT ENVIRONMENT - outputs to temporary location for testing
+    # DOCX_PATH: Full path to the source Word document (typically same as production)
     DOCX_PATH = r"C:\Technical Documents\RMC-CPD-2023-11 - RMC Pipe Service Life Toolbox.docx"
+
+    # BIB_PATH: Full path to the bib.json bibliography file (typically same as production)
     BIB_PATH = r"C:\Git\RMC-Software-Documentation\static\bibliographies\toolbox-technical-manuals\internal-erosion-suite\pipe-service-life\v1.0\bib.json"
+
+    # FIGURES_DIR: Temporary directory for testing extracted figures
     FIGURES_DIR = r"C:\Technical Documents\MDX Conversions\Pipe Service Life\Figures"
+
+    # MDX_DIR: Temporary directory for testing generated MDX files
     MDX_DIR = r"C:\Technical Documents\MDX Conversions\Pipe Service Life\MDX"
 
 # ---- Constants ----

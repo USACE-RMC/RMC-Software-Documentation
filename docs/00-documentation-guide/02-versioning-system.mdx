@@ -2,6 +2,8 @@
 title: Versioning System
 ---
 
+import DocTabs from '@site/src/components/DocTabs';
+
 # Versioning System
 
 The RMC Software Documentation site uses a structured versioning system to maintain clarity and transparency as documentation evolves. This system helps both contributors and readers track significant updates to documentation over time.
@@ -150,29 +152,85 @@ docs/
         └── 03-usage.mdx   (updated content)
 ```
 
-### Step 4: Update Images/Assets
+### Step 4: Copy Images/Assets to New Version Folder
 
-If adding new images for the new version:
+**Important:** ALL images used in the new version must be placed in the new version's folder, even if they haven't changed from the previous version.
 
-1. Create version-specific folder:
+1. **Create new version-specific folder:**
 
    ```
    static/
    └── figures/
        └── software-name/
            ├── v1.0/      ← Old version images
-           └── v1.1/      ← New version images
+           └── v1.1/      ← New version images (copy all from v1.0)
    ```
 
-2. Update image paths in MDX files:
+2. **Copy all images from the previous version:**
+
+   ```powershell
+   # Windows PowerShell:
+   Copy-Item -Recurse static/figures/software-name/v1.0 static/figures/software-name/v1.1
+
+   # Or using Command Line:
+   cp -r static/figures/software-name/v1.0 static/figures/software-name/v1.1
+   ```
+
+3. **Add any new images to the new version folder**
+
+4. **Remove any images no longer used in the new version**
+
+5. **Update image paths in MDX files:**
+
    ```mdx
    <Figure
-     src="/figures/software-name/v1.1/new-screenshot.png"
+     src="/figures/software-name/v1.1/screenshot.png"
      ...
    />
    ```
 
-### Step 5: Restart Development Server
+   **Note:** Change the version number in ALL image paths, even for unchanged images.
+
+### Step 5: Copy and Update Bibliography
+
+If your documentation uses citations and a bibliography:
+
+1. **Create new version-specific folder:**
+
+   ```
+   static/
+   └── bibliographies/
+       └── software-name/
+           ├── v1.0/
+           │   └── bib.json
+           └── v1.1/
+               └── bib.json
+   ```
+
+2. **Copy the bibliography from the previous version:**
+
+   ```powershell
+   # Windows PowerShell:
+   Copy-Item -Recurse static/bibliographies/software-name/v1.0 static/bibliographies/software-name/v1.1
+
+   # Or using Command Line:
+   cp -r static/bibliographies/software-name/v1.0 static/bibliographies/software-name/v1.1
+   ```
+
+3. **Update `bib.json` in the new version folder:**
+   - If references haven't changed, no edits are needed
+   - If references were added, add the new entries to `bib.json`
+   - If references were removed, delete the entries from `bib.json`
+
+4. **Update bibliography path in MDX files:**
+
+   ```mdx
+   <Bibliography bibFile="/bibliographies/software-name/v1.1/bib.json" />
+   ```
+
+   **Note:** Change the version number in the bibliography path.
+
+### Step 6: Restart Development Server and Verify New Version
 
 After creating a new version folder, restart the development server to trigger automatic version detection:
 
@@ -195,37 +253,69 @@ npm start
 All necessary scripts run automatically during `npm start` or `npm run build`. You never need to run scripts manually.
 :::
 
-### Step 6: Verify New Version
+**Once the server is running, verify the new version:**
 
-1. **Start Development Server:**
-
-   ```bash
-   npm start
-   ```
-
-2. **Check Version Selector:**
+1. **Check Version Selector:**
    - Look for dropdown in top navigation
    - Verify new version appears in list
    - Click to switch between versions
 
-3. **Test Content:**
+2. **Test Content:**
    - Browse new version pages
    - Verify images load correctly
    - Check all links work
    - Test cross-references
+   - Verify bibliography displays correctly (if applicable)
 
 ### Step 7: Commit Changes
 
-```bash
-# Stage all changes
+<DocTabs
+  items={[
+    {
+      label: 'Using GitHub Desktop',
+      value: 'github-desktop',
+      child: (
+        <>
+          <p><strong>✅ Stage and Commit Changes</strong></p>
+          <ol>
+            <li>Open <strong>GitHub Desktop</strong></li>
+            <li>You should see all changed files listed in the left sidebar under "Changes"</li>
+            <li>Review the changes in the diff viewer on the right</li>
+            <li>Enter a commit message in the <strong>Summary</strong> field (e.g., "Add v1.1 documentation with updated usage guide")</li>
+            <li>Optionally add a more detailed <strong>Description</strong></li>
+            <li>Click <strong>Commit to main</strong> (or your current branch)</li>
+          </ol>
+          <p><strong>✅ Push Changes to Remote</strong></p>
+          <ol>
+            <li>After committing, click <strong>Push origin</strong> in the top toolbar</li>
+            <li>Your changes will be uploaded to the GitHub repository</li>
+          </ol>
+        </>
+      ),
+    },
+    {
+      label: 'Using Git (Command Line)',
+      value: 'git',
+      child: (
+        <>
+          <p><strong>✅ Stage, Commit, and Push Changes</strong></p>
+          <pre><code className="language-bash">{`# Stage all changes
 git add .
 
 # Commit with descriptive message
+
 git commit -m "Add v1.1 documentation with updated usage guide"
 
 # Push to remote
-git push origin main
-```
+
+git push origin main`}</code></pre>
+
+</>
+),
+},
+]}
+defaultValue="github-desktop"
+/>
 
 ---
 
@@ -283,18 +373,24 @@ The version selector appears in the top navigation bar, allowing users to switch
 
 All documentation **must** include a version history table at the beginning of the document. This table tracks all versions and changes over time.
 
+:::info **Important**
+List versions from **newest to oldest** (most recent version first).
+:::
+
 ```mdx
 import TableVersionHistory from '@site/src/components/TableVersionHistory';
 
 <TableVersionHistory
-  versionHistoryKey="lifesim-history"
-  header={['Version', 'Date', 'Description']}
-  data={[
-    ['1.1', '2024-03-15', 'Updated usage guide with new import features'],
-    ['1.0', '2024-01-10', 'Initial release'],
-  ]}
+  versions={['1.2', '1.1', '1.0']}
+  dates={['January 2025', 'March 2024', 'January 2024']}
+  descriptions={['Added new analysis features and updated documentation', 'Updated installation instructions and fixed bugs', 'Initial release']}
+  modifiedBy={['John Doe', 'Jane Smith', '-']}
+  reviewedBy={['Jane Smith', 'John Doe', 'John Doe']}
+  approvedBy={['Project Lead', '-', 'Project Lead']}
 />
 ```
+
+For detailed information about available props and advanced usage, see the [TableVersionHistory component reference](./07-react-components.mdx#tableversionhistory).
 
 ---
 
@@ -352,4 +448,4 @@ npm start
 - Old versions remain accessible to users
 - Match software versions when documenting software releases
 
-For more details on the build process and automation scripts, see [Build Process Overview](./06-build-process-overview.mdx).
+For more details on the build process and automation scripts, see [Appendix B: Build Process Overview](./11-appendix-b-build-process-overview.mdx).

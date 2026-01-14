@@ -366,13 +366,12 @@ function generateDocumentationGuideSidebar() {
     '03-project-structure',
     '04-creating-new-document-walkthrough',
     '05-docx-converter',
-    '06-build-process-overview',
-    '07-creating-editing-pages',
-    '08-react-components',
-    '09-quick-reference',
-    '10-troubleshooting-faq',
+    '06-creating-editing-pages',
+    '07-react-components',
+    '08-quick-reference',
+    '09-troubleshooting-faq',
   ];
-  const appendixIds = ['11-appendix-a-source-code-structure', '12-appendix-b-search-configuration'];
+  const appendixIds = ['10-appendix-a-source-code-structure', '11-appendix-b-build-process-overview', '12-appendix-c-search-configuration'];
 
   const files = fs
     .readdirSync(guideDir)
