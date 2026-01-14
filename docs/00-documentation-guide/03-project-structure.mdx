@@ -28,18 +28,18 @@ RMC-SOFTWARE-DOCUMENTATION/
 ├── src/
 │   ├── components/                 📖 REFERENCE ONLY - React components to use
 │   ├── css/                        📖 REFERENCE ONLY - Styling
-│   ├── pages/                      📖 REFERENCE ONLY - Landing pages
+│   ├── pages/                      ⛔ DON'T TOUCH - Landing pages
 │   ├── data/                       ⛔ DON'T TOUCH - Auto-generated
 │   └── reportIdMap.js              ⛔ DON'T TOUCH - Auto-generated
-├── scripts/                        📖 REFERENCE ONLY - Build automation
+├── scripts/                        ⛔ DON'T TOUCH - Build automation
 ├── docx_converter/                 📖 REFERENCE ONLY - Conversion utility
 ├── .docusaurus/                    ⛔ DON'T TOUCH - Build cache
 ├── build/                          ⛔ DON'T TOUCH - Production build
 ├── node_modules/                   ⛔ DON'T TOUCH - Dependencies
-├── docusaurus.config.js            📖 REFERENCE ONLY - Site configuration
-├── package.json                    📖 REFERENCE ONLY - Project dependencies
+├── docusaurus.config.js            ⛔ DON'T TOUCH - Site configuration
+├── package.json                    ⛔ DON'T TOUCH - Project dependencies
 ├── sidebars.js                     ⛔ DON'T TOUCH - Auto-generated sidebar
-└── [other config files]            📖 REFERENCE ONLY - Project setup
+└── [other config files]            ⛔ DON'T TOUCH - Project setup
 ```
 
 ---
@@ -134,7 +134,7 @@ Every document must include:
 
 :::warning CRITICAL: First Chapter Must Be Preface
 
-**File name:** `01-preface.mdx`
+**File name:** `01-preface.mdx`  
 **Title in file:** `Preface`
 
 The first chapter of the main report **must always** be named `01-preface.mdx` with the title "Preface" - even if your source document's first chapter is titled "Introduction," "Overview," or something else.
@@ -149,7 +149,7 @@ The first chapter of the main report **must always** be named `01-preface.mdx` w
 If your source document has "Introduction" as the first chapter, rename it to "Preface" when creating the MDX file. The content can remain the same - only the title changes.
 
 **Exception process:**
-If your specific document absolutely requires a different first chapter title (must be a compelling, case-specific reason), contact a site administrator **before** creating the document. A custom sidebar configuration may be created, but this requires administrator approval and coordination.
+If your specific document absolutely requires a different first chapter title, contact a site administrator **before** creating the document. A custom sidebar configuration may be created, but this requires administrator approval and coordination.
 
 :::
 
@@ -192,6 +192,7 @@ Create a new version folder (e.g., `v1.1`) when:
 - Making significant changes to existing documentation
 - Releasing updated software with new features
 - Correcting substantial errors or outdated information
+- See [Versioning System](./02-versioning-system.mdx) for details
 
 :::tip
 
@@ -255,7 +256,7 @@ This project uses **two approved naming conventions**. Choose the standard that 
 
 **Standard B: Descriptive Semantic** (Optional for hand-authored documentation)
 
-- **figKey:** `fig-menu-screenshot`, `fig-workflow-diagram`, `fig-settings-dialog`, etc.
+- **figKey:** `menu-screenshot`, `workflow-diagram`, `settings-dialog`, etc.
 - **Filename:** `menu-screenshot.png`, `workflow-diagram.png`, `settings-dialog.png`, etc.
 - **When to use:** Hand-authored documentation where semantic names improve maintainability
 - **Alignment:** figKey and filename match conceptually (filename is a slug of the figKey)
@@ -353,7 +354,7 @@ Creating `bib.json` files manually can be time-consuming. AI language models can
 
 1. **Gather your references** from your source document (bibliography section, reference list, etc.)
 2. **Find an example bib.json file** from an existing document in this project to use as a template
-3. **Provide both to an AI LLM** (like Claude, ChatGPT, etc.) with a prompt such as:
+3. **Provide both to an AI Large Language Model** (Claude, ChatGPT, etc.) with a prompt such as:
 
    > "I need to create a bib.json file for my documentation project. Here's an example bib.json file from the project showing the required format:
    >
@@ -401,6 +402,8 @@ The method was developed by Beard <Citation citationKey="Beard1960" />.
 <Bibliography />
 ```
 
+For complete documentation on citation components including all props and usage examples, see the [Citations](./07-react-components.mdx#citations) section of the React Components reference guide.
+
 :::warning
 
 Bibliography files must be created **before** building the documentation. If referenced citation keys don't exist in `bib.json`, the build will fail or citations won't render correctly.
@@ -415,16 +418,23 @@ Bibliography files must be created **before** building the documentation. If ref
 
 **Structure:**
 
-Organize by software/document type:
+The folder structure **mirrors** the `docs/` folder (same as `static/figures/` and `static/bibliographies/`):
 
 ```
 static/
 └── source-documents/
-    ├── lifesim-users-guide-v1.0.docx
-    ├── rmc-rfa-technical-manual-v2.1.pdf
-    └── internal-erosion-suite/
-        ├── backward-erosion-piping-v1.0.docx
-        └── concentrated-leak-erosion-v1.1.docx
+    ├── desktop-applications/
+    │   └── lifesim/
+    │       └── users-guide/
+    │           ├── v1.0/
+    │           │   └── lifesim-users-guide-v1.0.docx
+    │           └── v1.1/
+    │               └── lifesim-users-guide-v1.1.docx
+    └── toolbox-technical-manuals/
+        └── internal-erosion-suite/
+            └── backward-erosion-piping-initiation/
+                └── v1.0/
+                    └── backward-erosion-piping-initiation-v1.0.docx
 ```
 
 **Purpose:**
@@ -432,6 +442,13 @@ static/
 - Archive original documents for reference
 - Source material for MDX conversion using `docx_converter`
 - Historical record of documentation evolution
+
+**Naming Convention:**
+
+Use descriptive filenames that include the document name and version:
+
+- `software-name-document-type-v1.0.docx`
+- `tool-name-v1.1.pdf`
 
 ---
 
@@ -457,45 +474,7 @@ Over 30 custom components are available including:
 - **Multimedia:** `Video`, `VideoReference`
 - **Navigation:** `Button`, `NavLink`
 
-For complete documentation, see [React Components](./08-react-components.mdx).
-
----
-
-### `scripts/` - Build Automation
-
-**Purpose:** Automated scripts that run during `npm start` and `npm run build`.
-
-**Key Scripts:**
-
-1. **`generateSidebars.js`** - Creates sidebar navigation from folder structure
-2. **`counters.js`** - Generates figure/table/equation numbering
-3. **`versions.js`** - Creates version metadata for version selector
-4. **`generateReportIdMap.js`** - Maps document paths to unique IDs
-5. **`generateEventTreeTOC.js`** - Builds event tree table of contents
-
-**When Scripts Run:**
-
-These scripts execute automatically every time you run:
-
-```powershell
-npm start   # Runs all scripts, then starts dev server
-npm run build   # Runs all scripts, then builds for production
-```
-
-**What Contributors Need to Know:**
-
-You don't need to understand how these scripts work. Just know that they:
-
-- Automatically generate the sidebar navigation
-- Assign sequential numbers to figures, tables, and equations
-- Detect all available document versions
-- Update internal references and mappings
-
-:::info
-
-If you see files like `sidebars.js`, `static/counters/`, or `static/versions/` appear after running `npm start`, these are auto-generated. Don't edit them manually - they'll be overwritten on the next build.
-
-:::
+For complete documentation, see [React Components](./07-react-components.mdx).
 
 ---
 
@@ -516,24 +495,42 @@ For detailed usage instructions, see [DOCX Converter](./05-docx-converter.mdx).
 
 ---
 
-### Configuration Files
-
-**Key Files You Should Be Aware Of:**
-
-- **`docusaurus.config.js`** - Main site configuration (URL, title, search, analytics)
-- **`package.json`** - Project dependencies and npm scripts
-- **`tailwind.config.js`** - Styling and theming configuration
-- **`.gitignore`** - Files excluded from version control
-
-**What Contributors Need to Know:**
-
-These files configure the project but are rarely modified. If you need to change site-wide settings, consult with a site administrator.
-
----
-
 ## ⛔ Tier 3: Off-Limits Areas
 
-**Never edit these files or folders directly.** They are auto-generated and will be overwritten.
+**Never edit these files or folders directly.** They are site configuration files or auto-generated files that are overwritten during site build.
+
+### `scripts/` - Build Automation Scripts
+
+**Purpose:** Automated scripts that run during `npm start` and `npm run build`.
+
+**Key Scripts:**
+
+1. **`generateSidebars.js`** - Creates sidebar navigation from folder structure
+2. **`counters.js`** - Generates figure/table/equation numbering
+3. **`versions.js`** - Creates version metadata for version selector
+4. **`generateReportIdMap.js`** - Maps document paths to unique IDs
+5. **`generateEventTreeTOC.js`** - Builds event tree table of contents for the RMC Event Tree Database
+
+**When Scripts Run:**
+
+These scripts execute automatically every time you run:
+
+```powershell
+npm start   # Runs all scripts, then starts dev server
+npm run build   # Runs all scripts, then builds for production
+```
+
+**Why You Shouldn't Edit Them:**
+
+These scripts are part of the build system and should only be modified by site administrators. Any changes could break the automatic generation of sidebars, numbering, or version metadata.
+
+:::info
+
+If you see files like `sidebars.js`, `static/counters/`, or `static/versions/` appear after running `npm start`, these are auto-generated by these scripts. Don't edit them manually - they'll be overwritten on the next build.
+
+:::
+
+---
 
 ### `sidebars.js` - Auto-Generated Navigation
 
@@ -548,6 +545,10 @@ This file is completely auto-generated from your folder structure. Any manual ed
 **How to Change Sidebar:**
 
 To change the sidebar, modify your folder and file structure in `docs/`. The sidebar will automatically update to reflect your changes.
+
+:::tip Custom Sidebars
+If you have a document that requires a custom sidebar structure, contact a site administrator for assistance.
+:::
 
 ---
 
@@ -590,6 +591,28 @@ The versions script automatically detects all version folders in `docs/` and gen
 
 ---
 
+### `src/pages/` - Landing Pages
+
+**Purpose:** Contains React-based landing pages for the site.
+
+**Why You Shouldn't Edit It:**
+
+These are custom React pages that define the site's landing pages and navigation structure. They should only be modified by site administrators who understand the site architecture.
+
+---
+
+### `src/data/` - Auto-Generated Data
+
+**Generated by:** Various build scripts
+
+**Purpose:** Contains auto-generated data files used by the site for navigation, search, and internal references.
+
+**Why You Shouldn't Edit It:**
+
+All files in this folder are automatically generated during the build process and will be overwritten.
+
+---
+
 ### `src/reportIdMap.js` - Auto-Generated Mappings
 
 **Generated by:** `scripts/generateReportIdMap.js`
@@ -629,7 +652,7 @@ npm start       # Rebuilds cache and starts dev server
 
 **Why You Shouldn't Edit It:**
 
-This folder is the compiled output of your documentation. Any edits will be overwritten on the next build. To change the live site, edit source files in `docs/` and rebuild.
+This folder is the compiled output of your documentation. Any edits will be overwritten on the next build.
 
 ---
 
@@ -642,6 +665,41 @@ This folder is the compiled output of your documentation. Any edits will be over
 **Why You Shouldn't Edit It:**
 
 This folder contains third-party libraries managed by npm. Never edit files here directly. It can be safely deleted and regenerated by running `npm install`.
+
+---
+
+### `docusaurus.config.js` - Site Configuration
+
+**Purpose:** Main configuration file for Docusaurus defining site URL, title, theme, plugins, search, and analytics.
+
+**Why You Shouldn't Edit It:**
+
+This file controls core site functionality and should only be modified by site administrators. Incorrect changes can break the entire site.
+
+---
+
+### `package.json` - Project Dependencies
+
+**Purpose:** Defines npm dependencies, scripts, and project metadata.
+
+**Why You Shouldn't Edit It:**
+
+This file manages the project's dependency tree and build scripts. Modifying it without proper knowledge can break the build system or introduce version conflicts. Only site administrators should modify this file.
+
+---
+
+### Other Configuration Files
+
+**Files:**
+
+- **`tailwind.config.js`** - Styling and theming configuration
+- **`.gitignore`** - Files excluded from Git version control
+- **`tsconfig.json`** - TypeScript configuration
+- **`.eslintrc.js`** - Code linting rules
+
+**Why You Shouldn't Edit Them:**
+
+These configuration files define project-wide settings and should only be modified by site administrators who understand their impact on the entire codebase.
 
 ---
 
@@ -729,11 +787,11 @@ static/bibliographies/desktop-applications/lifesim/users-guide/v1.0/bib.json
 
 ## Common Questions
 
-### Can I create new React components?
+### Can I create new React components or revise existing ones?
 
-**For beginner contributors:** No. Use the existing components documented in [React Components](./08-react-components.mdx).
+**For beginner contributors:** No. Use the existing components documented in [React Components](./07-react-components.mdx).
 
-**For advanced contributors:** Coordinate with site administrators before creating custom components. This requires understanding React, JSX, and Tailwind CSS.
+**For advanced contributors:** Coordinate with site administrators before creating custom components or revising existing ones. This requires understanding React, JSX, and Tailwind CSS.
 
 ### Can I modify the sidebar structure?
 
@@ -744,6 +802,10 @@ Yes! The sidebar is automatically generated from your folder structure. To chang
 3. Run `npm start` - the sidebar updates automatically
 
 **Don't** edit `sidebars.js` directly - it will be overwritten.
+
+:::tip Custom Sidebars
+If you have a document that requires a custom sidebar structure, contact a site administrator for assistance.
+:::
 
 ### What if I see a file not listed here?
 
@@ -777,22 +839,29 @@ Common auto-generated files:
 - MDX files in `docs/`
 - Images in `static/figures/`
 - Citation files in `static/bibliographies/`
+- Source documents in `static/source-documents/`
 
 ### 📖 Read and Reference
 
 - React components in `src/components/`
-- Configuration files (`docusaurus.config.js`, `package.json`)
-- Build scripts in `scripts/`
+- CSS styling in `src/css/`
+- Site-wide images in `static/img/`
+- Site fonts in `static/fonts/`
+- DOCX converter utility in `docx_converter/`
 
 ### ⛔ Never Edit
 
-- `sidebars.js`
-- `src/reportIdMap.js`
-- `static/counters/`
-- `static/versions/`
-- `.docusaurus/`
-- `build/`
-- `node_modules/`
+- Build scripts in `scripts/`
+- Auto-generated `sidebars.js`
+- Auto-generated `src/reportIdMap.js`
+- Auto-generated `src/data/`
+- Landing pages in `src/pages/`
+- Auto-generated counters in `static/counters/`
+- Auto-generated versions in `static/versions/`
+- Build cache in `.docusaurus/`
+- Production build in `build/`
+- Dependencies in `node_modules/`
+- Configuration files (`docusaurus.config.js`, `package.json`, etc.)
 
 ---
 
@@ -800,7 +869,7 @@ Common auto-generated files:
 
 Now that you understand the project structure, you're ready to start creating content:
 
-- **Create MDX documents:** See [Creating and Editing Pages](./07-creating-editing-pages.mdx)
-- **Use React components:** See [React Components](./08-react-components.mdx)
+- **Create MDX documents:** See [Creating and Editing Pages](./06-creating-editing-pages.mdx)
+- **Use React components:** See [React Components](./07-react-components.mdx)
 - **Convert Word documents:** See [DOCX Converter](./05-docx-converter.mdx)
 - **Manage versions:** See [Versioning System](./02-versioning-system.mdx)
