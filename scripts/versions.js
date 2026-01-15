@@ -138,15 +138,15 @@ function generateVersions() {
     ([key, version]) => `${baseUrl}${key}/${version}/${PREFACE_SLUG}`,
   );
 
-  // (Optional) Warn if Preface.{md,mdx} doesn't exist locally.
+  // (Optional) Warn if 01-preface.{md,mdx} doesn't exist locally.
   // This is just a sanity check and won't block output.
   for (const [key, version] of Object.entries(updatedLatestVersions)) {
     const parts = key.split('/');
-    const prefaceMdx = path.join(docsFolderPath, ...parts, version, `${PREFACE_SLUG}.mdx`);
-    const prefaceMd = path.join(docsFolderPath, ...parts, version, `${PREFACE_SLUG}.md`);
+    const prefaceMdx = path.join(docsFolderPath, ...parts, version, '01-preface.mdx');
+    const prefaceMd = path.join(docsFolderPath, ...parts, version, '01-preface.md');
     if (!fs.existsSync(prefaceMdx) && !fs.existsSync(prefaceMd)) {
       console.warn(
-        `[versions] Warning: no ${PREFACE_SLUG}.{md,mdx} at docs/${key}/${version} (startUrl will still use /${PREFACE_SLUG})`,
+        `[versions] Warning: no 01-preface.{md,mdx} at docs/${key}/${version} (startUrl will still use /${PREFACE_SLUG})`,
       );
     }
   }
