@@ -12,7 +12,7 @@ const lstData = [
     iconDark: 'img/WebAppDarkMode.png',
     doc_location: 'web-applications/lst/users-guide',
     doc_name: 'Levee Screening Tool Users Guide',
-    active: true,
+    active: false,
     draft: true,
   },
 ];
@@ -35,16 +35,11 @@ export default function LST() {
     icon: addBaseUrl(doc.icon),
     iconLight: addBaseUrl(doc.iconLight),
     iconDark: addBaseUrl(doc.iconDark),
-    doc_location: addBaseUrl(
-      `docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`,
-    ),
+    doc_location: addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`),
   }));
 
   return (
-    <Layout
-      title="RMC Software Documentation"
-      description="Documentation for RMC Software Packages"
-    >
+    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
       <main>
         <div className="title-container">
           <ThemedImage
