@@ -12,7 +12,7 @@ const lstData = [
     iconDark: 'img/WebAppDarkMode.png',
     doc_location: 'web-applications/lst/users-guide',
     doc_name: 'Levee Screening Tool Users Guide',
-    active: false,
+    active: true,
     draft: true,
   },
 ];
