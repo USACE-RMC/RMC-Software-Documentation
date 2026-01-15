@@ -599,6 +599,220 @@ These files configure the build process but are rarely modified:
 
 ---
 
+## Deployment to Production (Administrator-Level Only)
+
+:::danger Important - Administrators Only
+
+**Deployment is an administrator-level task.** Contributors should focus on creating and editing documentation content using `npm start` for local testing. Site administrators will handle all building and deployment to production.
+
+**Contributors do NOT need to run `npm run build` or `npm run deploy`.** If you encounter any issues while testing locally with `npm start`, contact the repository administrator rather than attempting to troubleshoot build processes.
+
+Unauthorized deployment may overwrite live documentation and disrupt the website.
+
+:::
+
+### Deployment Workflow
+
+If you are a site administrator deploying to **GitHub Pages**, follow these steps:
+
+#### Step 1: Build for Production
+
+```powershell
+npm run build
+```
+
+**What this does:**
+
+- Runs all 5 automation scripts (Report ID Map, Sidebars, Counters, Versions, Event Tree TOC)
+- Compiles all MDX files to static HTML
+- Minifies CSS and JavaScript
+- Optimizes and compresses images
+- Generates sitemap for search engines
+- Creates search index
+- Validates all links and references
+- Outputs production-ready files to `build/` directory
+
+**Expected output:**
+
+```
+Success! Generated static files in "build".
+
+You can now deploy the "build" folder to your static hosting service.
+```
+
+#### Step 2: Test the Production Build Locally
+
+Before deploying to production, **always test the build locally**:
+
+```powershell
+npx serve build
+```
+
+This serves the production build locally (typically at `http://localhost:3000` or `http://localhost:5000`).
+
+**Important verification steps:**
+
+- ✓ All pages load correctly
+- ✓ Navigation works as expected
+- ✓ Images and static assets display properly
+- ✓ Links are not broken
+- ✓ Search functionality works (if configured)
+- ✓ Version selector functions correctly
+- ✓ No console errors appear in browser developer tools
+- ✓ Mobile responsive design works
+- ✓ Dark mode toggle works (if applicable)
+
+Press `Ctrl+C` to stop the server when testing is complete.
+
+:::warning Common Production Issues
+
+Production builds can reveal issues not present in development:
+
+- **Missing dependencies:** Components that work in dev but fail in production
+- **Image path errors:** Relative paths that break during build
+- **Link issues:** Internal links that don't resolve correctly
+- **Memory errors:** Large documents that exceed build limits
+
+Always test locally before deploying to catch these issues.
+
+:::
+
+#### Step 3: Set GitHub User Environment Variable
+
+```powershell
+$env:GIT_USER="USACE-RMC"
+```
+
+**Why this is needed:**
+
+- The deploy script needs git credentials to push to the `gh-pages` branch
+- `GIT_USER` specifies the GitHub organization/user account
+- This variable is only needed for the current PowerShell session
+
+#### Step 4: Deploy to GitHub Pages
+
+```powershell
+npm run deploy
+```
+
+**What this does:**
+
+1. Runs `npm run build` again (to ensure latest changes)
+2. Pushes the contents of `build/` directory to `gh-pages` branch
+3. GitHub Pages automatically serves the updated site
+4. Site updates are live within 1-2 minutes
+
+**Expected output:**
+
+```
+Published
+```
+
+:::tip Build Redundancy
+
+Note that `npm run deploy` automatically runs the build process, so technically Step 1 is redundant if you skip testing. However, testing the production build before deployment (Steps 1-2) is **strongly recommended** to catch any production-specific issues before they go live.
+
+:::
+
+### Post-Deployment Verification
+
+After deploying, verify the live site:
+
+1. **Visit the production URL:** [https://software.rmc.usace.army.mil](https://software.rmc.usace.army.mil) (or your configured domain)
+
+2. **Spot check critical pages:**
+   - Homepage loads correctly
+   - Recently updated documentation displays properly
+   - Navigation works across all sections
+   - Search returns relevant results
+
+3. **Check for errors:**
+   - Open browser developer console (F12)
+   - Look for any console errors (red messages)
+   - Verify no 404 errors for images or assets
+
+4. **Test on multiple devices:**
+   - Desktop browser
+   - Mobile browser
+   - Different browsers (Chrome, Firefox, Edge)
+
+### Troubleshooting Deployment Issues
+
+**Deployment fails with authentication error:**
+
+- Verify `GIT_USER` is set correctly
+- Check that you have push permissions to the repository
+- Ensure Git credentials are configured
+
+**Build succeeds but site doesn't update:**
+
+- Wait 2-3 minutes for GitHub Pages to rebuild
+- Clear browser cache and hard refresh (Ctrl+Shift+R)
+- Check GitHub repository settings for Pages configuration
+
+**Production site shows errors not present in development:**
+
+- Review build output for warnings
+- Test production build locally with `npx serve build`
+- Check browser console for specific error messages
+
+**Deployment takes too long or times out:**
+
+- Check internet connection
+- Verify GitHub is accessible (not blocked by firewall)
+- Try deploying again - temporary network issues can cause failures
+
+### Deployment Best Practices
+
+**Before deploying:**
+
+- ✓ Test all changes locally with `npm start`
+- ✓ Commit all changes to Git
+- ✓ Pull latest changes from remote repository
+- ✓ Run `npm run build` and test locally
+- ✓ Review build output for warnings
+
+**During deployment:**
+
+- ✓ Deploy during low-traffic periods when possible
+- ✓ Announce significant updates to team
+- ✓ Keep terminal window open to monitor progress
+
+**After deployment:**
+
+- ✓ Verify live site immediately
+- ✓ Check for broken links or missing assets
+- ✓ Test search functionality
+- ✓ Monitor for user feedback
+
+### Rollback Procedure
+
+If deployment causes issues:
+
+1. **Identify last working commit:**
+   ```powershell
+   git log --oneline
+   ```
+
+2. **Revert to previous version:**
+   ```powershell
+   git checkout <commit-hash>
+   npm run deploy
+   ```
+
+3. **Fix issues in development:**
+   - Debug the problem locally
+   - Test thoroughly before redeploying
+   - Consider creating a branch for testing
+
+4. **Redeploy when ready:**
+   ```powershell
+   git checkout main
+   npm run deploy
+   ```
+
+---
+
 ## Summary
 
 ### What You Should Remember
@@ -655,6 +869,6 @@ Now that you understand what happens behind the scenes:
 - **Continue creating content:** [Creating and Editing Pages](./06-creating-editing-pages.mdx)
 - **Use React components:** [React Components](./07-react-components.mdx)
 - **Convert Word documents:** [DOCX Converter](./05-docx-converter.mdx)
-- **Quick troubleshooting:** [Troubleshooting & FAQ](./09-troubleshooting-faq.mdx)
+- **Quick troubleshooting:** [Troubleshooting & FAQ](./08-troubleshooting-faq.mdx)
 
 **Remember:** Understanding the build process is helpful but not required. Focus on creating great documentation - the automation takes care of everything else!
