@@ -1,4 +1,4 @@
-﻿# QC Report: RMC Concentrated Leak Erosion (Initiation) Toolbox
+# QC Report: RMC Concentrated Leak Erosion (Initiation) Toolbox
 
 **Source PDF:** `RMC-CPD-2023-08 - RMC Concentrated Leak Erosion (Initiation) Toolbox.pdf`
 **Review Date:** 2025-12-21
@@ -17,6 +17,7 @@
 - **Recommended Fix:** Update to "Nate Snorteland".
 - **Fix Applied:** Yes
 - **Human Verification Required:** No
+- **Addressed:** [x]
 
 ---
 
@@ -29,8 +30,9 @@
 - **Severity:** Major
 - **Problem:** Equations use `P_W` but variable is defined as `P_w` in text/PDF.
 - **Recommended Fix:** Update to `P_w` if consistent with PDF symbols.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** Yes
+- **Addressed:** [x]
 
 ### Issue 2: Wetted Perimeter Symbol (Equation 2)
 
@@ -39,8 +41,9 @@
 - **Severity:** Major
 - **Problem:** Equations use `P_W` but variable is defined as `P_w` in text/PDF.
 - **Recommended Fix:** Update to `P_w` if consistent with PDF symbols.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** Yes
+- **Addressed:** [x]
 
 ### Issue 3: Missing Raw Citation Text
 
@@ -49,8 +52,9 @@
 - **Severity:** Major
 - **Problem:** PDF cites "Fell et al. (2008)" for the probability tables, but MDX has only `<Citation citationKey="Fell2008" />` with no raw reference text.
 - **Recommended Fix:** Add the raw reference text (e.g., "Fell et al. (2008)") adjacent to the `<Citation>` component.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** No
+- **Addressed:** [x]
 
 ### Issue 4: Missing Citation Component in Figure Caption
 
@@ -59,8 +63,9 @@
 - **Severity:** Major
 - **Problem:** Caption includes "Fell et al. 2015" but no `<Citation>` component is present in the caption.
 - **Recommended Fix:** Add `<Citation citationKey="Fell2015" />` in the caption text alongside the author-year.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** No
+- **Addressed:** [x]
 
 ---
 
@@ -73,8 +78,9 @@
 - **Severity:** Major
 - **Problem:** Equations use `\gamma_{W}` (uppercase) instead of `\gamma_{w}`.
 - **Recommended Fix:** Confirm PDF symbol casing and update if needed.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** Yes
+- **Addressed:** [x]
 
 ### Issue 2: Unit Weight Symbol Casing (Equation 5)
 
@@ -83,8 +89,9 @@
 - **Severity:** Major
 - **Problem:** Equations use `\gamma_{W}` (uppercase) instead of `\gamma_{w}`.
 - **Recommended Fix:** Confirm PDF symbol casing and update if needed.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** Yes
+- **Addressed:** [x]
 
 ### Issue 3: "Where" Term Prefix Formatting (Equation 3)
 
@@ -93,8 +100,9 @@
 - **Severity:** Minor
 - **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
 - **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** No
+- **Addressed:** [x]
 
 ### Issue 4: "Where" Term Prefix Formatting (Equation 4)
 
@@ -103,8 +111,9 @@
 - **Severity:** Minor
 - **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
 - **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** No
+- **Addressed:** [x]
 
 ---
 
@@ -117,8 +126,9 @@
 - **Severity:** Minor
 - **Problem:** Caption typo: "geoemetry".
 - **Recommended Fix:** Change to "geometry".
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** No
+- **Addressed:** [x]
 
 ### Issue 2: Unit Weight Symbol Casing (Equation 6)
 
@@ -127,8 +137,9 @@
 - **Severity:** Major
 - **Problem:** Equations use `\gamma_{W}` (uppercase) instead of `\gamma_{w}`.
 - **Recommended Fix:** Confirm PDF symbol casing and update if needed.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** Yes
+- **Addressed:** [x]
 
 ### Issue 3: Unit Weight Symbol Casing (Equation 7)
 
@@ -137,8 +148,9 @@
 - **Severity:** Major
 - **Problem:** Equations use `\gamma_{W}` (uppercase) instead of `\gamma_{w}`.
 - **Recommended Fix:** Confirm PDF symbol casing and update if needed.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** Yes
+- **Addressed:** [x]
 
 ### Issue 4: "Where" Term Prefix Formatting (Equation 6)
 
@@ -147,8 +159,9 @@
 - **Severity:** Minor
 - **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
 - **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** No
+- **Addressed:** [x]
 
 ---
 
@@ -161,8 +174,9 @@
 - **Severity:** Major
 - **Problem:** Equations use `\gamma_{W}` (uppercase) instead of `\gamma_{w}`.
 - **Recommended Fix:** Confirm PDF symbol casing and update if needed.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** Yes
+- **Addressed:** [x]
 
 ### Issue 2: Unit Weight Symbol Casing (Equation 9)
 
@@ -171,8 +185,9 @@
 - **Severity:** Major
 - **Problem:** Equations use `\gamma_{W}` (uppercase) instead of `\gamma_{w}`.
 - **Recommended Fix:** Confirm PDF symbol casing and update if needed.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** Yes
+- **Addressed:** [x]
 
 ### Issue 3: Missing Citation Component in Figure Caption
 
@@ -181,8 +196,9 @@
 - **Severity:** Major
 - **Problem:** Caption includes "Foster et al. 2002" but no `<Citation>` component is present in the caption.
 - **Recommended Fix:** Add `<Citation citationKey="Foster2002" />` in the caption text alongside the author-year.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** No
+- **Addressed:** [x]
 
 ---
 
@@ -195,8 +211,9 @@
 - **Severity:** Major
 - **Problem:** Equations use `\gamma_{W}` (uppercase) instead of `\gamma_{w}`.
 - **Recommended Fix:** Confirm PDF symbol casing and update if needed.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** Yes
+- **Addressed:** [x]
 
 ### Issue 2: Unit Weight Symbol Casing (Equation 11)
 
@@ -205,8 +222,9 @@
 - **Severity:** Major
 - **Problem:** Equations use `\gamma_{W}` (uppercase) instead of `\gamma_{w}`.
 - **Recommended Fix:** Confirm PDF symbol casing and update if needed.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** Yes
+- **Addressed:** [x]
 
 ---
 
@@ -219,8 +237,9 @@
 - **Severity:** Minor
 - **Problem:** "Fell et. al." includes an extra period after "et"; PDF uses "Fell et al."
 - **Recommended Fix:** Remove the extra period.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** No
+- **Addressed:** [x]
 
 ### Issue 2: Missing Citation Component in Figure Caption
 
@@ -229,8 +248,9 @@
 - **Severity:** Major
 - **Problem:** Caption includes "Fell et al. (2008)" but no `<Citation>` component is present in the caption.
 - **Recommended Fix:** Add `<Citation citationKey="Fell2008" />` in the caption text alongside the author-year.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** No
+- **Addressed:** [x]
 
 ---
 
@@ -243,8 +263,9 @@
 - **Severity:** Minor
 - **Problem:** Alt text says "hoirzontal" instead of "horizontal".
 - **Recommended Fix:** Change to "horizontal".
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** No
+- **Addressed:** [x]
 
 ### Issue 2: Missing Parenthesis in Equation A-36
 
@@ -253,8 +274,9 @@
 - **Severity:** Major
 - **Problem:** Equation text is missing a closing parenthesis: `\tau L(H_{1}+H_{2}+W=...`.
 - **Recommended Fix:** Correct equation formatting to match PDF.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** Yes
+- **Addressed:** [x]
 
 ### Issue 3: Corrupted Tau Symbol in Text (Sentence 1)
 
@@ -263,8 +285,9 @@
 - **Severity:** Major
 - **Problem:** Tau symbol in text appears corrupted in the first sentence.
 - **Recommended Fix:** Restore correct tau symbol in text.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** Yes
+- **Addressed:** [x]
 
 ### Issue 4: Corrupted Tau Symbol in Text (Sentence 2)
 
@@ -273,8 +296,9 @@
 - **Severity:** Major
 - **Problem:** Tau symbol in text appears corrupted in the second sentence.
 - **Recommended Fix:** Restore correct tau symbol in text.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** Yes
+- **Addressed:** [x]
 
 ### Issue 5: Stray Brace in Tau Symbol
 
@@ -283,8 +307,9 @@
 - **Severity:** Major
 - **Problem:** Stray brace in `&tau;}` (`<em>&tau;}<sub>c</sub></em>`).
 - **Recommended Fix:** Remove stray brace.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** Yes
+- **Addressed:** [x]
 
 ### Issue 6: Wetted Perimeter Symbol Casing (Equation A-6)
 
@@ -293,8 +318,9 @@
 - **Severity:** Major
 - **Problem:** Equation uses `P_W` but variable is defined as `P_w` in text/PDF.
 - **Recommended Fix:** Update to `P_w` if consistent with PDF symbols.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** Yes
+- **Addressed:** [x]
 
 ### Issue 7: Wetted Perimeter Symbol Casing (Equation A-20)
 
@@ -303,8 +329,9 @@
 - **Severity:** Major
 - **Problem:** Equation uses `P_W` but variable is defined as `P_w` in text/PDF.
 - **Recommended Fix:** Update to `P_w` if consistent with PDF symbols.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** Yes
+- **Addressed:** [x]
 
 ### Issue 8: Wetted Perimeter Symbol Casing (Equation A-38)
 
@@ -313,8 +340,9 @@
 - **Severity:** Major
 - **Problem:** Equation uses `P_W` but variable is defined as `P_w` in text/PDF.
 - **Recommended Fix:** Update to `P_w` if consistent with PDF symbols.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** Yes
+- **Addressed:** [x]
 
 ### Issue 9: Wetted Perimeter Symbol Casing (Equation A-64)
 
@@ -323,8 +351,9 @@
 - **Severity:** Major
 - **Problem:** Equation uses `P_W` but variable is defined as `P_w` in text/PDF.
 - **Recommended Fix:** Update to `P_w` if consistent with PDF symbols.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** Yes
+- **Addressed:** [x]
 
 ### Issue 10: "Where" Term Prefix Formatting (Equation A-1)
 
@@ -333,8 +362,9 @@
 - **Severity:** Minor
 - **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
 - **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** No
+- **Addressed:** [x]
 
 ### Issue 11: "Where" Term Prefix Formatting (Equation A-6)
 
@@ -343,8 +373,9 @@
 - **Severity:** Minor
 - **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
 - **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** No
+- **Addressed:** [x]
 
 ### Issue 12: "Where" Term Prefix Formatting (Equation A-15)
 
@@ -353,8 +384,9 @@
 - **Severity:** Minor
 - **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
 - **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** No
+- **Addressed:** [x]
 
 ### Issue 13: "Where" Term Prefix Formatting (Equation A-20)
 
@@ -363,8 +395,9 @@
 - **Severity:** Minor
 - **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
 - **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** No
+- **Addressed:** [x]
 
 ### Issue 14: "Where" Term Prefix Formatting (Equation A-35)
 
@@ -373,8 +406,9 @@
 - **Severity:** Minor
 - **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
 - **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** No
+- **Addressed:** [x]
 
 ### Issue 15: "Where" Term Prefix Formatting (Equation A-38)
 
@@ -383,8 +417,9 @@
 - **Severity:** Minor
 - **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
 - **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** No
+- **Addressed:** [x]
 
 ### Issue 16: "Where" Term Prefix Formatting (Equation A-55)
 
@@ -393,8 +428,9 @@
 - **Severity:** Minor
 - **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
 - **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** No
+- **Addressed:** [x]
 
 ### Issue 17: "Where" Term Prefix Formatting (Equation A-64)
 
@@ -403,8 +439,9 @@
 - **Severity:** Minor
 - **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
 - **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** No
+- **Addressed:** [x]
 
 ### Issue 18: "Where" Term Prefix Formatting (Equation A-66)
 
@@ -413,8 +450,9 @@
 - **Severity:** Minor
 - **Problem:** "where" terms use bullet list formatting (`- Term`) instead of the required blockquote lines (`> Term`).
 - **Recommended Fix:** Convert each "where" term to blockquote lines beginning with `> ` and ending with double-space line breaks, with no blank lines between terms.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** No
+- **Addressed:** [x]
 
 ---
 
@@ -427,8 +465,9 @@
 - **Severity:** Minor
 - **Problem:** UDF expansion is plural "User-Defined Functions"; PDF uses singular "User-Defined Function".
 - **Recommended Fix:** Update to match PDF if strict match required.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** No
+- **Addressed:** [x]
 
 ---
 
