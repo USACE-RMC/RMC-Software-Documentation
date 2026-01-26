@@ -15,8 +15,9 @@ Category: Text
 Severity: Major
 Problem: The PDF shows "RMC Seismic Hazard Curves Toolbox" but the MDX reportTitle is "RMC Hazard Curves Toolbox".
 Recommended Fix: Update reportTitle to "RMC Seismic Hazard Curves Toolbox".
-Fix Applied: No
+Fix Applied: Yes
 Human Verification Required: No
+Addressed: [x]
 
 ## File: 04-background.mdx
 
@@ -29,8 +30,9 @@ Category: Citation
 Severity: Major
 Problem: The PDF shows "(Petersen et al. 2020)" but the MDX only includes the citation component without the raw author-year text.
 Recommended Fix: Add the raw author-year text (e.g., "Petersen et al. 2020") alongside <Citation citationKey="Petersen2020" />.
-Fix Applied: No
+Fix Applied: Yes
 Human Verification Required: No
+Addressed: [x]
 
 ## File: 05-modern-nshm.mdx
 
@@ -43,8 +45,9 @@ Category: Figure
 Severity: Minor
 Problem: The PDF caption is "Modern NSHM worksheet: USGS Earthquake Hazard Toolbox hazard curve data." but the MDX caption omits "Hazard".
 Recommended Fix: Change the caption to "Modern NSHM worksheet: USGS Earthquake Hazard Toolbox hazard curve data.".
-Fix Applied: No
+Fix Applied: Yes
 Human Verification Required: No
+Addressed: [x]
 
 ## File: 07-site-class-effects.mdx
 
@@ -57,8 +60,9 @@ Category: Text
 Severity: Minor
 Problem: The PDF uses "ASCE/SEI 7-16" but the MDX has "ASCE-SEI 7-16".
 Recommended Fix: Replace "ASCE-SEI" with "ASCE/SEI".
-Fix Applied: No
+Fix Applied: Yes
 Human Verification Required: No
+Addressed: [x]
 
 ## File: 08-site-specific-data.mdx
 
@@ -71,8 +75,9 @@ Category: Figure
 Severity: Minor
 Problem: The PDF caption is "Step 1 of Site-Specific Data worksheet: Enable PSHA input." but the MDX caption says "Step 2".
 Recommended Fix: Update the caption to "Step 1 of Site-Specific Data worksheet: Enable PSHA input.".
-Fix Applied: No
+Fix Applied: Yes
 Human Verification Required: No
+Addressed: [x]
 
 ### Issue 6: Figure 23 caption step number mismatch
 
@@ -81,8 +86,9 @@ Category: Figure
 Severity: Minor
 Problem: The PDF caption is "Step 1 of Site-Specific Data worksheet: Site-specific PSHA input." but the MDX caption says "Step 2".
 Recommended Fix: Update the caption to "Step 1 of Site-Specific Data worksheet: Site-specific PSHA input.".
-Fix Applied: No
+Fix Applied: Yes
 Human Verification Required: No
+Addressed: [x]
 
 ## File: 09-hazard-curves.mdx
 
@@ -95,5 +101,6 @@ Category: Figure
 Severity: Minor
 Problem: The PDF caption says "Filtering data series for hazard curves" but the MDX caption has "Filitering".
 Recommended Fix: Change "Filitering" to "Filtering".
-Fix Applied: No
+Fix Applied: Yes
 Human Verification Required: No
+Addressed: [x]
