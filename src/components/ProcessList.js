@@ -27,6 +27,7 @@ export default function ProcessList({
   maxIndentPx,
   bubbleSizePx = 28,
   bubbleGapPx = 10,
+  numberStyle = 'bubble', // 'bubble' | 'plain' | 'chevron'
   nowrap = false,
 
   // Tailwind class props (overridable)
@@ -35,6 +36,7 @@ export default function ProcessList({
   childBadgeClass = 'border border-ifm-primary text-caption font-usace text-ifm-primary bg-transparent rounded-full',
   gapClass = '!mb-0',
   fontClass = 'font-usace text-normal text-font-color',
+  lineHeightClass = 'leading-[1.5]',
   detailButtonClass = 'mt-2 text-sm underline hover:no-underline text-ifm-link hover:text-ifm-link-hover',
   detailPanelClass = 'mt-2 rounded border border-border-color p-3 text-sm',
   className = '',
@@ -53,6 +55,7 @@ export default function ProcessList({
   const [openChild, setOpenChild] = useState({}); // key: `${i}-${j}` => boolean
 
   const norm = useMemo(() => normalizeItems(items), [items]);
+  const childNumberStyle = numberStyle === 'chevron' ? 'plain' : numberStyle;
 
   // Track available container width for indentation calculations
   useEffect(() => {
@@ -77,17 +80,9 @@ export default function ProcessList({
   const childIndent = typeof childIndentPx === 'number' ? childIndentPx : indentPx;
 
   return (
-    <section
-      ref={rootRef}
-      className={`not-prose relative w-full ${className}`}
-      aria-label="Process list"
-    >
+    <section ref={rootRef} className={`not-prose relative w-full ${className}`} aria-label="Process list">
       {/* Top-level ordered list */}
-      <ol
-        className="m-0 ml-0 list-none py-0 !pl-0 pr-2"
-        style={{ listStyleType: 'none' }}
-        role="list"
-      >
+      <ol className="m-0 ml-0 list-none py-0 !pl-0 pr-2" style={{ listStyleType: 'none' }} role="list">
         {norm.map((node, i) => {
           const n = i + startAt;
           const ml = Math.min(i * indentPx, computedMaxIndent);
@@ -98,8 +93,8 @@ export default function ProcessList({
             marginLeft: ml,
             width,
             display: 'grid',
-            gridTemplateColumns: `${bubbleSizePx}px ${bubbleGapPx}px minmax(0,1fr)`,
-            alignItems: 'start',
+            gridTemplateColumns: `${numberStyle === 'plain' ? 'auto' : `${bubbleSizePx}px`} ${bubbleGapPx}px minmax(0,1fr)`,
+            alignItems: 'center',
             whiteSpace: nowrap ? 'nowrap' : 'normal',
             overflowX: nowrap ? 'auto' : 'visible',
             minHeight: Math.max(bubbleSizePx + 8, 36),
@@ -117,15 +112,33 @@ export default function ProcessList({
             <li key={i} className={`relative ${gapClass}`}>
               {/* Step header row */}
               <div className={`relative ${boxClass}`} style={headerGrid}>
-                <span
-                  aria-hidden="true"
-                  className={`inline-flex items-center justify-center ${badgeClass}`}
-                  style={{ width: bubbleSizePx, height: bubbleSizePx }}
-                >
-                  {n}
-                </span>
+                {numberStyle === 'plain' ? (
+                  <span aria-hidden="true" className={`${fontClass} ${lineHeightClass} whitespace-nowrap`}>
+                    {n}.
+                  </span>
+                ) : numberStyle === 'chevron' ? (
+                  <span
+                    aria-hidden="true"
+                    className={`inline-flex items-center justify-center ${fontClass} ${lineHeightClass} bg-ifm-primary text-font-color-inverse shadow`}
+                    style={{
+                      width: Math.round(bubbleSizePx * 1.1),
+                      height: bubbleSizePx,
+                      clipPath: 'polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%)',
+                    }}
+                  >
+                    {n}
+                  </span>
+                ) : (
+                  <span
+                    aria-hidden="true"
+                    className={`inline-flex items-center justify-center ${badgeClass}`}
+                    style={{ width: bubbleSizePx, height: bubbleSizePx }}
+                  >
+                    {n}
+                  </span>
+                )}
                 <span aria-hidden="true" />
-                <span className={`${fontClass} min-w-0 break-words`} title={String(title)}>
+                <span className={`${fontClass} ${lineHeightClass} min-w-0 break-words`} title={String(title)}>
                   {title}
                 </span>
               </div>
@@ -170,11 +183,13 @@ export default function ProcessList({
                   maxIndentPx={childMaxIndentPx}
                   bubbleSizePx={bubbleSizePx}
                   bubbleGapPx={bubbleGapPx}
+                  numberStyle={childNumberStyle}
                   nowrap={nowrap}
                   boxClass={boxClass}
                   badgeClass={childBadgeClass}
                   gapClass={gapClass}
                   fontClass={fontClass}
+                  lineHeightClass={lineHeightClass}
                   openChild={openChild}
                   setOpenChild={setOpenChild}
                   detailButtonClass={detailButtonClass}
@@ -184,13 +199,7 @@ export default function ProcessList({
               )}
 
               {/* Freeform MDX blocks */}
-              {hasFreeform && (
-                <FreeBlocks
-                  blocks={node.freeform}
-                  indent={ml + bubbleSizePx + bubbleGapPx}
-                  freeBlockClass={freeBlockClass}
-                />
-              )}
+              {hasFreeform && <FreeBlocks blocks={node.freeform} indent={ml + bubbleSizePx + bubbleGapPx} freeBlockClass={freeBlockClass} />}
             </li>
           );
         })}
@@ -210,11 +219,13 @@ function ChildGroup({
   maxIndentPx,
   bubbleSizePx,
   bubbleGapPx,
+  numberStyle = 'bubble',
   nowrap,
   boxClass,
   badgeClass,
   gapClass,
   fontClass,
+  lineHeightClass,
   openChild,
   setOpenChild,
   detailButtonClass,
@@ -252,8 +263,8 @@ function ChildGroup({
                 marginLeft: ml,
                 width,
                 display: 'grid',
-                gridTemplateColumns: `${bubbleSizePx}px ${bubbleGapPx}px minmax(0,1fr)`,
-                alignItems: 'start',
+                gridTemplateColumns: `${numberStyle === 'plain' ? 'auto' : `${bubbleSizePx}px`} ${bubbleGapPx}px minmax(0,1fr)`,
+                alignItems: 'center',
                 whiteSpace: nowrap ? 'nowrap' : 'normal',
                 overflowX: nowrap ? 'auto' : 'visible',
                 minHeight: Math.max(bubbleSizePx + 8, 36),
@@ -262,15 +273,21 @@ function ChildGroup({
                 minWidth: 0,
               }}
             >
-              <span
-                aria-hidden="true"
-                className={`inline-flex items-center justify-center ${badgeClass}`}
-                style={{ width: bubbleSizePx, height: bubbleSizePx }}
-              >
-                {label}
-              </span>
+              {numberStyle === 'plain' ? (
+                <span aria-hidden="true" className={`${fontClass} ${lineHeightClass} whitespace-nowrap`}>
+                  {label}.
+                </span>
+              ) : (
+                <span
+                  aria-hidden="true"
+                  className={`inline-flex items-center justify-center ${badgeClass}`}
+                  style={{ width: bubbleSizePx, height: bubbleSizePx }}
+                >
+                  {label}
+                </span>
+              )}
               <span aria-hidden="true" />
-              <span className={`${fontClass} min-w-0 break-words`} title={String(child.title)}>
+              <span className={`${fontClass} ${lineHeightClass} min-w-0 break-words`} title={String(child.title)}>
                 {child.title}
               </span>
             </div>
@@ -315,11 +332,13 @@ function ChildGroup({
                 maxIndentPx={maxIndentPx}
                 bubbleSizePx={bubbleSizePx}
                 bubbleGapPx={bubbleGapPx}
+                numberStyle={numberStyle}
                 nowrap={nowrap}
                 boxClass={boxClass}
                 badgeClass={badgeClass}
                 gapClass={gapClass}
                 fontClass={fontClass}
+                lineHeightClass={lineHeightClass}
                 openChild={openChild}
                 setOpenChild={setOpenChild}
                 detailButtonClass={detailButtonClass}
@@ -329,13 +348,7 @@ function ChildGroup({
             )}
 
             {/* Freeform blocks under sub-step */}
-            {hasFreeform && (
-              <FreeBlocks
-                blocks={child.freeform}
-                indent={ml + bubbleSizePx + bubbleGapPx}
-                freeBlockClass={freeBlockClass}
-              />
-            )}
+            {hasFreeform && <FreeBlocks blocks={child.freeform} indent={ml + bubbleSizePx + bubbleGapPx} freeBlockClass={freeBlockClass} />}
           </li>
         );
       })}

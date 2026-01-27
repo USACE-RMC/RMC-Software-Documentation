@@ -174,7 +174,7 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
           id: 'rmc-rfa',
           text: 'RMC-RFA',
           href: rfaHref,
-          children: [{ id: 'rfa-users-guide', text: "RFA User's Guide", href: rfaUserGuideHref }],
+          children: [{ id: 'rfa-users-guide', text: "RMC-RFA User's Guide", href: rfaUserGuideHref }],
         },
         {
           id: 'lifesim',

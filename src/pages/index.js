@@ -78,15 +78,13 @@ export default function Home() {
   ];
 
   return (
-    <Layout
-      title="RMC Software Documentation"
-      description="Documentation for RMC Software Packages"
-    >
+    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
       <Hero
         image={[addBaseUrl('nww-lucky-peak-dam.jpg'), addBaseUrl('taylorsville-SPPRu4Rw.jpg')]}
         alt={['Lucky Peak Dam', 'Taylorsville Dam']}
         title="RMC Software Documentation"
         subtitle="Your hub for comprehensive guides, resources, and support to navigate our powerful tools."
+        imgHeight="25vh"
       />
       <main className="main-content-container">
         <ContentBoxLarge contentData={homepageData} />
