@@ -1,9 +1,16 @@
 import React from "react";
+import Link from "@docusaurus/Link";
+import useBaseUrl from "@docusaurus/useBaseUrl";
+import { useLocation } from "@docusaurus/router";
 import "../css/custom.css";
 import "../css/tables.css";
 
 const TableVersionHistory = ({ versions = [], dates = [], descriptions = [], modifiedBy = [], reviewedBy = [], approvedBy = [] }) => {
   const rowCount = Math.max(versions.length, dates.length, descriptions.length, modifiedBy.length, reviewedBy.length, approvedBy.length);
+  const location = useLocation();
+  const pathname = location?.pathname || "";
+  const docMatch = pathname.match(/\/docs\/(.+?)\/v\d+\.\d+\//);
+  const documentPath = docMatch ? docMatch[1] : "";
 
   // Hard-coded headers, widths, and alignments
   const HEADERS = ["Version", "Date", "Description", "Modified By", "Reviewed By", "Approved By"];
@@ -11,6 +18,15 @@ const TableVersionHistory = ({ versions = [], dates = [], descriptions = [], mod
   const HEADERS_ALIGN = ["center", "left", "left", "left", "left", "left"];
 
   const get = (arr, i) => (Array.isArray(arr) ? arr[i] : undefined) ?? "";
+  const normalizeVersion = (value) => {
+    if (!value) return "";
+    return value.startsWith("v") ? value : `v${value}`;
+  };
+  const buildVersionHistoryHref = (value) => {
+    if (!documentPath || !value) return "";
+    const version = normalizeVersion(value);
+    return `/docs/${documentPath}/${version}/version-history`;
+  };
 
   return (
     <div className="table-container">
@@ -40,12 +56,22 @@ const TableVersionHistory = ({ versions = [], dates = [], descriptions = [], mod
             const m = get(modifiedBy, rowIndex);
             const r = get(reviewedBy, rowIndex);
             const a = get(approvedBy, rowIndex);
+            const versionHref = buildVersionHistoryHref(v);
 
             return (
               <tr key={rowIndex}>
                 {/* Version (col 0) */}
                 <td className="table-body-cell border table-cell-nowrap" style={{ textAlign: "center" }} title={v}>
-                  {v}
+                  {versionHref ? (
+                    <Link
+                      to={useBaseUrl(versionHref)}
+                      className="text-ifm-link hover:text-ifm-link-hover no-underline hover:underline"
+                    >
+                      {v}
+                    </Link>
+                  ) : (
+                    v
+                  )}
                 </td>
 
                 {/* Date (col 1) */}
