@@ -1,0 +1,1239 @@
+---
+title: CLAUDE.md
+---
+
+import ProcessList from '@site/src/components/ProcessList';
+
+# Claude Code Development Instructions
+
+:::warning
+Update this file to be more of a guide for how to create a CLAUDE.md or AGENT.md file rather than a template to copy and paste into each repo.
+:::
+
+**Version:** 1.0  
+**Last Updated:** January 2026  
+**Organization:** USACE-RMC (U.S. Army Corps of Engineers Risk Management Center)  
+**Purpose:** Shared instructions for Claude Code to ensure consistent AI-assisted development across our team
+
+---
+
+## Overview
+
+This file provides instructions for Claude Code when assisting with development on USACE-RMC software projects. All developers should use this file to ensure Claude provides consistent, high-quality assistance that aligns with our team's standards and practices.
+
+---
+
+## General Principles
+
+### Development Philosophy
+
+- **Clarity over cleverness**: Write code that's easy to understand and maintain
+- **Explicit over implicit**: Be clear about intentions, avoid "magic" behavior
+- **Tested over trusted**: Prefer code that can be verified through testing
+- **Safe over fast**: Prioritize correctness and security over premature optimization
+
+### Interaction Style
+
+- **Be a tool, not a friend**: Professional, direct communication focused on technical assistance
+- **Explain reasoning**: When suggesting changes, explain why
+- **Offer alternatives**: Present multiple approaches when appropriate
+- **Acknowledge uncertainty**: If unsure, say so and explain trade-offs
+- **Use analogies**: When explaining complex concepts, provide technical analogies
+
+---
+
+## Git & Version Control Integration
+
+### USACE-RMC Workflow Context
+
+Our organization uses a centralized administrative model:
+
+- **6 Organization Owners** approve and merge all PRs
+- **Members with Write access** create feature branches and pull requests
+- **All PRs require 1 Organization Owner approval** before merging to main
+- Owners may approve their own PRs but should seek second review when possible
+
+When helping with Git workflows, remind developers that:
+
+- PRs need owner approval before merge
+- Never commit directly to main
+- Feature branches are the standard workflow
+
+### Branch Awareness
+
+- Always check current branch before suggesting commits
+- If developer is on `main`, suggest creating a feature branch first
+- Remind about pulling latest changes before starting work
+
+### Commit Message Assistance
+
+When helping write commit messages, follow our Conventional Commits standard:
+
+**Format:** `<type>(<scope>): <description>`
+
+**Types:** `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`
+
+**Guidelines:**
+
+- Use imperative mood ("add feature" not "added feature")
+- Keep subject line under 50 characters
+- Don't capitalize first letter
+- No period at end
+- Add body for complex changes explaining what and why
+
+**Example suggestions:**
+
+```
+Good: "feat(auth): add password reset functionality"
+Bad: "Added some auth stuff"
+
+Good: "fix(api): prevent duplicate form submissions"
+Bad: "fixed bug"
+```
+
+### Pre-Commit Checks
+
+Before suggesting a commit, remind developer to:
+
+- Run/test the code
+- Remove debug statements and console logs
+- Check for unintended file changes
+- Ensure changes are related to a single logical change
+
+---
+
+## Technology Stack Standards
+
+### React (Frontend Web Applications)
+
+**Component Structure:**
+
+- Use functional components with hooks (no class components)
+- One component per file
+- File name matches component name (PascalCase)
+- Place related components in feature folders
+
+**State Management:**
+
+- Use `useState` for simple local state
+- Use `useReducer` for complex state logic
+- Context API for shared state across components
+- Avoid prop drilling beyond 2-3 levels
+
+**Code Style:**
+
+```javascript
+// Preferred: Named exports for components
+export function UserProfile({ userId }) {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    fetchUser(userId).then(setUser);
+  }, [userId]);
+
+  if (!user) return <LoadingSpinner />;
+
+  return (
+    <div className="user-profile">
+      <h2>{user.name}</h2>
+      {/* Component content */}
+    </div>
+  );
+}
+
+// Event handlers: use "handle" prefix
+const handleSubmit = (event) => {
+  event.preventDefault();
+  // Handle submission
+};
+
+// Custom hooks: use "use" prefix
+function useUserData(userId) {
+  // Hook logic
+}
+```
+
+**API Integration:**
+
+- Create separate API service files (`services/api.js`)
+- Use async/await over promise chains
+- Handle loading, error, and success states
+- Don't put API calls directly in components
+
+**Common Patterns:**
+
+```javascript
+// Data fetching pattern
+const [data, setData] = useState(null);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState(null);
+
+useEffect(() => {
+  async function fetchData() {
+    try {
+      setLoading(true);
+      const result = await api.getData();
+      setData(result);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+  fetchData();
+}, []);
+```
+
+**Styling:**
+
+- Use CSS modules or styled-components (project-specific)
+- Avoid inline styles except for dynamic values
+- Use semantic class names
+
+**Performance:**
+
+- Use `useMemo` for expensive calculations
+- Use `useCallback` for functions passed to child components
+- Lazy load routes and heavy components
+- Debounce inputs (500ms) for snappy UX
+
+### ASP.NET (Backend Web Applications)
+
+**API Structure:**
+
+- RESTful endpoint design
+- Use controller actions for endpoints
+- Keep controllers thin - logic in services
+- Return proper HTTP status codes
+
+**Controller Pattern:**
+
+```csharp
+[ApiController]
+[Route("api/[controller]")]
+public class UsersController : ControllerBase
+{
+    private readonly IUserService _userService;
+
+    public UsersController(IUserService userService)
+    {
+        _userService = userService;
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<UserDto>> GetUser(int id)
+    {
+        try
+        {
+            var user = await _userService.GetUserAsync(id);
+            if (user == null)
+                return NotFound();
+
+            return Ok(user);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving user {UserId}", id);
+            return StatusCode(500, "An error occurred");
+        }
+    }
+}
+```
+
+**Service Layer:**
+
+- Business logic lives in service classes
+- Use dependency injection
+- Services should be async where possible
+- Inject `ILogger<T>` for logging
+
+**Error Handling:**
+
+- Use try-catch in controllers
+- Log exceptions with context
+- Return user-friendly error messages
+- Use Problem Details for API errors
+
+**Validation:**
+
+- Use Data Annotations on DTOs
+- Use FluentValidation for complex rules
+- Validate in controller before service call
+
+**Status Codes:**
+
+- 200 OK: Success with response body
+- 201 Created: Resource created
+- 204 No Content: Success, no response body
+- 400 Bad Request: Validation errors
+- 401 Unauthorized: Authentication required
+- 403 Forbidden: Insufficient permissions
+- 404 Not Found: Resource doesn't exist
+- 500 Internal Server Error: Unhandled exception
+
+### C# (Models, Libraries, Desktop)
+
+**Naming Conventions:**
+
+- PascalCase for classes, methods, properties, constants
+- camelCase for local variables, parameters
+- Prefix interfaces with 'I': `IUserService`
+- Use descriptive names: `CalculateMonthlyPayment` not `CalcPmt`
+
+**Code Organization:**
+
+```csharp
+// Class structure order:
+// 1. Constants
+// 2. Fields
+// 3. Constructors
+// 4. Properties
+// 5. Methods
+// 6. Nested types
+
+public class User
+{
+    // Constants
+    private const int MaxNameLength = 100;
+
+    // Fields
+    private string _encryptedPassword;
+
+    // Constructor
+    public User(string name, string email)
+    {
+        Name = name;
+        Email = email;
+    }
+
+    // Properties
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Email { get; set; }
+
+    // Methods
+    public void UpdateEmail(string newEmail)
+    {
+        // Method implementation
+    }
+}
+```
+
+**Null Handling:**
+
+- Use nullable reference types where appropriate: `string?`
+- Check for null before using: `if (user == null) return;`
+- Use null-coalescing: `var name = user?.Name ?? "Unknown";`
+
+**LINQ Usage:**
+
+- Prefer method syntax over query syntax
+- Use meaningful variable names in lambdas
+- Chain operations for readability
+
+```csharp
+// Preferred
+var activeUsers = users
+    .Where(u => u.IsActive)
+    .OrderBy(u => u.Name)
+    .Select(u => new UserDto(u));
+```
+
+**Async/Await:**
+
+- Suffix async methods with 'Async': `GetUserAsync`
+- Await all async calls
+- Use `Task<T>` for async methods returning values
+- Use `Task` for async methods returning void
+- Don't use `.Result` or `.Wait()` - use `await`
+
+### Entity Framework Core (Database)
+
+**DbContext:**
+
+- One DbContext per database
+- Register in DI container
+- Use async methods: `ToListAsync()`, `FirstOrDefaultAsync()`
+
+**Migrations:**
+
+- Create migration for every schema change
+- Use descriptive migration names: `Add_User_PhoneNumber_Column`
+- Review generated migration code before applying
+- Never edit applied migrations
+
+**Queries:**
+
+```csharp
+// Good: Async, specific columns, filtered
+var users = await _context.Users
+    .Where(u => u.IsActive)
+    .Select(u => new { u.Id, u.Name, u.Email })
+    .ToListAsync();
+
+// Bad: Synchronous, loading entire table
+var users = _context.Users.ToList();
+```
+
+**Change Tracking:**
+
+- Use `AsNoTracking()` for read-only queries
+- Call `SaveChangesAsync()` to persist changes
+- Handle concurrency conflicts appropriately
+
+**Common Patterns:**
+
+```csharp
+// Repository pattern
+public class UserRepository : IUserRepository
+{
+    private readonly ApplicationDbContext _context;
+
+    public async Task<User> GetByIdAsync(int id)
+    {
+        return await _context.Users
+            .Include(u => u.Profile)
+            .FirstOrDefaultAsync(u => u.Id == id);
+    }
+
+    public async Task AddAsync(User user)
+    {
+        await _context.Users.AddAsync(user);
+        await _context.SaveChangesAsync();
+    }
+}
+```
+
+### WPF (Desktop Applications)
+
+**MVVM Pattern:**
+
+- Separate View (XAML), ViewModel (C#), Model (C#)
+- No code-behind except for view-specific logic
+- Use commands for user interactions
+- Use INotifyPropertyChanged for data binding
+
+**ViewModel Structure:**
+
+```csharp
+public class UserViewModel : INotifyPropertyChanged
+{
+    private string _name;
+    public string Name
+    {
+        get => _name;
+        set
+        {
+            if (_name != value)
+            {
+                _name = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public ICommand SaveCommand { get; }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}
+```
+
+**Threading:**
+
+- Keep UI responsive - use async for long operations
+- Use `Dispatcher.Invoke` for UI updates from background threads
+- Show loading indicators during operations
+
+**File I/O:**
+
+- Use async file operations
+- Handle file access errors gracefully
+- Use `SaveFileDialog` and `OpenFileDialog` for user file selection
+
+### Python (Data Science Tools)
+
+**Code Style:**
+
+- Follow PEP 8 style guide
+- Use type hints for function parameters and returns
+- Use docstrings for functions and classes
+- 4 spaces for indentation
+
+```python
+def calculate_statistics(data: list[float]) -> dict[str, float]:
+    """
+    Calculate basic statistics for a dataset.
+
+    Args:
+        data: List of numeric values
+
+    Returns:
+        Dictionary containing mean, median, and std dev
+    """
+    return {
+        'mean': statistics.mean(data),
+        'median': statistics.median(data),
+        'std_dev': statistics.stdev(data)
+    }
+```
+
+**Common Libraries:**
+
+- pandas for data manipulation
+- numpy for numerical operations
+- matplotlib/seaborn for visualization
+- scikit-learn for machine learning
+
+**Best Practices:**
+
+- Use virtual environments
+- Document required packages in requirements.txt
+- Handle missing data explicitly
+- Validate data before processing
+
+### R (Statistical Analysis)
+
+**Code Style:**
+
+- Use `<-` for assignment, not `=`
+- Use snake_case for variable names
+- Use tidyverse conventions where appropriate
+
+```r
+# Data processing with dplyr
+user_summary <- users %>%
+  filter(is_active == TRUE) %>%
+  group_by(department) %>%
+  summarize(
+    total_users = n(),
+    avg_age = mean(age, na.rm = TRUE)
+  )
+```
+
+**Best Practices:**
+
+- Document package dependencies
+- Use reproducible examples
+- Handle NA values explicitly
+- Comment statistical assumptions
+
+### Postgres (Database)
+
+**Query Guidelines:**
+
+- Use parameterized queries (handled by EF Core)
+- Index foreign keys and frequently queried columns
+- Use appropriate data types
+- Normalize data to 3NF unless performance requires denormalization
+
+**Naming Conventions:**
+
+- Tables: plural, snake_case: `users`, `order_items`
+- Columns: snake_case: `first_name`, `created_at`
+- Primary keys: `id`
+- Foreign keys: `table_name_id` (e.g., `user_id`)
+
+---
+
+## Code Quality Guidelines
+
+### Comments and Documentation
+
+**When to comment:**
+
+- Complex business logic
+- Non-obvious algorithms
+- Workarounds for bugs/limitations
+- Public API methods (XML docs for C#)
+
+**When NOT to comment:**
+
+- Obvious code: `// Increment counter` above `counter++`
+- Commented-out code (delete it, Git remembers)
+- TODO comments without a plan to address
+
+**C# XML Documentation:**
+
+```csharp
+/// <summary>
+/// Calculates the monthly payment for a loan.
+/// </summary>
+/// <param name="principal">The loan amount</param>
+/// <param name="annualRate">Annual interest rate as decimal (0.05 = 5%)</param>
+/// <param name="months">Number of monthly payments</param>
+/// <returns>Monthly payment amount</returns>
+public decimal CalculateMonthlyPayment(decimal principal, decimal annualRate, int months)
+{
+    // Implementation
+}
+```
+
+### Error Handling
+
+**Always handle errors for:**
+
+- File I/O operations
+- Network requests
+- Database operations
+- User input parsing
+- External service calls
+
+**Error Handling Pattern:**
+
+```csharp
+try
+{
+    // Attempt operation
+    var result = await service.GetDataAsync();
+    return result;
+}
+catch (NotFoundException ex)
+{
+    // Handle specific exceptions
+    _logger.LogWarning(ex, "Resource not found: {Id}", id);
+    return NotFound();
+}
+catch (Exception ex)
+{
+    // Handle unexpected exceptions
+    _logger.LogError(ex, "Unexpected error in GetData");
+    return StatusCode(500, "An error occurred");
+}
+```
+
+**Logging:**
+
+- Log exceptions with context
+- Use appropriate log levels: Debug, Info, Warning, Error, Critical
+- Don't log sensitive data (passwords, tokens, PII)
+- Use structured logging: `_logger.LogInfo("User {UserId} logged in", userId)`
+
+### Security Considerations
+
+**Always:**
+
+- Validate and sanitize user input
+- Use parameterized queries (EF Core does this)
+- Implement authentication and authorization
+- Use HTTPS for API calls
+- Store secrets in configuration, not code
+- Hash passwords (never plain text)
+
+**Never:**
+
+- Trust client-side validation alone
+- Expose stack traces in production
+- Store secrets in source control
+- Use string concatenation for SQL queries
+- Return detailed error messages to clients in production
+
+---
+
+## Testing Approach
+
+### [PLACEHOLDER: Testing Standards]
+
+**When testing infrastructure is implemented:**
+
+**Unit Tests:**
+
+- Test individual functions and methods in isolation
+- Use mocking for dependencies
+- Aim for >80% code coverage on business logic
+- Test edge cases and error conditions
+
+**Integration Tests:**
+
+- Test API endpoints end-to-end
+- Test database operations
+- Verify external service integration
+
+**Test Naming:**
+
+```csharp
+// Pattern: MethodName_Scenario_ExpectedResult
+[Test]
+public void CalculateMonthlyPayment_WithZeroRate_ReturnsEqualPayments()
+{
+    // Test implementation
+}
+```
+
+**Test Frameworks:**
+
+- C#: xUnit or NUnit
+- JavaScript: Jest
+- Python: pytest
+- R: testthat
+
+---
+
+## Code Organization
+
+### Project Structure
+
+**Web Applications:**
+
+```
+src/
+├── Controllers/        # API endpoints
+├── Services/          # Business logic
+├── Models/            # Data models
+├── DTOs/              # Data transfer objects
+├── Repositories/      # Data access
+├── Middleware/        # Request pipeline
+└── Utilities/         # Helper functions
+```
+
+**Desktop Applications:**
+
+```
+src/
+├── Views/             # XAML files
+├── ViewModels/        # View logic
+├── Models/            # Data models
+├── Services/          # Business services
+└── Utilities/         # Helper classes
+```
+
+**Libraries:**
+
+```
+src/
+├── Models/            # Data models
+├── Services/          # Core functionality
+├── Interfaces/        # Abstractions
+└── Utilities/         # Helper functions
+```
+
+### File Naming
+
+- C#: PascalCase - `UserService.cs`, `OrderRepository.cs`
+- React: PascalCase for components - `UserProfile.jsx`
+- JavaScript utilities: camelCase - `apiClient.js`
+- Python: snake_case - `data_processor.py`
+- R: snake_case - `statistical_analysis.R`
+
+---
+
+## Debugging and Development
+
+### Debugging Preferences
+
+**When helping debug:**
+
+- Use plain text prefixes for debug output: `DEBUG:`, `INFO:`, `ERROR:`
+- Suggest strategic console.log/Debug.WriteLine placement
+- Explain what to look for in output
+- Provide step-by-step debugging approach
+
+**Example:**
+
+```javascript
+// Add debug output to track state changes
+console.log('DEBUG: User state before update:', user);
+handleUpdate(user);
+console.log('DEBUG: User state after update:', user);
+```
+
+### Development Server
+
+**Frontend (React):**
+
+- Run with `npm run dev` (Vite)
+- Hot module replacement for fast development
+- Check browser console for errors
+
+**Backend (ASP.NET):**
+
+- Run with `dotnet run` or IDE debugger
+- Check Swagger UI for API testing
+- Monitor console for exceptions
+
+---
+
+## Performance Considerations
+
+### Frontend Optimization
+
+**React Performance:**
+
+- Debounce user inputs (500ms for text inputs)
+- Lazy load routes: `const Component = lazy(() => import('./Component'))`
+- Memoize expensive calculations with `useMemo`
+- Virtualize long lists (react-window)
+- Optimize re-renders with `React.memo` and `useCallback`
+
+**Network Optimization:**
+
+- Batch API requests when possible
+- Use pagination for large datasets
+- Implement caching where appropriate
+- Show loading states immediately
+
+### Backend Optimization
+
+**Database:**
+
+- Use `AsNoTracking()` for read-only queries
+- Select only needed columns
+- Use appropriate indexes
+- Avoid N+1 query problems with `.Include()`
+
+**API:**
+
+- Return only needed data (use DTOs, not entities)
+- Implement pagination for list endpoints
+- Use async/await for I/O operations
+- Cache expensive computations
+
+---
+
+## AI-Assisted Development Guidelines
+
+### Code Generation
+
+**When generating code:**
+
+- Follow all standards in this document
+- Match existing code style in the project
+- Add comments for complex logic
+- Use proper error handling
+- Consider edge cases
+
+**After generating code:**
+
+- Review thoroughly before committing
+- Test the code manually
+- Check for performance implications
+- Verify security considerations
+
+### Code Review Assistance
+
+**When reviewing code:**
+
+- Check against team standards
+- Identify potential bugs or edge cases
+- Suggest performance improvements
+- Verify error handling
+- Check for security issues
+
+### Refactoring Assistance
+
+**When refactoring:**
+
+- Preserve existing functionality
+- Improve readability and maintainability
+- Remove duplication
+- Simplify complex logic
+- Add tests if missing
+
+---
+
+## Common Patterns and Idioms
+
+### Singleton Pattern (C# - Use with caution)
+
+```csharp
+public sealed class ConfigurationManager
+{
+    private static readonly Lazy<ConfigurationManager> _instance =
+        new Lazy<ConfigurationManager>(() => new ConfigurationManager());
+
+    public static ConfigurationManager Instance => _instance.Value;
+
+    private ConfigurationManager() { }
+}
+```
+
+### Repository Pattern (C# with EF Core)
+
+```csharp
+public interface IRepository<T> where T : class
+{
+    Task<T> GetByIdAsync(int id);
+    Task<IEnumerable<T>> GetAllAsync();
+    Task AddAsync(T entity);
+    Task UpdateAsync(T entity);
+    Task DeleteAsync(int id);
+}
+```
+
+### Factory Pattern (C#)
+
+```csharp
+public interface IReportFactory
+{
+    IReport CreateReport(ReportType type);
+}
+
+public class ReportFactory : IReportFactory
+{
+    public IReport CreateReport(ReportType type)
+    {
+        return type switch
+        {
+            ReportType.Daily => new DailyReport(),
+            ReportType.Weekly => new WeeklyReport(),
+            ReportType.Monthly => new MonthlyReport(),
+            _ => throw new ArgumentException("Invalid report type")
+        };
+    }
+}
+```
+
+### Custom Hook Pattern (React)
+
+```javascript
+function useApi(endpoint) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(endpoint);
+      const json = await response.json();
+      setData(json);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [endpoint]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return { data, loading, error, refetch: fetchData };
+}
+```
+
+---
+
+## [PLACEHOLDER: Coding Standards to Be Defined]
+
+The following areas need team discussion and standardization:
+
+### Code Formatting
+
+- [ ] **Indentation**: Spaces vs tabs, how many spaces
+- [ ] **Line length**: Maximum characters per line
+- [ ] **Brace style**: Same line vs new line for opening braces
+- [ ] **Automatic formatting**: Prettier for JS, dotnet format for C#
+
+**Example decisions needed:**
+
+```csharp
+// Style A: Opening brace on new line (Allman)
+public void DoSomething()
+{
+    // code
+}
+
+// Style B: Opening brace on same line (K&R)
+public void DoSomething() {
+    // code
+}
+```
+
+### Naming Conventions Deep Dive
+
+- [ ] **Boolean variables**: Should use `is`, `has`, `can` prefixes?
+- [ ] **Collection names**: Plural or singular?
+- [ ] **Event handlers**: `handle` vs `on` prefix?
+- [ ] **Private fields**: Underscore prefix or not?
+
+**Examples:**
+
+```csharp
+// Boolean naming
+bool isActive vs bool active
+bool hasPermission vs bool permission
+
+// Collections
+List<User> users vs List<User> userList
+
+// Event handlers
+handleClick vs onClick vs buttonClick
+
+// Private fields
+private string _name vs private string name
+```
+
+### File Organization
+
+- [ ] **Folder structure**: Feature-based vs type-based
+- [ ] **File size limits**: Maximum lines per file
+- [ ] **Related files**: Should tests live next to code or separate folder?
+
+### API Design
+
+- [ ] **Endpoint naming**: Plural vs singular resource names
+- [ ] **Versioning**: URL path vs header vs query param
+- [ ] **Error response format**: Standardized error object structure
+- [ ] **Pagination**: Offset-based vs cursor-based
+
+**Example endpoint patterns:**
+
+```
+Option A: /api/users/{id}
+Option B: /api/user/{id}
+
+Option A: /api/v1/users
+Option B: /api/users (version in header)
+```
+
+### Database Conventions
+
+- [ ] **Timestamps**: `created_at`/`updated_at` on all tables?
+- [ ] **Soft deletes**: Use `deleted_at` or `is_deleted` flag?
+- [ ] **ID strategy**: Auto-increment integers vs UUIDs
+- [ ] **Audit fields**: What metadata to track on all tables?
+
+### Documentation Requirements
+
+- [ ] **Minimum documentation**: What requires docs?
+- [ ] **Public APIs**: Swagger/OpenAPI required?
+- [ ] **README standards**: What must be in every repo?
+- [ ] **Code comments**: When are they required vs optional?
+
+### Security Standards
+
+- [ ] **Authentication**: JWT vs cookies vs other
+- [ ] **Authorization**: Role-based vs claims-based vs other
+- [ ] **API keys**: Storage and rotation policy
+- [ ] **Secrets management**: Environment variables vs vault service
+- [ ] **Input validation**: Server-side rules and client-side helpers
+
+### Dependency Management
+
+- [ ] **Package updates**: How often to update dependencies
+- [ ] **Version pinning**: Exact versions vs ranges
+- [ ] **Security scanning**: Tools and frequency
+- [ ] **Approval process**: For adding new dependencies
+
+### Logging Standards
+
+- [ ] **Log levels**: When to use each level
+- [ ] **Log format**: Structured (JSON) vs text
+- [ ] **PII handling**: What can/cannot be logged
+- [ ] **Log retention**: How long to keep logs
+
+### Error Handling Standards
+
+- [ ] **Exception types**: Custom exceptions vs built-in
+- [ ] **Error codes**: Standardized error code system
+- [ ] **User-facing messages**: How detailed should they be
+- [ ] **Retry logic**: When to implement, with what strategy
+
+---
+
+## Document Maintenance
+
+### Updating This File
+
+When you discover Claude Code repeatedly:
+
+- Makes the same mistake
+- Suggests code that doesn't match our standards
+- Misunderstands our tech stack
+- Could be more helpful with better instructions
+
+**Then:**
+
+<ProcessList
+  items={[
+    { title: 'Create a feature branch: `docs/update-claude-instructions`' },
+    { title: 'Update this file with the correction' },
+    { title: 'Create a PR for team review' },
+    { title: 'After approval, merge and have all developers pull the latest changes' },
+  ]}
+/>
+
+### Versioning
+
+- Version number at top of document
+- Major version (1.x): Significant changes to standards
+- Minor version (x.1): Additions or clarifications
+- Document date of last update
+
+### Feedback
+
+If Claude Code gives suggestions that don't align with this document:
+
+- Note the discrepancy
+- Discuss with team
+- Update document if needed
+
+---
+
+## Quick Reference
+
+### Key Reminders for Claude
+
+1. **Check branch**: Always verify developer isn't on `main` before suggesting commits
+2. **Conventional commits**: Use proper format for commit messages
+3. **Error handling**: Always include try-catch for risky operations
+4. **Async/await**: Use async properly in C# and JavaScript
+5. **Explain reasoning**: Don't just provide code, explain why
+6. **Security first**: Validate inputs, handle errors, protect secrets
+7. **Test suggestions**: Remind to test before committing
+8. **Follow existing style**: Match the code style already in the file
+
+### Common Code Patterns Quick Reference
+
+**React state:**
+
+```javascript
+const [data, setData] = useState(initialValue);
+```
+
+**C# async method:**
+
+```csharp
+public async Task<Result> DoSomethingAsync()
+```
+
+**EF Core query:**
+
+```csharp
+await _context.Users.Where(u => u.IsActive).ToListAsync();
+```
+
+**Error handling:**
+
+```csharp
+try { } catch (SpecificException) { } catch (Exception) { }
+```
+
+**ASP.NET controller:**
+
+```csharp
+[HttpGet("{id}")]
+public async Task<ActionResult<T>> Get(int id)
+```
+
+---
+
+## Examples of Good vs Bad Code
+
+### Example 1: API Controller
+
+**Bad:**
+
+```csharp
+[HttpGet]
+public User GetUser(int id)
+{
+    var user = db.Users.Find(id);
+    return user;
+}
+```
+
+**Issues:**
+
+- Not async
+- No error handling
+- Returns entity directly (not DTO)
+- No null check
+- Direct db access in controller
+
+**Good:**
+
+```csharp
+[HttpGet("{id}")]
+public async Task<ActionResult<UserDto>> GetUser(int id)
+{
+    try
+    {
+        var user = await _userService.GetUserAsync(id);
+
+        if (user == null)
+            return NotFound($"User with ID {id} not found");
+
+        return Ok(user);
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error retrieving user {UserId}", id);
+        return StatusCode(500, "An error occurred while retrieving the user");
+    }
+}
+```
+
+### Example 2: React Component
+
+**Bad:**
+
+```javascript
+function Users() {
+  const [users, setUsers] = useState([]);
+
+  fetch('/api/users')
+    .then((r) => r.json())
+    .then(setUsers);
+
+  return (
+    <div>
+      {users.map((u) => (
+        <div>{u.name}</div>
+      ))}
+    </div>
+  );
+}
+```
+
+**Issues:**
+
+- Fetch on every render
+- No error handling
+- No loading state
+- Missing keys in map
+- No error handling
+
+**Good:**
+
+```javascript
+export function Users() {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function fetchUsers() {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/users');
+        if (!response.ok) throw new Error('Failed to fetch users');
+        const data = await response.json();
+        setUsers(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchUsers();
+  }, []);
+
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage message={error} />;
+
+  return (
+    <div className="users-list">
+      {users.map((user) => (
+        <UserCard key={user.id} user={user} />
+      ))}
+    </div>
+  );
+}
+```

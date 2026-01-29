@@ -1,0 +1,71 @@
+---
+title: Release Management
+---
+
+# Release Management
+
+## Development vs Production
+
+We maintain two main states:
+
+**Main Branch**
+
+- Always stable and deployable
+- Represents latest development work
+- Used for testing and staging
+
+**Production Releases**
+
+- Tagged commits on main branch
+- Represent specific deployed versions
+- Used when you need to support multiple versions
+
+## Tagging Releases
+
+**When deploying to production:**
+
+```bash
+# From main branch
+git tag -a v1.2.3 -m "Release version 1.2.3: Description of release"
+git push origin v1.2.3
+```
+
+**Tag format:** `v<major>.<minor>.<patch>`
+
+- Example: `v1.0.0`, `v1.2.5`, `v2.0.0`
+
+## Hotfixes for Production
+
+**When production has a critical bug:**
+
+```bash
+# Branch from the production tag
+git checkout v1.2.3
+git checkout -b hotfix/critical-security-fix
+
+# Make your fix and commit
+git add .
+git commit -m "fix: resolve critical security vulnerability"
+
+# Create PR to merge back to main
+git push origin hotfix/critical-security-fix
+
+# After PR is approved and merged to main:
+# Create new patch version tag
+git checkout main
+git pull origin main
+git tag -a v1.2.4 -m "Hotfix: security vulnerability"
+git push origin v1.2.4
+```
+
+## Release Notes
+
+**For each tagged release, document:**
+
+- New features added
+- Bugs fixed
+- Breaking changes
+- Known issues
+- Upgrade instructions
+
+**Store in:** `CHANGELOG.md` in repository root or GitHub Releases

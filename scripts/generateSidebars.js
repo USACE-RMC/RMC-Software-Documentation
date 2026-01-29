@@ -406,6 +406,76 @@ function generateDocumentationGuideSidebar() {
   return items;
 }
 
+/* --- Custom Logic: Software Development Sidebar --- */
+
+function generateSoftwareDevelopment() {
+  const guideDir = path.join(DOCS_DIR, '00-software-development');
+  if (!fs.existsSync(guideDir)) return null;
+
+  const introId = '00-introduction';
+  const gitHubWorkflowIds = [
+    '01-overview',
+    '02-repository-structure-permissions',
+    '03-branching-strategy',
+    '04-commit-message-standards',
+    '05-pull-request-workflow',
+    '06-github-issues',
+    '07-code-review-process',
+    '08-merging-to-main',
+    '09-project-specific-workflows',
+    '10-conflict-resolution',
+    '11-release-management',
+  ];
+  const aiGuidanceIds = ['12-ai-assisted-development', '13-claude-md'];
+  const referenceIds = ['14-case-conventions-by-language', '15-quick-reference', '16-appendix-common-scenarios'];
+
+  const files = fs
+    .readdirSync(guideDir)
+    .filter((f) => f.endsWith('.mdx'))
+    .sort();
+
+  function getLabel(fileBase) {
+    const fullPath = path.join(guideDir, `${fileBase}.mdx`);
+    return getFrontmatterTitle(fullPath) || titleCase(fileBase.replace(/^\d+-/, ''));
+  }
+
+  function buildDocItem(id) {
+    if (!files.includes(`${id}.mdx`)) return null;
+    return {
+      type: 'doc',
+      id: `software-development/${id.replace(/^\d+-/, '')}`,
+      label: getLabel(id),
+    };
+  }
+
+  function buildCategory(label, ids, collapsed) {
+    const items = ids.map(buildDocItem).filter(Boolean);
+    if (!items.length) return null;
+    return {
+      type: 'category',
+      label,
+      collapsible: true,
+      collapsed,
+      items,
+    };
+  }
+
+  const items = [];
+  const introItem = buildDocItem(introId);
+  if (introItem) items.push(introItem);
+
+  const coreCategory = buildCategory('GitHub Workflow and Best Practices', gitHubWorkflowIds, false);
+  if (coreCategory) items.push(coreCategory);
+
+  const aiCategory = buildCategory('AI Assistant Guidance', aiGuidanceIds, true);
+  if (aiCategory) items.push(aiCategory);
+
+  const referenceCategory = buildCategory('Standards & References', referenceIds, true);
+  if (referenceCategory) items.push(referenceCategory);
+
+  return items;
+}
+
 /* --- Sidebar Generation Entrypoint --- */
 
 function generateSidebars() {
@@ -445,6 +515,14 @@ function generateSidebars() {
   if (docGuideSidebar) {
     sidebarContent.documentationGuide = {
       'Documentation Guide': docGuideSidebar,
+    };
+  }
+
+  // Add Software Development sidebar if present
+  const softwareDevSidebar = generateSoftwareDevelopment();
+  if (softwareDevSidebar) {
+    sidebarContent.softwareDevelopment = {
+      'Software Development SOP': softwareDevSidebar,
     };
   }
 

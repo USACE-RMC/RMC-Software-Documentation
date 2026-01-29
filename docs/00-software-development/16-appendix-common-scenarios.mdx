@@ -1,0 +1,77 @@
+---
+title: Common Scenarios
+---
+
+# Common Scenarios
+
+## Scenario: "I accidentally committed to main"
+
+```bash
+# Undo the commit (keeps changes in working directory)
+git reset HEAD~1
+
+# Create proper feature branch
+git checkout -b feature/my-fix
+
+# Commit properly
+git add .
+git commit -m "fix: proper commit message"
+git push origin feature/my-fix
+
+# Create PR as normal
+```
+
+## Scenario: "My PR has conflicts with main"
+
+```bash
+# Update your local main
+git checkout main
+git pull origin main
+
+# Merge main into your branch
+git checkout feature/your-branch
+git merge main
+
+# Resolve conflicts in files
+# After resolving:
+git add .
+git commit -m "merge: resolve conflicts with main"
+git push origin feature/your-branch
+
+# Request re-review if conflicts were substantial
+```
+
+## Scenario: "I need to make a quick fix to production"
+
+```bash
+# Create hotfix branch
+git checkout -b hotfix/critical-fix
+
+# Make fix and commit
+git add .
+git commit -m "fix: critical production issue"
+
+# Push and create PR
+git push origin hotfix/critical-fix
+
+# Tag after merging
+git checkout main
+git pull origin main
+git tag -a v1.2.4 -m "Hotfix: description"
+git push origin v1.2.4
+```
+
+## Scenario: "I want to work on someone else's PR"
+
+```bash
+# Fetch their branch
+git fetch origin
+git checkout their-feature-branch
+
+# Make changes and commit
+git add .
+git commit -m "enhancement: improve their feature"
+git push origin their-feature-branch
+
+# Comment on PR that you added commits
+```
