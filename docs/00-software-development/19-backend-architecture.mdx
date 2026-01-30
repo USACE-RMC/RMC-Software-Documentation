@@ -1,0 +1,766 @@
+---
+title: Backend Architecture
+---
+
+import DocTabs from '@site/src/components/DocTabs';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+# Backend Architecture
+
+This guide defines the standard backend architecture for RMC web applications using ASP.NET Core and Entity Framework Core. It is written for developers who may be new to .NET development.
+
+---
+
+## Technology Stack
+
+| Technology            | Version | Purpose                        |
+| --------------------- | ------- | ------------------------------ |
+| ASP.NET Core          | 8.0     | Web API framework              |
+| Entity Framework Core | 8.0     | Object-relational mapper (ORM) |
+| PostgreSQL            | 15+     | Relational database            |
+| JWT Bearer            | -       | Authentication tokens          |
+| Serilog               | -       | Structured logging             |
+
+---
+
+## Key Concepts
+
+### What Is ASP.NET Core?
+
+ASP.NET Core is Microsoft's framework for building web applications and APIs in C#. It handles:
+
+- Receiving HTTP requests from clients (browsers, mobile apps)
+- Routing requests to the appropriate handler code
+- Serializing/deserializing JSON data automatically
+- Managing application configuration and services
+
+### What Is an API?
+
+An API (Application Programming Interface) is a way for programs to communicate. In our case, the frontend sends HTTP requests to URLs like `/api/analyses/123`, and the backend returns JSON data. The frontend never directly accesses the database—it always goes through the API.
+
+### What Is Dependency Injection?
+
+Dependency Injection (DI) is a pattern where objects receive their dependencies (other objects they need) from the outside rather than creating them internally. ASP.NET Core has built-in DI.
+
+```csharp
+// WITHOUT dependency injection (hard to test, tightly coupled)
+public class AnalysisController
+{
+    public AnalysisController()
+    {
+        _db = new AppDbContext();  // Creates its own database connection
+    }
+}
+
+// WITH dependency injection (testable, loosely coupled)
+public class AnalysisController
+{
+    private readonly AppDbContext _db;
+
+    public AnalysisController(AppDbContext db)  // Receives database from framework
+    {
+        _db = db;
+    }
+}
+```
+
+---
+
+## Project Structure
+
+```
+backend/
+├── WebApp.API/
+│   ├── Controllers/             # Handle HTTP requests
+│   │   ├── AuthController.cs
+│   │   └── Analyses/
+│   │       ├── SettlementController.cs
+│   │       └── SeepageController.cs
+│   │
+│   ├── Services/                # Business logic layer
+│   │   ├── ICalculationService.cs
+│   │   └── CalculationService.cs
+│   │
+│   ├── Entities/                # Database table definitions
+│   │   ├── User.cs
+│   │   ├── Analysis.cs
+│   │   └── AppDbContext.cs
+│   │
+│   ├── DTOs/                    # Data transfer objects
+│   │   ├── AnalysisDto.cs
+│   │   └── CalculationResponse.cs
+│   │
+│   ├── Middleware/              # Custom request processing
+│   │   └── ErrorHandlingMiddleware.cs
+│   │
+│   ├── Program.cs               # Application entry point
+│   ├── appsettings.json         # Configuration
+│   └── WebApp.API.csproj        # Project file
+│
+├── WebApp.API.Tests/            # Unit and integration tests
+│   └── Controllers/
+│
+└── Dockerfile                   # Container configuration
+```
+
+---
+
+## The Controller Layer
+
+### What Is a Controller?
+
+A **Controller** is a class that handles incoming HTTP requests. Each public method in a controller is an **action** that responds to a specific HTTP method (GET, POST, PUT, DELETE) at a specific URL.
+
+When a request arrives:
+
+1. ASP.NET Core matches the URL to a controller and action
+2. It extracts data from the URL, query string, or request body
+3. It calls your action method
+4. Your code runs and returns a result
+5. ASP.NET Core serializes the result to JSON and sends the response
+
+### Controller Anatomy
+
+```csharp
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace WebApp.API.Controllers.Analyses;
+
+// [ApiController] tells ASP.NET this is an API controller (enables automatic validation)
+[ApiController]
+// [Route] defines the base URL path for all actions in this controller
+[Route("api/analyses/settlement")]
+// [Authorize] requires a valid JWT token for all actions (authentication)
+[Authorize]
+public class SettlementController : ControllerBase
+{
+    // Dependencies injected via constructor
+    private readonly ICalculationService _calculationService;
+    private readonly AppDbContext _db;
+    private readonly ILogger<SettlementController> _logger;
+
+    public SettlementController(
+        ICalculationService calculationService,
+        AppDbContext db,
+        ILogger<SettlementController> logger)
+    {
+        _calculationService = calculationService;
+        _db = db;
+        _logger = logger;
+    }
+
+    /// <summary>
+    /// Retrieves analysis parameters.
+    /// GET /api/analyses/settlement/parameters/123
+    /// </summary>
+    [HttpGet("parameters/{analysisId}")]
+    public async Task<IActionResult> GetParameters(int analysisId)
+    {
+        var userId = GetCurrentUserId();
+
+        // Find the analysis in the database
+        var analysis = await _db.Analyses.FindAsync(analysisId);
+
+        // Return 404 if not found
+        if (analysis == null)
+            return NotFound();
+
+        // Return 403 if user doesn't own this analysis
+        if (analysis.UserId != userId)
+            return Forbid();
+
+        // Return 200 with the data
+        return Ok(MapToDto(analysis));
+    }
+
+    /// <summary>
+    /// Runs the calculation for an analysis.
+    /// POST /api/analyses/settlement/calculate/123
+    /// </summary>
+    [HttpPost("calculate/{analysisId}")]
+    public async Task<IActionResult> Calculate(int analysisId)
+    {
+        _logger.LogInformation(
+            "[API] POST calculate/{AnalysisId}",
+            analysisId);
+
+        var userId = GetCurrentUserId();
+
+        // Delegate to service layer
+        var response = await _calculationService.RunAsync(analysisId, userId);
+
+        // Return appropriate HTTP status based on result
+        return response.Status switch
+        {
+            "success" => Ok(response),
+            "incomplete" => Ok(response),
+            "error" => BadRequest(response),
+            _ => StatusCode(500, response)
+        };
+    }
+
+    // Helper to get user ID from JWT token claims
+    private string GetCurrentUserId() =>
+        User.FindFirstValue(ClaimTypes.NameIdentifier)
+        ?? throw new UnauthorizedAccessException();
+}
+```
+
+### HTTP Method Conventions
+
+| Operation       | HTTP Method | Route Example                  | Returns                   |
+| --------------- | ----------- | ------------------------------ | ------------------------- |
+| Get single item | GET         | `/api/analyses/{id}`           | 200 OK or 404 Not Found   |
+| Get collection  | GET         | `/api/analyses`                | 200 OK (array)            |
+| Create item     | POST        | `/api/analyses`                | 201 Created               |
+| Update item     | PUT         | `/api/analyses/{id}`           | 200 OK or 404 Not Found   |
+| Delete item     | DELETE      | `/api/analyses/{id}`           | 204 No Content            |
+| Run calculation | POST        | `/api/analyses/{id}/calculate` | 200 OK or 400 Bad Request |
+
+### Route Parameters and Binding
+
+ASP.NET Core automatically binds data from different parts of the request:
+
+```csharp
+// From URL path: /api/analyses/123
+[HttpGet("{id}")]
+public async Task<IActionResult> Get(int id)  // id = 123
+
+// From query string: /api/analyses?page=1&limit=10
+[HttpGet]
+public async Task<IActionResult> List(
+    [FromQuery] int page = 1,
+    [FromQuery] int limit = 10)
+
+// From request body (JSON)
+[HttpPost]
+public async Task<IActionResult> Create([FromBody] CreateAnalysisDto dto)
+
+// From route and body combined
+[HttpPut("{id}")]
+public async Task<IActionResult> Update(int id, [FromBody] UpdateDto dto)
+```
+
+---
+
+## The Service Layer
+
+### What Is a Service?
+
+A **Service** is a class that contains business logic. Services orchestrate operations between controllers, the database, and calculation libraries.
+
+Why separate services from controllers?
+
+- **Testability**: Services can be unit tested without HTTP
+- **Reusability**: Multiple controllers can use the same service
+- **Single Responsibility**: Controllers handle HTTP, services handle logic
+
+### Service Interface Pattern
+
+Define an interface so the implementation can be mocked in tests:
+
+```csharp
+// Services/ICalculationService.cs
+public interface ICalculationService
+{
+    Task<CalculationResponse> RunAsync(int analysisId, string userId);
+    Task<ValidationResult> ValidateAsync(int analysisId);
+}
+```
+
+Implement the interface:
+
+```csharp
+// Services/CalculationService.cs
+public class CalculationService : ICalculationService
+{
+    private readonly AppDbContext _db;
+    private readonly ILogger<CalculationService> _logger;
+
+    public CalculationService(
+        AppDbContext db,
+        ILogger<CalculationService> logger)
+    {
+        _db = db;
+        _logger = logger;
+    }
+
+    public async Task<CalculationResponse> RunAsync(int analysisId, string userId)
+    {
+        // 1. Load analysis from database
+        var analysis = await _db.Analyses
+            .FirstOrDefaultAsync(a => a.Id == analysisId && a.UserId == userId);
+
+        if (analysis == null)
+        {
+            return new CalculationResponse
+            {
+                Status = "error",
+                Errors = new List<string> { "Analysis not found" }
+            };
+        }
+
+        // 2. Validate inputs
+        var validation = ValidateInputs(analysis.Parameters);
+        if (!validation.IsValid)
+        {
+            return new CalculationResponse
+            {
+                Status = "incomplete",
+                Inputs = validation.MissingInputs,
+                CanRun = false
+            };
+        }
+
+        // 3. Run calculation (calls the calculation library)
+        var config = MapToConfig(analysis.Parameters);
+        var model = new SettlementModel(config);
+        var result = await model.RunAsync();
+
+        // 4. Save results to database
+        analysis.Results = JsonSerializer.SerializeToDocument(result);
+        analysis.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
+
+        // 5. Return response following messaging contract
+        return new CalculationResponse
+        {
+            Status = "success",
+            Results = result,
+            Warnings = result.Warnings,
+            CanRun = true
+        };
+    }
+}
+```
+
+### Registering Services
+
+Services must be registered with the dependency injection container in `Program.cs`:
+
+```csharp
+// Program.cs
+builder.Services.AddScoped<ICalculationService, CalculationService>();
+```
+
+The `AddScoped` method means a new instance is created for each HTTP request.
+
+---
+
+## Entity Framework Core
+
+### What Is Entity Framework Core?
+
+Entity Framework Core (EF Core) is an **ORM** (Object-Relational Mapper) that lets you work with database records as C# objects. Instead of writing SQL, you write LINQ queries that EF Core translates to SQL.
+
+Benefits:
+
+- **Type safety**: Compiler catches errors, not runtime
+- **IntelliSense**: IDE helps you write correct queries
+- **Migrations**: Version control for database schema
+- **Cross-database**: Switch between PostgreSQL, SQL Server, SQLite
+
+### Entity Definition
+
+An **entity** is a C# class that maps to a database table. Each property maps to a column.
+
+```csharp
+// Entities/Analysis.cs
+public class Analysis
+{
+    // Primary key - auto-incremented by database
+    public int Id { get; set; }
+
+    // Required string column with max length
+    [Required]
+    [MaxLength(255)]
+    public string Name { get; set; } = string.Empty;
+
+    // Foreign key to User table
+    [Required]
+    public string UserId { get; set; } = string.Empty;
+
+    // Timestamp columns
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+    // JSONB columns for flexible data (PostgreSQL feature)
+    [Column(TypeName = "jsonb")]
+    public JsonDocument? Parameters { get; set; }
+
+    [Column(TypeName = "jsonb")]
+    public JsonDocument? Results { get; set; }
+
+    // Navigation property - the related User object
+    public User User { get; set; } = null!;
+}
+```
+
+### DbContext Configuration
+
+The **DbContext** is your gateway to the database. It contains `DbSet<T>` properties for each table.
+
+```csharp
+// Entities/AppDbContext.cs
+public class AppDbContext : DbContext
+{
+    public AppDbContext(DbContextOptions<AppDbContext> options)
+        : base(options) { }
+
+    // Each DbSet represents a database table
+    public DbSet<User> Users => Set<User>();
+    public DbSet<Analysis> Analyses => Set<Analysis>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        // Configure relationships
+        modelBuilder.Entity<Analysis>()
+            .HasOne(a => a.User)
+            .WithMany(u => u.Analyses)
+            .HasForeignKey(a => a.UserId);
+
+        // Configure JSONB columns
+        modelBuilder.Entity<Analysis>()
+            .Property(a => a.Parameters)
+            .HasColumnType("jsonb");
+
+        // Add indexes for frequently queried columns
+        modelBuilder.Entity<Analysis>()
+            .HasIndex(a => a.UserId);
+    }
+}
+```
+
+### Common Database Operations
+
+<DocTabs
+  items={[
+    {
+      title: 'Find by ID',
+      child: (
+        <div>
+          <p>Retrieve a single record by its primary key:</p>
+          <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`// Returns the entity or null if not found
+var analysis = await _db.Analyses.FindAsync(id);
+
+// Always check for null before using
+if (analysis == null)
+return NotFound();
+
+// Now safe to use analysis
+return Ok(analysis.Name);`}
+          </pre>
+        </div>
+      ),
+    },
+    {
+      title: 'Filter with Where',
+      child: (
+        <div>
+          <p>Query records matching a condition:</p>
+          <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`// Get all analyses for a specific user
+var analyses = await \_db.Analyses
+.Where(a => a.UserId == userId)
+.OrderByDescending(a => a.UpdatedAt)
+.ToListAsync();
+
+// Get first matching record (or null)
+var latest = await \_db.Analyses
+.Where(a => a.UserId == userId)
+.OrderByDescending(a => a.UpdatedAt)
+.FirstOrDefaultAsync();`}
+          </pre>
+        </div>
+      ),
+    },
+    {
+      title: 'Create',
+      child: (
+        <div>
+          <p>Insert a new record into the database:</p>
+          <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`// Create a new entity object
+var analysis = new Analysis
+{
+Name = dto.Name,
+UserId = userId
+};
+
+// Add to change tracking (not yet saved)
+\_db.Analyses.Add(analysis);
+
+// Save to database (executes INSERT)
+await \_db.SaveChangesAsync();
+
+// analysis.Id is now populated with the generated key
+return Created($"/api/analyses/{analysis.Id}", analysis);`}
+          </pre>
+        </div>
+      ),
+    },
+    {
+      title: 'Update',
+      child: (
+        <div>
+          <p>Modify an existing record:</p>
+          <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`// Load the entity (now tracked by EF Core)
+var analysis = await \_db.Analyses.FindAsync(id);
+if (analysis == null)
+return NotFound();
+
+// Modify properties
+analysis.Name = dto.Name;
+analysis.UpdatedAt = DateTime.UtcNow;
+
+// Save changes (executes UPDATE)
+await \_db.SaveChangesAsync();
+
+return Ok(analysis);`}
+          </pre>
+        </div>
+      ),
+    },
+    {
+      title: 'Delete',
+      child: (
+        <div>
+          <p>Remove a record from the database:</p>
+          <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`// Load the entity
+var analysis = await \_db.Analyses.FindAsync(id);
+if (analysis == null)
+return NotFound();
+
+// Mark for deletion
+\_db.Analyses.Remove(analysis);
+
+// Execute DELETE
+await \_db.SaveChangesAsync();
+
+return NoContent();`}
+</pre>
+</div>
+),
+},
+]}
+/>
+
+---
+
+## Messaging Contract
+
+All calculation endpoints return responses following a standard structure. This consistency makes the frontend predictable and simplifies error handling.
+
+```csharp
+// DTOs/CalculationResponse.cs
+public class CalculationResponse
+{
+    [JsonPropertyName("status")]
+    public string Status { get; set; } = "success";
+
+    [JsonPropertyName("inputs")]
+    public List<string> Inputs { get; set; } = new();
+
+    [JsonPropertyName("warnings")]
+    public List<string> Warnings { get; set; } = new();
+
+    [JsonPropertyName("errors")]
+    public List<string> Errors { get; set; } = new();
+
+    [JsonPropertyName("can_run")]
+    public bool CanRun { get; set; } = true;
+
+    [JsonPropertyName("results")]
+    public object? Results { get; set; }
+
+    [JsonPropertyName("results_cleared")]
+    public bool ResultsCleared { get; set; } = false;
+}
+```
+
+### Status Values
+
+| Status       | HTTP Code | Meaning                                |
+| ------------ | --------- | -------------------------------------- |
+| `success`    | 200       | Analysis completed successfully        |
+| `incomplete` | 200       | Missing required inputs (not an error) |
+| `error`      | 400       | Validation or calculation error        |
+
+---
+
+## Authentication
+
+RMC applications use JWT (JSON Web Token) bearer authentication.
+
+### What Is JWT?
+
+A JWT is a signed token that contains user identity information. The frontend includes this token in the `Authorization` header of every request. The backend validates the signature to verify the user's identity without hitting the database.
+
+### JWT Configuration
+
+```csharp
+// Program.cs
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        };
+    });
+
+builder.Services.AddAuthorization();
+```
+
+### Getting the Current User
+
+```csharp
+// In a controller, get user ID from JWT claims
+private string GetCurrentUserId()
+{
+    return User.FindFirstValue(ClaimTypes.NameIdentifier)
+        ?? throw new UnauthorizedAccessException("User ID not found in token");
+}
+```
+
+---
+
+## Logging
+
+Use Serilog with structured logging for all operations.
+
+### Logging Configuration
+
+```csharp
+// Program.cs
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+    .Enrich.FromLogContext()
+    .WriteTo.Console(outputTemplate:
+        "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext}: {Message:lj}{NewLine}{Exception}")
+    .WriteTo.File("logs/app.log", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+```
+
+### Logging Best Practices
+
+```csharp
+// Use structured logging with named parameters (not string interpolation)
+_logger.LogInformation(
+    "[API] POST /api/analyses/settlement/calculate/{AnalysisId}",
+    analysisId);
+
+_logger.LogDebug(
+    "[CALC] Running analysis: Iterations={Iterations}, Seed={Seed}",
+    config.Iterations, config.Seed);
+
+_logger.LogError(ex,
+    "[ERROR] Calculation failed for analysis {AnalysisId}",
+    analysisId);
+```
+
+### Log Prefixes
+
+| Prefix    | Usage                          |
+| --------- | ------------------------------ |
+| `[API]`   | HTTP request/response handling |
+| `[CALC]`  | Engineering calculations       |
+| `[VALID]` | Input validation               |
+| `[DB]`    | Database operations            |
+| `[ERROR]` | Error conditions               |
+
+---
+
+## Error Handling
+
+Use a global exception handler middleware for consistent error responses.
+
+```csharp
+// Middleware/ErrorHandlingMiddleware.cs
+public class ErrorHandlingMiddleware
+{
+    private readonly RequestDelegate _next;
+    private readonly ILogger<ErrorHandlingMiddleware> _logger;
+
+    public ErrorHandlingMiddleware(
+        RequestDelegate next,
+        ILogger<ErrorHandlingMiddleware> logger)
+    {
+        _next = next;
+        _logger = logger;
+    }
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        try
+        {
+            await _next(context);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "[ERROR] Unhandled exception");
+            await HandleExceptionAsync(context, ex);
+        }
+    }
+
+    private static async Task HandleExceptionAsync(HttpContext context, Exception ex)
+    {
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = ex switch
+        {
+            UnauthorizedAccessException => StatusCodes.Status403Forbidden,
+            ArgumentException => StatusCodes.Status400BadRequest,
+            _ => StatusCodes.Status500InternalServerError
+        };
+
+        var response = new CalculationResponse
+        {
+            Status = "error",
+            Errors = new List<string> { ex.Message }
+        };
+
+        await context.Response.WriteAsJsonAsync(response);
+    }
+}
+
+// Register in Program.cs
+app.UseMiddleware<ErrorHandlingMiddleware>();
+```
+
+---
+
+## Best Practices
+
+### Do
+
+- Keep controllers thin—delegate business logic to services
+- Use async/await for all I/O operations (database, HTTP)
+- Validate inputs before processing
+- Log all significant operations with context
+- Use dependency injection for all dependencies
+- Return appropriate HTTP status codes
+- Check authorization (user owns the resource)
+
+### Don't
+
+- Put business logic directly in controllers
+- Expose database entities directly to the API (use DTOs)
+- Catch and swallow exceptions silently (always log)
+- Use synchronous database calls (blocks the thread)
+- Store secrets in code (use configuration/environment variables)
+- Skip authorization checks (security critical)
+- Trust data from the frontend without validation
