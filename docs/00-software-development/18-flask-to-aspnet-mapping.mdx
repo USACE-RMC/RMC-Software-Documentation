@@ -1,0 +1,509 @@
+---
+title: Flask to ASP.NET Mapping
+---
+
+import DocTabs from '@site/src/components/DocTabs';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+# Flask to ASP.NET Mapping
+
+This guide provides a direct mapping between Flask/Python concepts and their ASP.NET Core/C# equivalents. Use this as a reference when reading or writing ASP.NET code.
+
+---
+
+## Terminology Mapping
+
+<TableVerticalNoRef
+  alt="Flask to ASP.NET terminology mapping"
+  headers={[[{ value: 'Flask (Python)' }, { value: 'ASP.NET Core (C#)' }, { value: 'What It Does' }]]}
+  columns={[
+    [
+      '@app.route(\'/api/...\')',
+      'Blueprint',
+      'Route function',
+      'request.json',
+      'jsonify(data)',
+      'Flask app',
+      'SQLAlchemy model',
+      'db.session',
+      'requirements.txt',
+    ],
+    [
+      '[HttpPost("...")] attribute',
+      'Controller class',
+      'Action method',
+      '[FromBody] parameter',
+      'Ok(data) or return data',
+      'Program.cs + Startup',
+      'EF Core entity',
+      'DbContext',
+      '.csproj file (NuGet)',
+    ],
+    [
+      'Defines an API endpoint URL',
+      'Groups related endpoints together',
+      'The function that handles the request',
+      'Gets JSON from request body',
+      'Returns JSON response',
+      'Configures the server',
+      'Database table definition',
+      'Database connection/operations',
+      'Lists dependencies',
+    ],
+  ]}
+  colWidths={[28, 28, 30]}
+/>
+
+---
+
+## Side-by-Side Code Comparison
+
+The following examples show equivalent code in Flask and ASP.NET.
+
+<DocTabs
+  items={[
+    {
+      title: 'Flask (Python)',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`# backend/app/routes/schmertmann.py
+
+from flask import Blueprint, request, jsonify
+from app.models.schmertmann import SchmertmannModel
+from app.db import Analysis
+
+schmertmann_bp = Blueprint('schmertmann', __name__)
+
+@schmertmann_bp.route(
+    '/toolboxes/bep-progression/schmertmann/calculate/<int:analysis_id>',
+    methods=['POST']
+)
+def calculate(analysis_id):
+    """Run Schmertmann calculation for an analysis."""
+
+    # 1. Get user from session/token
+    user_id = get_current_user_id()
+
+    # 2. Load from database
+    analysis = Analysis.query.get(analysis_id)
+
+    # 3. Check ownership
+    if analysis.user_id != user_id:
+        return jsonify({"error": "Not authorized"}), 403
+
+    # 4. Extract parameters from database
+    config = analysis.parameters  # JSONB field
+
+    # 5. Run calculation
+    model = SchmertmannModel(config)
+    result = model.run()
+
+    # 6. Save results back to database
+    analysis.results = result
+    db.session.commit()
+
+    # 7. Return response
+    return jsonify({
+        "status": "success",
+        "inputs": [],
+        "warnings": [],
+        "errors": [],
+        "can_run": True,
+        "results": result,
+        "results_cleared": False
+    }), 200`}
+        </pre>
+      ),
+    },
+    {
+      title: 'ASP.NET (C#)',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`// backend-dotnet/Controllers/SchmertmannController.cs
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using SystemResponse.Toolboxes.BEPProgression.Schmertmann;
+
+namespace RMCToolboxes.API.Controllers;
+
+[ApiController]  // "This class handles API requests"
+[Route("api/toolboxes/bep-progression/schmertmann")]
+[Authorize]  // "User must be logged in"
+public class SchmertmannController : ControllerBase
+{
+    private readonly ToolboxDbContext _db;
+    private readonly ILogger<SchmertmannController> _logger;
+
+    public SchmertmannController(
+        ToolboxDbContext db,
+        ILogger<SchmertmannController> logger)
+    {
+        _db = db;
+        _logger = logger;
+    }
+
+    [HttpPost("calculate/{analysisId}")]
+    public async Task<IActionResult> Calculate(int analysisId)
+    {
+        // 1. Get user from JWT token (automatic)
+        var userId = User.FindFirstValue(
+            ClaimTypes.NameIdentifier);
+
+        // 2. Load from database
+        var analysis = await _db.Analyses.FindAsync(analysisId);
+
+        // 3. Check ownership
+        if (analysis.UserId != userId)
+            return Forbid();  // HTTP 403
+
+        // 4. Extract parameters from database
+        var config = analysis.Parameters;  // JSONB field
+
+        // 5. Run calculation
+        var model = new SchmertmannModel(config);
+        var result = await model.RunAsync();
+
+        // 6. Save results back to database
+        analysis.Results = result;
+        await _db.SaveChangesAsync();
+
+        // 7. Return response
+        return Ok(new {
+            status = "success",
+            inputs = new List<string>(),
+            warnings = new List<string>(),
+            errors = new List<string>(),
+            can_run = true,
+            results = result,
+            results_cleared = false
+        });
+    }
+}`}
+        </pre>
+      ),
+    },
+  ]}
+/>
+
+---
+
+## Key Syntax Differences
+
+### Decorators vs Attributes
+
+Flask uses Python decorators. ASP.NET uses C# attributes (which look similar but use square brackets).
+
+<DocTabs
+  items={[
+    {
+      title: 'Flask Decorator',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`@app.route('/api/users', methods=['GET'])
+def get_users():
+    return jsonify(users)`}
+        </pre>
+      ),
+    },
+    {
+      title: 'ASP.NET Attribute',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`[HttpGet("api/users")]
+public IActionResult GetUsers()
+{
+    return Ok(users);
+}`}
+        </pre>
+      ),
+    },
+  ]}
+/>
+
+### Getting Request Data
+
+<DocTabs
+  items={[
+    {
+      title: 'Flask',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`# JSON body
+data = request.json
+name = data['name']
+
+# URL parameter
+@app.route('/users/<int:user_id>')
+def get_user(user_id):
+    ...
+
+# Query string
+page = request.args.get('page', 1)`}
+        </pre>
+      ),
+    },
+    {
+      title: 'ASP.NET',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`// JSON body (auto-deserialized to object)
+[HttpPost]
+public IActionResult Create([FromBody] UserDto data)
+{
+    var name = data.Name;
+}
+
+// URL parameter
+[HttpGet("{userId}")]
+public IActionResult GetUser(int userId) { ... }
+
+// Query string
+[HttpGet]
+public IActionResult List([FromQuery] int page = 1) { ... }`}
+        </pre>
+      ),
+    },
+  ]}
+/>
+
+### Returning Responses
+
+<TableVerticalNoRef
+  alt="Response methods comparison"
+  headers={[[{ value: 'Flask' }, { value: 'ASP.NET' }, { value: 'HTTP Status' }]]}
+  columns={[
+    [
+      'return jsonify(data), 200',
+      'return jsonify(data), 201',
+      'return jsonify({"error": "..."}), 400',
+      'return jsonify({"error": "..."}), 401',
+      'return jsonify({"error": "..."}), 403',
+      'return jsonify({"error": "..."}), 404',
+      'return jsonify({"error": "..."}), 500',
+    ],
+    [
+      'return Ok(data)',
+      'return Created(url, data)',
+      'return BadRequest(error)',
+      'return Unauthorized()',
+      'return Forbid()',
+      'return NotFound()',
+      'return StatusCode(500, error)',
+    ],
+    [
+      '200 OK',
+      '201 Created',
+      '400 Bad Request',
+      '401 Unauthorized',
+      '403 Forbidden',
+      '404 Not Found',
+      '500 Internal Server Error',
+    ],
+  ]}
+  colWidths={[35, 30, 20]}
+/>
+
+---
+
+## Database Operations
+
+### Model Definition
+
+<DocTabs
+  items={[
+    {
+      title: 'SQLAlchemy (Flask)',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`from sqlalchemy import Column, Integer, String, JSON
+
+class Analysis(db.Model):
+    __tablename__ = 'analyses'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    parameters = Column(JSON)  # JSONB
+    results = Column(JSON)
+
+    user = relationship('User', back_populates='analyses')`}
+        </pre>
+      ),
+    },
+    {
+      title: 'Entity Framework Core',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`public class Analysis
+{
+    public int Id { get; set; }
+
+    [Required]
+    [MaxLength(255)]
+    public string Name { get; set; }
+
+    public int UserId { get; set; }
+
+    [Column(TypeName = "jsonb")]
+    public JsonDocument Parameters { get; set; }
+
+    [Column(TypeName = "jsonb")]
+    public JsonDocument Results { get; set; }
+
+    // Navigation property
+    public User User { get; set; }
+}`}
+        </pre>
+      ),
+    },
+  ]}
+/>
+
+### Query Operations
+
+<TableVerticalNoRef
+  alt="Database query operations comparison"
+  headers={[[{ value: 'Operation' }, { value: 'SQLAlchemy (Flask)' }, { value: 'Entity Framework Core' }]]}
+  columns={[
+    [
+      'Get by ID',
+      'Get all',
+      'Filter',
+      'Create',
+      'Update',
+      'Delete',
+      'Save changes',
+    ],
+    [
+      'Analysis.query.get(id)',
+      'Analysis.query.all()',
+      'Analysis.query.filter_by(user_id=uid).all()',
+      'db.session.add(analysis)',
+      'analysis.name = "New Name"',
+      'db.session.delete(analysis)',
+      'db.session.commit()',
+    ],
+    [
+      'await _db.Analyses.FindAsync(id)',
+      'await _db.Analyses.ToListAsync()',
+      '_db.Analyses.Where(a => a.UserId == uid).ToList()',
+      '_db.Analyses.Add(analysis)',
+      'analysis.Name = "New Name"',
+      '_db.Analyses.Remove(analysis)',
+      'await _db.SaveChangesAsync()',
+    ],
+  ]}
+  colWidths={[15, 40, 45]}
+/>
+
+---
+
+## Async/Await
+
+Both Flask and ASP.NET support async operations, but ASP.NET uses it more pervasively.
+
+<DocTabs
+  items={[
+    {
+      title: 'Flask (async optional)',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`# Synchronous (common)
+def calculate(analysis_id):
+    analysis = Analysis.query.get(analysis_id)
+    result = model.run()
+    return jsonify(result)
+
+# Async (less common)
+async def calculate(analysis_id):
+    analysis = await Analysis.query.get(analysis_id)
+    result = await model.run_async()
+    return jsonify(result)`}
+        </pre>
+      ),
+    },
+    {
+      title: 'ASP.NET (async standard)',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`// Async is the standard pattern
+public async Task<IActionResult> Calculate(int analysisId)
+{
+    // await for database operations
+    var analysis = await _db.Analyses.FindAsync(analysisId);
+
+    // await for long-running calculations
+    var result = await model.RunAsync();
+
+    // await for saving
+    await _db.SaveChangesAsync();
+
+    return Ok(result);
+}`}
+        </pre>
+      ),
+    },
+  ]}
+/>
+
+---
+
+## Dependency Injection
+
+ASP.NET uses constructor injection extensively, while Flask typically uses global app context.
+
+<DocTabs
+  items={[
+    {
+      title: 'Flask (globals)',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`from flask import current_app, g
+from app.db import db
+
+def calculate(analysis_id):
+    # Access app config via current_app
+    debug_mode = current_app.config['DEBUG']
+
+    # Access database via global db
+    analysis = Analysis.query.get(analysis_id)
+
+    # Use g for request-scoped data
+    user = g.current_user`}
+        </pre>
+      ),
+    },
+    {
+      title: 'ASP.NET (constructor injection)',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`public class AnalysisController : ControllerBase
+{
+    private readonly ToolboxDbContext _db;
+    private readonly IConfiguration _config;
+    private readonly ILogger<AnalysisController> _logger;
+
+    // Dependencies injected via constructor
+    public AnalysisController(
+        ToolboxDbContext db,
+        IConfiguration config,
+        ILogger<AnalysisController> logger)
+    {
+        _db = db;
+        _config = config;
+        _logger = logger;
+    }
+
+    public async Task<IActionResult> Calculate(int id)
+    {
+        var debug = _config.GetValue<bool>("Debug");
+        var analysis = await _db.Analyses.FindAsync(id);
+        _logger.LogInformation("Calculating...");
+    }
+}`}
+        </pre>
+      ),
+    },
+  ]}
+/>

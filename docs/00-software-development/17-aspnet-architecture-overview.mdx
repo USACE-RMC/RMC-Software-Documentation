@@ -1,0 +1,228 @@
+---
+title: ASP.NET Architecture Overview
+---
+
+import DocTabs from '@site/src/components/DocTabs';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+# ASP.NET Architecture Overview
+
+This guide explains the architecture of RMC web applications built with ASP.NET Core, with special focus on how they relate to the Flask/Python architecture that developers may already be familiar with.
+
+---
+
+## The Big Picture
+
+The frontend code (React/JSX, hooks, ViewModels, APIs) remains **unchanged** when migrating from Flask to ASP.NET. The frontend does not care whether it communicates with a Flask server or an ASP.NET server—it simply makes HTTP requests and receives JSON responses.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ Frontend (React/JSX)                                        │
+│ This layer is UNCHANGED                                     │
+│ - JSX components                                            │
+│ - Hooks                                                     │
+│ - ViewModels (use*VM.js hooks)                              │
+│ - API utilities (apiFetch.js)                               │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+                      │ HTTP/JSON (same as before)
+                      │ "I don't know or care what's on the other end"
+                      ↓
+┌─────────────────────────────────────────────────────────────┐
+│ Backend Server                                              │
+│                                                             │
+│ BEFORE: Flask + Python   →   AFTER: ASP.NET + C#           │
+│                                                             │
+│ Same job, different language                                │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Three-Tier Architecture
+
+RMC web applications follow a three-tier architecture pattern that separates concerns cleanly.
+
+<DocTabs
+  items={[
+    {
+      title: 'Frontend',
+      child: (
+        <div>
+          <p><strong>Technology:</strong> React + Vite, JavaScript, Tailwind CSS</p>
+          <p><strong>Responsibility:</strong> User interface, form handling, data visualization</p>
+          <p><strong>Communication:</strong> HTTP/JSON to backend API</p>
+          <p><strong>Status:</strong> Unchanged during migration</p>
+        </div>
+      ),
+    },
+    {
+      title: 'Web API',
+      child: (
+        <div>
+          <p><strong>Technology:</strong> ASP.NET Core, Entity Framework Core</p>
+          <p><strong>Responsibility:</strong> Authentication, authorization, database operations, API endpoints</p>
+          <p><strong>Communication:</strong> Direct C# calls to calculation library</p>
+          <p><strong>Status:</strong> New implementation replacing Flask</p>
+        </div>
+      ),
+    },
+    {
+      title: 'Calculation Library',
+      child: (
+        <div>
+          <p><strong>Technology:</strong> System-Response (.NET 8.0 library)</p>
+          <p><strong>Responsibility:</strong> Engineering calculations, Monte Carlo simulations</p>
+          <p><strong>Communication:</strong> Pure C# function calls (no HTTP)</p>
+          <p><strong>Status:</strong> Ported from Python calculation models</p>
+        </div>
+      ),
+    },
+  ]}
+/>
+
+---
+
+## Data Flow Example
+
+The following diagram shows how data flows through the system when a user runs an analysis.
+
+```
+1. User clicks "Run Analysis" in the browser
+                │
+                ↓
+2. Frontend hook calls apiFetch()
+   POST /api/toolboxes/bep-progression/schmertmann/calculate/123
+                │
+                ↓
+3. ASP.NET Controller receives request
+   - Authenticates user (JWT token)
+   - Loads analysis from database (Entity Framework)
+   - Extracts configuration parameters
+                │
+                ↓
+4. Controller calls System-Response library
+   var model = new SchmertmannModel(config);
+   var result = await model.RunAsync();
+                │
+                ↓
+5. System-Response performs calculation
+   - Uses RMC.Numerics for distributions
+   - Runs Monte Carlo simulation
+   - Returns result DTO
+                │
+                ↓
+6. Controller saves results and returns JSON
+   {
+     "status": "success",
+     "results": { ... },
+     "warnings": []
+   }
+                │
+                ↓
+7. Frontend receives response and updates UI
+```
+
+---
+
+## What Files Go Where
+
+The following table shows where different types of code belong across the repositories.
+
+<TableVerticalNoRef
+  alt="File locations across repositories"
+  headers={[[{ value: 'File Type' }, { value: 'Location' }, { value: 'Repository' }]]}
+  columns={[
+    [
+      'UI Components',
+      'Frontend Hooks',
+      'Frontend ViewModels',
+      'Frontend API Utilities',
+      'API Endpoints (Routes)',
+      'Database Entities',
+      'Calculation Models',
+    ],
+    [
+      'frontend/src/components/',
+      'frontend/src/hooks/',
+      'frontend/src/pages/**/hooks/use*VM.js',
+      'frontend/src/api/',
+      'backend-dotnet/Controllers/',
+      'backend-dotnet/Entities/',
+      'SystemResponse/Toolboxes/',
+    ],
+    [
+      'RMC-Toolboxes-WebApp',
+      'RMC-Toolboxes-WebApp',
+      'RMC-Toolboxes-WebApp',
+      'RMC-Toolboxes-WebApp',
+      'RMC-Toolboxes-WebApp',
+      'RMC-Toolboxes-WebApp',
+      'System-Response (separate)',
+    ],
+  ]}
+  colWidths={[25, 30, 25]}
+/>
+
+---
+
+## Frontend ViewModel Purpose
+
+The frontend ViewModel layer (`use*VM.js` hooks) serves as a **translator** between the UI and the API. This layer remains necessary in the new architecture.
+
+**Note:** These are React hooks that return `{ vm, actions }`. The term "ViewModel" comes from the MVVM (Model-View-ViewModel) pattern and accurately describes what these hooks do: create view-ready data structures from raw API responses.
+
+### Without ViewModel Layer
+
+```
+Hook ──────────────────────────────────────────────────► API
+
+Problem: Hook must know:
+  - Exact API endpoint structure
+  - How to transform data for the API
+  - How to transform API response for UI
+  - Makes hooks complicated and hard to test
+```
+
+### With ViewModel Layer
+
+```
+Hook ────► ViewModel (use*VM.js) ────► API
+
+ViewModel's job:
+  - Transform UI data → API shape
+  - Transform API response → UI shape (vm object)
+  - Hide API complexity from hooks
+  - Single place to update if API changes
+```
+
+---
+
+## Key Architectural Decisions
+
+### Why Separate Calculation Library?
+
+The System-Response library is maintained separately from the web application for several reasons:
+
+1. **Reusability**: Multiple applications can use the same calculation engine
+2. **Testing**: Calculations can be validated independently with golden outputs
+3. **Expertise Separation**: Domain experts focus on calculations, web developers focus on UI/API
+4. **Versioning**: Calculation updates can be released independently
+
+### Why Direct C# Calls (Not HTTP)?
+
+The web application calls System-Response directly via C# function calls rather than HTTP because:
+
+1. **Performance**: No network overhead or serialization cost
+2. **Simplicity**: One process, one deployment
+3. **Type Safety**: Compile-time checking of interfaces
+4. **Debugging**: Single debugger session covers entire stack
+
+### Why Keep Flask During Migration?
+
+The Flask backend remains operational during migration to:
+
+1. **Generate Golden Outputs**: Python results serve as reference for C# validation
+2. **Comparison Testing**: Side-by-side verification of calculation results
+3. **Gradual Rollout**: Features can migrate incrementally
+4. **Fallback Option**: Rollback capability if issues arise

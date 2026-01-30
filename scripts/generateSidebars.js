@@ -428,6 +428,13 @@ function generateSoftwareDevelopment() {
   ];
   const aiGuidanceIds = ['12-ai-assisted-development', '13-claude-md'];
   const referenceIds = ['14-case-conventions-by-language', '15-quick-reference', '16-appendix-common-scenarios'];
+  const aspnetArchitectureIds = [
+    '17-aspnet-architecture-overview',
+    '18-flask-to-aspnet-mapping',
+    '19-system-response-library',
+    '20-nuget-packages',
+    '21-aspnet-quick-reference',
+  ];
 
   const files = fs
     .readdirSync(guideDir)
@@ -472,6 +479,9 @@ function generateSoftwareDevelopment() {
 
   const referenceCategory = buildCategory('Standards & References', referenceIds, true);
   if (referenceCategory) items.push(referenceCategory);
+
+  const aspnetCategory = buildCategory('ASP.NET Architecture Guide', aspnetArchitectureIds, true);
+  if (aspnetCategory) items.push(aspnetCategory);
 
   return items;
 }

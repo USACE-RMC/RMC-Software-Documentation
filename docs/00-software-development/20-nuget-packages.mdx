@@ -1,0 +1,423 @@
+---
+title: NuGet Packages
+---
+
+import DocTabs from '@site/src/components/DocTabs';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+# NuGet Packages
+
+This guide explains how NuGet packages work in .NET development, particularly how they compare to pip packages in Python and how System-Response will be distributed as a NuGet package.
+
+---
+
+## What Is NuGet?
+
+NuGet is the package manager for .NET, equivalent to pip for Python. It handles downloading, installing, and managing library dependencies.
+
+<TableVerticalNoRef
+  alt="Package manager comparison"
+  headers={[[{ value: 'Aspect' }, { value: 'Python (pip)' }, { value: '.NET (NuGet)' }]]}
+  columns={[
+    [
+      'Package manager',
+      'Install command',
+      'Package file',
+      'Dependencies file',
+      'Lock file',
+      'Package source',
+    ],
+    [
+      'pip',
+      'pip install package-name',
+      '.whl or .tar.gz',
+      'requirements.txt',
+      'pip freeze > requirements.txt',
+      'PyPI (pypi.org)',
+    ],
+    [
+      'NuGet',
+      'dotnet add package PackageName',
+      '.nupkg',
+      '.csproj file',
+      'packages.lock.json (optional)',
+      'nuget.org or private feeds',
+    ],
+  ]}
+  colWidths={[20, 35, 35]}
+/>
+
+---
+
+## Project Reference vs Package Reference
+
+There are two ways to reference another library in .NET:
+
+### Project Reference (During Development)
+
+When you have the source code locally and want to work on both projects together:
+
+```xml
+<!-- In RMCToolboxes.API.csproj -->
+<ItemGroup>
+    <!-- Points to local source code -->
+    <ProjectReference Include="..\..\..\..\System-Response\SystemResponse\SystemResponse.csproj" />
+</ItemGroup>
+```
+
+**Python equivalent**: Adding a local folder to your Python path:
+
+```python
+import sys
+sys.path.append("C:/GitHub/System-Response")
+from system_response import SchmertmannModel
+```
+
+### Package Reference (For Published Packages)
+
+When using a published NuGet package:
+
+```xml
+<!-- In RMCToolboxes.API.csproj -->
+<ItemGroup>
+    <!-- Downloads from NuGet server -->
+    <PackageReference Include="SystemResponse" Version="1.0.0" />
+</ItemGroup>
+```
+
+**Python equivalent**: Installing from pip:
+
+```bash
+pip install system-response
+```
+
+---
+
+## What Changes When System-Response Becomes a NuGet Package?
+
+**Almost nothing changes in how you write code**—you just change one line in your project file.
+
+<DocTabs
+  items={[
+    {
+      title: 'Before (Project Reference)',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`<!-- RMCToolboxes.API.csproj -->
+<ItemGroup>
+    <!-- "Go find the source code at this path" -->
+    <ProjectReference
+        Include="..\\..\\..\\..\\System-Response\\SystemResponse\\SystemResponse.csproj"
+    />
+</ItemGroup>`}
+        </pre>
+      ),
+    },
+    {
+      title: 'After (NuGet Package)',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`<!-- RMCToolboxes.API.csproj -->
+<ItemGroup>
+    <!-- "Download this pre-built package from NuGet" -->
+    <PackageReference
+        Include="SystemResponse"
+        Version="1.0.0"
+    />
+</ItemGroup>`}
+        </pre>
+      ),
+    },
+  ]}
+/>
+
+### Your Code Stays Identical
+
+The actual C# code you write does not change at all:
+
+```csharp
+// This code works EXACTLY the same whether System-Response is:
+// - A project reference (local source code)
+// - A NuGet package (downloaded binary)
+
+using SystemResponse.Toolboxes.BEPProgression.Schmertmann;
+
+public class SchmertmannController : ControllerBase
+{
+    [HttpPost("calculate/{analysisId}")]
+    public async Task<IActionResult> Calculate(int analysisId)
+    {
+        var config = await LoadConfigFromDatabase(analysisId);
+
+        // This line is IDENTICAL regardless of reference method
+        var model = new SchmertmannModel(config);
+        var result = await model.RunAsync();
+
+        return Ok(result);
+    }
+}
+```
+
+---
+
+## Visual Comparison
+
+### Project Reference (Current State)
+
+```
+Your Computer
+┌─────────────────────────────────────────────────────────────────┐
+│ C:\GitHub\                                                       │
+│ ├── RMC-Toolboxes-WebApp\                                       │
+│ │   └── backend-dotnet\                                         │
+│ │       └── RMCToolboxes.API.csproj ────────────────────┐       │
+│ │                                                        │       │
+│ └── System-Response\                                     │       │
+│     └── SystemResponse\                                  │       │
+│         └── SystemResponse.csproj  ←─────────────────────┘       │
+│             (source code compiled together)                      │
+└─────────────────────────────────────────────────────────────────┘
+
+Pros:
+✓ Can edit library code and see changes immediately
+✓ Single debugging session covers both projects
+✓ Good for active development
+
+Cons:
+✗ Everyone needs the repo at the same path
+✗ Manual coordination of versions
+```
+
+### NuGet Package (Future State)
+
+```
+Your Computer                          NuGet Server (USACE Nexus)
+┌───────────────────────────┐         ┌───────────────────────────┐
+│ C:\GitHub\                │         │                           │
+│ └── RMC-Toolboxes-WebApp\ │         │  SystemResponse.1.0.0     │
+│     └── backend-dotnet\   │         │  ┌─────────────────────┐  │
+│         └── .csproj ──────┼─────────┼─►│ Pre-compiled .dll   │  │
+│            "Give me       │ Download│  │ (binary, not source)│  │
+│             v1.0.0"       │         │  └─────────────────────┘  │
+└───────────────────────────┘         └───────────────────────────┘
+
+Pros:
+✓ No need for System-Response repo locally
+✓ Version controlled (v1.0.0 vs v1.1.0-beta)
+✓ CI/CD can build without cloning multiple repos
+✓ Reproducible builds
+
+Cons:
+✗ Cannot edit library code directly
+✗ Need to publish new version for changes
+```
+
+---
+
+## Working with NuGet
+
+### Adding a Package
+
+```bash
+# From command line
+dotnet add package SystemResponse --version 1.0.0
+
+# Or edit .csproj directly
+<PackageReference Include="SystemResponse" Version="1.0.0" />
+```
+
+### Updating a Package
+
+```bash
+# Update to latest version
+dotnet add package SystemResponse
+
+# Update to specific version
+dotnet add package SystemResponse --version 1.1.0
+```
+
+### Restoring Packages
+
+When you clone a project, NuGet packages need to be downloaded:
+
+```bash
+# Restore all packages defined in .csproj
+dotnet restore
+```
+
+### Private NuGet Feeds
+
+USACE uses a private NuGet feed (Nexus). To access it:
+
+```bash
+# Add the USACE Nexus source
+dotnet nuget add source https://www.hec.usace.army.mil/nexus/repository/consequences-nuget-public/ --name USACENexus
+```
+
+---
+
+## Development Workflow
+
+### During Active Development (Project Reference)
+
+When both the web app and library are changing frequently:
+
+```xml
+<!-- Use project reference for rapid iteration -->
+<ItemGroup>
+    <ProjectReference Include="..\..\System-Response\SystemResponse\SystemResponse.csproj" />
+</ItemGroup>
+```
+
+Benefits:
+- Edit library code, see changes immediately
+- Single debugging session
+- No version coordination needed
+
+### For Stable Releases (NuGet Package)
+
+When the library is stable and versioned:
+
+```xml
+<!-- Use NuGet for reproducible builds -->
+<ItemGroup>
+    <PackageReference Include="SystemResponse" Version="1.0.0" />
+</ItemGroup>
+```
+
+Benefits:
+- Reproducible builds across all machines
+- Clear version dependencies
+- No need for library repo locally
+
+### Hybrid Approach (Common During Transition)
+
+Keep both options available by commenting:
+
+```xml
+<ItemGroup>
+    <!-- Uncomment ONE of these: -->
+
+    <!-- For development (when modifying System-Response): -->
+    <!-- <ProjectReference Include="..\..\System-Response\SystemResponse\SystemResponse.csproj" /> -->
+
+    <!-- For production (use published package): -->
+    <PackageReference Include="SystemResponse" Version="1.0.0" />
+</ItemGroup>
+```
+
+---
+
+## Version Management
+
+### Semantic Versioning
+
+NuGet packages follow semantic versioning (SemVer):
+
+<TableVerticalNoRef
+  alt="Semantic versioning"
+  headers={[[{ value: 'Version' }, { value: 'Meaning' }, { value: 'When to Increment' }]]}
+  columns={[
+    [
+      'Major (1.x.x)',
+      'Minor (x.1.x)',
+      'Patch (x.x.1)',
+      'Prerelease (1.0.0-beta)',
+    ],
+    [
+      'Breaking changes',
+      'New features (backward compatible)',
+      'Bug fixes (backward compatible)',
+      'Preview/testing release',
+    ],
+    [
+      'API changes, removed methods',
+      'New calculation methods added',
+      'Fixed calculation bug',
+      'Testing before stable release',
+    ],
+  ]}
+  colWidths={[25, 35, 30]}
+/>
+
+### Version Ranges
+
+You can specify version ranges in your .csproj:
+
+```xml
+<!-- Exact version -->
+<PackageReference Include="SystemResponse" Version="1.0.0" />
+
+<!-- Any 1.x version -->
+<PackageReference Include="SystemResponse" Version="1.*" />
+
+<!-- At least 1.0.0, less than 2.0.0 -->
+<PackageReference Include="SystemResponse" Version="[1.0.0, 2.0.0)" />
+```
+
+---
+
+## Benefits of NuGet Packaging
+
+<TableVerticalNoRef
+  alt="NuGet packaging benefits"
+  headers={[[{ value: 'Benefit' }, { value: 'Explanation' }]]}
+  columns={[
+    [
+      'Versioning',
+      'No path dependencies',
+      'CI/CD friendly',
+      'Dependency management',
+      'Reproducible builds',
+    ],
+    [
+      '"My app uses v1.0.0, someone else can test v1.1.0-beta"',
+      'Don\'t need C:\\GitHub\\System-Response on every machine',
+      'Build servers just run dotnet restore to download packages',
+      'NuGet handles transitive dependencies automatically',
+      'Same version = same code, always',
+    ],
+  ]}
+  colWidths={[25, 65]}
+/>
+
+---
+
+## Summary
+
+<TableVerticalNoRef
+  alt="Project vs Package reference summary"
+  headers={[[{ value: 'Aspect' }, { value: 'Project Reference' }, { value: 'NuGet Package' }]]}
+  columns={[
+    [
+      'Your C# code',
+      'How you reference',
+      'Where code lives',
+      'Can edit library?',
+      'Need local clone?',
+      'Version control',
+      'Best for',
+    ],
+    [
+      'Identical',
+      'Path to .csproj file',
+      'Local folder',
+      'Yes, immediately',
+      'Yes',
+      "Whatever's on disk",
+      'Active development',
+    ],
+    [
+      'Identical',
+      'Package name + version',
+      'NuGet server',
+      'No, need new version',
+      'No',
+      'Explicit version number',
+      'Stable releases',
+    ],
+  ]}
+  colWidths={[20, 35, 35]}
+/>
+
+**Bottom line**: When System-Response becomes a NuGet package, you change one line in your `.csproj` file. Everything else stays the same.
