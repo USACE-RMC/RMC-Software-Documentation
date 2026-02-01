@@ -7,7 +7,9 @@ import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
 
 # Backend Architecture
 
-This guide defines the standard backend architecture for RMC web applications using ASP.NET Core and Entity Framework Core. It is written for developers who may be new to .NET development.
+This guide defines the standard backend architecture for RMC web applications using ASP.NET Core and Entity Framework Core. It targets developers who may be new to .NET development.
+
+RMC applications use **Clean Architecture**, which provides the testability, maintainability, and separation of concerns required for life safety applications.
 
 ---
 
@@ -20,6 +22,365 @@ This guide defines the standard backend architecture for RMC web applications us
 | PostgreSQL            | 15+     | Relational database            |
 | JWT Bearer            | -       | Authentication tokens          |
 | Serilog               | -       | Structured logging             |
+
+---
+
+## C# Fundamentals for This Guide
+
+This section explains C# syntax and concepts that appear throughout this guide. Readers already familiar with C# may skip to [Architecture Overview](#architecture-overview).
+
+### Classes and Objects
+
+A **class** serves as a blueprint for creating objects. An **object** represents an instance of a class.
+
+```csharp
+// This is a class definition - a blueprint
+public class Analysis
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
+
+// This code creates an object (instance) from the blueprint
+var myAnalysis = new Analysis();
+myAnalysis.Id = 1;
+myAnalysis.Name = "Settlement Study";
+```
+
+### Properties
+
+**Properties** represent variables that belong to a class. The `{ get; set; }` syntax indicates that external code can read (get) and write (set) the property.
+
+```csharp
+public class Analysis
+{
+    // External code can read and write this property
+    public int Id { get; set; }
+
+    // The "= string.Empty" sets a default value (empty string)
+    public string Name { get; set; } = string.Empty;
+}
+```
+
+### Access Modifiers
+
+Access modifiers control visibility and accessibility of code:
+
+| Modifier | Meaning |
+| --- | --- |
+| `public` | Any code can access this member |
+| `private` | Only code within the same class can access this member |
+| `protected` | Only the class and its derived classes can access this member |
+| `internal` | Only code within the same project can access this member |
+
+```csharp
+public class SettlementController
+{
+    // Private field - only code within this class can access it
+    // "readonly" means the constructor sets it once and nothing else can change it
+    private readonly ICalculationService _calculationService;
+
+    // Public method - any code can call this method
+    public void Calculate() { }
+}
+```
+
+### Constructors
+
+A **constructor** is a special method that runs when code creates a new object. The constructor sets up the object's initial state.
+
+```csharp
+public class CalculationService
+{
+    private readonly IAnalysisRepository _repository;
+
+    // Constructor - same name as the class, no return type
+    // The framework "injects" parameters via dependency injection
+    public CalculationService(IAnalysisRepository repository)
+    {
+        _repository = repository;  // Store the injected dependency
+    }
+}
+```
+
+### Interfaces
+
+An **interface** defines a contract that specifies what methods a class must have, without specifying how those methods work. Similar to a job description, an interface specifies what tasks a class must perform, but not how to perform them.
+
+```csharp
+// Interface - the contract (what the class must do)
+// By convention, interface names start with "I"
+public interface IAnalysisRepository
+{
+    Task<Analysis?> GetByIdAsync(int id);  // Implementers must provide this method
+    Task AddAsync(Analysis analysis);       // Implementers must provide this method
+}
+
+// Implementation - fulfills the contract (how the class does it)
+// The ": IAnalysisRepository" indicates this class implements the interface
+public class AnalysisRepository : IAnalysisRepository
+{
+    public Task<Analysis?> GetByIdAsync(int id)
+    {
+        // Actual code that retrieves an analysis from the database
+    }
+
+    public Task AddAsync(Analysis analysis)
+    {
+        // Actual code that saves an analysis to the database
+    }
+}
+```
+
+**Why use interfaces?** Interfaces allow developers to swap implementations without changing the code that uses them. During testing, developers can provide a fake implementation that doesn't require a real database.
+
+### Inheritance
+
+When a class **inherits** from another class, the child class receives all the parent's code and can add or change behavior. The `:` symbol indicates inheritance.
+
+```csharp
+// ControllerBase is an ASP.NET class that provides helpful methods like Ok() and NotFound()
+// SettlementController inherits from ControllerBase, so it receives all those methods
+public class SettlementController : ControllerBase
+{
+    public IActionResult GetAnalysis()
+    {
+        // Ok() comes from ControllerBase - this class does not define it
+        return Ok("Here's the data");
+    }
+}
+```
+
+### Async and Await
+
+**Async/await** enables C# to handle operations that take time (like database queries or HTTP requests) without freezing the application.
+
+```csharp
+// "async" marks a method that contains awaitable operations
+// "Task" represents the return type for async methods that don't return a value
+// "Task<Analysis>" represents async methods that return an Analysis
+public async Task<Analysis?> GetByIdAsync(int id)
+{
+    // "await" pauses this method until the database responds
+    // While waiting, the application can handle other requests
+    return await _db.Analyses.FindAsync(id);
+}
+```
+
+**Analogy**: Consider ordering food at a restaurant. Without async, a customer stands at the counter staring at the kitchen until the food is ready. With async, the customer receives a number, sits down, and does other things while waiting—the kitchen calls the number when the food is ready.
+
+### Nullable Types
+
+The `?` after a type indicates that the value can be `null` (missing/empty).
+
+```csharp
+// Analysis? means this method could return an Analysis object, or null if not found
+public async Task<Analysis?> GetByIdAsync(int id)
+{
+    return await _db.Analyses.FindAsync(id);  // Returns null if no match exists
+}
+
+// When using nullable types, code must check for null
+var analysis = await repository.GetByIdAsync(123);
+if (analysis == null)
+{
+    return NotFound();  // Handle the missing case
+}
+// Now the code knows analysis is not null, so it can safely use it
+```
+
+### Lambda Expressions
+
+**Lambda expressions** provide a shorthand way to write small functions. The `=>` symbol reads as "goes to" or "maps to."
+
+```csharp
+// Full method syntax
+public bool IsActive(Analysis a)
+{
+    return a.Status == AnalysisStatus.Running;
+}
+
+// Same logic as a lambda expression
+a => a.Status == AnalysisStatus.Running
+
+// Queries use lambdas - "find analyses where the UserId matches"
+var analyses = await _db.Analyses
+    .Where(a => a.UserId == userId)  // a => ... is the lambda
+    .ToListAsync();
+```
+
+### Generics
+
+**Generics** allow code to work with different types. The type goes in angle brackets `<>`.
+
+```csharp
+// List<string> represents a list that holds strings
+List<string> names = new List<string>();
+names.Add("Alice");
+names.Add("Bob");
+
+// Task<Analysis> represents an async operation that will eventually return an Analysis
+Task<Analysis> futureAnalysis = repository.GetByIdAsync(1);
+
+// IReadOnlyList<Analysis> represents a list of analyses that code cannot modify
+IReadOnlyList<Analysis> analyses = await repository.GetAllAsync();
+```
+
+### Attributes
+
+**Attributes** attach metadata tags to code elements using square brackets `[]`. They provide extra information to the framework.
+
+```csharp
+[ApiController]  // Tells ASP.NET this class is an API controller
+[Route("api/analyses")]  // Sets the URL path for this controller
+[Authorize]  // Requires authentication to access
+public class AnalysisController : ControllerBase
+{
+    [HttpGet("{id}")]  // Responds to GET requests at /api/analyses/{id}
+    public async Task<IActionResult> GetById(int id)
+    {
+        // ...
+    }
+
+    [HttpPost]  // Responds to POST requests at /api/analyses
+    public async Task<IActionResult> Create([FromBody] CreateAnalysisDto dto)
+    {
+        // [FromBody] tells ASP.NET to get 'dto' from the request body JSON
+    }
+}
+```
+
+### Namespaces
+
+**Namespaces** organize code and prevent naming conflicts. They function like folders for code.
+
+```csharp
+// This class lives in the WebApp.Domain.Entities namespace
+namespace WebApp.Domain.Entities;
+
+public class Analysis
+{
+    // ...
+}
+
+// To use Analysis in another file, code either:
+// 1. Uses the full name: WebApp.Domain.Entities.Analysis
+// 2. Adds a "using" statement at the top of the file:
+using WebApp.Domain.Entities;
+// Now the code can just write: Analysis
+```
+
+### Extension Methods
+
+**Extension methods** add new methods to existing types without modifying them. They must reside in a `static` class and have `this` before the first parameter.
+
+```csharp
+// Static class containing extension methods
+public static class DependencyInjection
+{
+    // "this IServiceCollection services" makes this an extension method
+    // It adds "AddApplication()" to IServiceCollection
+    public static IServiceCollection AddApplication(this IServiceCollection services)
+    {
+        services.AddScoped<ICalculationService, CalculationService>();
+        return services;
+    }
+}
+
+// Now code can call it like a regular method on IServiceCollection:
+builder.Services.AddApplication();
+```
+
+---
+
+## Architecture Overview
+
+### What Is Software Architecture?
+
+**Software architecture** defines how code organizes into different parts and how those parts communicate. Good architecture makes code easier to understand, test, and change over time.
+
+**Analogy**: Consider building a house. A builder could combine all rooms into one large space, but that would create chaos. Instead, builders organize rooms by purpose with defined connections (doors, hallways). Software architecture applies the same principle to code.
+
+### What Is Clean Architecture?
+
+Clean Architecture organizes code into **layers**, where each layer has a specific job. The most important rule states that **dependencies point inward**—outer layers know about inner layers, but inner layers have no knowledge of outer layers.
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         API Layer                               │
+│              (Controllers, Middleware, Program.cs)              │
+│                   Handles HTTP requests                         │
+├─────────────────────────────────────────────────────────────────┤
+│                    Infrastructure Layer                         │
+│         (DbContext, Repositories, External Services)            │
+│              Handles databases and external systems             │
+├─────────────────────────────────────────────────────────────────┤
+│                     Application Layer                           │
+│          (Services, Interfaces, DTOs, Use Cases)                │
+│            Contains application logic and rules                 │
+├─────────────────────────────────────────────────────────────────┤
+│                       Domain Layer                              │
+│            (Entities, Business Rules, Value Objects)            │
+│           Contains core business logic and data                 │
+│                                                                 │
+│                    ↑ NO DEPENDENCIES ↑                          │
+│            This layer has no knowledge of other layers          │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+The **Domain layer** at the center has zero dependencies on any other layer, framework, or library. It contains pure C# code—business entities and rules—that developers can test without databases, HTTP, or any external system.
+
+### An Analogy for Clean Architecture
+
+Consider a restaurant:
+
+- **Domain Layer** = Recipes and cooking techniques. These represent core knowledge that doesn't depend on anything else. A recipe for soup remains the same whether in a food truck or a five-star restaurant.
+
+- **Application Layer** = The kitchen workflow. "When an order comes in, get ingredients, follow the recipe, plate the food." This layer coordinates the work but has no knowledge of customers or payment.
+
+- **Infrastructure Layer** = The actual kitchen equipment, refrigerators, and suppliers. These are the physical tools that make the workflow possible.
+
+- **API Layer** = The waitstaff and front desk. They take orders from customers, pass them to the kitchen, and deliver the results.
+
+If the kitchen equipment (Infrastructure) changes, the recipes (Domain) remain unchanged. If the restaurant switches from dine-in to delivery (API), the recipes still remain unchanged. That demonstrates the power of Clean Architecture.
+
+### Why Clean Architecture for RMC Applications?
+
+RMC applications have specific requirements that make Clean Architecture the right choice:
+
+| Requirement | How Clean Architecture Helps |
+| --- | --- |
+| **Life safety applications** | Developers can exhaustively unit test domain logic in complete isolation from databases and HTTP—critical calculations become verifiable |
+| **Multiple teams** | Clear project boundaries allow teams to own specific layers without conflicts |
+| **Long-term maintenance** | The dependency rule prevents architectural decay; inner layers remain stable as outer layers change |
+| **Complex calculations** | Engineering calculations live in the Domain layer, protected from infrastructure concerns |
+| **Regulatory compliance** | Separation makes it easier to audit and verify critical business logic |
+
+### The Dependency Rule
+
+The fundamental rule of Clean Architecture:
+
+> **Inner layers cannot know about or depend on outer layers.**
+
+In practice, this means:
+
+- **Domain** depends on nothing (it's the innermost layer)
+- **Application** depends only on Domain
+- **Infrastructure** depends on Domain and Application
+- **API** depends on Application and Infrastructure
+
+The compiler enforces this at **compile time** through project references. If a developer tries to reference Infrastructure from Domain, the compiler produces an error and the code won't compile.
+
+**Why does this matter?** Core business logic (Domain) can never become "infected" by database code, HTTP code, or any other infrastructure concern. Developers can change the database from PostgreSQL to SQL Server without touching Domain code. Developers can change the API from REST to GraphQL without touching Domain code.
+
+### Layer Responsibilities
+
+| Layer | What Lives Here | What It Does |
+| --- | --- | --- |
+| **Domain** | Entities, enums, business logic | Defines data structures and core business rules |
+| **Application** | Services, interfaces, DTOs | Coordinates operations, defines contracts for infrastructure |
+| **Infrastructure** | DbContext, repositories, external API clients | Implements data access and external integrations |
+| **API** | Controllers, middleware, Program.cs | Handles HTTP requests and responses |
 
 ---
 
@@ -36,540 +397,608 @@ ASP.NET Core is Microsoft's framework for building web applications and APIs in 
 
 ### What Is an API?
 
-An API (Application Programming Interface) is a way for programs to communicate. In our case, the frontend sends HTTP requests to URLs like `/api/analyses/123`, and the backend returns JSON data. The frontend never directly accesses the database—it always goes through the API.
+An **API** (Application Programming Interface) provides a way for programs to communicate. In web development, it usually means HTTP endpoints that accept requests and return data (typically JSON).
+
+**Example**: The frontend (React, Vue, etc.) sends an HTTP request to `GET /api/analyses/123`, and the backend returns JSON data like `{"id": 123, "name": "Settlement Study", "status": "completed"}`.
+
+The frontend never directly accesses the database—it always goes through the API. This separation provides security and flexibility.
+
+### What Is an ORM?
+
+An **ORM** (Object-Relational Mapper) enables developers to work with database records as C# objects instead of writing raw SQL.
+
+Without an ORM:
+```sql
+SELECT * FROM analyses WHERE user_id = '123';
+```
+
+With an ORM (Entity Framework Core):
+```csharp
+var analyses = await _db.Analyses
+    .Where(a => a.UserId == "123")
+    .ToListAsync();
+```
+
+The ORM translates C# code into SQL and maps the results back to C# objects.
 
 ### What Is Dependency Injection?
 
-Dependency Injection (DI) is a pattern where objects receive their dependencies (other objects they need) from the outside rather than creating them internally. ASP.NET Core has built-in DI.
+**Dependency Injection** (DI) is a pattern where objects receive their dependencies (other objects they need) from the outside rather than creating them internally.
 
 ```csharp
-// WITHOUT dependency injection (hard to test, tightly coupled)
-public class AnalysisController
-{
-    public AnalysisController()
-    {
-        _db = new AppDbContext();  // Creates its own database connection
-    }
-}
-
-// WITH dependency injection (testable, loosely coupled)
+// WITHOUT dependency injection - the class creates its own dependencies
 public class AnalysisController
 {
     private readonly AppDbContext _db;
 
-    public AnalysisController(AppDbContext db)  // Receives database from framework
+    public AnalysisController()
     {
-        _db = db;
+        // Problem: This creates a tight coupling to a specific database
+        // Problem: Tests cannot substitute a fake database
+        _db = new AppDbContext();
     }
 }
+
+// WITH dependency injection - dependencies come from outside
+public class AnalysisController
+{
+    private readonly IAnalysisRepository _repository;
+
+    public AnalysisController(IAnalysisRepository repository)
+    {
+        // The framework provides the repository
+        // Tests can provide a fake repository
+        // Production code uses the real one
+        _repository = repository;
+    }
+}
+```
+
+**Why is this important?** Dependency injection is essential to Clean Architecture because:
+
+1. **Testability**: Tests can verify class behavior by providing fake dependencies
+2. **Flexibility**: Developers can swap implementations without changing the class
+3. **The dependency rule**: Outer layers provide implementations of interfaces that inner layers define
+
+### What Is a Repository?
+
+A **repository** handles all database operations for a specific entity. It hides the details of how the system stores and retrieves data.
+
+```csharp
+// The interface defines WHAT operations the repository provides
+public interface IAnalysisRepository
+{
+    Task<Analysis?> GetByIdAsync(int id);
+    Task<IReadOnlyList<Analysis>> GetAllForUserAsync(string userId);
+    Task AddAsync(Analysis analysis);
+    Task UpdateAsync(Analysis analysis);
+    Task DeleteAsync(Analysis analysis);
+}
+
+// The implementation defines HOW those operations work
+public class AnalysisRepository : IAnalysisRepository
+{
+    public async Task<Analysis?> GetByIdAsync(int id)
+    {
+        return await _db.Analyses.FindAsync(id);
+    }
+    // ... other methods
+}
+```
+
+**Why use repositories?** They create a boundary between application logic and the database. If the database or ORM changes, only the repository implementation needs to change, not the code that uses it.
+
+### What Is a DTO?
+
+A **DTO** (Data Transfer Object) is a simple object that carries data between layers, especially between the API and external clients.
+
+```csharp
+// Domain entity - contains business logic and all internal properties
+public class Analysis
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string UserId { get; set; }  // Internal - the API should not expose this
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
+    public string InternalNotes { get; set; }  // Internal - the API should not expose this
+
+    public bool CanRun() { /* business logic */ }
+}
+
+// DTO - only the data API clients need to see
+public class AnalysisDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Status { get; set; }
+    public DateTime CreatedAt { get; set; }
+}
+```
+
+**Why use DTOs?**
+
+1. **Security**: The API does not expose internal fields like `UserId` or `InternalNotes`
+2. **Stability**: The API contract can remain the same even if internal entities change
+3. **Shape**: The API returns data in exactly the format clients need
+
+### What Is Middleware?
+
+**Middleware** runs for every HTTP request, before or after controller code. It functions like a series of checkpoints that each request passes through.
+
+```
+HTTP Request
+     ↓
+[Logging Middleware] ← Logs the request
+     ↓
+[Authentication Middleware] ← Checks if the user is logged in
+     ↓
+[Error Handling Middleware] ← Catches any errors
+     ↓
+[Controller] ← The actual handler code
+     ↓
+[Error Handling Middleware] ← Can modify the response if an error occurred
+     ↓
+[Logging Middleware] ← Logs the response
+     ↓
+HTTP Response
 ```
 
 ---
 
 ## Project Structure
 
+Clean Architecture uses multiple projects to enforce the dependency rule at compile time. Each project becomes a separate `.csproj` file.
+
+### Why Multiple Projects?
+
+When code adds a `using` statement or reference to another project, the compiler checks if that reference is allowed based on the project's dependencies. If the Domain project doesn't have a reference to Infrastructure, the compiler rejects any attempt to use Infrastructure code in Domain.
+
+This compile-time enforcement prevents accidental violations of the architecture.
+
+### The Project Layout
+
 ```
 backend/
-├── WebApp.API/
-│   ├── Controllers/             # Handle HTTP requests
-│   │   ├── AuthController.cs
-│   │   └── Analyses/
-│   │       ├── SettlementController.cs
-│   │       └── SeepageController.cs
+├── src/
+│   ├── WebApp.Domain/                 # Innermost layer - no dependencies
+│   │   ├── Entities/                  # Business objects
+│   │   │   ├── User.cs
+│   │   │   └── Analysis.cs
+│   │   ├── Enums/                     # Status codes, categories, etc.
+│   │   │   └── AnalysisStatus.cs
+│   │   └── WebApp.Domain.csproj       # Project file - no references
 │   │
-│   ├── Services/                # Business logic layer
-│   │   ├── ICalculationService.cs
-│   │   └── CalculationService.cs
+│   ├── WebApp.Application/            # References: Domain only
+│   │   ├── Interfaces/                # Contracts for infrastructure
+│   │   │   ├── IAnalysisRepository.cs
+│   │   │   └── ICalculationService.cs
+│   │   ├── Services/                  # Application logic
+│   │   │   └── CalculationService.cs
+│   │   ├── DTOs/                      # Data shapes for API
+│   │   │   ├── AnalysisDto.cs
+│   │   │   └── CalculationResponse.cs
+│   │   └── WebApp.Application.csproj
 │   │
-│   ├── Entities/                # Database table definitions
-│   │   ├── User.cs
-│   │   ├── Analysis.cs
-│   │   └── AppDbContext.cs
+│   ├── WebApp.Infrastructure/         # References: Domain, Application
+│   │   ├── Data/
+│   │   │   ├── AppDbContext.cs        # Database connection
+│   │   │   └── Configurations/        # How entities map to tables
+│   │   │       ├── UserConfiguration.cs
+│   │   │       └── AnalysisConfiguration.cs
+│   │   ├── Repositories/              # Data access implementations
+│   │   │   └── AnalysisRepository.cs
+│   │   └── WebApp.Infrastructure.csproj
 │   │
-│   ├── DTOs/                    # Data transfer objects
-│   │   ├── AnalysisDto.cs
-│   │   └── CalculationResponse.cs
-│   │
-│   ├── Middleware/              # Custom request processing
-│   │   └── ErrorHandlingMiddleware.cs
-│   │
-│   ├── Program.cs               # Application entry point
-│   ├── appsettings.json         # Configuration
-│   └── WebApp.API.csproj        # Project file
+│   └── WebApp.API/                    # References: Application, Infrastructure
+│       ├── Controllers/               # HTTP endpoints
+│       │   ├── AuthController.cs
+│       │   └── Analyses/
+│       │       ├── SettlementController.cs
+│       │       └── SeepageController.cs
+│       ├── Middleware/                # Request/response processing
+│       │   └── ErrorHandlingMiddleware.cs
+│       ├── Program.cs                 # Application entry point
+│       ├── appsettings.json           # Configuration
+│       └── WebApp.API.csproj
 │
-├── WebApp.API.Tests/            # Unit and integration tests
-│   └── Controllers/
+├── tests/
+│   ├── WebApp.Domain.Tests/           # Unit tests for domain logic
+│   ├── WebApp.Application.Tests/      # Unit tests for services
+│   └── WebApp.Integration.Tests/      # Tests with real database
 │
-└── Dockerfile                   # Container configuration
+└── WebApp.sln                         # Solution file - groups all projects
+```
+
+### Project References
+
+Each `.csproj` file declares which other projects it can reference. This enforces the dependency rule.
+
+```xml
+<!-- WebApp.Domain.csproj - NO project references (innermost layer) -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <!-- Notice: No ProjectReference elements - Domain depends on nothing -->
+</Project>
+```
+
+```xml
+<!-- WebApp.Application.csproj - Can only reference Domain -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- This project can use code from Domain -->
+    <ProjectReference Include="..\WebApp.Domain\WebApp.Domain.csproj" />
+  </ItemGroup>
+</Project>
+```
+
+```xml
+<!-- WebApp.Infrastructure.csproj - References Domain and Application -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WebApp.Domain\WebApp.Domain.csproj" />
+    <ProjectReference Include="..\WebApp.Application\WebApp.Application.csproj" />
+    <!-- NuGet packages - external libraries -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
+  </ItemGroup>
+</Project>
+```
+
+```xml
+<!-- WebApp.API.csproj - References Application and Infrastructure -->
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WebApp.Application\WebApp.Application.csproj" />
+    <ProjectReference Include="..\WebApp.Infrastructure\WebApp.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>
 ```
 
 ---
 
-## The Controller Layer
+## The Domain Layer
 
-### What Is a Controller?
+The Domain layer forms the heart of the application. It contains business entities and rules. It has **no dependencies** on any other project, framework, or external library.
 
-A **Controller** is a class that handles incoming HTTP requests. Each public method in a controller is an **action** that responds to a specific HTTP method (GET, POST, PUT, DELETE) at a specific URL.
+### What Are Entities?
 
-When a request arrives:
+**Entities** are classes that represent the core objects in the business domain. In RMC applications, this might include `Analysis`, `User`, `Project`, or `CalculationResult`.
 
-1. ASP.NET Core matches the URL to a controller and action
-2. It extracts data from the URL, query string, or request body
-3. It calls your action method
-4. Your code runs and returns a result
-5. ASP.NET Core serializes the result to JSON and sends the response
+Domain entities are **POCOs** (Plain Old CLR Objects)—simple C# classes with no special framework code.
 
-### Controller Anatomy
+### Entity Example
 
 ```csharp
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+// Domain/Entities/Analysis.cs
+namespace WebApp.Domain.Entities;
 
-namespace WebApp.API.Controllers.Analyses;
-
-// [ApiController] tells ASP.NET this is an API controller (enables automatic validation)
-[ApiController]
-// [Route] defines the base URL path for all actions in this controller
-[Route("api/analyses/settlement")]
-// [Authorize] requires a valid JWT token for all actions (authentication)
-[Authorize]
-public class SettlementController : ControllerBase
+/// <summary>
+/// Represents an engineering analysis in the system.
+/// This is a domain entity - it contains business data and logic.
+/// </summary>
+public class Analysis
 {
-    // Dependencies injected via constructor
-    private readonly ICalculationService _calculationService;
-    private readonly AppDbContext _db;
-    private readonly ILogger<SettlementController> _logger;
+    // Properties - the data this entity holds
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string UserId { get; set; } = string.Empty;
+    public AnalysisStatus Status { get; set; } = AnalysisStatus.Draft;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-    public SettlementController(
-        ICalculationService calculationService,
-        AppDbContext db,
-        ILogger<SettlementController> logger)
+    // Domain logic - business rules that apply to this entity
+
+    /// <summary>
+    /// Determines if this analysis can run based on its current status.
+    /// Business rule: An analysis cannot run if it's already running or archived.
+    /// </summary>
+    public bool CanRun()
     {
-        _calculationService = calculationService;
-        _db = db;
-        _logger = logger;
+        return Status != AnalysisStatus.Running
+            && Status != AnalysisStatus.Archived;
     }
 
     /// <summary>
-    /// Retrieves analysis parameters.
-    /// GET /api/analyses/settlement/parameters/123
+    /// Marks the analysis as currently running.
+    /// Throws an exception if the business rules don't allow it.
     /// </summary>
-    [HttpGet("parameters/{analysisId}")]
-    public async Task<IActionResult> GetParameters(int analysisId)
+    public void MarkAsRunning()
     {
-        var userId = GetCurrentUserId();
-
-        // Find the analysis in the database
-        var analysis = await _db.Analyses.FindAsync(analysisId);
-
-        // Return 404 if not found
-        if (analysis == null)
-            return NotFound();
-
-        // Return 403 if user doesn't own this analysis
-        if (analysis.UserId != userId)
-            return Forbid();
-
-        // Return 200 with the data
-        return Ok(MapToDto(analysis));
-    }
-
-    /// <summary>
-    /// Runs the calculation for an analysis.
-    /// POST /api/analyses/settlement/calculate/123
-    /// </summary>
-    [HttpPost("calculate/{analysisId}")]
-    public async Task<IActionResult> Calculate(int analysisId)
-    {
-        _logger.LogInformation(
-            "[API] POST calculate/{AnalysisId}",
-            analysisId);
-
-        var userId = GetCurrentUserId();
-
-        // Delegate to service layer
-        var response = await _calculationService.RunAsync(analysisId, userId);
-
-        // Return appropriate HTTP status based on result
-        return response.Status switch
+        // Enforce business rule
+        if (!CanRun())
         {
-            "success" => Ok(response),
-            "incomplete" => Ok(response),
-            "error" => BadRequest(response),
-            _ => StatusCode(500, response)
-        };
+            throw new InvalidOperationException(
+                "Analysis cannot run in its current state.");
+        }
+
+        Status = AnalysisStatus.Running;
+        UpdatedAt = DateTime.UtcNow;
     }
 
-    // Helper to get user ID from JWT token claims
-    private string GetCurrentUserId() =>
-        User.FindFirstValue(ClaimTypes.NameIdentifier)
-        ?? throw new UnauthorizedAccessException();
+    /// <summary>
+    /// Marks the analysis as completed.
+    /// </summary>
+    public void Complete()
+    {
+        Status = AnalysisStatus.Completed;
+        UpdatedAt = DateTime.UtcNow;
+    }
 }
 ```
 
-### HTTP Method Conventions
+```csharp
+// Domain/Enums/AnalysisStatus.cs
+namespace WebApp.Domain.Enums;
 
-| Operation       | HTTP Method | Route Example                  | Returns                   |
-| --------------- | ----------- | ------------------------------ | ------------------------- |
-| Get single item | GET         | `/api/analyses/{id}`           | 200 OK or 404 Not Found   |
-| Get collection  | GET         | `/api/analyses`                | 200 OK (array)            |
-| Create item     | POST        | `/api/analyses`                | 201 Created               |
-| Update item     | PUT         | `/api/analyses/{id}`           | 200 OK or 404 Not Found   |
-| Delete item     | DELETE      | `/api/analyses/{id}`           | 204 No Content            |
-| Run calculation | POST        | `/api/analyses/{id}/calculate` | 200 OK or 400 Bad Request |
+/// <summary>
+/// Represents the possible states an analysis can have.
+/// </summary>
+public enum AnalysisStatus
+{
+    Draft,      // Just created, not yet run
+    Running,    // Currently calculating
+    Completed,  // Finished successfully
+    Failed,     // Finished with errors
+    Archived    // No longer active
+}
+```
 
-### Route Parameters and Binding
+### Why No Database Attributes?
 
-ASP.NET Core automatically binds data from different parts of the request:
+Some codebases use code like this:
 
 ```csharp
-// From URL path: /api/analyses/123
-[HttpGet("{id}")]
-public async Task<IActionResult> Get(int id)  // id = 123
+// DON'T do this in Clean Architecture
+public class Analysis
+{
+    [Key]  // Database attribute
+    public int Id { get; set; }
 
-// From query string: /api/analyses?page=1&limit=10
-[HttpGet]
-public async Task<IActionResult> List(
-    [FromQuery] int page = 1,
-    [FromQuery] int limit = 10)
-
-// From request body (JSON)
-[HttpPost]
-public async Task<IActionResult> Create([FromBody] CreateAnalysisDto dto)
-
-// From route and body combined
-[HttpPut("{id}")]
-public async Task<IActionResult> Update(int id, [FromBody] UpdateDto dto)
+    [Required]  // Database attribute
+    [MaxLength(255)]  // Database attribute
+    public string Name { get; set; }
+}
 ```
+
+In Clean Architecture, entities don't have these database attributes because:
+
+1. **The Domain layer has no knowledge of databases**. It contains pure business logic.
+2. **Testability**: Developers can create and test entities without any database setup.
+3. **Flexibility**: Switching from Entity Framework to a different ORM (or no ORM) requires no changes to Domain code.
+
+Instead, the Infrastructure layer configures database mapping separately.
 
 ---
 
-## The Service Layer
+## The Application Layer
 
-### What Is a Service?
+The Application layer sits between the API and Domain. It contains:
 
-A **Service** is a class that contains business logic. Services orchestrate operations between controllers, the database, and calculation libraries.
+- **Interfaces** that define what operations the system provides (contracts)
+- **Services** that coordinate business operations
+- **DTOs** that define data shapes for the API
 
-Why separate services from controllers?
+### Repository Interface
 
-- **Testability**: Services can be unit tested without HTTP
-- **Reusability**: Multiple controllers can use the same service
-- **Single Responsibility**: Controllers handle HTTP, services handle logic
-
-### Service Interface Pattern
-
-Define an interface so the implementation can be mocked in tests:
+The Application layer defines interfaces for data access. It specifies "the system needs a way to get and save analyses" without specifying how.
 
 ```csharp
-// Services/ICalculationService.cs
+// Application/Interfaces/IAnalysisRepository.cs
+namespace WebApp.Application.Interfaces;
+
+/// <summary>
+/// Defines the operations available for Analysis data access.
+/// The Infrastructure layer provides the actual implementation.
+/// </summary>
+public interface IAnalysisRepository
+{
+    /// <summary>
+    /// Gets an analysis by its ID.
+    /// Returns null if not found.
+    /// </summary>
+    Task<Analysis?> GetByIdAsync(int id);
+
+    /// <summary>
+    /// Gets an analysis by ID, but only if it belongs to the specified user.
+    /// Returns null if not found or if the user doesn't own it.
+    /// </summary>
+    Task<Analysis?> GetByIdForUserAsync(int id, string userId);
+
+    /// <summary>
+    /// Gets all analyses belonging to a user.
+    /// </summary>
+    Task<IReadOnlyList<Analysis>> GetAllForUserAsync(string userId);
+
+    /// <summary>
+    /// Adds a new analysis to the database.
+    /// </summary>
+    Task AddAsync(Analysis analysis);
+
+    /// <summary>
+    /// Updates an existing analysis in the database.
+    /// </summary>
+    Task UpdateAsync(Analysis analysis);
+
+    /// <summary>
+    /// Deletes an analysis from the database.
+    /// </summary>
+    Task DeleteAsync(Analysis analysis);
+}
+```
+
+### Service Interface and Implementation
+
+Services contain **application logic**—they coordinate between repositories, domain entities, and external systems.
+
+```csharp
+// Application/Interfaces/ICalculationService.cs
+namespace WebApp.Application.Interfaces;
+
+/// <summary>
+/// Defines operations for running engineering calculations.
+/// </summary>
 public interface ICalculationService
 {
+    /// <summary>
+    /// Runs the calculation for the specified analysis.
+    /// </summary>
+    /// <param name="analysisId">The ID of the analysis to run</param>
+    /// <param name="userId">The ID of the user making the request (for authorization)</param>
+    /// <returns>A response indicating success, failure, or missing inputs</returns>
     Task<CalculationResponse> RunAsync(int analysisId, string userId);
-    Task<ValidationResult> ValidateAsync(int analysisId);
 }
 ```
 
-Implement the interface:
-
 ```csharp
-// Services/CalculationService.cs
+// Application/Services/CalculationService.cs
+namespace WebApp.Application.Services;
+
+/// <summary>
+/// Implements the calculation service.
+/// This class coordinates the workflow for running an analysis.
+/// </summary>
 public class CalculationService : ICalculationService
 {
-    private readonly AppDbContext _db;
+    // Dependencies - the constructor receives these via dependency injection
+    private readonly IAnalysisRepository _repository;
     private readonly ILogger<CalculationService> _logger;
 
+    // Constructor - the framework provides dependencies via dependency injection
     public CalculationService(
-        AppDbContext db,
+        IAnalysisRepository repository,
         ILogger<CalculationService> logger)
     {
-        _db = db;
+        _repository = repository;
         _logger = logger;
     }
 
     public async Task<CalculationResponse> RunAsync(int analysisId, string userId)
     {
-        // 1. Load analysis from database
-        var analysis = await _db.Analyses
-            .FirstOrDefaultAsync(a => a.Id == analysisId && a.UserId == userId);
+        // Step 1: Load the analysis from the database
+        // Note: The code uses the repository interface, not the database directly
+        var analysis = await _repository.GetByIdForUserAsync(analysisId, userId);
 
+        // Step 2: Handle "not found" case
         if (analysis == null)
         {
             return new CalculationResponse
             {
                 Status = "error",
-                Errors = new List<string> { "Analysis not found" }
+                Errors = ["Analysis not found"]
             };
         }
 
-        // 2. Validate inputs
-        var validation = ValidateInputs(analysis.Parameters);
-        if (!validation.IsValid)
+        // Step 3: Use domain logic to check business rules
+        // The CanRun() method lives on the entity - it's domain logic
+        if (!analysis.CanRun())
         {
             return new CalculationResponse
             {
-                Status = "incomplete",
-                Inputs = validation.MissingInputs,
-                CanRun = false
+                Status = "error",
+                Errors = ["Analysis cannot run in its current state"]
             };
         }
 
-        // 3. Run calculation (calls the calculation library)
-        var config = MapToConfig(analysis.Parameters);
-        var model = new SettlementModel(config);
-        var result = await model.RunAsync();
+        // Step 4: Update domain state using domain methods
+        analysis.MarkAsRunning();
+        await _repository.UpdateAsync(analysis);
 
-        // 4. Save results to database
-        analysis.Results = JsonSerializer.SerializeToDocument(result);
-        analysis.UpdatedAt = DateTime.UtcNow;
-        await _db.SaveChangesAsync();
+        // Step 5: Log the operation
+        _logger.LogInformation(
+            "[CALC] Running analysis {AnalysisId} for user {UserId}",
+            analysisId, userId);
 
-        // 5. Return response following messaging contract
+        // Step 6: Run the actual calculation
+        // (In a real application, this calls the calculation library)
+        // ... calculation logic ...
+
+        // Step 7: Update domain state with results
+        analysis.Complete();
+        await _repository.UpdateAsync(analysis);
+
+        // Step 8: Return success response
         return new CalculationResponse
         {
             Status = "success",
-            Results = result,
-            Warnings = result.Warnings,
             CanRun = true
         };
     }
 }
 ```
 
-### Registering Services
+### Data Transfer Objects (DTOs)
 
-Services must be registered with the dependency injection container in `Program.cs`:
-
-```csharp
-// Program.cs
-builder.Services.AddScoped<ICalculationService, CalculationService>();
-```
-
-The `AddScoped` method means a new instance is created for each HTTP request.
-
----
-
-## Entity Framework Core
-
-### What Is Entity Framework Core?
-
-Entity Framework Core (EF Core) is an **ORM** (Object-Relational Mapper) that lets you work with database records as C# objects. Instead of writing SQL, you write LINQ queries that EF Core translates to SQL.
-
-Benefits:
-
-- **Type safety**: Compiler catches errors, not runtime
-- **IntelliSense**: IDE helps you write correct queries
-- **Migrations**: Version control for database schema
-- **Cross-database**: Switch between PostgreSQL, SQL Server, SQLite
-
-### Entity Definition
-
-An **entity** is a C# class that maps to a database table. Each property maps to a column.
+DTOs are simple classes that define the shape of data going in and out of the API.
 
 ```csharp
-// Entities/Analysis.cs
-public class Analysis
+// Application/DTOs/AnalysisDto.cs
+namespace WebApp.Application.DTOs;
+
+/// <summary>
+/// Represents analysis data returned to API clients.
+/// Only includes fields that external clients should see.
+/// </summary>
+public class AnalysisDto
 {
-    // Primary key - auto-incremented by database
     public int Id { get; set; }
-
-    // Required string column with max length
-    [Required]
-    [MaxLength(255)]
     public string Name { get; set; } = string.Empty;
+    public string Status { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
+}
 
-    // Foreign key to User table
-    [Required]
-    public string UserId { get; set; } = string.Empty;
+/// <summary>
+/// Data required to create a new analysis.
+/// </summary>
+public class CreateAnalysisDto
+{
+    public string Name { get; set; } = string.Empty;
+}
 
-    // Timestamp columns
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-
-    // JSONB columns for flexible data (PostgreSQL feature)
-    [Column(TypeName = "jsonb")]
-    public JsonDocument? Parameters { get; set; }
-
-    [Column(TypeName = "jsonb")]
-    public JsonDocument? Results { get; set; }
-
-    // Navigation property - the related User object
-    public User User { get; set; } = null!;
+/// <summary>
+/// Data that the API can update on an existing analysis.
+/// </summary>
+public class UpdateAnalysisDto
+{
+    public string Name { get; set; } = string.Empty;
 }
 ```
 
-### DbContext Configuration
-
-The **DbContext** is your gateway to the database. It contains `DbSet<T>` properties for each table.
-
 ```csharp
-// Entities/AppDbContext.cs
-public class AppDbContext : DbContext
-{
-    public AppDbContext(DbContextOptions<AppDbContext> options)
-        : base(options) { }
+// Application/DTOs/CalculationResponse.cs
+namespace WebApp.Application.DTOs;
 
-    // Each DbSet represents a database table
-    public DbSet<User> Users => Set<User>();
-    public DbSet<Analysis> Analyses => Set<Analysis>();
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        // Configure relationships
-        modelBuilder.Entity<Analysis>()
-            .HasOne(a => a.User)
-            .WithMany(u => u.Analyses)
-            .HasForeignKey(a => a.UserId);
-
-        // Configure JSONB columns
-        modelBuilder.Entity<Analysis>()
-            .Property(a => a.Parameters)
-            .HasColumnType("jsonb");
-
-        // Add indexes for frequently queried columns
-        modelBuilder.Entity<Analysis>()
-            .HasIndex(a => a.UserId);
-    }
-}
-```
-
-### Common Database Operations
-
-<DocTabs
-  items={[
-    {
-      title: 'Find by ID',
-      child: (
-        <div>
-          <p>Retrieve a single record by its primary key:</p>
-          <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
-{`// Returns the entity or null if not found
-var analysis = await _db.Analyses.FindAsync(id);
-
-// Always check for null before using
-if (analysis == null)
-return NotFound();
-
-// Now safe to use analysis
-return Ok(analysis.Name);`}
-          </pre>
-        </div>
-      ),
-    },
-    {
-      title: 'Filter with Where',
-      child: (
-        <div>
-          <p>Query records matching a condition:</p>
-          <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
-{`// Get all analyses for a specific user
-var analyses = await \_db.Analyses
-.Where(a => a.UserId == userId)
-.OrderByDescending(a => a.UpdatedAt)
-.ToListAsync();
-
-// Get first matching record (or null)
-var latest = await \_db.Analyses
-.Where(a => a.UserId == userId)
-.OrderByDescending(a => a.UpdatedAt)
-.FirstOrDefaultAsync();`}
-          </pre>
-        </div>
-      ),
-    },
-    {
-      title: 'Create',
-      child: (
-        <div>
-          <p>Insert a new record into the database:</p>
-          <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
-{`// Create a new entity object
-var analysis = new Analysis
-{
-Name = dto.Name,
-UserId = userId
-};
-
-// Add to change tracking (not yet saved)
-\_db.Analyses.Add(analysis);
-
-// Save to database (executes INSERT)
-await \_db.SaveChangesAsync();
-
-// analysis.Id is now populated with the generated key
-return Created($"/api/analyses/{analysis.Id}", analysis);`}
-          </pre>
-        </div>
-      ),
-    },
-    {
-      title: 'Update',
-      child: (
-        <div>
-          <p>Modify an existing record:</p>
-          <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
-{`// Load the entity (now tracked by EF Core)
-var analysis = await \_db.Analyses.FindAsync(id);
-if (analysis == null)
-return NotFound();
-
-// Modify properties
-analysis.Name = dto.Name;
-analysis.UpdatedAt = DateTime.UtcNow;
-
-// Save changes (executes UPDATE)
-await \_db.SaveChangesAsync();
-
-return Ok(analysis);`}
-          </pre>
-        </div>
-      ),
-    },
-    {
-      title: 'Delete',
-      child: (
-        <div>
-          <p>Remove a record from the database:</p>
-          <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
-{`// Load the entity
-var analysis = await \_db.Analyses.FindAsync(id);
-if (analysis == null)
-return NotFound();
-
-// Mark for deletion
-\_db.Analyses.Remove(analysis);
-
-// Execute DELETE
-await \_db.SaveChangesAsync();
-
-return NoContent();`}
-</pre>
-</div>
-),
-},
-]}
-/>
-
----
-
-## Messaging Contract
-
-All calculation endpoints return responses following a standard structure. This consistency makes the frontend predictable and simplifies error handling.
-
-```csharp
-// DTOs/CalculationResponse.cs
+/// <summary>
+/// Standard response format for all calculation operations.
+/// This consistent format simplifies frontend development.
+/// </summary>
 public class CalculationResponse
 {
+    // [JsonPropertyName] controls how the property appears in JSON
+    // "status" in JSON instead of "Status"
     [JsonPropertyName("status")]
     public string Status { get; set; } = "success";
 
     [JsonPropertyName("inputs")]
-    public List<string> Inputs { get; set; } = new();
+    public List<string> Inputs { get; set; } = [];  // Empty list by default
 
     [JsonPropertyName("warnings")]
-    public List<string> Warnings { get; set; } = new();
+    public List<string> Warnings { get; set; } = [];
 
     [JsonPropertyName("errors")]
-    public List<string> Errors { get; set; } = new();
+    public List<string> Errors { get; set; } = [];
 
     [JsonPropertyName("can_run")]
     public bool CanRun { get; set; } = true;
@@ -582,28 +1011,373 @@ public class CalculationResponse
 }
 ```
 
-### Status Values
+---
 
-| Status       | HTTP Code | Meaning                                |
-| ------------ | --------- | -------------------------------------- |
-| `success`    | 200       | Analysis completed successfully        |
-| `incomplete` | 200       | Missing required inputs (not an error) |
-| `error`      | 400       | Validation or calculation error        |
+## The Infrastructure Layer
+
+The Infrastructure layer contains implementations for data access and external services. This is where Entity Framework Core, database connections, and external API clients live.
+
+### What Is a DbContext?
+
+A **DbContext** is Entity Framework Core's main class for interacting with the database. It represents a session with the database and enables querying and saving data.
+
+```csharp
+// Infrastructure/Data/AppDbContext.cs
+namespace WebApp.Infrastructure.Data;
+
+/// <summary>
+/// The database context for this application.
+/// It serves as the "gateway" to the database - all database operations go through here.
+/// </summary>
+public class AppDbContext : DbContext
+{
+    // Constructor - receives configuration from dependency injection
+    public AppDbContext(DbContextOptions<AppDbContext> options)
+        : base(options)  // Pass options to the parent class
+    {
+    }
+
+    // DbSet<T> represents a table in the database
+    // This creates a "Users" table mapped to the User entity
+    public DbSet<User> Users => Set<User>();
+
+    // This creates an "Analyses" table mapped to the Analysis entity
+    public DbSet<Analysis> Analyses => Set<Analysis>();
+
+    /// <summary>
+    /// The framework calls this method when creating the model.
+    /// This is where entity-to-table mappings get configured.
+    /// </summary>
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        // Find all configuration classes in this project and apply them
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+    }
+}
+```
+
+### Entity Configuration (Fluent API)
+
+Instead of putting database attributes on domain entities, developers use **Fluent API** to configure the mapping in separate configuration classes.
+
+```csharp
+// Infrastructure/Data/Configurations/AnalysisConfiguration.cs
+namespace WebApp.Infrastructure.Data.Configurations;
+
+/// <summary>
+/// Configures how the Analysis entity maps to the database.
+/// This keeps database concerns out of the Domain layer.
+/// </summary>
+public class AnalysisConfiguration : IEntityTypeConfiguration<Analysis>
+{
+    public void Configure(EntityTypeBuilder<Analysis> builder)
+    {
+        // Table name in the database
+        builder.ToTable("analyses");
+
+        // Primary key
+        builder.HasKey(a => a.Id);
+
+        // Property configurations
+        builder.Property(a => a.Name)
+            .IsRequired()        // NOT NULL in database
+            .HasMaxLength(255);  // VARCHAR(255)
+
+        builder.Property(a => a.UserId)
+            .IsRequired();
+
+        // Store enum as string (e.g., "Draft", "Running") instead of number
+        builder.Property(a => a.Status)
+            .HasConversion<string>()
+            .HasMaxLength(50);
+
+        // Set default value using SQL
+        builder.Property(a => a.CreatedAt)
+            .HasDefaultValueSql("NOW()");
+
+        // Create an index for faster queries by UserId
+        builder.HasIndex(a => a.UserId);
+
+        // Define relationship: Each Analysis belongs to one User
+        builder.HasOne<User>()
+            .WithMany()
+            .HasForeignKey(a => a.UserId);
+    }
+}
+```
+
+### Repository Implementation
+
+The repository class implements the interface defined in Application, using DbContext for actual database operations.
+
+```csharp
+// Infrastructure/Repositories/AnalysisRepository.cs
+namespace WebApp.Infrastructure.Repositories;
+
+/// <summary>
+/// Implementation of IAnalysisRepository using Entity Framework Core.
+/// </summary>
+public class AnalysisRepository : IAnalysisRepository
+{
+    private readonly AppDbContext _db;
+
+    public AnalysisRepository(AppDbContext db)
+    {
+        _db = db;
+    }
+
+    public async Task<Analysis?> GetByIdAsync(int id)
+    {
+        // FindAsync looks up by primary key
+        return await _db.Analyses.FindAsync(id);
+    }
+
+    public async Task<Analysis?> GetByIdForUserAsync(int id, string userId)
+    {
+        // FirstOrDefaultAsync returns the first match or null
+        // The lambda expression filters: where Id matches AND UserId matches
+        return await _db.Analyses
+            .FirstOrDefaultAsync(a => a.Id == id && a.UserId == userId);
+    }
+
+    public async Task<IReadOnlyList<Analysis>> GetAllForUserAsync(string userId)
+    {
+        return await _db.Analyses
+            .Where(a => a.UserId == userId)           // Filter by user
+            .OrderByDescending(a => a.UpdatedAt)      // Newest first
+            .ToListAsync();                           // Execute query
+    }
+
+    public async Task AddAsync(Analysis analysis)
+    {
+        // Add tells EF to track this entity for insertion
+        _db.Analyses.Add(analysis);
+        // SaveChangesAsync sends the INSERT to the database
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task UpdateAsync(Analysis analysis)
+    {
+        // Update tells EF this entity has been modified
+        _db.Analyses.Update(analysis);
+        // SaveChangesAsync sends the UPDATE to the database
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(Analysis analysis)
+    {
+        // Remove tells EF to delete this entity
+        _db.Analyses.Remove(analysis);
+        // SaveChangesAsync sends the DELETE to the database
+        await _db.SaveChangesAsync();
+    }
+}
+```
+
+### Registering Services with Dependency Injection
+
+Each layer provides an **extension method** that registers its services with the dependency injection container.
+
+```csharp
+// Infrastructure/DependencyInjection.cs
+namespace WebApp.Infrastructure;
+
+/// <summary>
+/// Extension methods for registering Infrastructure layer services.
+/// </summary>
+public static class DependencyInjection
+{
+    /// <summary>
+    /// Adds Infrastructure services to the dependency injection container.
+    /// Call this in Program.cs: builder.Services.AddInfrastructure(configuration)
+    /// </summary>
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        // Register the database context
+        // When code requests AppDbContext, the framework creates one connected to PostgreSQL
+        services.AddDbContext<AppDbContext>(options =>
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+
+        // Register repositories
+        // When code requests IAnalysisRepository, the framework provides an AnalysisRepository
+        // "Scoped" means the framework creates one instance per HTTP request
+        services.AddScoped<IAnalysisRepository, AnalysisRepository>();
+
+        return services;
+    }
+}
+```
+
+```csharp
+// Application/DependencyInjection.cs
+namespace WebApp.Application;
+
+/// <summary>
+/// Extension methods for registering Application layer services.
+/// </summary>
+public static class DependencyInjection
+{
+    /// <summary>
+    /// Adds Application services to the dependency injection container.
+    /// Call this in Program.cs: builder.Services.AddApplication()
+    /// </summary>
+    public static IServiceCollection AddApplication(this IServiceCollection services)
+    {
+        // Register services
+        services.AddScoped<ICalculationService, CalculationService>();
+
+        return services;
+    }
+}
+```
 
 ---
 
-## Authentication
+## The API Layer
 
-RMC applications use JWT (JSON Web Token) bearer authentication.
+The API layer handles HTTP requests and responses. It contains controllers (which handle specific routes), middleware (which processes all requests), and the application entry point.
 
-### What Is JWT?
+### What Is a Controller?
 
-A JWT is a signed token that contains user identity information. The frontend includes this token in the `Authorization` header of every request. The backend validates the signature to verify the user's identity without hitting the database.
-
-### JWT Configuration
+A **controller** handles HTTP requests for a specific resource. Each public method (called an **action**) handles a specific HTTP method and route.
 
 ```csharp
-// Program.cs
+// API/Controllers/Analyses/SettlementController.cs
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace WebApp.API.Controllers.Analyses;
+
+// Attributes provide metadata to ASP.NET
+
+[ApiController]  // This class is an API controller (enables automatic validation, etc.)
+[Route("api/analyses/settlement")]  // Base URL path for all actions
+[Authorize]  // All actions in this controller require authentication
+public class SettlementController : ControllerBase  // Inherit from ControllerBase
+{
+    // Dependencies - the constructor receives these via dependency injection
+    private readonly ICalculationService _calculationService;
+    private readonly IAnalysisRepository _repository;
+    private readonly ILogger<SettlementController> _logger;
+
+    // Constructor - ASP.NET provides these automatically via dependency injection
+    public SettlementController(
+        ICalculationService calculationService,
+        IAnalysisRepository repository,
+        ILogger<SettlementController> logger)
+    {
+        _calculationService = calculationService;
+        _repository = repository;
+        _logger = logger;
+    }
+
+    /// <summary>
+    /// Gets an analysis by ID.
+    /// HTTP: GET /api/analyses/settlement/{id}
+    /// Example: GET /api/analyses/settlement/123
+    /// </summary>
+    [HttpGet("{id}")]  // {id} is a route parameter
+    public async Task<IActionResult> GetById(int id)  // id comes from the URL
+    {
+        // Get the current user's ID from their authentication token
+        var userId = GetCurrentUserId();
+
+        // Use the repository to get the analysis
+        var analysis = await _repository.GetByIdForUserAsync(id, userId);
+
+        // If not found, return 404 Not Found
+        if (analysis == null)
+            return NotFound();
+
+        // Convert to DTO and return 200 OK with the data
+        return Ok(MapToDto(analysis));
+    }
+
+    /// <summary>
+    /// Runs the calculation for an analysis.
+    /// HTTP: POST /api/analyses/settlement/{id}/calculate
+    /// Example: POST /api/analyses/settlement/123/calculate
+    /// </summary>
+    [HttpPost("{id}/calculate")]
+    public async Task<IActionResult> Calculate(int id)
+    {
+        // Log the request
+        _logger.LogInformation("[API] POST calculate/{AnalysisId}", id);
+
+        var userId = GetCurrentUserId();
+
+        // Delegate to the service layer - the controller stays thin
+        var response = await _calculationService.RunAsync(id, userId);
+
+        // Return appropriate HTTP status based on the result
+        // This is a "switch expression" - a compact way to choose based on a value
+        return response.Status switch
+        {
+            "success" => Ok(response),       // 200
+            "incomplete" => Ok(response),    // 200
+            "error" => BadRequest(response), // 400
+            _ => StatusCode(500, response)   // 500 (underscore means "anything else")
+        };
+    }
+
+    /// <summary>
+    /// Helper method that gets the current user's ID from their JWT token.
+    /// </summary>
+    private string GetCurrentUserId()
+    {
+        // User.FindFirstValue gets a claim from the JWT token
+        // ?? means "if null, throw the exception instead"
+        return User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? throw new UnauthorizedAccessException();
+    }
+
+    /// <summary>
+    /// Converts a domain entity to a DTO for the API response.
+    /// </summary>
+    private static AnalysisDto MapToDto(Analysis analysis) => new()
+    {
+        Id = analysis.Id,
+        Name = analysis.Name,
+        Status = analysis.Status.ToString(),
+        CreatedAt = analysis.CreatedAt,
+        UpdatedAt = analysis.UpdatedAt
+    };
+}
+```
+
+### Program.cs - The Entry Point
+
+`Program.cs` is where the application starts. It wires together all the layers and configures the HTTP pipeline.
+
+```csharp
+// API/Program.cs
+using Serilog;
+using WebApp.Application;
+using WebApp.Infrastructure;
+
+// Create the web application builder
+var builder = WebApplication.CreateBuilder(args);
+
+// === CONFIGURE LOGGING ===
+// Serilog provides structured logging
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.File("logs/app.log", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
+// === REGISTER SERVICES (Dependency Injection) ===
+// These extension methods come from the Application and Infrastructure layers
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure(builder.Configuration);
+
+// === CONFIGURE AUTHENTICATION ===
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -621,78 +1395,83 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
+builder.Services.AddControllers();
+
+// Build the application
+var app = builder.Build();
+
+// === CONFIGURE THE HTTP PIPELINE ===
+// Middleware runs in the order added
+
+// Error handling middleware catches exceptions and returns consistent error responses
+app.UseMiddleware<ErrorHandlingMiddleware>();
+
+// Authentication and authorization middleware
+app.UseAuthentication();
+app.UseAuthorization();
+
+// Map controller routes
+app.MapControllers();
+
+// Start the application
+app.Run();
 ```
 
-### Getting the Current User
+### HTTP Methods and Routes
+
+| Operation | HTTP Method | Route Example | What It Does |
+| --- | --- | --- | --- |
+| Get one | GET | `/api/analyses/123` | Retrieves a single analysis |
+| Get many | GET | `/api/analyses` | Retrieves a list of analyses |
+| Create | POST | `/api/analyses` | Creates a new analysis |
+| Update | PUT | `/api/analyses/123` | Updates an existing analysis |
+| Delete | DELETE | `/api/analyses/123` | Deletes an analysis |
+| Run action | POST | `/api/analyses/123/calculate` | Triggers a calculation |
+
+### Route Parameters and Model Binding
+
+ASP.NET Core automatically extracts data from requests and passes it to methods:
 
 ```csharp
-// In a controller, get user ID from JWT claims
-private string GetCurrentUserId()
-{
-    return User.FindFirstValue(ClaimTypes.NameIdentifier)
-        ?? throw new UnauthorizedAccessException("User ID not found in token");
-}
+// From URL path: GET /api/analyses/123
+// The {id} in the route becomes the 'id' parameter
+[HttpGet("{id}")]
+public async Task<IActionResult> Get(int id)  // id = 123
+
+// From query string: GET /api/analyses?page=1&limit=10
+// [FromQuery] tells ASP.NET to look in the query string
+[HttpGet]
+public async Task<IActionResult> List(
+    [FromQuery] int page = 1,    // Default value if not provided
+    [FromQuery] int limit = 10)
+
+// From request body: POST /api/analyses with JSON body
+// [FromBody] tells ASP.NET to deserialize the JSON body into this object
+[HttpPost]
+public async Task<IActionResult> Create([FromBody] CreateAnalysisDto dto)
+
+// Combined: PUT /api/analyses/123 with JSON body
+[HttpPut("{id}")]
+public async Task<IActionResult> Update(int id, [FromBody] UpdateAnalysisDto dto)
 ```
-
----
-
-## Logging
-
-Use Serilog with structured logging for all operations.
-
-### Logging Configuration
-
-```csharp
-// Program.cs
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Debug()
-    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-    .Enrich.FromLogContext()
-    .WriteTo.Console(outputTemplate:
-        "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext}: {Message:lj}{NewLine}{Exception}")
-    .WriteTo.File("logs/app.log", rollingInterval: RollingInterval.Day)
-    .CreateLogger();
-
-builder.Host.UseSerilog();
-```
-
-### Logging Best Practices
-
-```csharp
-// Use structured logging with named parameters (not string interpolation)
-_logger.LogInformation(
-    "[API] POST /api/analyses/settlement/calculate/{AnalysisId}",
-    analysisId);
-
-_logger.LogDebug(
-    "[CALC] Running analysis: Iterations={Iterations}, Seed={Seed}",
-    config.Iterations, config.Seed);
-
-_logger.LogError(ex,
-    "[ERROR] Calculation failed for analysis {AnalysisId}",
-    analysisId);
-```
-
-### Log Prefixes
-
-| Prefix    | Usage                          |
-| --------- | ------------------------------ |
-| `[API]`   | HTTP request/response handling |
-| `[CALC]`  | Engineering calculations       |
-| `[VALID]` | Input validation               |
-| `[DB]`    | Database operations            |
-| `[ERROR]` | Error conditions               |
 
 ---
 
 ## Error Handling
 
-Use a global exception handler middleware for consistent error responses.
+Global error handling middleware catches exceptions and returns consistent error responses.
 
 ```csharp
-// Middleware/ErrorHandlingMiddleware.cs
+// API/Middleware/ErrorHandlingMiddleware.cs
+namespace WebApp.API.Middleware;
+
+/// <summary>
+/// Middleware that catches unhandled exceptions and returns consistent error responses.
+/// This runs for every request and wraps the rest of the pipeline in a try-catch.
+/// </summary>
 public class ErrorHandlingMiddleware
 {
+    // _next represents the next middleware in the pipeline
     private readonly RequestDelegate _next;
     private readonly ILogger<ErrorHandlingMiddleware> _logger;
 
@@ -704,22 +1483,32 @@ public class ErrorHandlingMiddleware
         _logger = logger;
     }
 
+    /// <summary>
+    /// The framework calls this method for every HTTP request.
+    /// </summary>
     public async Task InvokeAsync(HttpContext context)
     {
         try
         {
+            // Call the next middleware (eventually reaches the controller)
             await _next(context);
         }
         catch (Exception ex)
         {
+            // If any exception occurs, the middleware catches it here
             _logger.LogError(ex, "[ERROR] Unhandled exception");
             await HandleExceptionAsync(context, ex);
         }
     }
 
+    /// <summary>
+    /// Converts an exception into an HTTP response.
+    /// </summary>
     private static async Task HandleExceptionAsync(HttpContext context, Exception ex)
     {
         context.Response.ContentType = "application/json";
+
+        // Choose HTTP status code based on exception type
         context.Response.StatusCode = ex switch
         {
             UnauthorizedAccessException => StatusCodes.Status403Forbidden,
@@ -727,18 +1516,164 @@ public class ErrorHandlingMiddleware
             _ => StatusCodes.Status500InternalServerError
         };
 
+        // Return a consistent error response format
         var response = new CalculationResponse
         {
             Status = "error",
-            Errors = new List<string> { ex.Message }
+            Errors = [ex.Message]
         };
 
         await context.Response.WriteAsJsonAsync(response);
     }
 }
+```
 
-// Register in Program.cs
-app.UseMiddleware<ErrorHandlingMiddleware>();
+---
+
+## Authentication
+
+RMC applications use JWT (JSON Web Token) bearer authentication.
+
+### What Is JWT?
+
+A **JWT** (JSON Web Token) is a signed token that contains information about the user. When a user logs in, the system issues a JWT. The client includes this token in the `Authorization` header of every subsequent request:
+
+```
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+The server validates the token's signature to verify:
+1. This server issued the token (not forged)
+2. No one has tampered with the token
+3. The token has not expired
+
+This enables stateless authentication—the server doesn't need to look up session data in a database for every request.
+
+### Getting the Current User
+
+```csharp
+// In a controller, code can access the current user's information
+// from the JWT token claims
+
+private string GetCurrentUserId()
+{
+    // User is a property on ControllerBase
+    // FindFirstValue looks for a claim in the JWT token
+    // ClaimTypes.NameIdentifier is the standard claim for user ID
+    return User.FindFirstValue(ClaimTypes.NameIdentifier)
+        ?? throw new UnauthorizedAccessException("User ID not found in token");
+}
+```
+
+---
+
+## Logging
+
+All operations use structured logging with Serilog.
+
+### What Is Structured Logging?
+
+**Structured logging** captures data as named properties rather than just text. This makes logs searchable and analyzable.
+
+```csharp
+// BAD: String interpolation - data gets buried in text
+_logger.LogInformation($"Running analysis {analysisId} for user {userId}");
+// Output: "Running analysis 123 for user user-456"
+// Searching for all logs about analysis 123 becomes difficult
+
+// GOOD: Structured logging - the logger captures data as properties
+_logger.LogInformation(
+    "[CALC] Running analysis {AnalysisId} for user {UserId}",
+    analysisId, userId);
+// Output: "[CALC] Running analysis 123 for user user-456"
+// Also captures: { AnalysisId: 123, UserId: "user-456" }
+// Searching/filtering by AnalysisId or UserId becomes easy
+```
+
+### Log Prefixes
+
+Consistent prefixes categorize log messages:
+
+| Prefix | Usage |
+| --- | --- |
+| `[API]` | HTTP request/response handling |
+| `[CALC]` | Engineering calculations |
+| `[VALID]` | Input validation |
+| `[DB]` | Database operations |
+| `[ERROR]` | Error conditions |
+
+---
+
+## Testing
+
+Clean Architecture enables comprehensive testing because each layer can operate independently.
+
+### Domain Layer Tests
+
+Domain logic is pure C#—no database, no HTTP, no mocking needed.
+
+```csharp
+// tests/WebApp.Domain.Tests/AnalysisTests.cs
+public class AnalysisTests
+{
+    [Fact]  // Marks this as a test method
+    public void CanRun_WhenStatusIsDraft_ReturnsTrue()
+    {
+        // Arrange: Set up the test scenario
+        var analysis = new Analysis { Status = AnalysisStatus.Draft };
+
+        // Act & Assert: Call the method and verify the result
+        Assert.True(analysis.CanRun());
+    }
+
+    [Fact]
+    public void CanRun_WhenStatusIsRunning_ReturnsFalse()
+    {
+        var analysis = new Analysis { Status = AnalysisStatus.Running };
+
+        Assert.False(analysis.CanRun());
+    }
+
+    [Fact]
+    public void MarkAsRunning_WhenCannotRun_ThrowsException()
+    {
+        var analysis = new Analysis { Status = AnalysisStatus.Running };
+
+        // Assert.Throws verifies that the code throws an exception
+        Assert.Throws<InvalidOperationException>(() => analysis.MarkAsRunning());
+    }
+}
+```
+
+### Application Layer Tests
+
+Service tests use **mocked** repositories—fake implementations that return predetermined data.
+
+```csharp
+// tests/WebApp.Application.Tests/CalculationServiceTests.cs
+public class CalculationServiceTests
+{
+    [Fact]
+    public async Task RunAsync_WhenAnalysisNotFound_ReturnsError()
+    {
+        // Arrange: Create a mock repository that returns null
+        var mockRepo = new Mock<IAnalysisRepository>();
+        mockRepo
+            .Setup(r => r.GetByIdForUserAsync(It.IsAny<int>(), It.IsAny<string>()))
+            .ReturnsAsync((Analysis?)null);  // Simulate "not found"
+
+        var service = new CalculationService(
+            mockRepo.Object,
+            Mock.Of<ILogger<CalculationService>>());
+
+        // Act: Call the method under test
+        var result = await service.RunAsync(1, "user-123");
+
+        // Assert: Verify the result
+        Assert.Equal("error", result.Status);
+        Assert.Contains("not found", result.Errors[0]);
+    }
+}
 ```
 
 ---
@@ -747,20 +1682,55 @@ app.UseMiddleware<ErrorHandlingMiddleware>();
 
 ### Do
 
+- Keep the Domain layer free of all external dependencies
 - Keep controllers thin—delegate business logic to services
-- Use async/await for all I/O operations (database, HTTP)
-- Validate inputs before processing
-- Log all significant operations with context
-- Use dependency injection for all dependencies
+- Use async/await for all I/O operations (database, HTTP, file system)
+- Define interfaces in Application, implement them in Infrastructure
+- Use the Repository pattern to abstract data access
+- Log all significant operations with structured logging
 - Return appropriate HTTP status codes
-- Check authorization (user owns the resource)
+- Write unit tests for Domain logic without mocks
 
 ### Don't
 
-- Put business logic directly in controllers
-- Expose database entities directly to the API (use DTOs)
-- Catch and swallow exceptions silently (always log)
-- Use synchronous database calls (blocks the thread)
-- Store secrets in code (use configuration/environment variables)
+- Reference Infrastructure or API from Domain (violates dependency rule)
+- Put business logic in controllers (controllers should only handle HTTP)
+- Expose domain entities directly to the API (use DTOs)
+- Put database attributes on domain entities (use Fluent API configuration)
+- Catch and swallow exceptions silently (always log errors)
+- Use synchronous database calls (blocks threads, hurts performance)
+- Store secrets (passwords, API keys) in code (use configuration)
 - Skip authorization checks (security critical)
-- Trust data from the frontend without validation
+
+---
+
+## Glossary
+
+| Term | Definition |
+| --- | --- |
+| **API** | Application Programming Interface—a way for programs to communicate, typically over HTTP |
+| **Async/Await** | C# keywords for handling long-running operations without blocking |
+| **Attribute** | Metadata attached to code elements using `[brackets]` |
+| **Clean Architecture** | A software design pattern where dependencies point inward toward business logic |
+| **Constructor** | A special method that runs when creating a new object |
+| **Controller** | A class that handles HTTP requests in ASP.NET Core |
+| **DbContext** | Entity Framework Core's class for database interaction |
+| **Dependency Injection** | A pattern where objects receive their dependencies from outside |
+| **DTO** | Data Transfer Object—a simple object for carrying data between layers |
+| **Entity** | A class representing a business object, often mapped to a database table |
+| **Extension Method** | A method that adds functionality to an existing type |
+| **Fluent API** | EF Core's method-chaining approach to configure entity mappings |
+| **Generic** | A type that works with different types, specified in angle brackets `<>` |
+| **Interface** | A contract defining what methods a class must implement |
+| **JWT** | JSON Web Token—a signed token containing user identity information |
+| **Lambda Expression** | A shorthand for writing small functions using `=>` |
+| **Layer** | A logical grouping of code with specific responsibilities |
+| **Middleware** | Code that runs for every HTTP request in the pipeline |
+| **Namespace** | A way to organize code and prevent naming conflicts |
+| **NuGet Package** | A library published for use in .NET projects |
+| **ORM** | Object-Relational Mapper—a tool that maps database records to objects |
+| **POCO** | Plain Old CLR Object—a simple class with no framework dependencies |
+| **Property** | A class member that encapsulates a field with get/set accessors |
+| **Repository** | A class that handles data access for a specific entity type |
+| **Service** | A class containing business or application logic |
+
