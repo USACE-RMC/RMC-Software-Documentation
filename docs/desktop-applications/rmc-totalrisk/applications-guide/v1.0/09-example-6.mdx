@@ -26,3 +26,273 @@ import VersionSelector from "@site/src/components/VersionSelector";
 This example steps through the evaluation of seismic crest deformation that leads to overtopping. New RMC-TotalRisk concepts covered
 by this example include the development of an event tree with primary and secondary hazards and how to calculate the weights for the secondary hazard.
 
+## Hazards
+
+Two hazards are required for this risk analysis. The non-breach risk is a function of stage and is computed using the same stage frequency curve as in [Example 1](./03-example-1.mdx). 
+Reference the hazard function development in [Hazards](./03-example-1.mdx#hazards) from Example 1 to create the hazard for non-breach risk.
+
+The seismic failure mode and incremental risk in this example is a function of both PGA and stage. To model this in RMC-TotalRisk, stage duration will be the primary hazard 
+and PGA will be the secondary hazard. 
+
+The primary hazard (stage duration) is developed first.
+
+<ProcessList
+    items={[
+        {
+            title: (
+                <>
+                Right-click on the <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/folder.png"/> <strong>Hazards</strong> folder in the Project Explorer 
+                window and select <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/addtabtransform.png"/> <strong>Add Tabular Hazard…</strong> Name
+                 the hazard function in the prompt (e.g., Stage Duration) and press <strong>OK</strong>.
+                </>
+            )
+        },
+        {
+            title: (
+                <>
+                The hazard for the stage duration curve is stage and is measured in feet. In the <strong>Tabular Hazard Properties</strong> section of the Properties 
+                window, <FigReference figKey="example-9-stage-dur-hf"/>(a), select <em>Stage</em> for <strong>Hazard Type</strong> and <em>ft</em> for <strong>Hazard Units</strong>. 
+                </>
+            )
+        },
+        {
+            title: (
+                <>
+                Uncheck the <strong>Hazard is Uncertain</strong> check box.
+                </>
+            )
+        },
+        {
+            title: (
+                <>
+                The stage duration curve is generally plotted on a linear scale. In the <strong>Interpolation Transforms</strong> section of the Properties window, the <strong>Hazard</strong> is set 
+                to <em>None</em> (linear interpolation), and the <strong>Probability</strong> is set to <em>None</em> (linear interpolation), <FigReference figKey="example-6-stage-dur-hf"/>(b).
+                </>
+            )
+        },
+        {
+            title: (
+                <>
+                Select an appropriate input distribution that best defines the stage frequency dataset and enter the data into the hazard function. 
+                Because uncertainty was not considered in the development of this stage duration curve, <em>Deterministic</em> is selected from the <strong>Distribution</strong> drop-down 
+                menu. Enter the hazard function from <TableReference tableKey="example-6-stage-duration-hazard"/> by copying and pasting into the table as 
+                indicated in <FigReference figKey="example-6-stage-dur-hf"/>(c).
+                </>
+            ),
+            freeform: (
+                <>
+                    {/*Table 31*/}
+                    <TableVertical
+                    tableKey="example-6-stage-duration-hazard"
+                    alt="Stage duration hazard function."
+                    caption="Stage duration hazard function."
+
+                        headers={
+                            [
+                            [
+                                { value: 'Stage (ft)' },
+                                { value: 'AEP' }
+                            ]
+                        ]
+                        }
+                        columns={[
+                            [
+                            603.41,606.83,'610.20',611.02,611.94,613.14,614.05,614.57,
+                            615.38,616.86,617.97,618.84,'619.70',623.16,626.62,630.08,
+                            633.54,'637.00',638.73,'639.60',640.46,641.33,642.19,643.06,
+                            643.92,644.65,645.65,649.88,'654.10',603.41
+                            ],
+                            [
+                            "9.99E-01","9.98E-01","9.97E-01","9.96E-01","9.95E-01","9.94E-01","9.92E-01","9.90E-01",
+                            "9.80E-01","9.15E-01","7.80E-01","7.08E-01","6.65E-01","5.69E-01","5.01E-01","4.53E-01",
+                            "4.25E-01","4.05E-01","3.82E-01","3.31E-01","2.31E-01","7.23E-03","9.79E-04","1.69E-04",
+                            "8.51E-05","5.70E-05","5.32E-05","3.46E-05","1.60E-05","9.99E-01"
+                            ]
+                        ]}
+                        widthMode="intrinsic"
+                    />
+
+                    {/*Figure 67*/}
+                    <Figure 
+                        docId="09-example-6.mdx"
+                        figKey="example-6-stage-dur-hf"
+                        src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure67.png" 
+                        fullWidth={true}
+                        alt="Stage duration hazard function." 
+                        caption="Stage duration hazard function."
+                    />
+                </>
+            )
+        }
+    ]}
+/>
+
+Development of the secondary hazard (PGA frequency) occurs in the system response event tree for each failure mode. The PGAs that define the system response 
+of the failure mode each get a branch in the event tree immediately after the stage duration hazard function as shown in <FigReference figKey="example-6-tree-secondary-haz"/>. 
+Using the seismic hazard curve data in <TableReference tableKey="example-6-seismic-haz"/>, weights are calculated for each PGA of the event tree.
+
+{/*Figure 68*/}
+<Figure 
+    docId="09-example-6.mdx"
+    figKey="example-6-tree-secondary-haz"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure68.png" 
+    fullWidth={true}
+    alt="Event tree structure for secondary hazard." 
+    caption="Event tree structure for secondary hazard."
+/>
+
+{/*Table 32*/}
+<TableVertical
+tableKey="example-6-seismic-haz"
+alt="Seismic hazard function."
+caption="Seismic hazard function."
+
+    headers={
+        [
+        [
+            { value: 'PGA (g)' },
+            { value: 'AEP' }
+        ]
+    ]
+    }
+    columns={[
+        [
+        0.002,0.004,0.005,0.008,0.012,0.018,0.027,'0.040',
+        '0.050','0.060','0.090',0.125,0.134,0.202,0.302,'0.310',
+        0.325,0.454,0.565,'0.680'
+        ],
+        [
+        "2.93E-02","2.30E-02","1.80E-02","1.38E-02","1.02E-02","7.14E-03","4.75E-03","2.97E-03",
+        "2.27E-03","1.75E-03","9.69E-04","5.74E-04","5.02E-04","2.38E-04","1.06E-04","1.00E-04",
+        "9.15E-05","4.30E-05","2.67E-05","1.63E-05"
+        ]
+    ]}
+    widthMode="intrinsic"
+/>
+
+<ProcessList
+    items={[
+        {
+            title: (
+                <>
+                Identify the PGA values used to evaluate the system response (0.05g, 0.2g, 0.45g, and 0.68g), <TableReference tableKey="example-6-aep-pgas"/>. Note that the first PGA must be equal to the 
+                threshold for the system response (SRP equal to 0).
+                </>
+            ),
+            freeform: (
+                <>
+                    {/*Table 33*/}
+                    <TableVertical
+                    tableKey="example-6-aep-pgas"
+                    alt="AEP of PGAs that define the system response."
+                    caption="AEP of PGAs that define the system response."
+
+                        headers={
+                            [
+                            [
+                                { value: 'PGA (g)' },
+                                { value: 'AEP' }
+                            ]
+                        ]
+                        }
+                        columns={[
+                            [
+                            '0.050','0.200','0.450','0.680'
+                            ],
+                            [
+                            "2.27E-03","2.43E-04","4.40E-05","1.63E-05"
+                            ]
+                        ]}
+                        widthMode="intrinsic"
+                    />
+                </>
+            )
+        },
+        {
+            title: (
+                <>
+                Partition the seismic hazard function using the PGA threshold value, the mid-points between the PGAs that define the system response (<TableReference tableKey="example-6-aep-mp-pgas"/>), and the highest 
+                PGA evaluated for the system response, <TableReference tableKey="example-6-seismic-haz-paw"/>.
+                </>
+            ),
+            freeform: (
+                <>
+                    {/*Table 34*/}
+                    <TableVertical
+                    tableKey="example-6-aep-mp-pgas"
+                    alt="AEP of mid-point PGAs.."
+                    caption="AEP of mid-point PGAs."
+
+                        headers={
+                            [
+                            [
+                                { value: 'Mid-Point PGAs (g)' },
+                                { value: 'AEP' }
+                            ]
+                        ]
+                        }
+                        columns={[
+                            [
+                            0.125,0.325,0.565
+                            ],
+                            [
+                            "5.74E-04","9.15E-05","2.67E-05"
+                            ]
+                        ]}
+                        widthMode="intrinsic"
+                    />
+
+                    {/*Table 35*/}
+                    <TableVertical
+                    tableKey="example-6-seismic-haz-paw"
+                    alt="Seismic hazard partitions and weighting."
+                    caption="Seismic hazard partitions and weighting."
+
+                        headers={
+                            [
+                            [
+                                { value: 'PGA (g)' },
+                                { value: 'Representative Partition' },
+                                { value: 'Probability'}
+                            ]
+                        ]
+                        }
+                        columns={[
+                            [
+                            '0.050g','0.200g','0.450g','0.680g'
+                            ],
+                            [
+                            '0.050g to 0.125g','0.125g to 0.325g','0.325g to 0.565g','Greater than 0.565g'
+                            ],
+                            [
+                            '2.27E-03 – 5.74E-04 = 1.69E-03','5.74E-04 – 9.15E-05 = 4.82E-04','9.15E-05 – 2.67E-05 = 6.48E-05','2.67E-05'
+                            ]
+                        ]}
+                        widthMode="intrinsic"
+                    />
+                </>
+            )
+        },
+        {
+            title: (
+                <>
+                Calculate the probability of having a PGA hazard within the partition by subtracting the AEP of the highest PGA of the partition from the AEP of the lowest PGA of 
+                the partition, <TableReference tableKey="example-6-seismic-haz-paw"/>.
+                </>
+            )
+        }
+    ]}
+/>
+
+Building an event tree for a failure mode and applying these probabilities to the event tree will be covered in [System Responses](./09-example-6.mdx#system-responses).
+
+## Transforms
+
+## System Responses
+
+## Consequences
+
+## Risk Analyses
+
+## Results
+
