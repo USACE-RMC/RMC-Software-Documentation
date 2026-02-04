@@ -242,7 +242,8 @@ function generateSidebarForRmcTotalRiskApplicationsGuide(versionPath, relativePa
       prefaceDoc = { type: 'doc', id, label };
     } else if (file === '02-hydrologic-risk-analysis.mdx') {
       hydrologicDoc = { id, label };
-    } else if (file.startsWith('03-') || file.startsWith('04-') || file.startsWith('05-')) {
+      //TODO: find a better way to do this
+    } else if (file.startsWith('03-') || file.startsWith('04-') || file.startsWith('05-') || file.startsWith('06-') || file.startsWith('07-')){
       exampleDocs.push({ type: 'doc', id, label });
     }
   });
