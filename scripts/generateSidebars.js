@@ -228,7 +228,9 @@ function generateSidebarForRmcTotalRiskApplicationsGuide(versionPath, relativePa
   const documentInfoDocs = [];
   let prefaceDoc = null;
   let hydrologicDoc = null;
-  const exampleDocs = [];
+  const hydroExampleDocs = [];
+  let seismicDoc = null;
+  const seismicExampleDocs = [];
 
   files.forEach((file) => {
     const fileBase = file.replace('.mdx', '').replace(/^\d+-/, '');
@@ -244,7 +246,11 @@ function generateSidebarForRmcTotalRiskApplicationsGuide(versionPath, relativePa
       hydrologicDoc = { id, label };
       //TODO: find a better way to do this
     } else if (file.startsWith('03-') || file.startsWith('04-') || file.startsWith('05-') || file.startsWith('06-') || file.startsWith('07-')){
-      exampleDocs.push({ type: 'doc', id, label });
+      hydroExampleDocs.push({ type: 'doc', id, label });
+    } else if (file === '08-seismic-risk-analysis.mdx') {
+      seismicDoc = { id, label };
+    } else if (file.startsWith('09-')) {
+      seismicExampleDocs.push({ type: 'doc', id, label });
     }
   });
 
@@ -269,7 +275,18 @@ function generateSidebarForRmcTotalRiskApplicationsGuide(versionPath, relativePa
       link: { type: 'doc', id: hydrologicDoc.id },
       collapsible: true,
       collapsed: false,
-      items: exampleDocs,
+      items: hydroExampleDocs,
+    });
+  }
+
+  if (seismicDoc) {
+    customStructure.push({
+      type: 'category',
+      label: seismicDoc.label || 'Seismic Risk Analysis',
+      link: { type: 'doc', id: seismicDoc.id },
+      collapsible: true,
+      collapsed: false,
+      items: seismicExampleDocs,
     });
   }
 
