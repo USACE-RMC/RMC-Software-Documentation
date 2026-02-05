@@ -37,7 +37,7 @@ From the provided MDX file path, automatically derive:
 3. **DOC_ROOT**: The path up to but not including the version folder
 4. **Source PDF** (Levels 2 & 3): Replace `docs/` with `static/source-documents/`, same path structure—find the `.pdf` file
 5. **Bibliography** (Levels 2 & 3): Replace `docs/` with `static/bibliographies/`, same path structure—find the `bib.json` file
-6. **QC output path**: Replace `docs/` with `qc/reports/`, same path structure
+6. **QC output path**: Replace `docs/` with `qc/`, same path structure
 
 ## REVIEW LEVELS
 
@@ -62,7 +62,7 @@ MDX_DIR:     docs/toolbox-technical-manuals/internal-erosion-suite/backward-eros
 DOC_ROOT:    docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression
 SOURCE PDF:  static/source-documents/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/*.pdf
 BIBLIOGRAPHY: static/bibliographies/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/bib.json
-QC OUTPUT:   qc/reports/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/
+QC OUTPUT:   qc/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/
 ```
 
 ---
@@ -97,6 +97,30 @@ Review MDX files for:
    - Whitespace and indentation patterns
    - Consistent use of bold/italic emphasis
 
+5. **Equation "where" Block Formatting**
+   - "Where" blocks after equations must use blockquote format with `> ` prefix
+   - Each term on its own line with double space at line end (except last line)
+   - Correct format example:
+     ```
+     where:
+
+     > $V$ = volume
+     > $Q$ = discharge
+     > $t$ = time
+     ```
+   - Incorrect formats: inline text with semicolons, bullet lists, plain paragraphs
+
+6. **Citation Component Usage**
+   - Locate the bibliography file (`bib.json`) for the document
+   - Search MDX files for author-year text patterns (e.g., "Efron 1979", "(Smith, 2020)", "Smith et al. (2015)")
+   - Each author-year reference must have a corresponding `<Citation citationKey="..."/>` component
+   - Citation keys must exist in the document's `bib.json` file
+   - Check both body text and figure/table captions for citation references
+   - Common patterns to search for:
+     - `(Author YYYY)` or `(Author, YYYY)`
+     - `Author (YYYY)` or `Author, YYYY`
+     - `(Author et al. YYYY)` or `Author et al. (YYYY)`
+
 **Level 1 Restrictions:**
 - Do NOT suggest rewording or rephrasing
 - Do NOT suggest reorganization of content
@@ -125,8 +149,9 @@ Perform all Level 1 checks, PLUS:
    - Every equation in source appears in MDX
    - LaTeX content matches source exactly
    - Equation numbering/keys are sequential
-   - "Where" blocks formatted correctly (blockquote with `> ` prefix)
+   - "Where" blocks use blockquote format (see Level 1 formatting rules)
    - All symbols, operators, sub/superscripts match source
+   - Variable definitions in "where" blocks match source exactly
 
 4. **Tables**
    - Every table in source appears in MDX
@@ -251,14 +276,30 @@ File,Issue,Location,Category,Severity,Problem,Recommended Fix,Human Verification
 
 3. **Version history caution:** Treat as controlled content; if uncertain about a mismatch, mark Human Verification Required = Yes.
 
+4. **Equation "where" block format:** All equation "where" blocks must follow this format:
+   - Use blockquote lines with `> ` prefix
+   - Each variable definition on its own line
+   - Double space (`  `) at end of each line EXCEPT the last line
+   - Example of correct format:
+     ```
+     where:
+
+     > $V$ = volume (acre-feet)
+     > $Q$ = discharge (cfs)
+     > $t$ = time (days)
+     ```
+   - **Incorrect formats to flag:**
+     - Inline text with semicolons: `Where V = volume; Q = discharge; t = time`
+     - Bullet lists: `- V = volume`
+     - Missing `> ` prefix
+     - Missing double spaces at line ends
+
 ### Levels 2 & 3 Only
 
-4. **Citation rule:** If source shows author-year text (e.g., "Fell et al. (2008)"), MDX must include:
-   - The raw author-year text, AND
-   - A `<Citation citationKey="...">` with key from bibliography
-   - Check both body text and figure/table captions
-
-5. **Equation "where" block format:** Must use blockquote lines with `> ` prefix and double space at line end (except last line).
+5. **Citation content verification:** Beyond Level 1 citation component checks, verify:
+   - Every citation in the source PDF appears in the MDX with `<Citation>` component
+   - Citation placement matches source document locations
+   - No citations are missing compared to source
 
 6. **Deep-dive requirements:**
    - Tables: verify every cell, header, ordering, merged cells, units
@@ -269,6 +310,8 @@ File,Issue,Location,Category,Severity,Problem,Recommended Fix,Human Verification
 8. **Precision requirement:** Verify every numeric value, unit, symbol against source.
 
 9. **Completeness requirement:** Every figure/table in source must appear in MDX with correct placement.
+
+10. **Equation "where" content:** In addition to format (rule 4), verify "where" block content matches source exactly.
 
 ---
 

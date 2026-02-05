@@ -3,15 +3,14 @@ title: Overview of RMC-RFA Methodology
 ---
 
 import Link from "@docusaurus/Link";
-import addBaseUrl from "@docusaurus/useBaseUrl";
 import Citation from "@site/src/components/Citation";
 import CitationFootnote from "@site/src/components/CitationFootnote";
 import Figure from "@site/src/components/Figure";
 import FigReference from "@site/src/components/FigureReference";
 import NavContainer from "@site/src/components/NavContainer";
+import ProcessList from "@site/src/components/ProcessList";
 import TableReference from "@site/src/components/TableReference";
 import TableVertical from "@site/src/components/TableVertical";
-import VersionSelector from "@site/src/components/VersionSelector";
 
 <NavContainer
   link="/desktop-applications/rmc-rfa"
@@ -24,7 +23,7 @@ import VersionSelector from "@site/src/components/VersionSelector";
 
 There are two primary components of randomness in reservoir stage exceedance probabilities: natural
 variability and knowledge uncertainty. Natural variability is best described as the effect of randomness and is a
-function of the system (Vose 2008). It is not reducible through either study or further measurement. For
+function of the system <Citation citationKey="Vose2008"/>. It is not reducible through either study or further measurement. For
 example, a flow-frequency curve describes the natural variability in flow. Knowledge uncertainty is the lack of
 knowledge about parameters that characterize the system being modeled. Knowledge uncertainty can be
 reduced through further measurement or study. For example, the confidence intervals, or uncertainty bounds,
@@ -39,7 +38,7 @@ employs a two looped, nested Monte Carlo methodology. The natural variability of
 simulated in the inner loop defined as a realization, which comprises many thousands of simulated flood events,
 while the knowledge uncertainty in the inflow volume frequency distribution is simulated in the outer loop, which
 comprises many realizations. The basic construct of the simulation procedure employed by RMC-RFA is
-illustrated in <FigReference figKey = "figure-6"/>.
+illustrated in <FigReference figKey="figure-6"/>.
 
 <Figure
   figKey="figure-6"
@@ -56,15 +55,14 @@ risk assessments. For example, in a Monte Carlo simulation with 10,000 events, t
 that provide any information about flood events with an annual exceedance probability less than 1 in 10.
 
 Consequently, to ensure computational effort is focused on extreme flood events, RMC-RFA uses a <i>stratified
-sampling</i> approach based on procedures outlined in (Nathan and Weinmann, 2013) and (Nathan, Jordan, et al.
-2016). The procedure involve first dividing the inflow volume-frequency curve into 50 bins uniformly spaced
+sampling</i> approach based on procedures outlined in <Citation citationKey="NathanWeinmann2013"/> and <Citation citationKey="NathanEtAl2016"/>. The procedure involve first dividing the inflow volume-frequency curve into 50 bins uniformly spaced
 over the Extreme Value Type I (EVI) probability domain. Within each bin, 200 inflow volumes are stochastically
 sampled. For each sampled inflow volume, a reservoir routing simulation is executed using a set of model
 parameters (as described in the table below) that are sampled using standard Monte Carlo procedures. This process
 performed for each of the 200 sampled inflow volumes within each of the 50 bins, for a total of
 10,000 reservoir routing simulations. The routing results from the 10,000 simulations are combined using the
 Total Probability Theorem to produce a reservoir stage-frequency curve. A conceptual schematic of the
-stratified sampling approach can be seen in <FigReference figKey = "figure-7"/>.
+stratified sampling approach can be seen in <FigReference figKey="figure-7"/>.
 
 With only 10,000 simulations, accurate reservoir stage-frequency results can be attained within the exceedance
 probability range of 0.99 to ~10<sup>-8</sup> using the stratified sampling approach. Conversely, with only 10,000
@@ -101,7 +99,7 @@ to ~10<sup>-4</sup>.
       { value: "Analytical", rowSpan: 1, colSpan: 1 },
       { value: "Empirical", rowSpan: 1, colSpan: 1 },
       { value: "Empirical", rowSpan: 1, colSpan: 1 },
-      { value: "Emprirical", rowSpan: 1, colSpan: 1}
+      { value: "Empirical", rowSpan: 1, colSpan: 1}
     ],
     [
       { value: "Stratified", rowSpan: 1, colSpan: 1 },
@@ -133,23 +131,24 @@ the knowledge uncertainty decreases.
 
 The uncertainty due to sampling error can be estimated using the <i>bootstrap</i>, which was originally introduced in
 1979 as a computer-based method for estimating standard errors by Dr. Bradley Efron in his paper “Bootstrap
-methods: Another look at the jackknife” (Efron 1979). Typical applications of the bootstrap method use the
+methods: Another look at the jackknife” <Citation citationKey="Efron1979"/>. Typical applications of the bootstrap method use the
 empirical cumulative distribution function as the approximating distribution for the observed data. However,
 RMC-RFA uses the <i>parametric bootstrap</i>, which is a variation of the general bootstrap, in which the
 approximating distribution for the observed dataset is an analytical probability distribution. The bootstrap
 procedure in RMC-RFA involves the following steps:
 
-  1. Randomly sample N inflow volumes from a user-defined volume-frequency curve (N is equal to the
-effective record length of the annual maxima inflow volume data).
-  2. Estimate the statistical parameters of interest (such as mean, standard deviation, and skew) from the
-bootstrapped sample of size N.
-  3. Using the new statistical parameters, fit a new inflow volume-frequency curve.
-  4. Repeat steps 1 through 3 for a sufficiently large number of realizations in order to derive uncertainty
-bounds.
+<ProcessList
+  items={[
+    "Randomly sample N inflow volumes from a user-defined volume-frequency curve (N is equal to the effective record length of the annual maxima inflow volume data).",
+    "Estimate the statistical parameters of interest (such as mean, standard deviation, and skew) from the bootstrapped sample of size N.",
+    "Using the new statistical parameters, fit a new inflow volume-frequency curve.",
+    "Repeat steps 1 through 3 for a sufficiently large number of realizations in order to derive uncertainty bounds."
+  ]}
+/>
 
-An illustration of steps 1 through 3 is shown in <FigReference figKey = "figure-8"/>. A histogram representing the uncertainty in
-skew (of log) developed from 1,000 bootstrap realizations is shown in <FigReference figKey = "figure-9"/>. For greater details on
-the parametric bootstrap, see Efron’s “An Introduction to the Bootstrap” (Efron and Tibshirani, 1998).
+An illustration of steps 1 through 3 is shown in <FigReference figKey="figure-8"/>. A histogram representing the uncertainty in
+skew (of log) developed from 1,000 bootstrap realizations is shown in <FigReference figKey="figure-9"/>. For greater details on
+the parametric bootstrap, see Efron’s “An Introduction to the Bootstrap” <Citation citationKey="EfronTibshirani1998"/>.
 
 <Figure
   figKey="figure-8"
@@ -192,7 +191,7 @@ estimates for these inputs to allow more flexibility.
 
 ## Reservoir Routing
 
-The current version of RMC-RFA utilizes the Modified Puls method for routing, and only requires a stagestorage-discharge 
+The current version of RMC-RFA utilizes the Modified Puls method for routing, and only requires a stage-storage-discharge 
 relationship. Therefore, RMC-RFA cannot simulate complex reservoir operations, such as
 those that require seasonal guide curves, complex rules, or downstream constraints on releases. Consequently,
 RMC-RFA should only be used as a screening level tool for those reservoirs requiring complex operations.
