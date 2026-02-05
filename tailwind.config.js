@@ -30,7 +30,7 @@ export default {
         h3: 'clamp(1.125rem, 2vw, 1.5rem)',
         h4: 'clamp(1rem, 1.75vw, 1.25rem)',
         h5: 'clamp(0.925rem, 1.5vw, 1.1rem)',
-        h6: 'clamp(0.85rem, 1.2vw, 1.0rem)',
+        h6: 'clamp(0.875rem, 1.35vw, 1.05rem)',
         caption: 'clamp(0.7rem, 2vw, 0.9rem)',
         footnote: 'clamp(0.7rem, 2vw, 0.9rem)',
         normal: 'clamp(0.8rem, 2vw, 1.0rem)',

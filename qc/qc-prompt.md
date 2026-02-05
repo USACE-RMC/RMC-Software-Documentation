@@ -113,7 +113,9 @@ Review MDX files for:
 6. **Citation Component Usage**
    - Locate the bibliography file (`bib.json`) for the document
    - Search MDX files for author-year text patterns (e.g., "Efron 1979", "(Smith, 2020)", "Smith et al. (2015)")
-   - Each author-year reference must have a corresponding `<Citation citationKey="..."/>` component
+   - **IMPORTANT**: The `<Citation citationKey="..."/>` component must ACCOMPANY the author-year text, NOT replace it
+   - Correct format: `(Author, Year) <Citation citationKey="AuthorYear"/>` → renders as "(Author, Year) [1]"
+   - Incorrect format: `<Citation citationKey="AuthorYear"/>` alone (without author-year text)
    - Citation keys must exist in the document's `bib.json` file
    - Check both body text and figure/table captions for citation references
    - Common patterns to search for:
@@ -161,8 +163,9 @@ Perform all Level 1 checks, PLUS:
    - Header configuration matches source structure
 
 5. **Citations**
-   - Raw author-year text appears where source has citations
-   - `<Citation citationKey="...">` component accompanies each citation
+   - Raw author-year text MUST be preserved where source has citations
+   - `<Citation citationKey="..."/>` component is ADDED alongside the text (not replacing it)
+   - Correct format: `(Author, Year) <Citation citationKey="AuthorYear"/>` → renders as "(Author, Year) [1]"
    - Citation keys exist in bibliography file
    - Citations appear at every occurrence (including captions)
 
