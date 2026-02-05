@@ -1,0 +1,615 @@
+---
+title: Example 7 – Seismic Gated Spillway (Single Failure Mode)
+---
+
+import Link from "@docusaurus/Link";
+import addBaseUrl from "@docusaurus/useBaseUrl";
+import Citation from "@site/src/components/Citation";
+import CitationFootnote from "@site/src/components/CitationFootnote";
+import Figure from "@site/src/components/Figure";
+import FigureInline from "@site/src/components/FigureInline";
+import FigReference from "@site/src/components/FigureReference";
+import NavContainer from "@site/src/components/NavContainer";
+import ProcessList from "@site/src/components/ProcessList";
+import TableReference from "@site/src/components/TableReference";
+import TableVertical from "@site/src/components/TableVertical";
+import VersionSelector from "@site/src/components/VersionSelector";
+
+<NavContainer 
+  link="/desktop-applications/rmc-totalrisk"
+  linkTitle="RMC-TotalRisk" 
+  document="desktop-applications/rmc-totalrisk/applications-guide"
+></NavContainer>
+
+# Example 7 – Seismic Gated Spillway (Single Failure Mode)
+
+In this example, components of a concrete gated spillway are subject to failure when exposed to shaking during an earthquake. The spillway consists of three Tainter gates, 
+two piers, two middle anchorages, and two end anchorages, <FigReference figKey="example-7-concrete-gate-spill"/>. For this risk analysis, only failure of the Tainter gates is evaluated.
+
+{/*Figure 85*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-concrete-gate-spill"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure85.png" 
+    fullWidth={true}
+    alt="Concrete gated spillway." 
+    caption="Concrete gated spillway."
+/>
+
+Because failure of a single component can result in several different breach sizes (typically given by number of gate or concrete monolith failures), calculating the total 
+risk for failure modes associated with the components of a concrete gated spillway differs from calculating the total risk for hydrologic and seismic embankment failure modes. 
+Failure of a single component can result in several different breach scenarios (e.g., gate failure for a 3-gate spillway can result in a breach of 1 gate, 2 gates, or 3 gates 
+depending on the failure combination). Therefore, the method for calculating the total risk includes either the use of combinatorics or extensive event trees that account for 
+the probability of failure (or non-failure) of multiple concrete gated spillway components. To accurately calculate the total risk due to gate failure, all possible failure 
+combinations must be accounted for. A gate failure can occur due to any possible failure/non-failure combination of the three gates within the spillway, with the eight unique 
+combinations listed in <TableReference tableKey="example-7-gate-fail-combo"/>.
+
+{/*Table 39*/}
+<TableVertical
+tableKey="example-7-gate-fail-combo"
+    headers={
+        [
+            [
+                { value: "Combination"},
+                { value: "Gate 1" },
+                { value: "Gate 2" },
+                { value: "Gate 3" },
+                { value: "# of Gates Breached" }
+            ]
+        ]
+        }
+    columns={[
+    [
+    <b>1</b>,<b>2</b>,<b>3</b>,<b>4</b>,<b>5</b>,<b>6</b>,<b>7</b>,<b>8</b>
+    ],
+    [
+    "Non-Fail","Fail","Non-Fail","Non-Fail","Fail","Fail","Non-Fail","Fail"
+    ],
+    [
+    "Non-Fail","Non-Fail","Fail","Non-Fail","Fail","Non-Fail","Fail","Fail"
+    ],
+    [
+    "Non-Fail","Non-Fail","Non-Fail","Fail","Non-Fail","Fail","Fail","Fail"
+    ],
+    [
+    0,1,1,1,2,2,2,3
+    ]
+    ]}
+    fullWidth={false}
+    alt="Gate failure combinations."
+    caption="Gate failure combinations." />
+
+The annual probability of failure is calculated using several steps. First, an event tree is created that represents the probability of seismic gate failure for a single spillway gate. Next, a second event tree is constructed to represent all possible failure combinations for gate failure as shown in Figure 86. The annual probability of failure is equal to the sum of all branches in the event tree that result in one or more gate failures. The branches in the event tree that display the breach sizes (e.g., 1 gate breach, 2 gate breach, etc.) are included to demonstrate the resulting breach size and are assigned a probability of one. Each branch of the event tree is matched with the appropriate life loss consequence scenario to calculate the average annual life loss. The average annual life loss is equal to the sum of the products of the annual probability of failure and life loss consequences for each branch that results in one or more gate failures.
+
+
+{/*Table 40*/}
+<TableVertical
+tableKey="example-7-gate-fail-pfm-weight"
+    headers={
+        [
+        [
+        { value: 'PGA (g)' },
+        { value: 'Probability' }
+        ]
+        ]
+    }
+    columns={[
+    [
+    0.05,0.15,'0.40',0.68,'Remainder'
+    ],
+    [
+    '1.44E-03','6.99E-04','1.02E-04','2.97E-05','9.98E-01'
+    ]
+    ]}
+    fullWidth={false}
+    alt="Seismic gate failure PFM seismic hazard weights."
+    caption="Seismic gate failure PFM seismic hazard weights."
+/>
+
+{/*Figure 87*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-gate-fail-mode-tree"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure87.png" 
+    fullWidth={true}
+    alt="Seismic gate failure potential failure mode event tree." 
+    caption="Seismic gate failure potential failure mode event tree."
+/>
+
+{/*Table 41*/}
+<TableVertical
+tableKey="example-7-gate-fail-1-prob"
+    headers={[
+        [
+            { value: "PGA (g)" },
+            { value: "Stage (ft)" },
+            { value: "622.90" },
+            { value: "623.00" },
+            { value: "633.00" },
+            { value: "640.00" },
+            { value: "644.00" }
+        ]
+    ]}
+    columns={[
+    [
+    <strong>0.05</strong>,<strong>0.15</strong>,<strong>0.40</strong>,<strong>0.68</strong>
+    ],
+    [
+    "LRV","MLV","HRV","EV","LRV","MLV","HRV","EV","LRV","MLV","HRV","EV","LRV","MLV","HRV","EV"
+    ],
+    [
+    '0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000'
+    ],
+    [
+    '0.000','0.000','0.000','0.000',0.075,"0.150","0.450",0.225,0.095,0.275,"0.600",0.323,"0.150","0.350","0.800",0.433
+    ],
+    [
+    '0.000','0.000','0.000','0.000',"0.090","0.250","0.550",0.297,0.125,0.325,0.675,0.375,0.225,"0.500","0.900",0.542
+    ],
+    [
+    '0.000','0.000','0.000','0.000',"0.100","0.300","0.700",0.367,"0.200","0.450",0.825,0.492,"0.400","0.650","0.950",0.667    
+    ],
+    [
+    '0.000','0.000','0.000','0.000',"0.150","0.400","0.750",0.433,0.225,"0.550",0.875,"0.550","0.450","0.700","0.990",0.713
+    ]
+    ]}
+    fullWidth={false}
+    alt="Seismic gate failure node 1 system response probabilities."
+    caption="Seismic gate failure node 1 system response probabilities."
+/>
+
+{/*Table 42*/}
+<TableVertical
+tableKey="example-7-gate-fail-2-prob"
+    headers={[
+        [
+            { value: "PGA (g)" },
+            { value: "Stage (ft)" },
+            { value: "622.90" },
+            { value: "623.00" },
+            { value: "633.00" },
+            { value: "640.00" },
+            { value: "644.00" }
+        ]
+    ]}
+    columns={[
+    [
+    <strong>0.05</strong>,<strong>0.15</strong>,<strong>0.40</strong>,<strong>0.68</strong>
+    ],
+    [
+    "LRV","MLV","HRV","EV","LRV","MLV","HRV","EV","LRV","MLV","HRV","EV","LRV","MLV","HRV","EV"
+    ],
+    [
+    '0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000'
+    ],
+    [
+    '0.000','0.000','0.000','0.000',0.001,"0.050","0.270",0.107,"0.010","0.200","0.550",0.253,0.042,"0.350","0.850",0.414
+    ],
+    [
+    '0.000','0.000','0.000','0.000',0.001,0.075,"0.380",0.152,0.015,"0.250","0.650",0.305,0.093,"0.460","0.900",0.484
+    ],
+    [
+    '0.000','0.000','0.000','0.000',0.002,0.175,"0.450",0.209,"0.050","0.430","0.750","0.410","0.170","0.550","0.970",0.563   
+    ],
+    [
+    '0.000','0.000','0.000','0.000',"0.010","0.200","0.500",0.237,"0.100","0.500","0.850",0.483,"0.200","0.650","0.990",0.613
+    ]
+    ]}
+    fullWidth={false}
+    alt="Seismic gate failure node 2 system response probabilities."
+    caption="Seismic gate failure node 2 system response probabilities."
+/>
+
+{/*Figure 88*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-seis-gate-fail-tree"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure88.png" 
+    fullWidth={true}
+    alt="Seismic gate failure event tree in RMC-TotalRisk." 
+    caption="Seismic gate failure event tree in RMC-TotalRisk."
+/>
+
+{/*Figure 89*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-seis-gate-fail-tree-curve"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure89.png" 
+    fullWidth={true}
+    alt="Seismic gate failure event tree system response curve." 
+    caption="Seismic gate failure event tree system response curve."
+/>
+
+{/*Figure 90*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-tab-sys-fn-dummy"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure90.png" 
+    fullWidth={true}
+    alt="Tabular system response function for dummy probabilities." 
+    caption="Tabular system response function for dummy probabilities."
+/>
+
+{/*Figure 91*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-gate-fail-1-tree-props"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure91.png" 
+    fullWidth={true}
+    alt="Seismic gate failure 1 gate breach scenario event tree properties and hazard levels." 
+    caption="Seismic gate failure 1 gate breach scenario event tree properties and hazard levels."
+/>
+
+{/*Figure 92*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-event-tree-branch-props"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure92.png" 
+    fullWidth={true}
+    alt="Event tree structure and branch properties." 
+    caption="Event tree structure and branch properties."
+/>
+
+{/*Figure 93*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-event-tree-gate-1-prob"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure93.png" 
+    fullWidth={true}
+    alt="Event tree system response probability input for “Gate 1 Fail (P)”." 
+    caption="Event tree system response probability input for “Gate 1 Fail (P)”."
+/>
+
+{/*Figure 94*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-event-tree-sys-prob-input"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure94.png" 
+    fullWidth={true}
+    alt="Event tree system response probability input." 
+    caption="Event tree system response probability input."
+/>
+
+{/*Figure 95*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-1-gate-tree-dummy-11"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure95.png" 
+    fullWidth={true}
+    alt="1 gate breach event tree with a dummy probability of one for a 1 gate breach." 
+    caption="1 gate breach event tree with a dummy probability of one for a 1 gate breach."
+/>
+
+{/*Figure 96*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-1-gate-tree-dummy-03"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure96.png" 
+    fullWidth={true}
+    alt="1 gate breach event tree with a dummy probability of zero for a 3 gate breach." 
+    caption="1 gate breach event tree with a dummy probability of zero for a 3 gate breach."
+/>
+
+{/*Figure 97*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-1-gate-breach-curve"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure97.png" 
+    fullWidth={true}
+    alt="Seismic gate failure 1 gate breach system response curve and axis options." 
+    caption="Seismic gate failure 1 gate breach system response curve and axis options."
+/>
+
+{/*Figure 98*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-2-gate-breach-curve"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure98.png" 
+    fullWidth={true}
+    alt="Seismic gate failure 2 gate breach system response curve." 
+    caption="Seismic gate failure 2 gate breach system response curve."
+/>
+
+{/*Figure 99*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-3-gate-breach-curve"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure99.png" 
+    fullWidth={true}
+    alt="Seismic gate failure 3 gate breach system response curve." 
+    caption="Seismic gate failure 3 gate breach system response curve."
+/>
+
+{/*Figure 100*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-create-group"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure100.png" 
+    fullWidth={true}
+    alt="Creating a group within the project explorer window." 
+    caption="Creating a group within the project explorer window."
+/>
+
+{/*Figure 101*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-ungroup"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure101.png" 
+    fullWidth={true}
+    alt="Ungrouping items within the project explorer window." 
+    caption="Ungrouping items within the project explorer window."
+/>
+
+{/*Table 43*/}
+<TableVertical 
+    tableKey="example-7-non-breach-day-night"
+    headerAlign={["center", "center", "center", "center", "center", "center", "center", "center", "center"]}
+    headers={[
+        [
+        { value: "Stage (ft)", colSpan: 1, rowSpan: 2 },
+        { value: "Day Life Loss", colSpan: 3, rowSpan: 1 },
+        { value: "Night Life Loss", colSpan: 3, rowSpan: 1 }
+    ],
+    [
+        { value: "Minimum"},
+        { value: "Most Likely"},
+        { value: "Maximum"},
+        { value: "Minimum"},
+        { value: "Most Likely"},
+        { value: "Maximum"}
+    ]
+    ]}
+    columns={[
+        [ // First column 
+        "641.00", "642.50", "644.00", "647.00", "649.65", "653.00", "656.50" 
+        ],
+        [ // Second column
+        "0", "0", "0", "5", "15", "35", "75"
+        ],
+        [ // Third column
+        "0", "0", "0", "25", "45", "80", "160"
+        ],
+        [ // Fourth column
+        "0", "0", "0", "55", "80", "170", "275"
+        ],
+        [ // Fifth
+        "0", "0", "0", "10", "25", "50", "95"
+        ],
+        [ // Sixth
+        "0", "0", "0", "40", "60", "90", "185"
+        ],
+        [ // Seventh
+        "0", "0", "0", "65", "90", "160", "300"
+        ]
+    ]}
+    alt="Non-breach life loss for the daytime scenario and nighttime scenario."
+    caption="Non-breach life loss for the daytime scenario and nighttime scenario."
+    />
+
+{/*Table 44*/}
+<TableVertical 
+    tableKey="example-7-1-gate-breach-day-night"
+    headerAlign={["center", "center", "center", "center", "center", "center", "center", "center", "center"]}
+    headers={[
+        [
+        { value: "Stage (ft)", colSpan: 1, rowSpan: 2 },
+        { value: "Day Life Loss", colSpan: 3, rowSpan: 1 },
+        { value: "Night Life Loss", colSpan: 3, rowSpan: 1 }
+    ],
+    [
+        { value: "Minimum"},
+        { value: "Most Likely"},
+        { value: "Maximum"},
+        { value: "Minimum"},
+        { value: "Most Likely"},
+        { value: "Maximum"}
+    ]
+    ]}
+    columns={[
+        [ // First column 
+        "616.40", "633.50", "644.40"
+        ],
+        [ // Second column
+        "0", "0", "2"
+        ],
+        [ // Third column
+        "0", "2", "8"
+        ],
+        [ // Fourth column
+        0,7,15
+        ],
+        [ // Fifth
+        0,0,4
+        ],
+        [ // Sixth
+        0,4,12
+        ],
+        [ // Seventh
+        0,10,18
+        ]
+    ]}
+    alt="1 gate breach life loss for the daytime scenario and nighttime scenario."
+    caption="1 gate breach life loss for the daytime scenario and nighttime scenario."
+    />
+
+{/*Table 45*/}
+<TableVertical 
+    tableKey="example-7-2-gate-breach-day-night"
+    headerAlign={["center", "center", "center", "center", "center", "center", "center", "center", "center"]}
+    headers={[
+        [
+        { value: "Stage (ft)", colSpan: 1, rowSpan: 2 },
+        { value: "Day Life Loss", colSpan: 3, rowSpan: 1 },
+        { value: "Night Life Loss", colSpan: 3, rowSpan: 1 }
+    ],
+    [
+        { value: "Minimum"},
+        { value: "Most Likely"},
+        { value: "Maximum"},
+        { value: "Minimum"},
+        { value: "Most Likely"},
+        { value: "Maximum"}
+    ]
+    ]}
+    columns={[
+        [ // First column 
+        "616.40", "633.50", "644.40"
+        ],
+        [ // Second column
+        "0", "0", "6"
+        ],
+        [ // Third column
+        0,5,15
+        ],
+        [ // Fourth column
+        0,11,29
+        ],
+        [ // Fifth
+        0,0,5
+        ],
+        [ // Sixth
+        0,7,18
+        ],
+        [ // Seventh
+        0,12,32
+        ]
+    ]}
+    alt="2 gate breach life loss for the daytime scenario and nighttime scenario."
+    caption="2 gate breach life loss for the daytime scenario and nighttime scenario."
+    />
+
+{/*Table 46*/}
+<TableVertical 
+    tableKey="example-7-3-gate-breach-day-night"
+    headerAlign={["center", "center", "center", "center", "center", "center", "center", "center", "center"]}
+    headers={[
+        [
+        { value: "Stage (ft)", colSpan: 1, rowSpan: 2 },
+        { value: "Day Life Loss", colSpan: 3, rowSpan: 1 },
+        { value: "Night Life Loss", colSpan: 3, rowSpan: 1 }
+    ],
+    [
+        { value: "Minimum"},
+        { value: "Most Likely"},
+        { value: "Maximum"},
+        { value: "Minimum"},
+        { value: "Most Likely"},
+        { value: "Maximum"}
+    ]
+    ]}
+    columns={[
+        [ // First column 
+        "616.40", "633.50", "644.40"
+        ],
+        [ // Second column
+        0,4,9
+        ],
+        [ // Third column
+        0,9,26
+        ],
+        [ // Fourth column
+        0,18,52
+        ],
+        [ // Fifth
+        0,5,10
+        ],
+        [ // Sixth
+        0,13,29
+        ],
+        [ // Seventh
+        0,25,58
+        ]
+    ]}
+    alt="3 gate breach life loss for the daytime scenario and nighttime scenario."
+    caption="3 gate breach life loss for the daytime scenario and nighttime scenario."
+    />
+
+{/*Figure 102*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-nb-ll-fn"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure102.png" 
+    fullWidth={true}
+    alt="Non-breach composite life loss consequence function." 
+    caption="Non-breach composite life loss consequence function."
+/>
+
+{/*Figure 103*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-1-gate-ll-fn"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure103.png" 
+    fullWidth={true}
+    alt="1 gate breach composite life loss consequence function." 
+    caption="1 gate breach composite life loss consequence function."
+/>
+
+{/*Figure 104*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-2-gate-ll-fn"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure104.png" 
+    fullWidth={true}
+    alt="2 gate breach composite life loss consequence function." 
+    caption="2 gate breach composite life loss consequence function."
+/>
+
+{/*Figure 105*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-2-gate-ll-fn"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure105.png" 
+    fullWidth={true}
+    alt="3 gate breach composite life loss consequence function." 
+    caption="3 gate breach composite life loss consequence function."
+/>
+
+{/*Figure 106*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-tot-risk-wo-intervene"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure106.png" 
+    fullWidth={true}
+    alt="Total project without intervention risk diagram (Example 7)." 
+    caption="Total project without intervention risk diagram (Example 7)."
+/>
+
+{/*Figure 107*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-gate-fail-ops"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure107.png" 
+    fullWidth={true}
+    alt="Seismic gate failure risk analysis options tab." 
+    caption="Seismic gate failure risk analysis options tab."
+/>
+
+{/*Figure 108*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-sum-stats-gate-fail"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure108.png" 
+    fullWidth={true}
+    alt="Summary statistics for seismic gate failure (Example 7)." 
+    caption="Summary statistics for seismic gate failure (Example 7)."
+/>
+
+{/*Figure 109*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-inc-fn-full-uncertain-fail"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure109.png" 
+    fullWidth={true}
+    alt="Incremental F-N plot with full uncertainty for seismic gate failure (Example 7)." 
+    caption="Incremental F-N plot with full uncertainty for seismic gate failure (Example 7)."
+/>
+
+{/*Figure 110*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-an-uncertain-scatter-fail"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure110.png" 
+    fullWidth={true}
+    alt="α-ƞ plot with uncertainty scatter for seismic gate failure (Example 7)." 
+    caption="α-ƞ plot with uncertainty scatter for seismic gate failure (Example 7)."
+/>
