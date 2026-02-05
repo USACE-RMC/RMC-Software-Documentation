@@ -89,6 +89,25 @@ Content with <Figure figKey="fig1" src="path" alt="text" caption="..." />
 - Do NOT include "Co-Authored-By: Claude", "Claude Code", or any AI/assistant attribution in commit messages
 - Keep commit messages concise and focused on the changes made
 
+## QC Reviews & Technical Edits
+
+Use the QC prompt template at [qc/qc-prompt.md](qc/qc-prompt.md) for AI-assisted document reviews.
+
+### Review Levels
+
+| Level | Name | When to Use |
+|-------|------|-------------|
+| 1 | Syntax & Grammar | No source PDF available; check MDX syntax, components, grammar only |
+| 2 | Source Comparison | Source PDF available; Level 1 + verify MDX matches source exactly |
+| 3 | Technical Edit | Source PDF available; Levels 1 & 2 + suggest content improvements |
+
+### Key Rules
+
+- **Level 1**: Do NOT suggest rewording or technical changes—syntax and grammar only
+- **Level 2**: Do NOT suggest improvements beyond matching the source document
+- **Level 3**: Full editorial suggestions allowed; mark these as "Editorial" category with "Suggestion" severity
+- All levels: Do NOT edit MDX files directly—output findings to `qc/reports/` only
+
 ## Requirements
 
 - Node.js >= 18.0
