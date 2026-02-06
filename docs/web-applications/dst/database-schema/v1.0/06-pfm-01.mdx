@@ -1,0 +1,277 @@
+---
+title: 'PFM-01: Overtopping Erosion'
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import SchemaTable from '@site/src/components/SchemaTable';
+import SchemaGroup from '@site/src/components/SchemaGroup';
+import SchemaTag from '@site/src/components/SchemaTag';
+
+<NavContainer
+  link="/web-applications/dst"
+  linkTitle="Dam Screening Tool"
+  document="web-applications/dst/database-schema"
+/>
+
+# PFM-01: Overtopping Erosion
+
+PFM-01 (Potential Failure Mode 01) models overtopping erosion of embankment dams. This is the first fully implemented failure mode in the DST and serves as the template for all subsequent PFM modules.
+
+Each PFM-01 location represents one embankment section being evaluated (e.g., "Main Embankment", "Left Abutment"). The module uses the **three-table SRP pattern**: a DST-calculated SRP, a user-defined SRP, and an active SRP that is synced from one of the two sources based on the user's selected mode.
+
+## Table Group
+
+<SchemaGroup
+  title="PFM-01: Overtopping Erosion"
+  description="Each row represents one PFM location. The three-table SRP pattern preserves data when switching between DST and User mode."
+  id="pfm01-group"
+  relationships={[
+    { from: 'Pfm01', to: 'Pfm01_DstSrp', type: 'one-to-one', label: 'CASCADE DELETE', onDelete: 'cascade' },
+    { from: 'Pfm01', to: 'Pfm01_UserSrp', type: 'one-to-one', label: 'CASCADE DELETE', onDelete: 'cascade' },
+    { from: 'Pfm01', to: 'Pfm01_ActiveSrp', type: 'one-to-one', label: 'CASCADE DELETE', onDelete: 'cascade' },
+  ]}
+>
+
+<SchemaTable
+  name="Pfm01"
+  description="PFM-01: Overtopping Erosion location entity. Each row represents one PFM location being evaluated."
+  status="implemented"
+  id="Pfm01"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key', group: 'Identity' },
+    { name: 'ScreeningId', type: 'UUID', tags: ['indexed', 'nullable'], description: 'For future Screening FK', group: 'Identity' },
+    { name: 'Index', type: 'INT', tags: ['indexed'], description: 'Ordering within this PFM', group: 'Identity' },
+    { name: 'Name', type: 'VARCHAR(200)', tags: [], description: 'Location name (e.g., "Main Embankment", "Left Abutment")', group: 'Identity' },
+    { name: 'CrossSection', type: 'VARCHAR(200)', tags: ['nullable'], description: 'Cross-section identifier (e.g., "Sta 10+00")', group: 'Identity' },
+    { name: 'SrpMode', type: 'VARCHAR(20)', tags: ['default'], default: "'dst'", description: "SRP mode: 'dst' or 'user'", group: 'SRP Mode' },
+    { name: 'EmbankmentHeight', type: 'FLOAT8', tags: ['nullable'], description: 'Embankment height in feet', group: 'Geometry' },
+    { name: 'CrestWidth', type: 'FLOAT8', tags: ['nullable'], description: 'Crest width in feet', group: 'Geometry' },
+    { name: 'DownstreamSlope', type: 'FLOAT8', tags: ['nullable'], description: 'Downstream slope ratio (e.g., 2.5)', group: 'Geometry' },
+    { name: 'DownstreamShellMaterial', type: 'VARCHAR(100)', tags: ['nullable'], description: 'Downstream shell material type', group: 'Materials' },
+    { name: 'EmbankmentErodibility', type: 'VARCHAR(50)', tags: ['nullable'], description: 'Erodibility category (see Enum below)', group: 'Materials' },
+    { name: 'GrassCoverQuality', type: 'VARCHAR(50)', tags: ['nullable'], description: 'Grass cover quality (see Enum below)', group: 'Materials' },
+    { name: 'KdDistributionType', type: 'VARCHAR(50)', tags: ['nullable'], description: 'Distribution type for erodibility coefficient (kd)', group: 'Erodibility Coefficient (kd)' },
+    { name: 'KdMin', type: 'FLOAT8', tags: ['nullable'], description: 'kd lower bound (Uniform/Triangular/PERT)', group: 'Erodibility Coefficient (kd)' },
+    { name: 'KdMode', type: 'FLOAT8', tags: ['nullable'], description: 'kd mode value (Triangular/PERT)', group: 'Erodibility Coefficient (kd)' },
+    { name: 'KdMax', type: 'FLOAT8', tags: ['nullable'], description: 'kd upper bound (Uniform/Triangular/PERT)', group: 'Erodibility Coefficient (kd)' },
+    { name: 'KdMean', type: 'FLOAT8', tags: ['nullable'], description: 'kd mean value (Normal/Lognormal)', group: 'Erodibility Coefficient (kd)' },
+    { name: 'KdStd', type: 'FLOAT8', tags: ['nullable'], description: 'kd standard deviation (Normal/Lognormal)', group: 'Erodibility Coefficient (kd)' },
+    { name: 'TauCDistributionType', type: 'VARCHAR(50)', tags: ['nullable'], description: 'Distribution type for critical shear stress (\u03C4c)', group: 'Critical Shear Stress (\u03C4c)' },
+    { name: 'TauCMin', type: 'FLOAT8', tags: ['nullable'], description: '\u03C4c lower bound', group: 'Critical Shear Stress (\u03C4c)' },
+    { name: 'TauCMode', type: 'FLOAT8', tags: ['nullable'], description: '\u03C4c mode value', group: 'Critical Shear Stress (\u03C4c)' },
+    { name: 'TauCMax', type: 'FLOAT8', tags: ['nullable'], description: '\u03C4c upper bound', group: 'Critical Shear Stress (\u03C4c)' },
+    { name: 'TauCMean', type: 'FLOAT8', tags: ['nullable'], description: '\u03C4c mean value', group: 'Critical Shear Stress (\u03C4c)' },
+    { name: 'TauCStd', type: 'FLOAT8', tags: ['nullable'], description: '\u03C4c standard deviation', group: 'Critical Shear Stress (\u03C4c)' },
+    { name: 'ManningsNDistributionType', type: 'VARCHAR(50)', tags: ['nullable'], description: "Distribution type for Manning's roughness (n)", group: "Manning's Roughness (n)" },
+    { name: 'ManningsNMin', type: 'FLOAT8', tags: ['nullable'], description: "Manning's n lower bound", group: "Manning's Roughness (n)" },
+    { name: 'ManningsNMode', type: 'FLOAT8', tags: ['nullable'], description: "Manning's n mode value", group: "Manning's Roughness (n)" },
+    { name: 'ManningsNMax', type: 'FLOAT8', tags: ['nullable'], description: "Manning's n upper bound", group: "Manning's Roughness (n)" },
+    { name: 'ManningsNMean', type: 'FLOAT8', tags: ['nullable'], description: "Manning's n mean value", group: "Manning's Roughness (n)" },
+    { name: 'ManningsNStd', type: 'FLOAT8', tags: ['nullable'], description: "Manning's n standard deviation", group: "Manning's Roughness (n)" },
+    { name: 'BaseDuration', type: 'FLOAT8', tags: ['nullable'], description: 'Base duration in hours at 0.5 ft overtopping depth', group: 'Analysis' },
+    { name: 'MaxHazardLevel', type: 'FLOAT8', tags: ['nullable'], description: 'Max overtopping depth in feet (max hazard stage minus crest elevation)', group: 'Analysis' },
+    { name: 'ShowAssumptions', type: 'BOOLEAN', tags: [], description: 'UI state: show/hide assumptions panel', group: 'UI State' },
+    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'When the location was created', group: 'Timestamps' },
+    { name: 'UpdatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'When the location was last modified', group: 'Timestamps' },
+  ]}
+  notes={[
+    'The ScreeningId column is indexed for future FK enforcement to the Screenings table.',
+    'Distribution parameters (Kd, TauC, ManningsN) follow a pattern: DistributionType selects the distribution family, then the relevant parameters (Min/Mode/Max for Triangular/PERT, Mean/Std for Normal/Lognormal) are populated.',
+    'Indexes: PK on Id, Index on ScreeningId, Index on Index column.',
+  ]}
+/>
+
+<SchemaTable
+  name="Pfm01_DstSrp"
+  description="Stores System-Response calculation results and user's nodal probability adjustments. Created when DST-based SRP calculations are first run."
+  status="implemented"
+  id="Pfm01_DstSrp"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
+    { name: 'Pfm01Id', type: 'UUID', tags: ['fk', 'unique', 'indexed'], fkTarget: 'Pfm01', description: 'Foreign key to parent PFM-01 location (1:1)' },
+    { name: 'CurvesJson', type: 'JSONB', tags: ['nullable', 'jsonb'], description: 'System-Response 50-point curves (see structure below)' },
+    { name: 'NodalJson', type: 'JSONB', tags: ['nullable', 'jsonb'], description: 'Nodal probability tables (see structure below)' },
+    { name: 'LastCalculatedAt', type: 'TIMESTAMP', tags: ['nullable'], description: 'When System-Response was last executed' },
+    { name: 'LastNodalEditAt', type: 'TIMESTAMP', tags: ['nullable'], description: 'When user last edited nodal values' },
+  ]}
+  jsonSchemas={[
+    {
+      name: 'CurvesJson',
+      description: 'System-Response calculation output curves',
+      structure: `{
+  "systemResponseCurve": [
+    { "headwater": 0.0, "probability": 0.0 },
+    { "headwater": 0.1, "probability": 0.002 },
+    ...  // 50 points: overtopping depth (ft) vs probability of failure
+  ],
+  "grassRemovalCurve": [
+    { "headwater": 0.0, "probability": 0.0 },
+    ...  // 50 points: Node 2 — probability of grass cover removal
+  ],
+  "conditionalBreachCurve": [
+    { "headwater": 0.0, "probability": 0.0 },
+    ...  // 50 points: Node 5 — conditional probability of breach
+  ],
+  "durationCurve": [
+    { "depth": 0.5, "duration": 12.0 },
+    { "depth": 1.0, "duration": 6.0 },
+    ...  // Overtopping depth (ft) vs duration (hours)
+  ]
+}
+
+Point types:
+  CurvePointDto:    { headwater: double, probability: double }
+  DurationPointDto: { depth: double, duration: double }`,
+    },
+    {
+      name: 'NodalJson',
+      description: '5-node event tree nodal probability tables',
+      structure: `{
+  "originalHeadwaters": [0.1, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0],
+  // Up to 8 RDP-selected headwater values. Set once, never modified.
+
+  "nodes": {
+    "node1": {
+      "name": "Overtopping Initiates",
+      "headwaters":       [0.1, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0],
+      "dstEstimate":      [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+      "revisedEstimate":  [null, ...],  // null = use dstEstimate
+      "justification":    null
+    },
+    "node2": { "name": "Grass Cover Removed", ... },
+    "node3": { "name": "Erosion Continues", ... },
+    "node4": { "name": "Breach Mechanism Forms", ... },
+    "node5": { "name": "Dam Breaches", ... }
+  },
+
+  "totalSrp": {
+    "headwaters":       [0.1, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0],
+    "dstEstimate":      [0.00036, 0.0069, 0.0554, ...],
+    "revisedEstimate":  [null, ...]
+    // Product of all node probabilities at each headwater.
+  }
+}
+
+Key details:
+  - PFM-01 has exactly 5 nodes in its event tree
+  - Each node has up to 8 headwater values (RDP algorithm)
+  - dstEstimate = read-only (from System-Response)
+  - revisedEstimate = user overrides; null means "use DST"
+  - totalSrp = product of all nodes at each headwater`,
+    },
+  ]}
+  notes={[
+    'JSONB columns allow PostgreSQL to index and query JSON data.',
+    'CurvesJson stores raw 50-point curves from System-Response library.',
+    'NodalJson contains the full 5-node event tree with both DST and user-revised estimates.',
+    'Unique index on Pfm01Id enforces the 1:1 relationship with the parent Pfm01 entity.',
+  ]}
+/>
+
+<SchemaTable
+  name="Pfm01_UserSrp"
+  description="Stores manually-entered SRP curves computed outside DST by the user. Created when user first enters a user-defined SRP curve."
+  status="implemented"
+  id="Pfm01_UserSrp"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
+    { name: 'Pfm01Id', type: 'UUID', tags: ['fk', 'unique', 'indexed'], fkTarget: 'Pfm01', description: 'Foreign key to parent PFM-01 location (1:1)' },
+    { name: 'CurveJson', type: 'JSONB', tags: ['nullable', 'jsonb'], description: 'User-entered SRP curve' },
+    { name: 'Notes', type: 'VARCHAR(4000)', tags: ['nullable'], description: 'Optional user notes/justification' },
+    { name: 'LastModifiedAt', type: 'TIMESTAMP', tags: ['nullable'], description: 'When user last modified the curve' },
+  ]}
+  jsonSchemas={[
+    {
+      name: 'CurveJson',
+      description: 'User-defined SRP curve (headwater vs probability)',
+      structure: `[
+  { "headwater": 0.0, "probability": 0.0 },
+  { "headwater": 0.5, "probability": 0.01 },
+  { "headwater": 1.0, "probability": 0.05 },
+  { "headwater": 2.0, "probability": 0.15 },
+  { "headwater": 3.0, "probability": 0.35 },
+  { "headwater": 5.0, "probability": 0.70 }
+]
+
+Point type: { headwater: double, probability: double }
+  headwater:   Overtopping depth in feet (load level)
+  probability: Probability of failure at this depth (0.0 to 1.0)
+  Variable number of points (user-defined).`,
+    },
+  ]}
+/>
+
+<SchemaTable
+  name="Pfm01_ActiveSrp"
+  description="Stores the SRP curve actually used in risk calculations. Synced from either DstSrp or UserSrp based on the parent Pfm01's SrpMode. Acts as a denormalized cache."
+  status="implemented"
+  id="Pfm01_ActiveSrp"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
+    { name: 'Pfm01Id', type: 'UUID', tags: ['fk', 'unique', 'indexed'], fkTarget: 'Pfm01', description: 'Foreign key to parent PFM-01 location (1:1)' },
+    { name: 'CurveJson', type: 'JSONB', tags: ['nullable', 'jsonb'], description: 'Active SRP curve for risk calculations (same format as UserSrp CurveJson)' },
+    { name: 'SourceMode', type: 'VARCHAR(20)', tags: ['nullable'], description: "Which source the curve came from: 'dst' or 'user'" },
+    { name: 'LastSyncedAt', type: 'TIMESTAMP', tags: ['nullable'], description: 'When the curve was last synced from its source' },
+  ]}
+  notes={[
+    "When SrpMode = 'dst': Copy totalSrp.revisedEstimate from Pfm01_DstSrp.NodalJson.",
+    "When SrpMode = 'user': Copy CurveJson from Pfm01_UserSrp.",
+    'Sync triggers: mode switch, DST calculation complete, user-defined curve save.',
+  ]}
+/>
+
+</SchemaGroup>
+
+## Three-Table SRP Pattern
+
+The SRP (System Response Probability) pattern is central to PFM-01 and will be replicated across all future PFM modules. It uses three child tables per PFM location:
+
+1. **DstSrp** — Stores the curves and nodal tables computed by the DST System-Response library. This is the "computed" result and is read-only from the user's perspective (though users can revise individual nodal estimates).
+
+2. **UserSrp** — Stores a manually-entered SRP curve that the user computed outside DST using their own tools. This is fully user-defined.
+
+3. **ActiveSrp** — A denormalized cache of whichever SRP is currently "active" based on the parent entity's `SrpMode` field. When the mode is `'dst'`, the active curve is synced from DstSrp's total SRP. When the mode is `'user'`, it's synced from UserSrp's curve.
+
+Data is **never deleted** when switching modes. Switching from DST to User mode does not erase the DST calculations, and switching back does not erase user-entered curves. This preserves all work.
+
+## Enum Reference Tables
+
+### SrpMode
+
+| Value | Database String | Description |
+|-------|----------------|-------------|
+| Dst | `"dst"` | DST-based SRP: System-Response library calculates probabilities |
+| User | `"user"` | User-defined SRP: User manually defines the complete SRP curve |
+
+### EmbankmentErodibility
+
+| Value | Database String | Description |
+|-------|----------------|-------------|
+| VeryErodible | `"veryErodible"` | Very erodible material |
+| Erodible | `"erodible"` | Erodible material |
+| ModeratelyResistant | `"moderatelyResistant"` | Moderately resistant material |
+| Resistant | `"resistant"` | Resistant material |
+| VeryResistant | `"veryResistant"` | Very resistant material |
+
+### GrassCoverQuality
+
+| Value | Database String | Description |
+|-------|----------------|-------------|
+| None | `"noGrassCover"` | No grass cover |
+| Poor | `"poorCover"` | Poor grass cover |
+| Average | `"averageCover"` | Average grass cover |
+| Good | `"goodCover"` | Good grass cover |
+
+## Concurrency Handling
+
+PFM-01 uses pessimistic locking for System-Response calculations. When a calculation is in progress, the `LastCalculatedAt` timestamp on `Pfm01_DstSrp` is checked to prevent concurrent overwrites.
+
+## Entity Relationship Summary
+
+```
+Pfm01 (1) ──→ (0..1) Pfm01_DstSrp       [FK: Pfm01Id, UNIQUE, CASCADE DELETE]
+Pfm01 (1) ──→ (0..1) Pfm01_UserSrp      [FK: Pfm01Id, UNIQUE, CASCADE DELETE]
+Pfm01 (1) ──→ (0..1) Pfm01_ActiveSrp    [FK: Pfm01Id, UNIQUE, CASCADE DELETE]
+```
+
+All three child tables use a UNIQUE constraint on `Pfm01Id` to enforce the 1:1 relationship. CASCADE DELETE ensures that when a PFM-01 location is deleted, all associated SRP data is cleaned up automatically.

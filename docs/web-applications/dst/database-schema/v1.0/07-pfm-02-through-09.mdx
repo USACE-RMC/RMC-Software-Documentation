@@ -1,0 +1,142 @@
+---
+title: 'PFM-02 through PFM-09'
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import SchemaTable from '@site/src/components/SchemaTable';
+import SchemaGroup from '@site/src/components/SchemaGroup';
+
+<NavContainer
+  link="/web-applications/dst"
+  linkTitle="Dam Screening Tool"
+  document="web-applications/dst/database-schema"
+/>
+
+# PFM-02 through PFM-09
+
+PFM-02 through PFM-09 cover internal erosion failure modes, static and seismic slope instability, seismic deformation, and overtopping by seiche/wave action. These modules are all planned and follow the same **four-table blueprint** established by PFM-01.
+
+All tables in this chapter are planned and not yet implemented in the database.
+
+## Blueprint Pattern
+
+Every PFM module follows the same four-table structure:
+
+| Table | Purpose |
+|-------|---------|
+| `Pfm{NN}` | Main entity with PFM-specific input parameters |
+| `Pfm{NN}_DstSrp` | System-Response calculation results + nodal tables |
+| `Pfm{NN}_UserSrp` | User-defined SRP curve |
+| `Pfm{NN}_ActiveSrp` | Active SRP for risk calculations |
+
+The three SRP child tables (`DstSrp`, `UserSrp`, `ActiveSrp`) have the **same structure** across all PFMs. Only the main `Pfm{NN}` table differs because each failure mode has different input parameters.
+
+## PFM Index
+
+| PFM | Name | Status |
+|-----|------|--------|
+| PFM-02 | Internal Erosion - Backward Erosion Piping | Planned |
+| PFM-03 | Internal Erosion - Concentrated Leak Erosion | Planned |
+| PFM-04 | Internal Erosion - Contact Erosion | Planned |
+| PFM-05 | Internal Erosion - Internal Migration | Planned |
+| PFM-06 | Static Slope Instability | Planned |
+| PFM-07 | Seismic Slope Instability | Planned |
+| PFM-08 | Seismic Deformation | Planned |
+| PFM-09 | Overtopping - Seiche/Wave | Planned |
+
+## Representative Example: PFM-02
+
+The following shows PFM-02 (Backward Erosion Piping) as a representative example of the four-table pattern. All other PFMs in this range will follow the same structure with different columns in the main entity table.
+
+<SchemaGroup
+  title="PFM-02: Internal Erosion - Backward Erosion Piping"
+  description="Representative example of the four-table PFM pattern. The main entity columns are specific to backward erosion piping; the SRP tables are identical across all PFMs."
+  id="pfm02-group"
+  relationships={[
+    { from: 'Pfm02', to: 'Pfm02_DstSrp', type: 'one-to-one', onDelete: 'cascade' },
+    { from: 'Pfm02', to: 'Pfm02_UserSrp', type: 'one-to-one', onDelete: 'cascade' },
+    { from: 'Pfm02', to: 'Pfm02_ActiveSrp', type: 'one-to-one', onDelete: 'cascade' },
+  ]}
+>
+
+<SchemaTable
+  name="Pfm02"
+  description="PFM-02: Internal Erosion - Backward Erosion Piping location entity. Each row represents one PFM location being evaluated."
+  status="planned"
+  id="Pfm02"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
+    { name: 'ScreeningId', type: 'UUID', tags: ['fk', 'indexed'], fkTarget: 'Screenings', description: 'FK to parent screening' },
+    { name: 'Index', type: 'INT', tags: ['indexed'], description: 'Ordering within this PFM' },
+    { name: 'Name', type: 'VARCHAR(200)', tags: [], description: 'Location name' },
+    { name: 'CrossSection', type: 'VARCHAR(200)', tags: ['nullable'], description: 'Cross-section identifier' },
+    { name: 'SrpMode', type: 'VARCHAR(20)', tags: ['default'], default: "'dst'", description: "SRP mode: 'dst' or 'user'" },
+    { name: 'ShowAssumptions', type: 'BOOLEAN', tags: [], description: 'UI state: show/hide assumptions panel' },
+    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record creation timestamp' },
+    { name: 'UpdatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record modification timestamp' },
+  ]}
+  notes={[
+    'Additional PFM-specific input parameter columns will be added when the failure mode analysis logic is implemented.',
+    'The columns shown are the common baseline shared across all PFM main entity tables.',
+  ]}
+/>
+
+<SchemaTable
+  name="Pfm02_DstSrp"
+  description="System-Response calculation results for PFM-02. Same structure as Pfm01_DstSrp."
+  status="planned"
+  id="Pfm02_DstSrp"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
+    { name: 'Pfm02Id', type: 'UUID', tags: ['fk', 'unique', 'indexed'], fkTarget: 'Pfm02', description: 'FK to parent PFM-02 location (1:1)' },
+    { name: 'CurvesJson', type: 'JSONB', tags: ['nullable', 'jsonb'], description: 'System-Response curves (PFM-specific node structure)' },
+    { name: 'NodalJson', type: 'JSONB', tags: ['nullable', 'jsonb'], description: 'Nodal probability tables (PFM-specific event tree nodes)' },
+    { name: 'LastCalculatedAt', type: 'TIMESTAMP', tags: ['nullable'], description: 'When System-Response was last executed' },
+    { name: 'LastNodalEditAt', type: 'TIMESTAMP', tags: ['nullable'], description: 'When user last edited nodal values' },
+  ]}
+/>
+
+<SchemaTable
+  name="Pfm02_UserSrp"
+  description="User-defined SRP curve for PFM-02. Same structure as Pfm01_UserSrp."
+  status="planned"
+  id="Pfm02_UserSrp"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
+    { name: 'Pfm02Id', type: 'UUID', tags: ['fk', 'unique', 'indexed'], fkTarget: 'Pfm02', description: 'FK to parent PFM-02 location (1:1)' },
+    { name: 'CurveJson', type: 'JSONB', tags: ['nullable', 'jsonb'], description: 'User-entered SRP curve' },
+    { name: 'Notes', type: 'VARCHAR(4000)', tags: ['nullable'], description: 'Optional user notes/justification' },
+    { name: 'LastModifiedAt', type: 'TIMESTAMP', tags: ['nullable'], description: 'When user last modified the curve' },
+  ]}
+/>
+
+<SchemaTable
+  name="Pfm02_ActiveSrp"
+  description="Active SRP curve for PFM-02 risk calculations. Same structure as Pfm01_ActiveSrp."
+  status="planned"
+  id="Pfm02_ActiveSrp"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
+    { name: 'Pfm02Id', type: 'UUID', tags: ['fk', 'unique', 'indexed'], fkTarget: 'Pfm02', description: 'FK to parent PFM-02 location (1:1)' },
+    { name: 'CurveJson', type: 'JSONB', tags: ['nullable', 'jsonb'], description: 'Active SRP curve' },
+    { name: 'SourceMode', type: 'VARCHAR(20)', tags: ['nullable'], description: "Curve source: 'dst' or 'user'" },
+    { name: 'LastSyncedAt', type: 'TIMESTAMP', tags: ['nullable'], description: 'When last synced from source' },
+  ]}
+/>
+
+</SchemaGroup>
+
+## Table Count Summary
+
+Each of the 8 PFMs in this range will produce 4 tables, for a total of **32 planned tables**.
+
+| PFM | Main Table | DstSrp | UserSrp | ActiveSrp |
+|-----|-----------|--------|---------|-----------|
+| PFM-02 | Pfm02 | Pfm02_DstSrp | Pfm02_UserSrp | Pfm02_ActiveSrp |
+| PFM-03 | Pfm03 | Pfm03_DstSrp | Pfm03_UserSrp | Pfm03_ActiveSrp |
+| PFM-04 | Pfm04 | Pfm04_DstSrp | Pfm04_UserSrp | Pfm04_ActiveSrp |
+| PFM-05 | Pfm05 | Pfm05_DstSrp | Pfm05_UserSrp | Pfm05_ActiveSrp |
+| PFM-06 | Pfm06 | Pfm06_DstSrp | Pfm06_UserSrp | Pfm06_ActiveSrp |
+| PFM-07 | Pfm07 | Pfm07_DstSrp | Pfm07_UserSrp | Pfm07_ActiveSrp |
+| PFM-08 | Pfm08 | Pfm08_DstSrp | Pfm08_UserSrp | Pfm08_ActiveSrp |
+| PFM-09 | Pfm09 | Pfm09_DstSrp | Pfm09_UserSrp | Pfm09_ActiveSrp |

@@ -1,0 +1,120 @@
+---
+title: Hazards
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import SchemaTable from '@site/src/components/SchemaTable';
+import SchemaGroup from '@site/src/components/SchemaGroup';
+
+<NavContainer
+  link="/web-applications/dst"
+  linkTitle="Dam Screening Tool"
+  document="web-applications/dst/database-schema"
+/>
+
+# Hazards
+
+The Hazards module stores hydrologic and seismic hazard characterization data for each screening. Hazard data defines the loading conditions (flood frequencies, seismic ground motions) used as inputs to failure mode analyses.
+
+All tables in this chapter are planned and not yet implemented in the database.
+
+## Hydrologic Hazards
+
+<SchemaGroup
+  title="Hydrologic Hazards"
+  description="Stage-frequency relationships and inflow flood data for hydrologic hazard characterization."
+  id="hydrologic-hazards"
+  relationships={[
+    { from: 'HydrologicHazard', to: 'HydrologicHazardCurve', type: 'one-to-many' },
+  ]}
+>
+
+<SchemaTable
+  name="HydrologicHazard"
+  description="Stage-frequency relationships, inflow flood data, and PMF characterization."
+  status="planned"
+  id="HydrologicHazard"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
+    { name: 'ScreeningId', type: 'UUID', tags: ['fk', 'indexed'], fkTarget: 'Screenings', description: 'FK to parent screening' },
+    { name: 'Name', type: 'VARCHAR(200)', tags: [], description: 'Hazard name (e.g., "Pool Stage-Frequency")' },
+    { name: 'HazardType', type: 'VARCHAR(50)', tags: [], description: 'Type: stage-frequency, inflow-frequency, PMF' },
+    { name: 'DataSource', type: 'VARCHAR(200)', tags: ['nullable'], description: 'Source of hazard data (study name, agency)' },
+    { name: 'DataDate', type: 'TIMESTAMP', tags: ['nullable'], description: 'Date of hazard data or study' },
+    { name: 'Notes', type: 'VARCHAR(4000)', tags: ['nullable'], description: 'Notes about hazard characterization' },
+    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record creation timestamp' },
+    { name: 'UpdatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record modification timestamp' },
+  ]}
+/>
+
+<SchemaTable
+  name="HydrologicHazardCurve"
+  description="Individual curve points for stage-frequency or inflow-frequency relationships."
+  status="planned"
+  id="HydrologicHazardCurve"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
+    { name: 'HydrologicHazardId', type: 'UUID', tags: ['fk', 'indexed'], fkTarget: 'HydrologicHazard', description: 'FK to parent hazard definition' },
+    { name: 'AnnualExceedanceProbability', type: 'FLOAT8', tags: [], description: 'Annual exceedance probability' },
+    { name: 'StageOrFlow', type: 'FLOAT8', tags: [], description: 'Stage (ft) or flow (cfs) at this probability' },
+    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record creation timestamp' },
+    { name: 'UpdatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record modification timestamp' },
+  ]}
+/>
+
+</SchemaGroup>
+
+## Seismic Hazards
+
+<SchemaGroup
+  title="Seismic Hazards"
+  description="Peak ground acceleration (PGA) hazard data for seismic loading characterization."
+  id="seismic-hazards"
+  relationships={[
+    { from: 'SeismicHazard', to: 'SeismicHazardCurve', type: 'one-to-many' },
+  ]}
+>
+
+<SchemaTable
+  name="SeismicHazard"
+  description="Peak ground acceleration (PGA) hazard data and seismic source characterization."
+  status="planned"
+  id="SeismicHazard"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
+    { name: 'ScreeningId', type: 'UUID', tags: ['fk', 'indexed'], fkTarget: 'Screenings', description: 'FK to parent screening' },
+    { name: 'Name', type: 'VARCHAR(200)', tags: [], description: 'Hazard name (e.g., "Site PGA Hazard")' },
+    { name: 'DataSource', type: 'VARCHAR(200)', tags: ['nullable'], description: 'Source of seismic hazard data (USGS, site-specific study)' },
+    { name: 'SiteClass', type: 'VARCHAR(10)', tags: ['nullable'], description: 'NEHRP site class (A through E)' },
+    { name: 'DataDate', type: 'TIMESTAMP', tags: ['nullable'], description: 'Date of hazard data' },
+    { name: 'Notes', type: 'VARCHAR(4000)', tags: ['nullable'], description: 'Notes about seismic characterization' },
+    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record creation timestamp' },
+    { name: 'UpdatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record modification timestamp' },
+  ]}
+/>
+
+<SchemaTable
+  name="SeismicHazardCurve"
+  description="PGA-frequency curve points for seismic hazard characterization."
+  status="planned"
+  id="SeismicHazardCurve"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
+    { name: 'SeismicHazardId', type: 'UUID', tags: ['fk', 'indexed'], fkTarget: 'SeismicHazard', description: 'FK to parent seismic hazard' },
+    { name: 'AnnualExceedanceProbability', type: 'FLOAT8', tags: [], description: 'Annual exceedance probability' },
+    { name: 'PeakGroundAcceleration', type: 'FLOAT8', tags: [], description: 'PGA value in g' },
+    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record creation timestamp' },
+    { name: 'UpdatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record modification timestamp' },
+  ]}
+/>
+
+</SchemaGroup>
+
+## Hazard Curve Storage
+
+Hazard curves (stage-frequency, PGA-frequency) are stored as individual rows in child tables rather than JSONB columns. This normalized approach was chosen because:
+
+- Hazard curve points need individual querying and filtering for interpolation
+- The number of points is relatively small (typically 10-30)
+- Individual points may need to be edited independently
+- Relational storage enables straightforward validation constraints

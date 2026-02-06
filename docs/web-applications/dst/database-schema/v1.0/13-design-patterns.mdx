@@ -1,0 +1,170 @@
+---
+title: Design Patterns
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import SchemaTag from '@site/src/components/SchemaTag';
+
+<NavContainer
+  link="/web-applications/dst"
+  linkTitle="Dam Screening Tool"
+  document="web-applications/dst/database-schema"
+/>
+
+# Design Patterns
+
+This chapter documents the cross-cutting database design patterns used throughout the DST schema. These patterns ensure consistency across all modules and simplify development as new failure modes are added.
+
+## GUID Primary Keys
+
+All tables use `UUID` primary keys generated via PostgreSQL's `gen_random_uuid()` function.
+
+**Why UUIDs instead of auto-increment integers:**
+
+- **Distributed generation** — IDs can be created on the client or server without database coordination, enabling offline-first workflows and reducing contention.
+- **Merge safety** — When combining data from multiple environments (dev, staging, production), UUID keys eliminate collision risk.
+- **URL safety** — UUIDs are opaque and don't leak information about record count or insertion order.
+- **EF Core integration** — The application generates GUIDs in the domain layer before persisting, which simplifies entity creation in Clean Architecture.
+
+**Convention:** Every table has an `Id` column of type `UUID` with a default of `gen_random_uuid()`, tagged as <SchemaTag type="pk">PK</SchemaTag>.
+
+## JSONB Columns
+
+Several tables use PostgreSQL JSONB columns to store complex nested data structures that would require excessive normalization if stored relationally.
+
+**When JSONB is used:**
+
+- **Multi-point curves** — SRP curves with 50+ data points (`CurvesJson` in DstSrp tables)
+- **Nodal probability tables** — Event tree node arrays with DST estimates and user revisions (`NodalJson`)
+- **User-defined curves** — Variable-length headwater/probability arrays (`CurveJson` in UserSrp and ActiveSrp tables)
+
+**When JSONB is NOT used:**
+
+- Scalar properties that need individual query filtering (stored as typed columns)
+- Data with complex relational integrity requirements (stored as normalized tables with FK constraints)
+- Enumerated values (stored as `VARCHAR` strings)
+
+**Indexing:** JSONB columns can be indexed using PostgreSQL GIN indexes when query patterns require filtering by JSON properties. Currently, JSONB columns in DST are read/written as whole documents and do not have GIN indexes applied.
+
+## Three-Table SRP Pattern
+
+The SRP (System Response Probability) pattern is the most distinctive structural pattern in the DST schema. Every PFM module that computes an SRP curve uses three child tables:
+
+| Table Suffix | Purpose | Data Source |
+|-------------|---------|-------------|
+| `_DstSrp` | System-Response library calculation results + nodal probability tables | Computed by DST |
+| `_UserSrp` | Manually-entered SRP curve from external tools | User input |
+| `_ActiveSrp` | Active SRP curve used in risk calculations | Synced from DstSrp or UserSrp |
+
+**How it works:**
+
+1. The parent entity (e.g., `Pfm01`) has a `SrpMode` column set to either `'dst'` or `'user'`.
+2. When the mode is `'dst'`, the `ActiveSrp` table is populated with the total SRP from `DstSrp.NodalJson.totalSrp.revisedEstimate`.
+3. When the mode is `'user'`, the `ActiveSrp` table is populated with the curve from `UserSrp.CurveJson`.
+4. Switching modes **never deletes data** from either source table — only the active cache changes.
+5. The `ActiveSrp.SourceMode` column records which source the active curve came from.
+
+**Sync triggers:**
+
+- SRP mode switch on the parent entity
+- DST System-Response calculation completes (re-syncs if mode is `'dst'`)
+- User saves a modified user-defined curve (re-syncs if mode is `'user'`)
+
+**Why three tables instead of one?**
+
+- Separation of concerns: computed data, user data, and active data have different lifecycles
+- Data preservation: switching modes doesn't destroy work
+- Simplicity: each table has a clear, single purpose
+- Risk calculation reads only `ActiveSrp`, avoiding conditional logic at query time
+
+## Timestamp Conventions
+
+All entity tables follow a consistent timestamp pattern:
+
+| Column | Purpose | Default | Nullable |
+|--------|---------|---------|----------|
+| `CreatedAt` | When the record was first created | `CURRENT_TIMESTAMP` | NO |
+| `UpdatedAt` | When the record was last modified | `CURRENT_TIMESTAMP` | NO |
+
+Additional timestamps may exist for specific purposes:
+
+| Pattern | Example | Purpose |
+|---------|---------|---------|
+| `Last*At` | `LastCalculatedAt` | When a specific operation was last performed |
+| `LastModifiedAt` | `LastModifiedAt` | Domain-specific modification tracking |
+| `LastSyncedAt` | `LastSyncedAt` | When data was last synced from another source |
+
+All timestamps are stored as PostgreSQL `TIMESTAMP` (without time zone) in UTC.
+
+## Naming Conventions
+
+### Table Names
+
+- **PascalCase** entity names: `Pfm01`, `Screenings`, `DamOverview`
+- **PFM prefix pattern**: `Pfm{NN}` for the main entity, `Pfm{NN}_{Suffix}` for child tables
+- **Underscore separation** for child tables: `Pfm01_DstSrp`, `Pfm01_UserSrp`
+
+### Column Names
+
+- **PascalCase** column names: `ScreeningId`, `EmbankmentHeight`, `CreatedAt`
+- **Id suffix** for primary keys and foreign keys: `Id`, `Pfm01Id`, `ScreeningId`
+- **Distribution parameter pattern**: `{Param}DistributionType`, `{Param}Min`, `{Param}Mode`, `{Param}Max`, `{Param}Mean`, `{Param}Std`
+
+### Enum Storage
+
+Enums are stored as `VARCHAR` strings using the C# enum value name in camelCase:
+
+```
+C# Enum Value:  EmbankmentErodibility.VeryErodible
+Database String: "veryErodible"
+```
+
+This convention ensures that database values are human-readable and can be parsed without a mapping table.
+
+## Soft Delete vs Hard Delete
+
+DST currently uses **hard delete with cascade**. When a parent entity is deleted, all child records are removed via `ON DELETE CASCADE` constraints.
+
+**Rationale:**
+
+- Screening data is user-owned and recreatable
+- Simplifies queries — no `WHERE IsDeleted = false` filters needed
+- Reduces storage overhead from soft-deleted records
+- Cascade delete prevents orphaned records automatically
+
+**Future consideration:** If audit trail requirements evolve, soft delete could be added with an `IsDeleted` flag and `DeletedAt` timestamp. This would require updating all queries and adding database-level row filtering (PostgreSQL row-level security or EF Core global query filters).
+
+## EF Core Configuration Pattern
+
+Database table configurations use EF Core's Fluent API in separate `IEntityTypeConfiguration<T>` classes, following Clean Architecture principles:
+
+```csharp
+public class Pfm01Configuration : IEntityTypeConfiguration<Pfm01>
+{
+    public void Configure(EntityTypeBuilder<Pfm01> builder)
+    {
+        builder.HasKey(e => e.Id);
+        builder.Property(e => e.Id).HasDefaultValueSql("gen_random_uuid()");
+        builder.HasIndex(e => e.ScreeningId);
+        builder.HasIndex(e => e.Index);
+        // ... column configurations
+    }
+}
+```
+
+Each configuration class lives in the Infrastructure layer and is registered in the `DbContext.OnModelCreating` method via `modelBuilder.ApplyConfigurationsFromAssembly(...)`.
+
+## Migration Strategy
+
+Database migrations are managed with EF Core and follow these conventions:
+
+- **Naming format:** `{Timestamp}_{DescriptiveName}` (e.g., `20260204213854_InitialCreate`)
+- **One migration per feature:** Each feature branch produces one migration capturing all schema changes
+- **Forward-only:** Migrations are designed to be applied in sequence without rollback in production
+- **Migration history:**
+
+| Timestamp | Migration Name | Tables Affected |
+|-----------|----------------|-----------------|
+| 20260204213854 | InitialCreate | Screenings, Pfm01, Pfm01_DstSrp, Pfm01_UserSrp, Pfm01_ActiveSrp |
+| 20260205192548 | AddScreeningEntity | Screenings (restructured) |
+| 20260206160000 | AddMaxHazardLevelToPfm01 | Pfm01 (added MaxHazardLevel column) |

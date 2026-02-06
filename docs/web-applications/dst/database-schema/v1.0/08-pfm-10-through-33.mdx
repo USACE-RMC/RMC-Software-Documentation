@@ -1,0 +1,95 @@
+---
+title: 'PFM-10 through PFM-33'
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import SchemaTable from '@site/src/components/SchemaTable';
+
+<NavContainer
+  link="/web-applications/dst"
+  linkTitle="Dam Screening Tool"
+  document="web-applications/dst/database-schema"
+/>
+
+# PFM-10 through PFM-33
+
+PFM-10 through PFM-33 cover additional failure modes including sand boils (internal erosion), various specialized failure mechanisms, and user-defined failure modes. These modules follow the same **four-table blueprint** described in the previous chapter.
+
+All tables in this chapter are planned except PFM-10 which has partial frontend support.
+
+## PFM Index
+
+| PFM | Name | Status |
+|-----|------|--------|
+| PFM-10 | Internal Erosion - Sand Boils | Partial (frontend only) |
+| PFM-11 through PFM-32 | Various (names TBD) | Planned |
+| PFM-33 | User-Defined Failure Mode | Planned |
+
+## PFM-10: Internal Erosion - Sand Boils
+
+PFM-10 is notable because it has partial frontend support already implemented in the DST application. The UI pages exist and display the PFM-10 analysis workflow, but the database tables have not yet been created via migration.
+
+<SchemaTable
+  name="Pfm10"
+  description="PFM-10: Internal Erosion - Sand Boils location entity. Partial frontend support exists."
+  status="partial"
+  id="Pfm10"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
+    { name: 'ScreeningId', type: 'UUID', tags: ['fk', 'indexed'], fkTarget: 'Screenings', description: 'FK to parent screening' },
+    { name: 'Index', type: 'INT', tags: ['indexed'], description: 'Ordering within this PFM' },
+    { name: 'Name', type: 'VARCHAR(200)', tags: [], description: 'Location name' },
+    { name: 'CrossSection', type: 'VARCHAR(200)', tags: ['nullable'], description: 'Cross-section identifier' },
+    { name: 'SrpMode', type: 'VARCHAR(20)', tags: ['default'], default: "'dst'", description: "SRP mode: 'dst' or 'user'" },
+    { name: 'ShowAssumptions', type: 'BOOLEAN', tags: [], description: 'UI state: show/hide assumptions panel' },
+    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record creation timestamp' },
+    { name: 'UpdatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record modification timestamp' },
+  ]}
+  notes={[
+    'PFM-10 has partial frontend support — the UI pages exist but the database migration has not been applied.',
+    'PFM-specific input columns (sand boil characteristics, foundation soil properties) will be added during implementation.',
+  ]}
+/>
+
+## PFM-33: User-Defined Failure Mode
+
+PFM-33 is a special module that allows users to define and evaluate a custom failure mode not covered by PFMs 1-32.
+
+<SchemaTable
+  name="Pfm33"
+  description="PFM-33: User-Defined Failure Mode. Allows users to define a custom failure mode for evaluation."
+  status="planned"
+  id="Pfm33"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
+    { name: 'ScreeningId', type: 'UUID', tags: ['fk', 'indexed'], fkTarget: 'Screenings', description: 'FK to parent screening' },
+    { name: 'Index', type: 'INT', tags: ['indexed'], description: 'Ordering within this PFM' },
+    { name: 'Name', type: 'VARCHAR(200)', tags: [], description: 'User-defined failure mode name' },
+    { name: 'Description', type: 'VARCHAR(4000)', tags: ['nullable'], description: 'Description of the custom failure mode' },
+    { name: 'CrossSection', type: 'VARCHAR(200)', tags: ['nullable'], description: 'Cross-section identifier' },
+    { name: 'SrpMode', type: 'VARCHAR(20)', tags: ['default'], default: "'user'", description: "SRP mode (defaults to 'user' for custom failure modes)" },
+    { name: 'ShowAssumptions', type: 'BOOLEAN', tags: [], description: 'UI state: show/hide assumptions panel' },
+    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record creation timestamp' },
+    { name: 'UpdatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record modification timestamp' },
+  ]}
+  notes={[
+    "PFM-33 defaults to 'user' SRP mode since custom failure modes typically don't have DST System-Response implementations.",
+    'The Description column allows users to document the custom failure mechanism.',
+  ]}
+/>
+
+## Table Count Summary
+
+Each of the 24 PFMs in this range will produce 4 tables, for a total of **96 planned tables**. Combined with PFMs 1-9, the complete PFM module set will contain **132 tables** (4 implemented for PFM-01, 128 planned).
+
+## Four-Table Pattern Recap
+
+All PFMs follow the same structural pattern:
+
+```
+Pfm{NN} (1) ──→ (0..1) Pfm{NN}_DstSrp       [FK, UNIQUE, CASCADE DELETE]
+Pfm{NN} (1) ──→ (0..1) Pfm{NN}_UserSrp      [FK, UNIQUE, CASCADE DELETE]
+Pfm{NN} (1) ──→ (0..1) Pfm{NN}_ActiveSrp    [FK, UNIQUE, CASCADE DELETE]
+```
+
+The SRP child table structures are identical across all PFMs. Only the main `Pfm{NN}` entity table has PFM-specific columns for the failure mode's unique input parameters.

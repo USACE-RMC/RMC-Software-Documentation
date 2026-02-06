@@ -1,0 +1,127 @@
+---
+title: Auth & System
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import SchemaTable from '@site/src/components/SchemaTable';
+
+<NavContainer
+  link="/web-applications/dst"
+  linkTitle="Dam Screening Tool"
+  document="web-applications/dst/database-schema"
+/>
+
+# Auth & System
+
+The Auth & System module covers authentication, user management, role-based access control (RBAC), session management, audit logging, and dashboard configuration. These tables support the administrative infrastructure of the DST application.
+
+All tables in this chapter are planned and not yet implemented in the database.
+
+## Tables
+
+<SchemaTable
+  name="Users"
+  description="User accounts for the DST application."
+  status="planned"
+  id="Users"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
+    { name: 'Email', type: 'VARCHAR(255)', tags: ['unique', 'indexed'], description: 'User email address (login identifier)' },
+    { name: 'DisplayName', type: 'VARCHAR(200)', tags: [], description: 'User display name' },
+    { name: 'FirstName', type: 'VARCHAR(100)', tags: ['nullable'], description: 'First name' },
+    { name: 'LastName', type: 'VARCHAR(100)', tags: ['nullable'], description: 'Last name' },
+    { name: 'Organization', type: 'VARCHAR(200)', tags: ['nullable'], description: 'Organization or agency' },
+    { name: 'IsActive', type: 'BOOLEAN', tags: ['default'], default: 'true', description: 'Whether the account is active' },
+    { name: 'LastLoginAt', type: 'TIMESTAMP', tags: ['nullable'], description: 'Last successful login timestamp' },
+    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record creation timestamp' },
+    { name: 'UpdatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record modification timestamp' },
+  ]}
+/>
+
+<SchemaTable
+  name="Roles"
+  description="Role definitions for RBAC (Admin, Reviewer, Analyst, etc.)."
+  status="planned"
+  id="Roles"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
+    { name: 'Name', type: 'VARCHAR(50)', tags: ['unique'], description: 'Role name (Admin, Reviewer, Analyst, Viewer)' },
+    { name: 'Description', type: 'VARCHAR(500)', tags: ['nullable'], description: 'Role description and permissions summary' },
+    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record creation timestamp' },
+    { name: 'UpdatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record modification timestamp' },
+  ]}
+/>
+
+<SchemaTable
+  name="UserRoles"
+  description="Many-to-many join table for user-role assignments."
+  status="planned"
+  id="UserRoles"
+  columns={[
+    { name: 'UserId', type: 'UUID', tags: ['pk', 'fk', 'indexed'], fkTarget: 'Users', description: 'FK to user' },
+    { name: 'RoleId', type: 'UUID', tags: ['pk', 'fk', 'indexed'], fkTarget: 'Roles', description: 'FK to role' },
+    { name: 'AssignedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'When the role was assigned' },
+    { name: 'AssignedBy', type: 'UUID', tags: ['fk', 'nullable'], fkTarget: 'Users', description: 'FK to the user who assigned this role' },
+  ]}
+  notes={['Composite primary key on (UserId, RoleId) prevents duplicate role assignments.']}
+/>
+
+<SchemaTable
+  name="Sessions"
+  description="Active user sessions for session management."
+  status="planned"
+  id="Sessions"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key (session token)' },
+    { name: 'UserId', type: 'UUID', tags: ['fk', 'indexed'], fkTarget: 'Users', description: 'FK to authenticated user' },
+    { name: 'ExpiresAt', type: 'TIMESTAMP', tags: [], description: 'Session expiration timestamp' },
+    { name: 'IpAddress', type: 'VARCHAR(45)', tags: ['nullable'], description: 'Client IP address' },
+    { name: 'UserAgent', type: 'VARCHAR(500)', tags: ['nullable'], description: 'Client user agent string' },
+    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Session creation timestamp' },
+  ]}
+/>
+
+<SchemaTable
+  name="AuditLog"
+  description="Audit trail of significant actions — who changed what, when."
+  status="planned"
+  id="AuditLog"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
+    { name: 'UserId', type: 'UUID', tags: ['fk', 'indexed'], fkTarget: 'Users', description: 'FK to user who performed the action' },
+    { name: 'Action', type: 'VARCHAR(50)', tags: ['indexed'], description: 'Action type (create, update, delete, login, etc.)' },
+    { name: 'EntityType', type: 'VARCHAR(100)', tags: ['indexed'], description: 'Type of entity affected' },
+    { name: 'EntityId', type: 'UUID', tags: ['nullable'], description: 'ID of the affected entity' },
+    { name: 'Details', type: 'JSONB', tags: ['nullable', 'jsonb'], description: 'Additional details about the action (before/after values)' },
+    { name: 'IpAddress', type: 'VARCHAR(45)', tags: ['nullable'], description: 'Client IP address' },
+    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'When the action occurred' },
+  ]}
+/>
+
+<SchemaTable
+  name="DashboardConfig"
+  description="Per-user dashboard preferences and saved views."
+  status="planned"
+  id="DashboardConfig"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
+    { name: 'UserId', type: 'UUID', tags: ['fk', 'unique', 'indexed'], fkTarget: 'Users', description: 'FK to user (1:1)' },
+    { name: 'ConfigJson', type: 'JSONB', tags: ['nullable', 'jsonb'], description: 'Dashboard layout and preferences as JSON' },
+    { name: 'DefaultView', type: 'VARCHAR(50)', tags: ['nullable'], description: 'Default dashboard view name' },
+    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record creation timestamp' },
+    { name: 'UpdatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record modification timestamp' },
+  ]}
+/>
+
+## RBAC Design
+
+The DST RBAC model uses a simple role-based approach:
+
+| Role | Permissions |
+|------|-------------|
+| **Admin** | Full access — manage users, roles, all screenings |
+| **Reviewer** | View and comment on screenings, approve/reject |
+| **Analyst** | Create and edit screenings, run analyses |
+| **Viewer** | Read-only access to shared screenings |
+
+Role assignments are stored in the `UserRoles` join table. A user can have multiple roles, and permissions are evaluated as the union of all assigned role permissions.

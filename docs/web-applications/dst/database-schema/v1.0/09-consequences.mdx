@@ -1,0 +1,82 @@
+---
+title: Consequences
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import SchemaTable from '@site/src/components/SchemaTable';
+
+<NavContainer
+  link="/web-applications/dst"
+  linkTitle="Dam Screening Tool"
+  document="web-applications/dst/database-schema"
+/>
+
+# Consequences
+
+The Consequences module stores consequence estimation data for each screening, including life safety, economic, and environmental consequence categories. Consequence estimates are linked to breach scenarios and used in risk analysis computations.
+
+All tables in this chapter are planned and not yet implemented in the database.
+
+## Tables
+
+<SchemaTable
+  name="ConsequenceEstimate"
+  description="Per-screening consequence summary covering life safety, economic, and environmental categories."
+  status="planned"
+  id="ConsequenceEstimate"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
+    { name: 'ScreeningId', type: 'UUID', tags: ['fk', 'indexed'], fkTarget: 'Screenings', description: 'FK to parent screening' },
+    { name: 'BreachScenario', type: 'VARCHAR(100)', tags: [], description: 'Breach scenario name (e.g., "Sunny Day", "Flood")' },
+    { name: 'LifeLoss', type: 'FLOAT8', tags: ['nullable'], description: 'Estimated life loss' },
+    { name: 'EconomicDamage', type: 'FLOAT8', tags: ['nullable'], description: 'Estimated economic damage in dollars' },
+    { name: 'EnvironmentalImpact', type: 'VARCHAR(50)', tags: ['nullable'], description: 'Environmental impact level (low, moderate, high, severe)' },
+    { name: 'Notes', type: 'VARCHAR(4000)', tags: ['nullable'], description: 'Notes about consequence estimation methodology' },
+    { name: 'DataSource', type: 'VARCHAR(200)', tags: ['nullable'], description: 'Source of consequence estimates' },
+    { name: 'ConfidenceLevel', type: 'VARCHAR(50)', tags: ['nullable'], description: 'Confidence level in estimates (low, medium, high)' },
+    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record creation timestamp' },
+    { name: 'UpdatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record modification timestamp' },
+  ]}
+/>
+
+<SchemaTable
+  name="PopulationAtRisk"
+  description="Population at risk data for different breach scenarios and warning times."
+  status="planned"
+  id="PopulationAtRisk"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
+    { name: 'ScreeningId', type: 'UUID', tags: ['fk', 'indexed'], fkTarget: 'Screenings', description: 'FK to parent screening' },
+    { name: 'BreachScenario', type: 'VARCHAR(100)', tags: [], description: 'Breach scenario name' },
+    { name: 'WarningTimeHours', type: 'FLOAT8', tags: ['nullable'], description: 'Warning time in hours' },
+    { name: 'DayPopulation', type: 'INT', tags: ['nullable'], description: 'Daytime population at risk' },
+    { name: 'NightPopulation', type: 'INT', tags: ['nullable'], description: 'Nighttime population at risk' },
+    { name: 'SeasonalPopulation', type: 'INT', tags: ['nullable'], description: 'Seasonal/recreational population at risk' },
+    { name: 'Notes', type: 'VARCHAR(4000)', tags: ['nullable'], description: 'Notes about PAR estimates' },
+    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record creation timestamp' },
+    { name: 'UpdatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record modification timestamp' },
+  ]}
+/>
+
+<SchemaTable
+  name="EconomicConsequence"
+  description="Direct and indirect economic damage estimates for different breach scenarios."
+  status="planned"
+  id="EconomicConsequence"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
+    { name: 'ScreeningId', type: 'UUID', tags: ['fk', 'indexed'], fkTarget: 'Screenings', description: 'FK to parent screening' },
+    { name: 'BreachScenario', type: 'VARCHAR(100)', tags: [], description: 'Breach scenario name' },
+    { name: 'DirectDamage', type: 'FLOAT8', tags: ['nullable'], description: 'Direct property damage in dollars' },
+    { name: 'IndirectDamage', type: 'FLOAT8', tags: ['nullable'], description: 'Indirect economic losses in dollars' },
+    { name: 'InfrastructureDamage', type: 'FLOAT8', tags: ['nullable'], description: 'Infrastructure damage in dollars' },
+    { name: 'AgriculturalDamage', type: 'FLOAT8', tags: ['nullable'], description: 'Agricultural losses in dollars' },
+    { name: 'Notes', type: 'VARCHAR(4000)', tags: ['nullable'], description: 'Notes about economic estimates' },
+    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record creation timestamp' },
+    { name: 'UpdatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'Record modification timestamp' },
+  ]}
+/>
+
+## Relationship to PFM Results
+
+Consequence estimates are associated with the screening rather than individual failure modes. During risk analysis, consequences are combined with failure probabilities from each PFM module to compute risk metrics.
