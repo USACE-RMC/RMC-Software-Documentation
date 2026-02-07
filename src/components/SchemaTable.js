@@ -4,7 +4,6 @@ import '../css/schema.css';
 
 export default function SchemaTable({ name, description, status = 'implemented', columns, notes, jsonSchemas, id }) {
   const statusLabels = { implemented: 'Implemented', partial: 'Partial', planned: 'Planned' };
-  const statusColors = { implemented: 'schema-tag--jsonb', partial: 'schema-tag--pk', planned: 'schema-tag--type' };
 
   // Build groups from column data
   const groups = [];
@@ -69,12 +68,12 @@ export default function SchemaTable({ name, description, status = 'implemented',
               const target = col.fkTarget || null;
               return <SchemaTag key="fk" type="fk" href={target ? `#${target}` : undefined}>{target ? `\u2192 ${target}` : 'FK'}</SchemaTag>;
             }
-            if (tag === 'unique') return <SchemaTag key="uq" type="unique">UQ</SchemaTag>;
-            if (tag === 'indexed') return <SchemaTag key="idx" type="indexed">IDX</SchemaTag>;
-            if (tag === 'nullable') return <SchemaTag key="null" type="nullable">NULL</SchemaTag>;
             if (tag === 'jsonb') return <SchemaTag key="jsonb" type="jsonb">JSONB</SchemaTag>;
-            if (tag === 'cascade') return <SchemaTag key="cascade" type="cascade">CASCADE</SchemaTag>;
-            if (tag === 'default') return <SchemaTag key="default" type="default" title={col.default || ''}>DEFAULT</SchemaTag>;
+            if (tag === 'unique') return <SchemaTag key="uq" type="unique">unique</SchemaTag>;
+            if (tag === 'indexed') return <SchemaTag key="idx" type="indexed">indexed</SchemaTag>;
+            if (tag === 'nullable') return <SchemaTag key="null" type="nullable">nullable</SchemaTag>;
+            if (tag === 'cascade') return <SchemaTag key="cascade" type="cascade">cascade</SchemaTag>;
+            if (tag === 'default') return <SchemaTag key="default" type="default" title={col.default || ''}>default</SchemaTag>;
             return null;
           })}
       </div>
@@ -135,12 +134,12 @@ export default function SchemaTable({ name, description, status = 'implemented',
     <div className={`schema-card schema-card--${status}`} id={id || name}>
       <div className="schema-card__header">
         <div className="schema-card__title-area">
-          <span className="schema-card__label">TABLE</span>
           <h3 className="schema-card__name">{name}</h3>
           <span className="schema-card__col-count">{columns.length} cols</span>
         </div>
         <div className="schema-card__status">
-          <span className={`schema-tag ${statusColors[status]}`}>{statusLabels[status] || status}</span>
+          <span className={`schema-card__status-dot schema-card__status-dot--${status}`} />
+          <span className="schema-card__status-text">{statusLabels[status] || status}</span>
         </div>
       </div>
 

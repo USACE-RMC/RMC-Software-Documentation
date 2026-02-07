@@ -2,11 +2,334 @@
    DST Database Schema Documentation Styles
    ============================================================ */
 
-/* === Schema Card === */
-.schema-card {
-  @apply relative w-full rounded-lg border border-border-color shadow-sm my-6 overflow-hidden;
+/* ═══════════════════════════════════════════════════════════════
+   RELATIONSHIP DIAGRAM (static CSS layout)
+   ═══════════════════════════════════════════════════════════════ */
+.schema-rel {
+  @apply flex flex-col items-center my-6;
+}
+
+.schema-rel__level {
+  @apply flex justify-center gap-3;
+}
+
+.schema-rel__level--spread {
+  @apply flex-wrap;
+}
+
+.schema-rel__box {
+  @apply flex flex-col items-center rounded-lg px-5 py-2.5;
+  border: 1.5px solid var(--border-color);
+  background-color: var(--ifm-background-surface-color);
+  color: var(--font-color);
+  text-decoration: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-width: 120px;
+  text-align: center;
+}
+
+.schema-rel__box--implemented {
+  border-color: #10b981;
+  background-color: rgba(16, 185, 129, 0.04);
+}
+
+.schema-rel__box--implemented:hover {
+  border-color: #059669;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+  text-decoration: none;
+  color: var(--font-color);
+}
+
+.schema-rel__box--child {
+  min-width: 100px;
+}
+
+.schema-rel__box-name {
+  @apply font-mono text-sm font-semibold;
+}
+
+.schema-rel__box-cols {
+  @apply text-xs mt-0.5;
+  opacity: 0.5;
+}
+
+.schema-rel__connector {
+  @apply flex flex-col items-center py-1;
+}
+
+.schema-rel__line {
+  width: 1.5px;
+  height: 16px;
+  background-color: var(--border-color);
+}
+
+.schema-rel__label {
+  @apply text-xs py-0.5;
+  color: var(--font-color);
+  opacity: 0.45;
+}
+
+[data-theme='dark'] .schema-rel__box--implemented {
+  background-color: rgba(16, 185, 129, 0.08);
+}
+
+[data-theme='dark'] .schema-rel__box--implemented:hover {
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   COMPACT TABLE CARD
+   ═══════════════════════════════════════════════════════════════ */
+.schema-compact-card {
+  @apply relative w-full rounded-lg border border-border-color my-5 overflow-hidden;
   background-color: var(--ifm-background-surface-color);
   border-left-width: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.schema-compact-card--implemented {
+  border-left-color: var(--ifm-color-primary);
+}
+
+.schema-compact-card--planned {
+  border-left-color: #9ca3af;
+}
+
+.schema-compact-card__header {
+  @apply flex items-center justify-between gap-3 px-4 pt-3 pb-1;
+}
+
+.schema-compact-card__name {
+  @apply font-mono text-base font-bold m-0;
+  color: var(--font-color);
+}
+
+.schema-compact-card__meta {
+  @apply flex items-center gap-2 text-xs flex-shrink-0;
+}
+
+.schema-compact-card__col-count {
+  color: var(--font-color);
+  opacity: 0.4;
+}
+
+.schema-compact-card__dot {
+  @apply inline-block rounded-full;
+  width: 7px;
+  height: 7px;
+}
+
+.schema-compact-card__dot--implemented {
+  background-color: #10b981;
+}
+
+.schema-compact-card__dot--planned {
+  background-color: #9ca3af;
+}
+
+.schema-compact-card__status-text {
+  @apply text-xs;
+  color: var(--font-color);
+  opacity: 0.4;
+}
+
+.schema-compact-card__desc {
+  @apply px-4 pb-2 text-sm;
+  color: var(--font-color);
+  opacity: 0.6;
+}
+
+.schema-compact-card__toolbar {
+  @apply flex gap-2 px-4 pb-2;
+}
+
+/* ── Compact 3-column grid ── */
+.schema-compact__grid {
+  @apply w-full;
+  display: grid;
+  grid-template-columns: minmax(140px, 28%) minmax(80px, 16%) auto;
+}
+
+.schema-compact__header-row {
+  display: contents;
+}
+
+.schema-compact__header {
+  @apply text-xs font-bold uppercase tracking-wider px-3 py-1.5;
+  background-color: var(--ifm-color-emphasis-100);
+  color: var(--font-color);
+  opacity: 0.6;
+  border-top: 2px solid var(--ifm-color-primary);
+}
+
+.schema-compact__row {
+  display: contents;
+}
+
+.schema-compact__row--even .schema-compact__cell {
+  background-color: var(--ifm-color-emphasis-50, #f9fafb);
+}
+
+.schema-compact__cell {
+  @apply px-3 py-1 border-b border-border-color;
+  color: var(--font-color);
+  line-height: 1.6;
+}
+
+.schema-compact__cell--name {
+  @apply font-mono text-sm font-medium;
+  cursor: default;
+}
+
+.schema-compact__cell--name[title] {
+  cursor: help;
+  text-decoration-style: dotted;
+  text-decoration-line: underline;
+  text-decoration-color: var(--border-color);
+  text-underline-offset: 3px;
+}
+
+.schema-compact__cell--type {
+  @apply font-mono text-sm;
+  opacity: 0.5;
+}
+
+.schema-compact__cell--tags {
+  @apply flex flex-wrap items-center gap-1;
+}
+
+/* ── Group separator ── */
+.schema-compact__group {
+  grid-column: 1 / -1;
+  @apply flex items-center justify-between px-3 py-1 text-xs font-bold uppercase tracking-wider;
+  color: var(--font-color);
+  opacity: 0.55;
+  user-select: none;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  background-color: transparent;
+}
+
+.schema-compact__group--interactive {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.schema-compact__group--interactive:hover {
+  background-color: var(--ifm-color-emphasis-100);
+}
+
+.schema-compact__group-name {
+  @apply flex items-center gap-1;
+}
+
+.schema-compact__group-count {
+  @apply text-xs font-normal normal-case tracking-normal;
+  opacity: 0.5;
+}
+
+.schema-compact__group-count::before {
+  content: '(';
+}
+
+.schema-compact__group-count::after {
+  content: ')';
+}
+
+.schema-compact__group-chevron {
+  @apply inline-block text-xs;
+  transition: transform 0.2s ease;
+}
+
+.schema-compact__group-chevron--open {
+  transform: rotate(90deg);
+}
+
+/* ── Compact dark mode ── */
+[data-theme='dark'] .schema-compact-card {
+  background-color: var(--ifm-background-surface-color);
+  border-color: var(--border-color);
+}
+
+[data-theme='dark'] .schema-compact-card--planned {
+  border-left-color: #6b7280;
+}
+
+[data-theme='dark'] .schema-compact__row--even .schema-compact__cell {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+[data-theme='dark'] .schema-compact__header {
+  background-color: var(--ifm-color-emphasis-200);
+  border-top-color: var(--ifm-color-primary);
+}
+
+[data-theme='dark'] .schema-compact__cell {
+  border-color: var(--border-color);
+}
+
+[data-theme='dark'] .schema-compact__group {
+  border-color: var(--border-color);
+}
+
+[data-theme='dark'] .schema-compact__group--interactive:hover {
+  background-color: var(--ifm-color-emphasis-200);
+}
+
+/* ── Compact mobile ── */
+@media (max-width: 900px) {
+  .schema-compact__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .schema-compact__header-row {
+    display: none;
+  }
+
+  .schema-compact__row {
+    display: block;
+    @apply border-b border-border-color py-2 px-3;
+  }
+
+  .schema-compact__row--even {
+    background-color: var(--ifm-color-emphasis-50, #f9fafb);
+  }
+
+  [data-theme='dark'] .schema-compact__row--even {
+    background-color: rgba(255, 255, 255, 0.03);
+  }
+
+  .schema-compact__cell {
+    @apply border-0 px-0 py-0;
+    display: inline;
+  }
+
+  .schema-compact__cell--name {
+    @apply font-bold;
+  }
+
+  .schema-compact__cell--type {
+    @apply ml-2;
+  }
+
+  .schema-compact__cell--tags {
+    @apply mt-1;
+    display: flex;
+  }
+
+  .schema-rel__level--spread {
+    @apply flex-col items-center;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCHEMA TABLE CARD
+   ═══════════════════════════════════════════════════════════════ */
+.schema-card {
+  @apply relative w-full rounded-lg border border-border-color my-6 overflow-hidden;
+  background-color: var(--ifm-background-surface-color);
+  border-left-width: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .schema-card--implemented {
@@ -21,43 +344,62 @@
   border-left-color: #9ca3af;
 }
 
+/* ── Card Header (refreshed) ── */
 .schema-card__header {
-  @apply flex flex-wrap items-start justify-between gap-2 px-5 pt-4 pb-2;
+  @apply flex flex-wrap items-center justify-between gap-2 px-5 pt-4 pb-2;
 }
 
 .schema-card__title-area {
   @apply flex items-center gap-3;
 }
 
-.schema-card__label {
-  @apply inline-flex items-center rounded px-2 py-0.5 text-xs font-bold uppercase tracking-wider;
-  background-color: var(--ifm-color-primary);
-  color: var(--font-color-inverse);
-}
-
 .schema-card__name {
-  @apply font-usace text-h3 font-bold m-0;
+  @apply font-mono text-lg font-bold m-0;
   color: var(--font-color);
 }
 
 .schema-card__col-count {
-  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
-  background-color: var(--ifm-color-emphasis-100);
+  @apply text-xs font-medium;
   color: var(--font-color);
-  opacity: 0.6;
+  opacity: 0.4;
 }
 
 .schema-card__description {
   @apply px-5 pb-3 font-usace text-normal;
   color: var(--font-color);
-  opacity: 0.7;
+  opacity: 0.65;
 }
 
+/* ── Status indicator (dot + text instead of badge) ── */
 .schema-card__status {
-  @apply flex-shrink-0;
+  @apply flex items-center gap-1.5 flex-shrink-0;
 }
 
-/* === Expand / Collapse Toolbar === */
+.schema-card__status-dot {
+  @apply inline-block rounded-full;
+  width: 8px;
+  height: 8px;
+}
+
+.schema-card__status-dot--implemented {
+  background-color: #10b981;
+}
+
+.schema-card__status-dot--partial {
+  background-color: #f59e0b;
+}
+
+.schema-card__status-dot--planned {
+  background-color: #9ca3af;
+}
+
+.schema-card__status-text {
+  @apply text-xs font-medium;
+  color: var(--font-color);
+  opacity: 0.5;
+}
+
+/* ── Expand / Collapse Toolbar ── */
 .schema-card__toolbar {
   @apply flex gap-2 px-5 pb-2;
 }
@@ -79,29 +421,32 @@
   cursor: default;
 }
 
-/* === Schema Column Grid === */
+/* ═══════════════════════════════════════════════════════════════
+   SCHEMA COLUMN GRID (refreshed)
+   ═══════════════════════════════════════════════════════════════ */
 .schema-columns {
   @apply w-full;
   display: grid;
   grid-template-columns: minmax(140px, 25%) minmax(80px, 12%) auto 1fr;
 }
 
-/* Header row wrapper — uses contents so children participate in parent grid */
 .schema-columns__header-row {
   display: contents;
 }
 
+/* Lighter header — thin top border accent, light tint background */
 .schema-columns__header {
   @apply font-usace text-xs font-bold uppercase tracking-wider px-3 py-2;
-  background-color: var(--ifm-color-primary);
-  color: var(--font-color-inverse);
+  background-color: var(--ifm-color-emphasis-100);
+  color: var(--font-color);
+  opacity: 0.7;
+  border-top: 2px solid var(--ifm-color-primary);
 }
 
 .schema-columns__row {
   display: contents;
 }
 
-/* JS-based zebra striping (replaces broken nth-child with group separators) */
 .schema-columns__row--even .schema-columns__cell {
   background-color: var(--ifm-color-emphasis-50, #f9fafb);
 }
@@ -112,12 +457,12 @@
 }
 
 .schema-columns__cell--name {
-  @apply font-mono text-sm font-medium;
+  @apply font-mono text-sm font-semibold;
 }
 
 .schema-columns__cell--type {
   @apply font-mono text-sm;
-  opacity: 0.7;
+  opacity: 0.55;
 }
 
 .schema-columns__cell--tags {
@@ -126,16 +471,19 @@
 
 .schema-columns__cell--desc {
   @apply text-sm;
+  opacity: 0.8;
 }
 
-/* === Column Group Separator === */
+/* ── Column Group Separator (cleaner fieldset/legend style) ── */
 .schema-columns__group-separator {
   grid-column: 1 / -1;
   @apply flex items-center justify-between px-3 py-1.5 font-usace text-xs font-bold uppercase tracking-wider;
-  background-color: var(--ifm-color-emphasis-100);
   color: var(--font-color);
-  opacity: 0.8;
+  opacity: 0.6;
   user-select: none;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  background-color: transparent;
 }
 
 .schema-columns__group-separator--interactive {
@@ -144,7 +492,7 @@
 }
 
 .schema-columns__group-separator--interactive:hover {
-  background-color: var(--ifm-color-emphasis-200);
+  background-color: var(--ifm-color-emphasis-100);
 }
 
 .schema-columns__group-name {
@@ -153,7 +501,7 @@
 
 .schema-columns__group-count {
   @apply text-xs font-normal normal-case tracking-normal;
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
 .schema-columns__group-chevron {
@@ -165,77 +513,72 @@
   transform: rotate(90deg);
 }
 
-/* === Schema Tags (Badges) === */
+/* ═══════════════════════════════════════════════════════════════
+   SCHEMA TAGS / BADGES (reduced palette: 3 accent + gray)
+   ═══════════════════════════════════════════════════════════════ */
 .schema-tag {
-  @apply inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium whitespace-nowrap;
+  @apply inline-flex items-center rounded-md px-1.5 py-0.5 text-xs font-medium whitespace-nowrap;
   text-decoration: none;
+  font-size: 0.7rem;
 }
 
+/* Accent: PK (amber) */
 .schema-tag--pk {
   @apply bg-amber-100 text-amber-800;
 }
 
+/* Accent: FK (primary teal link) */
 .schema-tag--fk {
-  @apply bg-blue-100 text-blue-800;
+  color: var(--ifm-color-primary);
+  background: none;
+  padding-left: 0;
 }
 
-/* Only show link affordance on actual FK links */
 a.schema-tag--fk {
   cursor: pointer;
 }
 
 a.schema-tag--fk:hover {
-  @apply underline;
+  text-decoration: underline;
 }
 
-.schema-tag--type {
-  @apply bg-gray-100 text-gray-700;
-}
-
-.schema-tag--nullable {
-  @apply bg-slate-100 text-slate-600;
-}
-
-.schema-tag--indexed {
-  @apply bg-violet-100 text-violet-800;
-}
-
+/* Accent: JSONB (emerald) */
 .schema-tag--jsonb {
   @apply bg-emerald-100 text-emerald-800;
 }
 
-.schema-tag--unique {
-  @apply bg-orange-100 text-orange-800;
-}
-
-.schema-tag--default {
-  @apply bg-stone-100 text-stone-600;
-  cursor: default;
-}
-
+/* Muted gray: everything else */
+.schema-tag--type,
+.schema-tag--nullable,
+.schema-tag--indexed,
+.schema-tag--unique,
+.schema-tag--default,
 .schema-tag--cascade {
-  @apply bg-red-100 text-red-800;
+  @apply bg-gray-100 text-gray-500;
 }
 
-/* === Schema Group === */
+/* ═══════════════════════════════════════════════════════════════
+   SCHEMA GROUP (lightened)
+   ═══════════════════════════════════════════════════════════════ */
 .schema-group {
-  @apply my-8 rounded-xl border-2 border-border-color overflow-hidden;
+  @apply my-8 rounded-lg border border-border-color overflow-hidden;
 }
 
 .schema-group__header {
   @apply px-5 py-3;
-  background-color: var(--ifm-color-primary);
+  background-color: var(--ifm-color-emphasis-100);
+  border-bottom: 2px solid var(--ifm-color-primary);
 }
 
 .schema-group__title {
   @apply font-usace text-h3 font-bold m-0;
-  color: var(--font-color-inverse);
+  color: var(--font-color);
 }
 
 .schema-group__description {
   @apply font-usace text-sm mt-1;
-  color: var(--font-color-inverse);
-  opacity: 0.85;
+  color: var(--font-color);
+  opacity: 0.65;
 }
 
 .schema-group__content {
@@ -268,7 +611,9 @@ a.schema-tag--fk:hover {
   font-style: italic;
 }
 
-/* === JSONB Expander === */
+/* ═══════════════════════════════════════════════════════════════
+   JSONB EXPANDER
+   ═══════════════════════════════════════════════════════════════ */
 .schema-json-expander {
   @apply mx-5 mb-4 rounded-lg border border-border-color overflow-hidden;
 }
@@ -304,7 +649,9 @@ a.schema-tag--fk:hover {
   color: inherit;
 }
 
-/* === Schema Notes === */
+/* ═══════════════════════════════════════════════════════════════
+   SCHEMA NOTES
+   ═══════════════════════════════════════════════════════════════ */
 .schema-notes {
   @apply px-5 pb-4;
 }
@@ -325,7 +672,9 @@ a.schema-tag--fk:hover {
   opacity: 0.8;
 }
 
-/* === Module Map (SVG) === */
+/* ═══════════════════════════════════════════════════════════════
+   MODULE MAP (SVG) — kept for backward compatibility
+   ═══════════════════════════════════════════════════════════════ */
 .module-map {
   @apply w-full my-6;
 }
@@ -349,7 +698,9 @@ a.schema-tag--fk:hover {
   ry: 8;
 }
 
-/* === Enum Table (reuses schema card look) === */
+/* ═══════════════════════════════════════════════════════════════
+   ENUM TABLE
+   ═══════════════════════════════════════════════════════════════ */
 .schema-enum-table {
   @apply w-full my-4;
   border-collapse: collapse;
@@ -357,8 +708,9 @@ a.schema-tag--fk:hover {
 
 .schema-enum-table th {
   @apply font-usace text-xs font-bold uppercase tracking-wider px-3 py-2 text-left;
-  background-color: var(--ifm-color-primary);
-  color: var(--font-color-inverse);
+  background-color: var(--ifm-color-emphasis-100);
+  color: var(--font-color);
+  border-top: 2px solid var(--ifm-color-primary);
 }
 
 .schema-enum-table td {
@@ -370,9 +722,9 @@ a.schema-tag--fk:hover {
   background-color: var(--ifm-color-emphasis-50, #f9fafb);
 }
 
-/* ============================================================
-   Dark Mode Overrides
-   ============================================================ */
+/* ═══════════════════════════════════════════════════════════════
+   DARK MODE OVERRIDES
+   ═══════════════════════════════════════════════════════════════ */
 [data-theme='dark'] .schema-card {
   background-color: var(--ifm-background-surface-color);
   border-color: var(--border-color);
@@ -386,48 +738,36 @@ a.schema-tag--fk:hover {
   border-left-color: #6b7280;
 }
 
+/* Tags — dark mode */
 [data-theme='dark'] .schema-tag--pk {
   @apply bg-amber-900 text-amber-200;
 }
 
 [data-theme='dark'] .schema-tag--fk {
-  @apply bg-blue-900 text-blue-200;
-}
-
-[data-theme='dark'] .schema-tag--type {
-  @apply bg-gray-800 text-gray-300;
-}
-
-[data-theme='dark'] .schema-tag--nullable {
-  @apply bg-slate-800 text-slate-300;
-}
-
-[data-theme='dark'] .schema-tag--indexed {
-  @apply bg-violet-900 text-violet-200;
+  color: var(--ifm-color-primary);
 }
 
 [data-theme='dark'] .schema-tag--jsonb {
   @apply bg-emerald-900 text-emerald-200;
 }
 
-[data-theme='dark'] .schema-tag--unique {
-  @apply bg-orange-900 text-orange-200;
-}
-
-[data-theme='dark'] .schema-tag--default {
-  @apply bg-stone-800 text-stone-300;
-}
-
+[data-theme='dark'] .schema-tag--type,
+[data-theme='dark'] .schema-tag--nullable,
+[data-theme='dark'] .schema-tag--indexed,
+[data-theme='dark'] .schema-tag--unique,
+[data-theme='dark'] .schema-tag--default,
 [data-theme='dark'] .schema-tag--cascade {
-  @apply bg-red-900 text-red-200;
+  @apply bg-gray-800 text-gray-400;
 }
 
+/* Grid — dark mode */
 [data-theme='dark'] .schema-columns__row--even .schema-columns__cell {
   background-color: rgba(255, 255, 255, 0.03);
 }
 
 [data-theme='dark'] .schema-columns__header {
-  background-color: var(--ifm-color-primary-darkest);
+  background-color: var(--ifm-color-emphasis-200);
+  border-top-color: var(--ifm-color-primary);
 }
 
 [data-theme='dark'] .schema-columns__cell {
@@ -435,21 +775,24 @@ a.schema-tag--fk:hover {
 }
 
 [data-theme='dark'] .schema-columns__group-separator {
-  background-color: var(--ifm-color-emphasis-200);
+  border-color: var(--border-color);
 }
 
 [data-theme='dark'] .schema-columns__group-separator--interactive:hover {
-  background-color: var(--ifm-color-emphasis-300);
+  background-color: var(--ifm-color-emphasis-200);
 }
 
+/* Group — dark mode */
 [data-theme='dark'] .schema-group {
   border-color: var(--border-color);
 }
 
 [data-theme='dark'] .schema-group__header {
-  background-color: var(--ifm-color-primary-darkest);
+  background-color: var(--ifm-color-emphasis-200);
+  border-bottom-color: var(--ifm-color-primary);
 }
 
+/* JSONB — dark mode */
 [data-theme='dark'] .schema-json-expander {
   border-color: var(--border-color);
 }
@@ -458,8 +801,10 @@ a.schema-tag--fk:hover {
   background-color: var(--ifm-color-emphasis-200);
 }
 
+/* Enum table — dark mode */
 [data-theme='dark'] .schema-enum-table th {
-  background-color: var(--ifm-color-primary-darkest);
+  background-color: var(--ifm-color-emphasis-200);
+  border-top-color: var(--ifm-color-primary);
 }
 
 [data-theme='dark'] .schema-enum-table tr:nth-child(even) td {
@@ -470,6 +815,7 @@ a.schema-tag--fk:hover {
   border-color: var(--border-color);
 }
 
+/* Toolbar — dark mode */
 [data-theme='dark'] .schema-card__toolbar-btn {
   background-color: var(--ifm-color-emphasis-200);
   border-color: var(--border-color);
@@ -479,9 +825,9 @@ a.schema-tag--fk:hover {
   background-color: var(--ifm-color-emphasis-300);
 }
 
-/* ============================================================
-   Responsive (Mobile)
-   ============================================================ */
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE (MOBILE)
+   ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 900px) {
   .schema-columns {
     grid-template-columns: 1fr;
@@ -510,7 +856,6 @@ a.schema-tag--fk:hover {
     display: block;
   }
 
-  /* Mobile data-label pseudo-elements */
   .schema-columns__cell[data-label]::before {
     content: attr(data-label);
     @apply block text-xs font-bold uppercase tracking-wider mb-0.5;
@@ -522,7 +867,6 @@ a.schema-tag--fk:hover {
     @apply font-bold text-base;
   }
 
-  /* Hide redundant label for column name (it's visually obvious) */
   .schema-columns__cell--name[data-label]::before {
     display: none;
   }
@@ -539,6 +883,7 @@ a.schema-tag--fk:hover {
     @apply flex-col;
   }
 
+  .er-diagram svg,
   .module-map svg {
     @apply w-full;
   }
