@@ -18,18 +18,24 @@ export default function SchemaGroup({ title, description, relationships, childre
       <div className="schema-group__content">
         {relationships && relationships.length > 0 && (
           <div className="schema-group__relationships">
-            {relationships.map((rel, i) => (
-              <div key={i} className="schema-group__rel-badge">
-                <span className="font-mono text-xs font-medium">{rel.from}</span>
-                <span className="schema-group__rel-arrow">&rarr;</span>
-                <span className="font-mono text-xs font-medium">{rel.to}</span>
-                <span className="schema-group__rel-label">
-                  {relTypeLabels[rel.type] || rel.type}
-                  {rel.label ? ` ${rel.label}` : ''}
-                  {rel.onDelete ? ` (${rel.onDelete})` : ''}
-                </span>
-              </div>
-            ))}
+            {relationships.map((rel, i) => {
+              const cardinality = relTypeLabels[rel.type] || rel.type;
+              // Deduplicate: if label already conveys onDelete, don't repeat
+              const deleteInfo = rel.onDelete && (!rel.label || !rel.label.toLowerCase().includes(rel.onDelete))
+                ? ` \u00B7 on delete: ${rel.onDelete}`
+                : '';
+
+              return (
+                <div key={i} className="schema-group__rel-badge">
+                  <span className="font-mono text-xs font-medium">{rel.from}</span>
+                  <span className="schema-group__rel-arrow">&rarr;</span>
+                  <span className="font-mono text-xs font-medium">{rel.to}</span>
+                  <span className="schema-group__rel-label">{cardinality}</span>
+                  {rel.label && <span className="schema-group__rel-detail">{rel.label}</span>}
+                  {deleteInfo && <span className="schema-group__rel-detail">{deleteInfo}</span>}
+                </div>
+              );
+            })}
           </div>
         )}
 

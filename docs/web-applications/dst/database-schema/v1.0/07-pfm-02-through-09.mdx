@@ -29,7 +29,7 @@ Every PFM module follows the same four-table structure:
 | `Pfm{NN}_UserSrp` | User-defined SRP curve |
 | `Pfm{NN}_ActiveSrp` | Active SRP for risk calculations |
 
-The three SRP child tables (`DstSrp`, `UserSrp`, `ActiveSrp`) have the **same structure** across all PFMs. Only the main `Pfm{NN}` table differs because each failure mode has different input parameters.
+The three SRP child tables (`DstSrp`, `UserSrp`, `ActiveSrp`) have the **same structure** across all PFMs — see [PFM-01: Overtopping Erosion](./pfm-01#Pfm01_DstSrp) for the complete column definitions and JSONB structures. Only the main `Pfm{NN}` table differs because each failure mode has different input parameters.
 
 ## PFM Index
 
@@ -46,11 +46,11 @@ The three SRP child tables (`DstSrp`, `UserSrp`, `ActiveSrp`) have the **same st
 
 ## Representative Example: PFM-02
 
-The following shows PFM-02 (Backward Erosion Piping) as a representative example of the four-table pattern. All other PFMs in this range will follow the same structure with different columns in the main entity table.
+The following shows PFM-02 (Backward Erosion Piping) as a representative example. Only the main entity table is shown — the three SRP child tables are structurally identical to PFM-01's [DstSrp](./pfm-01#Pfm01_DstSrp), [UserSrp](./pfm-01#Pfm01_UserSrp), and [ActiveSrp](./pfm-01#Pfm01_ActiveSrp).
 
 <SchemaGroup
   title="PFM-02: Internal Erosion - Backward Erosion Piping"
-  description="Representative example of the four-table PFM pattern. The main entity columns are specific to backward erosion piping; the SRP tables are identical across all PFMs."
+  description="Representative example. SRP child tables follow the same structure as PFM-01."
   id="pfm02-group"
   relationships={[
     { from: 'Pfm02', to: 'Pfm02_DstSrp', type: 'one-to-one', onDelete: 'cascade' },
@@ -78,49 +78,7 @@ The following shows PFM-02 (Backward Erosion Piping) as a representative example
   notes={[
     'Additional PFM-specific input parameter columns will be added when the failure mode analysis logic is implemented.',
     'The columns shown are the common baseline shared across all PFM main entity tables.',
-  ]}
-/>
-
-<SchemaTable
-  name="Pfm02_DstSrp"
-  description="System-Response calculation results for PFM-02. Same structure as Pfm01_DstSrp."
-  status="planned"
-  id="Pfm02_DstSrp"
-  columns={[
-    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
-    { name: 'Pfm02Id', type: 'UUID', tags: ['fk', 'unique', 'indexed'], fkTarget: 'Pfm02', description: 'FK to parent PFM-02 location (1:1)' },
-    { name: 'CurvesJson', type: 'JSONB', tags: ['nullable', 'jsonb'], description: 'System-Response curves (PFM-specific node structure)' },
-    { name: 'NodalJson', type: 'JSONB', tags: ['nullable', 'jsonb'], description: 'Nodal probability tables (PFM-specific event tree nodes)' },
-    { name: 'LastCalculatedAt', type: 'TIMESTAMP', tags: ['nullable'], description: 'When System-Response was last executed' },
-    { name: 'LastNodalEditAt', type: 'TIMESTAMP', tags: ['nullable'], description: 'When user last edited nodal values' },
-  ]}
-/>
-
-<SchemaTable
-  name="Pfm02_UserSrp"
-  description="User-defined SRP curve for PFM-02. Same structure as Pfm01_UserSrp."
-  status="planned"
-  id="Pfm02_UserSrp"
-  columns={[
-    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
-    { name: 'Pfm02Id', type: 'UUID', tags: ['fk', 'unique', 'indexed'], fkTarget: 'Pfm02', description: 'FK to parent PFM-02 location (1:1)' },
-    { name: 'CurveJson', type: 'JSONB', tags: ['nullable', 'jsonb'], description: 'User-entered SRP curve' },
-    { name: 'Notes', type: 'VARCHAR(4000)', tags: ['nullable'], description: 'Optional user notes/justification' },
-    { name: 'LastModifiedAt', type: 'TIMESTAMP', tags: ['nullable'], description: 'When user last modified the curve' },
-  ]}
-/>
-
-<SchemaTable
-  name="Pfm02_ActiveSrp"
-  description="Active SRP curve for PFM-02 risk calculations. Same structure as Pfm01_ActiveSrp."
-  status="planned"
-  id="Pfm02_ActiveSrp"
-  columns={[
-    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
-    { name: 'Pfm02Id', type: 'UUID', tags: ['fk', 'unique', 'indexed'], fkTarget: 'Pfm02', description: 'FK to parent PFM-02 location (1:1)' },
-    { name: 'CurveJson', type: 'JSONB', tags: ['nullable', 'jsonb'], description: 'Active SRP curve' },
-    { name: 'SourceMode', type: 'VARCHAR(20)', tags: ['nullable'], description: "Curve source: 'dst' or 'user'" },
-    { name: 'LastSyncedAt', type: 'TIMESTAMP', tags: ['nullable'], description: 'When last synced from source' },
+    'SRP child tables (DstSrp, UserSrp, ActiveSrp) follow the same structure as PFM-01.',
   ]}
 />
 

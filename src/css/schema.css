@@ -1,3 +1,7 @@
+/* ============================================================
+   DST Database Schema Documentation Styles
+   ============================================================ */
+
 /* === Schema Card === */
 .schema-card {
   @apply relative w-full rounded-lg border border-border-color shadow-sm my-6 overflow-hidden;
@@ -36,6 +40,13 @@
   color: var(--font-color);
 }
 
+.schema-card__col-count {
+  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  background-color: var(--ifm-color-emphasis-100);
+  color: var(--font-color);
+  opacity: 0.6;
+}
+
 .schema-card__description {
   @apply px-5 pb-3 font-usace text-normal;
   color: var(--font-color);
@@ -46,11 +57,38 @@
   @apply flex-shrink-0;
 }
 
+/* === Expand / Collapse Toolbar === */
+.schema-card__toolbar {
+  @apply flex gap-2 px-5 pb-2;
+}
+
+.schema-card__toolbar-btn {
+  @apply inline-flex items-center rounded px-2.5 py-1 text-xs font-medium cursor-pointer;
+  background-color: var(--ifm-color-emphasis-100);
+  color: var(--font-color);
+  border: 1px solid var(--border-color);
+  transition: background-color 0.15s ease;
+}
+
+.schema-card__toolbar-btn:hover:not(:disabled) {
+  background-color: var(--ifm-color-emphasis-200);
+}
+
+.schema-card__toolbar-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 /* === Schema Column Grid === */
 .schema-columns {
   @apply w-full;
   display: grid;
   grid-template-columns: minmax(140px, 25%) minmax(80px, 12%) auto 1fr;
+}
+
+/* Header row wrapper — uses contents so children participate in parent grid */
+.schema-columns__header-row {
+  display: contents;
 }
 
 .schema-columns__header {
@@ -63,8 +101,9 @@
   display: contents;
 }
 
-.schema-columns__row:nth-child(even) .schema-columns__cell {
-  background-color: #f5f5f5;
+/* JS-based zebra striping (replaces broken nth-child with group separators) */
+.schema-columns__row--even .schema-columns__cell {
+  background-color: var(--ifm-color-emphasis-50, #f9fafb);
 }
 
 .schema-columns__cell {
@@ -89,18 +128,47 @@
   @apply text-sm;
 }
 
-/* === Column group separator === */
+/* === Column Group Separator === */
 .schema-columns__group-separator {
   grid-column: 1 / -1;
-  @apply px-3 py-1.5 font-usace text-xs font-bold uppercase tracking-wider;
+  @apply flex items-center justify-between px-3 py-1.5 font-usace text-xs font-bold uppercase tracking-wider;
   background-color: var(--ifm-color-emphasis-100);
   color: var(--font-color);
-  opacity: 0.7;
+  opacity: 0.8;
+  user-select: none;
+}
+
+.schema-columns__group-separator--interactive {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.schema-columns__group-separator--interactive:hover {
+  background-color: var(--ifm-color-emphasis-200);
+}
+
+.schema-columns__group-name {
+  @apply flex items-center gap-1;
+}
+
+.schema-columns__group-count {
+  @apply text-xs font-normal normal-case tracking-normal;
+  opacity: 0.6;
+}
+
+.schema-columns__group-chevron {
+  @apply inline-block text-xs;
+  transition: transform 0.2s ease;
+}
+
+.schema-columns__group-chevron--open {
+  transform: rotate(90deg);
 }
 
 /* === Schema Tags (Badges) === */
 .schema-tag {
   @apply inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium whitespace-nowrap;
+  text-decoration: none;
 }
 
 .schema-tag--pk {
@@ -108,10 +176,15 @@
 }
 
 .schema-tag--fk {
-  @apply bg-blue-100 text-blue-800 cursor-pointer;
+  @apply bg-blue-100 text-blue-800;
 }
 
-.schema-tag--fk:hover {
+/* Only show link affordance on actual FK links */
+a.schema-tag--fk {
+  cursor: pointer;
+}
+
+a.schema-tag--fk:hover {
   @apply underline;
 }
 
@@ -137,6 +210,7 @@
 
 .schema-tag--default {
   @apply bg-stone-100 text-stone-600;
+  cursor: default;
 }
 
 .schema-tag--cascade {
@@ -186,6 +260,12 @@
 .schema-group__rel-label {
   @apply font-mono text-xs;
   opacity: 0.6;
+}
+
+.schema-group__rel-detail {
+  @apply text-xs;
+  opacity: 0.5;
+  font-style: italic;
 }
 
 /* === JSONB Expander === */
@@ -287,10 +367,12 @@
 }
 
 .schema-enum-table tr:nth-child(even) td {
-  background-color: #f5f5f5;
+  background-color: var(--ifm-color-emphasis-50, #f9fafb);
 }
 
-/* === Dark Mode Overrides === */
+/* ============================================================
+   Dark Mode Overrides
+   ============================================================ */
 [data-theme='dark'] .schema-card {
   background-color: var(--ifm-background-surface-color);
   border-color: var(--border-color);
@@ -340,8 +422,8 @@
   @apply bg-red-900 text-red-200;
 }
 
-[data-theme='dark'] .schema-columns__row:nth-child(even) .schema-columns__cell {
-  background-color: #121212;
+[data-theme='dark'] .schema-columns__row--even .schema-columns__cell {
+  background-color: rgba(255, 255, 255, 0.03);
 }
 
 [data-theme='dark'] .schema-columns__header {
@@ -350,6 +432,14 @@
 
 [data-theme='dark'] .schema-columns__cell {
   border-color: var(--border-color);
+}
+
+[data-theme='dark'] .schema-columns__group-separator {
+  background-color: var(--ifm-color-emphasis-200);
+}
+
+[data-theme='dark'] .schema-columns__group-separator--interactive:hover {
+  background-color: var(--ifm-color-emphasis-300);
 }
 
 [data-theme='dark'] .schema-group {
@@ -373,18 +463,25 @@
 }
 
 [data-theme='dark'] .schema-enum-table tr:nth-child(even) td {
-  background-color: #121212;
+  background-color: rgba(255, 255, 255, 0.03);
 }
 
 [data-theme='dark'] .schema-enum-table td {
   border-color: var(--border-color);
 }
 
-[data-theme='dark'] .schema-columns__group-separator {
+[data-theme='dark'] .schema-card__toolbar-btn {
   background-color: var(--ifm-color-emphasis-200);
+  border-color: var(--border-color);
 }
 
-/* === Responsive === */
+[data-theme='dark'] .schema-card__toolbar-btn:hover:not(:disabled) {
+  background-color: var(--ifm-color-emphasis-300);
+}
+
+/* ============================================================
+   Responsive (Mobile)
+   ============================================================ */
 @media (max-width: 900px) {
   .schema-columns {
     grid-template-columns: 1fr;
@@ -400,12 +497,12 @@
     @apply border-b border-border-color py-3 px-3;
   }
 
-  .schema-columns__row:nth-child(even) {
-    background-color: #f5f5f5;
+  .schema-columns__row--even {
+    background-color: var(--ifm-color-emphasis-50, #f9fafb);
   }
 
-  [data-theme='dark'] .schema-columns__row:nth-child(even) {
-    background-color: #121212;
+  [data-theme='dark'] .schema-columns__row--even {
+    background-color: rgba(255, 255, 255, 0.03);
   }
 
   .schema-columns__cell {
@@ -413,8 +510,21 @@
     display: block;
   }
 
+  /* Mobile data-label pseudo-elements */
+  .schema-columns__cell[data-label]::before {
+    content: attr(data-label);
+    @apply block text-xs font-bold uppercase tracking-wider mb-0.5;
+    color: var(--font-color);
+    opacity: 0.5;
+  }
+
   .schema-columns__cell--name {
     @apply font-bold text-base;
+  }
+
+  /* Hide redundant label for column name (it's visually obvious) */
+  .schema-columns__cell--name[data-label]::before {
+    display: none;
   }
 
   .schema-columns__cell--tags {
@@ -422,7 +532,7 @@
   }
 
   .schema-columns__group-separator {
-    display: block;
+    display: flex;
   }
 
   .schema-group__relationships {

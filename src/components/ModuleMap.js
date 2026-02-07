@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import '../css/schema.css';
 
 const GROUP_COLORS = {
@@ -17,6 +17,18 @@ const GROUP_COLORS_DARK = {
   system: { fill: '#1f2937', stroke: '#6b7280', text: '#d1d5db' },
 };
 
+function useIsDarkMode() {
+  const [isDark, setIsDark] = useState(false);
+  useEffect(() => {
+    const check = () => setIsDark(document.documentElement.getAttribute('data-theme') === 'dark');
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => observer.disconnect();
+  }, []);
+  return isDark;
+}
+
 function StatusIndicator({ status, x, y }) {
   if (status === 'implemented') {
     return <circle cx={x} cy={y} r={4} fill="currentColor" />;
@@ -32,22 +44,11 @@ function StatusIndicator({ status, x, y }) {
   return <circle cx={x} cy={y} r={4} fill="none" stroke="currentColor" strokeWidth={1.5} />;
 }
 
-function ModuleBox({ module, x, y, width = 130, height = 70 }) {
-  const colors = GROUP_COLORS[module.group] || GROUP_COLORS.system;
-
+function ModuleBox({ module, x, y, width = 130, height = 70, colors }) {
   return (
     <a href={module.href} className="module-map__box" style={{ textDecoration: 'none' }}>
       <g transform={`translate(${x}, ${y})`}>
-        <rect
-          width={width}
-          height={height}
-          rx={6}
-          ry={6}
-          fill={colors.fill}
-          stroke={colors.stroke}
-          strokeWidth={1.5}
-          className="module-map__box-rect"
-        />
+        <rect width={width} height={height} rx={6} ry={6} fill={colors.fill} stroke={colors.stroke} strokeWidth={1.5} />
         <text x={width / 2} y={18} textAnchor="middle" fontSize={12} fontWeight="bold" fill={colors.text} fontFamily="var(--ifm-font-family-base)">
           {module.name}
         </text>
@@ -64,60 +65,42 @@ function ModuleBox({ module, x, y, width = 130, height = 70 }) {
 }
 
 export default function ModuleMap({ modules, relationships, height }) {
+  const isDark = useIsDarkMode();
+  const palette = isDark ? GROUP_COLORS_DARK : GROUP_COLORS;
+
   const viewBoxWidth = 820;
   const viewBoxHeight = height || 420;
 
-  // Position modules in a flow layout
-  // Row 1: Screening, Dam Info, Hazards
-  // Row 2: FM Screening, PFM modules (grouped)
-  // Row 3: Consequences, Risk Analysis
-  // Row 4: System modules
-
   const getModuleById = (id) => modules.find((m) => m.id === id);
+  const getColors = (group) => palette[group] || palette.system;
 
-  // Calculate positions based on groups
   const coreModules = modules.filter((m) => m.group === 'core');
   const hazardModules = modules.filter((m) => m.group === 'hazards');
   const responseModules = modules.filter((m) => m.group === 'response');
   const riskModules = modules.filter((m) => m.group === 'risk');
   const systemModules = modules.filter((m) => m.group === 'system');
 
-  // Layout positions
+  // Layout
   const positions = {};
   let xOffset;
 
-  // Row 1: Core modules (Screening, Dam Info)
   xOffset = 20;
-  coreModules.forEach((m, i) => {
-    positions[m.id] = { x: xOffset + i * 150, y: 20 };
-  });
+  coreModules.forEach((m, i) => { positions[m.id] = { x: xOffset + i * 150, y: 20 }; });
 
-  // Row 1 continued: Hazard modules
   xOffset = 320;
-  hazardModules.forEach((m, i) => {
-    positions[m.id] = { x: xOffset + i * 150, y: 20 };
-  });
+  hazardModules.forEach((m, i) => { positions[m.id] = { x: xOffset + i * 150, y: 20 }; });
 
-  // Row 2: Response modules (PFMs)
   const pfmBoxWidth = 100;
   const pfmGap = 10;
   const responseGroupX = 20;
   const responseGroupY = 130;
-  responseModules.forEach((m, i) => {
-    positions[m.id] = { x: responseGroupX + 15 + i * (pfmBoxWidth + pfmGap), y: responseGroupY + 30 };
-  });
+  responseModules.forEach((m, i) => { positions[m.id] = { x: responseGroupX + 15 + i * (pfmBoxWidth + pfmGap), y: responseGroupY + 30 }; });
 
-  // Row 3: Risk modules
   xOffset = 20;
-  riskModules.forEach((m, i) => {
-    positions[m.id] = { x: xOffset + i * 150, y: 270 };
-  });
+  riskModules.forEach((m, i) => { positions[m.id] = { x: xOffset + i * 150, y: 270 }; });
 
-  // Row 4: System modules
   xOffset = 20;
-  systemModules.forEach((m, i) => {
-    positions[m.id] = { x: xOffset + i * 150, y: 340 };
-  });
+  systemModules.forEach((m, i) => { positions[m.id] = { x: xOffset + i * 150, y: 340 }; });
 
   return (
     <div className="module-map">
@@ -130,56 +113,32 @@ export default function ModuleMap({ modules, relationships, height }) {
 
         {/* Response group background */}
         {responseModules.length > 0 && (
-          <rect
-            x={responseGroupX}
-            y={responseGroupY}
-            width={responseModules.length * (pfmBoxWidth + pfmGap) + 20}
-            height={85}
-            rx={8}
-            ry={8}
-            fill="none"
-            stroke={GROUP_COLORS.response.stroke}
-            strokeWidth={1}
-            strokeDasharray="4 2"
-            opacity={0.5}
-            className="module-map__group-bg"
-          />
-        )}
-        {responseModules.length > 0 && (
-          <text
-            x={responseGroupX + 10}
-            y={responseGroupY + 14}
-            fontSize={10}
-            fontWeight="bold"
-            fill={GROUP_COLORS.response.text}
-            fontFamily="var(--ifm-font-family-base)"
-            opacity={0.7}
-          >
-            Failure Mode Response Modules
-          </text>
+          <>
+            <rect
+              x={responseGroupX} y={responseGroupY}
+              width={responseModules.length * (pfmBoxWidth + pfmGap) + 20} height={85}
+              rx={8} ry={8} fill="none"
+              stroke={getColors('response').stroke} strokeWidth={1} strokeDasharray="4 2" opacity={0.5}
+            />
+            <text x={responseGroupX + 10} y={responseGroupY + 14} fontSize={10} fontWeight="bold" fill={getColors('response').text} fontFamily="var(--ifm-font-family-base)" opacity={0.7}>
+              Failure Mode Response Modules
+            </text>
+          </>
         )}
 
         {/* System group background */}
         {systemModules.length > 0 && (
-          <rect
-            x={10}
-            y={330}
-            width={systemModules.length * 150 + 20}
-            height={80}
-            rx={8}
-            ry={8}
-            fill="none"
-            stroke={GROUP_COLORS.system.stroke}
-            strokeWidth={1}
-            strokeDasharray="4 2"
-            opacity={0.5}
-            className="module-map__group-bg"
-          />
-        )}
-        {systemModules.length > 0 && (
-          <text x={20} y={344} fontSize={10} fontWeight="bold" fill={GROUP_COLORS.system.text} fontFamily="var(--ifm-font-family-base)" opacity={0.7}>
-            System &amp; Administration
-          </text>
+          <>
+            <rect
+              x={10} y={330}
+              width={systemModules.length * 150 + 20} height={80}
+              rx={8} ry={8} fill="none"
+              stroke={getColors('system').stroke} strokeWidth={1} strokeDasharray="4 2" opacity={0.5}
+            />
+            <text x={20} y={344} fontSize={10} fontWeight="bold" fill={getColors('system').text} fontFamily="var(--ifm-font-family-base)" opacity={0.7}>
+              System &amp; Administration
+            </text>
+          </>
         )}
 
         {/* Relationship lines */}
@@ -212,40 +171,22 @@ export default function ModuleMap({ modules, relationships, height }) {
           })}
 
         {/* Module boxes */}
-        {coreModules.map((m) => (
-          <ModuleBox key={m.id} module={m} x={positions[m.id].x} y={positions[m.id].y} />
-        ))}
-        {hazardModules.map((m) => (
-          <ModuleBox key={m.id} module={m} x={positions[m.id].x} y={positions[m.id].y} />
-        ))}
-        {responseModules.map((m) => (
-          <ModuleBox key={m.id} module={m} x={positions[m.id].x} y={positions[m.id].y} width={pfmBoxWidth} height={55} />
-        ))}
-        {riskModules.map((m) => (
-          <ModuleBox key={m.id} module={m} x={positions[m.id].x} y={positions[m.id].y} />
-        ))}
-        {systemModules.map((m) => (
-          <ModuleBox key={m.id} module={m} x={positions[m.id].x} y={positions[m.id].y} />
-        ))}
+        {coreModules.map((m) => <ModuleBox key={m.id} module={m} x={positions[m.id].x} y={positions[m.id].y} colors={getColors(m.group)} />)}
+        {hazardModules.map((m) => <ModuleBox key={m.id} module={m} x={positions[m.id].x} y={positions[m.id].y} colors={getColors(m.group)} />)}
+        {responseModules.map((m) => <ModuleBox key={m.id} module={m} x={positions[m.id].x} y={positions[m.id].y} width={pfmBoxWidth} height={55} colors={getColors(m.group)} />)}
+        {riskModules.map((m) => <ModuleBox key={m.id} module={m} x={positions[m.id].x} y={positions[m.id].y} colors={getColors(m.group)} />)}
+        {systemModules.map((m) => <ModuleBox key={m.id} module={m} x={positions[m.id].x} y={positions[m.id].y} colors={getColors(m.group)} />)}
 
         {/* Legend */}
         <g transform={`translate(${viewBoxWidth - 180}, ${viewBoxHeight - 60})`}>
-          <text x={0} y={0} fontSize={10} fontWeight="bold" fill="var(--font-color)" fontFamily="var(--ifm-font-family-base)">
-            Status Legend
-          </text>
+          <text x={0} y={0} fontSize={10} fontWeight="bold" fill="var(--font-color)" fontFamily="var(--ifm-font-family-base)">Status Legend</text>
           <circle cx={8} cy={14} r={4} fill="var(--font-color)" />
-          <text x={18} y={18} fontSize={9} fill="var(--font-color)" fontFamily="var(--ifm-font-family-base)">
-            Implemented
-          </text>
+          <text x={18} y={18} fontSize={9} fill="var(--font-color)" fontFamily="var(--ifm-font-family-base)">Implemented</text>
           <circle cx={8} cy={30} r={4} fill="none" stroke="var(--font-color)" strokeWidth={1.5} />
-          <path d={`M 8 26 A 4 4 0 0 1 8 34 Z`} fill="var(--font-color)" />
-          <text x={18} y={34} fontSize={9} fill="var(--font-color)" fontFamily="var(--ifm-font-family-base)">
-            Partial
-          </text>
+          <path d="M 8 26 A 4 4 0 0 1 8 34 Z" fill="var(--font-color)" />
+          <text x={18} y={34} fontSize={9} fill="var(--font-color)" fontFamily="var(--ifm-font-family-base)">Partial</text>
           <circle cx={8} cy={46} r={4} fill="none" stroke="var(--font-color)" strokeWidth={1.5} />
-          <text x={18} y={50} fontSize={9} fill="var(--font-color)" fontFamily="var(--ifm-font-family-base)">
-            Planned
-          </text>
+          <text x={18} y={50} fontSize={9} fill="var(--font-color)" fontFamily="var(--ifm-font-family-base)">Planned</text>
         </g>
       </svg>
     </div>
