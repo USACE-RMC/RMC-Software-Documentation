@@ -1,8 +1,7 @@
-import React from "react";
 import "../css/custom.css";
 import "../css/tables.css";
 
-const TableVerticalNoRef = ({ headers = [], columns = [], fullWidth = true, alt, colWidths, colAlign, widthMode = "full" }) => {
+const TableVerticalNoRef = ({ headers = [], columns = [], fullWidth = true, alt, colWidths, colAlign, widthMode = "full", footnotes }) => {
   const renderHTML = (content) => ({ __html: content });
 
   const colCount = columns.length ?? 0;
@@ -106,6 +105,25 @@ const TableVerticalNoRef = ({ headers = [], columns = [], fullWidth = true, alt,
           ))}
         </tbody>
       </table>
+
+      {/* Footnotes block (only if provided and non-empty) */}
+        {Array.isArray(footnotes) && footnotes.length > 0 && (
+          <div className="mt-2 leading-snug" style={{ maxWidth: '100%' }}>
+            <ol className="m-0 list-none space-y-1 !pl-[4px]">
+              {footnotes.map((note, idx) => (
+                <li key={idx} className="flex gap-2">
+                  <span className="min-w-0 break-words font-usace text-footnote italic">
+                    {typeof note === 'string' ? (
+                      <span dangerouslySetInnerHTML={renderHTML(note)} />
+                    ) : (
+                      note
+                    )}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
     </div>
   );
 };
