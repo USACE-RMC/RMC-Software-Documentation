@@ -409,7 +409,7 @@ function generateDocumentationGuideSidebar() {
 /* --- Custom Logic: Software Development Sidebar --- */
 
 function generateSoftwareDevelopment() {
-  const guideDir = path.join(DOCS_DIR, '00-software-development');
+  const guideDir = path.join(DOCS_DIR, 'dev/software-development');
   if (!fs.existsSync(guideDir)) return null;
 
   const introId = '00-introduction';
@@ -452,7 +452,7 @@ function generateSoftwareDevelopment() {
     if (!files.includes(`${id}.mdx`)) return null;
     return {
       type: 'doc',
-      id: `software-development/${id.replace(/^\d+-/, '')}`,
+      id: `dev/software-development/${id.replace(/^\d+-/, '')}`,
       label: getLabel(id),
     };
   }
