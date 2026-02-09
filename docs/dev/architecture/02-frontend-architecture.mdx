@@ -15,10 +15,15 @@ This guide defines the standard frontend architecture for RMC web applications u
 
 | Technology | Version | Purpose |
 |------------|---------|---------|
-| React | 18+ | Component-based UI framework |
-| Vite | 5+ | Build tool and development server |
+| React | latest | Component-based UI framework |
+| Vite | latest | Build tool and development server |
 | JavaScript | ES2022+ | Programming language (not TypeScript) |
-| Tailwind CSS | 3+ | Utility-first CSS framework |
+| Tailwind CSS | latest | Utility-first CSS framework |
+| React Router | latest | Client-side routing |
+| USACE Groundwork | latest | USACE design system components |
+| Chart.js | latest | Charts and data visualization |
+| Lucide React | latest | Icon library |
+| KaTeX | latest | Mathematical notation rendering |
 
 **Note:** RMC web applications use JavaScript, not TypeScript. This is an intentional choice to reduce complexity and build times.
 
@@ -78,41 +83,75 @@ Hooks are special functions that allow components to "hook into" React features.
 ```
 frontend/
 ├── src/
-│   ├── api/                         # Layer 5: HTTP utilities and API modules
-│   │   ├── apiFetch.js              # Low-level HTTP wrapper
-│   │   └── toolboxes/               # Domain-specific API modules
-│   │       └── {suite}/
-│   │           └── {feature}.js     # e.g., schmertmann.js
+│   ├── app/                         # Application entry point and root setup
+│   │   ├── main.jsx                 # React DOM mount
+│   │   ├── router.jsx               # React Router configuration
+│   │   └── index.css                # Global styles + Tailwind
+│   │
+│   ├── api/                         # HTTP utilities and API modules
+│   │   ├── common/
+│   │   │   └── apiFetch.js          # Low-level HTTP wrapper (get, post, put, del)
+│   │   ├── auth/                    # Auth API calls
+│   │   ├── dashboard/               # Dashboard API calls (if applicable)
+│   │   └── {domain}/                # Domain-specific API modules
+│   │       └── {feature}Api.js      # e.g., pfm01Api.js, schmertmannApi.js
 │   │
 │   ├── components/                  # Reusable UI components
-│   │   ├── shared/                  # Generic components (Button, Input, etc.)
-│   │   └── domain/                  # Domain-specific shared components
+│   │   ├── common/                  # Generic, shared across all features
+│   │   │   ├── ui/                  # Button, Input, Select, Panel
+│   │   │   ├── layout/              # PageContainer, NavBar
+│   │   │   ├── feedback/            # MessagesBanner, Toast
+│   │   │   ├── table/               # Data tables with inline editing
+│   │   │   └── chart/               # Chart.js wrappers
+│   │   ├── auth/                    # Auth-specific components
+│   │   ├── dashboard/               # Dashboard components (if applicable)
+│   │   └── {domain}/                # Domain-specific components
+│   │
+│   ├── pages/                       # Page components (Layer 1)
+│   │   ├── auth/                    # Login, password change
+│   │   ├── dashboard/               # Dashboard pages (if applicable)
+│   │   └── {domain}/
+│   │       └── {feature}/
+│   │           ├── FeaturePage.jsx              # Page component
+│   │           ├── hooks/
+│   │           │   ├── useFeatureController.js  # Controller hook (Layer 2)
+│   │           │   └── useFeatureData.js        # Data hook (Layer 3)
+│   │           ├── sections/                    # Page sub-sections
+│   │           └── modals/                      # Feature-specific modals
 │   │
 │   ├── hooks/                       # Shared custom hooks
-│   │   ├── useDebounce.js
-│   │   └── useLocalStorage.js
+│   │   └── common/
+│   │       ├── useDebounce.js
+│   │       └── useLocalStorage.js
 │   │
-│   ├── pages/                       # Layer 1: Page components
-│   │   └── {suite}/
-│   │       └── {feature}/
-│   │           ├── FeaturePage.jsx          # Page component
-│   │           ├── hooks/
-│   │           │   ├── useFeatureController.js  # Layer 2: Controller
-│   │           │   ├── useFeature.js            # Layer 3: Data hook
-│   │           │   └── useFeatureToggle.js      # Small helper hooks
-│   │           └── utils/
+│   ├── contexts/                    # React Context providers
+│   │   ├── auth/
+│   │   │   └── AuthContext.jsx
+│   │   └── {domain}/                # Domain-specific contexts
 │   │
-│   ├── contexts/                    # React contexts for global state
-│   │   └── AuthContext.jsx
-│   │
-│   ├── App.jsx                      # Root component with routing
-│   └── main.jsx                     # Application entry point
+│   ├── data/                        # Static config, lookup tables, constants
+│   ├── utils/                       # Helper functions
+│   └── assets/                      # Fonts, images
 │
-├── public/                          # Static assets
 ├── package.json
 ├── vite.config.js
-└── tailwind.config.js
+└── jsconfig.json                    # Path alias definitions
 ```
+
+The `{domain}` folders are project-specific and will vary across applications (e.g., `toolboxes/` for RMC-Toolboxes, `screening/` for DST). The top-level folders (`api/`, `components/`, `pages/`, `hooks/`, `contexts/`, `data/`, `utils/`, `assets/`, `app/`) are universal across all RMC web apps.
+
+### Path Aliases
+
+All RMC web applications configure Vite path aliases (in `vite.config.js`) and editor aliases (in `jsconfig.json`) for clean imports:
+
+| Alias | Maps To | Example Import |
+|-------|---------|----------------|
+| `@api/*` | `src/api/` | `import { get } from '@api/common/apiFetch'` |
+| `@components/*` | `src/components/` | `import MessagesBanner from '@components/common/feedback/MessagesBanner'` |
+| `@pages/*` | `src/pages/` | `import Pfm01Page from '@pages/screening/pfm-01/Pfm01Page'` |
+| `@hooks/*` | `src/hooks/` | `import { useDebounce } from '@hooks/common/useDebounce'` |
+| `@contexts/*` | `src/contexts/` | `import { useAuth } from '@contexts/auth/AuthContext'` |
+| `@data/*` | `src/data/` | `import { constants } from '@data/common/constants'` |
 
 ---
 
@@ -186,7 +225,7 @@ RMC frontend applications use a five-layer architecture that separates concerns 
 import { useSettlementController } from './hooks/useSettlementController';
 import { GeometrySection } from './sections/GeometrySection';
 import { ResultsSection } from './sections/ResultsSection';
-import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { LoadingSpinner } from '@components/common/ui/LoadingSpinner';
 
 export function SettlementPage({ analysisId }) {
   // Get view model and actions from the controller
@@ -616,7 +655,7 @@ This separation means:
 
 ## Shared Components
 
-Shared components live in `src/components/shared/` and provide consistent UI elements across the application.
+Shared components live in `src/components/common/` and provide consistent UI elements across the application.
 
 ### Component Guidelines
 
@@ -631,7 +670,7 @@ Shared components live in `src/components/shared/` and provide consistent UI ele
 ### Example: Input Component
 
 ```jsx
-// components/shared/Input.jsx
+// components/common/ui/Input.jsx
 
 export function Input({
   label,
@@ -673,6 +712,33 @@ export function Input({
 
 ---
 
+## Context Providers (Optional Layer)
+
+For pages with deeply nested component trees, a Context Provider can be inserted between the Page and Controller layers to distribute `{ vm, actions }` without prop drilling:
+
+```jsx
+// pages/{feature}/FeatureContext.jsx
+
+const FeatureContext = createContext(null);
+
+export function FeatureProvider({ id, children }) {
+  const { vm, actions } = useFeatureController(id);
+  return (
+    <FeatureContext.Provider value={{ vm, actions }}>
+      {children}
+    </FeatureContext.Provider>
+  );
+}
+
+export function useFeatureContext() {
+  return useContext(FeatureContext);
+}
+```
+
+This is optional—only add a Context when a page has many nested components that all need access to the same `vm` and `actions`. For simple pages, passing props directly from the Page is sufficient.
+
+---
+
 ## State Management
 
 RMC applications use React's built-in state management rather than external libraries like Redux.
@@ -682,9 +748,21 @@ RMC applications use React's built-in state management rather than external libr
 | Pattern | When to Use | Example |
 |---------|-------------|---------|
 | `useState` | Local component state | Form inputs, toggle states |
-| `useContext` | State shared across component tree | Authentication, theme |
+| `useContext` | State shared across component tree | Authentication, theme, feature vm/actions |
 | Custom hooks | Reusable stateful logic | Data fetching, debouncing |
 | URL state | State that should persist across refresh | Analysis ID, active tab |
+| React Query | Many similar CRUD/list data-fetching patterns | Dashboard lists, paginated queries |
+
+### React Query vs. Manual Hooks
+
+Both approaches are valid for server state management. Use the right tool for the use case:
+
+| Approach | When to Use |
+|----------|-------------|
+| **React Query (TanStack Query)** | CRUD-heavy pages with many similar data-fetching patterns, list pages, paginated queries, polling. Provides automatic caching, deduplication, and background refetching. |
+| **Manual hooks** | Complex auto-save flows with debouncing, hash-based change detection, phase tracking, and coordinated save-then-calculate sequences. When the data flow is bespoke and tightly controlled. |
+
+Projects may use both approaches—React Query for dashboard and list pages, manual hooks for analysis auto-save patterns.
 
 ---
 

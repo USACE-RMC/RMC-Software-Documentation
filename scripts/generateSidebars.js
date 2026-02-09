@@ -409,8 +409,11 @@ function generateDocumentationGuideSidebar() {
 /* --- Custom Logic: Software Development Sidebar --- */
 
 function generateSoftwareDevelopment() {
-  const guideDir = path.join(DOCS_DIR, 'dev/software-development');
-  if (!fs.existsSync(guideDir)) return null;
+  const githubDir = path.join(DOCS_DIR, 'dev/github-workflows');
+  const architectureDir = path.join(DOCS_DIR, 'dev/architecture');
+  const aiDevDir = path.join(DOCS_DIR, 'dev/ai-development');
+
+  if (!fs.existsSync(githubDir)) return null;
 
   const introId = '00-introduction';
   const gitHubWorkflowIds = [
@@ -425,40 +428,46 @@ function generateSoftwareDevelopment() {
     '09-project-specific-workflows',
     '10-conflict-resolution',
     '11-release-management',
+    '12-quick-reference',
+    '13-common-scenarios',
   ];
-  const aiGuidanceIds = ['12-ai-assisted-development', '13-claude-md'];
-  const referenceIds = ['14-case-conventions-by-language', '15-quick-reference', '16-appendix-common-scenarios'];
-  const webAppArchitectureIds = [
-    '17-web-app-architecture',
-    '18-frontend-architecture',
-    '19-backend-architecture',
-    '20-calculation-libraries',
-    '21-package-management',
-    '22-aspnet-quick-reference',
-    '23-appendix-flask-developers',
+  const aiGuidanceIds = ['01-ai-assisted-development', '02-claude-md'];
+  const architectureIds = [
+    '01-web-app-architecture',
+    '02-frontend-architecture',
+    '03-backend-architecture',
+    '04-calculation-libraries',
+    '05-package-management',
+    '06-case-conventions-by-language',
+    '07-aspnet-quick-reference',
+    '08-flask-to-aspnet-mapping',
   ];
 
-  const files = fs
-    .readdirSync(guideDir)
-    .filter((f) => f.endsWith('.mdx'))
-    .sort();
-
-  function getLabel(fileBase) {
-    const fullPath = path.join(guideDir, `${fileBase}.mdx`);
-    return getFrontmatterTitle(fullPath) || titleCase(fileBase.replace(/^\d+-/, ''));
+  function getFilesInDir(dir) {
+    if (!fs.existsSync(dir)) return [];
+    return fs
+      .readdirSync(dir)
+      .filter((f) => f.endsWith('.mdx'))
+      .sort();
   }
 
-  function buildDocItem(id) {
+  const githubFiles = getFilesInDir(githubDir);
+  const architectureFiles = getFilesInDir(architectureDir);
+  const aiDevFiles = getFilesInDir(aiDevDir);
+
+  function buildDocItem(dir, docPrefix, files, id) {
     if (!files.includes(`${id}.mdx`)) return null;
+    const fullPath = path.join(dir, `${id}.mdx`);
+    const label = getFrontmatterTitle(fullPath) || titleCase(id.replace(/^\d+-/, ''));
     return {
       type: 'doc',
-      id: `dev/software-development/${id.replace(/^\d+-/, '')}`,
-      label: getLabel(id),
+      id: `${docPrefix}/${id.replace(/^\d+-/, '')}`,
+      label,
     };
   }
 
-  function buildCategory(label, ids, collapsed) {
-    const items = ids.map(buildDocItem).filter(Boolean);
+  function buildCategory(label, dir, docPrefix, files, ids, collapsed) {
+    const items = ids.map((id) => buildDocItem(dir, docPrefix, files, id)).filter(Boolean);
     if (!items.length) return null;
     return {
       type: 'category',
@@ -470,20 +479,18 @@ function generateSoftwareDevelopment() {
   }
 
   const items = [];
-  const introItem = buildDocItem(introId);
+
+  const introItem = buildDocItem(githubDir, 'dev/github-workflows', githubFiles, introId);
   if (introItem) items.push(introItem);
 
-  const coreCategory = buildCategory('GitHub Workflow and Best Practices', gitHubWorkflowIds, false);
+  const coreCategory = buildCategory('GitHub Workflow and Best Practices', githubDir, 'dev/github-workflows', githubFiles, gitHubWorkflowIds, false);
   if (coreCategory) items.push(coreCategory);
 
-  const aiCategory = buildCategory('AI Assistant Guidance', aiGuidanceIds, true);
+  const aiCategory = buildCategory('AI Assistant Guidance', aiDevDir, 'dev/ai-development', aiDevFiles, aiGuidanceIds, true);
   if (aiCategory) items.push(aiCategory);
 
-  const referenceCategory = buildCategory('Standards & References', referenceIds, true);
-  if (referenceCategory) items.push(referenceCategory);
-
-  const webAppCategory = buildCategory('Web Application Architecture', webAppArchitectureIds, true);
-  if (webAppCategory) items.push(webAppCategory);
+  const archCategory = buildCategory('Web Application Architecture', architectureDir, 'dev/architecture', architectureFiles, architectureIds, true);
+  if (archCategory) items.push(archCategory);
 
   return items;
 }

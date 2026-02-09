@@ -9,7 +9,7 @@ const devData = [
   {
     iconLight: 'img/Toolbox.png',
     iconDark: 'img/ToolboxDarkMode.png',
-    doc_location: 'docs/dev/software-development/introduction',
+    doc_location: 'docs/dev/github-workflows/introduction',
     doc_name: 'Software Development SOP',
     active: true,
     versioned: false,
@@ -17,7 +17,7 @@ const devData = [
   {
     iconLight: 'img/WebApp.png',
     iconDark: 'img/WebAppDarkMode.png',
-    doc_location: 'dev/dst-database-schema',
+    doc_location: 'dev/dst/database-schema',
     doc_name: 'DST Database Schema Reference',
     active: true,
     versioned: true,

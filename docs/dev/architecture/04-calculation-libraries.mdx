@@ -102,16 +102,90 @@ System-Response/
 
 Calculation libraries can be consumed in different ways depending on the application's needs. Each approach has its own advantages.
 
-### Option 1: Direct Library Reference (Recommended for Web Apps)
+### Option 1: HTTP API (Recommended for Web Apps)
 
-The web application references the calculation library directly. Calculations run in the same process as the web server—no network calls involved.
+The calculation library is wrapped in a lightweight HTTP API and runs as a separate service. The web application communicates with it via typed HTTP clients (see [Backend Architecture — Typed HTTP Clients](./03-backend-architecture.mdx#typed-http-clients)).
+
+```
+┌──────────────────────┐         ┌──────────────────────┐
+│ Web Application      │         │ Calculation Server   │
+│                      │  HTTP   │                      │
+│  ASP.NET Core API    │ ◄─────► │ ASP.NET Core API     │
+│  (Backend)           │  JSON   │        +             │
+│                      │         │ System-Response      │
+└──────────────────────┘         └──────────────────────┘
+     Typed HTTP Client               Separate process
+```
+
+**When to use:**
+
+- Web applications (ASP.NET Core backends) — this is the default
+- Multiple applications need centralized calculation service
+- Scaling calculations independently from web servers
+- Language interoperability (non-.NET clients)
+
+**Advantages:**
+
+- Resource isolation (calculations don't affect web server memory/CPU)
+- Independent deployment and versioning
+- Horizontal scaling (multiple calculation servers)
+- Language agnostic (any client that speaks HTTP)
+- Clean separation between web concerns and calculation concerns
+
+**The SystemResponse.API Project:**
+
+The `SystemResponse.API` folder in the System-Response repository wraps the calculation library in an ASP.NET Core web API.
+
+```csharp
+// Example API controller (in SystemResponse.API)
+[ApiController]
+[Route("api/bep-initiation/btcase1")]
+public class BTCase1Controller : ControllerBase
+{
+    [HttpPost("calculate")]
+    public async Task<IActionResult> Calculate([FromBody] BTCase1Config config)
+    {
+        var model = new BTCase1Model(config);
+        var result = await model.RunAsync();
+        return Ok(result);
+    }
+}
+```
+
+**Client usage (in the web application backend):**
+
+```csharp
+// Infrastructure/Clients/CalculationClient.cs
+// Uses typed HTTP client pattern (see Backend Architecture)
+public class CalculationClient : ICalculationClient
+{
+    private readonly HttpClient _http;
+
+    public CalculationClient(HttpClient http) => _http = http;
+
+    public async Task<BTCase1Result> RunBTCase1Async(BTCase1Config config)
+    {
+        var response = await _http.PostAsJsonAsync(
+            "/api/bep-initiation/btcase1/calculate", config);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<BTCase1Result>()
+            ?? throw new InvalidOperationException("Calculation returned null");
+    }
+}
+```
+
+---
+
+### Option 2: Direct Library Reference (For Desktop and CLI)
+
+The application references the calculation library directly. Calculations run in the same process—no network calls involved.
 
 ```
 ┌─────────────────────────────────────────┐
-│ Web Application Process                 │
+│ Application Process                     │
 │                                         │
 │  ┌─────────────────────────────────┐   │
-│  │ ASP.NET Core Backend            │   │
+│  │ Desktop / CLI Application       │   │
 │  │                                 │   │
 │  │  var model = new BTCase1Model();│   │  ← Direct C# method call
 │  │  var result = model.RunAsync(); │   │    No network, no HTTP
@@ -122,7 +196,6 @@ The web application references the calculation library directly. Calculations ru
 │  │ System-Response Library         │   │
 │  │                                 │   │
 │  │  Pure calculation logic         │   │
-│  │  No HTTP knowledge              │   │
 │  └─────────────────────────────────┘   │
 │                                         │
 └─────────────────────────────────────────┘
@@ -130,9 +203,9 @@ The web application references the calculation library directly. Calculations ru
 
 **When to use:**
 
-- Web applications (ASP.NET Core backends)
-- Desktop applications
-- Any application where calculations run on the same machine
+- Desktop applications (direct reference)
+- Command-line batch processing tools
+- Calculations that must run on the same machine with no network
 
 **Advantages:**
 
@@ -186,85 +259,23 @@ Console.WriteLine($"Mean seepage: {result.MeanSeepage}");
 
 ---
 
-### Option 2: HTTP API (For Separate Deployments)
-
-The calculation library is wrapped in a web API and runs as a separate service. Clients communicate via HTTP requests.
-
-```
-┌──────────────────────┐         ┌──────────────────────┐
-│ Client Application   │         │ Calculation Server   │
-│                      │  HTTP   │                      │
-│ (Web app, mobile,    │ ◄─────► │ ASP.NET Core API     │
-│  desktop, script)    │  JSON   │        +             │
-│                      │         │ System-Response      │
-└──────────────────────┘         └──────────────────────┘
-     Network call                    Separate process
-```
-
-**When to use:**
-
-- Calculations need to run on different hardware (GPU servers, HPC clusters)
-- Multiple applications need centralized calculation service
-- Language interoperability (non-.NET clients)
-- Scaling calculations independently from web servers
-
-**Advantages:**
-
-- Horizontal scaling (multiple calculation servers)
-- Language agnostic (any client that speaks HTTP)
-- Resource isolation (calculations don't affect web server)
-- Independent deployment
-
-**The SystemResponse.API Project:**
-
-The `SystemResponse.API` folder in the System-Response repository provides a reference implementation of this pattern. It wraps the calculation library in an ASP.NET Core web API.
-
-```csharp
-// Example API controller (in SystemResponse.API)
-[ApiController]
-[Route("api/bep-initiation/btcase1")]
-public class BTCase1Controller : ControllerBase
-{
-    [HttpPost("calculate")]
-    public async Task<IActionResult> Calculate([FromBody] BTCase1Config config)
-    {
-        var model = new BTCase1Model(config);
-        var result = await model.RunAsync();
-        return Ok(result);
-    }
-}
-```
-
-**Client usage:**
-
-```csharp
-// HTTP client calling the API
-var response = await httpClient.PostAsJsonAsync(
-    "http://calc-server/api/bep-initiation/btcase1/calculate",
-    config
-);
-var result = await response.Content.ReadFromJsonAsync<BTCase1Result>();
-```
-
----
-
 ### Choosing the Right Approach
 
-| Factor          | Direct Library      | HTTP API                |
-| --------------- | ------------------- | ----------------------- |
-| **Latency**     | Microseconds        | Milliseconds (network)  |
-| **Type safety** | Full (compile-time) | Partial (runtime)       |
-| **Deployment**  | Single process      | Multiple services       |
-| **Scaling**     | Scale whole app     | Scale calculations only |
-| **Debugging**   | Single debugger     | Distributed tracing     |
-| **Language**    | .NET only           | Any language            |
+| Factor          | HTTP API (Web Apps) | Direct Library (Desktop/CLI) |
+| --------------- | ------------------- | ---------------------------- |
+| **Latency**     | Milliseconds (network) | Microseconds              |
+| **Type safety** | Partial (runtime)   | Full (compile-time)          |
+| **Deployment**  | Multiple services   | Single process               |
+| **Scaling**     | Scale calculations independently | Scale whole app  |
+| **Debugging**   | Distributed tracing | Single debugger              |
+| **Isolation**   | Full resource isolation | Shared process           |
 
-**RMC web applications typically use direct library references** because:
+**RMC web applications use the HTTP API pattern** because:
 
-- Calculations are fast enough to run inline
-- Type safety prevents integration bugs
-- Single deployment simplifies operations
-- No need for separate scaling
+- Resource isolation keeps calculation workloads from affecting web server responsiveness
+- Independent deployment allows updating calculations without redeploying the web app
+- The typed HTTP client pattern provides a clean integration boundary
+- Calculations can be scaled independently as demand grows
 
 ---
 

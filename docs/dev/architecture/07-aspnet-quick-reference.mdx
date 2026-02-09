@@ -48,7 +48,7 @@ This page provides quick-reference tables and code snippets for common ASP.NET C
       '[AllowAnonymous] public Login()',
       'Create([FromBody] Dto dto)',
       'List([FromQuery] int page)',
-      '[HttpGet("{id}")] Get(int id)',
+      '[HttpGet("{id}")] Get(Guid id)',
       '[Required] public string Name',
       '[MaxLength(255)] public string',
     ],
@@ -176,9 +176,9 @@ public class AnalysesController : ControllerBase
         return Ok(items);
     }
 
-    // GET /api/analyses/5
+    // GET /api/analyses/{id}
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(Guid id)
     {
         var item = await _db.Analyses.FindAsync(id);
         if (item == null) return NotFound();
@@ -200,9 +200,9 @@ public class AnalysesController : ControllerBase
         return Created($"/api/analyses/{analysis.Id}", analysis);
     }
 
-    // PUT /api/analyses/5
+    // PUT /api/analyses/{id}
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] AnalysisDto dto)
+    public async Task<IActionResult> Update(Guid id, [FromBody] AnalysisDto dto)
     {
         var analysis = await _db.Analyses.FindAsync(id);
         if (analysis == null) return NotFound();
@@ -215,9 +215,9 @@ public class AnalysesController : ControllerBase
         return Ok(analysis);
     }
 
-    // DELETE /api/analyses/5
+    // DELETE /api/analyses/{id}
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         var analysis = await _db.Analyses.FindAsync(id);
         if (analysis == null) return NotFound();
@@ -238,7 +238,7 @@ public class AnalysesController : ControllerBase
 
 ```csharp
 [HttpPost("calculate/{analysisId}")]
-public async Task<IActionResult> Calculate(int analysisId)
+public async Task<IActionResult> Calculate(Guid analysisId)
 {
     // 1. Get current user
     var userId = GetCurrentUserId();
@@ -250,21 +250,19 @@ public async Task<IActionResult> Calculate(int analysisId)
     // 3. Check authorization
     if (analysis.UserId != userId) return Forbid();
 
-    // 4. Run calculation (library call)
-    var config = MapToConfig(analysis.Parameters);
-    var model = new CalculationModel(config);
-    var result = await model.RunAsync();
+    // 4. Run calculation (via HTTP client or service)
+    var result = await _calculationService.RunAsync(analysisId, userId);
 
     // 5. Save results
-    analysis.Results = JsonSerializer.SerializeToDocument(result);
+    analysis.ResultData = JsonSerializer.SerializeToDocument(result.Data, JsonDefaults.CamelCase);
     analysis.UpdatedAt = DateTime.UtcNow;
     await _db.SaveChangesAsync();
 
     // 6. Return messaging contract response
-    return Ok(new CalculationResponse
+    return Ok(new ApiResponse<object>
     {
         Status = "success",
-        Results = result,
+        Data = result.Data,
         Warnings = result.Warnings,
         CanRun = true
     });
@@ -275,32 +273,44 @@ public async Task<IActionResult> Calculate(int analysisId)
 
 ## Entity Template
 
+Domain entities are **POCOs** (Plain Old CLR Objects) with no data annotations. Database mapping is configured separately via Fluent API (see [Backend Architecture — Entity Configuration](./03-backend-architecture.mdx#entity-configuration-fluent-api)).
+
 ```csharp
+// Domain/Entities/Analysis.cs
 public class Analysis
 {
-    public int Id { get; set; }
-
-    [Required]
-    [MaxLength(255)]
+    public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
-
-    [Required]
     public string UserId { get; set; } = string.Empty;
-
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-    // JSONB column for flexible parameters
-    [Column(TypeName = "jsonb")]
+    // JSONB columns for flexible data
     public JsonDocument? Parameters { get; set; }
-
-    // JSONB column for calculation results
-    [Column(TypeName = "jsonb")]
-    public JsonDocument? Results { get; set; }
+    public JsonDocument? ResultData { get; set; }
 
     // Navigation property
     public User User { get; set; } = null!;
+}
+```
+
+```csharp
+// Infrastructure/Data/Configurations/AnalysisConfiguration.cs
+public class AnalysisConfiguration : IEntityTypeConfiguration<Analysis>
+{
+    public void Configure(EntityTypeBuilder<Analysis> builder)
+    {
+        builder.ToTable("analyses");
+        builder.HasKey(a => a.Id);
+        builder.Property(a => a.Id).HasDefaultValueSql("gen_random_uuid()");
+        builder.Property(a => a.Name).IsRequired().HasMaxLength(255);
+        builder.Property(a => a.UserId).IsRequired();
+        builder.Property(a => a.Parameters).HasColumnType("jsonb");
+        builder.Property(a => a.ResultData).HasColumnType("jsonb");
+        builder.Property(a => a.CreatedAt).HasDefaultValueSql("NOW()");
+        builder.HasIndex(a => a.UserId);
+        builder.HasOne<User>().WithMany().HasForeignKey(a => a.UserId);
+    }
 }
 ```
 
@@ -319,7 +329,7 @@ public class AnalysisController : ControllerBase
     }
 
     [HttpPost("calculate/{id}")]
-    public async Task<IActionResult> Calculate(int id)
+    public async Task<IActionResult> Calculate(Guid id)
     {
         // Use structured logging with named parameters
         _logger.LogInformation(
@@ -377,14 +387,14 @@ public async Task<IActionResult> Get()
 
 ```csharp
 // WRONG: NullReferenceException if not found
-public async Task<IActionResult> Get(int id)
+public async Task<IActionResult> Get(Guid id)
 {
     var item = await _db.Analyses.FindAsync(id);
     return Ok(item.Name); // Crashes if item is null!
 }
 
 // CORRECT
-public async Task<IActionResult> Get(int id)
+public async Task<IActionResult> Get(Guid id)
 {
     var item = await _db.Analyses.FindAsync(id);
     if (item == null) return NotFound();
@@ -396,7 +406,7 @@ public async Task<IActionResult> Get(int id)
 
 ```csharp
 // WRONG: Changes not persisted
-public async Task<IActionResult> Update(int id, UpdateDto dto)
+public async Task<IActionResult> Update(Guid id, UpdateDto dto)
 {
     var item = await _db.Analyses.FindAsync(id);
     item.Name = dto.Name;
@@ -405,7 +415,7 @@ public async Task<IActionResult> Update(int id, UpdateDto dto)
 }
 
 // CORRECT
-public async Task<IActionResult> Update(int id, UpdateDto dto)
+public async Task<IActionResult> Update(Guid id, UpdateDto dto)
 {
     var item = await _db.Analyses.FindAsync(id);
     item.Name = dto.Name;
@@ -418,14 +428,14 @@ public async Task<IActionResult> Update(int id, UpdateDto dto)
 
 ```csharp
 // WRONG: Any user can access any analysis
-public async Task<IActionResult> Get(int id)
+public async Task<IActionResult> Get(Guid id)
 {
     var item = await _db.Analyses.FindAsync(id);
     return Ok(item);
 }
 
 // CORRECT: Check ownership
-public async Task<IActionResult> Get(int id)
+public async Task<IActionResult> Get(Guid id)
 {
     var item = await _db.Analyses.FindAsync(id);
     if (item == null) return NotFound();
@@ -440,28 +450,53 @@ public async Task<IActionResult> Get(int id)
 
 <TableVerticalNoRef
   alt="File locations"
-  headers={[[{ value: 'What' }, { value: 'Where' }]]}
+  headers={[[{ value: 'What' }, { value: 'Where' }, { value: 'Layer' }]]}
   columns={[
     [
       'API Controllers',
-      'Database Entities',
-      'DbContext',
-      'DTOs',
-      'Services',
       'Middleware',
-      'App Configuration',
       'App Entry Point',
+      'App Configuration',
+      'Services',
+      'Interfaces',
+      'DTOs (incl. ApiResponse)',
+      'Domain Entities',
+      'Domain Enums',
+      'DbContext',
+      'Entity Configurations',
+      'Repositories',
+      'Typed HTTP Clients',
     ],
     [
-      'backend/WebApp.API/Controllers/',
-      'backend/WebApp.API/Entities/',
-      'backend/WebApp.API/Entities/AppDbContext.cs',
-      'backend/WebApp.API/DTOs/',
-      'backend/WebApp.API/Services/',
-      'backend/WebApp.API/Middleware/',
-      'backend/WebApp.API/appsettings.json',
-      'backend/WebApp.API/Program.cs',
+      'backend/src/WebApp.API/Controllers/',
+      'backend/src/WebApp.API/Middleware/',
+      'backend/src/WebApp.API/Program.cs',
+      'backend/src/WebApp.API/appsettings.json',
+      'backend/src/WebApp.Application/Services/',
+      'backend/src/WebApp.Application/Interfaces/',
+      'backend/src/WebApp.Application/DTOs/',
+      'backend/src/WebApp.Domain/Entities/',
+      'backend/src/WebApp.Domain/Enums/',
+      'backend/src/WebApp.Infrastructure/Data/AppDbContext.cs',
+      'backend/src/WebApp.Infrastructure/Data/Configurations/',
+      'backend/src/WebApp.Infrastructure/Repositories/',
+      'backend/src/WebApp.Infrastructure/Clients/',
+    ],
+    [
+      'API',
+      'API',
+      'API',
+      'API',
+      'Application',
+      'Application',
+      'Application',
+      'Domain',
+      'Domain',
+      'Infrastructure',
+      'Infrastructure',
+      'Infrastructure',
+      'Infrastructure',
     ],
   ]}
-  colWidths={[25, 65]}
+  colWidths={[22, 52, 18]}
 />

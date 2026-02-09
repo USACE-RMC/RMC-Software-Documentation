@@ -41,14 +41,14 @@ RMC web applications follow a **three-tier architecture** that separates the use
 │ Technology: ASP.NET Core, Entity Framework Core, PostgreSQL │
 └─────────────────────┬───────────────────────────────────────┘
                       │
-                      │ Direct C# method calls
-                      │ No network involved - same process
+                      │ HTTP/JSON
+                      │ API calls to calculation service
                       ↓
 ┌─────────────────────────────────────────────────────────────┐
 │ CALCULATION LIBRARIES (.NET Libraries)                      │
 │                                                             │
 │ Pure engineering calculations with no knowledge of web/DB   │
-│ Imported like any other code library                        │
+│ Exposed via a lightweight HTTP API                          │
 │ Technology: .NET (latest), RMC.Numerics                     │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -156,7 +156,7 @@ The following diagram shows how data flows through the system when a user perfor
    └── Enters parameters and clicks "Run Analysis"
               │
               ↓
-2. Frontend ViewModel prepares request
+2. Frontend Controller hook prepares request
    └── Collects form values and transforms to API format
               │
               ↓
@@ -189,7 +189,7 @@ The following diagram shows how data flows through the system when a user perfor
               │
               ↓
 8. Frontend receives and displays results
-   ├── ViewModel transforms response for display
+   ├── Controller hook transforms response for display
    └── UI components render charts, tables, and messages
 ```
 
@@ -207,26 +207,42 @@ A web application repository contains both the frontend and backend code, plus d
 my-web-app/
 ├── frontend/                    # React application (runs in browser)
 │   ├── src/
+│   │   ├── app/                 # Entry point and root setup
+│   │   │   ├── main.jsx         # React DOM mount
+│   │   │   ├── router.jsx       # React Router configuration
+│   │   │   └── index.css        # Global styles + Tailwind
+│   │   ├── api/                 # HTTP utilities + API modules
+│   │   │   ├── common/
+│   │   │   │   └── apiFetch.js  # Low-level HTTP wrapper
+│   │   │   └── {domain}/        # Domain-specific API modules
 │   │   ├── components/          # Reusable UI components
-│   │   │   ├── shared/          # Generic components (Button, Input, etc.)
-│   │   │   └── domain/          # Domain-specific components
+│   │   │   ├── common/          # Generic (Button, Input, Table, etc.)
+│   │   │   │   ├── ui/
+│   │   │   │   ├── layout/
+│   │   │   │   ├── feedback/
+│   │   │   │   ├── table/
+│   │   │   │   └── chart/
+│   │   │   └── {domain}/        # Domain-specific components
 │   │   ├── pages/               # Page components organized by feature
-│   │   │   └── analysis/
-│   │   │       ├── AnalysisPage.jsx
+│   │   │   └── {feature}/
+│   │   │       ├── FeaturePage.jsx
 │   │   │       └── hooks/
-│   │   │           ├── useAnalysisVM.js    # ViewModel hook
-│   │   │           └── useAnalysisData.js  # Data fetching hook
+│   │   │           ├── useFeatureController.js  # Controller hook
+│   │   │           └── useFeatureData.js        # Data hook
 │   │   ├── hooks/               # Shared custom hooks
-│   │   └── api/                 # HTTP utilities
+│   │   │   └── common/
+│   │   ├── contexts/            # React Context providers
+│   │   ├── data/                # Static config, lookup tables
+│   │   ├── utils/               # Helper functions
+│   │   └── assets/              # Fonts, images
 │   └── package.json
 │
 ├── backend/                     # ASP.NET Core API (runs on server)
-│   └── WebApp.API/
-│       ├── Controllers/         # HTTP endpoint handlers
-│       ├── Services/            # Business logic layer
-│       ├── Entities/            # Database table definitions
-│       ├── DTOs/                # Data transfer objects
-│       └── Program.cs           # Application entry point
+│   └── src/
+│       ├── MyApp.Domain/        # Entities, enums, business rules
+│       ├── MyApp.Application/   # Services, interfaces, DTOs
+│       ├── MyApp.Infrastructure/# DbContext, repositories, HTTP clients
+│       └── MyApp.API/           # Controllers, middleware, Program.cs
 │
 ├── docker-compose.yml           # Container orchestration
 └── README.md
@@ -272,9 +288,10 @@ calc-library/
     [
       'Shared UI Components',
       'Page Components',
-      'ViewModel Hooks',
+      'Controller Hooks',
       'Data Hooks',
-      'HTTP Utilities',
+      'API Modules',
+      'HTTP Utility',
       'API Controllers',
       'Backend Services',
       'Database Entities',
@@ -282,15 +299,16 @@ calc-library/
       'Calculation Models',
     ],
     [
-      'frontend/src/components/shared/',
+      'frontend/src/components/common/',
       'frontend/src/pages/{feature}/',
-      'frontend/src/pages/{feature}/hooks/use*VM.js',
+      'frontend/src/pages/{feature}/hooks/use*Controller.js',
       'frontend/src/pages/{feature}/hooks/use*Data.js',
-      'frontend/src/api/',
-      'backend/WebApp.API/Controllers/',
-      'backend/WebApp.API/Services/',
-      'backend/WebApp.API/Entities/',
-      'backend/WebApp.API/DTOs/',
+      'frontend/src/api/{domain}/',
+      'frontend/src/api/common/apiFetch.js',
+      'backend/src/MyApp.API/Controllers/',
+      'backend/src/MyApp.Application/Services/',
+      'backend/src/MyApp.Domain/Entities/',
+      'backend/src/MyApp.Application/DTOs/',
       'CalcLibrary/Analyses/{AnalysisName}/',
     ],
     [
@@ -298,7 +316,8 @@ calc-library/
       'Full page layouts with feature-specific UI',
       'Transform API data into view-ready format',
       'Fetch and mutate data from the backend',
-      'Centralized HTTP request handling (apiFetch)',
+      'Domain-specific endpoint wrappers',
+      'Centralized HTTP request handling',
       'Handle HTTP requests, return responses',
       'Business logic, orchestrate calculations',
       'Database table definitions (EF Core)',
@@ -363,21 +382,21 @@ All API endpoints return responses following a standard structure. This consiste
   "inputs": ["List of missing required inputs"],
   "warnings": ["Non-fatal warning messages"],
   "errors": ["Fatal error messages"],
-  "can_run": true,
-  "results": {},
-  "results_cleared": false
+  "canRun": true,
+  "data": {},
+  "resultsCleared": false
 }
 ```
 
-| Field             | Purpose                                                        |
-| ----------------- | -------------------------------------------------------------- |
-| `status`          | Overall result: success, incomplete (missing inputs), or error |
-| `inputs`          | Missing required inputs preventing analysis                    |
-| `warnings`        | Issues that don't prevent analysis but should be noted         |
-| `errors`          | Fatal issues that prevented the analysis                       |
-| `can_run`         | Whether the analysis can execute with current inputs           |
-| `results`         | The calculation outputs (structure varies by analysis)         |
-| `results_cleared` | Whether previous results were invalidated                      |
+| Field            | Purpose                                                        |
+| ---------------- | -------------------------------------------------------------- |
+| `status`         | Overall result: success, incomplete (missing inputs), or error |
+| `inputs`         | Missing required inputs preventing analysis                    |
+| `warnings`       | Issues that don't prevent analysis but should be noted         |
+| `errors`         | Fatal issues that prevented the analysis                       |
+| `canRun`         | Whether the analysis can execute with current inputs           |
+| `data`           | The response payload (structure varies by endpoint)            |
+| `resultsCleared` | Whether previous results were invalidated                      |
 
 ---
 
@@ -400,7 +419,7 @@ All API endpoints return responses following a standard structure. This consiste
       'Containerization',
     ],
     [
-      'React 18+',
+      'React (latest)',
       'Tailwind CSS',
       'Vite',
       'ASP.NET Core (latest)',

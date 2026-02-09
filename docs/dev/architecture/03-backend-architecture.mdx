@@ -17,8 +17,8 @@ RMC applications use **Clean Architecture**, which provides the testability, mai
 
 | Technology            | Version | Purpose                        |
 | --------------------- | ------- | ------------------------------ |
-| ASP.NET Core          | 8.0     | Web API framework              |
-| Entity Framework Core | 8.0     | Object-relational mapper (ORM) |
+| ASP.NET Core          | Latest  | Web API framework              |
+| Entity Framework Core | Latest  | Object-relational mapper (ORM) |
 | PostgreSQL            | 15+     | Relational database            |
 | JWT Bearer            | -       | Authentication tokens          |
 | Serilog               | -       | Structured logging             |
@@ -37,13 +37,13 @@ A **class** serves as a blueprint for creating objects. An **object** represents
 // This is a class definition - a blueprint
 public class Analysis
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string Name { get; set; }
 }
 
 // This code creates an object (instance) from the blueprint
 var myAnalysis = new Analysis();
-myAnalysis.Id = 1;
+myAnalysis.Id = Guid.NewGuid();
 myAnalysis.Name = "Settlement Study";
 ```
 
@@ -55,7 +55,7 @@ myAnalysis.Name = "Settlement Study";
 public class Analysis
 {
     // External code can read and write this property
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     // The "= string.Empty" sets a default value (empty string)
     public string Name { get; set; } = string.Empty;
@@ -112,15 +112,15 @@ An **interface** defines a contract that specifies what methods a class must hav
 // By convention, interface names start with "I"
 public interface IAnalysisRepository
 {
-    Task<Analysis?> GetByIdAsync(int id);  // Implementers must provide this method
-    Task AddAsync(Analysis analysis);       // Implementers must provide this method
+    Task<Analysis?> GetByIdAsync(Guid id);  // Implementers must provide this method
+    Task AddAsync(Analysis analysis);        // Implementers must provide this method
 }
 
 // Implementation - fulfills the contract (how the class does it)
 // The ": IAnalysisRepository" indicates this class implements the interface
 public class AnalysisRepository : IAnalysisRepository
 {
-    public Task<Analysis?> GetByIdAsync(int id)
+    public Task<Analysis?> GetByIdAsync(Guid id)
     {
         // Actual code that retrieves an analysis from the database
     }
@@ -237,7 +237,7 @@ IReadOnlyList<Analysis> analyses = await repository.GetAllAsync();
 public class AnalysisController : ControllerBase
 {
     [HttpGet("{id}")]  // Responds to GET requests at /api/analyses/{id}
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(Guid id)
     {
         // ...
     }
@@ -379,7 +379,7 @@ The compiler enforces this at **compile time** through project references. If a 
 | --- | --- | --- |
 | **Domain** | Entities, enums, business logic | Defines data structures and core business rules |
 | **Application** | Services, interfaces, DTOs | Coordinates operations, defines contracts for infrastructure |
-| **Infrastructure** | DbContext, repositories, external API clients | Implements data access and external integrations |
+| **Infrastructure** | DbContext, repositories, typed HTTP clients | Implements data access and external integrations |
 | **API** | Controllers, middleware, Program.cs | Handles HTTP requests and responses |
 
 ---
@@ -468,7 +468,7 @@ A **repository** handles all database operations for a specific entity. It hides
 // The interface defines WHAT operations the repository provides
 public interface IAnalysisRepository
 {
-    Task<Analysis?> GetByIdAsync(int id);
+    Task<Analysis?> GetByIdAsync(Guid id);
     Task<IReadOnlyList<Analysis>> GetAllForUserAsync(string userId);
     Task AddAsync(Analysis analysis);
     Task UpdateAsync(Analysis analysis);
@@ -478,7 +478,7 @@ public interface IAnalysisRepository
 // The implementation defines HOW those operations work
 public class AnalysisRepository : IAnalysisRepository
 {
-    public async Task<Analysis?> GetByIdAsync(int id)
+    public async Task<Analysis?> GetByIdAsync(Guid id)
     {
         return await _db.Analyses.FindAsync(id);
     }
@@ -496,7 +496,7 @@ A **DTO** (Data Transfer Object) is a simple object that carries data between la
 // Domain entity - contains business logic and all internal properties
 public class Analysis
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string Name { get; set; }
     public string UserId { get; set; }  // Internal - the API should not expose this
     public DateTime CreatedAt { get; set; }
@@ -509,7 +509,7 @@ public class Analysis
 // DTO - only the data API clients need to see
 public class AnalysisDto
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string Name { get; set; }
     public string Status { get; set; }
     public DateTime CreatedAt { get; set; }
@@ -577,7 +577,7 @@ backend/
 │   │   │   └── CalculationService.cs
 │   │   ├── DTOs/                      # Data shapes for API
 │   │   │   ├── AnalysisDto.cs
-│   │   │   └── CalculationResponse.cs
+│   │   │   └── ApiResponse.cs
 │   │   └── WebApp.Application.csproj
 │   │
 │   ├── WebApp.Infrastructure/         # References: Domain, Application
@@ -588,6 +588,8 @@ backend/
 │   │   │       └── AnalysisConfiguration.cs
 │   │   ├── Repositories/              # Data access implementations
 │   │   │   └── AnalysisRepository.cs
+│   │   ├── Clients/                   # Typed HTTP clients for external services
+│   │   │   └── CalculationClient.cs
 │   │   └── WebApp.Infrastructure.csproj
 │   │
 │   └── WebApp.API/                    # References: Application, Infrastructure
@@ -618,7 +620,7 @@ Each `.csproj` file declares which other projects it can reference. This enforce
 <!-- WebApp.Domain.csproj - NO project references (innermost layer) -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>  <!-- Always target latest .NET -->
   </PropertyGroup>
   <!-- Notice: No ProjectReference elements - Domain depends on nothing -->
 </Project>
@@ -628,7 +630,7 @@ Each `.csproj` file declares which other projects it can reference. This enforce
 <!-- WebApp.Application.csproj - Can only reference Domain -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <!-- This project can use code from Domain -->
@@ -641,14 +643,14 @@ Each `.csproj` file declares which other projects it can reference. This enforce
 <!-- WebApp.Infrastructure.csproj - References Domain and Application -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\WebApp.Domain\WebApp.Domain.csproj" />
     <ProjectReference Include="..\WebApp.Application\WebApp.Application.csproj" />
-    <!-- NuGet packages - external libraries -->
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
+    <!-- NuGet packages - always use latest stable versions -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.*" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.*" />
   </ItemGroup>
 </Project>
 ```
@@ -657,7 +659,7 @@ Each `.csproj` file declares which other projects it can reference. This enforce
 <!-- WebApp.API.csproj - References Application and Infrastructure -->
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\WebApp.Application\WebApp.Application.csproj" />
@@ -665,6 +667,10 @@ Each `.csproj` file declares which other projects it can reference. This enforce
   </ItemGroup>
 </Project>
 ```
+
+:::note
+These examples show .NET 9 as the current latest version. Always target the latest stable .NET release when starting or upgrading a project. Update the `TargetFramework` and package versions accordingly.
+:::
 
 ---
 
@@ -691,7 +697,8 @@ namespace WebApp.Domain.Entities;
 public class Analysis
 {
     // Properties - the data this entity holds
-    public int Id { get; set; }
+    // UUID primary key - generated by PostgreSQL via gen_random_uuid()
+    public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public string UserId { get; set; } = string.Empty;
     public AnalysisStatus Status { get; set; } = AnalysisStatus.Draft;
@@ -764,7 +771,7 @@ Some codebases use code like this:
 public class Analysis
 {
     [Key]  // Database attribute
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     [Required]  // Database attribute
     [MaxLength(255)]  // Database attribute
@@ -808,13 +815,13 @@ public interface IAnalysisRepository
     /// Gets an analysis by its ID.
     /// Returns null if not found.
     /// </summary>
-    Task<Analysis?> GetByIdAsync(int id);
+    Task<Analysis?> GetByIdAsync(Guid id);
 
     /// <summary>
     /// Gets an analysis by ID, but only if it belongs to the specified user.
     /// Returns null if not found or if the user doesn't own it.
     /// </summary>
-    Task<Analysis?> GetByIdForUserAsync(int id, string userId);
+    Task<Analysis?> GetByIdForUserAsync(Guid id, string userId);
 
     /// <summary>
     /// Gets all analyses belonging to a user.
@@ -857,7 +864,7 @@ public interface ICalculationService
     /// <param name="analysisId">The ID of the analysis to run</param>
     /// <param name="userId">The ID of the user making the request (for authorization)</param>
     /// <returns>A response indicating success, failure, or missing inputs</returns>
-    Task<CalculationResponse> RunAsync(int analysisId, string userId);
+    Task<ApiResponse<object>> RunAsync(Guid analysisId, string userId);
 }
 ```
 
@@ -884,7 +891,7 @@ public class CalculationService : ICalculationService
         _logger = logger;
     }
 
-    public async Task<CalculationResponse> RunAsync(int analysisId, string userId)
+    public async Task<ApiResponse<object>> RunAsync(Guid analysisId, string userId)
     {
         // Step 1: Load the analysis from the database
         // Note: The code uses the repository interface, not the database directly
@@ -893,7 +900,7 @@ public class CalculationService : ICalculationService
         // Step 2: Handle "not found" case
         if (analysis == null)
         {
-            return new CalculationResponse
+            return new ApiResponse<object>
             {
                 Status = "error",
                 Errors = ["Analysis not found"]
@@ -904,7 +911,7 @@ public class CalculationService : ICalculationService
         // The CanRun() method lives on the entity - it's domain logic
         if (!analysis.CanRun())
         {
-            return new CalculationResponse
+            return new ApiResponse<object>
             {
                 Status = "error",
                 Errors = ["Analysis cannot run in its current state"]
@@ -921,7 +928,7 @@ public class CalculationService : ICalculationService
             analysisId, userId);
 
         // Step 6: Run the actual calculation
-        // (In a real application, this calls the calculation library)
+        // (In a real application, this calls the calculation library via HTTP client)
         // ... calculation logic ...
 
         // Step 7: Update domain state with results
@@ -929,7 +936,7 @@ public class CalculationService : ICalculationService
         await _repository.UpdateAsync(analysis);
 
         // Step 8: Return success response
-        return new CalculationResponse
+        return new ApiResponse<object>
         {
             Status = "success",
             CanRun = true
@@ -952,7 +959,7 @@ namespace WebApp.Application.DTOs;
 /// </summary>
 public class AnalysisDto
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Status { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
@@ -977,22 +984,24 @@ public class UpdateAnalysisDto
 ```
 
 ```csharp
-// Application/DTOs/CalculationResponse.cs
+// Application/DTOs/ApiResponse.cs
 namespace WebApp.Application.DTOs;
 
 /// <summary>
-/// Standard response format for all calculation operations.
+/// Standard response envelope for all API operations.
 /// This consistent format simplifies frontend development.
+///
+/// This is the ONE class that uses [JsonPropertyName] attributes to ensure
+/// the envelope fields are always serialized with the exact expected names.
+/// All other DTOs rely on the global camelCase naming policy (see JSON Serialization below).
 /// </summary>
-public class CalculationResponse
+public class ApiResponse<T>
 {
-    // [JsonPropertyName] controls how the property appears in JSON
-    // "status" in JSON instead of "Status"
     [JsonPropertyName("status")]
     public string Status { get; set; } = "success";
 
     [JsonPropertyName("inputs")]
-    public List<string> Inputs { get; set; } = [];  // Empty list by default
+    public List<string> Inputs { get; set; } = [];
 
     [JsonPropertyName("warnings")]
     public List<string> Warnings { get; set; } = [];
@@ -1000,22 +1009,58 @@ public class CalculationResponse
     [JsonPropertyName("errors")]
     public List<string> Errors { get; set; } = [];
 
-    [JsonPropertyName("can_run")]
+    [JsonPropertyName("canRun")]
     public bool CanRun { get; set; } = true;
 
-    [JsonPropertyName("results")]
-    public object? Results { get; set; }
+    [JsonPropertyName("data")]
+    public T? Data { get; set; }
 
-    [JsonPropertyName("results_cleared")]
+    [JsonPropertyName("resultsCleared")]
     public bool ResultsCleared { get; set; } = false;
 }
+```
+
+:::info Why `[JsonPropertyName]` only on `ApiResponse<T>`?
+ASP.NET Core's default JSON serialization uses **camelCase** naming automatically (`Status` → `status`, `CanRun` → `canRun`). This means most DTOs need no JSON attributes at all—the framework handles casing. The `ApiResponse<T>` envelope is the exception: it uses explicit `[JsonPropertyName]` attributes to guarantee the contract is never accidentally broken, since every frontend depends on these exact field names.
+:::
+
+### JSON Serialization Strategy
+
+ASP.NET Core serializes JSON using **camelCase** by default. This means a C# property like `CanRun` automatically becomes `canRun` in JSON—no attributes needed on most DTOs.
+
+**The rules:**
+
+1. **Do not** add `[JsonPropertyName]` attributes to regular DTOs. The framework's default camelCase policy handles them.
+2. **Do** add `[JsonPropertyName]` attributes to the `ApiResponse<T>` envelope class. This guarantees the standard messaging contract is never accidentally broken.
+3. **Do** use a `JsonDefaults` singleton for any manual serialization (e.g., serializing to a JSONB column or a message queue).
+
+```csharp
+// Infrastructure/JsonDefaults.cs
+namespace WebApp.Infrastructure;
+
+/// <summary>
+/// Shared JSON serialization options for manual serialization scenarios.
+/// ASP.NET controller serialization uses its own defaults (which are also camelCase).
+/// Use this for serializing to JSONB columns, message queues, or HTTP client payloads.
+/// </summary>
+public static class JsonDefaults
+{
+    public static readonly JsonSerializerOptions CamelCase = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+    };
+}
+
+// Usage example - serializing data to a JSONB column:
+var json = JsonSerializer.Serialize(analysisData, JsonDefaults.CamelCase);
 ```
 
 ---
 
 ## The Infrastructure Layer
 
-The Infrastructure layer contains implementations for data access and external services. This is where Entity Framework Core, database connections, and external API clients live.
+The Infrastructure layer contains implementations for data access, external services, and typed HTTP clients. This is where Entity Framework Core, database connections, and external API clients live.
 
 ### What Is a DbContext?
 
@@ -1075,8 +1120,10 @@ public class AnalysisConfiguration : IEntityTypeConfiguration<Analysis>
         // Table name in the database
         builder.ToTable("analyses");
 
-        // Primary key
+        // Primary key - UUID generated by PostgreSQL
         builder.HasKey(a => a.Id);
+        builder.Property(a => a.Id)
+            .HasDefaultValueSql("gen_random_uuid()");
 
         // Property configurations
         builder.Property(a => a.Name)
@@ -1126,13 +1173,13 @@ public class AnalysisRepository : IAnalysisRepository
         _db = db;
     }
 
-    public async Task<Analysis?> GetByIdAsync(int id)
+    public async Task<Analysis?> GetByIdAsync(Guid id)
     {
         // FindAsync looks up by primary key
         return await _db.Analyses.FindAsync(id);
     }
 
-    public async Task<Analysis?> GetByIdForUserAsync(int id, string userId)
+    public async Task<Analysis?> GetByIdForUserAsync(Guid id, string userId)
     {
         // FirstOrDefaultAsync returns the first match or null
         // The lambda expression filters: where Id matches AND UserId matches
@@ -1233,6 +1280,69 @@ public static class DependencyInjection
 }
 ```
 
+### Typed HTTP Clients
+
+When the backend needs to communicate with external services (such as calculation libraries exposed as HTTP APIs), use **typed HTTP clients** registered through `IHttpClientFactory`.
+
+```csharp
+// Application/Interfaces/ICalculationClient.cs
+namespace WebApp.Application.Interfaces;
+
+/// <summary>
+/// Defines the contract for calling the calculation service HTTP API.
+/// The interface lives in Application; the implementation lives in Infrastructure.
+/// </summary>
+public interface ICalculationClient
+{
+    Task<CalculationResult> RunAnalysisAsync(CalculationRequest request);
+}
+```
+
+```csharp
+// Infrastructure/Clients/CalculationClient.cs
+namespace WebApp.Infrastructure.Clients;
+
+/// <summary>
+/// Typed HTTP client for communicating with the calculation service.
+/// Uses IHttpClientFactory for proper connection management.
+/// </summary>
+public class CalculationClient : ICalculationClient
+{
+    private readonly HttpClient _http;
+    private readonly ILogger<CalculationClient> _logger;
+
+    public CalculationClient(HttpClient http, ILogger<CalculationClient> logger)
+    {
+        _http = http;
+        _logger = logger;
+    }
+
+    public async Task<CalculationResult> RunAnalysisAsync(CalculationRequest request)
+    {
+        _logger.LogInformation("[CALC] Sending calculation request");
+
+        var response = await _http.PostAsJsonAsync("/api/calculate", request, JsonDefaults.CamelCase);
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<CalculationResult>(JsonDefaults.CamelCase)
+            ?? throw new InvalidOperationException("Calculation service returned null");
+    }
+}
+```
+
+Register the typed client in the Infrastructure DI extension:
+
+```csharp
+// In Infrastructure/DependencyInjection.cs
+services.AddHttpClient<ICalculationClient, CalculationClient>(client =>
+{
+    client.BaseAddress = new Uri(configuration["Services:Calculation:BaseUrl"]!);
+    client.Timeout = TimeSpan.FromMinutes(5);  // Calculations can take time
+});
+```
+
+This pattern applies to any external HTTP service the backend consumes (calculation libraries, System-Response, third-party APIs). Each service gets its own interface in Application and its own typed client in `Infrastructure/Clients/`.
+
 ---
 
 ## The API Layer
@@ -1279,7 +1389,7 @@ public class SettlementController : ControllerBase  // Inherit from ControllerBa
     /// Example: GET /api/analyses/settlement/123
     /// </summary>
     [HttpGet("{id}")]  // {id} is a route parameter
-    public async Task<IActionResult> GetById(int id)  // id comes from the URL
+    public async Task<IActionResult> GetById(Guid id)  // id comes from the URL
     {
         // Get the current user's ID from their authentication token
         var userId = GetCurrentUserId();
@@ -1301,7 +1411,7 @@ public class SettlementController : ControllerBase  // Inherit from ControllerBa
     /// Example: POST /api/analyses/settlement/123/calculate
     /// </summary>
     [HttpPost("{id}/calculate")]
-    public async Task<IActionResult> Calculate(int id)
+    public async Task<IActionResult> Calculate(Guid id)
     {
         // Log the request
         _logger.LogInformation("[API] POST calculate/{AnalysisId}", id);
@@ -1433,10 +1543,10 @@ app.Run();
 ASP.NET Core automatically extracts data from requests and passes it to methods:
 
 ```csharp
-// From URL path: GET /api/analyses/123
+// From URL path: GET /api/analyses/{id}
 // The {id} in the route becomes the 'id' parameter
 [HttpGet("{id}")]
-public async Task<IActionResult> Get(int id)  // id = 123
+public async Task<IActionResult> Get(Guid id)
 
 // From query string: GET /api/analyses?page=1&limit=10
 // [FromQuery] tells ASP.NET to look in the query string
@@ -1450,9 +1560,9 @@ public async Task<IActionResult> List(
 [HttpPost]
 public async Task<IActionResult> Create([FromBody] CreateAnalysisDto dto)
 
-// Combined: PUT /api/analyses/123 with JSON body
+// Combined: PUT /api/analyses/{id} with JSON body
 [HttpPut("{id}")]
-public async Task<IActionResult> Update(int id, [FromBody] UpdateAnalysisDto dto)
+public async Task<IActionResult> Update(Guid id, [FromBody] UpdateAnalysisDto dto)
 ```
 
 ---
@@ -1517,7 +1627,7 @@ public class ErrorHandlingMiddleware
         };
 
         // Return a consistent error response format
-        var response = new CalculationResponse
+        var response = new ApiResponse<object>
         {
             Status = "error",
             Errors = [ex.Message]
@@ -1659,7 +1769,7 @@ public class CalculationServiceTests
         // Arrange: Create a mock repository that returns null
         var mockRepo = new Mock<IAnalysisRepository>();
         mockRepo
-            .Setup(r => r.GetByIdForUserAsync(It.IsAny<int>(), It.IsAny<string>()))
+            .Setup(r => r.GetByIdForUserAsync(It.IsAny<Guid>(), It.IsAny<string>()))
             .ReturnsAsync((Analysis?)null);  // Simulate "not found"
 
         var service = new CalculationService(
