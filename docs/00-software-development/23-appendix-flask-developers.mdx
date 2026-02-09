@@ -1,0 +1,709 @@
+---
+title: "Appendix: Flask to ASP.NET Mapping"
+---
+
+import DocTabs from '@site/src/components/DocTabs';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+# Appendix: Flask to ASP.NET Mapping
+
+This appendix provides a quick reference for developers transitioning from Flask/Python to ASP.NET Core/C#. It maps familiar Flask concepts to their ASP.NET equivalents.
+
+---
+
+## Concept Mapping
+
+<TableVerticalNoRef
+  alt="Flask to ASP.NET concept mapping"
+  headers={[[{ value: 'Flask / Python' }, { value: 'ASP.NET Core / C#' }, { value: 'Notes' }]]}
+  columns={[
+    [
+      'Flask app',
+      'Blueprint',
+      'Route decorator',
+      'request object',
+      'jsonify()',
+      'SQLAlchemy',
+      'Flask-Login',
+      'Flask config',
+      'requirements.txt',
+      'pytest',
+    ],
+    [
+      'WebApplication',
+      'Controller',
+      '[HttpGet], [HttpPost], etc.',
+      'ControllerBase methods',
+      'Ok(), BadRequest(), etc.',
+      'Entity Framework Core',
+      'JWT Bearer Auth',
+      'appsettings.json',
+      '.csproj PackageReferences',
+      'xUnit / MSTest',
+    ],
+    [
+      'Entry point and configuration',
+      'Groups related endpoints',
+      'Maps HTTP methods to handlers',
+      'Access via method parameters',
+      'Returns JSON responses',
+      'Database ORM',
+      'Authentication system',
+      'Configuration files',
+      'Dependency management',
+      'Testing framework',
+    ],
+  ]}
+  colWidths={[28, 32, 35]}
+/>
+
+---
+
+## Route Definition
+
+<DocTabs
+  items={[
+    {
+      title: 'Flask',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`from flask import Blueprint, jsonify
+
+bp = Blueprint('analysis', __name__, url_prefix='/api/analysis')
+
+@bp.route('/<int:id>', methods=['GET'])
+def get_analysis(id):
+    analysis = Analysis.query.get_or_404(id)
+    return jsonify(analysis.to_dict())
+
+@bp.route('/<int:id>/calculate', methods=['POST'])
+def calculate(id):
+    analysis = Analysis.query.get_or_404(id)
+    result = run_calculation(analysis)
+    return jsonify(result)`}
+        </pre>
+      ),
+    },
+    {
+      title: 'ASP.NET Core',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`[ApiController]
+[Route("api/analysis")]
+public class AnalysisController : ControllerBase
+{
+    private readonly AppDbContext _db;
+
+    public AnalysisController(AppDbContext db) => _db = db;
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetAnalysis(int id)
+    {
+        var analysis = await _db.Analyses.FindAsync(id);
+        if (analysis == null) return NotFound();
+        return Ok(analysis);
+    }
+
+    [HttpPost("{id}/calculate")]
+    public async Task<IActionResult> Calculate(int id)
+    {
+        var analysis = await _db.Analyses.FindAsync(id);
+        if (analysis == null) return NotFound();
+        var result = await RunCalculationAsync(analysis);
+        return Ok(result);
+    }
+}`}
+        </pre>
+      ),
+    },
+  ]}
+/>
+
+---
+
+## Request Handling
+
+<DocTabs
+  items={[
+    {
+      title: 'Flask',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`from flask import request
+
+@bp.route('/search', methods=['GET'])
+def search():
+    # Query parameters
+    page = request.args.get('page', 1, type=int)
+    limit = request.args.get('limit', 10, type=int)
+
+    # Headers
+    auth_token = request.headers.get('Authorization')
+
+    return jsonify({'page': page, 'limit': limit})
+
+@bp.route('/create', methods=['POST'])
+def create():
+    # JSON body
+    data = request.get_json()
+    name = data.get('name')
+
+    return jsonify({'name': name}), 201`}
+        </pre>
+      ),
+    },
+    {
+      title: 'ASP.NET Core',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`[HttpGet("search")]
+public IActionResult Search(
+    [FromQuery] int page = 1,
+    [FromQuery] int limit = 10)
+{
+    // Query parameters bound automatically
+    // Headers accessed via Request.Headers
+    var authToken = Request.Headers["Authorization"];
+
+    return Ok(new { page, limit });
+}
+
+[HttpPost("create")]
+public IActionResult Create([FromBody] CreateDto dto)
+{
+    // JSON body automatically deserialized
+    var name = dto.Name;
+
+    return Created($"/api/analysis/{id}", new { name });
+}`}
+        </pre>
+      ),
+    },
+  ]}
+/>
+
+---
+
+## Database Operations
+
+<DocTabs
+  items={[
+    {
+      title: 'Flask + SQLAlchemy',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`from app import db
+from app.models import Analysis
+
+# Get by ID
+analysis = Analysis.query.get(id)
+analysis = Analysis.query.get_or_404(id)
+
+# Filter
+analyses = Analysis.query.filter_by(user_id=user_id).all()
+analyses = Analysis.query.filter(Analysis.name.like('%test%')).all()
+
+# Create
+analysis = Analysis(name='New', user_id=user_id)
+db.session.add(analysis)
+db.session.commit()
+
+# Update
+analysis.name = 'Updated'
+db.session.commit()
+
+# Delete
+db.session.delete(analysis)
+db.session.commit()`}
+        </pre>
+      ),
+    },
+    {
+      title: 'ASP.NET + EF Core',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`// Get by ID
+var analysis = await _db.Analyses.FindAsync(id);
+// No built-in "or 404" - check manually
+
+// Filter
+var analyses = await _db.Analyses
+    .Where(a => a.UserId == userId)
+    .ToListAsync();
+var analyses = await _db.Analyses
+    .Where(a => a.Name.Contains("test"))
+    .ToListAsync();
+
+// Create
+var analysis = new Analysis { Name = "New", UserId = userId };
+_db.Analyses.Add(analysis);
+await _db.SaveChangesAsync();
+
+// Update
+analysis.Name = "Updated";
+await _db.SaveChangesAsync();
+
+// Delete
+_db.Analyses.Remove(analysis);
+await _db.SaveChangesAsync();`}
+        </pre>
+      ),
+    },
+  ]}
+/>
+
+---
+
+## Model Definition
+
+<DocTabs
+  items={[
+    {
+      title: 'Flask + SQLAlchemy',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`from app import db
+from sqlalchemy.dialects.postgresql import JSONB
+
+class Analysis(db.Model):
+    __tablename__ = 'analyses'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
+    user_id = db.Column(db.String, db.ForeignKey('users.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow)
+    parameters = db.Column(JSONB)
+    results = db.Column(JSONB)
+
+    user = db.relationship('User', back_populates='analyses')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            # ...
+        }`}
+        </pre>
+      ),
+    },
+    {
+      title: 'ASP.NET + EF Core',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
+
+public class Analysis
+{
+    public int Id { get; set; }
+
+    [Required]
+    [MaxLength(255)]
+    public string Name { get; set; } = string.Empty;
+
+    [Required]
+    public string UserId { get; set; } = string.Empty;
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+    [Column(TypeName = "jsonb")]
+    public JsonDocument? Parameters { get; set; }
+
+    [Column(TypeName = "jsonb")]
+    public JsonDocument? Results { get; set; }
+
+    public User User { get; set; } = null!;
+}
+// Serialization is automatic via JSON`}
+        </pre>
+      ),
+    },
+  ]}
+/>
+
+---
+
+## Configuration
+
+<DocTabs
+  items={[
+    {
+      title: 'Flask',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`# config.py
+import os
+
+class Config:
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    DEBUG = os.environ.get('DEBUG', 'false').lower() == 'true'
+
+# app/__init__.py
+app = Flask(__name__)
+app.config.from_object(Config)
+
+# Accessing config
+db_url = app.config['SQLALCHEMY_DATABASE_URI']`}
+        </pre>
+      ),
+    },
+    {
+      title: 'ASP.NET Core',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`// appsettings.json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Database=app"
+  },
+  "Jwt": {
+    "Key": "your-secret-key",
+    "Issuer": "your-app"
+  }
+}
+
+// Program.cs
+var builder = WebApplication.CreateBuilder(args);
+
+// Accessing configuration
+var connString = builder.Configuration
+    .GetConnectionString("DefaultConnection");
+var jwtKey = builder.Configuration["Jwt:Key"];
+
+// Environment-specific: appsettings.Development.json`}
+        </pre>
+      ),
+    },
+  ]}
+/>
+
+---
+
+## Error Handling
+
+<DocTabs
+  items={[
+    {
+      title: 'Flask',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`from flask import jsonify
+from werkzeug.exceptions import HTTPException
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    if isinstance(e, HTTPException):
+        return jsonify({'error': e.description}), e.code
+
+    # Log the error
+    app.logger.error(f'Unhandled exception: {e}')
+
+    return jsonify({'error': 'Internal server error'}), 500
+
+@app.errorhandler(404)
+def not_found(e):
+    return jsonify({'error': 'Not found'}), 404
+
+@app.errorhandler(400)
+def bad_request(e):
+    return jsonify({'error': str(e)}), 400`}
+        </pre>
+      ),
+    },
+    {
+      title: 'ASP.NET Core',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`// Middleware/ErrorHandlingMiddleware.cs
+public class ErrorHandlingMiddleware
+{
+    private readonly RequestDelegate _next;
+    private readonly ILogger _logger;
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        try
+        {
+            await _next(context);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unhandled exception");
+            await HandleExceptionAsync(context, ex);
+        }
+    }
+
+    private static Task HandleExceptionAsync(
+        HttpContext context, Exception ex)
+    {
+        context.Response.StatusCode = ex switch
+        {
+            ArgumentException => 400,
+            UnauthorizedAccessException => 403,
+            _ => 500
+        };
+        return context.Response.WriteAsJsonAsync(
+            new { error = ex.Message });
+    }
+}`}
+        </pre>
+      ),
+    },
+  ]}
+/>
+
+---
+
+## Logging
+
+<DocTabs
+  items={[
+    {
+      title: 'Flask',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`import logging
+
+logger = logging.getLogger(__name__)
+
+# Configuration
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+)
+
+# Usage
+logger.debug(f"Processing analysis {analysis_id}")
+logger.info(f"[API] POST /calculate/{analysis_id}")
+logger.warning(f"Parameter {name} outside typical range")
+logger.error(f"Calculation failed: {error}", exc_info=True)`}
+        </pre>
+      ),
+    },
+    {
+      title: 'ASP.NET Core (Serilog)',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`using Serilog;
+
+// Configuration in Program.cs
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console(outputTemplate:
+        "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}")
+    .CreateLogger();
+
+// Usage (structured logging)
+_logger.LogDebug("Processing analysis {AnalysisId}", analysisId);
+_logger.LogInformation(
+    "[API] POST /calculate/{AnalysisId}", analysisId);
+_logger.LogWarning(
+    "Parameter {Name} outside typical range", name);
+_logger.LogError(ex, "Calculation failed");`}
+        </pre>
+      ),
+    },
+  ]}
+/>
+
+---
+
+## Testing
+
+<DocTabs
+  items={[
+    {
+      title: 'Flask (pytest)',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`import pytest
+from app import create_app, db
+
+@pytest.fixture
+def client():
+    app = create_app('testing')
+    with app.test_client() as client:
+        with app.app_context():
+            db.create_all()
+        yield client
+
+def test_get_analysis(client):
+    response = client.get('/api/analysis/1')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'id' in data
+
+def test_calculate_missing_params(client):
+    response = client.post('/api/analysis/1/calculate')
+    assert response.status_code == 400`}
+        </pre>
+      ),
+    },
+    {
+      title: 'ASP.NET Core (xUnit)',
+      child: (
+        <pre style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px' }}>
+{`using Xunit;
+using Microsoft.EntityFrameworkCore;
+
+public class AnalysisControllerTests
+{
+    private AppDbContext CreateTestDb()
+    {
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+        return new AppDbContext(options);
+    }
+
+    [Fact]
+    public async Task GetAnalysis_ReturnsOk()
+    {
+        using var db = CreateTestDb();
+        var controller = new AnalysisController(db);
+
+        var result = await controller.GetAnalysis(1);
+
+        Assert.IsType<OkObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task Calculate_MissingParams_ReturnsBadRequest()
+    {
+        // ... test implementation
+    }
+}`}
+        </pre>
+      ),
+    },
+  ]}
+/>
+
+---
+
+## Common Gotchas for Flask Developers
+
+### 1. Async/Await is Required
+
+In Flask, everything runs synchronously by default. In ASP.NET Core, database operations and I/O should be async:
+
+```csharp
+// WRONG: Blocking call
+var analysis = _db.Analyses.Find(id);
+
+// CORRECT: Async call
+var analysis = await _db.Analyses.FindAsync(id);
+```
+
+### 2. No Global Request Object
+
+Flask has a global `request` object. In ASP.NET, request data comes through method parameters:
+
+```csharp
+// Flask-style thinking (WRONG)
+var body = Request.Body;  // Don't do this
+
+// ASP.NET style (CORRECT)
+public IActionResult Create([FromBody] CreateDto dto)
+{
+    // dto is already parsed
+}
+```
+
+### 3. Explicit Null Checks
+
+Python's `get_or_404` doesn't exist. Check nulls explicitly:
+
+```csharp
+var analysis = await _db.Analyses.FindAsync(id);
+if (analysis == null)
+    return NotFound();
+```
+
+### 4. SaveChanges is Explicit
+
+Unlike some Flask patterns, EF Core requires explicit saves:
+
+```csharp
+analysis.Name = "Updated";
+await _db.SaveChangesAsync();  // Must call this!
+```
+
+### 5. Dependency Injection is Required
+
+Flask uses module imports. ASP.NET uses constructor injection:
+
+```csharp
+public class MyController : ControllerBase
+{
+    private readonly IMyService _service;  // Injected
+
+    public MyController(IMyService service)
+    {
+        _service = service;
+    }
+}
+```
+
+### 6. No Flask-style Decorators
+
+Flask decorators become attributes in C#:
+
+```python
+# Flask
+@bp.route('/items/<int:id>', methods=['GET'])
+@login_required
+def get_item(id):
+    pass
+```
+
+```csharp
+// ASP.NET
+[HttpGet("items/{id}")]
+[Authorize]
+public async Task<IActionResult> GetItem(int id)
+{
+    // ...
+}
+```
+
+---
+
+## Quick Translation Reference
+
+<TableVerticalNoRef
+  alt="Quick translation reference"
+  headers={[[{ value: 'Flask Pattern' }, { value: 'ASP.NET Equivalent' }]]}
+  columns={[
+    [
+      'return jsonify(data), 200',
+      'return jsonify(data), 201',
+      'return jsonify({"error": msg}), 400',
+      'return jsonify({"error": msg}), 404',
+      'abort(403)',
+      'request.get_json()',
+      'request.args.get("key")',
+      'g.user (current user)',
+      '@login_required',
+      'db.session.commit()',
+    ],
+    [
+      'return Ok(data)',
+      'return Created(url, data)',
+      'return BadRequest(new { error = msg })',
+      'return NotFound()',
+      'return Forbid()',
+      '[FromBody] MyDto dto',
+      '[FromQuery] string key',
+      'User.FindFirstValue(ClaimTypes.NameIdentifier)',
+      '[Authorize]',
+      'await _db.SaveChangesAsync()',
+    ],
+  ]}
+  colWidths={[45, 50]}
+/>
+

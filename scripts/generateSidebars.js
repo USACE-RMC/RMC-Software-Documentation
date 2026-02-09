@@ -428,6 +428,15 @@ function generateSoftwareDevelopment() {
   ];
   const aiGuidanceIds = ['12-ai-assisted-development', '13-claude-md'];
   const referenceIds = ['14-case-conventions-by-language', '15-quick-reference', '16-appendix-common-scenarios'];
+  const webAppArchitectureIds = [
+    '17-web-app-architecture',
+    '18-frontend-architecture',
+    '19-backend-architecture',
+    '20-calculation-libraries',
+    '21-package-management',
+    '22-aspnet-quick-reference',
+    '23-appendix-flask-developers',
+  ];
 
   const files = fs
     .readdirSync(guideDir)
@@ -472,6 +481,9 @@ function generateSoftwareDevelopment() {
 
   const referenceCategory = buildCategory('Standards & References', referenceIds, true);
   if (referenceCategory) items.push(referenceCategory);
+
+  const webAppCategory = buildCategory('Web Application Architecture', webAppArchitectureIds, true);
+  if (webAppCategory) items.push(webAppCategory);
 
   return items;
 }

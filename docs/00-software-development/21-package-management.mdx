@@ -1,0 +1,412 @@
+---
+title: Package Management
+---
+
+import DocTabs from '@site/src/components/DocTabs';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+# Package Management
+
+This guide explains how to manage dependencies in RMC .NET applications using NuGet packages and project references.
+
+---
+
+## Overview
+
+RMC applications use two methods to reference external libraries:
+
+| Method | When to Use | Example |
+|--------|-------------|---------|
+| **Project Reference** | Active development, both projects change frequently | Local calculation library |
+| **Package Reference** | Stable releases, published libraries | RMC.Numerics, third-party packages |
+
+---
+
+## Project References
+
+Project references point to source code in another project. Changes in the referenced project are immediately visible.
+
+### Adding a Project Reference
+
+```xml
+<!-- In WebApp.API.csproj -->
+<ItemGroup>
+    <ProjectReference Include="..\..\CalcLibrary\CalcLibrary.csproj" />
+</ItemGroup>
+```
+
+Or via command line:
+
+```bash
+dotnet add reference ../CalcLibrary/CalcLibrary.csproj
+```
+
+### When to Use Project References
+
+- **Active development**: Both projects are being modified
+- **Local testing**: Need to debug across project boundaries
+- **Before publishing**: Library is not yet packaged
+
+### Directory Structure Example
+
+```
+C:\GitHub\
+├── MyWebApp\
+│   └── backend\
+│       └── WebApp.API\
+│           └── WebApp.API.csproj  ←── References CalcLibrary
+│
+└── CalcLibrary\
+    └── CalcLibrary.csproj         ←── Referenced project
+```
+
+---
+
+## Package References (NuGet)
+
+Package references download pre-built binaries from a NuGet server.
+
+### Adding a Package Reference
+
+```xml
+<!-- In WebApp.API.csproj -->
+<ItemGroup>
+    <PackageReference Include="RMC.Numerics" Version="1.0.0" />
+    <PackageReference Include="Serilog" Version="3.1.1" />
+</ItemGroup>
+```
+
+Or via command line:
+
+```bash
+dotnet add package RMC.Numerics --version 1.0.0
+```
+
+### Configuring NuGet Sources
+
+RMC uses a private NuGet feed. Add it to the NuGet configuration:
+
+```bash
+# Add USACE Nexus source
+dotnet nuget add source https://www.hec.usace.army.mil/nexus/repository/consequences-nuget-public/ --name USACENexus
+```
+
+Or create a `nuget.config` file in the solution root:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+    <packageSources>
+        <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+        <add key="USACENexus" value="https://www.hec.usace.army.mil/nexus/repository/consequences-nuget-public/" />
+    </packageSources>
+</configuration>
+```
+
+---
+
+## Version Management
+
+### Semantic Versioning
+
+NuGet packages follow semantic versioning (SemVer):
+
+<TableVerticalNoRef
+  alt="Semantic versioning"
+  headers={[[{ value: 'Component' }, { value: 'When to Increment' }, { value: 'Example Change' }]]}
+  columns={[
+    [
+      'Major (X.0.0)',
+      'Minor (0.X.0)',
+      'Patch (0.0.X)',
+      'Prerelease (-beta)',
+    ],
+    [
+      'Breaking changes to public API',
+      'New features, backward compatible',
+      'Bug fixes, backward compatible',
+      'Preview/testing releases',
+    ],
+    [
+      'Method signature changed, class removed',
+      'New calculation method added',
+      'Fixed calculation bug',
+      'Testing before stable release',
+    ],
+  ]}
+  colWidths={[22, 38, 35]}
+/>
+
+### Version Constraints
+
+Specify version requirements in the project file:
+
+```xml
+<!-- Exact version -->
+<PackageReference Include="RMC.Numerics" Version="1.0.0" />
+
+<!-- Minimum version -->
+<PackageReference Include="RMC.Numerics" Version="1.0.0" />
+
+<!-- Version range (at least 1.0.0, less than 2.0.0) -->
+<PackageReference Include="RMC.Numerics" Version="[1.0.0, 2.0.0)" />
+
+<!-- Any 1.x version -->
+<PackageReference Include="RMC.Numerics" Version="1.*" />
+
+<!-- Floating prerelease -->
+<PackageReference Include="RMC.Numerics" Version="1.0.0-*" />
+```
+
+### Recommendation
+
+For RMC applications, use **exact versions** to ensure reproducible builds:
+
+```xml
+<PackageReference Include="RMC.Numerics" Version="1.0.0" />
+```
+
+---
+
+## Development Workflow
+
+### During Active Development
+
+When both the web application and calculation library are changing frequently:
+
+```xml
+<!-- Use project reference for rapid iteration -->
+<ItemGroup>
+    <ProjectReference Include="..\..\CalcLibrary\CalcLibrary.csproj" />
+</ItemGroup>
+```
+
+**Benefits:**
+- Changes visible immediately
+- Single debugging session across projects
+- No version coordination needed
+
+### For Stable Releases
+
+When the calculation library is stable and versioned:
+
+```xml
+<!-- Use NuGet package for reproducible builds -->
+<ItemGroup>
+    <PackageReference Include="CalcLibrary" Version="1.0.0" />
+</ItemGroup>
+```
+
+**Benefits:**
+- Reproducible builds
+- Clear version dependencies
+- No need for library source locally
+- CI/CD compatible
+
+### Hybrid Approach
+
+During transition, keep both options available:
+
+```xml
+<ItemGroup>
+    <!-- Uncomment ONE of these: -->
+
+    <!-- For development (modifying library): -->
+    <!-- <ProjectReference Include="..\..\CalcLibrary\CalcLibrary.csproj" /> -->
+
+    <!-- For production (stable package): -->
+    <PackageReference Include="CalcLibrary" Version="1.0.0" />
+</ItemGroup>
+```
+
+---
+
+## Common Operations
+
+### Restore Packages
+
+Download all packages defined in the project:
+
+```bash
+dotnet restore
+```
+
+### Update a Package
+
+```bash
+# Update to latest stable version
+dotnet add package RMC.Numerics
+
+# Update to specific version
+dotnet add package RMC.Numerics --version 1.1.0
+```
+
+### List Installed Packages
+
+```bash
+dotnet list package
+```
+
+### Remove a Package
+
+```bash
+dotnet remove package RMC.Numerics
+```
+
+### Clear NuGet Cache
+
+To resolve package resolution issues:
+
+```bash
+dotnet nuget locals all --clear
+```
+
+---
+
+## Project File Structure
+
+A typical RMC project file:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <!-- External NuGet packages -->
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
+        <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
+        <PackageReference Include="RMC.Numerics" Version="1.0.0" />
+    </ItemGroup>
+
+    <!-- Local project references (development) -->
+    <ItemGroup>
+        <ProjectReference Include="..\..\CalcLibrary\CalcLibrary.csproj" />
+    </ItemGroup>
+
+</Project>
+```
+
+---
+
+## Transitive Dependencies
+
+NuGet automatically handles transitive dependencies—packages that project packages depend on.
+
+### Viewing the Dependency Graph
+
+```bash
+dotnet list package --include-transitive
+```
+
+### Pinning Transitive Versions
+
+To override a transitive dependency version:
+
+```xml
+<ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="8.0.0" />
+</ItemGroup>
+```
+
+---
+
+## CI/CD Considerations
+
+### Package Restoration in CI
+
+Always restore packages before building:
+
+```yaml
+# GitHub Actions example
+steps:
+  - name: Restore packages
+    run: dotnet restore
+
+  - name: Build
+    run: dotnet build --no-restore
+
+  - name: Test
+    run: dotnet test --no-build
+```
+
+### Private Feed Authentication
+
+For private NuGet feeds in CI, use environment variables:
+
+```yaml
+- name: Add private NuGet source
+  run: |
+    dotnet nuget add source ${{ secrets.NUGET_FEED_URL }} \
+      --name PrivateFeed \
+      --username ${{ secrets.NUGET_USERNAME }} \
+      --password ${{ secrets.NUGET_PASSWORD }} \
+      --store-password-in-clear-text
+```
+
+---
+
+## Troubleshooting
+
+### Package Not Found
+
+1. Verify the package source is configured:
+   ```bash
+   dotnet nuget list source
+   ```
+
+2. Check if the package exists on the source:
+   ```bash
+   dotnet search PackageName --source USACENexus
+   ```
+
+3. Try clearing the cache:
+   ```bash
+   dotnet nuget locals all --clear
+   ```
+
+### Version Conflicts
+
+When two packages require different versions of a shared dependency:
+
+1. Check the conflict:
+   ```bash
+   dotnet list package --include-transitive
+   ```
+
+2. Pin the shared dependency to a compatible version:
+   ```xml
+   <PackageReference Include="SharedDependency" Version="X.Y.Z" />
+   ```
+
+### Restore Fails in CI
+
+1. Ensure nuget.config is in the repository root
+2. Verify feed credentials are configured
+3. Check that the feed URL is accessible from CI environment
+
+---
+
+## Best Practices
+
+### Do
+
+- Use exact versions for reproducibility
+- Include nuget.config in version control
+- Document required NuGet sources in README
+- Update packages regularly (security patches)
+- Test after package updates
+
+### Don't
+
+- Use floating versions in production
+- Commit NuGet packages to version control (use restore)
+- Mix project and package references to the same library
+- Ignore version conflicts
+- Skip restoration in CI pipelines

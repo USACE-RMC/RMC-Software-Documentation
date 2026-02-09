@@ -1,0 +1,638 @@
+---
+title: Calculation Libraries
+---
+
+import DocTabs from '@site/src/components/DocTabs';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+# Calculation Libraries
+
+This guide defines the architecture and patterns for RMC calculation libraries—standalone .NET libraries that implement engineering calculations. The primary calculation library for RMC applications is **System-Response**, located at `C:\GitHub\System-Response`.
+
+---
+
+## What Is a Calculation Library?
+
+A calculation library is a **.NET class library** containing engineering calculations. It has no knowledge of web frameworks, databases, or user interfaces—it is pure computational logic.
+
+### Key Concepts
+
+**What is a class library?**
+
+A class library is a collection of reusable code compiled into a `.dll` file. Other applications can reference this library and call its methods directly. Unlike a web application, a library doesn't run on its own—it's imported by other programs.
+
+**Why separate calculations from the web app?**
+
+- **Reusability**: The same calculations can be used by web apps, desktop apps, and command-line tools
+- **Testability**: Pure calculations are easy to test—same inputs always produce same outputs
+- **Maintainability**: Calculation logic can be versioned and updated independently
+- **Expertise**: Domain experts can work on calculations without knowing web development
+
+### Key Properties
+
+| Property      | Description                                         |
+| ------------- | --------------------------------------------------- |
+| **Stateless** | Same inputs always produce same outputs             |
+| **Pure**      | No side effects (no database, no HTTP, no file I/O) |
+| **Testable**  | Can be validated against known reference outputs    |
+| **Reusable**  | Multiple applications can consume the same library  |
+
+---
+
+## System-Response Repository Structure
+
+The System-Response repository (`C:\GitHub\System-Response`) contains engineering calculations for RMC applications.
+
+```
+System-Response/
+└── SystemResponse/
+    ├── SystemResponse/              # Main calculation library
+    │   ├── Common/                  # Shared utilities
+    │   │   ├── DistributionSampler.cs
+    │   │   ├── DistributionSpec.cs
+    │   │   └── HydraulicUtils.cs
+    │   │
+    │   ├── Core/                    # Base classes and interfaces
+    │   │   ├── IResponseAnalysis.cs
+    │   │   ├── ResponseAnalysisBase.cs
+    │   │   ├── Constants.cs
+    │   │   └── Enumerations.cs
+    │   │
+    │   ├── Toolboxes/               # Domain-specific calculations
+    │   │   ├── BEPInitiation/       # Backward Erosion Piping - Initiation
+    │   │   │   ├── BTCase1/
+    │   │   │   │   ├── BTCase1Config.cs
+    │   │   │   │   ├── BTCase1Model.cs
+    │   │   │   │   └── BTCase1Result.cs
+    │   │   │   ├── BTCase2/
+    │   │   │   └── ... (BTCase3-8)
+    │   │   │
+    │   │   ├── BEPProgression/      # Backward Erosion Piping - Progression
+    │   │   │   ├── Schmertmann/
+    │   │   │   │   ├── SchmertmannConfig.cs
+    │   │   │   │   ├── SchmertmannModel.cs
+    │   │   │   │   ├── SchmertmannResult.cs
+    │   │   │   │   └── SchmertmannMathUtils.cs
+    │   │   │   └── Sellmeijer/
+    │   │   │       ├── SellmeijerConfig.cs
+    │   │   │       ├── SellmeijerModel.cs
+    │   │   │       └── SellmeijerResult.cs
+    │   │   │
+    │   │   └── FilterEvaluation/    # Filter compatibility analysis
+    │   │       ├── FilterEvaluationConfig.cs
+    │   │       ├── FosterAndFell.cs
+    │   │       └── ParticleRetention.cs
+    │   │
+    │   ├── Screening/               # Screening-level analyses
+    │   │   └── Overtopping Erosion/
+    │   │
+    │   └── SystemResponse.csproj
+    │
+    ├── SystemResponse.API/          # Reference API implementation
+    │   └── SystemResponse.Api.csproj
+    │
+    └── Test_SystemResponse/         # Unit and integration tests
+        ├── GoldenOutputs/           # Reference outputs for validation
+        └── Test_SystemResponse.csproj
+```
+
+---
+
+## How Calculation Libraries Are Consumed
+
+Calculation libraries can be consumed in different ways depending on the application's needs. Each approach has its own advantages.
+
+### Option 1: Direct Library Reference (Recommended for Web Apps)
+
+The web application references the calculation library directly. Calculations run in the same process as the web server—no network calls involved.
+
+```
+┌─────────────────────────────────────────┐
+│ Web Application Process                 │
+│                                         │
+│  ┌─────────────────────────────────┐   │
+│  │ ASP.NET Core Backend            │   │
+│  │                                 │   │
+│  │  var model = new BTCase1Model();│   │  ← Direct C# method call
+│  │  var result = model.RunAsync(); │   │    No network, no HTTP
+│  │                                 │   │    Fast and type-safe
+│  └──────────────┬──────────────────┘   │
+│                 │ (same process)        │
+│  ┌──────────────▼──────────────────┐   │
+│  │ System-Response Library         │   │
+│  │                                 │   │
+│  │  Pure calculation logic         │   │
+│  │  No HTTP knowledge              │   │
+│  └─────────────────────────────────┘   │
+│                                         │
+└─────────────────────────────────────────┘
+```
+
+**When to use:**
+
+- Web applications (ASP.NET Core backends)
+- Desktop applications
+- Any application where calculations run on the same machine
+
+**Advantages:**
+
+- No network latency
+- Type safety (compiler catches errors)
+- Simpler deployment (single process)
+- Better debugging experience
+
+**How to reference:**
+
+```xml
+<!-- In the .csproj file -->
+<ItemGroup>
+    <!-- Project reference during development -->
+    <ProjectReference Include="..\..\System-Response\SystemResponse\SystemResponse\SystemResponse.csproj" />
+
+    <!-- OR: NuGet package for production -->
+    <PackageReference Include="SystemResponse" Version="1.0.0" />
+</ItemGroup>
+```
+
+**Usage:**
+
+```csharp
+using SystemResponse.Toolboxes.BEPInitiation.BTCase1;
+
+// Create configuration with inputs
+var config = new BTCase1Config
+{
+    Iterations = 1000,
+    HWSteps = 50,
+    RngSeed = 42,
+    DDistribution = new DistributionSpec
+    {
+        Kind = DistributionKind.Normal,
+        Params = new Dictionary<string, double>
+        {
+            ["mean"] = 10.0,
+            ["std"] = 2.0
+        }
+    }
+};
+
+// Create model and run
+var model = new BTCase1Model(config);
+var result = await model.RunAsync();
+
+// Use results
+Console.WriteLine($"Mean seepage: {result.MeanSeepage}");
+```
+
+---
+
+### Option 2: HTTP API (For Separate Deployments)
+
+The calculation library is wrapped in a web API and runs as a separate service. Clients communicate via HTTP requests.
+
+```
+┌──────────────────────┐         ┌──────────────────────┐
+│ Client Application   │         │ Calculation Server   │
+│                      │  HTTP   │                      │
+│ (Web app, mobile,    │ ◄─────► │ ASP.NET Core API     │
+│  desktop, script)    │  JSON   │        +             │
+│                      │         │ System-Response      │
+└──────────────────────┘         └──────────────────────┘
+     Network call                    Separate process
+```
+
+**When to use:**
+
+- Calculations need to run on different hardware (GPU servers, HPC clusters)
+- Multiple applications need centralized calculation service
+- Language interoperability (non-.NET clients)
+- Scaling calculations independently from web servers
+
+**Advantages:**
+
+- Horizontal scaling (multiple calculation servers)
+- Language agnostic (any client that speaks HTTP)
+- Resource isolation (calculations don't affect web server)
+- Independent deployment
+
+**The SystemResponse.API Project:**
+
+The `SystemResponse.API` folder in the System-Response repository provides a reference implementation of this pattern. It wraps the calculation library in an ASP.NET Core web API.
+
+```csharp
+// Example API controller (in SystemResponse.API)
+[ApiController]
+[Route("api/bep-initiation/btcase1")]
+public class BTCase1Controller : ControllerBase
+{
+    [HttpPost("calculate")]
+    public async Task<IActionResult> Calculate([FromBody] BTCase1Config config)
+    {
+        var model = new BTCase1Model(config);
+        var result = await model.RunAsync();
+        return Ok(result);
+    }
+}
+```
+
+**Client usage:**
+
+```csharp
+// HTTP client calling the API
+var response = await httpClient.PostAsJsonAsync(
+    "http://calc-server/api/bep-initiation/btcase1/calculate",
+    config
+);
+var result = await response.Content.ReadFromJsonAsync<BTCase1Result>();
+```
+
+---
+
+### Choosing the Right Approach
+
+| Factor          | Direct Library      | HTTP API                |
+| --------------- | ------------------- | ----------------------- |
+| **Latency**     | Microseconds        | Milliseconds (network)  |
+| **Type safety** | Full (compile-time) | Partial (runtime)       |
+| **Deployment**  | Single process      | Multiple services       |
+| **Scaling**     | Scale whole app     | Scale calculations only |
+| **Debugging**   | Single debugger     | Distributed tracing     |
+| **Language**    | .NET only           | Any language            |
+
+**RMC web applications typically use direct library references** because:
+
+- Calculations are fast enough to run inline
+- Type safety prevents integration bugs
+- Single deployment simplifies operations
+- No need for separate scaling
+
+---
+
+## Model Architecture Pattern
+
+Each calculation in System-Response follows a consistent **Config → Model → Result** pattern.
+
+### Why This Pattern?
+
+- **Config**: Defines all inputs explicitly (no hidden state)
+- **Model**: Encapsulates the calculation algorithm
+- **Result**: Structures all outputs clearly
+
+This pattern ensures calculations are:
+
+- Stateless (all inputs in Config)
+- Testable (same Config produces same Result)
+- Self-documenting (Config lists all required inputs)
+
+---
+
+### Configuration Class
+
+The Config class defines all inputs required for the calculation:
+
+```csharp
+// Toolboxes/BEPProgression/Schmertmann/SchmertmannConfig.cs
+
+/// <summary>
+/// Configuration for the Schmertmann critical gradient analysis.
+/// All inputs required to run the calculation are specified here.
+/// </summary>
+public class SchmertmannConfig
+{
+    /// <summary>
+    /// Number of Monte Carlo iterations to run.
+    /// Higher values produce more stable statistics but take longer.
+    /// </summary>
+    public int Iterations { get; set; } = 1000;
+
+    /// <summary>
+    /// Random seed for reproducible results.
+    /// Use null for non-deterministic (different each run).
+    /// Use a fixed value (e.g., 42) for reproducible testing.
+    /// </summary>
+    public int? Seed { get; set; }
+
+    /// <summary>
+    /// Distribution specification for aquifer thickness (meters).
+    /// </summary>
+    public DistributionSpec ThicknessDistribution { get; set; } = new();
+
+    /// <summary>
+    /// Distribution specification for hydraulic conductivity (m/s).
+    /// </summary>
+    public DistributionSpec ConductivityDistribution { get; set; } = new();
+
+    /// <summary>
+    /// Validates the configuration before running.
+    /// Returns true if valid, or false with error messages.
+    /// </summary>
+    public (bool IsValid, List<string> Errors) Validate()
+    {
+        var errors = new List<string>();
+
+        if (Iterations <= 0)
+            errors.Add("Iterations must be a positive number");
+
+        if (ThicknessDistribution == null)
+            errors.Add("Thickness distribution is required");
+
+        if (ConductivityDistribution == null)
+            errors.Add("Conductivity distribution is required");
+
+        return (errors.Count == 0, errors);
+    }
+}
+```
+
+---
+
+### Model Class
+
+The Model class implements the calculation algorithm:
+
+```csharp
+// Toolboxes/BEPProgression/Schmertmann/SchmertmannModel.cs
+
+/// <summary>
+/// Performs the Schmertmann critical gradient analysis.
+/// This is a stateless model—all inputs come from the config,
+/// and no state is retained between method calls.
+/// </summary>
+public class SchmertmannModel
+{
+    private readonly SchmertmannConfig _config;
+
+    /// <summary>
+    /// Creates a new Schmertmann model with the specified configuration.
+    /// </summary>
+    /// <param name="config">Configuration containing all input parameters.</param>
+    /// <exception cref="ArgumentNullException">If config is null.</exception>
+    public SchmertmannModel(SchmertmannConfig config)
+    {
+        ArgumentNullException.ThrowIfNull(config);
+        _config = config;
+    }
+
+    /// <summary>
+    /// Runs the Schmertmann analysis asynchronously.
+    /// </summary>
+    /// <param name="progress">Optional progress reporter (0-100%).</param>
+    /// <returns>Analysis results including statistics and fragility data.</returns>
+    /// <exception cref="ArgumentException">If configuration is invalid.</exception>
+    public async Task<SchmertmannResult> RunAsync(IProgress<double>? progress = null)
+    {
+        // Validate configuration
+        var (isValid, errors) = _config.Validate();
+        if (!isValid)
+            throw new ArgumentException(string.Join("; ", errors));
+
+        // Initialize random number generator
+        var rng = _config.Seed.HasValue
+            ? new Random(_config.Seed.Value)
+            : new Random();
+
+        // Run Monte Carlo simulation
+        var gradients = new double[_config.Iterations];
+
+        for (int i = 0; i < _config.Iterations; i++)
+        {
+            // Sample from input distributions
+            var thickness = DistributionSampler.Sample(
+                _config.ThicknessDistribution, rng);
+            var conductivity = DistributionSampler.Sample(
+                _config.ConductivityDistribution, rng);
+
+            // Calculate critical gradient for this iteration
+            gradients[i] = CalculateCriticalGradient(thickness, conductivity);
+
+            // Report progress periodically
+            if (progress != null && i % 100 == 0)
+            {
+                progress.Report((double)i / _config.Iterations * 100);
+            }
+        }
+
+        // Compute statistics from results
+        return new SchmertmannResult
+        {
+            Mean = gradients.Average(),
+            Median = Percentile(gradients, 50),
+            P05 = Percentile(gradients, 5),
+            P95 = Percentile(gradients, 95),
+            RawData = gradients
+        };
+    }
+
+    /// <summary>
+    /// Calculates the critical gradient using the Schmertmann formula.
+    /// </summary>
+    private double CalculateCriticalGradient(double thickness, double conductivity)
+    {
+        // Engineering calculation implementation
+        // (Actual formula depends on the specific analysis)
+        return thickness * conductivity * 0.85;
+    }
+}
+```
+
+---
+
+### Result Class
+
+The Result class defines the calculation outputs:
+
+```csharp
+// Toolboxes/BEPProgression/Schmertmann/SchmertmannResult.cs
+
+/// <summary>
+/// Results from the Schmertmann critical gradient analysis.
+/// Contains statistical summaries and optional raw iteration data.
+/// </summary>
+public class SchmertmannResult
+{
+    /// <summary>
+    /// Mean (average) critical gradient across all iterations.
+    /// </summary>
+    public double Mean { get; set; }
+
+    /// <summary>
+    /// Median (50th percentile) critical gradient.
+    /// </summary>
+    public double Median { get; set; }
+
+    /// <summary>
+    /// 5th percentile critical gradient (lower bound).
+    /// </summary>
+    public double P05 { get; set; }
+
+    /// <summary>
+    /// 95th percentile critical gradient (upper bound).
+    /// </summary>
+    public double P95 { get; set; }
+
+    /// <summary>
+    /// Raw iteration results for detailed analysis or plotting.
+    /// May be null if raw data was not requested.
+    /// </summary>
+    public double[]? RawData { get; set; }
+
+    /// <summary>
+    /// Warnings generated during calculation (e.g., edge cases hit).
+    /// </summary>
+    public List<string> Warnings { get; set; } = new();
+
+    /// <summary>
+    /// Human-readable summary of results.
+    /// </summary>
+    public string Summary => $"Mean: {Mean:F4}, Median: {Median:F4}, 90% CI: [{P05:F4}, {P95:F4}]";
+}
+```
+
+---
+
+## Testing Calculation Libraries
+
+Calculation libraries require comprehensive tests because they perform life-safety-critical engineering calculations.
+
+### Golden Output Testing
+
+Golden outputs are reference results from a verified implementation. Tests compare new results against these references to detect regressions.
+
+```csharp
+[TestClass]
+public class SchmertmannModelTests
+{
+    [TestMethod]
+    public async Task RunAsync_DeterministicSeed_MatchesGoldenOutput()
+    {
+        // Arrange: Create deterministic config
+        var config = new SchmertmannConfig
+        {
+            Iterations = 1000,
+            Seed = 42,  // Fixed seed for reproducibility
+            ThicknessDistribution = DistributionSpec.Constant(10.0),
+            ConductivityDistribution = DistributionSpec.Constant(0.001)
+        };
+
+        // Load expected results from golden output file
+        var golden = LoadGoldenOutput("Schmertmann_Seed42_1000Iterations.json");
+
+        // Act: Run the calculation
+        var model = new SchmertmannModel(config);
+        var result = await model.RunAsync();
+
+        // Assert: Results match golden output with tight tolerance
+        Assert.AreEqual(golden.Mean, result.Mean, 1e-10);
+        Assert.AreEqual(golden.Median, result.Median, 1e-10);
+        Assert.AreEqual(golden.P05, result.P05, 1e-10);
+        Assert.AreEqual(golden.P95, result.P95, 1e-10);
+    }
+
+    [TestMethod]
+    public async Task RunAsync_InvalidIterations_ThrowsArgumentException()
+    {
+        // Arrange: Invalid config
+        var config = new SchmertmannConfig { Iterations = 0 };
+        var model = new SchmertmannModel(config);
+
+        // Act & Assert: Should throw
+        await Assert.ThrowsExceptionAsync<ArgumentException>(
+            () => model.RunAsync());
+    }
+}
+```
+
+### Test Tolerances
+
+| Calculation Type         | Tolerance | Reason                 |
+| ------------------------ | --------- | ---------------------- |
+| Deterministic            | 1e-10     | Near machine precision |
+| Monte Carlo (same seed)  | 1e-10     | Should be identical    |
+| Monte Carlo (statistics) | 2-5%      | Sampling variance      |
+| Interpolation/lookup     | 1e-12     | Should be exact        |
+
+---
+
+## Documentation Standards
+
+Calculation libraries require extensive documentation due to their engineering context.
+
+### XML Documentation
+
+Every public class and method should have XML documentation:
+
+```csharp
+/// <summary>
+/// Computes the critical hydraulic gradient using the Schmertmann method.
+/// </summary>
+/// <remarks>
+/// <para>
+/// This method implements the critical gradient calculation from
+/// Schmertmann (1970). The formula accounts for soil properties
+/// and geometric factors.
+/// </para>
+/// <para>
+/// Formula: i_c = (γ_s - γ_w) / γ_w × factor
+/// </para>
+/// <para>
+/// Units:
+/// - γ_s: Saturated unit weight [kN/m³]
+/// - γ_w: Unit weight of water [kN/m³]
+/// - factor: Geometric correction factor [dimensionless]
+/// </para>
+/// </remarks>
+/// <param name="saturatedUnitWeight">Saturated unit weight in kN/m³.</param>
+/// <param name="geometryFactor">Geometric correction factor.</param>
+/// <returns>Critical gradient (dimensionless).</returns>
+/// <exception cref="ArgumentException">
+/// Thrown when saturated unit weight is less than water unit weight.
+/// </exception>
+public double ComputeCriticalGradient(
+    double saturatedUnitWeight,
+    double geometryFactor)
+{
+    // Implementation...
+}
+```
+
+### Inline Comments for Complex Logic
+
+```csharp
+// Calculate settlement using Schmertmann method.
+// The strain influence factor (Iz) varies with depth according to
+// a triangular distribution peaking at z = B/2.
+double Iz = CalculateStrainInfluenceFactor(depth, foundationWidth);
+
+// Apply correction for time-dependent creep settlement.
+// Creep factor increases logarithmically with time.
+// Reference: Schmertmann (1970), ASCE Journal of SMFE
+if (timeYears > 0.1)
+{
+    double creepFactor = 1.0 + 0.2 * Math.Log10(timeYears / 0.1);
+    settlement *= creepFactor;
+}
+```
+
+---
+
+## Best Practices
+
+### Do
+
+- Keep calculations stateless and pure (no side effects)
+- Validate all inputs before starting calculation
+- Document physical meanings, units, and formulas
+- Use deterministic seeds for reproducible testing
+- Provide progress reporting for long calculations
+- Return structured result objects with clear properties
+- Include warnings for edge cases or unusual inputs
+
+### Don't
+
+- Access databases or external services from calculations
+- Store state between method calls
+- Assume input validity without checking
+- Swallow exceptions silently (always propagate or log)
+- Mix calculation logic with I/O operations
+- Use mutable shared state (thread safety issues)
+- Skip unit tests for "simple" calculations
