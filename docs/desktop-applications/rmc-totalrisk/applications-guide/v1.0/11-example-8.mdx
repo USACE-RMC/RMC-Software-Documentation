@@ -1,0 +1,2240 @@
+---
+title: Example 8 – Seismic Gated Spillway (Multiple Failure Modes) 
+---
+
+import Link from "@docusaurus/Link";
+import addBaseUrl from "@docusaurus/useBaseUrl";
+import Citation from "@site/src/components/Citation";
+import CitationFootnote from "@site/src/components/CitationFootnote";
+import Figure from "@site/src/components/Figure";
+import FigureInline from "@site/src/components/FigureInline";
+import FigReference from "@site/src/components/FigureReference";
+import NavContainer from "@site/src/components/NavContainer";
+import ProcessList from "@site/src/components/ProcessList";
+import TableReference from "@site/src/components/TableReference";
+import TableVertical from "@site/src/components/TableVertical";
+import VersionSelector from "@site/src/components/VersionSelector";
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+<NavContainer 
+  link="/desktop-applications/rmc-totalrisk"
+  linkTitle="RMC-TotalRisk" 
+  document="desktop-applications/rmc-totalrisk/applications-guide"
+></NavContainer>
+
+# Example 8 – Seismic Gated Spillway (Multiple Failure Modes)
+
+The components of the concrete gated spillway are subject to failure when exposed to seismic ground shaking. The spillway consists of three Tainter gates, two piers, two middle 
+anchorages, and two end anchorages, <FigReference figKey="example-8-conc-gate-spill"/>. For this risk analysis, failure of all components is evaluated, resulting in four risk-driving PFMs: seismic pier failure, 
+seismic gate failure, seismic middle anchorage failure, and seismic end anchorage failure.
+
+{/*Figure 111*/}
+<Figure figKey="example-8-conc-gate-spill"
+    docId="11-example-8.mdx"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure111.png" 
+    fullWidth={true}
+    alt="Concrete gated spillway." 
+    caption="Concrete gated spillway."
+/>
+
+Calculating the total risk for potential failure modes related to the components of a concrete gated spillway differs from the evaluation of hydrologic potential failure modes or 
+seismic embankment potential failure modes. The reason is that the failure of the spillway components can result in several different breach sizes (typically given by number of 
+gate or concrete monolith failures). This can become complicated because the failure of a single component can result in several different breach scenarios (e.g., gate failure 
+for a 3-gate spillway can result in a breach of 1 gate, 2 gates, or 3 gates depending on the failure combination). Therefore, the method for calculating the total risk includes 
+either the use of combinatorics or extensive event trees that account for the probability of failure (or non-failure) of multiple concrete gated spillway 
+components. <TableReference tableKey="example-8-gate-breach-spill-comp"/> lists the resultant gate breaches that occur due to failure of the spillway components. For this 
+spillway, the failure of a single pier or middle anchorage always results in a two-gate breach, while the failure of a single gate or end anchorage always results in a one 
+gate breach.
+
+{/*Table 47*/}
+<TableVertical tableKey="example-8-gate-breach-spill-comp"
+    headers={
+        [
+            [
+                { value: "Spillway Component"},
+                { value: "Gate 1" },
+                { value: "Gate 2" },
+                { value: "Gate 3" }
+            ]
+        ]
+        }
+    columns={[
+    [
+    <b>Pier 1</b>,<b>Pier 2</b>,<b>Gate 1</b>,<b>Gate 2</b>,<b>Gate 3</b>,<b>Middle Anchorage (MA) 1</b>,<b>Middle Anchorage (MA) 2</b>, 
+    <b>End Anchorage (EA) 1</b>,<b>End Anchorage (EA) 2</b>
+    ],
+    [
+    'F','-','F','-','-','F','-','F','-'
+    ],
+    [
+    'F','F','-','F','-','F','F','-','-'
+    ],
+    [
+    '-','F','-','-','F','-','F','-','F'
+    ]
+    ]}
+    fullWidth={false}
+    alt="Resultant gate breaches by spillway component."
+    caption="Resultant gate breaches by spillway component." 
+    footnotes={["NOTE: “F” represents a component failure; “-“ represents a component non-failure."]}
+/>
+
+To accurately calculate the total risk due to spillway component failure, all possible failure combinations must be accounted for. A breach of a spillway gate can occur due 
+to any possible failure/non-failure combination of the spillway components. There are 512 unique combinations as listed in <TableReference tableKey="example-7-spill-fail-combo-1"/> 
+(click below to open collapsible panel).
+
+{/*Table 48*/}
+<details>
+    <summary>Table 48: Spillway component failure combinations</summary>
+<Tabs 
+  className="unique-tabs"
+  defaultValue="one"
+  values={[
+    {label: '1-50', value: 'one'},
+    {label: '51-100', value: 'two'},
+    {label: '101-150', value: 'three'},
+    {label: '151-200', value: 'four'},
+    {label: '201-250', value: 'five'},
+    {label: '251-300', value: 'six'},
+    {label: '301-350', value: 'seven'},
+    {label: '351-400', value: 'eight'},
+    {label: '401-450', value: 'nine'},
+    {label: '451-500', value: 'ten'},
+    {label: '501-512', value: 'eleven'},
+  ]}>
+  <TabItem value="one">
+    <TableVertical tableKey="example-7-spill-fail-combo-1"
+        headerAlign={["center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center"]}
+        colAlign={["center"]}
+        headers={
+            [
+                [
+                    { value: "Combination"},
+                    { value: "Pier 1" },
+                    { value: "Pier 2" },
+                    { value: "Gate 1" },
+                    { value: "Gate 2" },
+                    { value: "Gate 3" },
+                    { value: "MA 1" },
+                    { value: "MA 2" },
+                    { value: "EA 1" },
+                    { value: "EA 2" },
+                    { value: "# of Gates Breached" }
+                ]
+            ]
+            }
+        columns={[
+            [
+            1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50
+            ],
+            [
+             '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
+            ],
+            [
+             '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
+            ],
+            [
+             '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
+            ],
+            [
+             '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+             '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F'
+            ],
+            [
+             '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-'
+            ],
+            [
+             '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-'
+            ],
+            [
+             '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-'
+            ],
+            [
+             '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F'
+            ],
+            [
+            0,1,1,2,2,2,3,3,2,3,2,3,3,3,3,3,1,1,2,2,2,2,3,3,3,3,3,3,3,3,3,3,1,2,2,3,2,2,3,3,2,3,2,3,3,3,3,3,2,2
+            ]
+        ]}
+        widthMode="instrinsic"
+        alt="Spillway component failure combinations."
+        caption="Spillway component failure combinations." 
+        footnotes={["NOTE: “F” represents a component failure; “-“ represents a component non-failure."]}
+    />
+  </TabItem>
+  <TabItem value="two">
+    <TableVerticalNoRef
+        colAlign={["center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center"]}
+        headers={
+            [
+                [
+                    { value: "Combination"},
+                    { value: "Pier 1" },
+                    { value: "Pier 2" },
+                    { value: "Gate 1" },
+                    { value: "Gate 2" },
+                    { value: "Gate 3" },
+                    { value: "MA 1" },
+                    { value: "MA 2" },
+                    { value: "EA 1" },
+                    { value: "EA 2" },
+                    { value: "# of Gates Breached" }
+                ]
+            ]
+            }
+        columns={[
+            [
+            51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100
+            ],
+            [
+             '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
+            ],
+            [
+             '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
+            ],
+            [
+             '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+             'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F'
+            ],
+            [
+             'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-'
+            ],
+            [
+             '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-'
+            ],
+            [
+             '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-'
+            ],
+            [
+             'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F'
+            ],
+            [
+             '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F'
+            ],
+            [
+            3,3,2,2,3,3,3,3,3,3,3,3,3,3,1,2,1,2,3,3,3,3,2,3,2,3,3,3,3,3,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,2,3,2,3
+            ]
+        ]}
+        widthMode="instrinsic"
+        alt="Spillway component failure combinations."
+        caption="Spillway component failure combinations." 
+        footnotes={["NOTE: “F” represents a component failure; “-“ represents a component non-failure."]}
+    />
+
+  </TabItem>
+  <TabItem value="three">
+    <TableVerticalNoRef
+        colAlign={["center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center"]}
+        headers={
+            [
+                [
+                    { value: "Combination"},
+                    { value: "Pier 1" },
+                    { value: "Pier 2" },
+                    { value: "Gate 1" },
+                    { value: "Gate 2" },
+                    { value: "Gate 3" },
+                    { value: "MA 1" },
+                    { value: "MA 2" },
+                    { value: "EA 1" },
+                    { value: "EA 2" },
+                    { value: "# of Gates Breached" }
+                ]
+            ]
+            }
+        columns={[
+            [
+            101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150
+            ],
+            [
+             '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
+            ],
+            [
+             '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+             'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
+            ],
+            [
+             'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
+            ],
+            [
+             '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+             '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-'
+            ],
+            [
+             'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F'
+            ],
+            [
+             '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-'
+            ],
+            [
+             '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F'
+            ],
+            [
+            3,3,3,3,2,3,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,3,3,2,2,3,3,3,3,3,3,3,3,3,3,2,2,3,3,2,2
+            ]
+        ]}
+        widthMode="instrinsic"
+        alt="Spillway component failure combinations."
+        caption="Spillway component failure combinations." 
+        footnotes={["NOTE: “F” represents a component failure; “-“ represents a component non-failure."]}
+    />
+  </TabItem>
+
+  <TabItem value="four">
+    <TableVerticalNoRef
+        colAlign={["center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center"]}
+        headers={
+            [
+                [
+                    { value: "Combination"},
+                    { value: "Pier 1" },
+                    { value: "Pier 2" },
+                    { value: "Gate 1" },
+                    { value: "Gate 2" },
+                    { value: "Gate 3" },
+                    { value: "MA 1" },
+                    { value: "MA 2" },
+                    { value: "EA 1" },
+                    { value: "EA 2" },
+                    { value: "# of Gates Breached" }
+                ]
+            ]
+            }
+        columns={[
+            [
+            151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200
+            ],
+            [
+             '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-'
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-'
+            ],
+            [
+                 '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-'
+            ],
+            [
+                 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F'
+            ],
+            [
+                 '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F'
+            ],
+            [
+                3,3,3,3,3,3,3,3,3,3,2,2,3,3,2,2,3,3,3,3,3,3,3,3,3,3,2,2,3,3,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+            ]
+        ]}
+        widthMode="instrinsic"
+        alt="Spillway component failure combinations."
+        caption="Spillway component failure combinations." 
+        footnotes={["NOTE: “F” represents a component failure; “-“ represents a component non-failure."]}
+    />
+  </TabItem>
+
+  <TabItem value="five">
+    <TableVerticalNoRef
+        colAlign={["center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center"]}
+        headers={
+            [
+                [
+                    { value: "Combination"},
+                    { value: "Pier 1" },
+                    { value: "Pier 2" },
+                    { value: "Gate 1" },
+                    { value: "Gate 2" },
+                    { value: "Gate 3" },
+                    { value: "MA 1" },
+                    { value: "MA 2" },
+                    { value: "EA 1" },
+                    { value: "EA 2" },
+                    { value: "# of Gates Breached" }
+                ]
+            ]
+            }
+        columns={[
+            [
+            201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,245,246,247,248,249,250
+            ],
+            [
+                 '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F'
+            ],
+            [
+                 '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-'
+            ],
+            [
+                 '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-'
+            ],
+            [
+                 '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F'
+            ],
+            [
+                3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+            ]
+        ]}
+        widthMode="instrinsic"
+        alt="Spillway component failure combinations."
+        caption="Spillway component failure combinations." 
+        footnotes={["NOTE: “F” represents a component failure; “-“ represents a component non-failure."]}
+    />
+  </TabItem>
+
+  <TabItem value="six">
+    <TableVerticalNoRef
+        colAlign={["center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center"]}
+        headers={
+            [
+                [
+                    { value: "Combination"},
+                    { value: "Pier 1" },
+                    { value: "Pier 2" },
+                    { value: "Gate 1" },
+                    { value: "Gate 2" },
+                    { value: "Gate 3" },
+                    { value: "MA 1" },
+                    { value: "MA 2" },
+                    { value: "EA 1" },
+                    { value: "EA 2" },
+                    { value: "# of Gates Breached" }
+                ]
+            ]
+            }
+        columns={[
+            [
+            251,252,253,254,255,256,257,258,259,260,261,262,263,264,265,266,267,268,269,270,271,272,273,274,275,276,277,278,279,280,281,282,283,284,285,286,287,288,289,290,291,292,293,294,295,296,297,298,299,300
+            ],
+            [
+                 '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-'
+            ],
+            [
+                 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F'
+            ],
+            [
+                 '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F'
+            ],
+            [
+                3,3,3,3,3,3,2,3,2,3,3,3,3,3,2,3,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,3,2,3,3,3,3,3,2,3,2,3
+            ]
+        ]}
+        widthMode="instrinsic"
+        alt="Spillway component failure combinations."
+        caption="Spillway component failure combinations." 
+        footnotes={["NOTE: “F” represents a component failure; “-“ represents a component non-failure."]}
+    />
+  </TabItem>
+
+  <TabItem value="seven">
+    <TableVerticalNoRef
+        colAlign={["center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center"]}
+        headers={
+            [
+                [
+                    { value: "Combination"},
+                    { value: "Pier 1" },
+                    { value: "Pier 2" },
+                    { value: "Gate 1" },
+                    { value: "Gate 2" },
+                    { value: "Gate 3" },
+                    { value: "MA 1" },
+                    { value: "MA 2" },
+                    { value: "EA 1" },
+                    { value: "EA 2" },
+                    { value: "# of Gates Breached" }
+                ]
+            ]
+            }
+        columns={[
+            [
+            301,302,303,304,305,306,307,308,309,310,311,312,313,314,315,316,317,318,319,320,321,322,323,324,325,326,327,328,329,330,331,332,333,334,335,336,337,338,339,340,341,342,343,344,345,346,347,348,349,350
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
+            ],
+            [
+                 '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
+            ],
+            [
+                 '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F'
+            ],
+            [
+                 '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-'
+            ],
+            [
+                 '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F'
+            ],
+            [
+                3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,3,2,3,3,3,3,3,2,3,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+            ]
+        ]}
+        widthMode="instrinsic"
+        alt="Spillway component failure combinations."
+        caption="Spillway component failure combinations." 
+        footnotes={["NOTE: “F” represents a component failure; “-“ represents a component non-failure."]}
+    />
+  </TabItem>
+
+  <TabItem value="eight">
+    <TableVerticalNoRef
+        colAlign={["center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center"]}
+        headers={
+            [
+                [
+                    { value: "Combination"},
+                    { value: "Pier 1" },
+                    { value: "Pier 2" },
+                    { value: "Gate 1" },
+                    { value: "Gate 2" },
+                    { value: "Gate 3" },
+                    { value: "MA 1" },
+                    { value: "MA 2" },
+                    { value: "EA 1" },
+                    { value: "EA 2" },
+                    { value: "# of Gates Breached" }
+                ]
+            ]
+            }
+        columns={[
+            [
+            351,352,353,354,355,356,357,358,359,360,361,362,363,364,365,366,367,368,369,370,371,372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,387,388,389,390,391,392,393,394,395,396,397,398,399,400
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
+            ],
+            [
+                 '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
+            ],
+            [
+                 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
+            ],
+            [
+                 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F'
+            ],
+            [
+                 '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F'
+            ],
+            [
+                3,3,2,3,2,3,3,3,3,3,2,3,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+            ]
+        ]}
+        widthMode="instrinsic"
+        alt="Spillway component failure combinations."
+        caption="Spillway component failure combinations." 
+        footnotes={["NOTE: “F” represents a component failure; “-“ represents a component non-failure."]}
+    />
+  </TabItem>
+
+  <TabItem value="nine">
+    <TableVerticalNoRef
+        colAlign={["center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center"]}
+        headers={
+            [
+                [
+                    { value: "Combination"},
+                    { value: "Pier 1" },
+                    { value: "Pier 2" },
+                    { value: "Gate 1" },
+                    { value: "Gate 2" },
+                    { value: "Gate 3" },
+                    { value: "MA 1" },
+                    { value: "MA 2" },
+                    { value: "EA 1" },
+                    { value: "EA 2" },
+                    { value: "# of Gates Breached" }
+                ]
+            ]
+            }
+        columns={[
+            [
+            401,402,403,404,405,406,407,408,409,410,411,412,413,414,415,416,417,418,419,420,421,422,423,424,425,426,427,428,429,430,431,432,433,434,435,436,437,438,439,440,441,442,443,444,445,446,447,448,449,450
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F'
+            ],
+            [
+                 '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-'
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-'
+            ],
+            [
+                 '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-'
+            ],
+            [
+                 '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-'
+            ],
+            [
+                 '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-'
+            ],
+            [
+                 '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F'
+            ],
+            [
+                3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+            ]
+        ]}
+        widthMode="instrinsic"
+        alt="Spillway component failure combinations."
+        caption="Spillway component failure combinations." 
+        footnotes={["NOTE: “F” represents a component failure; “-“ represents a component non-failure."]}
+    />
+  </TabItem>
+
+  <TabItem value="ten">
+    <TableVerticalNoRef
+        colAlign={["center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center"]}
+        headers={
+            [
+                [
+                    { value: "Combination"},
+                    { value: "Pier 1" },
+                    { value: "Pier 2" },
+                    { value: "Gate 1" },
+                    { value: "Gate 2" },
+                    { value: "Gate 3" },
+                    { value: "MA 1" },
+                    { value: "MA 2" },
+                    { value: "EA 1" },
+                    { value: "EA 2" },
+                    { value: "# of Gates Breached" }
+                ]
+            ]
+            }
+        columns={[
+            [
+            451,452,453,454,455,456,457,458,459,460,461,462,463,464,465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,495,496,497,498,499,500
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-', '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', '-', '-', '-', '-'
+            ],
+            [
+                 '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F', '-', '-', '-', '-'
+            ],
+            [
+                 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F'
+            ],
+            [
+                 '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F'
+            ],
+            [
+                3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+            ]
+        ]}
+        widthMode="instrinsic"
+        alt="Spillway component failure combinations."
+        caption="Spillway component failure combinations." 
+        footnotes={["NOTE: “F” represents a component failure; “-“ represents a component non-failure."]}
+    />
+  </TabItem>
+
+  <TabItem value="eleven">
+    <TableVerticalNoRef
+        colAlign={["center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center"]}
+        headers={
+            [
+                [
+                    { value: "Combination"},
+                    { value: "Pier 1" },
+                    { value: "Pier 2" },
+                    { value: "Gate 1" },
+                    { value: "Gate 2" },
+                    { value: "Gate 3" },
+                    { value: "MA 1" },
+                    { value: "MA 2" },
+                    { value: "EA 1" },
+                    { value: "EA 2" },
+                    { value: "# of Gates Breached" }
+                ]
+            ]
+            }
+        columns={[
+            [
+            501,502,503,504,505,506,507,508,509,510,511,512
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 '-', '-', '-', '-', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 'F', 'F', 'F', 'F', '-', '-', '-', '-', 'F', 'F', 'F', 'F'
+            ],
+            [
+                 '-', '-', 'F', 'F', '-', '-', 'F', 'F', '-', '-', 'F', 'F'
+            ],
+            [
+                 '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F', '-', 'F'
+            ],
+            [
+                3,3,3,3,3,3,3,3,3,3,3,3
+            ]
+        ]}
+        widthMode="instrinsic"
+        alt="Spillway component failure combinations."
+        caption="Spillway component failure combinations." 
+        footnotes={["NOTE: “F” represents a component failure; “-“ represents a component non-failure."]}
+    />
+  </TabItem>
+</Tabs>
+</details>
+
+The annual probability of failure is calculated using several steps. First, event trees are created to represent the probability of seismic gated spillway component failure 
+for each component (pier, gate, middle anchorage, end anchorage). Next, secondary event trees are created to represent the failure combinations for each component of the 
+spillway as shown in <FigReference figKey="example-8-seis-pier-fail-tree"/> through <FigReference figKey="example-8-seis-end-anchor-fail-tree"/>. Finally, an event tree is 
+constructed to represent all possible failure combinations for the gated spillway – this event tree contains the secondary event trees for each component of the spillway in 
+series and is very large. The final event tree has been simplified in <FigReference figKey="example-8-seis-conc-gate-spill-tree"/>. The annual probability of failure is equal 
+to the sum of all branches in the event tree that result in one or more gate failures. The event tree also contains branches that display the breach size (e.g., 1 gate breach, 
+2 gate breach, etc.) to demonstrate the resulting breach size for each branch and are assigned a probability of 1.0. The simplified event tree denotes these branches 
+as “X Gate Breaches” as each branch contains multiple component failure/non-failure combinations.
+
+{/*Figure 112*/}
+<Figure figKey="example-8-seis-pier-fail-tree"
+    docId="11-example-8.mdx"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure112.png" 
+    fullWidth={true}
+    alt="Seismic pier failure event tree." 
+    caption="Seismic pier failure event tree."
+/>
+
+{/*Figure 113*/}
+<Figure figKey="example-8-seis-gate-fail-tree"
+    docId="11-example-8.mdx"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure113.png" 
+    fullWidth={true}
+    alt="Seismic gate failure event tree." 
+    caption="Seismic gate failure event tree."
+/>
+
+{/*Figure 114*/}
+<Figure figKey="example-8-seis-mid-anchor-fail-tree"
+    docId="11-example-8.mdx"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure114.png" 
+    fullWidth={true}
+    alt="Seismic middle anchorage failure event tree." 
+    caption="Seismic middle anchorage failure event tree."
+/>
+
+{/*Figure 115*/}
+<Figure figKey="example-8-seis-end-anchor-fail-tree"
+    docId="11-example-8.mdx"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure115.png" 
+    fullWidth={true}
+    alt="Seismic end anchorage failure event tree." 
+    caption="Seismic end anchorage failure event tree."
+/>
+
+{/*Figure 116*/}
+<Figure figKey="example-8-seis-conc-gate-spill-tree"
+    docId="11-example-8.mdx"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure116.png" 
+    fullWidth={true}
+    alt="Simplified seismic concrete gated spillway failure event tree." 
+    caption="Simplified seismic concrete gated spillway failure event tree."
+/>
+
+To calculate the average annual life loss, each branch of the event tree is matched with the appropriate life loss consequence scenario as shown in <FigReference figKey="example-8-gate-fail-tree-avg-ll"/>. 
+The average annual life loss is equal to the sum of the products of the annual probability of failure and life loss consequences for each branch that results in one or more 
+gate failures.
+
+{/*Figure 117*/}
+<Figure figKey="example-8-gate-fail-tree-avg-ll"
+    docId="11-example-8.mdx"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure117.png" 
+    fullWidth={true}
+    alt="Gate failure combination event tree for average annual life loss calculation." 
+    caption="Gate failure combination event tree for average annual life loss calculation."
+/>
+
+Instead of using this time- and labor-intensive procedure, the user can leverage the joint risk model in RMC-TotalRisk to simplify the calculation. The event trees 
+in <FigReference figKey="example-8-seis-pier-fail-tree"/> through <FigReference figKey="example-8-seis-end-anchor-fail-tree"/> are duplicated for each possible breach 
+scenario (e.g., 1 gate breach, 2 gate breach, etc.). This results in a total of 12 event trees – three event trees for each spillway component (e.g., 1 Gate Breach_Pier, 
+2 Gate Breach_Pier, 3 Gate Breach_Pier, 1 Gate Breach_Gate, etc.). Dummy probabilities are created using tabular system response functions to represent probabilities of 
+zero and one, and these dummy probabilities are assigned to the end branches of the event trees – the end branches that result in the number of gate failures of interest 
+are assigned a probability of one, and the end branches that do not are assigned a probability of zero. Consequence functions for each breach scenario are created and the 
+total risk is calculated by combining the discrete breach scenario event trees for each spillway component with their corresponding consequences using the joint risk model. 
+
+## Hazards
+
+The primary hazard for this risk analysis is the same as in [Example 6](./09-example-6.mdx). Reference the hazard function development procedure 
+in [Hazards](./09-example-6.mdx#hazards) from Example 6 to create the primary hazard for this risk analysis.
+
+## Transforms
+
+The primary hazard (stage duration), system response, and consequence data for this risk analysis are all a function of stage (ft). Therefore, a transform function is not required.
+
+## System Responses
+
+### Seismic Loading Weights
+
+The four risk-driving PFMs for the dam are seismic pier failure, seismic gate failure, seismic middle anchorage failure, and seismic end anchorage failure. When using 
+RMC-TotalRisk to evaluate PFMs that are driven by a seismic hazard, the seismic hazard must be partitioned by assigning weights to each representative seismic ground 
+motion evaluated for system response. The procedure for calculating seismic weights is shown in Section [Hazards](./09-example-6.mdx#hazards) from Example 6. For the PFMs 
+in this risk analysis, the seismic ground motions evaluated for system response and their respective weights for event tree analysis are provided in <TableReference tableKey="example-8-seis-conc-spill-fail-weight"/>.
+
+{/*Table 49*/}
+<TableVertical tableKey="example-8-seis-conc-spill-fail-weight"
+    alt="Seismic concrete spillway failure seismic hazard weights."
+    caption="Seismic concrete spillway failure seismic hazard weights."
+
+    headers={
+    [
+        [
+        { value: 'PGA (g)' },
+        { value: 'Probability' }
+        ]
+    ]
+    }
+    columns={[
+    [
+        0.05, 0.15, '0.40', 0.68, 'Remainder'
+    ],
+    [
+        '1.44E-03','6.99E-04','1.02E-04','2.97E-05','9.98E-01'
+    ]
+    ]}
+    widthMode="intrinsic"
+/>
+
+For all four PFMs, a PGA of 0.05g is assigned as the threshold for non-zero system response (i.e., all ground motions less than 0.05g have a system response probability of zero). 
+Therefore, the first seismic hazard partition does not include the non-exceedance probability for peak ground accelerations less than 0.05g. Instead, the non-exceedance probability 
+is included in the remainder partition and will not contribute to the annual probability of failure.
+
+### Seismic Gate Failure
+
+The event tree for the seismic gate failure PFM is shown in <FigReference figKey="example-8-seis-gate-fail-pot-tree"/> and the elicited system response probabilities are 
+shown in <TableReference tableKey="example-8-gate-fail-node-1-prob"/> and <TableReference tableKey="example-8-gate-fail-node-2-prob"/>. As the failure is due to a sudden 
+seismic event, intervention to prevent breach is not considered possible; therefore, only a “without intervention” scenario is evaluated.
+
+{/*Figure 118*/}
+<Figure figKey="example-8-seis-gate-fail-pot-tree"
+    docId="11-example-8.mdx"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure118.png" 
+    fullWidth={true}
+    alt="Seismic gate failure potential failure mode event tree." 
+    caption="Seismic gate failure potential failure mode event tree."
+/>
+
+The procedure for the creating the seismic gate failure PFM event tree is the same as the procedure used to create the seismic crest deformation PFM event tree 
+detailed in [System Responses](./09-example-6.mdx#system-responses) from Example 6. 
+
+{/*Table 55*/}
+<TableVertical tableKey="example-8-gate-fail-node-1-prob"
+    headers={[
+        [
+            { value: "PGA (g)" },
+            { value: "Stage (ft)" },
+            { value: "622.90" },
+            { value: "623.00" },
+            { value: "633.00" },
+            { value: "640.00" },
+            { value: "644.00" }
+        ]
+    ]}
+    colAlign={["center",]}
+    headerAlign={["center", "center", "center", "center", "center", "center", "center"]}
+    columns={[
+    [
+    { 
+          value: (
+            <>
+              <strong>0.05</strong>
+            </>
+          ), 
+        rowSpan: 4
+
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.015</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.40</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.68</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+        null,null,null
+    ],
+    [
+    "LRV","MLV","HRV","EV","LRV","MLV","HRV","EV","LRV","MLV","HRV","EV","LRV","MLV","HRV","EV"
+    ],
+    [
+    '0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000'
+    ],
+    [
+    '0.000','0.000','0.000','0.000',0.075,"0.150","0.450",0.225,0.095,0.275,"0.600",0.323,"0.150","0.350","0.800",0.433
+    ],
+    [
+    '0.000','0.000','0.000','0.000',"0.090","0.250","0.550",0.297,0.125,0.325,0.675,0.375,0.225,"0.500","0.900",0.542
+    ],
+    [
+    '0.000','0.000','0.000','0.000',"0.100","0.300","0.700",0.367,"0.200","0.450",0.825,0.492,"0.400","0.650","0.950",0.667    
+    ],
+    [
+    '0.000','0.000','0.000','0.000',"0.150","0.400","0.750",0.433,0.225,"0.550",0.875,"0.550","0.450","0.700","0.990",0.713
+    ]
+    ]}
+    fullWidth={false}
+    alt="Seismic gate failure node 1 system response probabilities."
+    caption="Seismic gate failure node 1 system response probabilities." />
+
+{/*Table 56*/}
+<TableVertical tableKey="example-8-gate-fail-node-2-prob"
+    headers={[
+        [
+            { value: "PGA (g)" },
+            { value: "Stage (ft)" },
+            { value: "622.90" },
+            { value: "623.00" },
+            { value: "633.00" },
+            { value: "640.00" },
+            { value: "644.00" }
+        ]
+    ]}
+    colAlign={["center",]}
+    headerAlign={["center", "center", "center", "center", "center", "center", "center"]}
+    columns={[
+    [
+    { 
+          value: (
+            <>
+              <strong>0.05</strong>
+            </>
+          ), 
+        rowSpan: 4
+
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.015</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.40</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.68</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+        null,null,null
+    ],
+    [
+    "LRV","MLV","HRV","EV","LRV","MLV","HRV","EV","LRV","MLV","HRV","EV","LRV","MLV","HRV","EV"
+    ],
+    [
+    '0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000'
+    ],
+    [
+    '0.000','0.000','0.000','0.000',0.001,"0.050","0.270",0.107,"0.010","0.200","0.550",0.253,0.042,"0.350","0.850",0.414
+    ],
+    [
+    '0.000','0.000','0.000','0.000',0.001,0.075,"0.380",0.152,0.015,"0.250","0.650",0.305,0.093,"0.460","0.900",0.484
+    ],
+    [
+    '0.000','0.000','0.000','0.000',0.002,0.175,"0.450",0.209,"0.050","0.430","0.750","0.410","0.170","0.550","0.970",0.563   
+    ],
+    [
+    '0.000','0.000','0.000','0.000',"0.010","0.200","0.500",0.237,"0.100","0.500","0.850",0.483,"0.200","0.650","0.990",0.613
+    ]
+    ]}
+    fullWidth={false}
+    alt="Seismic gate failure node 2 system response probabilities."
+    caption="Seismic gate failure node 2 system response probabilities." />
+
+{/*Figure 119*/}
+<Figure figKey="example-8-seis-gate-fail-tree-tr"
+    docId="11-example-8.mdx"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure119.png" 
+    fullWidth={true}
+    alt="Seismic gate failure event tree in RMC-TotalRisk." 
+    caption="Seismic gate failure event tree in RMC-TotalRisk."
+/>
+
+{/*Figure 121*/}
+<Figure figKey="example-8-seis-gate-fail-tree-curve"
+    docId="11-example-8.mdx"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure121.png" 
+    fullWidth={true}
+    alt="Seismic gate failure event tree system response curve." 
+    caption="Seismic gate failure event tree system response curve."
+/>
+
+### Seismic Pier Failure
+
+The event tree for the seismic pier failure PFM is shown in Figure <FigReference figKey="example-8-seis-pier-pot-fail-tree"/> and the elicited system response probabilities are 
+shown in <TableReference tableKey="example-8-pier-fail-node-1-prob"/>, <TableReference tableKey="example-8-pier-fail-node-2-prob"/>, 
+<TableReference tableKey="example-8-pier-fail-node-3-prob"/>, and <TableReference tableKey="example-8-pier-fail-node-4-prob"/>. As the failure is due to a sudden seismic 
+event, intervention to prevent breach is not considered possible; therefore, only a “without intervention” scenario is evaluated.
+
+{/*Figure 122*/}
+<Figure figKey="example-8-seis-pier-pot-fail-tree"
+    docId="11-example-8.mdx"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure122.png" 
+    fullWidth={true}
+    alt="Seismic pier failure potential failure mode event tree." 
+    caption="Seismic pier failure potential failure mode event tree."
+/>
+
+The procedure for the creating the seismic pier failure PFM event tree is the same as the procedure used to create the seismic crest deformation PFM event tree 
+detailed in [System Responses](./09-example-6.mdx#system-responses) from Example 6. 
+
+{/*Table 50*/}
+<TableVertical tableKey="example-8-pier-fail-node-1-prob"
+    headers={
+        [
+            [
+                { value: "PGA (g)" },
+                { value: "Stage (ft)"},
+                { value: "622.90" },
+                { value: "623.00" },
+                { value: "633.00" },
+                { value: "640.00" },
+                { value: "644.00" }
+            ]
+        ]
+        }
+    colAlign={["center",]}
+    headerAlign={["center", "center", "center", "center", "center", "center", "center"]}
+    columns={[
+    [
+    { 
+          value: (
+            <>
+              <strong>0.05</strong>
+            </>
+          ), 
+        rowSpan: 4
+
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.015</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.40</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.68</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+        null,null,null
+    ],
+    [
+    'LRV','MLV','HRV','EV','LRV','MLV','HRV','EV','LRV','MLV','HRV','EV','LRV','MLV','HRV','EV'
+    ],
+    [
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    ],
+    [
+    0,0,0,0,0,0,0.001,0,0,0,0.001,0,0.001,0.006,0.065,0.024
+    ],
+    [
+    0,0,0,0,0,0,0.001,0,0,0.001,'0.010',0.004,0.011,'0.100','0.200',0.104
+    ],
+    [
+    0,0,0,0,0.001,0.002,0.003,0.002,0.003,0.013,'0.100',0.039,0.015,'0.150','0.300',0.155   
+    ],
+    [
+    0,0,0,0,0.001,0.004,'0.010',0.005,0.025,'0.100','0.200',0.108,0.033,'0.200','0.400',0.211
+    ]
+    ]}
+    fullWidth={false}
+    alt="Seismic pier failure node 1 system response probabilities."
+    caption="Seismic pier failure node 1 system response probabilities."
+/>
+
+{/*Table 51*/}
+<TableVertical tableKey="example-8-pier-fail-node-2-prob"
+    headers={
+        [
+            [
+                { value: "PGA (g)" },
+                { value: "Stage (ft)"},
+                { value: "622.90" },
+                { value: "623.00" },
+                { value: "633.00" },
+                { value: "640.00" },
+                { value: "644.00" }
+            ]
+        ]
+        }
+    colAlign={["center",]}
+    headerAlign={["center", "center", "center", "center", "center", "center", "center"]}
+    columns={[
+    [
+    { 
+          value: (
+            <>
+              <strong>0.05</strong>
+            </>
+          ), 
+        rowSpan: 4
+
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.015</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.40</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.68</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+        null,null,null
+    ],
+    [
+    'LRV','MLV','HRV','EV','LRV','MLV','HRV','EV','LRV','MLV','HRV','EV','LRV','MLV','HRV','EV'
+    ],
+    [
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    ],
+    [
+    0,0,0,0,0.051,0.387,0.677,0.372,'0.300',0.677,0.919,0.632,'0.500','0.900','0.990',0.797
+    ],
+    [
+    0,0,0,0,0.071,0.393,0.688,0.384,'0.300',0.688,0.934,0.641,'0.500','0.900','0.990',0.797
+    ],
+    [
+    0,0,0,0,0.094,0.396,0.693,0.394,'0.350',0.693,0.941,0.661,0.532,'0.900',0.997,'0.810'  
+    ],
+    [
+    0,0,0,0,0.094,0.396,0.693,0.394,'0.350',0.693,0.941,0.661,0.532,'0.900',0.997,'0.810'
+    ]
+    ]}
+    fullWidth={false}
+    alt="Seismic pier failure node 2 system response probabilities."
+    caption="Seismic pier failure node 2 system response probabilities."
+/>
+
+{/*Table 52*/}
+<TableVertical tableKey="example-8-pier-fail-node-3-prob"
+    headers={
+        [
+            [
+                { value: "PGA (g)" },
+                { value: "Stage (ft)"},
+                { value: "622.90" },
+                { value: "623.00" },
+                { value: "633.00" },
+                { value: "640.00" },
+                { value: "644.00" }
+            ]
+        ]
+        }
+    colAlign={["center",]}
+    headerAlign={["center", "center", "center", "center", "center", "center", "center"]}
+    columns={[
+    [
+    { 
+          value: (
+            <>
+              <strong>0.05</strong>
+            </>
+          ), 
+        rowSpan: 4
+
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.015</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.40</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.68</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+        null,null,null
+    ],
+    [
+    'LRV','MLV','HRV','EV','LRV','MLV','HRV','EV','LRV','MLV','HRV','EV','LRV','MLV','HRV','EV'
+    ],
+    [
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    ],
+    [
+    0,0,0,0,'0.010','0.100','0.250','0.120',0.066,'0.150','0.350',0.189,0.441,'0.900','0.990',0.777
+    ],
+    [
+    0,0,0,0,'0.040','0.200','0.300','0.180',0.106,'0.250','0.400',0.252,'0.450','0.900','0.990','0.780'
+    ],
+    [
+    0,0,0,0,0.097,'0.300','0.500',0.299,0.159,'0.310','0.500',0.323,'0.450','0.950',0.999,'0.800' 
+    ],
+    [
+    0,0,0,0,0.286,'0.600','0.750',0.545,0.398,'0.700','0.950',0.683,'0.600','0.990',0.999,0.863
+    ]
+    ]}
+    fullWidth={false}
+    alt="Seismic pier failure node 3 system response probabilities."
+    caption="Seismic pier failure node 3 system response probabilities."
+/>
+
+{/*Table 53*/}
+<TableVertical tableKey="example-8-pier-fail-node-4-prob"
+    headers={
+        [
+            [
+                { value: "PGA (g)" },
+                { value: "Stage (ft)"},
+                { value: "622.90" },
+                { value: "623.00" },
+                { value: "633.00" },
+                { value: "640.00" },
+                { value: "644.00" }
+            ]
+        ]
+        }
+    colAlign={["center",]}
+    headerAlign={["center", "center", "center", "center", "center", "center", "center"]}
+    columns={[
+    [
+    { 
+          value: (
+            <>
+              <strong>0.05</strong>
+            </>
+          ), 
+        rowSpan: 4
+
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.015</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.40</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.68</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+        null,null,null
+    ],
+    [
+    'LRV','MLV','HRV','EV','LRV','MLV','HRV','EV','LRV','MLV','HRV','EV','LRV','MLV','HRV','EV'
+    ],
+    [
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    ],
+    [
+    0,0,0,0,0.026,'0.150','0.350',0.175,'0.150','0.400',0.774,0.441,'0.250',0.585,'0.900',0.578
+    ],
+    [
+    0,0,0,0,0.036,'0.150','0.350',0.179,'0.150','0.400',0.786,0.445,'0.250',0.585,'0.900',0.578
+    ],
+    [
+    0,0,0,0,0.047,'0.150','0.350',0.182,'0.150','0.400',0.793,0.448,'0.250',0.585,'0.900',0.578 
+    ],
+    [
+    0,0,0,0,'0.050','0.150','0.350',0.183,'0.150','0.400','0.800','0.450','0.250',0.618,'0.900',0.589
+    ]
+    ]}
+    fullWidth={false}
+    alt="Seismic pier failure node 4 system response probabilities."
+    caption="Seismic pier failure node 4 system response probabilities."
+/>
+
+{/*Figure 123*/}
+<Figure figKey="example-8-seis-pier-fail-tree-tr"
+    docId="11-example-8.mdx"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure123.png" 
+    fullWidth={true}
+    alt="Seismic pier failure event tree in RMC-TotalRisk." 
+    caption="Seismic pier failure event tree in RMC-TotalRisk."
+/>
+
+{/*Figure 124*/}
+<Figure figKey="example-8-seis-pier-fail-tree-curve"
+    docId="11-example-8.mdx"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure124.png" 
+    fullWidth={true}
+    alt="Seismic pier failure event tree system response curve." 
+    caption="Seismic pier failure event tree system response curve."
+/>
+
+### Seismic Middle Anchorage Failure
+
+The event tree for the seismic middle anchorage failure PFM is shown in <FigReference figKey="example-8-mid-anc-fail-tree"/> and the elicited system response probabilities 
+are shown in <TableReference tableKey="example-8-mid-anc-fail-node-1-prob"/>, <TableReference tableKey="example-8-mid-anc-fail-node-2-prob"/>, and 
+<TableReference tableKey="example-8-mid-anc-fail-node-3-prob"/>. As the failure is due to a sudden seismic event, intervention to prevent breach is not considered 
+possible; therefore, only a “without intervention” scenario is evaluated.
+
+{/*Figure 125*/}
+<Figure figKey="example-8-mid-anc-fail-tree"
+    docId="11-example-8.mdx"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure125.png" 
+    fullWidth={true}
+    alt="Seismic middle anchorage failure potential failure mode event tree." 
+    caption="Seismic middle anchorage failure potential failure mode event tree."
+/>
+The procedure for the creating the seismic middle anchorage failure PFM event tree is the same as the procedure used to create the seismic crest deformation PFM event 
+tree detailed in [System Responses](./09-example-6.mdx#system-responses) from Example 6. 
+
+{/*Table 58*/}
+<TableVertical tableKey="example-8-mid-anc-fail-node-1-prob"
+    headers={
+        [
+            [
+                { value: "PGA (g)" },
+                { value: "Stage (ft)"},
+                { value: "622.90" },
+                { value: "623.00" },
+                { value: "633.00" },
+                { value: "640.00" },
+                { value: "644.00" }
+            ]
+        ]
+        }
+    colAlign={["center",]}
+    headerAlign={["center", "center", "center", "center", "center", "center", "center"]}
+    columns={[
+    [
+    { 
+          value: (
+            <>
+              <strong>0.05</strong>
+            </>
+          ), 
+        rowSpan: 4
+
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.015</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.40</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.68</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+        null,null,null
+    ],
+    [
+    'LRV','MLV','HRV','EV','LRV','MLV','HRV','EV','LRV','MLV','HRV','EV','LRV','MLV','HRV','EV'
+    ],
+    [
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    ],
+    [
+    0,0,0,0,0,0,0,0,0,0.002,0.002,0.001,0.002,'0.020',0.038,'0.020'
+    ],
+    [
+    0,0,0,0,0,0,0.002,0.001,0.002,0.008,0.012,0.007,'0.010','0.150','0.200','0.120'
+    ],
+    [
+    0,0,0,0,0,0.002,0.004,0.002,0.002,0.016,'0.030',0.016,'0.100',0.304,'0.500',0.301 
+    ],
+    [
+    0,0,0,0,0,0.008,'0.010',0.006,'0.010',0.118,'0.200',0.109,'0.200',0.534,0.802,0.512
+    ]
+    ]}
+    fullWidth={false}
+    alt="Seismic middle anchorage failure node 1 system response probabilities."
+    caption="Seismic middle anchorage failure node 1 system response probabilities."
+/>
+
+{/*Table 59*/}
+<TableVertical tableKey="example-8-mid-anc-fail-node-2-prob"
+    headers={
+        [
+            [
+                { value: "PGA (g)" },
+                { value: "Stage (ft)"},
+                { value: "622.90" },
+                { value: "623.00" },
+                { value: "633.00" },
+                { value: "640.00" },
+                { value: "644.00" }
+            ]
+        ]
+        }
+    colAlign={["center",]}
+    headerAlign={["center", "center", "center", "center", "center", "center", "center"]}
+    columns={[
+    [
+    { 
+          value: (
+            <>
+              <strong>0.05</strong>
+            </>
+          ), 
+        rowSpan: 4
+
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.015</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.40</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.68</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+        null,null,null
+    ],
+    [
+    'LRV','MLV','HRV','EV','LRV','MLV','HRV','EV','LRV','MLV','HRV','EV','LRV','MLV','HRV','EV'
+    ],
+    [
+    0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999
+    ],
+    [
+    0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999
+    ],
+    [
+    0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999
+    ],
+    [
+    0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999 
+    ],
+    [
+    0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999
+    ]
+    ]}
+    fullWidth={false}
+    alt="Seismic middle anchorage failure node 2 system response probabilities."
+    caption="Seismic middle anchorage failure node 2 system response probabilities."
+/>
+
+{/*Table 60*/}
+<TableVertical tableKey="example-8-mid-anc-fail-node-3-prob"
+    headers={
+        [
+            [
+                { value: "PGA (g)" },
+                { value: "Stage (ft)"},
+                { value: "622.90" },
+                { value: "623.00" },
+                { value: "633.00" },
+                { value: "640.00" },
+                { value: "644.00" }
+            ]
+        ]
+        }
+    colAlign={["center",]}
+    headerAlign={["center", "center", "center", "center", "center", "center", "center"]}
+    columns={[
+    [
+    { 
+          value: (
+            <>
+              <strong>0.05</strong>
+            </>
+          ), 
+        rowSpan: 4
+
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.015</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.40</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.68</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+        null,null,null
+    ],
+    [
+    'LRV','MLV','HRV','EV','LRV','MLV','HRV','EV','LRV','MLV','HRV','EV','LRV','MLV','HRV','EV'
+    ],
+    [
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    ],
+    [
+    0,0,0,0,0.001,0.004,'0.010',0.005,0.003,'0.010','0.050',0.021,'0.010','0.050','0.100',0.053
+    ],
+    [
+    0,0,0,0,0.001,0.022,'0.050',0.024,'0.010',0.075,'0.300',0.128,'0.050','0.200','0.500','0.250'
+    ],
+    [
+    0,0,0,0,0.007,0.075,'0.150',0.077,0.015,'0.200','0.500',0.238,'0.100',0.274,0.693,0.356 
+    ],
+    [
+    0,0,0,0,'0.010',0.274,'0.500',0.261,0.057,0.382,'0.680',0.373,'0.150','0.500',0.842,0.497
+    ]
+    ]}
+    fullWidth={false}
+    alt="Seismic middle anchorage failure node 3 system response probabilities."
+    caption="Seismic middle anchorage failure node 3 system response probabilities."
+/>
+
+{/*Figure 126*/}
+<Figure figKey="example-8-mid-anc-fail-tree-tr"
+    docId="11-example-8.mdx"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure126.png" 
+    fullWidth={true}
+    alt="Seismic middle anchorage failure event tree in RMC-TotalRisk." 
+    caption="Seismic middle anchorage failure event tree in RMC-TotalRisk."
+/>
+
+{/*Figure 127*/}
+<Figure figKey="example-8-mid-anc-fail-tree-curve"
+    docId="11-example-8.mdx"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure127.png" 
+    fullWidth={true}
+    alt="Seismic middle anchorage failure event tree system response curve." 
+    caption="Seismic middle anchorage failure event tree system response curve."
+/>
+
+### Seismic End Anchorage Failure
+
+The event tree for the seismic end anchorage failure PFM is shown in <FigReference figKey="example-8-end-anc-fail-tree"/> and the elicited system response probabilities 
+are shown in <TableReference tableKey="example-8-end-anc-fail-node-1-prob"/>, <TableReference tableKey="example-8-end-anc-fail-node-2-prob"/>, and 
+<TableReference tableKey="example-8-end-anc-fail-node-3-prob"/>. As the failure is due to a sudden seismic event, intervention to prevent breach is not 
+considered possible; therefore, only a “without intervention” scenario is evaluated.
+
+{/*Figure 128*/}
+<Figure figKey="example-8-end-anc-fail-tree"
+    docId="11-example-8.mdx"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure128.png" 
+    fullWidth={true}
+    alt="Seismic end anchorage failure potential failure mode event tree." 
+    caption="Seismic end anchorage failure potential failure mode event tree."
+/>
+
+The procedure for the creating the seismic end anchorage failure PFM event tree is the same as the procedure used to create the seismic crest deformation PFM event tree 
+detailed in [System Responses](./09-example-6.mdx#system-responses) from Example 6.
+
+{/*Table 62*/}
+<TableVertical tableKey="example-8-end-anc-fail-node-1-prob"
+    headers={
+        [
+            [
+                { value: "PGA (g)" },
+                { value: "Stage (ft)"},
+                { value: "622.90" },
+                { value: "623.00" },
+                { value: "633.00" },
+                { value: "640.00" },
+                { value: "644.00" }
+            ]
+        ]
+        }
+    colAlign={["center",]}
+    headerAlign={["center", "center", "center", "center", "center", "center", "center"]}
+    columns={[
+    [
+    { 
+          value: (
+            <>
+              <strong>0.05</strong>
+            </>
+          ), 
+        rowSpan: 4
+
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.015</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.40</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.68</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+        null,null,null
+    ],
+    [
+    'LRV','MLV','HRV','EV','LRV','MLV','HRV','EV','LRV','MLV','HRV','EV','LRV','MLV','HRV','EV'
+    ],
+    [
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    ],
+    [
+    0,0,0,0,0,0,0,0,0,0.004,0.007,0.004,0.001,0.025,0.048,0.025
+    ],
+    [
+    0,0,0,0,0,0,0.004,0.001,0.001,0.007,0.009,0.006,0.005,'0.090',0.138,0.078
+    ],
+    [
+    0,0,0,0,0,0.003,0.008,0.004,0.001,'0.010',0.034,0.015,'0.050',0.267,'0.500',0.272 
+    ],
+    [
+    0,0,0,0,0,0.008,'0.010',0.006,0.005,'0.040','0.090',0.045,'0.100',0.485,'0.670',0.418
+    ]
+    ]}
+    fullWidth={false}
+    alt="Seismic end anchorage failure node 1 system response probabilities."
+    caption="Seismic end anchorage failure node 1 system response probabilities."
+/>
+
+{/*Table 63*/}
+<TableVertical tableKey="example-8-end-anc-fail-node-2-prob"
+    headers={
+        [
+            [
+                { value: "PGA (g)" },
+                { value: "Stage (ft)"},
+                { value: "622.90" },
+                { value: "623.00" },
+                { value: "633.00" },
+                { value: "640.00" },
+                { value: "644.00" }
+            ]
+        ]
+        }
+    colAlign={["center",]}
+    headerAlign={["center", "center", "center", "center", "center", "center", "center"]}
+    columns={[
+    [
+    { 
+          value: (
+            <>
+              <strong>0.05</strong>
+            </>
+          ), 
+        rowSpan: 4
+
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.015</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.40</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.68</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+        null,null,null
+    ],
+    [
+    'LRV','MLV','HRV','EV','LRV','MLV','HRV','EV','LRV','MLV','HRV','EV','LRV','MLV','HRV','EV'
+    ],
+    [
+    0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999
+    ],
+    [
+    0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999
+    ],
+    [
+    0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999
+    ],
+    [
+    0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999
+    ],
+    [
+    0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999,0.999
+    ]
+    ]}
+    fullWidth={false}
+    alt="Seismic end anchorage failure node 2 system response probabilities."
+    caption="Seismic end anchorage failure node 2 system response probabilities."
+/>
+
+{/*Table 64*/}
+<TableVertical tableKey="example-8-end-anc-fail-node-3-prob"
+    headers={
+        [
+            [
+                { value: "PGA (g)" },
+                { value: "Stage (ft)"},
+                { value: "622.90" },
+                { value: "623.00" },
+                { value: "633.00" },
+                { value: "640.00" },
+                { value: "644.00" }
+            ]
+        ]
+        }
+    colAlign={["center",]}
+    headerAlign={["center", "center", "center", "center", "center", "center", "center"]}
+    columns={[
+    [
+    { 
+          value: (
+            <>
+              <strong>0.05</strong>
+            </>
+          ), 
+        rowSpan: 4
+
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.015</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.40</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.68</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+        null,null,null
+    ],
+    [
+    'LRV','MLV','HRV','EV','LRV','MLV','HRV','EV','LRV','MLV','HRV','EV','LRV','MLV','HRV','EV'
+    ],
+    [
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    ],
+    [
+    0,0,0,0,0,0,0.001,0.001,0,0.002,0.008,0.003,0.001,0.008,0.018,0.009
+    ],
+    [
+    0,0,0,0,0,0.003,0.007,0.003,0.001,0.011,0.045,0.019,0.007,0.032,0.087,0.042
+    ],
+    [
+    0,0,0,0,0.001,0.009,0.018,0.009,0.002,0.034,0.084,'0.040',0.019,0.058,0.151,0.076
+    ],
+    [
+    0,0,0,0,0.001,0.042,0.073,0.039,0.012,0.084,0.148,0.081,0.034,0.129,0.224,0.129
+    ]
+    ]}
+    fullWidth={false}
+    alt="Seismic end anchorage failure node 3 system response probabilities."
+    caption="Seismic end anchorage failure node 3 system response probabilities."
+/>
+
+{/*Figure 129*/}
+<Figure figKey="example-8-end-anc-fail-tree-tr"
+    docId="11-example-8.mdx"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure129.png" 
+    fullWidth={true}
+    alt="Seismic end anchorage failure event tree in RMC-TotalRisk." 
+    caption="Seismic end anchorage failure event tree in RMC-TotalRisk."
+/>
+
+{/*Figure 130*/}
+<Figure figKey="example-8-end-anc-fail-tree-curve"
+    docId="11-example-8.mdx"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure130.png" 
+    fullWidth={true}
+    alt="Seismic end anchorage failure event tree system response curve." 
+    caption="Seismic end anchorage failure event tree system response curve."
+/>
+
+### Breach Scenarios
+
+Breach scenario event trees need to be created for each spillway component for a total of 12 event trees. The procedure for creating the breach scenario event trees is the 
+same as the procedure used to create the seismic gate failure breach scenario event trees detailed in [Breach Scenarios](./10-example-7.mdx#breach-responses) from Example 7.
+
+## Consequences
+
+As detailed above, seismic failure of the concrete gated spillway components can result in a 1 gate breach, 2 gate breach, or 3 gate breach. Consequence models for each 
+scenario, along with the non-breach condition, have been run for the analysis. The consequence functions for this risk analysis are identical to those detailed 
+in [Consequences](./03-example-1.mdx#consequences) from Example 7.
+
+## Risk Analyses
+
+To calculate the total seismic risk for the concrete gated spillway, all breach scenarios must be combined into a single analysis so that all failure combinations are accounted for.
+
+:::note 
+Replace Figure 130 with a figure that can actually be seen.
+Replace Figure 130 with correct non-breach risk.
+:::
+
+:::note 
+Add figure to show simulation options as consistent with other examples.
+:::
+
+<ProcessList
+    items={[
+        {
+            title: (
+                <>
+                Right-click the <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/folder.png"/> <strong>Risk Analyses</strong> folder and 
+                selecting <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/addriskanalysis.png"/> <strong>Add Risk Analysis…</strong> Name 
+                the risk analysis in the prompt (e.g., Total Seismic Risk) and press <strong>OK</strong>.
+                </>
+            )
+        },
+        {
+            title: (
+                <>
+                For <strong>Consequence</strong> and <strong>Consequence Unit</strong> in the <strong>Risk Analysis Properties</strong> section of the Properties window, select <em>Life Loss</em> and <em>Lives</em>.
+                </>
+            )
+        },
+        {
+            title: (
+                <>
+                For this risk analysis two hazard functions, twelve system response functions, and thirteen consequence functions are required. Add components to the risk 
+                analysis <strong>Diagram</strong> by clicking the <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/newbranch.png"/> green plus 
+                sign, clicking on a node output connector, or right-clicking anywhere in the diagram.
+                </>
+            ),
+            child: [
+                {
+                    title: (
+                        <>
+                        First, add a hazard node <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/hazardIcon.png"/> to the diagram. Select the 
+                        hazard function (e.g., Stage Frequency) for the non-breach risk from the blank drop-down box in the hazard node.
+                        </>
+                    )
+                },
+                {
+                    title: (
+                        <>
+                        Next, add the non-breach condition by clicking on the non-breach risk hazard node output connector and adding a consequence 
+                        node <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/consequenceIcon.png"/> and selecting the composite 
+                        non-breach life loss function (e.g., Non-Breach) from the drop-down box. 
+                        </>
+                    )
+                },
+                {
+                    title: (
+                        <>
+                        Add a second hazard node <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/hazardIcon.png"/> to the diagram. 
+                        Select the hazard function (e.g., Stage Duration) for the incremental risk from the blank drop-down box in the hazard node.
+                        </>
+                    )
+                },
+                {
+                    title: (
+                        <>
+                        Next, add the 1 Gate Breach, 2 Gate Breach, and 3 Gate Breach system response functions for each spillway component and their associated breach life 
+                        loss consequence functions to the incremental risk hazard node. These PFMs have the same hazard (stage) as the hazard function and can be added to the 
+                        risk analysis without a transform function.
+                        </>
+                    ),
+                    child: [
+                        {
+                            title: (
+                                <>
+                                Add a response node <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/responseIcon.png"/> by clicking 
+                                on the incremental risk hazard node output connector and select the appropriate system response function (e.g., 1 Gate Breach_Pier, etc.) from 
+                                the drop-down box.
+                                </>
+                            )
+                        },
+                        {
+                            title: (
+                                <>
+                                Add the breach condition by clicking on the response node output connector and adding a consequence 
+                                node <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/consequenceIcon.png"/> and selecting the 
+                                composite breach life loss function (e.g., 1 Gate Breach) from the drop-down box.
+                                </>
+                            )
+                        },
+                        {
+                            title: (
+                                <>
+                                Repeat steps c.(1) and c.(2) for the remaining system response functions and their associated consequence functions. 
+                                </>
+                            )
+                        }
+                    ]
+                },
+                {
+                    title: (
+                        <>
+                        Re-arrange the nodes (click and hold, then drag) to personalize the diagram. The final risk analysis diagram is shown in <FigReference figKey="example-8-tot-proj-wo-intervene-diagram"/>.
+                        </>
+                    ),
+                    freeform: (
+                        <>
+                            {/*Figure 110*/}
+                            <Figure 
+                                docId="11-example-8.mdx"
+                                figKey="example-8-tot-proj-wo-intervene-diagram"
+                                src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figuretemp.png" 
+                                fullWidth={true}
+                                alt="Total project without intervention risk diagram (Example 8)." 
+                                caption="Total project without intervention risk diagram (Example 8)."
+                            />
+                        </>
+                    )
+                }
+            ]
+        },
+        {
+            title: (
+                <>
+                When running a risk analysis, the simulation options can be adjusted within the <strong>Options</strong> tab of the Properties window. 
+                </>
+            ),
+            child: [
+                {
+                    title: (
+                        <>
+                        Within the <strong>System Component Options</strong> section, the <strong>Failure Mode Method</strong> is set to <em>Joint Failures</em> and the <strong>Joint Consequences</strong> are set 
+                        to <em>Maximum</em>, Figure X(a). Additional options for Failure Mode Method include <em>Common Cause Failures</em> and <em>Competing Failures</em>. The Joint Consequences option will not be displayed if either Common Cause Failure or Competing Failures is used.
+                        </>
+                    )
+                },
+                {
+                    title: (
+                        <>
+                        Within the <strong>Simulation Options</strong> section, the <strong>Confidence Interval</strong> is set to <em>90%</em> and <strong>Realizations</strong> is set to <em>10,000</em>, Figure X(b).
+                        </>
+                    )
+                },
+                {
+                    title: (
+                        <>
+                        The <strong>Integration Options</strong>, Figure X(c), <strong>System Options</strong>, Figure X(d), and <strong>Risk Measure Options</strong>, Figure X(e), are set to their default values. 
+                        </>
+                    )
+                }
+            ]
+        },
+        {
+            title: (
+                <>
+                To run the risk analysis without uncertainty, click on the General tab in the Properties window, select <em>Simulate Mean Risk Only</em> in the <strong>Simulation</strong> section, and
+                 click <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/estimate.png"/> <strong>Estimate</strong>. To run the risk analysis with 
+                 uncertainty, select <em>Simulate Risk with Full Uncertainty</em> and 
+                 click <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/estimate.png"/> <strong>Estimate</strong>.
+                </>
+            )
+        }
+    ]}
+/>
+
+## Results
+
+Once the risk analysis model has been simulated, the Summary Statistics tab provides a table of summary results, <FigReference figKey="example-8-sum-stats-seis-spill"/>. 
+This table shows the incremental _Mean, E[N]_ (also referred to as the average annual life loss, AALL), of 8.50E-04 and an _Exceedance Probability, α_ (also referred to as 
+annual probability of failure, APF) of 1.26E-04.
+
+The incremental F-N Plot with uncertainty is shown in <FigReference figKey="example-8-inc-fn-full-uncertain-seis-spill"/>, and the α-ƞ Plot with uncertainty is shown 
+in <FigReference figKey="example-8-an-uncertain-scatter-seis-spill"/>.
+
+
+{/*Figure 131*/}
+<Figure 
+    docId="11-example-8.mdx"
+    figKey="example-8-sum-stats-seis-spill"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure131.png" 
+    fullWidth={true}
+    alt="Summary statistics for seismic spillway failure (Example 8)." 
+    caption="Summary statistics for seismic spillway failure (Example 8)."
+/>
+
+{/*Figure 132*/}
+<Figure 
+    docId="11-example-8.mdx"
+    figKey="example-8-inc-fn-full-uncertain-seis-spill"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure132.png" 
+    fullWidth={true}
+    alt="Incremental F-N plot with full uncertainty for seismic spillway failure (Example 8)." 
+    caption="Incremental F-N plot with full uncertainty for seismic spillway failure (Example 8)."
+/>
+
+{/*Figure 133*/}
+<Figure 
+    docId="11-example-8.mdx"
+    figKey="example-8-an-uncertain-scatter-seis-spill"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure133.png" 
+    fullWidth={true}
+    alt="α-ƞ plot with uncertainty scatter for seismic spillway failure (Example 8)." 
+    caption="α-ƞ plot with uncertainty scatter for seismic spillway failure (Example 8)."
+/>

@@ -45,8 +45,7 @@ combinations must be accounted for. A gate failure can occur due to any possible
 combinations listed in <TableReference tableKey="example-7-gate-fail-combo"/>.
 
 {/*Table 39*/}
-<TableVertical
-tableKey="example-7-gate-fail-combo"
+<TableVertical tableKey="example-7-gate-fail-combo"
     headers={
         [
             [
@@ -58,6 +57,7 @@ tableKey="example-7-gate-fail-combo"
             ]
         ]
         }
+    headerAlign={['center','center','center','center','center']}
     columns={[
     [
     <b>1</b>,<b>2</b>,<b>3</b>,<b>4</b>,<b>5</b>,<b>6</b>,<b>7</b>,<b>8</b>
@@ -79,8 +79,49 @@ tableKey="example-7-gate-fail-combo"
     alt="Gate failure combinations."
     caption="Gate failure combinations." />
 
-The annual probability of failure is calculated using several steps. First, an event tree is created that represents the probability of seismic gate failure for a single spillway gate. Next, a second event tree is constructed to represent all possible failure combinations for gate failure as shown in Figure 86. The annual probability of failure is equal to the sum of all branches in the event tree that result in one or more gate failures. The branches in the event tree that display the breach sizes (e.g., 1 gate breach, 2 gate breach, etc.) are included to demonstrate the resulting breach size and are assigned a probability of one. Each branch of the event tree is matched with the appropriate life loss consequence scenario to calculate the average annual life loss. The average annual life loss is equal to the sum of the products of the annual probability of failure and life loss consequences for each branch that results in one or more gate failures.
+The annual probability of failure is calculated using several steps. First, an event tree is created that represents the probability of seismic gate failure for a single 
+spillway gate. Next, a second event tree is constructed to represent all possible failure combinations for gate failure as shown 
+in <FigReference figKey="example-7-gate-fail-combo-tree"/>. The annual probability of failure is equal to the sum of all branches in the event tree that result in one or 
+more gate failures. The branches in the event tree that display the breach sizes (e.g., 1 gate breach, 2 gate breach, etc.) are included to demonstrate the resulting breach 
+size and are assigned a probability of one. Each branch of the event tree is matched with the appropriate life loss consequence scenario to calculate the average annual life 
+loss. The average annual life loss is equal to the sum of the products of the annual probability of failure and life loss consequences for each branch that results in one or 
+more gate failures.
 
+{/*Figure 86*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-gate-fail-combo-tree"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure86.png" 
+    fullWidth={true}
+    alt="Gate failure combination event tree." 
+    caption="Gate failure combination event tree."
+/>
+
+RMC-TotalRisk does not allow the user to assign life loss consequences to discrete branches within an event tree; therefore, an alternative method is used to calculate the annual 
+probability of failure and average annual life loss. The event tree in <FigReference figKey="example-7-gate-fail-combo-tree"/> is duplicated for each possible breach size scenario 
+(e.g., 1 gate breach, 2 gate breach, etc.). Dummy probabilities are created using tabular system response functions to represent probabilities of zero and one, and these dummy 
+probabilities are assigned to the end branches of the event tree – the end branches that result in the number of gate failures of interest are assigned a probability of one, and the
+end branches that do not are assigned a probability of zero. This results in event trees that are used to calculate the annual probability of failure for each discrete breach 
+scenario. Consequence functions for each breach scenario are created and the total risk is calculated by combining the discrete breach scenario event trees and their 
+corresponding consequences using the joint risk model.
+
+## Hazards
+
+The primary hazard for this risk analysis is the same as in [Example 6](./09-example-6.mdx). Reference the hazard function development procedure 
+in [Hazards](./09-example-6.mdx#hazards) from Example 6 to create the primary hazard for this risk analysis.
+
+## Transforms
+
+The primary hazard (stage duration), system response, and consequence data for this risk analysis are all a function of stage (ft). Therefore, a transform function is not required.
+
+## System Responses
+
+### Seismic Gate Failure
+
+The single risk-driving PFM for the dam is seismic failure of the spillway Tainter gates. The system response probabilities for the potential failure mode were obtained from team 
+elicitation using the event tree method. When using RMC-TotalRisk to evaluate a PFM that is driven by a seismic hazard, the seismic hazard must be partitioned by assigning 
+weights to each representative seismic ground motion evaluated for system response. The procedure for calculating seismic weights is shown in [Hazards](./09-example-6.mdx#hazards) from Example 6. 
+For the seismic gate failure PFM, the seismic ground motions evaluated for system response and their respective weights for event tree analysis are provided in <TableReference tableKey="example-7-gate-fail-pfm-weight"/>.
 
 {/*Table 40*/}
 <TableVertical
@@ -93,6 +134,7 @@ tableKey="example-7-gate-fail-pfm-weight"
         ]
         ]
     }
+    headerAlign={['center', 'center']}
     columns={[
     [
     0.05,0.15,'0.40',0.68,'Remainder'
@@ -105,6 +147,15 @@ tableKey="example-7-gate-fail-pfm-weight"
     alt="Seismic gate failure PFM seismic hazard weights."
     caption="Seismic gate failure PFM seismic hazard weights."
 />
+
+For this PFM, a PGA of 0.05g is assigned as the threshold for non-zero system response (i.e., all ground motions less than 0.05g have a system response probability of zero). 
+Therefore, the first seismic hazard partition does not include the non-exceedance probability for peak ground accelerations less than 0.05g. Instead, the non-exceedance 
+probability is included in the remainder partition and will not contribute to the annual probability of failure.
+
+The event tree for the seismic gate failure PFM is shown in <FigReference figKey="example-7-gate-fail-mode-tree"/> and the elicited system response probabilities are shown 
+in <TableReference tableKey="example-7-gate-fail-1-prob"/>. As the failure is due to a sudden seismic event, intervention to prevent breach is not considered possible; 
+therefore, only a “without intervention” scenario is evaluated.
+
 
 {/*Figure 87*/}
 <Figure 
@@ -130,9 +181,47 @@ tableKey="example-7-gate-fail-1-prob"
             { value: "644.00" }
         ]
     ]}
+    colAlign={["center",]}
+    headerAlign={["center", "center", "center", "center", "center", "center", "center"]}
     columns={[
     [
-    <strong>0.05</strong>,<strong>0.15</strong>,<strong>0.40</strong>,<strong>0.68</strong>
+    { 
+          value: (
+            <>
+              <strong>0.05</strong>
+            </>
+          ), 
+        rowSpan: 4
+
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.015</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.40</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.68</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+        null,null,null
     ],
     [
     "LRV","MLV","HRV","EV","LRV","MLV","HRV","EV","LRV","MLV","HRV","EV","LRV","MLV","HRV","EV"
@@ -158,6 +247,9 @@ tableKey="example-7-gate-fail-1-prob"
     caption="Seismic gate failure node 1 system response probabilities."
 />
 
+The procedure for the creating the seismic gate failure PFM event tree is the same as the procedure used to create the seismic crest deformation PFM event tree detailed 
+in [System Responses](./09-example-6.mdx#system-responses) from Example 6.
+
 {/*Table 42*/}
 <TableVertical
 tableKey="example-7-gate-fail-2-prob"
@@ -172,9 +264,47 @@ tableKey="example-7-gate-fail-2-prob"
             { value: "644.00" }
         ]
     ]}
+    colAlign={["center",]}
+    headerAlign={["center", "center", "center", "center", "center", "center", "center"]}
     columns={[
     [
-    <strong>0.05</strong>,<strong>0.15</strong>,<strong>0.40</strong>,<strong>0.68</strong>
+    { 
+          value: (
+            <>
+              <strong>0.05</strong>
+            </>
+          ), 
+        rowSpan: 4
+
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.015</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.40</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+    null,null,null,
+    { 
+          value: (
+            <>
+              <strong>0.68</strong>
+            </>
+          ), 
+        rowSpan: 4
+        },
+        null,null,null
     ],
     [
     "LRV","MLV","HRV","EV","LRV","MLV","HRV","EV","LRV","MLV","HRV","EV","LRV","MLV","HRV","EV"
@@ -220,105 +350,381 @@ tableKey="example-7-gate-fail-2-prob"
     caption="Seismic gate failure event tree system response curve."
 />
 
-{/*Figure 90*/}
-<Figure 
-    docId="10-example-7.mdx"
-    figKey="example-7-tab-sys-fn-dummy"
-    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure90.png" 
-    fullWidth={true}
-    alt="Tabular system response function for dummy probabilities." 
-    caption="Tabular system response function for dummy probabilities."
+### Breach Scenarios
+
+As stated previously, RMC-TotalRisk requires that gate failure combination event trees for each breach scenario (as shown in <FigReference figKey="example-7-gate-fail-combo-tree"/>) be 
+constructed along with dummy probabilities to correctly calculate the total risk. First, dummy probabilities are created using tabular response functions, followed by the creation 
+of the gate failure combination event trees. 
+
+The procedure for creating the dummy probabilities is as follows:
+
+<ProcessList
+    items={[
+        {
+            title:(
+                <>
+                Right-click on the <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/folder.png"/> <strong>System Responses</strong> folder in the 
+                Project Explorer window and 
+                select <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/addtabresponse.png"/> <strong>Add Tabular Response…</strong> Name the 
+                system response function in the prompt (e.g., Breach_0) and press <strong>OK</strong>.
+                </>
+            )
+        },
+        {
+            title:(
+                <>
+                The hazard for the system response function is stage and is measured in feet. In the <strong>Tabular Response</strong> Properties section of the 
+                Properties window, <FigReference figKey="example-7-tab-sys-fn-dummy"/>(a), select <em>Stage</em> for <strong>Hazard Type</strong> and <em>ft</em> for <strong>Hazard Units</strong>.
+                </>
+            )
+        },
+        {
+            title:(
+                <>
+                Since this response function is a dummy probability that is equal to zero, the interpolation method will not affect the response function or event tree where the 
+                function is used. In the <strong>Interpolation Transforms</strong> section of the Properties window, the <strong>Hazard</strong> and <strong>Probability</strong> interpolation transforms are left on the 
+                default settings of <em>None</em> (linear interpolation), <FigReference figKey="example-7-tab-sys-fn-dummy"/>(b).
+                </>
+            )
+        },
+        {
+            title:(
+                <>
+                Assign a distribution, stages, and response probabilities to the tabular response function. The <strong>Distribution</strong> for the response function is set 
+                to <em>Deterministic</em>, <FigReference figKey="example-7-tab-sys-fn-dummy"/>(c). The tabular response function will use two stages to assign a uniform probability; click 
+                on <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/addrow.png"/> <strong>Add row(s) to the bottom of the table</strong> to add a 
+                second row. The stages assigned in the function should encompass the entire range of stages within the stage-duration hazard curve, and the probabilities should 
+                be set equal to zero for all stages within the function. For this function, stages of 600 feet and 660 feet are used, <FigReference figKey="example-7-tab-sys-fn-dummy"/>(d). 
+                </>
+            ),
+            freeform: (
+                <>
+                {/*Figure 90*/}
+                <Figure 
+                    docId="10-example-7.mdx"
+                    figKey="example-7-tab-sys-fn-dummy"
+                    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure90.png" 
+                    fullWidth={true}
+                    alt="Tabular system response function for dummy probabilities." 
+                    caption="Tabular system response function for dummy probabilities."
+                />
+                </>
+            )
+        },
+        {
+            title:(
+                <>
+                Follow the same procedure to create a second dummy probability with a probability of one. In Step 1, name the system response function “Breach_1” and assign 
+                probabilities of 1.0 to the function in Step 4.
+                </>
+            )
+        }
+    ]}
 />
 
-{/*Figure 91*/}
-<Figure 
-    docId="10-example-7.mdx"
-    figKey="example-7-gate-fail-1-tree-props"
-    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure91.png" 
-    fullWidth={true}
-    alt="Seismic gate failure 1 gate breach scenario event tree properties and hazard levels." 
-    caption="Seismic gate failure 1 gate breach scenario event tree properties and hazard levels."
+Once the dummy probability tabular system response functions have been created, use the following procedure to create event tree responses for the discrete breach scenarios.
+
+<ProcessList 
+    items={[
+        {
+            title:(
+                <>
+                Right-click on the <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/folder.png"/> <strong>System Responses</strong> folder in 
+                the Project Explorer window and select <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/addeventtree.png"/> 
+               <strong>Add Event Tree Response…</strong> Name the system response function in the prompt (e.g., 1 Gate Breach). RMC-TotalRisk contains a database of event trees for 
+                common potential failure modes that can be used for system response functions. For the 1 Gate Breach event tree, select <em>Generic</em> from the <strong>Category</strong> drop-down
+                 menu and select <em>Basic</em> from the <strong>Template</strong> drop-down menu and press <strong>OK</strong>.
+                </>
+            )
+        },
+        {
+            title:(
+                <>
+                The hazard for the system response function is stage and is measured in feet. In the <strong>Event Tree Properties</strong> section of the Properties 
+                window, <FigReference figKey="example-7-gate-fail-1-tree-props"/>(a), select <em>Stage</em> for <strong>Hazard Type</strong> and <em>ft</em> for <strong>Hazard Units</strong>. 
+                </>
+            )
+        },
+        {
+            title:(
+                <>
+                In the <strong>Interpolation Transforms</strong> section of the Properties window, select interpolation methods that are best suited for the hazard and system response 
+                probability. For this PFM, the <strong>Hazard</strong> is set to <em>None</em> (linear interpolation), and the <strong>Probability</strong> is set to <em>Logarithmic</em>, <FigReference figKey="example-7-gate-fail-1-tree-props"/>(b).
+                </>
+            )
+        },
+        {
+            title:(
+                <>
+                Assign the hazard levels that define the system response curve to the event tree by clicking on the Hazard 
+                node <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/hazardnode.png"/> symbol, <FigReference figKey="example-7-gate-fail-1-tree-props"/>(c), and 
+                entering the hazard levels into the <strong>Hazard Levels</strong> section of the Properties window, <FigReference figKey="example-7-gate-fail-1-tree-props"/>(d). Alternatively, hazard levels can be assigned by hovering over the 
+                Hazard node name, clicking the Branch Properties <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/branchproperties.png"/> symbol, and 
+                entering the hazard levels into the <strong>Hazard Levels</strong> section of the pop-up box that appears. The hazard levels for the breach scenario event tree are identical to those used 
+                in the seismic gate failure PFM event tree from <Link to="#seismic-gate-failure">Seismic Gate Failure</Link>.
+                </>
+            ),
+            freeform:(
+                <>
+                {/*Figure 91*/}
+                <Figure 
+                    docId="10-example-7.mdx"
+                    figKey="example-7-gate-fail-1-tree-props"
+                    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure91.png" 
+                    fullWidth={true}
+                    alt="Seismic gate failure 1 gate breach scenario event tree properties and hazard levels." 
+                    caption="Seismic gate failure 1 gate breach scenario event tree properties and hazard levels."
+                />
+                </>
+            )
+        },
+        {
+            title:(
+                <>
+                Ensure the structure of the event tree, including the number, name, and description of each node, matches the event tree 
+                in <FigReference figKey="example-7-gate-fail-combo-tree"/>. To add a branch to the event tree or delete a branch from the event tree, click on the node 
+                symbol <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/chancenode.png"/> or remainder node 
+                symbol <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/remaindernode.png"/> and perform one of the following options:
+                </>
+            ),
+            child:[
+                {
+                    title: (
+                        <>
+                        Click the <strong>Add new branch</strong> <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/newbranch.png"/> button 
+                        (to add a branch) or the <strong>Delete all branches from this node</strong> <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/deletebranches.png"/> 
+                        button (to delete branches) in the node toolbar, <FigReference figKey="example-7-event-tree-branch-props"/>(a).
+                        </>
+                    )
+                },
+                {
+                    title: (
+                        <>
+                        Click the <strong>Add Branch Node</strong> <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/newbranch.png"/> button (to add a branch) or 
+                        the <strong>Delete Branch</strong> <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/deletebranch.png"/> button (to delete branches) in 
+                        the <strong>Sub-Branches</strong> section of the Properties window, <FigReference figKey="example-7-event-tree-branch-props"/>(b). 
+                        </>
+                    )
+                }
+            ]
+        },
+        {
+            title:(
+                <>
+                The <strong>Name</strong> and <strong>Description</strong> of the node can be changed in the <strong>Selected Branch Properties</strong> section of the Properties 
+                window, <FigReference figKey="example-7-event-tree-branch-props"/>(c), or by clicking 
+                the <strong>Branch Properties</strong> <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/branchproperties.png"/> symbol. To 
+                allow for system response probabilities to be applied more easily to each node in the event tree, a different naming convention is used for the events along the 
+                top branch of the event tree. The phrase “(P)” is added to the node names along this branch to signify that these are “parent” nodes which will be used as a 
+                reference for system response probabilities in a later step, <FigReference figKey="example-7-event-tree-branch-props"/>(d).
+                </>
+            ),
+            freeform: (
+                <>
+                {/*Figure 92*/}
+                <Figure 
+                    docId="10-example-7.mdx"
+                    figKey="example-7-event-tree-branch-props"
+                    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure92.png" 
+                    fullWidth={true}
+                    alt="Event tree structure and branch properties." 
+                    caption="Event tree structure and branch properties."
+                />
+                </>
+            )
+        },
+        {
+            title:(
+                <>
+                The nodes corresponding to gate failure in the 1 Gate Breach event tree (i.e., nodes named “Gate 1 Fail”, “Gate 2 Fail”, and “Gate 3 Fail”) represent the 
+                probability that seismic gate failure will occur. The nodal probabilities for each node in the tree are assigned by setting them equal to the system response 
+                probabilities of the seismic gate failure event tree function created in <Link to="#seismic-gate-failure">Seismic Gate Failure</Link>. However, the system 
+                response probability between the spillway gates is not perfectly correlated (i.e., a high system response probability for gate 1 does not correspond to a 
+                high system response probability for gate 2 and gate 3). Therefore, each gate will be sampled independently of the seismic gate failure event tree function. At 
+                the same time, the responses of the same gate within the event tree should be perfectly correlated (i.e., the system response probability for “Gate 2 Fail (P)” 
+                emanating from the “Gate 1 Fail (P)” branch of node 1 should be the same as the system response probability for “Gate 2 Fail” emanating from the “Gate 1 Non-Fail” 
+                branch of node 1). To account for this, the system response probabilities for each individual gate will be set equal throughout the event tree.
+                </>
+            ),
+            child:[
+                {
+                    title: (
+                        <>
+                        Select the event tree node symbol <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/chancenode.png"/> or name 
+                        for “Gate 1 Fail (P)”, <FigReference figKey="example-7-event-tree-gate-1-prob"/>(a). Assign system response probabilities using the options located in 
+                        the <strong>System Response</strong> section of the Properties window, <FigReference figKey="example-7-event-tree-gate-1-prob"/>(b). As the nodal probability for this node will 
+                        reference a separate system response function within the model, the <strong>Source</strong> is set to <em>Response Function</em>. Once this option is selected the event 
+                        tree chance node symbol <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/chancenode.png"/> is replaced with 
+                        a reference node symbol <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/referencenode.png"/>,&nbsp; 
+                        <FigReference figKey="example-7-event-tree-gate-1-prob"/>(c). The <strong>Response Function</strong> for this node in the event tree is set to <em>Seismic Gate Failure</em>. 
+                        The <strong>Sample Independently</strong> box for this node is checked to account for the independence of Gate 1.
+                        </>
+                    ),
+                    freeform: (
+                        <>
+                        {/*Figure 93*/}
+                        <Figure 
+                            docId="10-example-7.mdx"
+                            figKey="example-7-event-tree-gate-1-prob"
+                            src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure93.png" 
+                            fullWidth={true}
+                            alt="Event tree system response probability input for “Gate 1 Fail (P)”." 
+                            caption="Event tree system response probability input for “Gate 1 Fail (P)”."
+                        />
+                        </>
+                    )
+                },
+                {
+                    title: (
+                        <>
+                        Repeat Step (a) to assign nodal probabilities to the “Gate 2 Fail (P)” and “Gate 3 Fail (P)” nodes along the top branch of the event tree.
+                        </>
+                    )
+                },
+                {
+                    title: (
+                        <>
+                        Select the event tree node symbol <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/chancenode.png"/> or name 
+                        for “Gate 2 Fail” from the “Gate 1 Non-Fail” branch of node 1, <FigReference figKey="example-7-event-tree-sys-prob-input"/>(a). The nodal probability for 
+                        this node will reference the “Gate 2 Fail (P)” system response probability from the top branch of the event tree. Set the <strong>Source</strong> to <em>Event Node</em>; 
+                        once this option is selected the event tree chance node 
+                        symbol <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/chancenode.png"/> is replaced with a reference node 
+                        symbol <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/referencenode.png"/>,&nbsp; 
+                        <FigReference figKey="example-7-event-tree-sys-prob-input"/>(b). The <strong>Event Nodes</strong> is set to <em>Gate 2 Fail (P)</em>. Since the system response probability 
+                        for this node is assumed to be the same as the “parent” node to which it is referenced, the <strong>Sample Independently</strong> box is left 
+                        unchecked, <FigReference figKey="example-7-event-tree-sys-prob-input"/>(c).
+                        </>
+                    ),
+                    freeform: (
+                        <>
+                        {/*Figure 94*/}
+                        <Figure 
+                            docId="10-example-7.mdx"
+                            figKey="example-7-event-tree-sys-prob-input"
+                            src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure94.png" 
+                            fullWidth={true}
+                            alt="Event tree system response probability input." 
+                            caption="Event tree system response probability input."
+                        />
+                        </>
+                    )
+                },
+                {
+                    title: (
+                        <>
+                        Repeat Step (c) to assign nodal probabilities to the remaining “Gate 3 Fail” nodes in the event tree. Ensure the <strong>Event Nodes</strong> is set 
+                        to <em>Gate 3 Fail (P)</em> for these nodes.
+                        </>
+                    )
+                }
+            ]
+        },
+        {
+            title: (
+                <>
+                To capture the probability of failure correctly, only the branches in the event tree that result in the desired number of gate failures should be captured. 
+                The tabular response functions “Breach_0” and “Breach_1” are used to capture the branches that are desired and “zero out” branches that are not. As in Step 7, 
+                reference response functions are used for the event tree end nodes. For the 1 Gate Breach event tree, the <strong>Response Function</strong> is set to <em>Breach_1</em> for end 
+                nodes that result in a 1 gate breach, <FigReference figKey="example-7-1-gate-tree-dummy-11"/>, and is set to <em>Breach_0</em> for end nodes that result in a 
+                0 gate breach, 2 gate breach, or 3 gate breach, <FigReference figKey="example-7-1-gate-tree-dummy-03"/>.
+                </>
+            ),
+            freeform: (
+                <>
+                {/*Figure 95*/}
+                <Figure 
+                    docId="10-example-7.mdx"
+                    figKey="example-7-1-gate-tree-dummy-11"
+                    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure95.png" 
+                    fullWidth={true}
+                    alt="1 gate breach event tree with a dummy probability of one for a 1 gate breach." 
+                    caption="1 gate breach event tree with a dummy probability of one for a 1 gate breach."
+                />
+
+                {/*Figure 96*/}
+                <Figure 
+                    docId="10-example-7.mdx"
+                    figKey="example-7-1-gate-tree-dummy-03"
+                    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure96.png" 
+                    fullWidth={true}
+                    alt="1 gate breach event tree with a dummy probability of zero for a 3 gate breach." 
+                    caption="1 gate breach event tree with a dummy probability of zero for a 3 gate breach."
+                />
+                </>
+            )
+        },
+        {
+            title: (
+                <>
+                Once the event tree has been completed, click on the Response tab within the event tree window to view a graph of the system response curve plotted against 
+                stage. The mean system response curve is plotted with a blue dashed line, <FigReference figKey="example-7-1-gate-breach-curve"/>(a), and the 90% confidence 
+                bounds are shaded in light blue, <FigReference figKey="example-7-1-gate-breach-curve"/>(b). This curve can be compared against the system response probability 
+                input data to ensure accuracy. To change the graph axis extents, axis type, or axis properties, right click on the axis of interest and click 
+                <em>Format Axis: [Axis Name Here]</em>, <FigReference figKey="example-7-1-gate-breach-curve"/>(c). The axis type can be set to <em>Linear, Logarithmic, Normal Probability, Basic,
+                </em> or <em>Gumbel Probability</em> in the <strong>Axis Type</strong> drop-down menu within the Properties window, <FigReference figKey="example-7-1-gate-breach-curve"/>(d), along with 
+                many other axis customizations. 
+                </>
+            ),
+            freeform: (
+                <>
+                {/*Figure 97*/}
+                <Figure 
+                    docId="10-example-7.mdx"
+                    figKey="example-7-1-gate-breach-curve"
+                    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure97.png" 
+                    fullWidth={true}
+                    alt="Seismic gate failure 1 gate breach system response curve and axis options." 
+                    caption="Seismic gate failure 1 gate breach system response curve and axis options."
+                />
+                </>
+            )
+        },
+        {
+            title: (
+                <>
+                Repeat this procedure twice more to create event trees for a 2 Gate Breach and 3 Gate Breach. All steps are identical except for Step 8. For the 2 Gate Breach 
+                event tree, end nodes that result in a 2 gate breach should be assigned a <strong>Response Function</strong> of <em>Breach_1</em> while end nodes that result in a 0 gate 
+                breach, 1 gate breach, or 3 gate breach should be assigned a <strong>Response Function</strong> of <em>Breach_0</em>. For the 3 Gate Breach event tree, end nodes that 
+                result in a 3 gate breach should be assigned a <strong>Response Function</strong> of <em>Breach_1</em> while end nodes that result in a 0 gate breach, 1 gate breach, or 2 
+                gate breach should be assigned a <strong>Response Function</strong> of <em>Breach_0</em>. The system response curve for the 2 Gate Breach event tree is shown 
+                in <FigReference figKey="example-7-2-gate-breach-curve"/> and the system response curve for the 3 Gate Breach event tree is shown in <FigReference figKey="example-7-3-gate-breach-curve"/>.
+                </>
+            ),
+            freeform: (
+                <>
+                {/*Figure 98*/}
+                    <Figure 
+                        docId="10-example-7.mdx"
+                        figKey="example-7-2-gate-breach-curve"
+                        src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure98.png" 
+                        fullWidth={true}
+                        alt="Seismic gate failure 2 gate breach system response curve." 
+                        caption="Seismic gate failure 2 gate breach system response curve."
+                    />
+
+                {/*Figure 99*/}
+                <Figure 
+                    docId="10-example-7.mdx"
+                    figKey="example-7-3-gate-breach-curve"
+                    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure99.png" 
+                    fullWidth={true}
+                    alt="Seismic gate failure 3 gate breach system response curve." 
+                    caption="Seismic gate failure 3 gate breach system response curve."
+                />
+                </>
+            )
+        }
+
+    ]}
 />
 
-{/*Figure 92*/}
-<Figure 
-    docId="10-example-7.mdx"
-    figKey="example-7-event-tree-branch-props"
-    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure92.png" 
-    fullWidth={true}
-    alt="Event tree structure and branch properties." 
-    caption="Event tree structure and branch properties."
-/>
+In the Project Explorer, functions can be grouped into collapsible and expandable lists. Since the dummy probability tabular functions are used within the breach scenario event 
+trees, these items can be grouped by holding Ctrl + clicking on the items in the Project Explorer window. Once the desired items are selected, right click and 
+select <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/group.png"/> **Group**, <FigReference figKey="example-7-create-group"/>. Once 
+the group has been created, RMC-TotalRisk will prompt the user to name the group (i.e., Breach Scenarios). The group can be named at any time by double clicking on the group 
+name. The items can also be ungrouped by right clicking on the group name and clicking <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/ungroup.png"/> Ungroup, 
+<FigReference figKey="example-7-ungroup"/>.
 
-{/*Figure 93*/}
-<Figure 
-    docId="10-example-7.mdx"
-    figKey="example-7-event-tree-gate-1-prob"
-    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure93.png" 
-    fullWidth={true}
-    alt="Event tree system response probability input for “Gate 1 Fail (P)”." 
-    caption="Event tree system response probability input for “Gate 1 Fail (P)”."
-/>
-
-{/*Figure 94*/}
-<Figure 
-    docId="10-example-7.mdx"
-    figKey="example-7-event-tree-sys-prob-input"
-    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure94.png" 
-    fullWidth={true}
-    alt="Event tree system response probability input." 
-    caption="Event tree system response probability input."
-/>
-
-{/*Figure 95*/}
-<Figure 
-    docId="10-example-7.mdx"
-    figKey="example-7-1-gate-tree-dummy-11"
-    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure95.png" 
-    fullWidth={true}
-    alt="1 gate breach event tree with a dummy probability of one for a 1 gate breach." 
-    caption="1 gate breach event tree with a dummy probability of one for a 1 gate breach."
-/>
-
-{/*Figure 96*/}
-<Figure 
-    docId="10-example-7.mdx"
-    figKey="example-7-1-gate-tree-dummy-03"
-    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure96.png" 
-    fullWidth={true}
-    alt="1 gate breach event tree with a dummy probability of zero for a 3 gate breach." 
-    caption="1 gate breach event tree with a dummy probability of zero for a 3 gate breach."
-/>
-
-{/*Figure 97*/}
-<Figure 
-    docId="10-example-7.mdx"
-    figKey="example-7-1-gate-breach-curve"
-    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure97.png" 
-    fullWidth={true}
-    alt="Seismic gate failure 1 gate breach system response curve and axis options." 
-    caption="Seismic gate failure 1 gate breach system response curve and axis options."
-/>
-
-{/*Figure 98*/}
-<Figure 
-    docId="10-example-7.mdx"
-    figKey="example-7-2-gate-breach-curve"
-    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure98.png" 
-    fullWidth={true}
-    alt="Seismic gate failure 2 gate breach system response curve." 
-    caption="Seismic gate failure 2 gate breach system response curve."
-/>
-
-{/*Figure 99*/}
-<Figure 
-    docId="10-example-7.mdx"
-    figKey="example-7-3-gate-breach-curve"
-    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure99.png" 
-    fullWidth={true}
-    alt="Seismic gate failure 3 gate breach system response curve." 
-    caption="Seismic gate failure 3 gate breach system response curve."
-/>
 
 {/*Figure 100*/}
 <Figure 
@@ -338,6 +744,58 @@ tableKey="example-7-gate-fail-2-prob"
     fullWidth={true}
     alt="Ungrouping items within the project explorer window." 
     caption="Ungrouping items within the project explorer window."
+/>
+
+## Consequences
+
+As detailed above, seismic failure of the concrete gated spillway gates can result in a 1 gate breach, 2 gate breach, or 3 gate breach. Consequence models for each scenario, 
+along with the non-breach condition, have been run for the analysis. No economic costs have been modeled for this scenario.
+
+Life loss estimates have been developed for a range of reservoir stages for the following scenarios: Non-breach, 1 gate breach, 2 gate breach, and 3 gate breach. The life loss 
+scenarios have been developed for daytime and nighttime conditions. The daytime exposure scenario rate is assumed to be 45% while the nighttime exposure rate is assumed to be 
+55%. A total of twelve consequence functions will be created for the risk analysis. The procedure for creating a tabular life loss consequence function is detailed 
+in [Consequences](./09-example-6.mdx#consequences) from Example 6. Composite life loss consequence functions in RMC-TotalRisk for non-breach, 1 gate breach, 2 gate breach, 
+and 3 gate breach scenarios are shown in <FigReference figKey="example-7-nb-ll-fn"/>, <FigReference figKey="example-7-1-gate-ll-fn"/>, 
+<FigReference figKey="example-7-2-gate-ll-fn"/>, and <FigReference figKey="example-7-3-gate-ll-fn"/>, respectively.
+
+{/*Figure 102*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-nb-ll-fn"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure102.png" 
+    fullWidth={true}
+    alt="Non-breach composite life loss consequence function." 
+    caption="Non-breach composite life loss consequence function."
+/>
+
+{/*Figure 103*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-1-gate-ll-fn"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure103.png" 
+    fullWidth={true}
+    alt="1 gate breach composite life loss consequence function." 
+    caption="1 gate breach composite life loss consequence function."
+/>
+
+{/*Figure 104*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-2-gate-ll-fn"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure104.png" 
+    fullWidth={true}
+    alt="2 gate breach composite life loss consequence function." 
+    caption="2 gate breach composite life loss consequence function."
+/>
+
+{/*Figure 105*/}
+<Figure 
+    docId="10-example-7.mdx"
+    figKey="example-7-3-gate-ll-fn"
+    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure105.png" 
+    fullWidth={true}
+    alt="3 gate breach composite life loss consequence function." 
+    caption="3 gate breach composite life loss consequence function."
 />
 
 {/*Table 43*/}
@@ -524,65 +982,184 @@ tableKey="example-7-gate-fail-2-prob"
     caption="3 gate breach life loss for the daytime scenario and nighttime scenario."
     />
 
-{/*Figure 102*/}
-<Figure 
-    docId="10-example-7.mdx"
-    figKey="example-7-nb-ll-fn"
-    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure102.png" 
-    fullWidth={true}
-    alt="Non-breach composite life loss consequence function." 
-    caption="Non-breach composite life loss consequence function."
+## Risk Analyses
+
+To calculate the total risk for seismic gate failure, all breach scenarios must be combined into a single analysis so that all failure combinations are accounted for. 
+
+:::note
+Replace figure 106 with correct non-breach risk
+:::
+
+:::note
+Replace figure 107 with correct non-breach risk
+:::
+
+<ProcessList
+    items={[
+        {
+            title: (
+                <>
+                Right-click the <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/folder.png"/> <strong>Risk Analyses</strong> folder and 
+                selecting <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/addriskanalysis.png"/> <strong>Add Risk Analysis…</strong> Name
+                 the risk analysis in the prompt (e.g., Seismic Gate Failure) and press <strong>OK</strong>.
+                </>
+            )
+        },
+        {
+            title: (
+                <>
+                For <strong>Consequence</strong> and <strong>Consequence Unit</strong> in the <strong>Risk Analysis Properties</strong> section of the Properties window, select <em>Life Loss</em> and <em>Lives</em>.
+                </>
+            )
+        },
+        {
+            title: (
+                <>
+                For this risk analysis two hazard functions, three system response functions, and four consequence functions are required. Add components to the risk 
+                analysis <strong>Diagram</strong> by clicking the <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/newbranch.png"/> green plus sign, 
+                clicking on a node output connector, or right-clicking anywhere in the diagram.
+                </>
+            ),
+            child: [
+                {
+                    title: (
+                        <>
+                        First, add a hazard node <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/hazardIcon.png"/> to the diagram. 
+                        Select the hazard function (e.g., Stage Frequency) for the non-breach risk from the blank drop-down box in the hazard node.
+                        </>
+                    )
+                },
+                {
+                    title: (
+                        <>
+                        Next, add the non-breach condition by clicking on the non-breach risk hazard node output connector and adding a consequence 
+                        node <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/consequenceIcon.png"/> and selecting the 
+                        composite non-breach life loss function (e.g., Non-Breach) from the drop-down box. 
+                        </>
+                    )
+                },
+                {
+                    title: (
+                        <>
+                        Add a second hazard node <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/hazardIcon.png"/> to the diagram. Select 
+                        the hazard function (e.g., Stage Duration) for the incremental risk from the blank drop-down box in the hazard node.
+                        </>
+                    )
+                },
+                {
+                    title: (
+                        <>
+                        Next, add the 1 Gate Breach, 2 Gate Breach, and 3 Gate Breach system response functions and their associated breach life loss consequence functions 
+                        to the incremental risk hazard node. These PFMs have the same hazard (stage) as the incremental risk hazard function and can be added to the risk 
+                        analysis without a transform function.
+                        </>
+                    ),
+                    child: [
+                        {
+                            title: (
+                                <>
+                                Add a response node <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/responseIcon.png"/> by 
+                                clicking on the incremental risk hazard node output connector and select the appropriate system response function (e.g., 1 Gate Breach) 
+                                from the drop-down box.
+                                </>
+                            )
+                        },
+                        {
+                            title: (
+                                <>
+                                Add the breach condition by clicking on the response node output connector and adding a consequence 
+                                node <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/consequenceIcon.png"/> and selecting the 
+                                composite breach life loss function (e.g., 1 Gate Breach) from the drop-down box.
+                                </>
+                            )
+                        },
+                        {
+                            title: (
+                                <>
+                                Repeat steps c.(1) and c.(2) for the 2 Gate Breach and 3 Gate Breach system response functions and their associated consequence functions.
+                                </>
+                            )
+                        }
+                    ]
+                },
+                {
+                    title: (
+                        <>
+                        Re-arrange the nodes (click and hold, then drag) to personalize the diagram. The final risk analysis diagram is shown in <FigReference figKey="example-7-tot-risk-wo-intervene"/>.
+                        </>
+                    ),
+                    freeform: (
+                        <>
+                        {/*Figure 106*/}
+                        <Figure 
+                            docId="10-example-7.mdx"
+                            figKey="example-7-tot-risk-wo-intervene"
+                            src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure106.png" 
+                            fullWidth={true}
+                            alt="Total project without intervention risk diagram (Example 7)." 
+                            caption="Total project without intervention risk diagram (Example 7)."
+                        />
+                        </>
+                    )
+                }
+            ]
+        },
+        {
+            title: (
+                <>
+                When running a risk analysis, the simulation options can be adjusted within the <strong>Options</strong> tab of the Properties window. 
+                </>
+            ),
+            child: [
+                {
+                    title: (
+                        <>
+                        Within the <strong>System Component Options</strong> section, the <strong>Failure Mode Method</strong> is set to <em>Joint Failures</em> and the <strong>Joint Consequences</strong> are set to <em>Maximum</em>, <FigReference figKey="example-7-gate-fail-ops"/>(a). Additional options for Failure Mode Method include <em>Common Cause Failures</em> and <em>Competing Failures</em>. The Joint Consequences option will not be displayed if either Common Cause Failure or Competing Failures is used.
+                        </>
+                    )
+                },
+                {
+                    title: (
+                        <>
+                        Within the <strong>Simulation Options</strong> section, the <strong>Confidence Interval</strong> is set to <em>90%</em> and <strong>Realizations</strong> is set to <em>10,000</em>, <FigReference figKey="example-7-gate-fail-ops"/>(b).
+                        </>
+                    )
+                },
+                {
+                    title: (
+                        <>
+                        The <strong>Integration Options</strong>, <FigReference figKey="example-7-gate-fail-ops"/>(c), <strong>System Options</strong>, <FigReference figKey="example-7-gate-fail-ops"/>(d), and <strong>Risk Measure Options</strong>, <FigReference figKey="example-7-gate-fail-ops"/>(e), are set to their default values. 
+                        </>
+                    ),
+                    freeform: (
+                        <>
+                        {/*Figure 107*/}
+                        <Figure 
+                            docId="10-example-7.mdx"
+                            figKey="example-7-gate-fail-ops"
+                            src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure107.png" 
+                            fullWidth={true}
+                            alt="Seismic gate failure risk analysis options tab." 
+                            caption="Seismic gate failure risk analysis options tab."
+                        />
+                        </>
+                    )
+                }
+            ]
+        },
+        {
+            title: (
+                <>
+                To run the risk analysis without uncertainty, click on the General tab in the Properties window, select <em>Simulate Mean Risk Only</em> in the <strong>Simulation</strong> section, and click <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/estimate.png"/> <strong>Estimate</strong>. To run the risk analysis with uncertainty, select <em>Simulate Risk with Full Uncertainty</em> and click <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/estimate.png"/> <strong>Estimate</strong>. 
+                </>
+            )
+        }
+    ]}
 />
 
-{/*Figure 103*/}
-<Figure 
-    docId="10-example-7.mdx"
-    figKey="example-7-1-gate-ll-fn"
-    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure103.png" 
-    fullWidth={true}
-    alt="1 gate breach composite life loss consequence function." 
-    caption="1 gate breach composite life loss consequence function."
-/>
+## Results
 
-{/*Figure 104*/}
-<Figure 
-    docId="10-example-7.mdx"
-    figKey="example-7-2-gate-ll-fn"
-    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure104.png" 
-    fullWidth={true}
-    alt="2 gate breach composite life loss consequence function." 
-    caption="2 gate breach composite life loss consequence function."
-/>
-
-{/*Figure 105*/}
-<Figure 
-    docId="10-example-7.mdx"
-    figKey="example-7-2-gate-ll-fn"
-    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure105.png" 
-    fullWidth={true}
-    alt="3 gate breach composite life loss consequence function." 
-    caption="3 gate breach composite life loss consequence function."
-/>
-
-{/*Figure 106*/}
-<Figure 
-    docId="10-example-7.mdx"
-    figKey="example-7-tot-risk-wo-intervene"
-    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure106.png" 
-    fullWidth={true}
-    alt="Total project without intervention risk diagram (Example 7)." 
-    caption="Total project without intervention risk diagram (Example 7)."
-/>
-
-{/*Figure 107*/}
-<Figure 
-    docId="10-example-7.mdx"
-    figKey="example-7-gate-fail-ops"
-    src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure107.png" 
-    fullWidth={true}
-    alt="Seismic gate failure risk analysis options tab." 
-    caption="Seismic gate failure risk analysis options tab."
-/>
+Once the risk analysis model has been simulated, the **Summary Statistics** tab provides a table of summary results, <FigReference figKey="example-7-sum-stats-gate-fail"/>. This table shows the incremental _Mean, E[N]_ (also referred to as the average annual life loss, AALL), of 8.50E-04 and an _Exceedance Probability, α_ (also referred to as annual probability of failure, APF) of 1.26E-04. 
 
 {/*Figure 108*/}
 <Figure 
@@ -593,6 +1170,8 @@ tableKey="example-7-gate-fail-2-prob"
     alt="Summary statistics for seismic gate failure (Example 7)." 
     caption="Summary statistics for seismic gate failure (Example 7)."
 />
+
+The incremental F-N Plot with uncertainty is shown in <FigReference figKey="example-7-inc-fn-full-uncertain-fail"/>, and the α-ƞ Plot with uncertainty is shown in <FigReference figKey="example-7-an-uncertain-scatter-fail"/>.
 
 {/*Figure 109*/}
 <Figure 
