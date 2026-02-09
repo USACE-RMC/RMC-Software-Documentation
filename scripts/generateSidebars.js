@@ -249,7 +249,7 @@ function generateSidebarForRmcTotalRiskApplicationsGuide(versionPath, relativePa
       hydroExampleDocs.push({ type: 'doc', id, label });
     } else if (file === '08-seismic-risk-analysis.mdx') {
       seismicDoc = { id, label };
-    } else if (file.startsWith('09-') || file.startsWith('10-')) {
+    } else if (file.startsWith('09-') || file.startsWith('10-') || file.startsWith('11-')) {
       seismicExampleDocs.push({ type: 'doc', id, label });
     }
   });
