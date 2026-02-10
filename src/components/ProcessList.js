@@ -94,7 +94,7 @@ export default function ProcessList({
             width,
             display: 'grid',
             gridTemplateColumns: `${numberStyle === 'plain' ? 'auto' : `${bubbleSizePx}px`} ${bubbleGapPx}px minmax(0,1fr)`,
-            alignItems: 'center',
+            alignItems: 'start',
             whiteSpace: nowrap ? 'nowrap' : 'normal',
             overflowX: nowrap ? 'auto' : 'visible',
             minHeight: Math.max(bubbleSizePx + 8, 36),
@@ -113,7 +113,11 @@ export default function ProcessList({
               {/* Step header row */}
               <div className={`relative ${boxClass}`} style={headerGrid}>
                 {numberStyle === 'plain' ? (
-                  <span aria-hidden="true" className={`${fontClass} ${lineHeightClass} whitespace-nowrap`}>
+                  <span
+                    aria-hidden="true"
+                    className={`${fontClass} ${lineHeightClass} whitespace-nowrap`}
+                    style={{ paddingTop: `max(0px, calc((1.5em - ${bubbleSizePx}px) / 2))` }}
+                  >
                     {n}.
                   </span>
                 ) : numberStyle === 'chevron' ? (
@@ -124,6 +128,7 @@ export default function ProcessList({
                       width: Math.round(bubbleSizePx * 1.1),
                       height: bubbleSizePx,
                       clipPath: 'polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%)',
+                      marginTop: `max(0px, calc((1.5em - ${bubbleSizePx}px) / 2))`,
                     }}
                   >
                     {n}
@@ -132,13 +137,21 @@ export default function ProcessList({
                   <span
                     aria-hidden="true"
                     className={`inline-flex items-center justify-center ${badgeClass}`}
-                    style={{ width: bubbleSizePx, height: bubbleSizePx }}
+                    style={{
+                      width: bubbleSizePx,
+                      height: bubbleSizePx,
+                      marginTop: `max(0px, calc((1.5em - ${bubbleSizePx}px) / 2))`,
+                    }}
                   >
                     {n}
                   </span>
                 )}
                 <span aria-hidden="true" />
-                <span className={`${fontClass} ${lineHeightClass} min-w-0 break-words`} title={String(title)}>
+                <span
+                  className={`${fontClass} ${lineHeightClass} min-w-0 break-words`}
+                  title={String(title)}
+                  style={{ paddingTop: `max(0px, calc((${bubbleSizePx}px - 1.5em) / 2))` }}
+                >
                   {title}
                 </span>
               </div>
@@ -264,7 +277,7 @@ function ChildGroup({
                 width,
                 display: 'grid',
                 gridTemplateColumns: `${numberStyle === 'plain' ? 'auto' : `${bubbleSizePx}px`} ${bubbleGapPx}px minmax(0,1fr)`,
-                alignItems: 'center',
+                alignItems: 'start',
                 whiteSpace: nowrap ? 'nowrap' : 'normal',
                 overflowX: nowrap ? 'auto' : 'visible',
                 minHeight: Math.max(bubbleSizePx + 8, 36),
@@ -274,20 +287,32 @@ function ChildGroup({
               }}
             >
               {numberStyle === 'plain' ? (
-                <span aria-hidden="true" className={`${fontClass} ${lineHeightClass} whitespace-nowrap`}>
+                <span
+                  aria-hidden="true"
+                  className={`${fontClass} ${lineHeightClass} whitespace-nowrap`}
+                  style={{ paddingTop: `max(0px, calc((1.5em - ${bubbleSizePx}px) / 2))` }}
+                >
                   {label}.
                 </span>
               ) : (
                 <span
                   aria-hidden="true"
                   className={`inline-flex items-center justify-center ${badgeClass}`}
-                  style={{ width: bubbleSizePx, height: bubbleSizePx }}
+                  style={{
+                    width: bubbleSizePx,
+                    height: bubbleSizePx,
+                    marginTop: `max(0px, calc((1.5em - ${bubbleSizePx}px) / 2))`,
+                  }}
                 >
                   {label}
                 </span>
               )}
               <span aria-hidden="true" />
-              <span className={`${fontClass} ${lineHeightClass} min-w-0 break-words`} title={String(child.title)}>
+              <span
+                className={`${fontClass} ${lineHeightClass} min-w-0 break-words`}
+                title={String(child.title)}
+                style={{ paddingTop: `max(0px, calc((${bubbleSizePx}px - 1.5em) / 2))` }}
+              >
                 {child.title}
               </span>
             </div>

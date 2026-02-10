@@ -19,14 +19,14 @@ export default function CollectionList({
   defaultOpen = 'none', // 'none' | 'first' | 'all' | number[] (indices)
   showExpandAll = false,
 
-  /* ── STACK styles (originals; kept) ─────────────────────────────────── */
-  boxExpandableClass = 'bg-ifm-primary-darker border border-ifm-primary rounded-lg shadow-sm px-3 py-2.5 hover:bg-ifm-primary hover:ring-1 hover:ring-white/30 transition',
-  boxStaticClass = 'bg-ifm-primary-darker border border-border-color rounded-lg shadow-sm px-3 py-2.5 opacity-95',
-  badgeClass = 'bg-ifm-primary border border-border-color rounded-full shadow text-caption font-usace text-font-color-inverse',
-  fontClass = 'font-usace text-normal text-font-color-inverse',
-  panelClass = 'prose text-font-color-inverse max-w-none rounded-lg border-t border-border-color bg-background-color mt-4 px-3 py-2.5',
-  chipDetailsClass = 'ml-2 text-xs rounded-full px-2 py-0.5 bg-white/20 text-font-color-inverse',
-  headerButtonClass = 'flex w-full items-center justify-between text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 rounded-md',
+  /* ── STACK styles ─────────────────────────────────── */
+  boxExpandableClass = 'bg-white dark:bg-[#1e2224] border border-border-color border-l-[3px] border-l-ifm-primary rounded-lg px-3 py-2.5 hover:border-l-ifm-primary-dark hover:shadow-sm transition',
+  boxStaticClass = 'bg-white dark:bg-[#1e2224] border border-border-color rounded-lg px-3 py-2.5',
+  badgeClass = 'bg-ifm-primary rounded-full shadow text-caption font-usace text-font-color-inverse',
+  fontClass = 'font-usace text-normal text-font-color',
+  panelClass = 'prose max-w-none rounded-b-lg border-t border-border-color bg-[#f8fafa] dark:bg-[#161a1c] text-font-color mt-3 px-3 py-2.5',
+  chipDetailsClass = 'ml-2 text-xs rounded-full px-2 py-0.5 bg-ifm-primary/10 text-ifm-primary dark:bg-ifm-primary/20 dark:text-ifm-primary',
+  headerButtonClass = 'flex w-full items-center justify-between text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ifm-primary/40 rounded-md',
   gapClass = '!mb-0',
   className = '',
 
@@ -36,19 +36,19 @@ export default function CollectionList({
 
   gridWrapperClass = 'grid gap-3 w-full',
   gridColsOverrideClass = '',
-  gridTileExpandableClass = 'bg-ifm-primary-darker border border-ifm-primary rounded-lg shadow-sm px-3 py-2.5 hover:bg-ifm-primary hover:ring-1 hover:ring-white/30 transition',
-  gridTileStaticClass = 'bg-ifm-primary-darker border border-border-color rounded-lg shadow-sm px-3 py-2.5 opacity-95',
+  gridTileExpandableClass = 'bg-white dark:bg-[#1e2224] border border-border-color border-t-[3px] border-t-ifm-primary rounded-lg px-3 py-2.5 hover:border-t-ifm-primary-dark hover:shadow-sm transition',
+  gridTileStaticClass = 'bg-white dark:bg-[#1e2224] border border-border-color rounded-lg px-3 py-2.5',
 
-  gridHeaderButtonClass = 'grid w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 rounded-md grid-cols-[1fr_auto_1fr] items-center',
+  gridHeaderButtonClass = 'grid w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ifm-primary/40 rounded-md grid-cols-[1fr_auto_1fr] items-center',
   gridHeaderDisabledClass = 'grid w-full grid-cols-[1fr_auto_1fr] items-center',
 
   gridCenterTitleWrapClass = 'flex min-w-0 flex-1 items-center justify-center px-1 text-center',
   gridTitleInnerClass = 'flex items-center justify-center gap-3 min-w-0',
-  gridFontClass = 'font-usace text-normal text-font-color-inverse whitespace-normal break-words min-w-0',
+  gridFontClass = 'font-usace text-normal text-font-color whitespace-normal break-words min-w-0',
 
   gridRightControlsClass = 'flex items-center gap-2 justify-self-end self-center',
-  gridChipDetailsClass = 'ml-2 text-xs rounded-full px-2 py-0.5 bg-white/20 text-font-color-inverse',
-  gridChevronClass = 'text-font-color-inverse',
+  gridChipDetailsClass = 'ml-2 text-xs rounded-full px-2 py-0.5 bg-ifm-primary/10 text-ifm-primary dark:bg-ifm-primary/20 dark:text-ifm-primary',
+  gridChevronClass = 'text-ifm-primary',
 
   gridTileMinHClass = 'min-h-[75px]',
 }) {
@@ -298,7 +298,7 @@ function Badge({ className, label }) {
     </span>
   );
 }
-function Chevron({ isOpen, className = 'text-font-color-inverse' }) {
+function Chevron({ isOpen, className = 'text-ifm-primary' }) {
   return (
     <svg
       className={`ml-1 h-5 w-5 shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : 'rotate-0'} ${className}`}
