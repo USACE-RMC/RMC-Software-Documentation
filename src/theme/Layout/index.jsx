@@ -24,6 +24,7 @@ export default function LayoutWrapper({ children, ...rest }) {
   const links = buildNavLinks(useBaseUrl, latestVersions);
 
   const homeHref = useBaseUrl('/');
+  const devHref = useBaseUrl('/docs/dev');
 
   // Ensure Groundwork logo returns to base URL
   useEffect(() => {
@@ -57,6 +58,9 @@ export default function LayoutWrapper({ children, ...rest }) {
         usace250Logo={true}
       >
         {children}
+        <div className="dev-footer-link">
+          <a href={devHref}>v</a>
+        </div>
       </SiteWrapper>
     </Layout>
   );

@@ -2,15 +2,31 @@ import addBaseUrl from '@docusaurus/useBaseUrl';
 import Layout from '@theme/Layout';
 import ThemedImage from '@theme/ThemedImage';
 import { useEffect, useState } from 'react';
-import ContentBox from '../components/ContentBox';
-import '../css/custom.css';
+import ContentBox from '../../components/ContentBox';
+import '../../css/custom.css';
 
 const devData = [
   {
     iconLight: 'img/Toolbox.png',
     iconDark: 'img/ToolboxDarkMode.png',
     doc_location: 'docs/dev/github-workflows/introduction',
-    doc_name: 'Software Development SOP',
+    doc_name: 'GitHub Workflows SOP',
+    active: true,
+    versioned: false,
+  },
+  {
+    iconLight: 'img/Toolbox.png',
+    iconDark: 'img/ToolboxDarkMode.png',
+    doc_location: 'docs/dev/ai-development/ai-assisted-development',
+    doc_name: 'AI Assistant Guidance',
+    active: true,
+    versioned: false,
+  },
+  {
+    iconLight: 'img/Toolbox.png',
+    iconDark: 'img/ToolboxDarkMode.png',
+    doc_location: 'docs/dev/architecture/web-app-architecture',
+    doc_name: 'Web Application Architecture',
     active: true,
     versioned: false,
   },

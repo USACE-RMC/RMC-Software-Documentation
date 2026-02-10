@@ -406,13 +406,10 @@ function generateDocumentationGuideSidebar() {
   return items;
 }
 
-/* --- Custom Logic: Software Development Sidebar --- */
+/* --- Custom Logic: GitHub Workflows Sidebar --- */
 
-function generateSoftwareDevelopment() {
+function generateGitHubWorkflowsSidebar() {
   const githubDir = path.join(DOCS_DIR, 'dev/github-workflows');
-  const architectureDir = path.join(DOCS_DIR, 'dev/architecture');
-  const aiDevDir = path.join(DOCS_DIR, 'dev/ai-development');
-
   if (!fs.existsSync(githubDir)) return null;
 
   const introId = '00-introduction';
@@ -431,7 +428,38 @@ function generateSoftwareDevelopment() {
     '12-quick-reference',
     '13-common-scenarios',
   ];
+
+  const files = getDevFilesInDir(githubDir);
+  const items = [];
+
+  const introItem = buildDevDocItem(githubDir, 'dev/github-workflows', files, introId);
+  if (introItem) items.push(introItem);
+
+  const coreCategory = buildDevCategory('GitHub Workflow and Best Practices', githubDir, 'dev/github-workflows', files, gitHubWorkflowIds, false);
+  if (coreCategory) items.push(coreCategory);
+
+  return items;
+}
+
+/* --- Custom Logic: AI Development Sidebar --- */
+
+function generateAiDevelopmentSidebar() {
+  const aiDevDir = path.join(DOCS_DIR, 'dev/ai-development');
+  if (!fs.existsSync(aiDevDir)) return null;
+
   const aiGuidanceIds = ['01-ai-assisted-development', '02-claude-md'];
+  const files = getDevFilesInDir(aiDevDir);
+
+  const items = aiGuidanceIds.map((id) => buildDevDocItem(aiDevDir, 'dev/ai-development', files, id)).filter(Boolean);
+  return items.length ? items : null;
+}
+
+/* --- Custom Logic: Web Application Architecture Sidebar --- */
+
+function generateArchitectureSidebar() {
+  const architectureDir = path.join(DOCS_DIR, 'dev/architecture');
+  if (!fs.existsSync(architectureDir)) return null;
+
   const architectureIds = [
     '01-web-app-architecture',
     '02-frontend-architecture',
@@ -442,57 +470,43 @@ function generateSoftwareDevelopment() {
     '07-aspnet-quick-reference',
     '08-flask-to-aspnet-mapping',
   ];
+  const files = getDevFilesInDir(architectureDir);
 
-  function getFilesInDir(dir) {
-    if (!fs.existsSync(dir)) return [];
-    return fs
-      .readdirSync(dir)
-      .filter((f) => f.endsWith('.mdx'))
-      .sort();
-  }
+  const items = architectureIds.map((id) => buildDevDocItem(architectureDir, 'dev/architecture', files, id)).filter(Boolean);
+  return items.length ? items : null;
+}
 
-  const githubFiles = getFilesInDir(githubDir);
-  const architectureFiles = getFilesInDir(architectureDir);
-  const aiDevFiles = getFilesInDir(aiDevDir);
+/* --- Shared Dev Sidebar Helpers --- */
 
-  function buildDocItem(dir, docPrefix, files, id) {
-    if (!files.includes(`${id}.mdx`)) return null;
-    const fullPath = path.join(dir, `${id}.mdx`);
-    const label = getFrontmatterTitle(fullPath) || titleCase(id.replace(/^\d+-/, ''));
-    return {
-      type: 'doc',
-      id: `${docPrefix}/${id.replace(/^\d+-/, '')}`,
-      label,
-    };
-  }
+function getDevFilesInDir(dir) {
+  if (!fs.existsSync(dir)) return [];
+  return fs
+    .readdirSync(dir)
+    .filter((f) => f.endsWith('.mdx'))
+    .sort();
+}
 
-  function buildCategory(label, dir, docPrefix, files, ids, collapsed) {
-    const items = ids.map((id) => buildDocItem(dir, docPrefix, files, id)).filter(Boolean);
-    if (!items.length) return null;
-    return {
-      type: 'category',
-      label,
-      collapsible: true,
-      collapsed,
-      items,
-    };
-  }
+function buildDevDocItem(dir, docPrefix, files, id) {
+  if (!files.includes(`${id}.mdx`)) return null;
+  const fullPath = path.join(dir, `${id}.mdx`);
+  const label = getFrontmatterTitle(fullPath) || titleCase(id.replace(/^\d+-/, ''));
+  return {
+    type: 'doc',
+    id: `${docPrefix}/${id.replace(/^\d+-/, '')}`,
+    label,
+  };
+}
 
-  const items = [];
-
-  const introItem = buildDocItem(githubDir, 'dev/github-workflows', githubFiles, introId);
-  if (introItem) items.push(introItem);
-
-  const coreCategory = buildCategory('GitHub Workflow and Best Practices', githubDir, 'dev/github-workflows', githubFiles, gitHubWorkflowIds, false);
-  if (coreCategory) items.push(coreCategory);
-
-  const aiCategory = buildCategory('AI Assistant Guidance', aiDevDir, 'dev/ai-development', aiDevFiles, aiGuidanceIds, true);
-  if (aiCategory) items.push(aiCategory);
-
-  const archCategory = buildCategory('Web Application Architecture', architectureDir, 'dev/architecture', architectureFiles, architectureIds, true);
-  if (archCategory) items.push(archCategory);
-
-  return items;
+function buildDevCategory(label, dir, docPrefix, files, ids, collapsed) {
+  const items = ids.map((id) => buildDevDocItem(dir, docPrefix, files, id)).filter(Boolean);
+  if (!items.length) return null;
+  return {
+    type: 'category',
+    label,
+    collapsible: true,
+    collapsed,
+    items,
+  };
 }
 
 /* --- Sidebar Generation Entrypoint --- */
@@ -537,11 +551,27 @@ function generateSidebars() {
     };
   }
 
-  // Add Software Development sidebar if present
-  const softwareDevSidebar = generateSoftwareDevelopment();
-  if (softwareDevSidebar) {
-    sidebarContent.softwareDevelopment = {
-      'Software Development SOP': softwareDevSidebar,
+  // Add GitHub Workflows sidebar if present
+  const githubWorkflowsSidebar = generateGitHubWorkflowsSidebar();
+  if (githubWorkflowsSidebar) {
+    sidebarContent.githubWorkflows = {
+      'GitHub Workflows SOP': githubWorkflowsSidebar,
+    };
+  }
+
+  // Add AI Development sidebar if present
+  const aiDevSidebar = generateAiDevelopmentSidebar();
+  if (aiDevSidebar) {
+    sidebarContent.aiDevelopment = {
+      'AI Assistant Guidance': aiDevSidebar,
+    };
+  }
+
+  // Add Web Application Architecture sidebar if present
+  const archSidebar = generateArchitectureSidebar();
+  if (archSidebar) {
+    sidebarContent.webAppArchitecture = {
+      'Web Application Architecture': archSidebar,
     };
   }
 
