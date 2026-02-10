@@ -123,27 +123,47 @@ export default function ProcessList({
                 ) : numberStyle === 'chevron' ? (
                   <span
                     aria-hidden="true"
-                    className={`inline-flex items-center justify-center ${fontClass} ${lineHeightClass} bg-ifm-primary text-font-color-inverse shadow`}
+                    className={fontClass}
                     style={{
-                      width: Math.round(bubbleSizePx * 1.1),
-                      height: bubbleSizePx,
-                      clipPath: 'polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%)',
-                      marginTop: `max(0px, calc((1.5em - ${bubbleSizePx}px) / 2))`,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      height: '1.5em',
                     }}
                   >
-                    {n}
+                    <span
+                      className={`inline-flex items-center justify-center ${fontClass} ${lineHeightClass} bg-ifm-primary text-font-color-inverse shadow`}
+                      style={{
+                        width: Math.round(bubbleSizePx * 1.1),
+                        height: bubbleSizePx,
+                        clipPath: 'polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%)',
+                        flexShrink: 0,
+                      }}
+                    >
+                      {n}
+                    </span>
                   </span>
                 ) : (
                   <span
                     aria-hidden="true"
-                    className={`inline-flex items-center justify-center ${badgeClass}`}
+                    className={fontClass}
                     style={{
-                      width: bubbleSizePx,
-                      height: bubbleSizePx,
-                      marginTop: `max(0px, calc((1.5em - ${bubbleSizePx}px) / 2))`,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      height: '1.5em',
                     }}
                   >
-                    {n}
+                    <span
+                      className={`inline-flex items-center justify-center ${badgeClass}`}
+                      style={{
+                        width: bubbleSizePx,
+                        height: bubbleSizePx,
+                        flexShrink: 0,
+                      }}
+                    >
+                      {n}
+                    </span>
                   </span>
                 )}
                 <span aria-hidden="true" />
@@ -293,14 +313,24 @@ function ChildGroup({
               ) : (
                 <span
                   aria-hidden="true"
-                  className={`inline-flex items-center justify-center ${badgeClass}`}
+                  className={fontClass}
                   style={{
-                    width: bubbleSizePx,
-                    height: bubbleSizePx,
-                    marginTop: `max(0px, calc((1.5em - ${bubbleSizePx}px) / 2))`,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '1.5em',
                   }}
                 >
-                  {label}
+                  <span
+                    className={`inline-flex items-center justify-center ${badgeClass}`}
+                    style={{
+                      width: bubbleSizePx,
+                      height: bubbleSizePx,
+                      flexShrink: 0,
+                    }}
+                  >
+                    {label}
+                  </span>
                 </span>
               )}
               <span aria-hidden="true" />

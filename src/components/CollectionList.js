@@ -20,8 +20,8 @@ export default function CollectionList({
   showExpandAll = false,
 
   /* ── STACK styles ─────────────────────────────────── */
-  boxExpandableClass = 'bg-white dark:bg-[#1e2224] border border-border-color border-l-[3px] border-l-ifm-primary rounded-lg px-3 py-2.5 hover:border-l-ifm-primary-dark hover:shadow-sm transition',
-  boxStaticClass = 'bg-white dark:bg-[#1e2224] border border-border-color rounded-lg px-3 py-2.5',
+  boxExpandableClass = 'bg-[#e8eef0] dark:bg-[#2e373b] border border-border-color border-l-[3px] border-l-ifm-primary rounded-lg px-3 py-2.5 hover:border-l-ifm-primary-dark hover:shadow-sm transition',
+  boxStaticClass = 'bg-[#e8eef0] dark:bg-[#2e373b] border border-border-color rounded-lg px-3 py-2.5',
   badgeClass = 'bg-ifm-primary rounded-full shadow text-caption font-usace text-font-color-inverse',
   fontClass = 'font-usace text-normal text-font-color',
   panelClass = 'prose max-w-none rounded-b-lg border-t border-border-color bg-[#f8fafa] dark:bg-[#161a1c] text-font-color mt-3 px-3 py-2.5',
@@ -36,8 +36,8 @@ export default function CollectionList({
 
   gridWrapperClass = 'grid gap-3 w-full',
   gridColsOverrideClass = '',
-  gridTileExpandableClass = 'bg-white dark:bg-[#1e2224] border border-border-color border-t-[3px] border-t-ifm-primary rounded-lg px-3 py-2.5 hover:border-t-ifm-primary-dark hover:shadow-sm transition',
-  gridTileStaticClass = 'bg-white dark:bg-[#1e2224] border border-border-color rounded-lg px-3 py-2.5',
+  gridTileExpandableClass = 'bg-[#e8eef0] dark:bg-[#2e373b] border border-border-color border-t-[3px] border-t-ifm-primary rounded-lg px-3 py-2.5 hover:border-t-ifm-primary-dark hover:shadow-sm transition',
+  gridTileStaticClass = 'bg-[#e8eef0] dark:bg-[#2e373b] border border-border-color rounded-lg px-3 py-2.5',
 
   gridHeaderButtonClass = 'grid w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ifm-primary/40 rounded-md grid-cols-[1fr_auto_1fr] items-center',
   gridHeaderDisabledClass = 'grid w-full grid-cols-[1fr_auto_1fr] items-center',
