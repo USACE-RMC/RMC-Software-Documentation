@@ -147,11 +147,7 @@ export default function ProcessList({
                   </span>
                 )}
                 <span aria-hidden="true" />
-                <span
-                  className={`${fontClass} ${lineHeightClass} min-w-0 break-words`}
-                  title={String(title)}
-                  style={{ paddingTop: `max(0px, calc((${bubbleSizePx}px - 1.5em) / 2))` }}
-                >
+                <span className={`${fontClass} ${lineHeightClass} min-w-0 break-words`} title={String(title)}>
                   {title}
                 </span>
               </div>
@@ -308,11 +304,7 @@ function ChildGroup({
                 </span>
               )}
               <span aria-hidden="true" />
-              <span
-                className={`${fontClass} ${lineHeightClass} min-w-0 break-words`}
-                title={String(child.title)}
-                style={{ paddingTop: `max(0px, calc((${bubbleSizePx}px - 1.5em) / 2))` }}
-              >
+              <span className={`${fontClass} ${lineHeightClass} min-w-0 break-words`} title={String(child.title)}>
                 {child.title}
               </span>
             </div>
