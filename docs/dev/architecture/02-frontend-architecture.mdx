@@ -1,0 +1,788 @@
+---
+title: Frontend Architecture
+---
+
+import DocTabs from '@site/src/components/DocTabs';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+# Frontend Architecture
+
+This guide defines the standard frontend architecture for RMC web applications using React, Vite, and Tailwind CSS. It is written for developers who may be new to React development.
+
+---
+
+## Technology Stack
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| React | latest | Component-based UI framework |
+| Vite | latest | Build tool and development server |
+| JavaScript | ES2022+ | Programming language (not TypeScript) |
+| Tailwind CSS | latest | Utility-first CSS framework |
+| React Router | latest | Client-side routing |
+| USACE Groundwork | latest | USACE design system components |
+| Chart.js | latest | Charts and data visualization |
+| Lucide React | latest | Icon library |
+| KaTeX | latest | Mathematical notation rendering |
+
+**Note:** RMC web applications use JavaScript, not TypeScript. This is an intentional choice to reduce complexity and build times.
+
+---
+
+## Key Concepts for Beginners
+
+### What Is React?
+
+React is a JavaScript library for building user interfaces. Instead of writing HTML pages that JavaScript manipulates, developers write **components**—self-contained pieces of UI that manage their own rendering and behavior.
+
+```jsx
+// A simple React component
+function WelcomeMessage({ userName }) {
+  return <h1>Welcome, {userName}!</h1>;
+}
+```
+
+### What Is a Component?
+
+A component is a reusable piece of UI. Components can:
+
+- Accept **props** (inputs from parent components)
+- Manage **state** (data that changes over time)
+- Render **JSX** (HTML-like syntax in JavaScript)
+- Contain **hooks** (special functions for state and side effects)
+
+```jsx
+function Counter() {
+  // useState is a hook that creates a state variable
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+    </div>
+  );
+}
+```
+
+### What Are Hooks?
+
+Hooks are special functions that allow components to "hook into" React features. The most common hooks are:
+
+| Hook | Purpose | Example |
+|------|---------|---------|
+| `useState` | Store and update component state | `const [value, setValue] = useState(0)` |
+| `useEffect` | Run code when component mounts or data changes | Fetch data when page loads |
+| `useMemo` | Cache expensive calculations | Transform large datasets |
+| `useCallback` | Cache function references | Prevent unnecessary re-renders |
+
+---
+
+## Directory Structure
+
+```
+frontend/
+├── src/
+│   ├── app/                         # Application entry point and root setup
+│   │   ├── main.jsx                 # React DOM mount
+│   │   ├── router.jsx               # React Router configuration
+│   │   └── index.css                # Global styles + Tailwind
+│   │
+│   ├── api/                         # HTTP utilities and API modules
+│   │   ├── common/
+│   │   │   └── apiFetch.js          # Low-level HTTP wrapper (get, post, put, del)
+│   │   ├── auth/                    # Auth API calls
+│   │   ├── dashboard/               # Dashboard API calls (if applicable)
+│   │   └── {domain}/                # Domain-specific API modules
+│   │       └── {feature}Api.js      # e.g., pfm01Api.js, schmertmannApi.js
+│   │
+│   ├── components/                  # Reusable UI components
+│   │   ├── common/                  # Generic, shared across all features
+│   │   │   ├── ui/                  # Button, Input, Select, Panel
+│   │   │   ├── layout/              # PageContainer, NavBar
+│   │   │   ├── feedback/            # MessagesBanner, Toast
+│   │   │   ├── table/               # Data tables with inline editing
+│   │   │   └── chart/               # Chart.js wrappers
+│   │   ├── auth/                    # Auth-specific components
+│   │   ├── dashboard/               # Dashboard components (if applicable)
+│   │   └── {domain}/                # Domain-specific components
+│   │
+│   ├── pages/                       # Page components (Layer 1)
+│   │   ├── auth/                    # Login, password change
+│   │   ├── dashboard/               # Dashboard pages (if applicable)
+│   │   └── {domain}/
+│   │       └── {feature}/
+│   │           ├── FeaturePage.jsx              # Page component
+│   │           ├── hooks/
+│   │           │   ├── useFeatureController.js  # Controller hook (Layer 2)
+│   │           │   └── useFeatureData.js        # Data hook (Layer 3)
+│   │           ├── sections/                    # Page sub-sections
+│   │           └── modals/                      # Feature-specific modals
+│   │
+│   ├── hooks/                       # Shared custom hooks
+│   │   └── common/
+│   │       ├── useDebounce.js
+│   │       └── useLocalStorage.js
+│   │
+│   ├── contexts/                    # React Context providers
+│   │   ├── auth/
+│   │   │   └── AuthContext.jsx
+│   │   └── {domain}/                # Domain-specific contexts
+│   │
+│   ├── data/                        # Static config, lookup tables, constants
+│   ├── utils/                       # Helper functions
+│   └── assets/                      # Fonts, images
+│
+├── package.json
+├── vite.config.js
+└── jsconfig.json                    # Path alias definitions
+```
+
+The `{domain}` folders are project-specific and will vary across applications (e.g., `toolboxes/` for RMC-Toolboxes, `screening/` for DST). The top-level folders (`api/`, `components/`, `pages/`, `hooks/`, `contexts/`, `data/`, `utils/`, `assets/`, `app/`) are universal across all RMC web apps.
+
+### Path Aliases
+
+All RMC web applications configure Vite path aliases (in `vite.config.js`) and editor aliases (in `jsconfig.json`) for clean imports:
+
+| Alias | Maps To | Example Import |
+|-------|---------|----------------|
+| `@api/*` | `src/api/` | `import { get } from '@api/common/apiFetch'` |
+| `@components/*` | `src/components/` | `import MessagesBanner from '@components/common/feedback/MessagesBanner'` |
+| `@pages/*` | `src/pages/` | `import Pfm01Page from '@pages/screening/pfm-01/Pfm01Page'` |
+| `@hooks/*` | `src/hooks/` | `import { useDebounce } from '@hooks/common/useDebounce'` |
+| `@contexts/*` | `src/contexts/` | `import { useAuth } from '@contexts/auth/AuthContext'` |
+| `@data/*` | `src/data/` | `import { constants } from '@data/common/constants'` |
+
+---
+
+## The Five-Layer Architecture
+
+RMC frontend applications use a five-layer architecture that separates concerns and keeps code organized. Each layer has a specific responsibility.
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ Layer 1: PAGE COMPONENT (FeaturePage.jsx)                           │
+│                                                                     │
+│ The top-level component for a page. Renders layout and UI sections. │
+│ Consumes { vm, actions } from the Controller.                       │
+└───────────────────────────────┬─────────────────────────────────────┘
+                                │ const { vm, actions } = useFeatureController(id)
+                                ↓
+┌─────────────────────────────────────────────────────────────────────┐
+│ Layer 2: CONTROLLER HOOK (useFeatureController.js)                  │
+│                                                                     │
+│ Transforms raw data into view-ready format. Combines multiple       │
+│ hooks. Returns { vm, actions } for the page.                        │
+└───────────────────────────────┬─────────────────────────────────────┘
+                                │ Calls useFeature() and helper hooks
+                                ↓
+┌─────────────────────────────────────────────────────────────────────┐
+│ Layer 3: DATA HOOK (useFeature.js)                                  │
+│                                                                     │
+│ Manages all state, API orchestration, loading, saving, running,     │
+│ debouncing, and error handling. The "brain" of the feature.         │
+└───────────────────────────────┬─────────────────────────────────────┘
+                                │ Calls API module functions
+                                ↓
+┌─────────────────────────────────────────────────────────────────────┐
+│ Layer 4: API MODULE (api/toolboxes/.../feature.js)                  │
+│                                                                     │
+│ Domain-specific API functions: loadParams, saveParams, runAnalysis. │
+│ Knows the endpoint URLs for this feature.                           │
+└───────────────────────────────┬─────────────────────────────────────┘
+                                │ Calls apiFetch()
+                                ↓
+┌─────────────────────────────────────────────────────────────────────┐
+│ Layer 5: HTTP UTILITY (api/apiFetch.js)                             │
+│                                                                     │
+│ Low-level fetch wrapper. Handles auth headers, JSON parsing,        │
+│ error handling. Knows nothing about specific features.              │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Layer-by-Layer Explanation
+
+### Layer 1: Page Component
+
+**What it is:** The top-level React component for a page, rendered by the router.
+
+**What it does:**
+- Renders the overall page layout and structure
+- Consumes `{ vm, actions }` from the Controller hook
+- Passes data down to section components
+- Handles loading and error states
+
+**Why this layer exists:**
+- **Separation of concerns**: The page only cares about layout, not data fetching
+- **Readability**: Easy to see the page structure at a glance
+- **Testability**: Can test UI rendering independently from data logic
+
+```jsx
+// pages/settlement/SettlementPage.jsx
+
+import { useSettlementController } from './hooks/useSettlementController';
+import { GeometrySection } from './sections/GeometrySection';
+import { ResultsSection } from './sections/ResultsSection';
+import { LoadingSpinner } from '@components/common/ui/LoadingSpinner';
+
+export function SettlementPage({ analysisId }) {
+  // Get view model and actions from the controller
+  const { vm, actions } = useSettlementController(analysisId);
+
+  // Handle loading state
+  if (vm.status.loading) {
+    return <LoadingSpinner />;
+  }
+
+  // Handle error state
+  if (vm.status.error) {
+    return <ErrorMessage message={vm.status.error.message} />;
+  }
+
+  // Render the page with data from vm
+  return (
+    <div className="flex flex-col gap-6 p-4">
+      <GeometrySection
+        inputs={vm.ui.geometry}
+        onHeightChange={actions.set.height}
+        onWidthChange={actions.set.width}
+      />
+
+      <ResultsSection
+        results={vm.results}
+        hasResult={vm.status.hasResult}
+        bannerWarnings={vm.ui.bannerWarnings}
+      />
+    </div>
+  );
+}
+```
+
+---
+
+### Layer 2: Controller Hook
+
+**What it is:** A custom hook (`use*Controller.js`) that transforms raw data into a view-ready format.
+
+**What it does:**
+- Calls the Data Hook and any helper hooks
+- Transforms raw API data into a structured `vm` (view model) object
+- Organizes data by UI section (status, inputs, results, chart, etc.)
+- Provides normalized `actions` object with setter functions
+- Returns `{ vm, actions }` for the page to consume
+
+**Why this layer exists:**
+- **Data transformation**: UI components shouldn't know about API response shapes
+- **Composition**: Combines multiple hooks into a single interface
+- **Stability**: `vm` structure can stay stable even if API changes
+- **Type safety (conceptual)**: `vm` defines what the UI expects to receive
+
+```javascript
+// hooks/useSettlementController.js
+
+import { useMemo } from 'react';
+import { useSettlement } from './useSettlement';
+import { useAnisotropyToggle } from './useAnisotropyToggle';
+
+// Define the readable output shape
+export const Out = {
+  STATUS: ['loading', 'saving', 'running', 'error', 'hasResult'],
+  INPUTS: ['D', 'Cu', 'sand_fines'],
+  UI: ['alpha', 'L', 'useAnisotropy', 'bannerWarnings', 'bannerErrors'],
+};
+
+// Transform raw data into view-ready format
+function selectVM({ params, result, loading, saving, running, error, useAnisotropy }) {
+  return {
+    status: {
+      loading,
+      saving,
+      running,
+      error,
+      hasResult: !!result && Array.isArray(result?.HWs) && result.HWs.length > 0,
+    },
+
+    inputs: {
+      D: result?.param_means?.D ?? null,
+      Cu: result?.param_means?.Cu ?? null,
+      sand_fines: result?.param_means?.sand_fines ?? null,
+    },
+
+    ui: {
+      alpha: params?.alpha ?? null,
+      L: params?.L ?? null,
+      useAnisotropy,
+      bannerWarnings: [],
+      bannerErrors: [],
+    },
+
+    results: {
+      HWs: result?.HWs ?? [],
+      TWs: result?.TWs ?? [],
+    },
+  };
+}
+
+export function useSettlementController(analysisId) {
+  // Call the main data hook
+  const base = useSettlement(analysisId);
+  const { params, setParam, result, loading, saving, running, error } = base;
+
+  // Call helper hooks for toggles
+  const { useAnisotropy } = useAnisotropyToggle(params, setParam);
+
+  // Build the view model using useMemo for stability
+  const vm = useMemo(
+    () => selectVM({ params, result, loading, saving, running, error, useAnisotropy }),
+    [params, result, loading, saving, running, error, useAnisotropy]
+  );
+
+  // Build normalized action setters
+  const actions = useMemo(() => ({
+    set: {
+      alpha: (v) => setParam('alpha', v),
+      L: (v) => setParam('L', v),
+      anisotropy: (v) => setParam('use_anisotropy', Boolean(v)),
+    },
+  }), [setParam]);
+
+  return { vm, actions };
+}
+```
+
+---
+
+### Layer 3: Data Hook
+
+**What it is:** A custom hook (`use*.js`) that manages all state and API orchestration for a feature.
+
+**What it does:**
+- Manages React state (params, results, loading, error, etc.)
+- Loads initial data when the component mounts
+- Saves parameters with debouncing (wait 500ms after user stops typing)
+- Runs calculations and handles the response
+- Handles the messaging contract (inputs, warnings, errors)
+- Provides low-level `setParam` and `runModel` functions
+
+**Why this layer exists:**
+- **State management**: All state for a feature in one place
+- **Orchestration**: Coordinates load → save → run → interpolate flows
+- **Debouncing**: Prevents excessive API calls while user is typing
+- **Error handling**: Centralized error state and recovery
+- **Reusability**: Same data logic could be used by different UI layouts
+
+```javascript
+// hooks/useSettlement.js
+
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useDebounce } from '@hooks-shared/useDebounce';
+import { loadParams, saveParams, runAnalysis } from '@api/settlement';
+
+const DEBOUNCE_MS = 500;
+
+export function useSettlement(analysisId) {
+  // Core state
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [running, setRunning] = useState(false);
+  const [error, setError] = useState(null);
+  const [params, setParams] = useState({});
+  const [result, setResult] = useState(null);
+
+  // Track user edits for debounced save
+  const userEditedRef = useRef(false);
+
+  // Setter that marks user edits
+  const setParam = useCallback((key, value) => {
+    userEditedRef.current = true;
+    setParams(prev => ({ ...prev, [key]: value }));
+  }, []);
+
+  // Load initial data on mount
+  useEffect(() => {
+    let alive = true;
+
+    async function load() {
+      if (!Number.isFinite(analysisId)) return;
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        const data = await loadParams(analysisId);
+        if (alive) {
+          setParams(data);
+          // Run initial calculation silently
+          await runModel({ silent: true });
+        }
+      } catch (err) {
+        if (alive) setError(err);
+      } finally {
+        if (alive) setLoading(false);
+      }
+    }
+
+    load();
+    return () => { alive = false; };
+  }, [analysisId]);
+
+  // Run the calculation
+  const runModel = useCallback(async ({ silent = false } = {}) => {
+    if (!Number.isFinite(analysisId)) return;
+
+    setRunning(true);
+    try {
+      const response = await runAnalysis(analysisId);
+
+      if (response.status === 'success') {
+        setResult(response);
+        setError(null);
+      } else if (response.status === 'incomplete') {
+        setResult(null);
+        // Handle incomplete inputs (not an error)
+      } else if (response.status === 'error') {
+        setResult(null);
+        if (!silent) setError(new Error(response.errors?.[0] || 'Analysis failed'));
+      }
+    } catch (err) {
+      setError(err);
+      setResult(null);
+    } finally {
+      setRunning(false);
+    }
+  }, [analysisId]);
+
+  // Debounced auto-save when params change
+  useDebounce(
+    async () => {
+      if (!userEditedRef.current || !Number.isFinite(analysisId)) return;
+
+      setSaving(true);
+      try {
+        await saveParams(analysisId, params);
+        await runModel();
+      } catch (err) {
+        setError(err);
+      } finally {
+        setSaving(false);
+        userEditedRef.current = false;
+      }
+    },
+    DEBOUNCE_MS,
+    [params, analysisId]
+  );
+
+  return {
+    loading,
+    saving,
+    running,
+    error,
+    params,
+    setParam,
+    result,
+    runModel,
+  };
+}
+```
+
+---
+
+### Layer 4: API Module
+
+**What it is:** A JavaScript module (`api/toolboxes/.../feature.js`) containing domain-specific API functions.
+
+**What it does:**
+- Exports functions like `loadParams`, `saveParams`, `runAnalysis`
+- Knows the specific endpoint URLs for this feature
+- Handles request/response shaping for this domain
+- Calls the generic `apiFetch` utility
+
+**Why this layer exists:**
+- **Encapsulation**: Endpoint URLs are in one place, not scattered across hooks
+- **Reusability**: Same API functions can be called from different hooks
+- **Testability**: Can mock API functions in tests without mocking fetch
+- **Domain knowledge**: API module knows the shape of requests for this feature
+
+```javascript
+// api/toolboxes/settlement/settlement.js
+
+import { apiFetch } from '@api/apiFetch';
+
+const BASE_URL = '/toolboxes/internal-erosion/settlement';
+
+/**
+ * Load analysis parameters from the database.
+ */
+export async function loadParams(analysisId) {
+  if (!Number.isFinite(analysisId)) {
+    throw new Error('analysisId is required');
+  }
+
+  return apiFetch(`${BASE_URL}/load_params/${analysisId}`, {
+    method: 'GET',
+  });
+}
+
+/**
+ * Save partial parameters to the database.
+ */
+export async function saveParams(analysisId, params) {
+  if (!Number.isFinite(analysisId)) {
+    throw new Error('analysisId is required');
+  }
+
+  return apiFetch(`${BASE_URL}/save_params/${analysisId}`, {
+    method: 'POST',
+    body: params,
+  });
+}
+
+/**
+ * Run the analysis calculation.
+ * Backend reads inputs from DB and returns results.
+ */
+export async function runAnalysis(analysisId) {
+  if (!Number.isFinite(analysisId)) {
+    throw new Error('analysisId is required');
+  }
+
+  try {
+    const data = await apiFetch(`${BASE_URL}/run/${analysisId}`, {
+      method: 'POST',
+    });
+    return { status: data?.status || 'success', ...data };
+  } catch (err) {
+    // Handle structured error responses from backend
+    const payload = err?.payload;
+    if (payload?.status === 'incomplete' || payload?.status === 'error') {
+      return { status: payload.status, ...payload };
+    }
+    throw err;
+  }
+}
+```
+
+---
+
+### Layer 5: HTTP Utility
+
+**What it is:** A low-level utility (`api/apiFetch.js`) that wraps the browser's `fetch` API.
+
+**What it does:**
+- Adds authentication headers (JWT token) to every request
+- Parses JSON responses automatically
+- Handles HTTP errors consistently
+- Provides a clean interface for making requests
+
+**Why this layer exists:**
+- **DRY**: Auth header logic is in one place, not repeated everywhere
+- **Consistency**: All API calls have the same error handling
+- **Flexibility**: Easy to add logging, retry logic, or caching later
+- **Testability**: Can mock one function to test all API code
+
+```javascript
+// api/apiFetch.js
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
+/**
+ * Makes an HTTP request to the backend API.
+ * Automatically adds auth headers and parses JSON.
+ *
+ * @param {string} endpoint - The API endpoint (e.g., '/api/analyses/123')
+ * @param {object} options - Fetch options
+ * @param {string} options.method - HTTP method (GET, POST, PUT, DELETE)
+ * @param {object} options.body - Request body (will be JSON stringified)
+ * @param {object} options.headers - Additional headers
+ * @returns {Promise<object>} - The parsed JSON response
+ * @throws {Error} - If the request fails
+ */
+export async function apiFetch(endpoint, options = {}) {
+  const token = localStorage.getItem('authToken');
+
+  const config = {
+    method: options.method || 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+      ...options.headers,
+    },
+  };
+
+  // Stringify body if present
+  if (options.body) {
+    config.body = JSON.stringify(options.body);
+  }
+
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+
+  // Handle non-OK responses
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => ({}));
+    const error = new Error(
+      errorBody.message || errorBody.error || `HTTP ${response.status}`
+    );
+    error.status = response.status;
+    error.payload = errorBody;
+    throw error;
+  }
+
+  return response.json();
+}
+```
+
+---
+
+## Why Five Layers?
+
+| Layer | Responsibility | Benefit |
+|-------|----------------|---------|
+| **Page** | Layout and UI composition | Easy to see page structure; UI testing |
+| **Controller** | Data transformation → vm | Stable UI contract; hides API complexity |
+| **Data Hook** | State, orchestration, debouncing | Centralized logic; reusable across UIs |
+| **API Module** | Domain-specific endpoints | Encapsulated URLs; mockable in tests |
+| **HTTP Utility** | Auth, JSON parsing, errors | DRY; consistent behavior everywhere |
+
+This separation means:
+- **Changes are isolated**: Changing an endpoint URL only affects the API module
+- **Testing is easier**: Mock one layer to test another in isolation
+- **Code is reusable**: Same Data Hook could power different page layouts
+- **New developers can navigate**: Clear places for each type of code
+
+---
+
+## Shared Components
+
+Shared components live in `src/components/common/` and provide consistent UI elements across the application.
+
+### Component Guidelines
+
+| Guideline | Description |
+|-----------|-------------|
+| Single responsibility | Each component does one thing well |
+| Props over internal state | Parent controls data, child renders it |
+| Composition over configuration | Build complex UIs by combining simple components |
+| Consistent naming | PascalCase for components, camelCase for props |
+| Tailwind for styling | Use utility classes, avoid custom CSS files |
+
+### Example: Input Component
+
+```jsx
+// components/common/ui/Input.jsx
+
+export function Input({
+  label,
+  value,
+  onChange,
+  type = 'text',
+  error,
+  disabled = false,
+  className = '',
+}) {
+  return (
+    <div className={`flex flex-col gap-1 ${className}`}>
+      {label && (
+        <label className="text-sm font-medium text-gray-700">
+          {label}
+        </label>
+      )}
+
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        disabled={disabled}
+        className={`
+          rounded border px-3 py-2 text-sm
+          focus:outline-none focus:ring-2 focus:ring-blue-500
+          ${error ? 'border-red-500' : 'border-gray-300'}
+          ${disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}
+        `}
+      />
+
+      {error && (
+        <span className="text-sm text-red-500">{error}</span>
+      )}
+    </div>
+  );
+}
+```
+
+---
+
+## Context Providers (Optional Layer)
+
+For pages with deeply nested component trees, a Context Provider can be inserted between the Page and Controller layers to distribute `{ vm, actions }` without prop drilling:
+
+```jsx
+// pages/{feature}/FeatureContext.jsx
+
+const FeatureContext = createContext(null);
+
+export function FeatureProvider({ id, children }) {
+  const { vm, actions } = useFeatureController(id);
+  return (
+    <FeatureContext.Provider value={{ vm, actions }}>
+      {children}
+    </FeatureContext.Provider>
+  );
+}
+
+export function useFeatureContext() {
+  return useContext(FeatureContext);
+}
+```
+
+This is optional—only add a Context when a page has many nested components that all need access to the same `vm` and `actions`. For simple pages, passing props directly from the Page is sufficient.
+
+---
+
+## State Management
+
+RMC applications use React's built-in state management rather than external libraries like Redux.
+
+### When to Use Each Pattern
+
+| Pattern | When to Use | Example |
+|---------|-------------|---------|
+| `useState` | Local component state | Form inputs, toggle states |
+| `useContext` | State shared across component tree | Authentication, theme, feature vm/actions |
+| Custom hooks | Reusable stateful logic | Data fetching, debouncing |
+| URL state | State that should persist across refresh | Analysis ID, active tab |
+| React Query | Many similar CRUD/list data-fetching patterns | Dashboard lists, paginated queries |
+
+### React Query vs. Manual Hooks
+
+Both approaches are valid for server state management. Use the right tool for the use case:
+
+| Approach | When to Use |
+|----------|-------------|
+| **React Query (TanStack Query)** | CRUD-heavy pages with many similar data-fetching patterns, list pages, paginated queries, polling. Provides automatic caching, deduplication, and background refetching. |
+| **Manual hooks** | Complex auto-save flows with debouncing, hash-based change detection, phase tracking, and coordinated save-then-calculate sequences. When the data flow is bespoke and tightly controlled. |
+
+Projects may use both approaches—React Query for dashboard and list pages, manual hooks for analysis auto-save patterns.
+
+---
+
+## Best Practices
+
+### Do
+
+- Keep Page components focused on layout
+- Use Controller hooks to transform data for the UI
+- Centralize state in Data hooks
+- Debounce user inputs before API calls
+- Handle loading and error states explicitly
+- Use shared components for consistency
+
+### Don't
+
+- Put business logic in Page components
+- Make API calls directly from components (use hooks)
+- Duplicate API endpoint URLs across files
+- Skip the Controller layer (even for simple pages)
+- Store sensitive data in localStorage (tokens OK, passwords not)
+- Ignore error states
+

@@ -1,0 +1,43 @@
+---
+title: Preface
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import SchemaTag from '@site/src/components/SchemaTag';
+
+<NavContainer link="/web-applications/dst" linkTitle="Dam Screening Tool" document="dev/dst/database-schema" />
+
+# Preface
+
+The Dam Screening Tool (DST) uses a PostgreSQL database to store screening data. This document serves as the reference for the DST database schema, covering only the portions of the database that have been implemented.
+
+The DST currently has **5 implemented tables** across 2 modules: Screening Management and PFM-01 (Overtopping Erosion). Additional modules will be documented here as they are built. See the [Schema Reference](./schema-reference) for the complete table listing.
+
+## Design Principles
+
+The DST database follows several core design principles:
+
+- **PFM-based table naming** — Tables are prefixed with their failure mode identifier (e.g., `Pfm01`, `Pfm01_DstSrp`), making it immediately clear which module a table belongs to.
+- **Three-table SRP pattern** — Each PFM module uses a consistent trio of child tables (`DstSrp`, `UserSrp`, `ActiveSrp`) to separate computed, user-defined, and active SRP curves. Data is never lost when switching modes.
+- **GUID primary keys** — All tables use `UUID` primary keys generated via PostgreSQL's `gen_random_uuid()`, enabling distributed ID generation without coordination.
+- **JSONB for complex nested data** — Complex structures like multi-point curves and nodal probability tables are stored as JSONB columns, enabling PostgreSQL indexing and querying while avoiding excessive normalization.
+- **Clean Architecture alignment** — Database entities map to domain models in the application's Clean Architecture layers, with EF Core configurations in separate `IEntityTypeConfiguration<T>` classes.
+
+## How to Read This Document
+
+Tables are presented as compact cards showing columns, types, and constraints. Hover over a column name to see its description. Column groups are collapsed by default — click any group header to expand it.
+
+### Tag Legend
+
+The following tags are used throughout this document to annotate column metadata:
+
+| Tag                                               | Meaning                               |
+| ------------------------------------------------- | ------------------------------------- |
+| <SchemaTag type="pk">PK</SchemaTag>               | Primary key                           |
+| <SchemaTag type="fk">&rarr; TableName</SchemaTag> | Foreign key referencing another table |
+| <SchemaTag type="unique">UQ</SchemaTag>           | Unique constraint                     |
+| <SchemaTag type="indexed">IDX</SchemaTag>         | Database index                        |
+| <SchemaTag type="nullable">?</SchemaTag>          | Column allows NULL values             |
+| <SchemaTag type="jsonb">JSONB</SchemaTag>         | PostgreSQL JSONB column               |
+| <SchemaTag type="default">= value</SchemaTag>     | Default value                         |
+| <SchemaTag type="cascade">CASCADE</SchemaTag>     | Cascade delete                        |

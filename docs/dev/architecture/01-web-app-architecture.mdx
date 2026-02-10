@@ -1,0 +1,447 @@
+---
+title: Overview
+---
+
+import DocTabs from '@site/src/components/DocTabs';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+# Web Application Architecture Overview
+
+This guide defines the standard architecture for RMC web applications. All new web applications should follow this three-tier pattern to ensure consistency, maintainability, and separation of concerns.
+
+---
+
+## Three-Tier Architecture
+
+RMC web applications follow a **three-tier architecture** that separates the user interface, server logic, and calculation logic into distinct layers. This separation provides several key benefits:
+
+- **Maintainability**: Changes to one layer don't require changes to others
+- **Testability**: Each layer can be tested independently
+- **Reusability**: Calculation libraries can be shared across multiple applications
+- **Scalability**: Layers can be scaled independently based on demand
+- **Security**: Sensitive operations are isolated in the backend
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ FRONTEND (React + Vite)                                     │
+│                                                             │
+│ What users see and interact with: forms, buttons, charts   │
+│ Runs in the user's web browser                              │
+│ Technology: React, JavaScript, Tailwind CSS                 │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+                      │ HTTP/JSON
+                      │ RESTful API calls over the network
+                      ↓
+┌─────────────────────────────────────────────────────────────┐
+│ BACKEND API (ASP.NET Core)                                  │
+│                                                             │
+│ The "server" that handles requests, manages data, security  │
+│ Runs on a web server (not in the user's browser)            │
+│ Technology: ASP.NET Core, Entity Framework Core, PostgreSQL │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+                      │ HTTP/JSON
+                      │ API calls to calculation service
+                      ↓
+┌─────────────────────────────────────────────────────────────┐
+│ CALCULATION LIBRARIES (.NET Libraries)                      │
+│                                                             │
+│ Pure engineering calculations with no knowledge of web/DB   │
+│ Exposed via a lightweight HTTP API                          │
+│ Technology: .NET (latest), RMC.Numerics                     │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Understanding Each Layer
+
+### Frontend Layer
+
+The **frontend** is everything the user sees and interacts with in their web browser. When a user visits a web application, the browser downloads HTML, CSS, and JavaScript files that render the user interface.
+
+**Key Concepts:**
+
+- **React** is a JavaScript library for building user interfaces using reusable "components" (buttons, forms, charts, etc.)
+- **Vite** is a build tool that bundles application code and provides a fast development server
+- **Tailwind CSS** is a utility-first CSS framework for styling components
+
+**What the Frontend Does:**
+
+- Renders the user interface (forms, buttons, navigation)
+- Captures user input (typing, clicking, selecting)
+- Sends requests to the backend API
+- Displays data and results from the backend
+- Provides immediate feedback (loading spinners, validation messages)
+
+**What the Frontend Does NOT Do:**
+
+- Store sensitive data (passwords, tokens should not persist in the browser)
+- Perform engineering calculations (these belong in calculation libraries)
+- Access the database directly (always goes through the backend)
+- Make security decisions (backend validates everything)
+
+---
+
+### Backend API Layer
+
+The **backend** is a server application that runs on a remote machine (not in the user's browser). It receives requests from the frontend, processes them, and sends back responses.
+
+**Key Concepts:**
+
+- **ASP.NET Core** is Microsoft's framework for building web APIs in C#
+- **Controllers** are classes that handle incoming HTTP requests (like POST, GET, PUT, DELETE)
+- **Entity Framework Core** is an ORM (Object-Relational Mapper) that allows working with database records as C# objects instead of writing raw SQL
+- **JWT (JSON Web Token)** is a standard for securely transmitting user identity information
+
+**What the Backend Does:**
+
+- **Authentication**: Verifies who the user is (login, tokens)
+- **Authorization**: Checks what the user is allowed to do
+- **Data Persistence**: Saves and retrieves data from the database
+- **Request Validation**: Ensures incoming data is valid before processing
+- **Orchestration**: Coordinates between the database and calculation libraries
+- **Response Formatting**: Structures data for the frontend to consume
+
+**What the Backend Does NOT Do:**
+
+- Perform complex engineering calculations (delegates to libraries)
+- Render HTML or UI components (that's the frontend's job)
+- Trust data from the frontend without validation
+
+---
+
+### Calculation Library Layer
+
+**Calculation libraries** are standalone .NET class libraries containing engineering calculations. They have no knowledge of web frameworks, databases, or user interfaces—they are pure computational logic.
+
+**Key Concepts:**
+
+- A **class library** is a collection of reusable code that other applications can reference
+- **Stateless** means the library doesn't remember anything between calls—all inputs are passed in, and outputs are returned
+- **Deterministic** means the same inputs always produce the same outputs
+
+**What Calculation Libraries Do:**
+
+- Implement engineering algorithms and formulas
+- Run Monte Carlo simulations
+- Compute statistics and probabilities
+- Provide validated, tested calculation methods
+
+**What Calculation Libraries Do NOT Do:**
+
+- Make HTTP requests or network calls
+- Read from or write to databases
+- Handle user authentication
+- Render any user interface
+
+**Why This Separation Matters:**
+
+By keeping calculations in a separate library, the same code can be used by:
+
+- A web application (through the backend API)
+- A desktop application (direct reference)
+- A command-line batch processing tool
+- Automated testing systems
+
+---
+
+## Data Flow Example
+
+The following diagram shows how data flows through the system when a user performs an analysis.
+
+```
+1. User interacts with the UI
+   └── Enters parameters and clicks "Run Analysis"
+              │
+              ↓
+2. Frontend Controller hook prepares request
+   └── Collects form values and transforms to API format
+              │
+              ↓
+3. Frontend HTTP layer sends request to backend
+   └── POST /api/analyses/{id}/calculate
+              │
+              ↓
+4. Backend Controller receives the HTTP request
+   ├── Extracts and validates the JWT token (who is this user?)
+   ├── Queries the database for the analysis record
+   └── Verifies the user owns this analysis (authorization)
+              │
+              ↓
+5. Backend Service orchestrates the calculation
+   ├── Loads analysis parameters from the database
+   ├── Creates a configuration object for the library
+   └── Calls: var result = await model.RunAsync();
+              │
+              ↓
+6. Calculation library performs the analysis
+   ├── Validates inputs
+   ├── Samples from probability distributions
+   ├── Runs Monte Carlo iterations
+   └── Computes statistics (mean, percentiles, etc.)
+              │
+              ↓
+7. Backend saves results and returns response
+   ├── Persists results to database (JSON column)
+   └── Returns structured JSON following messaging contract
+              │
+              ↓
+8. Frontend receives and displays results
+   ├── Controller hook transforms response for display
+   └── UI components render charts, tables, and messages
+```
+
+---
+
+## Repository Structure
+
+RMC web applications typically involve multiple repositories, each with a specific role.
+
+### Web Application Repository
+
+A web application repository contains both the frontend and backend code, plus deployment configuration.
+
+```
+my-web-app/
+├── frontend/                    # React application (runs in browser)
+│   ├── src/
+│   │   ├── app/                 # Entry point and root setup
+│   │   │   ├── main.jsx         # React DOM mount
+│   │   │   ├── router.jsx       # React Router configuration
+│   │   │   └── index.css        # Global styles + Tailwind
+│   │   ├── api/                 # HTTP utilities + API modules
+│   │   │   ├── common/
+│   │   │   │   └── apiFetch.js  # Low-level HTTP wrapper
+│   │   │   └── {domain}/        # Domain-specific API modules
+│   │   ├── components/          # Reusable UI components
+│   │   │   ├── common/          # Generic (Button, Input, Table, etc.)
+│   │   │   │   ├── ui/
+│   │   │   │   ├── layout/
+│   │   │   │   ├── feedback/
+│   │   │   │   ├── table/
+│   │   │   │   └── chart/
+│   │   │   └── {domain}/        # Domain-specific components
+│   │   ├── pages/               # Page components organized by feature
+│   │   │   └── {feature}/
+│   │   │       ├── FeaturePage.jsx
+│   │   │       └── hooks/
+│   │   │           ├── useFeatureController.js  # Controller hook
+│   │   │           └── useFeatureData.js        # Data hook
+│   │   ├── hooks/               # Shared custom hooks
+│   │   │   └── common/
+│   │   ├── contexts/            # React Context providers
+│   │   ├── data/                # Static config, lookup tables
+│   │   ├── utils/               # Helper functions
+│   │   └── assets/              # Fonts, images
+│   └── package.json
+│
+├── backend/                     # ASP.NET Core API (runs on server)
+│   └── src/
+│       ├── MyApp.Domain/        # Entities, enums, business rules
+│       ├── MyApp.Application/   # Services, interfaces, DTOs
+│       ├── MyApp.Infrastructure/# DbContext, repositories, HTTP clients
+│       └── MyApp.API/           # Controllers, middleware, Program.cs
+│
+├── docker-compose.yml           # Container orchestration
+└── README.md
+```
+
+### Calculation Library Repository
+
+Calculation libraries live in their own repository so they can be versioned and shared independently.
+
+```
+calc-library/
+├── CalcLibrary/                 # Main library project
+│   ├── Common/                  # Shared utilities across calculations
+│   │   ├── DistributionSampler.cs
+│   │   └── StatisticsHelper.cs
+│   ├── Analyses/                # Domain-specific calculations
+│   │   ├── SettlementAnalysis/
+│   │   │   ├── SettlementConfig.cs    # Input configuration
+│   │   │   ├── SettlementModel.cs     # Calculation implementation
+│   │   │   └── SettlementResult.cs    # Output structure
+│   │   └── SeepageAnalysis/
+│   │       ├── SeepageConfig.cs
+│   │       ├── SeepageModel.cs
+│   │       └── SeepageResult.cs
+│   └── CalcLibrary.csproj
+│
+├── CalcLibrary.Tests/           # Unit and integration tests
+│   ├── SettlementAnalysisTests.cs
+│   └── GoldenOutputs/           # Reference outputs for validation
+│       └── Settlement_Seed42.json
+│
+└── README.md
+```
+
+---
+
+## File Location Guide
+
+<TableVerticalNoRef
+  alt="File locations"
+  headers={[[{ value: 'File Type' }, { value: 'Location' }, { value: 'Purpose' }]]}
+  columns={[
+    [
+      'Shared UI Components',
+      'Page Components',
+      'Controller Hooks',
+      'Data Hooks',
+      'API Modules',
+      'HTTP Utility',
+      'API Controllers',
+      'Backend Services',
+      'Database Entities',
+      'DTOs',
+      'Calculation Models',
+    ],
+    [
+      'frontend/src/components/common/',
+      'frontend/src/pages/{feature}/',
+      'frontend/src/pages/{feature}/hooks/use*Controller.js',
+      'frontend/src/pages/{feature}/hooks/use*Data.js',
+      'frontend/src/api/{domain}/',
+      'frontend/src/api/common/apiFetch.js',
+      'backend/src/MyApp.API/Controllers/',
+      'backend/src/MyApp.Application/Services/',
+      'backend/src/MyApp.Domain/Entities/',
+      'backend/src/MyApp.Application/DTOs/',
+      'CalcLibrary/Analyses/{AnalysisName}/',
+    ],
+    [
+      'Reusable elements: buttons, inputs, tables, modals',
+      'Full page layouts with feature-specific UI',
+      'Transform API data into view-ready format',
+      'Fetch and mutate data from the backend',
+      'Domain-specific endpoint wrappers',
+      'Centralized HTTP request handling',
+      'Handle HTTP requests, return responses',
+      'Business logic, orchestrate calculations',
+      'Database table definitions (EF Core)',
+      'Data shapes for API requests/responses',
+      'Engineering calculation implementations',
+    ],
+  ]}
+  colWidths={[20, 40, 35]}
+/>
+
+---
+
+## Design Principles
+
+### Separation of Concerns
+
+Each layer has a single, well-defined responsibility. Code should not leak between layers:
+
+- **Frontend** does not contain calculation logic or database queries
+- **Backend** does not render UI or contain calculation algorithms
+- **Calculation libraries** do not know about HTTP, databases, or users
+
+This separation enables:
+
+- Change the frontend framework without touching calculations
+- Swap databases without affecting the UI
+- Reuse calculation libraries in different applications
+
+### Stateless Calculations
+
+Calculation libraries must be **stateless** and **deterministic**. This means:
+
+- All inputs are passed explicitly (nothing hidden)
+- Same inputs always produce identical outputs
+- No side effects (no file I/O, no database, no HTTP)
+
+```csharp
+// CORRECT: Stateless - all inputs passed explicitly
+var config = new AnalysisConfig
+{
+    Iterations = 1000,
+    Seed = 42,
+    Parameters = loadedParameters
+};
+var model = new AnalysisModel(config);
+var result = await model.RunAsync();
+// Running again with same config produces identical result
+
+// INCORRECT: Stateful with hidden dependencies
+model.SetIterations(1000);      // State stored internally
+model.LoadFromDatabase();       // Side effect - external dependency
+var result = model.Run();       // Result depends on hidden state
+```
+
+### Messaging Contract
+
+All API endpoints return responses following a standard structure. This consistency makes the frontend predictable and simplifies error handling.
+
+```json
+{
+  "status": "success | incomplete | error",
+  "inputs": ["List of missing required inputs"],
+  "warnings": ["Non-fatal warning messages"],
+  "errors": ["Fatal error messages"],
+  "canRun": true,
+  "data": {},
+  "resultsCleared": false
+}
+```
+
+| Field            | Purpose                                                        |
+| ---------------- | -------------------------------------------------------------- |
+| `status`         | Overall result: success, incomplete (missing inputs), or error |
+| `inputs`         | Missing required inputs preventing analysis                    |
+| `warnings`       | Issues that don't prevent analysis but should be noted         |
+| `errors`         | Fatal issues that prevented the analysis                       |
+| `canRun`         | Whether the analysis can execute with current inputs           |
+| `data`           | The response payload (structure varies by endpoint)            |
+| `resultsCleared` | Whether previous results were invalidated                      |
+
+---
+
+## Technology Stack Summary
+
+<TableVerticalNoRef
+  alt="Technology stack"
+  headers={[[{ value: 'Layer' }, { value: 'Technology' }, { value: 'Purpose' }]]}
+  columns={[
+    [
+      'Frontend Framework',
+      'Frontend Styling',
+      'Frontend Build Tool',
+      'Backend Framework',
+      'Database ORM',
+      'Database',
+      'Authentication',
+      'Calculation Libraries',
+      'Numerics Foundation',
+      'Containerization',
+    ],
+    [
+      'React (latest)',
+      'Tailwind CSS',
+      'Vite',
+      'ASP.NET Core (latest)',
+      'Entity Framework Core',
+      'PostgreSQL',
+      'JWT Bearer Tokens',
+      '.NET Class Libraries (latest)',
+      'RMC.Numerics (NuGet)',
+      'Docker + Docker Compose',
+    ],
+    [
+      'Build UIs from reusable components with JavaScript',
+      'Apply styles using utility classes (no custom CSS files)',
+      'Fast development server with hot reload',
+      'Handle HTTP requests, dependency injection, middleware',
+      'Map database tables to C# classes, write LINQ queries',
+      'Relational database with JSONB support for flexible data',
+      'Stateless authentication via signed tokens',
+      'Encapsulate engineering calculations',
+      'Probability distributions, interpolation, statistics',
+      'Consistent dev/prod environments in containers',
+    ],
+  ]}
+  colWidths={[22, 28, 45]}
+/>

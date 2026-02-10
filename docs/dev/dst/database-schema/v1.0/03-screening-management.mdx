@@ -1,0 +1,34 @@
+---
+title: Screening Management
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import SchemaTableCompact from '@site/src/components/SchemaTableCompact';
+
+<NavContainer
+  link="/web-applications/dst"
+  linkTitle="Dam Screening Tool"
+  document="dev/dst/database-schema"
+/>
+
+# Screening Management
+
+The `Screenings` table is the top-level entity in the DST database. Each screening represents a complete dam screening assessment for one dam. All other data — hazard characterization, failure mode analysis, consequences, and risk results — is associated with a single screening.
+
+<a id="screenings"></a>
+<SchemaTableCompact
+  name="Screenings"
+  description="Top-level entity representing a complete dam screening assessment."
+  status="implemented"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
+    { name: 'Code', type: 'VARCHAR(10)', tags: ['unique', 'indexed'], description: 'Short alphanumeric code (6 chars) used in URLs. Example: "Xk9mP2" → /screening/Xk9mP2/...' },
+    { name: 'Name', type: 'VARCHAR(200)', tags: [], description: 'Name of the dam being screened' },
+    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'When the screening was created' },
+    { name: 'UpdatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'When the screening was last modified' },
+  ]}
+  notes={[
+    'The Code column is a 6-character alphanumeric string used for URL routing (e.g., /screening/Xk9mP2/pfm-01).',
+    'Unique index on Code ensures no two screenings share the same URL code.',
+  ]}
+/>

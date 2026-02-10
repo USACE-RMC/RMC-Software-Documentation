@@ -24,6 +24,10 @@ export default function LayoutWrapper({ children, ...rest }) {
   const links = buildNavLinks(useBaseUrl, latestVersions);
 
   const homeHref = useBaseUrl('/');
+  const devHref = useBaseUrl('/docs/dev');
+
+  // Append dev resources link to footer external links
+  const footerExternalLinks = [...externalLinks, { id: 'dev', text: 'Dev', href: devHref }];
 
   // Ensure Groundwork logo returns to base URL
   useEffect(() => {
@@ -52,7 +56,7 @@ export default function LayoutWrapper({ children, ...rest }) {
         missionText="Deliver vital engineering solutions, in collaboration with our partners, to secure our Nation, energize our economy, and reduce disaster risk."
         aboutText="The official website of the Institute for Water Resources, Risk Management Center"
         usaceLinks={USACELinks}
-        externalLinks={externalLinks}
+        externalLinks={footerExternalLinks}
         usaceLogo={false}
         usace250Logo={true}
       >
