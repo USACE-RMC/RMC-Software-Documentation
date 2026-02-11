@@ -20,6 +20,7 @@
 - **Recommended Fix:** Replace `"xx"` with the actual approver's name.
 - **Fix Applied:** No
 - **Human Verification Required:** Yes
+- **Response**: Concur. Need Adam to confirm and list appropriate RMC approver name. 
 
 ---
 
@@ -34,6 +35,7 @@
 - **Recommended Fix:** Change to `RMC.Software@usace.army.mil` (remove leading `@`).
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix.
 
 ---
 
@@ -46,8 +48,9 @@
 - **Severity:** Minor
 - **Problem:** JSX comment `{/*Comment for Woody or other reviewer: Include the below three lines? Agree with it? Please revise as necessary or delete.*/}` is a draft review comment that should be resolved and removed before publication.
 - **Recommended Fix:** Resolve the reviewer question and remove the comment.
-- **Fix Applied:** No
+- **Fix Applied:** Yes
 - **Human Verification Required:** Yes
+- **Response**: Concur and resolved. Removed comment for Woody and revised with professional judgement. 
 
 ### Issue 4: Spelling error "preceeding"
 
@@ -58,6 +61,7 @@
 - **Recommended Fix:** Change "preceeding" to "preceding".
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix.
 
 ---
 
@@ -72,6 +76,7 @@
 - **Recommended Fix:** Replace with `<Link to="/desktop-applications/lifesim/users-guide/v1.0/installing-and-starting-lifesim">Installing and Starting LifeSim</Link>`. The `Link` component is already imported.
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix.
 
 ### Issue 6: `<a href>` instead of `<Link>` — Appendix B references (6 instances)
 
@@ -82,6 +87,7 @@
 - **Recommended Fix:** Replace each `<a href="/RMC-Software-Documentation/docs/desktop-applications/lifesim/users-guide/v1.0/appendix-map-preferences" target="_blank" rel="noopener noreferrer">` with `<Link to="/desktop-applications/lifesim/users-guide/v1.0/appendix-map-preferences">`.
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix.
 
 ### Issue 7: `<a href>` instead of `<Link>` — Simulation Results Table
 
@@ -92,6 +98,7 @@
 - **Recommended Fix:** Replace with `<Link to="/desktop-applications/lifesim/users-guide/v1.0/viewing-lifesim-results#simulation-results-table">Simulation Results Table</Link>`.
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix.
 
 ### Issue 8: `<a href>` instead of `<Link>` — Hydraulic Data Import Options
 
@@ -102,6 +109,7 @@
 - **Recommended Fix:** Replace with `<Link to="/desktop-applications/lifesim/users-guide/v1.0/hydraulic-data#hydraulic-data-import-options">`.
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix.
 
 ### Issue 9: `<a href>` instead of `<Link>` — Customizing Plots Overview and figure references (7 instances)
 
@@ -112,6 +120,7 @@
 - **Recommended Fix:** For same-page anchors, use simple markdown anchors `[text](#anchor)` or `<Link to="#anchor">`. For the figure references wrapped in `<a href>`, consider whether a `<FigReference>` component would be more appropriate.
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix.
 
 ### Issue 10: `<a href>` instead of `<Link>` — View Result Map
 
@@ -122,6 +131,7 @@
 - **Recommended Fix:** Replace with `<Link to="/desktop-applications/lifesim/users-guide/v1.0/viewing-lifesim-results#view-result-map-in-the-map-window">`.
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix.
 
 ### Issue 11: Grammar — "an LifeSim" (multiple instances)
 
@@ -132,6 +142,7 @@
 - **Recommended Fix:** Change all instances of "an LifeSim" to "a LifeSim".
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix.
 
 ### Issue 12: Typo — "Agricultural Crop Dat"
 
@@ -142,6 +153,7 @@
 - **Recommended Fix:** Change "Crop Dat" to "Crop Data".
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix.
 
 ### Issue 13: Hyphenation — "geo-graphical"
 
@@ -152,6 +164,7 @@
 - **Recommended Fix:** Change to "geographical" (single word, no hyphen).
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix.
 
 ---
 
@@ -178,6 +191,7 @@
   - `files (Luettich & Westerink, 2018) <Citation citationKey="ADCIRC2018"/>`
 - **Fix Applied:** No
 - **Human Verification Required:** Yes
+- **Response**: Ongoing. Adam, please decide best practice for the citation. 
 
 ### Issue 15: `<a href>` instead of `<Link>` — 29 instances of internal links
 
@@ -191,6 +205,7 @@
 - **Recommended Fix:** Replace all `<a href>` internal links with `<Link to="...">` components using relative doc paths (without the `/RMC-Software-Documentation/docs/` prefix). For same-page anchors, use `[text](#anchor)` markdown syntax.
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix.
 
 ### Issue 16: Grammar — "an LifeSim"
 
@@ -201,6 +216,7 @@
 - **Recommended Fix:** Change "an LifeSim" to "a LifeSim".
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix.
 
 ---
 
@@ -215,6 +231,7 @@
 - **Recommended Fix:** Change "describe" to "describes".
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix.
 
 ### Issue 18: Citation missing author-year text — NSI
 
@@ -225,6 +242,7 @@
 - **Recommended Fix:** Add author text before Citation: `(NSI) (USACE, n.d.) <Citation citationKey="NSI"/>` or incorporate the full name and citation reference.
 - **Fix Applied:** No
 - **Human Verification Required:** Yes
+- **Response**: Ongoing. Adam, please decide best practice for the citation. 
 
 ### Issue 19: `<a href>` for external link — NSI technical documentation
 
@@ -235,6 +253,7 @@
 - **Recommended Fix:** Change link text from "here" to a more descriptive text, e.g., "NSI Technical Documentation".
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur and resolved. Revised "here" to "USACE HEC"
 
 ### Issue 20: `<a href>` instead of `<Link>` — Customizing Plots references (2 instances)
 
@@ -245,6 +264,7 @@
 - **Recommended Fix:** Replace with `<Link to="/desktop-applications/lifesim/users-guide/v1.0/lifesim-interface#customizing-plots-and-plotting-tools">`.
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix.
 
 ### Issue 21: Word choice — "respectfully" vs "respectively"
 
@@ -255,6 +275,7 @@
 - **Recommended Fix:** Change "respectfully" to "respectively".
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix.
 
 ---
 
@@ -269,6 +290,7 @@
 - **Recommended Fix:** Change "et. al." to "et al.".
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix.
 
 ### Issue 23: Citations missing year text — Sorensen & Mileti references
 
@@ -285,6 +307,7 @@
   - Line 49: `Sorensen & Mileti (2015) <Citation citationKey="SorensenMileti2015"/>`
 - **Fix Applied:** No
 - **Human Verification Required:** Yes
+- **Response**: Concur. Have Claude perform fix.
 
 ### Issue 24: `<a href>` instead of `<Link>` — Warning and Protective Action Data Editor (3 instances)
 
@@ -295,6 +318,7 @@
 - **Recommended Fix:** Replace with `<Link to="/desktop-applications/lifesim/users-guide/v1.0/emergency-planning-data#warning-and-protective-action-data-editor">` or use relative markdown link `[text](#warning-and-protective-action-data-editor)` for same-page anchors.
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix.
 
 ---
 
@@ -309,6 +333,7 @@
 - **Recommended Fix:** Add year or "n.d." text: `OpenStreetMap (OSM Foundation, n.d.) <Citation citationKey="OSM"/>`.
 - **Fix Applied:** No
 - **Human Verification Required:** Yes
+- **Response**: Ongoing. Adam to resolve with Claude with the other citation commments for consistency. 
 
 ### Issue 26: `<a href>` instead of `<Link>` — 3 instances
 
@@ -319,6 +344,7 @@
 - **Recommended Fix:** Replace with Docusaurus `<Link>` components.
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix.
 
 ---
 
@@ -333,6 +359,7 @@
 - **Recommended Fix:** No change needed for external links, but ensure `target="_blank"` and `rel="noopener noreferrer"` are present (they are).
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. No fix needed.
 
 ---
 
@@ -347,6 +374,7 @@
 - **Recommended Fix:** No change needed for external links.
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. No fix needed.
 
 ---
 
@@ -361,6 +389,7 @@
 - **Recommended Fix:** Replace all with Docusaurus `<Link>` components using relative paths.
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix.
 
 ---
 
@@ -375,6 +404,7 @@
 - **Recommended Fix:** Replace with Docusaurus `<Link>` components.
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix.
 
 ---
 
@@ -389,6 +419,7 @@
 - **Recommended Fix:** Replace all internal `<a href>` elements with Docusaurus `<Link>` components. For same-page anchors, use markdown `[text](#anchor)` syntax instead.
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix.
 
 ---
 
@@ -403,6 +434,7 @@
 - **Recommended Fix:** Replace with Docusaurus `<Link>` components.
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix.
 
 ---
 
@@ -473,6 +505,7 @@
 - **Recommended Fix:** Establish a single pattern for internal links — preferably Docusaurus `<Link>` components for cross-page navigation and markdown `[text](#anchor)` for same-page anchors.
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude/Adam perform fix and establish consistency across pages.
 
 ### Issue 34: Reviewer draft comments in source
 
@@ -483,6 +516,8 @@
 - **Recommended Fix:** Review each comment, resolve the question or implement the TODO, then remove the comment.
 - **Fix Applied:** No
 - **Human Verification Required:** Yes
+- **Response**: Concur and resolved. Searched and revised each one. One has been for Woody's general awareness in the future. 
+
 
 ### Issue 35: Repeated "an LifeSim" grammar pattern throughout document
 
@@ -493,6 +528,7 @@
 - **Recommended Fix:** Perform a global find-and-replace of "an LifeSim" with "a LifeSim" across all MDX files.
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur. Have Claude perform fix. If I fix globally myself, it will find-and-replace the references in this md as well. 
 
 ### Issue 36: Link text accessibility — "here" link
 
@@ -503,3 +539,4 @@
 - **Recommended Fix:** Change to `Technical documentation is available at <a href="...">NSI Technical Documentation</a>` or similar descriptive text.
 - **Fix Applied:** No
 - **Human Verification Required:** No
+- **Response**: Concur and resolved. "Here" revised to "USACE HEC"
