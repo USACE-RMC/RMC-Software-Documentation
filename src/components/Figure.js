@@ -40,7 +40,7 @@ const Figure = ({ figKey, src, alt, caption, width = '80%', background = 'filled
     loadCounters();
   }, [reportId, figKey]);
 
-  if (!figInfo) return <span>Loading...</span>;
+  if (!figInfo) return <span id={figureId}>Loading...</span>;
 
   const imgBgClass = background === 'transparent' ? '' : 'bg-[#f9f9f9] dark:bg-white';
 

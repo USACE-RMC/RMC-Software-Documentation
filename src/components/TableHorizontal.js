@@ -39,7 +39,7 @@ const TableHorizontal = ({
     })();
   }, [reportId, tableKey]);
 
-  if (!tableInfo) return <span>Loading...</span>;
+  if (!tableInfo) return <span id={tableId}>Loading...</span>;
 
   const renderHTML = (content) => ({ __html: content });
 

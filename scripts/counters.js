@@ -63,14 +63,21 @@ function processReport(reportPath, reportId) {
     const filePath = path.join(folder, file);
     const content = fs.readFileSync(filePath, 'utf-8');
 
-    // Regex for figures
-    for (const match of content.matchAll(/<(Figure|GIF)\s+[^>]*figKey="([^"]+)"/g)) {
-      const figKey = match[2];
+    // Regex for figures — match the entire <Figure .../> or <GIF .../> tag
+    // so we can extract src and caption alongside figKey
+    for (const match of content.matchAll(/<(Figure|GIF)\s+([\s\S]*?)\/>/g)) {
+      const attrs = match[2];
+      const figKey = attrs.match(/figKey="([^"]+)"/)?.[1];
+      if (!figKey) continue;
+      const src = attrs.match(/src="([^"]+)"/)?.[1] || '';
+      const caption = attrs.match(/caption="([^"]+)"/)?.[1] || '';
       counters.figures[figKey] = {
         figNumber: figureCount++,
         parentDocId: reportId,
         parentDocPath: reportPath,
         docId: file,
+        src,
+        caption,
       };
     }
 

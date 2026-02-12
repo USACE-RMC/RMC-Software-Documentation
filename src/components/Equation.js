@@ -27,7 +27,7 @@ const Equation = ({ equationKey, equation, inline = false, id }) => {
     })();
   }, [reportId, equationKey]);
 
-  if (equationNum === null) return <span>Loading...</span>;
+  if (equationNum === null) return <span id={equationId}>Loading...</span>;
 
   const equationWithTag = `${equation} \\tag{${equationNum}}`;
 

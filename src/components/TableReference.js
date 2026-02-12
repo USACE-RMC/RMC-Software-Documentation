@@ -54,7 +54,7 @@ const TableReference = ({ tableKey }) => {
   return (
     <a
       href={href}
-      className="font-usace text-normal"
+      className="font-usace text-normal whitespace-nowrap"
       title={`Jump to Table ${tableInfo.tableNumber}`}
     >
       Table {tableInfo.tableNumber}
