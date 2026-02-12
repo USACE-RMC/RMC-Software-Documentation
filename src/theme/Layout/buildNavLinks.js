@@ -5,9 +5,6 @@
 export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
   /* Main navbar links (top level) */
   const homeHref = useBaseUrl('/');
-  const desktopAppHref = useBaseUrl('/desktop-applications');
-  const toolboxAppHref = useBaseUrl('/toolboxes');
-  const webAppHref = useBaseUrl('/web-applications');
 
   /* -------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
@@ -147,7 +144,6 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
     {
       id: 'desktop-applications',
       text: 'Desktop Applications',
-      href: desktopAppHref,
       children: [
         {
           id: 'rmc-totalrisk',
@@ -194,7 +190,6 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
     {
       id: 'toolboxes',
       text: 'Toolbox Technical Manuals',
-      href: toolboxAppHref,
       children: [
         {
           id: 'internal-erosion-suite',
@@ -283,7 +278,6 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
     {
       id: 'web-applications',
       text: 'Web Applications',
-      href: webAppHref,
       children: [
         {
           id: 'lst',

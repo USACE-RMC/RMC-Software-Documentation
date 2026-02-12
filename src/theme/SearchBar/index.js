@@ -4,7 +4,7 @@ import SearchBar from '@theme-original/SearchBar';
 export default function SearchBarWrapper(props) {
   const iconUrl = useBaseUrl('/img/Magnifying_glass_icon.svg');
   return (
-    <div className="relative w-full min-w-[12rem] max-w-md">
+    <div className="search-wrapper relative w-full min-w-[12rem] max-w-md">
       {/* Left icon */}
       <img
         src={iconUrl}

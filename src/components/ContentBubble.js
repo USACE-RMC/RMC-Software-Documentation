@@ -3,55 +3,63 @@ import '../css/custom.css';
 
 const ContentBubble = ({ icon, iconLight, iconDark, doc_location, doc_name, active }) => {
   const baseClasses = `
-    flex h-[105px] items-center px-[15px] py-[10px] gap-[20px] rounded-[8px]
-    bg-[#F9F9F9] shadow-[0px_4px_8px_rgba(0,0,0,0.3)]
-    hover:bg-[#d4d4d4] hover:shadow-[0px_4px_8px_rgba(0,0,0,0.6)]
-    dark:bg-[#464545] dark:hover:bg-[#797979]
+    flex min-h-[70px] xl:min-h-[105px] items-center overflow-hidden rounded-[8px]
+    bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)]
+    dark:bg-[#3a3a3a]
     no-underline hover:no-underline
-    lg:basis-[calc((100%-40px)/3)]
-    lg:max-w-[calc((100%-40px)/3)]
-    lg:min-w-[150px]
-    md:basis-[calc((100%-20px)/2)]
-    md:max-w-[calc((100%-20px)/2)]
-    sm:basis-full sm:max-w-full
+    transition-all duration-200
+    2xl:basis-[calc((100%-40px)/3)]
+    2xl:max-w-[calc((100%-40px)/3)]
+    2xl:min-w-[150px]
+    lg:basis-[calc((100%-20px)/2)]
+    lg:max-w-[calc((100%-20px)/2)]
+    basis-full max-w-full
+  `;
+
+  const activeClasses = `
+    hover:shadow-[0px_4px_12px_rgba(0,0,0,0.18)]
+    hover:scale-[1.02]
+    dark:hover:bg-[#444]
+    cursor-pointer
   `;
 
   const inactiveClasses = `
-    bg-[#d4d4d4] 
-    dark:bg-[#313030]
-    pointer-events-none opacity-50 cursor-not-allowed
+    pointer-events-none opacity-40 cursor-not-allowed
   `;
 
   // Build <ThemedImage /> sources, with fallback to legacy `icon`
   const sources =
     iconLight || icon ? { light: iconLight ?? icon, dark: iconDark ?? iconLight ?? icon } : null;
 
-  const Icon = () =>
-    sources ? <ThemedImage alt={doc_name} sources={sources} className="h-auto w-[50px]" /> : null;
+  const accentBar = active
+    ? 'w-[4px] self-stretch shrink-0 bg-ifm-primary'
+    : 'w-[4px] self-stretch shrink-0 bg-[#ccc] dark:bg-[#555]';
 
   const Inner = ({ comingSoon = false }) => (
     <>
-      <div className="mt-0 shrink-0">
-        <Icon />
-      </div>
-      <div className="text-font-color">
-        <p className="mb-0 font-usace leading-[1.2] no-underline md:text-normal lg:text-content-bubble">
-          {doc_name}
-        </p>
-        {comingSoon && (
-          <>
-            <p className="mb-[10px] font-usace leading-[1.2] no-underline md:text-normal lg:text-content-bubble" />
-            <p className="font-usace leading-none no-underline md:text-normal lg:text-content-bubble">
+      <div className={accentBar} />
+      <div className="flex items-center gap-[12px] px-[12px] py-[6px] xl:gap-[16px] xl:px-[15px] xl:py-[10px]">
+        {sources ? (
+          <div className="flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-full bg-[#f0f2f4] xl:h-[50px] xl:w-[50px] dark:bg-[#4a4a4a]">
+            <ThemedImage alt={doc_name} sources={sources} className="h-[24px] w-[24px] object-contain xl:h-[34px] xl:w-[34px]" />
+          </div>
+        ) : null}
+        <div className="text-font-color">
+          <p className="mb-0 font-usace leading-[1.2] no-underline lg:text-normal xl:text-content-bubble">
+            {doc_name}
+          </p>
+          {comingSoon && (
+            <p className="mb-0 mt-1 font-usace text-[0.7rem] leading-none text-ifm-primary">
               Coming soon!
             </p>
-          </>
-        )}
+          )}
+        </div>
       </div>
     </>
   );
 
   return active ? (
-    <a href={doc_location} className={baseClasses}>
+    <a href={doc_location} className={`${baseClasses} ${activeClasses}`}>
       <Inner />
     </a>
   ) : (

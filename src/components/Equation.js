@@ -34,7 +34,7 @@ const Equation = ({ equationKey, equation, inline = false, id }) => {
   return (
     <span
       id={equationId}
-      className="equation-container scroll-mt-[var(--ifm-navbar-height)]"
+      className="equation-container"
       data-anchor="true"
     >
       {inline ? <InlineMath math={equation} /> : <BlockMath math={equationWithTag} />}
