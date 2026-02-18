@@ -81,7 +81,7 @@ Content with <Figure figKey="fig1" src="path" alt="text" caption="..." />
 ## Code Style
 
 - Prettier: 150 char line width, single quotes, trailing commas
-- Tailwind CSS with USACE branding colors (primary: `#1f6f78`)
+- Tailwind CSS with USACE branding colors (primary: `#4a7c9b`)
 - React components use ReportIdContext for version-aware data
 
 ## Git Commit Messages

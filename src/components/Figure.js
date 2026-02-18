@@ -42,7 +42,7 @@ const Figure = ({ figKey, src, alt, caption, width = '80%', background = 'filled
 
   if (!figInfo) return <span id={figureId}>Loading...</span>;
 
-  const imgBgClass = background === 'transparent' ? '' : 'bg-[#f9f9f9] dark:bg-white';
+  const imgBgClass = background === 'transparent' ? '' : 'bg-surface-page dark:bg-white';
 
   return (
     <figure id={figureId} className="my-[1em] ml-0 mr-auto w-full justify-items-start border-y border-border-color py-5">

@@ -17,7 +17,7 @@ const baseClasses = `
   hover:no-underline
   disabled:opacity-60
   disabled:cursor-not-allowed
-  dark:hover:bg-[#195d64]
+  dark:hover:bg-ifm-primary-darkest
 `;
 
 export default function Button({ children, onClick, href, to, className = '', ...props }) {

@@ -5,7 +5,7 @@ const ContentBubble = ({ icon, iconLight, iconDark, doc_location, doc_name, acti
   const baseClasses = `
     flex min-h-[70px] xl:min-h-[105px] items-center overflow-hidden rounded-[8px]
     bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)]
-    dark:bg-[#3a3a3a]
+    dark:bg-surface-card
     no-underline hover:no-underline
     transition-all duration-200
     2xl:basis-[calc((100%-40px)/3)]
@@ -19,7 +19,7 @@ const ContentBubble = ({ icon, iconLight, iconDark, doc_location, doc_name, acti
   const activeClasses = `
     hover:shadow-[0px_4px_12px_rgba(0,0,0,0.18)]
     hover:scale-[1.02]
-    dark:hover:bg-[#444]
+    dark:hover:bg-surface-card-hover
     cursor-pointer
   `;
 
@@ -33,14 +33,14 @@ const ContentBubble = ({ icon, iconLight, iconDark, doc_location, doc_name, acti
 
   const accentBar = active
     ? 'w-[4px] self-stretch shrink-0 bg-ifm-primary'
-    : 'w-[4px] self-stretch shrink-0 bg-[#ccc] dark:bg-[#555]';
+    : 'w-[4px] self-stretch shrink-0 bg-surface-inactive';
 
   const Inner = ({ comingSoon = false }) => (
     <>
       <div className={accentBar} />
       <div className="flex items-center gap-[12px] px-[12px] py-[6px] xl:gap-[16px] xl:px-[15px] xl:py-[10px]">
         {sources ? (
-          <div className="flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-full bg-[#f0f2f4] xl:h-[50px] xl:w-[50px] dark:bg-[#4a4a4a]">
+          <div className="flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-full bg-surface-icon xl:h-[50px] xl:w-[50px]">
             <ThemedImage alt={doc_name} sources={sources} className="h-[24px] w-[24px] object-contain xl:h-[34px] xl:w-[34px]" />
           </div>
         ) : null}

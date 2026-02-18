@@ -63,6 +63,17 @@ export default {
         'gov-banner-gray': '#aebfd4',
         'gov-banner-black': '#15263b',
 
+        // Surfaces (light/dark-aware via CSS variables)
+        'surface-nav': 'var(--surface-nav)',
+        'surface-header': 'var(--surface-header)',
+        'surface-page': 'var(--surface-page)',
+        'surface-panel': 'var(--surface-panel)',
+        'surface-card': 'var(--surface-card)',
+        'surface-card-hover': 'var(--surface-card-hover)',
+        'surface-icon': 'var(--surface-icon)',
+        'surface-zebra': 'var(--surface-zebra)',
+        'surface-inactive': 'var(--surface-inactive)',
+
         // Dynamically linked to CSS variables
         'border-color': 'var(--border-color)',
         'font-color': 'var(--font-color)',
