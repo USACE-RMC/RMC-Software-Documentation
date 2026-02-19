@@ -192,6 +192,10 @@ Do NOT give vague advice. Every recommendation must show the exact code change i
 
 Brief summary: Lighthouse score, total issues found, most critical items.
 
+## Groundwork Header & Footer
+
+The site header (navbar) and footer are provided by the `@usace/groundwork` package via the `SiteWrapper` component. The site maintainers do not control the look, feel, or markup of these elements. When reporting issues, **do not give significant weight to findings related to the Groundwork header or footer** (e.g., contrast, touch targets, ARIA attributes, heading hierarchy within the navbar/footer). Mention them briefly if found, but clearly label them as **"Groundwork (external)"** and do not include them in fix recommendations.
+
 ## USACE Color Palette Reference
 
 - **Primary steel blue**: `#4a7c9b`

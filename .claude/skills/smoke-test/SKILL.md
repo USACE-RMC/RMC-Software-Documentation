@@ -183,6 +183,10 @@ Categorize:
 ### Docusaurus Structure
 {Which structural elements are present/missing}
 
+### Groundwork (External) Notes
+
+The site header (navbar) and footer are provided by the `@usace/groundwork` package via the `SiteWrapper` component. The site maintainers do not control these elements. If any findings relate to the Groundwork header or footer, list them here separately labeled as **"Groundwork (external)"** rather than in the main findings. Do not count them toward the overall verdict.
+
 ### Verdict
 
 **PASS** — Page loads and functions correctly

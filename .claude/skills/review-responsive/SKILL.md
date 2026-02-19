@@ -126,6 +126,10 @@ Format each recommendation as:
 
 Do NOT give vague advice like "consider adjusting the layout." Every recommendation must be a specific, implementable code change.
 
+## Groundwork Header & Footer
+
+The site header (navbar) and footer are provided by the `@usace/groundwork` package via the `SiteWrapper` component. The site maintainers do not control the look, feel, or markup of these elements. When reporting issues, **do not give significant weight to findings related to the Groundwork header or footer** (e.g., layout, spacing, overflow, typography within the navbar/footer). Mention them briefly if found, but clearly label them as **"Groundwork (external)"** and do not include them in fix recommendations.
+
 ## Important Notes
 
 - Docusaurus has its own responsive breakpoints. The sidebar auto-collapses at 996px by default. Don't flag this as a bug.

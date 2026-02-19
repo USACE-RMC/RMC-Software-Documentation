@@ -12,7 +12,7 @@ const baseClasses = `
   ease-in-out
   border-none
   cursor-pointer
-  hover:bg-ifm-primary-lightest
+  hover:bg-ifm-primary-light
   hover:text-font-color
   hover:no-underline
   disabled:opacity-60

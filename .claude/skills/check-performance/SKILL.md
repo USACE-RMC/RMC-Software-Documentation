@@ -134,6 +134,10 @@ For each performance issue, provide:
 
 Brief summary: Is performance acceptable? What are the top 1-3 optimizations? Is there a significant mobile vs desktop gap?
 
+## Groundwork Header & Footer
+
+The site header (navbar) and footer are provided by the `@usace/groundwork` package via the `SiteWrapper` component. The site maintainers do not control the look, feel, or markup of these elements. When reporting issues, **do not give significant weight to findings related to the Groundwork header or footer** (e.g., resource weight from Groundwork bundles, layout shifts caused by the navbar/footer). Mention them briefly if found, but clearly label them as **"Groundwork (external)"** and do not include them in optimization recommendations.
+
 ## Docusaurus-Specific Notes
 
 - Docusaurus uses Webpack for bundling with automatic code splitting per route.

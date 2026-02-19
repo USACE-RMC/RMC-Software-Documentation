@@ -42,11 +42,11 @@ const ContentBubble = ({ icon, iconLight, iconDark, IconComponent, doc_location,
         </div>
       ) : null}
       <div>
-        <p className="mb-0 font-usace text-[0.85rem] leading-[1.2] no-underline text-white xl:text-[1rem]">
+        <p className="mb-0 font-usace text-[1rem] leading-[1.2] no-underline text-white xl:text-[1.15rem]">
           {doc_name}
         </p>
         {comingSoon && (
-          <p className="mb-0 mt-1 font-usace text-[0.75rem] leading-none text-white/70">
+          <p className="mb-0 mt-1 font-usace text-[0.8rem] leading-none text-white/70 xl:text-[0.85rem]">
             Coming soon!
           </p>
         )}
