@@ -1,13 +1,12 @@
 import ThemedImage from '@theme/ThemedImage';
 import '../css/custom.css';
 
-const ContentBubble = ({ icon, iconLight, iconDark, doc_location, doc_name, active }) => {
+const ContentBubble = ({ icon, iconLight, iconDark, IconComponent, doc_location, doc_name, active, preserveIconColor = false }) => {
+  const iconFilter = preserveIconColor ? '' : 'brightness-0 invert';
   const baseClasses = `
-    flex min-h-[70px] xl:min-h-[105px] items-center overflow-hidden rounded-[8px]
-    bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)]
-    dark:bg-surface-card
+    flex min-h-[90px] xl:min-h-[130px] items-center overflow-hidden rounded-xl
     no-underline hover:no-underline
-    transition-all duration-200
+    transition-all duration-300
     2xl:basis-[calc((100%-40px)/3)]
     2xl:max-w-[calc((100%-40px)/3)]
     2xl:min-w-[150px]
@@ -17,45 +16,42 @@ const ContentBubble = ({ icon, iconLight, iconDark, doc_location, doc_name, acti
   `;
 
   const activeClasses = `
-    hover:shadow-[0px_4px_12px_rgba(0,0,0,0.18)]
+    active-gradient-card
     hover:scale-[1.02]
-    dark:hover:bg-surface-card-hover
     cursor-pointer
   `;
 
   const inactiveClasses = `
-    pointer-events-none opacity-40 cursor-not-allowed
+    coming-soon-gradient-card
+    pointer-events-none cursor-not-allowed
   `;
 
   // Build <ThemedImage /> sources, with fallback to legacy `icon`
   const sources =
     iconLight || icon ? { light: iconLight ?? icon, dark: iconDark ?? iconLight ?? icon } : null;
 
-  const accentBar = active
-    ? 'w-[4px] self-stretch shrink-0 bg-ifm-primary'
-    : 'w-[4px] self-stretch shrink-0 bg-surface-inactive';
-
   const Inner = ({ comingSoon = false }) => (
-    <>
-      <div className={accentBar} />
-      <div className="flex items-center gap-[12px] px-[12px] py-[6px] xl:gap-[16px] xl:px-[15px] xl:py-[10px]">
-        {sources ? (
-          <div className="flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-full bg-surface-icon xl:h-[50px] xl:w-[50px]">
-            <ThemedImage alt={doc_name} sources={sources} className="h-[24px] w-[24px] object-contain xl:h-[34px] xl:w-[34px]" />
-          </div>
-        ) : null}
-        <div className="text-font-color">
-          <p className="mb-0 font-usace leading-[1.2] no-underline lg:text-normal xl:text-content-bubble">
-            {doc_name}
-          </p>
-          {comingSoon && (
-            <p className="mb-0 mt-1 font-usace text-[0.7rem] leading-none text-ifm-primary">
-              Coming soon!
-            </p>
-          )}
+    <div className="flex items-center gap-[16px] px-[16px] py-[10px] xl:gap-[20px] xl:px-[20px] xl:py-[14px]">
+      {IconComponent ? (
+        <div className="frosted-glass-circle flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full xl:h-[60px] xl:w-[60px]">
+          <IconComponent className="h-[28px] w-[28px] xl:h-[40px] xl:w-[40px]" color="white" showBackground={false} />
         </div>
+      ) : sources ? (
+        <div className="frosted-glass-circle flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full xl:h-[60px] xl:w-[60px]">
+          <ThemedImage alt={doc_name} sources={sources} className={`h-[28px] w-[28px] object-contain xl:h-[40px] xl:w-[40px] ${iconFilter}`} />
+        </div>
+      ) : null}
+      <div>
+        <p className="mb-0 font-usace text-[0.85rem] leading-[1.2] no-underline text-white xl:text-[1rem]">
+          {doc_name}
+        </p>
+        {comingSoon && (
+          <p className="mb-0 mt-1 font-usace text-[0.75rem] leading-none text-white/70">
+            Coming soon!
+          </p>
+        )}
       </div>
-    </>
+    </div>
   );
 
   return active ? (

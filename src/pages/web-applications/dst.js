@@ -1,15 +1,14 @@
 import addBaseUrl from '@docusaurus/useBaseUrl';
 import Layout from '@theme/Layout';
-import ThemedImage from '@theme/ThemedImage';
 import { useEffect, useState } from 'react';
 import ContentBox from '../../components/ContentBox';
+import WebAppIcon from '../../components/icons/WebAppIcon';
 import '../../css/custom.css';
 
 // Create the list of documents dynamically
 const dstData = [
   {
-    iconLight: 'img/WebApp.png',
-    iconDark: 'img/WebAppDarkMode.png',
+    IconComponent: WebAppIcon,
     doc_location: 'web-applications/dst/users-guide',
     doc_name: 'Dam Screening Tool Users Guide',
     active: false,
@@ -32,9 +31,6 @@ export default function DST() {
 
   const dstData = dstDocs.map((doc) => ({
     ...doc,
-    icon: addBaseUrl(doc.icon),
-    iconLight: addBaseUrl(doc.iconLight),
-    iconDark: addBaseUrl(doc.iconDark),
     doc_location: addBaseUrl(
       `docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`,
     ),
@@ -47,13 +43,7 @@ export default function DST() {
     >
       <main>
         <div className="title-container">
-          <ThemedImage
-            alt="Dam Screening Tool"
-            sources={{
-              light: addBaseUrl('img/WebAppFilled.png'),
-              dark: addBaseUrl('img/WebAppFilledDarkMode.png'),
-            }}
-          />
+          <WebAppIcon className="h-[80px] w-[80px] text-ifm-primary" />
           <div className="text-container">
             <p className="text-title">Dam Screening Tool</p>
             <p className="text-description">Dam Screening Tool</p>

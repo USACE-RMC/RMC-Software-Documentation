@@ -1,15 +1,14 @@
 import addBaseUrl from '@docusaurus/useBaseUrl';
 import Layout from '@theme/Layout';
-import ThemedImage from '@theme/ThemedImage';
 import { useEffect, useState } from 'react';
 import ContentBox from '../../components/ContentBox';
+import WebAppIcon from '../../components/icons/WebAppIcon';
 import '../../css/custom.css';
 
 // Create the list of documents dynamically
 const rrftData = [
   {
-    iconLight: 'img/WebApp.png',
-    iconDark: 'img/WebAppDarkMode.png',
+    IconComponent: WebAppIcon,
     doc_location: 'web-applications/rrft/users-guide',
     doc_name: 'RRFT Users Guide',
     active: false,
@@ -32,9 +31,6 @@ export default function RRFT() {
 
   const rrftData = rrftDocs.map((doc) => ({
     ...doc,
-    icon: addBaseUrl(doc.icon),
-    iconLight: addBaseUrl(doc.iconLight),
-    iconDark: addBaseUrl(doc.iconDark),
     doc_location: addBaseUrl(
       `docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`,
     ),
@@ -47,13 +43,7 @@ export default function RRFT() {
     >
       <main>
         <div className="title-container">
-          <ThemedImage
-            alt="Rainfall Runoff Frequency Tool"
-            sources={{
-              light: addBaseUrl('img/WebAppFilled.png'),
-              dark: addBaseUrl('img/WebAppFilledDarkMode.png'),
-            }}
-          />
+          <WebAppIcon className="h-[80px] w-[80px] text-ifm-primary" />
           <div className="text-container">
             <p className="text-title">Rainfall Runoff Frequency Tool</p>
             <p className="text-description">Rainfall Runoff Frequency Tool</p>

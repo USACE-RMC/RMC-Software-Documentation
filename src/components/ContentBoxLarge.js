@@ -9,6 +9,7 @@ const ContentBoxLarge = ({ contentData }) => {
           icon={data.icon}
           iconLight={data.iconLight}
           iconDark={data.iconDark}
+          IconComponent={data.IconComponent}
           doc_name={data.doc_name}
           contentCardData={data.contentCardData}
         />

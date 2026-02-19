@@ -1,14 +1,18 @@
 import ThemedImage from '@theme/ThemedImage';
 import ContentCard from './ContentCard';
 
-const ContentBubbleLarge = ({ icon, iconLight, iconDark, doc_name, contentCardData = [] }) => {
+const ContentBubbleLarge = ({ icon, iconLight, iconDark, IconComponent, doc_name, contentCardData = [] }) => {
   const sources = iconLight || icon ? { light: iconLight ?? icon, dark: iconDark ?? iconLight ?? icon } : null;
 
   return (
     <section>
       {/* Section header */}
       <div className="mb-3 flex items-center gap-4">
-        {sources ? <ThemedImage alt={doc_name} sources={sources} className="h-[52px] w-[52px] object-contain" /> : null}
+        {IconComponent ? (
+          <IconComponent className="h-[52px] w-[52px]" />
+        ) : sources ? (
+          <ThemedImage alt={doc_name} sources={sources} className="h-[52px] w-[52px] object-contain" />
+        ) : null}
         <h2 className="m-0 font-usace text-[1.6rem] font-bold text-font-color">{doc_name}</h2>
       </div>
 
@@ -23,6 +27,7 @@ const ContentBubbleLarge = ({ icon, iconLight, iconDark, doc_name, contentCardDa
             icon={data.icon}
             iconLight={data.iconLight}
             iconDark={data.iconDark}
+            IconComponent={data.IconComponent}
             title={data.title}
             description={data.description}
             href={data.href}

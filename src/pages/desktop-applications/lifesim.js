@@ -9,6 +9,7 @@ import '../../css/custom.css';
 const lifeSimData = [
   {
     icon: 'img/LifeSim.png',
+    preserveIconColor: true,
     doc_location: 'desktop-applications/lifesim/users-guide',
     doc_name: 'LifeSim Users Guide',
     active: true,
@@ -16,6 +17,7 @@ const lifeSimData = [
   },
   {
     icon: 'img/LifeSim.png',
+    preserveIconColor: true,
     doc_location: 'desktop-applications/lifesim/validation-studies',
     doc_name: 'LifeSim Validation Studies',
     active: true,
@@ -56,7 +58,7 @@ export default function LifeSim() {
           />
           <div className="text-container">
             <p className="text-title">LifeSim</p>
-            <p className="text-description">LifeSim</p>
+            <p className="text-description">Agent-based life loss and damage estimation for flood events</p>
           </div>
         </div>
         <ContentBox contentData={lifeSimData} />
