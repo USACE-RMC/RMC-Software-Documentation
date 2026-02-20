@@ -9,6 +9,7 @@ import '../../css/custom.css';
 const totalRiskData = [
   {
     icon: 'img/TotalRisk.png',
+    preserveIconColor: true,
     doc_location: 'desktop-applications/rmc-totalrisk/users-guide',
     doc_name: 'RMC TotalRisk Users Guide',
     active: true,
@@ -16,6 +17,7 @@ const totalRiskData = [
   },
   {
     icon: 'img/TotalRisk.png',
+    preserveIconColor: true,
     doc_location: 'desktop-applications/rmc-totalrisk/applications-guide',
     doc_name: 'RMC TotalRisk Applications Guide',
     active: false,
@@ -23,6 +25,7 @@ const totalRiskData = [
   },
   {
     icon: 'img/TotalRisk.png',
+    preserveIconColor: true,
     doc_location: 'desktop-applications/rmc-totalrisk/vertification-report',
     doc_name: 'RMC TotalRisk Verification Report',
     active: false,
@@ -68,8 +71,8 @@ export default function TotalRisk() {
             }}
           />
           <div className="text-container">
-            <p className="text-title">RMC TotalRisk</p>
-            <p className="text-description">RMC TotalRisk</p>
+            <h1 className="text-title">RMC TotalRisk</h1>
+            <p className="text-description">Quantitative risk analysis for dam and levee safety</p>
           </div>
         </div>
         <ContentBox contentData={totalRiskData} />

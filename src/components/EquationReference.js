@@ -53,7 +53,7 @@ const EquationReference = ({ equationKey }) => {
   return (
     <a
       href={href}
-      className="font-usace text-normal"
+      className="font-usace text-normal whitespace-nowrap"
       title={`Jump to Equation ${equationInfo.equationNumber}`}
     >
       Equation {equationInfo.equationNumber}

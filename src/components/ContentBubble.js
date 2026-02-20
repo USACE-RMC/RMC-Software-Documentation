@@ -1,57 +1,61 @@
 import ThemedImage from '@theme/ThemedImage';
 import '../css/custom.css';
 
-const ContentBubble = ({ icon, iconLight, iconDark, doc_location, doc_name, active }) => {
+const ContentBubble = ({ icon, iconLight, iconDark, IconComponent, doc_location, doc_name, active, preserveIconColor = false }) => {
+  const iconFilter = preserveIconColor ? '' : 'brightness-0 invert';
   const baseClasses = `
-    flex h-[105px] items-center px-[15px] py-[10px] gap-[20px] rounded-[8px]
-    bg-[#F9F9F9] shadow-[0px_4px_8px_rgba(0,0,0,0.3)]
-    hover:bg-[#d4d4d4] hover:shadow-[0px_4px_8px_rgba(0,0,0,0.6)]
-    dark:bg-[#464545] dark:hover:bg-[#797979]
+    flex min-h-[90px] xl:min-h-[130px] items-center overflow-hidden rounded-xl
     no-underline hover:no-underline
-    lg:basis-[calc((100%-40px)/3)]
-    lg:max-w-[calc((100%-40px)/3)]
-    lg:min-w-[150px]
-    md:basis-[calc((100%-20px)/2)]
-    md:max-w-[calc((100%-20px)/2)]
-    sm:basis-full sm:max-w-full
+    transition-all duration-300
+    2xl:basis-[calc((100%-40px)/3)]
+    2xl:max-w-[calc((100%-40px)/3)]
+    2xl:min-w-[150px]
+    lg:basis-[calc((100%-20px)/2)]
+    lg:max-w-[calc((100%-20px)/2)]
+    basis-full max-w-full
+  `;
+
+  const activeClasses = `
+    active-gradient-card
+    hover:scale-[1.02]
+    cursor-pointer
   `;
 
   const inactiveClasses = `
-    bg-[#d4d4d4] 
-    dark:bg-[#313030]
-    pointer-events-none opacity-50 cursor-not-allowed
+    coming-soon-gradient-card
+    pointer-events-none cursor-not-allowed
   `;
 
   // Build <ThemedImage /> sources, with fallback to legacy `icon`
   const sources =
     iconLight || icon ? { light: iconLight ?? icon, dark: iconDark ?? iconLight ?? icon } : null;
 
-  const Icon = () =>
-    sources ? <ThemedImage alt={doc_name} sources={sources} className="h-auto w-[50px]" /> : null;
-
   const Inner = ({ comingSoon = false }) => (
-    <>
-      <div className="mt-0 shrink-0">
-        <Icon />
-      </div>
-      <div className="text-font-color">
-        <p className="mb-0 font-usace leading-[1.2] no-underline md:text-normal lg:text-content-bubble">
+    <div className="flex items-center gap-[16px] px-[16px] py-[10px] xl:gap-[20px] xl:px-[20px] xl:py-[14px]">
+      {IconComponent ? (
+        <div className="frosted-glass-circle flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full xl:h-[60px] xl:w-[60px]">
+          <IconComponent className="h-[28px] w-[28px] xl:h-[40px] xl:w-[40px]" color="white" showBackground={false} />
+        </div>
+      ) : sources ? (
+        <div className="frosted-glass-circle flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full xl:h-[60px] xl:w-[60px]">
+          <ThemedImage alt={doc_name} sources={sources} className={`h-[28px] w-[28px] object-contain xl:h-[40px] xl:w-[40px] ${iconFilter}`} />
+        </div>
+      ) : null}
+      <div>
+        <p className="mb-0 font-usace text-[1rem] leading-[1.2] no-underline text-white xl:text-[1.15rem]">
           {doc_name}
         </p>
         {comingSoon && (
-          <>
-            <p className="mb-[10px] font-usace leading-[1.2] no-underline md:text-normal lg:text-content-bubble" />
-            <p className="font-usace leading-none no-underline md:text-normal lg:text-content-bubble">
-              Coming soon!
-            </p>
-          </>
+          <p className="mb-0 mt-1 font-usace text-[0.8rem] leading-none text-white/70 xl:text-[0.85rem]">
+            Coming soon!
+          </p>
         )}
       </div>
-    </>
+    </div>
   );
 
   return active ? (
-    <a href={doc_location} className={baseClasses}>
+    <a href={doc_location} className={`${baseClasses} ${activeClasses}`}>
       <Inner />
     </a>
   ) : (

@@ -27,14 +27,14 @@ const Equation = ({ equationKey, equation, inline = false, id }) => {
     })();
   }, [reportId, equationKey]);
 
-  if (equationNum === null) return <span>Loading...</span>;
+  if (equationNum === null) return <span id={equationId}>Loading...</span>;
 
   const equationWithTag = `${equation} \\tag{${equationNum}}`;
 
   return (
     <span
       id={equationId}
-      className="equation-container scroll-mt-[var(--ifm-navbar-height)]"
+      className="equation-container"
       data-anchor="true"
     >
       {inline ? <InlineMath math={equation} /> : <BlockMath math={equationWithTag} />}

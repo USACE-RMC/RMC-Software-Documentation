@@ -116,7 +116,7 @@ const Bibliography = () => {
         {citations.map((citation) => (
           <li key={citation.citationKey} className="flex items-start mb-2.5">
             <span className="min-w-[40px] flex-shrink-0">[{citation.number}]</span>
-            <span className="block">{formatCitation(citation)}</span>
+            <span className="block break-words">{formatCitation(citation)}</span>
           </li>
         ))}
       </ol>

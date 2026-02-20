@@ -1,38 +1,35 @@
 import addBaseUrl from '@docusaurus/useBaseUrl';
 import Layout from '@theme/Layout';
-import ThemedImage from '@theme/ThemedImage';
 import { useEffect, useState } from 'react';
 import ContentBox from '../../components/ContentBox';
+import ToolboxIcon from '../../components/icons/ToolboxIcon';
+import WebAppIcon from '../../components/icons/WebAppIcon';
 import '../../css/custom.css';
 
 const devData = [
   {
-    iconLight: 'img/Toolbox.png',
-    iconDark: 'img/ToolboxDarkMode.png',
+    IconComponent: ToolboxIcon,
     doc_location: 'docs/dev/github-workflows/introduction',
     doc_name: 'GitHub Workflows SOP',
     active: true,
     versioned: false,
   },
   {
-    iconLight: 'img/Toolbox.png',
-    iconDark: 'img/ToolboxDarkMode.png',
+    IconComponent: ToolboxIcon,
     doc_location: 'docs/dev/ai-development/ai-assisted-development',
     doc_name: 'AI Assistant Guidance',
     active: true,
     versioned: false,
   },
   {
-    iconLight: 'img/Toolbox.png',
-    iconDark: 'img/ToolboxDarkMode.png',
+    IconComponent: ToolboxIcon,
     doc_location: 'docs/dev/architecture/web-app-architecture',
     doc_name: 'Web Application Architecture',
     active: true,
     versioned: false,
   },
   {
-    iconLight: 'img/WebApp.png',
-    iconDark: 'img/WebAppDarkMode.png',
+    IconComponent: WebAppIcon,
     doc_location: 'dev/dst/database-schema',
     doc_name: 'DST Database Schema Reference',
     active: true,
@@ -52,8 +49,6 @@ export default function Dev() {
 
   const contentData = devData.map((doc) => ({
     ...doc,
-    iconLight: addBaseUrl(doc.iconLight),
-    iconDark: addBaseUrl(doc.iconDark),
     doc_location: doc.versioned
       ? addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location] || 'v1.0'}/preface`)
       : addBaseUrl(doc.doc_location),
@@ -63,15 +58,9 @@ export default function Dev() {
     <Layout title="Developer Resources" description="Developer documentation and references for RMC software">
       <main>
         <div className="title-container">
-          <ThemedImage
-            alt="Developer Resources"
-            sources={{
-              light: addBaseUrl('img/ToolboxFilled.png'),
-              dark: addBaseUrl('img/ToolboxFilledDarkMode.png'),
-            }}
-          />
+          <ToolboxIcon className="h-[80px] w-[80px] text-ifm-primary" />
           <div className="text-container">
-            <p className="text-title">Developer Resources</p>
+            <h1 className="text-title">Developer Resources</h1>
             <p className="text-description">Internal development guides and technical references</p>
           </div>
         </div>

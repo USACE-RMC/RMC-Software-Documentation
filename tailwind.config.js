@@ -63,10 +63,22 @@ export default {
         'gov-banner-gray': '#aebfd4',
         'gov-banner-black': '#15263b',
 
+        // Surfaces (light/dark-aware via CSS variables)
+        'surface-nav': 'var(--surface-nav)',
+        'surface-header': 'var(--surface-header)',
+        'surface-page': 'var(--surface-page)',
+        'surface-panel': 'var(--surface-panel)',
+        'surface-card': 'var(--surface-card)',
+        'surface-card-hover': 'var(--surface-card-hover)',
+        'surface-icon': 'var(--surface-icon)',
+        'surface-zebra': 'var(--surface-zebra)',
+        'surface-inactive': 'var(--surface-inactive)',
+
         // Dynamically linked to CSS variables
         'border-color': 'var(--border-color)',
         'font-color': 'var(--font-color)',
         'font-color-inverse': 'var(--font-color-inverse)',
+        'font-color-description': 'var(--font-color-description)',
         'sidebar-bg': 'var(--sidebar-background-color)',
         'sidebar-text': 'var(--sidebar-text-color)',
         'background-theme': 'var(--ifm-background-color-theme)',
@@ -94,10 +106,30 @@ export default {
         'tab-underline-color': 'var(--ifm-tab-underline-color)',
       },
     },
+    /* ── Breakpoints ──────────────────────────────────────────────────────
+     *
+     * Reference devices (CSS viewport width × height, DPR):
+     *   Phone:         393 × 852,  DPR 3
+     *   Tablet:        820 × 1180, DPR 2
+     *   Laptop:       1280 × 720,  DPR 1.5
+     *   Desktop 16:9: 1920 × 1080, DPR 1
+     *   Desktop 16:10: 1920 × 1200, DPR 1
+     *
+     * Device-tier transitions (used for layout, navigation, grids):
+     *   sm  (640px)  — phone → tablet
+     *   lg  (1024px) — tablet → laptop
+     *   2xl (1536px) — laptop → desktop
+     *
+     * Fine-grained breakpoints within tiers:
+     *   md  (768px)  — mid-tablet adjustments
+     *   xl  (1280px) — mid-laptop adjustments (matches laptop device width)
+     */
     screens: {
-      sm: '0px',
-      md: '900px',
-      lg: '1760px',
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      xl: '1280px',
+      '2xl': '1536px',
     },
   },
   plugins: [require('@tailwindcss/forms')],

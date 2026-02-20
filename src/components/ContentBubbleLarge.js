@@ -1,87 +1,42 @@
 import ThemedImage from '@theme/ThemedImage';
 import ContentCard from './ContentCard';
 
-const ContentBubbleLarge = ({
-  icon,
-  iconLight,
-  iconDark,
-  doc_location,
-  doc_name,
-  contentCardData = [],
-  active,
-}) => {
-  const baseClasses = `
-    flex flex-col h-[550px] items-center p-[25px] gap-[20px] rounded-[8px]
-    bg-[#F9F9F9] shadow-[0px_4px_8px_rgba(0,0,0,0.3)]
-    hover:bg-[#d4d4d4] hover:shadow-[0px_4px_8px_rgba(0,0,0,0.6)]
-    dark:bg-[#464545] dark:hover:bg-[#797979]
-    no-underline hover:no-underline
-    lg:basis-[calc((100%-40px)/3)]
-    lg:max-w-[calc((100%-40px)/3)]
-    lg:min-w-[150px]
-    md:basis-[calc((100%-40px)/3)]
-    md:max-w-[calc((100%-40px)/3)]
-    md:min-w-[250px]
-    sm:basis-full 
-    sm:max-w-full
-    sm:min-w-[250px]
-  `;
-
-  const inactiveClasses = `
-    bg-[#d4d4d4] 
-    dark:bg-[#313030]
-    pointer-events-none opacity-50 cursor-not-allowed
-  `;
-
-  // Build themed sources with graceful fallback to the old `icon`
-  const sources =
-    iconLight || icon ? { light: iconLight ?? icon, dark: iconDark ?? iconLight ?? icon } : null;
-
-  const Image = () =>
-    sources ? (
-      <ThemedImage alt={doc_name} sources={sources} className="h-full w-auto" />
-    ) : (
-      // Shouldn't hit this if icon/iconLight provided, but safe fallback:
-      <div className="h-full w-auto" aria-hidden />
-    );
-
-  const Shell = ({ children, className }) =>
-    active ? (
-      <a href={doc_location} className={className}>
-        {children}
-      </a>
-    ) : (
-      <div className={`${className} ${inactiveClasses}`}>{children}</div>
-    );
+const ContentBubbleLarge = ({ icon, iconLight, iconDark, IconComponent, doc_name, contentCardData = [] }) => {
+  const sources = iconLight || icon ? { light: iconLight ?? icon, dark: iconDark ?? iconLight ?? icon } : null;
 
   return (
-    <Shell className={baseClasses}>
-      <div className="flex h-[40%] justify-center">
-        <Image />
+    <section>
+      {/* Section header */}
+      <div className="mb-3 flex items-center gap-4">
+        {IconComponent ? (
+          <IconComponent className="h-[52px] w-[52px]" />
+        ) : sources ? (
+          <ThemedImage alt={doc_name} sources={sources} className="h-[52px] w-[52px] object-contain" />
+        ) : null}
+        <h2 className="m-0 font-usace text-[1.6rem] font-bold text-font-color">{doc_name}</h2>
       </div>
-      <div className="text-font-color">
-        <p className="mb-0 mt-5 text-center font-usace leading-[1.2] no-underline sm:text-xlarge md:text-xlarge lg:text-3xl">
-          {doc_name}
-        </p>
-      </div>
-      <div className="mx-auto mb-0 mt-[10px] flex h-[200px] w-fit flex-col items-start">
-        {contentCardData.map((data, index) => (
+
+      {/* Divider */}
+      <div className="mb-6 h-[2px] w-full bg-border-color" />
+
+      {/* Card grid */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
+        {contentCardData.map((data, idx) => (
           <ContentCard
-            key={index}
-            // Support ThemedImage for child rows too (see next step)
+            key={idx}
             icon={data.icon}
             iconLight={data.iconLight}
             iconDark={data.iconDark}
+            IconComponent={data.IconComponent}
             title={data.title}
+            description={data.description}
+            href={data.href}
+            active={data.active}
+            preserveIconColor={data.preserveIconColor}
           />
         ))}
       </div>
-      {!active && (
-        <div className="text-center font-usace text-xlarge leading-none text-ifm-primary no-underline sm:text-normal md:text-normal">
-          <p>Coming soon!</p>
-        </div>
-      )}
-    </Shell>
+    </section>
   );
 };
 

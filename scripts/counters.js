@@ -63,20 +63,27 @@ function processReport(reportPath, reportId) {
     const filePath = path.join(folder, file);
     const content = fs.readFileSync(filePath, 'utf-8');
 
-    // Regex for figures
-    for (const match of content.matchAll(/<(Figure|GIF)\s+[^>]*figKey="([^"]+)"/g)) {
-      const figKey = match[2];
+    // Regex for figures — match both self-closing <Figure ... /> and
+    // open+close <Figure ...></Figure> (or <GIF>) tag forms
+    for (const match of content.matchAll(/<(Figure|GIF)\s+([\s\S]*?)(?:\/>|><\/\1>)/g)) {
+      const attrs = match[2];
+      const figKey = attrs.match(/figKey="([^"]+)"/)?.[1];
+      if (!figKey) continue;
+      const src = attrs.match(/src="([^"]+)"/)?.[1] || '';
+      const caption = attrs.match(/caption="([^"]+)"/)?.[1] || '';
       counters.figures[figKey] = {
         figNumber: figureCount++,
         parentDocId: reportId,
         parentDocPath: reportPath,
         docId: file,
+        src,
+        caption,
       };
     }
 
-    // Regex for tables
+    // Regex for tables — match both self-closing and open+close tag forms
     for (const match of content.matchAll(
-      /<(TableHorizontal|TableVertical)\s+[^>]*tableKey="([^"]+)"/g,
+      /<(TableHorizontal|TableVertical)\s+[^>]*?tableKey="([^"]+)"[^>]*?(?:\/>|><\/\1>)/g,
     )) {
       const tableKey = match[2];
       counters.tables[tableKey] = {
@@ -87,8 +94,8 @@ function processReport(reportPath, reportId) {
       };
     }
 
-    // Regex for equations
-    for (const match of content.matchAll(/<Equation\s+[^>]*equationKey="([^"]+)"/g)) {
+    // Regex for equations — match both self-closing and open+close tag forms
+    for (const match of content.matchAll(/<Equation\s+[^>]*?equationKey="([^"]+)"[^>]*?(?:\/>|>)/g)) {
       const equationKey = match[1];
       counters.equations[equationKey] = {
         equationNumber: equationCount++,
@@ -98,8 +105,8 @@ function processReport(reportPath, reportId) {
       };
     }
 
-    // Regex for citations
-    for (const match of content.matchAll(/<Citation\s+[^>]*citationKey="([^"]+)"/g)) {
+    // Regex for citations — match both self-closing and open+close tag forms
+    for (const match of content.matchAll(/<Citation\s+[^>]*?citationKey="([^"]+)"[^>]*?(?:\/>|>)/g)) {
       const citationKey = match[1];
       if (!(citationKey in counters.citations)) {
         // Only count the first occurrence}
@@ -112,8 +119,8 @@ function processReport(reportPath, reportId) {
       }
     }
 
-    // Regex for videos
-    for (const match of content.matchAll(/<Video\s+[^>]*videoKey="([^"]+)"/g)) {
+    // Regex for videos — match both self-closing and open+close tag forms
+    for (const match of content.matchAll(/<Video\s+[^>]*?videoKey="([^"]+)"[^>]*?(?:\/>|>)/g)) {
       const videoKey = match[1];
       counters.videos[videoKey] = {
         videoNumber: videoCount++,

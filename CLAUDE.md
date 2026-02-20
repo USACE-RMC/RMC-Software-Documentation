@@ -81,7 +81,7 @@ Content with <Figure figKey="fig1" src="path" alt="text" caption="..." />
 ## Code Style
 
 - Prettier: 150 char line width, single quotes, trailing commas
-- Tailwind CSS with USACE branding colors (primary: `#1f6f78`)
+- Tailwind CSS with USACE branding colors (primary: `#4a7c9b`)
 - React components use ReportIdContext for version-aware data
 
 ## Git Commit Messages
@@ -89,9 +89,22 @@ Content with <Figure figKey="fig1" src="path" alt="text" caption="..." />
 - Do NOT include "Co-Authored-By: Claude", "Claude Code", or any AI/assistant attribution in commit messages
 - Keep commit messages concise and focused on the changes made
 
+## Claude Code Skills
+
+This repository includes Claude Code skills (slash commands) in `.claude/skills/`. Reference files for skills are in `.claude/skills/*.md` (e.g., `git-conventions.md`).
+
+### Available Skills
+
+**Git**: `/commit`, `/push`, `/commit-push`, `/pr`, `/review-pr`
+**Page verification**: `/smoke-test`, `/review-responsive`, `/review-page`
+**Quality**: `/check-accessibility`, `/check-performance`, `/lint-fix`
+**Documentation**: `/qc-review`, `/build`, `/check-links`, `/check-components`
+
+See `.claude/skills/{name}/SKILL.md` for full documentation of each skill.
+
 ## QC Reviews & Technical Edits
 
-Use the QC prompt template at [qc/qc-prompt.md](qc/qc-prompt.md) for AI-assisted document reviews.
+Use `/qc-review` skill or the QC prompt template at [qc/qc-prompt.md](qc/qc-prompt.md) for AI-assisted document reviews.
 
 ### Review Levels
 
