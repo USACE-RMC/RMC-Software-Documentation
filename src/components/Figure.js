@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useReportId } from '../contexts/ReportIdContext'; // Import the context hook to retrieve the reportId
+import imageDimensions from '../imageDimensions';
 import '../css/custom.css';
 
 const Figure = ({ figKey, src, alt, caption, width = '80%', background = 'filled', id }) => {
@@ -8,6 +9,10 @@ const Figure = ({ figKey, src, alt, caption, width = '80%', background = 'filled
 
   // If id is not passed, fall back to figKey
   const figureId = id || figKey;
+
+  // Look up intrinsic dimensions from build-time manifest (prevents layout shift)
+  const normalizedSrc = src.replace(/^\//, '');
+  const dims = imageDimensions[normalizedSrc];
 
   useEffect(() => {
     if (!reportId) return; // If reportId is not available, don't fetch
@@ -46,7 +51,7 @@ const Figure = ({ figKey, src, alt, caption, width = '80%', background = 'filled
 
   return (
     <figure id={figureId} className="my-[1em] ml-0 mr-auto w-full justify-items-start border-y border-border-color py-5">
-      <img src={`/RMC-Software-Documentation/${src}`} alt={alt} className={`block h-auto ${imgBgClass}`} style={{ maxWidth: width }} />
+      <img src={`/RMC-Software-Documentation/${src}`} alt={alt} className={`block h-auto ${imgBgClass}`} style={{ maxWidth: width }} width={dims?.width} height={dims?.height} />
       <figcaption className="mt-[1em] max-w-full text-left font-usace text-caption italic text-gray-500 dark:text-gray-400">
         Figure {figInfo.figNumber}: {caption}
       </figcaption>
