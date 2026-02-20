@@ -347,6 +347,11 @@ function normalizeNode(it) {
   }
   return { title };
 }
+function hasContent(c) {
+  if (c == null) return false;
+  if (typeof c === 'string') return c.trim().length > 0;
+  return true;
+}
 function formatOrdinal(n, style = 'decimal') {
   switch (style) {
     case 'upper-alpha':
