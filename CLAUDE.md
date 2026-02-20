@@ -69,7 +69,7 @@ Content with <Figure figKey="fig1" src="path" alt="text" caption="..." />
 - **Figures**: `<Figure figKey="unique-key" src="path" alt="text" caption="..." />`
 - **Tables**: `<TableHorizontal tableKey="key" />` or `<TableVertical tableKey="key" />`
 - **Equations**: `<Equation equationKey="key">\LaTeX</Equation>`
-- **Citations**: `<Citation citationKey="key" />` with `<Bibliography />`
+- **Citations**: `(Author, Year) <Citation citationKey="key" />` - the text citation is preserved alongside the component (renders as "(Author, Year) [1]"). Include `<Bibliography />` on the References page.
 - **References**: `<FigureReference figKey="key" />`, `<TableReference tableKey="key" />`
 
 ### File Naming
@@ -119,7 +119,7 @@ Use `/qc-review` skill or the QC prompt template at [qc/qc-prompt.md](qc/qc-prom
 - **Level 1**: Do NOT suggest rewording or technical changes—syntax and grammar only
 - **Level 2**: Do NOT suggest improvements beyond matching the source document
 - **Level 3**: Full editorial suggestions allowed; mark these as "Editorial" category with "Suggestion" severity
-- All levels: Do NOT edit MDX files directly—output findings to `qc/reports/` only
+- All levels: Do NOT edit MDX files directly—output findings to `qc/` only
 
 ## Requirements
 
