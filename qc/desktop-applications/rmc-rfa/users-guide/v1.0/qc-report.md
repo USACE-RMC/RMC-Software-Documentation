@@ -315,9 +315,8 @@ No issues found.
 - **Severity:** Major
 - **Problem:** `figKey="figure-3"` duplicates the same key used in 02-welcome-to-rmc-rfa.mdx (line 58).
 - **Recommended Fix:** Verify if this is intentional cross-reference or rename to unique key.
-- **Fix Applied:** N/A - Verified as intentional (2026-02-05)
-- **Human Verification Required:** Yes
-- **Comment:** This is intentional, no revision required.
+- **Fix Applied:** Yes (2026-02-20) - Replaced duplicate Figure with FigReference pointing to original figure-3
+- **Human Verification Required:** No
 
 ### Issue 25: Spelling error
 
@@ -557,8 +556,8 @@ No issues found.
 - **Severity:** Major
 - **Problem:** Author-year reference "(Chow, 1954)" appears in text but no matching citation key exists in bib.json.
 - **Recommended Fix:** Either add a `Chow1954` entry to bib.json and use `<Citation citationKey="Chow1954"/>`, or verify if citation should be removed.
-- **Fix Applied:** N/A - Left as-is per user decision (2026-02-05)
-- **Human Verification Required:** Yes
+- **Fix Applied:** Yes (2026-02-20) - Added Chow1954 entry to bib.json and Citation component
+- **Human Verification Required:** No
 
 ---
 
@@ -581,24 +580,23 @@ No issues found.
 | Severity  | Count | Resolved |
 | --------- | ------ | -------- |
 | Blocker   | 0      | 0        |
-| Major     | 8      | 7        |
-| Minor     | 44     | 43       |
-| **Total** | **52** | **50**   |
+| Major     | 8      | 8        |
+| Minor     | 44     | 44       |
+| **Total** | **52** | **52**   |
 
 **Fixes Applied:** 2026-02-05
 
 ### Remaining Issues
 
-1. **Issue 24:** Duplicate figure key (05-working-with-rmc-rfa.mdx) - Verified as intentional, no fix needed
-2. **Issue 34:** Inconsistent list formatting - No actionable change identified
+1. **Issue 34:** Inconsistent list formatting - No actionable change identified
 
 ### Major Issues Summary
 
 1. Issue 2: Incorrect linkTitle in NavContainer (00-document-info.mdx) - **FIXED**
-2. Issue 24: Duplicate figure key (05-working-with-rmc-rfa.mdx) - **INTENTIONAL**
+2. Issue 24: Duplicate figure key (05-working-with-rmc-rfa.mdx) - **FIXED** (replaced with FigReference)
 3. Issue 26: Duplicate figure definition (05-working-with-rmc-rfa.mdx) - **FIXED**
 4. Issue 28: Unclosed bold markdown (05-working-with-rmc-rfa.mdx) - **FIXED**
 5. Issue 37: Duplicate figure definition (05-working-with-rmc-rfa.mdx) - **FIXED**
 6. Issue 38: Duplicate table key (05-working-with-rmc-rfa.mdx) - **FIXED**
 7. Issue 46: Equation "where" block formatting (05-working-with-rmc-rfa.mdx) - **FIXED**
-8. Issue 52: Citation reference without bib.json entry (05-working-with-rmc-rfa.mdx) - **LEFT AS-IS**
+8. Issue 52: Citation reference without bib.json entry (05-working-with-rmc-rfa.mdx) - **FIXED**
