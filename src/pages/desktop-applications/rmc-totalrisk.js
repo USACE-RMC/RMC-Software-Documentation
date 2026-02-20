@@ -71,7 +71,7 @@ export default function TotalRisk() {
             }}
           />
           <div className="text-container">
-            <p className="text-title">RMC TotalRisk</p>
+            <h1 className="text-title">RMC TotalRisk</h1>
             <p className="text-description">Quantitative risk analysis for dam and levee safety</p>
           </div>
         </div>

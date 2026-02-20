@@ -57,7 +57,7 @@ export default function LifeSim() {
             }}
           />
           <div className="text-container">
-            <p className="text-title">LifeSim</p>
+            <h1 className="text-title">LifeSim</h1>
             <p className="text-description">Agent-based life loss and damage estimation for flood events</p>
           </div>
         </div>

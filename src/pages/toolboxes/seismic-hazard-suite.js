@@ -65,7 +65,7 @@ export default function SeismicHazardSuite() {
         <div className="title-container">
           <ToolboxIcon className="h-[80px] w-[80px] text-ifm-primary" />
           <div className="text-container">
-            <p className="text-title">Seismic Hazard Suite</p>
+            <h1 className="text-title">Seismic Hazard Suite</h1>
             <p className="text-description">Assessing seismic hazard and failure modes for dam and levee safety</p>
           </div>
         </div>

@@ -40,7 +40,7 @@ export default function LST() {
         <div className="title-container">
           <WebAppIcon className="h-[80px] w-[80px] text-ifm-primary" />
           <div className="text-container">
-            <p className="text-title">Levee Screening Tool</p>
+            <h1 className="text-title">Levee Screening Tool</h1>
             <p className="text-description">Risk screening for levee hazard exposure, performance, and consequences</p>
           </div>
         </div>

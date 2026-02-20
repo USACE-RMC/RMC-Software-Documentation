@@ -45,7 +45,7 @@ export default function DST() {
         <div className="title-container">
           <WebAppIcon className="h-[80px] w-[80px] text-ifm-primary" />
           <div className="text-container">
-            <p className="text-title">Dam Screening Tool</p>
+            <h1 className="text-title">Dam Screening Tool</h1>
             <p className="text-description">Dam Screening Tool</p>
           </div>
         </div>

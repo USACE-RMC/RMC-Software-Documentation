@@ -45,7 +45,7 @@ export default function RRFT() {
         <div className="title-container">
           <WebAppIcon className="h-[80px] w-[80px] text-ifm-primary" />
           <div className="text-container">
-            <p className="text-title">Rainfall Runoff Frequency Tool</p>
+            <h1 className="text-title">Rainfall Runoff Frequency Tool</h1>
             <p className="text-description">Rainfall Runoff Frequency Tool</p>
           </div>
         </div>

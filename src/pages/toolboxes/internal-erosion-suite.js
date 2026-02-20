@@ -122,7 +122,7 @@ export default function InternalErosionSuite() {
         <div className="title-container">
           <ToolboxIcon className="h-[80px] w-[80px] text-ifm-primary" />
           <div className="text-container">
-            <p className="text-title">Internal Erosion Suite</p>
+            <h1 className="text-title">Internal Erosion Suite</h1>
             <p className="text-description">Assessing internal erosion failure modes for dam and levee safety</p>
           </div>
         </div>

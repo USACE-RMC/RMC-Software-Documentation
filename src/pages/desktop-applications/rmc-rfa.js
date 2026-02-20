@@ -55,7 +55,7 @@ export default function RFA() {
             }}
           />
           <div className="text-container">
-            <p className="text-title">RMC Reservoir Frequency Analysis</p>
+            <h1 className="text-title">RMC Reservoir Frequency Analysis</h1>
             <p className="text-description">Reservoir stage-frequency analysis for hydrologic hazard assessments</p>
           </div>
         </div>

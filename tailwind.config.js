@@ -78,6 +78,7 @@ export default {
         'border-color': 'var(--border-color)',
         'font-color': 'var(--font-color)',
         'font-color-inverse': 'var(--font-color-inverse)',
+        'font-color-description': 'var(--font-color-description)',
         'sidebar-bg': 'var(--sidebar-background-color)',
         'sidebar-text': 'var(--sidebar-text-color)',
         'background-theme': 'var(--ifm-background-color-theme)',

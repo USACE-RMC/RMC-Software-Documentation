@@ -60,7 +60,7 @@ export default function Dev() {
         <div className="title-container">
           <ToolboxIcon className="h-[80px] w-[80px] text-ifm-primary" />
           <div className="text-container">
-            <p className="text-title">Developer Resources</p>
+            <h1 className="text-title">Developer Resources</h1>
             <p className="text-description">Internal development guides and technical references</p>
           </div>
         </div>

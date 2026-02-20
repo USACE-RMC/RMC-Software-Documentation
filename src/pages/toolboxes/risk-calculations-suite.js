@@ -79,7 +79,7 @@ export default function RiskCalculationsSuite() {
         <div className="title-container">
           <ToolboxIcon className="h-[80px] w-[80px] text-ifm-primary" />
           <div className="text-container">
-            <p className="text-title">Risk Calculations Suite</p>
+            <h1 className="text-title">Risk Calculations Suite</h1>
             <p className="text-description">Risk computations for dam and levee safety</p>
           </div>
         </div>

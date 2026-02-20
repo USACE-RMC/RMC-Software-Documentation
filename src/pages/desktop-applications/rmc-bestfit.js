@@ -55,7 +55,7 @@ export default function BestFit() {
             }}
           />
           <div className="text-container">
-            <p className="text-title">RMC BestFit</p>
+            <h1 className="text-title">RMC BestFit</h1>
             <p className="text-description">Bayesian flood frequency estimation and hazard analysis</p>
           </div>
         </div>
