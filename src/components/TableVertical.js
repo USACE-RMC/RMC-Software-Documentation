@@ -39,8 +39,6 @@ const TableVertical = ({
     })();
   }, [reportId, tableKey]);
 
-  if (!tableInfo) return <span id={tableId}>Loading...</span>;
-
   const renderHTML = (content) => ({ __html: content });
 
   const colCount = columns?.length ?? 0;
@@ -89,7 +87,7 @@ const TableVertical = ({
   return (
     <div id={tableId} className="table-container" data-anchor="true">
       <div className="table-cap">
-        Table {tableInfo.tableNumber}: {caption}
+        {tableInfo ? `Table ${tableInfo.tableNumber}` : 'Table'}: {caption}
       </div>
 
       {/* If you use a scroller wrapper elsewhere, you can place the footnotes inside it too */}

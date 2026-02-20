@@ -73,7 +73,7 @@ const FigReference = ({ figKey, suffix }) => {
   // Clean up timers on unmount
   useEffect(() => cancelTimers, [cancelTimers]);
 
-  if (!figInfo) return <span>Loading&hellip;</span>;
+  if (!figInfo) return <span className="font-usace text-normal whitespace-nowrap">Figure</span>;
 
   const imgSrc = figInfo.src ? `${STATIC_BASE}/${figInfo.src}` : '';
 

@@ -39,8 +39,6 @@ const TableHorizontal = ({
     })();
   }, [reportId, tableKey]);
 
-  if (!tableInfo) return <span id={tableId}>Loading...</span>;
-
   const renderHTML = (content) => ({ __html: content });
 
   // Total columns = 1 (left header column) + number of data columns
@@ -84,7 +82,7 @@ const TableHorizontal = ({
   return (
     <div id={tableId} className="table-container" data-anchor="true">
       <div className="table-cap">
-        Table {tableInfo.tableNumber}: {caption}
+        {tableInfo ? `Table ${tableInfo.tableNumber}` : 'Table'}: {caption}
       </div>
 
       <div className="table-scroller">

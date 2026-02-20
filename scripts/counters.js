@@ -81,11 +81,11 @@ function processReport(reportPath, reportId) {
       };
     }
 
-    // Regex for tables — match both self-closing and open+close tag forms
+    // Regex for tables — uses [\s\S] to match across newlines in multiline JSX
     for (const match of content.matchAll(
-      /<(TableHorizontal|TableVertical)\s+[^>]*?tableKey="([^"]+)"[^>]*?(?:\/>|><\/\1>)/g,
+      /<(?:TableHorizontal|TableVertical)\s[\s\S]*?tableKey="([^"]+)"/g,
     )) {
-      const tableKey = match[2];
+      const tableKey = match[1];
       counters.tables[tableKey] = {
         tableNumber: tableCount++,
         parentDocId: reportId,
@@ -94,8 +94,8 @@ function processReport(reportPath, reportId) {
       };
     }
 
-    // Regex for equations — match both self-closing and open+close tag forms
-    for (const match of content.matchAll(/<Equation\s+[^>]*?equationKey="([^"]+)"[^>]*?(?:\/>|>)/g)) {
+    // Regex for equations — uses [\s\S] to match across newlines in multiline JSX
+    for (const match of content.matchAll(/<Equation\s[\s\S]*?equationKey="([^"]+)"/g)) {
       const equationKey = match[1];
       counters.equations[equationKey] = {
         equationNumber: equationCount++,

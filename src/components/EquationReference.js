@@ -48,7 +48,7 @@ const EquationReference = ({ equationKey }) => {
     return isSamePage ? `#${targetId}` : `${targetDocPath}#${targetId}`;
   }, [equationInfo, isSamePage, targetDocPath, targetId]);
 
-  if (!equationInfo) return <span>Loading...</span>;
+  if (!equationInfo) return <span className="font-usace text-normal whitespace-nowrap">Equation</span>;
 
   return (
     <a
