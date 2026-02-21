@@ -2,27 +2,26 @@ import addBaseUrl from '@docusaurus/useBaseUrl';
 import Layout from '@theme/Layout';
 import { useEffect, useState } from 'react';
 import ContentBox from '../../components/ContentBox';
-import ToolboxIcon from '../../components/icons/ToolboxIcon';
 import WebAppIcon from '../../components/icons/WebAppIcon';
 import '../../css/custom.css';
 
 const devData = [
   {
-    IconComponent: ToolboxIcon,
+    IconComponent: WebAppIcon,
     doc_location: 'docs/dev/github-workflows/introduction',
     doc_name: 'GitHub Workflows SOP',
     active: true,
     versioned: false,
   },
   {
-    IconComponent: ToolboxIcon,
+    IconComponent: WebAppIcon,
     doc_location: 'docs/dev/ai-development/ai-assisted-development',
     doc_name: 'AI Assistant Guidance',
     active: true,
     versioned: false,
   },
   {
-    IconComponent: ToolboxIcon,
+    IconComponent: WebAppIcon,
     doc_location: 'docs/dev/architecture/web-app-architecture',
     doc_name: 'Web Application Architecture',
     active: true,
@@ -58,7 +57,7 @@ export default function Dev() {
     <Layout title="Developer Resources" description="Developer documentation and references for RMC software">
       <main>
         <div className="title-container">
-          <ToolboxIcon className="h-[80px] w-[80px] text-ifm-primary" />
+          <WebAppIcon className="h-[80px] w-[80px] text-ifm-primary" />
           <div className="text-container">
             <h1 className="text-title">Developer Resources</h1>
             <p className="text-description">Internal development guides and technical references</p>

@@ -12,22 +12,21 @@ const internalErosionSuite = [
     doc_location: `toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation`,
     doc_name: 'Backward Erosion Piping (Initiation) Toolbox Technical Manual',
     active: true,
-    draft: true,
+    draft: false,
   },
   {
     IconComponent: ToolboxIcon,
-    doc_location:
-      'toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression',
+    doc_location: 'toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression',
     doc_name: 'Backward Erosion Piping (Progression) Toolbox Technical Manual',
     active: true,
-    draft: true,
+    draft: false,
   },
   {
     IconComponent: ToolboxIcon,
     doc_location: `toolbox-technical-manuals/internal-erosion-suite/breach`,
     doc_name: 'Breach Toolbox Technical Manual',
     active: true,
-    draft: true,
+    draft: false,
   },
   {
     IconComponent: ToolboxIcon,
@@ -41,7 +40,7 @@ const internalErosionSuite = [
     doc_location: `toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation`,
     doc_name: 'Concentrated Leak Erosion (Initiation) Toolbox Technical Manual',
     active: true,
-    draft: true,
+    draft: false,
   },
   {
     IconComponent: ToolboxIcon,
@@ -55,7 +54,7 @@ const internalErosionSuite = [
     doc_location: `toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation`,
     doc_name: 'Filter Evaluation (Continuation) Toolbox Technical Manual',
     active: true,
-    draft: true,
+    draft: false,
   },
   {
     IconComponent: ToolboxIcon,
@@ -69,14 +68,14 @@ const internalErosionSuite = [
     doc_location: `toolbox-technical-manuals/internal-erosion-suite/internal-instability`,
     doc_name: 'Internal Instability Toolbox Technical Manual',
     active: true,
-    draft: true,
+    draft: false,
   },
   {
     IconComponent: ToolboxIcon,
     doc_location: `toolbox-technical-manuals/internal-erosion-suite/pipe-service-life`,
     doc_name: 'Pipe Service Life (Flaw) Toolbox Technical Manual',
     active: true,
-    draft: true,
+    draft: false,
   },
   {
     IconComponent: ToolboxIcon,
@@ -90,7 +89,7 @@ const internalErosionSuite = [
     doc_location: `toolbox-technical-manuals/internal-erosion-suite/soil-contact-erosion-initiation`,
     doc_name: 'Soil Contact Erosion (Initiation) Toolbox Technical Manual',
     active: true,
-    draft: true,
+    draft: false,
   },
 ];
 
@@ -108,16 +107,11 @@ export default function InternalErosionSuite() {
 
   const internalErosionSuite = internalErosionSuiteDocs.map((doc) => ({
     ...doc,
-    doc_location: addBaseUrl(
-      `docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`,
-    ),
+    doc_location: addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`),
   }));
 
   return (
-    <Layout
-      title="RMC Software Documentation"
-      description="Documentation for RMC Software Packages"
-    >
+    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
       <main>
         <div className="title-container">
           <ToolboxIcon className="h-[80px] w-[80px] text-ifm-primary" />

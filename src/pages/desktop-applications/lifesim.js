@@ -13,7 +13,7 @@ const lifeSimData = [
     doc_location: 'desktop-applications/lifesim/users-guide',
     doc_name: 'LifeSim Users Guide',
     active: true,
-    draft: true,
+    draft: false,
   },
   {
     icon: 'img/LifeSim.png',
@@ -21,7 +21,7 @@ const lifeSimData = [
     doc_location: 'desktop-applications/lifesim/validation-studies',
     doc_name: 'LifeSim Validation Studies',
     active: true,
-    draft: true,
+    draft: false,
   },
 ];
 

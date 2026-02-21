@@ -9,6 +9,13 @@ import '../../css/custom.css';
 const riskCalculationsSuite = [
   {
     IconComponent: ToolboxIcon,
+    doc_location: `toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database`,
+    doc_name: 'Typical Event Tree Database',
+    active: true,
+    draft: false,
+  },
+  {
+    IconComponent: ToolboxIcon,
     doc_location: `toolbox-technical-manuals/risk-calculations-suite/sqra-calcs`,
     doc_name: 'SQRAcalcs Toolbox Technical Manual',
     active: false,
@@ -42,13 +49,6 @@ const riskCalculationsSuite = [
     active: false,
     draft: true,
   },
-  {
-    IconComponent: ToolboxIcon,
-    doc_location: `toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database`,
-    doc_name: 'Typical Event Tree Database',
-    active: true,
-    draft: true,
-  },
 ];
 
 export const riskCalculationsSuiteDocs = riskCalculationsSuite;
@@ -65,16 +65,11 @@ export default function RiskCalculationsSuite() {
 
   const riskCalculationsSuite = riskCalculationsSuiteDocs.map((doc) => ({
     ...doc,
-    doc_location: addBaseUrl(
-      `docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`,
-    ),
+    doc_location: addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`),
   }));
 
   return (
-    <Layout
-      title="RMC Software Documentation"
-      description="Documentation for RMC Software Packages"
-    >
+    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
       <main>
         <div className="title-container">
           <ToolboxIcon className="h-[80px] w-[80px] text-ifm-primary" />

@@ -13,7 +13,7 @@ const bestFitData = [
     doc_location: 'desktop-applications/rmc-bestfit/users-guide',
     doc_name: 'RMC BestFit Users Guide',
     active: true,
-    draft: true,
+    draft: false,
   },
 ];
 
@@ -35,16 +35,11 @@ export default function BestFit() {
     icon: addBaseUrl(doc.icon),
     iconLight: addBaseUrl(doc.iconLight),
     iconDark: addBaseUrl(doc.iconDark),
-    doc_location: addBaseUrl(
-      `docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`,
-    ),
+    doc_location: addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`),
   }));
 
   return (
-    <Layout
-      title="RMC Software Documentation"
-      description="Documentation for RMC Software Packages"
-    >
+    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
       <main>
         <div className="title-container">
           <ThemedImage

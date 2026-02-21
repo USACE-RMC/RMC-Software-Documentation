@@ -12,7 +12,7 @@ const overtoppingSuite = [
     doc_location: `toolbox-technical-manuals/overtopping-suite/overtopping-erosion-toolbox-notes`,
     doc_name: 'Overtopping Toolbox User Notes',
     active: true,
-    draft: true,
+    draft: false,
   },
 ];
 
@@ -30,16 +30,11 @@ export default function OvertoppingSuite() {
 
   const overtoppingSuite = overtoppingSuiteDocs.map((doc) => ({
     ...doc,
-    doc_location: addBaseUrl(
-      `docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`,
-    ),
+    doc_location: addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`),
   }));
 
   return (
-    <Layout
-      title="RMC Software Documentation"
-      description="Documentation for RMC Software Packages"
-    >
+    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
       <main>
         <div className="title-container">
           <ToolboxIcon className="h-[80px] w-[80px] text-ifm-primary" />

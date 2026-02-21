@@ -86,7 +86,7 @@ const FigReference = ({ figKey, suffix }) => {
 
       {showPopover && imgSrc && (
         <span
-          className="absolute left-0 top-full z-50 mt-2 w-max max-w-[420px] rounded border border-gray-200 bg-white p-3 shadow-lg dark:border-gray-600 dark:bg-gray-800"
+          className="absolute left-0 top-full z-50 mt-2 w-max max-w-[420px] whitespace-normal rounded border border-gray-200 bg-white p-3 shadow-lg dark:border-gray-600 dark:bg-gray-800"
           role="tooltip"
         >
           <img src={imgSrc} alt={figInfo.caption || ''} className="block h-auto max-w-full rounded" />

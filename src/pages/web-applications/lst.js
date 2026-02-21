@@ -11,7 +11,7 @@ const lstData = [
     IconComponent: WebAppIcon,
     doc_location: 'web-applications/lst/users-guide',
     doc_name: 'Levee Screening Tool Users Guide',
-    active: true,
+    active: false,
     draft: true,
   },
 ];
