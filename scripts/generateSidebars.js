@@ -356,7 +356,7 @@ function generateSidebarForVersion(versionPath, relativePath, docGroup, folderNa
 /* --- Custom Logic: Documentation Guide Sidebar --- */
 
 function generateDocumentationGuideSidebar() {
-  const guideDir = path.join(DOCS_DIR, '00-documentation-guide');
+  const guideDir = path.join(DOCS_DIR, 'dev/documentation-guide');
   if (!fs.existsSync(guideDir)) return null;
 
   const mainIds = [
@@ -388,7 +388,7 @@ function generateDocumentationGuideSidebar() {
     if (!files.includes(`${id}.mdx`)) return;
     items.push({
       type: 'doc',
-      id: `documentation-guide/${id.replace(/^\d+-/, '')}`,
+      id: `dev/documentation-guide/${id.replace(/^\d+-/, '')}`,
       label: getLabel(id),
     });
   });
@@ -398,7 +398,7 @@ function generateDocumentationGuideSidebar() {
     if (!files.includes(`${id}.mdx`)) return;
     items.push({
       type: 'doc',
-      id: `documentation-guide/${id.replace(/^\d+-/, '')}`,
+      id: `dev/documentation-guide/${id.replace(/^\d+-/, '')}`,
       label: getLabel(id),
     });
   });
