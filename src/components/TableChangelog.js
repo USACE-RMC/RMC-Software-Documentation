@@ -34,7 +34,7 @@ const TableChangelog = ({ dates = [], categories = [], documents = [], descripti
           {Array.from({ length: rowCount }).map((_, rowIndex) => {
             const date = get(dates, rowIndex);
             const category = get(categories, rowIndex);
-            const document = get(documents, rowIndex);
+            const docName = get(documents, rowIndex);
             const desc = get(descriptions, rowIndex);
 
             return (
@@ -50,9 +50,9 @@ const TableChangelog = ({ dates = [], categories = [], documents = [], descripti
                 <td
                   className="table-body-cell border"
                   style={{ textAlign: 'left', whiteSpace: 'normal', overflowWrap: 'anywhere', wordBreak: 'break-word' }}
-                  title={typeof document === 'string' ? document : undefined}
+                  title={typeof docName === 'string' ? docName : undefined}
                 >
-                  {document}
+                  {docName}
                 </td>
 
                 <td

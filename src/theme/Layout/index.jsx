@@ -62,7 +62,7 @@ export default function LayoutWrapper({ children, ...rest }) {
         usace250Logo={true}
       >
         {children}
-        <SiteTour />
+        <SiteTour latestVersions={latestVersions} />
       </SiteWrapper>
     </Layout>
   );

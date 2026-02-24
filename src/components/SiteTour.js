@@ -1,6 +1,6 @@
 import { useHistory, useLocation } from '@docusaurus/router';
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTour } from '../contexts/TourContext';
 
 /*
@@ -163,19 +163,22 @@ const buildSteps = (baseUrl) => [
 
 /* ── URL helper: derive the required URL for a step ──────────────── */
 
-const LIFESIM_BASE = 'docs/desktop-applications/lifesim/users-guide/v1.0';
+function getLifeSimBase(latestVersions) {
+  const version = latestVersions['desktop-applications/lifesim/users-guide'] || 'v1.0';
+  return `docs/desktop-applications/lifesim/users-guide/${version}`;
+}
 
-function getRequiredUrl(step, baseUrl) {
+function getRequiredUrl(step, baseUrl, lifeSimBase) {
   if (!step?.page) return null;
   switch (step.page) {
     case 'doc':
-      return `${baseUrl}${LIFESIM_BASE}/hydraulic-data`;
+      return `${baseUrl}${lifeSimBase}/hydraulic-data`;
     case 'version-history':
-      return `${baseUrl}${LIFESIM_BASE}/version-history`;
+      return `${baseUrl}${lifeSimBase}/version-history`;
     case 'doc-info':
-      return `${baseUrl}${LIFESIM_BASE}/document-info`;
+      return `${baseUrl}${lifeSimBase}/document-info`;
     case 'references':
-      return `${baseUrl}${LIFESIM_BASE}/references`;
+      return `${baseUrl}${lifeSimBase}/references`;
     case 'home':
       return baseUrl;
     default:
@@ -424,11 +427,12 @@ function ProgressDots({ current, total }) {
 
 /* ── Main Tour Component ──────────────────────────────────────────── */
 
-export default function SiteTour() {
+export default function SiteTour({ latestVersions = {} }) {
   const { isTourActive, currentStep, totalSteps, nextStep, prevStep, endTour, startTour } = useTour();
   const baseUrl = useBaseUrl('/');
   const history = useHistory();
   const location = useLocation();
+  const lifeSimBase = useMemo(() => getLifeSimBase(latestVersions), [latestVersions]);
   const steps = useMemo(() => buildSteps(baseUrl), [baseUrl]);
   const tooltipRef = useRef(null);
   const [targetRect, setTargetRect] = useState(null);
@@ -439,14 +443,14 @@ export default function SiteTour() {
   const [isFadingOut, setIsFadingOut] = useState(false);
 
   // Wrap endTour so exiting always returns to the homepage
-  const handleEndTour = (markComplete) => {
+  const handleEndTour = useCallback((markComplete) => {
     endTour(markComplete);
     const currentPath = normalizePath(location.pathname);
     const homePath = normalizePath(baseUrl);
     if (currentPath !== homePath) {
       history.push(baseUrl);
     }
-  };
+  }, [endTour, location.pathname, baseUrl, history]);
 
   // Register step count on mount and play entrance animation
   useEffect(() => {
@@ -462,7 +466,7 @@ export default function SiteTour() {
     if (!isTourActive) return;
 
     const step = steps[currentStep];
-    const requiredUrl = getRequiredUrl(step, baseUrl);
+    const requiredUrl = getRequiredUrl(step, baseUrl, lifeSimBase);
     if (!requiredUrl) return;
 
     const currentPath = normalizePath(location.pathname);
@@ -481,14 +485,14 @@ export default function SiteTour() {
       }, 200);
       return () => clearTimeout(navTimer);
     }
-  }, [isTourActive, currentStep, steps, baseUrl, history, location.pathname]);
+  }, [isTourActive, currentStep, steps, baseUrl, lifeSimBase, history, location.pathname]);
 
   // Detect when navigation completes and let the page settle
   useEffect(() => {
     if (!isNavigating) return;
 
     const step = steps[currentStep];
-    const requiredUrl = getRequiredUrl(step, baseUrl);
+    const requiredUrl = getRequiredUrl(step, baseUrl, lifeSimBase);
     if (!requiredUrl) {
       setIsNavigating(false);
       return;
@@ -508,7 +512,7 @@ export default function SiteTour() {
       }, 500);
       return () => clearTimeout(timer);
     }
-  }, [location.pathname, isNavigating, currentStep, steps, baseUrl]);
+  }, [location.pathname, isNavigating, currentStep, steps, baseUrl, lifeSimBase]);
 
   // Find and position the tooltip relative to the target element
   useEffect(() => {
