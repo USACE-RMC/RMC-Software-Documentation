@@ -304,7 +304,7 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
       children: [
         {
           id: 'changelog',
-          text: 'Changelog',
+          text: 'Change Log',
           href: changelogHref,
         },
       ],
