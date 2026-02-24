@@ -139,6 +139,11 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
 
   /* -------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
+  /* Help links */
+  const changelogHref = useBaseUrl('/changelog');
+
+  /* -------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
   return [
     { id: 'home', text: 'Home', href: homeHref },
     {
@@ -290,6 +295,17 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
               href: lstUsersGuideHref,
             },
           ],
+        },
+      ],
+    },
+    {
+      id: 'help',
+      text: 'Help',
+      children: [
+        {
+          id: 'changelog',
+          text: 'Changelog',
+          href: changelogHref,
         },
       ],
     },
