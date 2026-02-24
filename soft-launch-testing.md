@@ -137,9 +137,9 @@ Thanks,
 
 ---
 
-## Tester 6 — Mobile, Links & Dev Portal
+## Tester 6 — Site Look & Feel
 
-**Subject:** RMC Software Documentation Site — Soft Launch Testing (Mobile, Links & Dev Portal)
+**Subject:** RMC Software Documentation Site — Soft Launch Testing (Look & Feel)
 
 ---
 
@@ -147,15 +147,42 @@ Hi [Name],
 
 We're preparing to launch a new documentation website for the RMC suite of tools. The site consolidates user's guides, technical manuals, validation studies, and other reference documents for RMC software — including desktop applications (LifeSim, RMC-TotalRisk, RMC-RFA, RMC-BestFit), web applications, and the full set of toolbox technical manuals (Internal Erosion, Overtopping, Risk Calculations, Seismic Hazard). The goal is to provide a single, searchable, version-managed home for all of this documentation, replacing scattered PDFs and legacy formats.
 
-Before we open this up more broadly, we're running a small round of hands-on testing. Your focus area covers a few different things: **mobile usability, external links, and the developer resources portal**. You're the only tester looking at the dev-facing parts of the site, so your feedback there is especially valuable.
+Before we open this up more broadly, we're running a small round of hands-on testing. Your focus area is **site look and feel** — does the site look right? We want your eye on visual consistency, layout, spacing, and overall polish across the site.
 
 Here's what I'd like you to do:
 
-1. **Test on mobile.** Open the site on your phone (or resize your browser window to roughly phone width). From the homepage, navigate into any document and find a page with figures. Report whether the hamburger menu works, figures resize properly, and text is readable without horizontal scrolling.
+1. **Review the homepage and landing pages.** Start at the homepage and look at the overall layout — card alignment, spacing, icon consistency, and readability. Then click into at least two application landing pages (e.g., Internal Erosion Suite and LifeSim). Do the landing pages follow a consistent visual pattern? Do images, cards, and headings look clean and well-aligned?
 
-2. **Verify external links.** Click the "RMC Website" link in the top navigation bar. Then click each of the four links in the site footer (Home, Training, Software, Library). Confirm all five links open the correct USACE RMC pages.
+2. **Review a document page for visual consistency.** Open the RMC-BestFit User's Guide (or any other document) and browse through several pages. Look at heading styles, font sizes, figure placement, table borders, caption formatting, and overall whitespace. Does everything feel visually consistent page-to-page? Do figures and tables look well-spaced and professionally presented?
 
-3. **Check the Developer Resources page.** Navigate to the Developer Resources page by adding `/docs/dev` to the site URL. Verify the page loads and shows four content sections. Click at least one link (e.g., Documentation Guide or GitHub Workflows) and confirm it takes you to the correct document. Then go back to the main search bar and search for "GitHub Workflows" or "commit message standards" — these developer docs should **not** appear in search results. Let me know if they do.
+3. **Test mobile and responsive layout.** Open the site on your phone (or resize your browser window to roughly phone width). Navigate from the homepage into a document and find a page with figures and tables. Check whether the hamburger menu works, figures and tables resize properly, text is readable without horizontal scrolling, and the overall layout holds together on a smaller screen. Also verify the external links in the navbar and footer — click the "RMC Website" link in the top navigation bar and the links in the site footer to confirm they open correctly.
+
+If anything looks off — inconsistent spacing, misaligned elements, odd font sizes, broken layouts, or anything that just doesn't feel polished — please note it. That kind of feedback is exactly what we're looking for at this stage.
+
+Thanks,
+[Your Name]
+
+---
+
+## Tester 7 — Developer Resources
+
+**Subject:** RMC Software Documentation Site — Soft Launch Testing (Developer Resources)
+
+---
+
+Hi [Name],
+
+We're preparing to launch a new documentation website for the RMC suite of tools. The site consolidates user's guides, technical manuals, validation studies, and other reference documents for RMC software — including desktop applications (LifeSim, RMC-TotalRisk, RMC-RFA, RMC-BestFit), web applications, and the full set of toolbox technical manuals (Internal Erosion, Overtopping, Risk Calculations, Seismic Hazard). The goal is to provide a single, searchable, version-managed home for all of this documentation, replacing scattered PDFs and legacy formats.
+
+In addition to end-user documentation, the site includes a set of **developer resources** — internal guides for contributors covering documentation standards, GitHub workflows, component usage, and style conventions. These are intentionally separated from the main documentation and should not appear in the site's primary search results. Before we open this up more broadly, we're running a small round of hands-on testing, and you're the dedicated tester for the developer-facing parts of the site. Your feedback here is especially valuable since you're the only tester focused on this area.
+
+Here's what I'd like you to do:
+
+1. **Find and access the Developer Resources page.** Navigate to the Developer Resources page by adding `/docs/dev` to the site URL. Verify the page loads and shows the available content sections. Are the sections clearly labeled and organized? Is it obvious what each section covers?
+
+2. **Test all links within the developer documents.** Click through each link on the Developer Resources page (e.g., Documentation Guide, GitHub Workflows, Component Reference, Style Guide). Confirm that every link takes you to the correct document and that each document loads fully — no broken pages, missing content, or dead ends. Once inside a developer document, check that its sidebar navigation works and that internal cross-references (links to other sections or pages within the document) resolve correctly.
+
+3. **Verify developer documents display correctly and are excluded from search.** Browse through at least two developer documents and check that they render properly — headings, code blocks, component examples, and any tables or lists should all display as expected. Then go back to the main site search bar and search for terms like "GitHub Workflows," "commit message standards," or "component usage." These developer docs should **not** appear in the main search results. Let me know if any of them do.
 
 If anything feels confusing, broken, or just off, please note it — that kind of feedback is exactly what we're looking for at this stage.
 
@@ -166,13 +193,14 @@ Thanks,
 
 ## Coverage Summary
 
-| Area | Tester | Tasks |
-|------|--------|-------|
-| Homepage & navigation flow | 1 | 3 |
-| Search (relevance, cross-doc, continuity) | 2 | 3 |
-| Version switching, warnings & history | 3 | 3 |
-| Figures, equations, citations, bibliography | 4 | 3 |
-| Document metadata, sidebars, tables | 5 | 3 |
-| Mobile, external links, dev portal & search exclusion | 6 | 3 |
+| Area | Tester | Focus | Tasks |
+|------|--------|-------|-------|
+| Homepage & navigation flow | 1 | Main site | 3 |
+| Search (relevance, cross-doc, continuity) | 2 | Main site | 3 |
+| Version switching, warnings & history | 3 | Main site | 3 |
+| Figures, equations, citations, bibliography | 4 | Main site | 3 |
+| Document metadata, sidebars, tables | 5 | Main site | 3 |
+| Visual consistency, layout, spacing & mobile | 6 | Look & Feel | 3 |
+| Dev docs: access, links, display & search exclusion | 7 | Developer Resources | 3 |
 
-**18 tasks across 6 testers**, 3 each.
+**21 tasks across 7 testers**, 3 each.

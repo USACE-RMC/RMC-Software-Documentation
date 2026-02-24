@@ -26,22 +26,32 @@ export function TourProvider({ children }) {
     }
   }, []);
 
+  const lockScroll = useCallback(() => {
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflowY = 'scroll';
+  }, []);
+
+  const unlockScroll = useCallback(() => {
+    document.documentElement.style.overflow = '';
+    document.body.style.overflowY = '';
+  }, []);
+
   const startTour = useCallback((stepCount) => {
     setCurrentStep(0);
     if (stepCount) setTotalSteps(stepCount);
     setIsTourActive(true);
-    document.body.style.overflow = 'hidden';
-  }, []);
+    lockScroll();
+  }, [lockScroll]);
 
   const endTour = useCallback((markComplete = true) => {
     setIsTourActive(false);
     setCurrentStep(0);
-    document.body.style.overflow = '';
+    unlockScroll();
     if (markComplete && typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEY, 'true');
       setHasCompletedTour(true);
     }
-  }, []);
+  }, [unlockScroll]);
 
   const nextStep = useCallback(() => {
     setCurrentStep((prev) => Math.min(prev + 1, totalSteps - 1));

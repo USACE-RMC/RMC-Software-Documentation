@@ -1,5 +1,6 @@
+import { useHistory, useLocation } from '@docusaurus/router';
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTour } from '../contexts/TourContext';
 
 /*
@@ -11,37 +12,48 @@ import { useTour } from '../contexts/TourContext';
  *
  *  Placement controls tooltip position relative to the target:
  *    top | bottom | left | right  (default: bottom)
+ *
+ *  The `page` field tags which page group a step belongs to ('home'
+ *  or 'doc'). Navigation is triggered automatically when the current
+ *  URL doesn't match the step's required page.
  * ────────────────────────────────────────────────────────────────────
  */
 const buildSteps = (baseUrl) => [
+  // ── Homepage steps (0-4) ──────────────────────────────────────
   {
     title: 'Welcome to RMC Software Documentation',
     content:
-      'This quick tour will show you how to navigate the site, find documents, and use the interactive features built into every page. You can revisit this tour anytime from the homepage.',
+      'This quick tour will show you how to navigate the site, find documents, and use the interactive features built into every page. You can revisit this tour anytime from the home page.',
     icon: 'compass',
+    page: 'home',
   },
   {
     title: 'Main Navigation',
     content:
-      'The top navigation bar organizes all documentation into three categories: Desktop Applications, Toolbox Technical Manuals, and Web Applications. Hover over each to see the available tools and their documents.',
-    selector: 'header.gw-sticky nav, header.gw-sticky .gw-hidden.md\\:gw-flex',
+      'The top navigation bar organizes all documentation into three categories: Desktop Applications, Toolbox Technical Manuals, and Web Applications. Each category expands on hover to reveal the available tools and their documents. Helpful resources can also be accessed from the navigation bar.',
+    selector: 'header.gw-sticky .gw-bg-nav-black',
+    padding: { bottom: 4 },
     placement: 'bottom',
     icon: 'menu',
+    page: 'home',
   },
   {
     title: 'Search',
     content:
-      'Use the search bar to quickly find any content across all documents. Search works across all versions and document types \u2014 just start typing a keyword, figure number, or topic.',
-    selector: '.search-wrapper',
+      'The search bar finds content across all documents, versions, and document types. Enter a keyword, figure number, or topic to see instant results.',
+    selector: 'header.gw-sticky span.gw-flex-row-reverse .search-wrapper',
+    padding: { right: 60, left: 2, bottom: -8 },
     placement: 'bottom',
     icon: 'search',
+    page: 'home',
   },
   {
-    title: 'Dark Mode',
-    content: 'Toggle between light and dark themes to suit your preference. The entire site, including figures and tables, adapts to your chosen theme.',
+    title: 'Light/Dark Mode Toggle',
+    content: 'This button switches between light and dark themes. The entire site, including figures and tables, adapts to your chosen theme.',
     selector: 'button[aria-label*="Switch to"]',
     placement: 'bottom',
     icon: 'theme',
+    page: 'home',
   },
   {
     title: 'Homepage Categories',
@@ -50,66 +62,130 @@ const buildSteps = (baseUrl) => [
     selector: '.main-content-container',
     placement: 'top',
     icon: 'grid',
+    page: 'home',
   },
+
+  // ── Doc page steps (5-13) — navigates across LifeSim pages ────
   {
     title: 'Sidebar Navigation',
     content:
-      'When viewing a document, the left sidebar shows all chapters and sections. Click any item to jump directly to that section. The sidebar reflects the document\u2019s full table of contents.',
+      'The left sidebar shows all chapters and sections of the current document. Selecting any item jumps directly to that section. The sidebar reflects the document\u2019s full table of contents.',
     selector: '.theme-doc-sidebar-container',
     selectorFallback: 'aside',
     placement: 'right',
     icon: 'sidebar',
-    requiresDocPage: true,
+    page: 'doc',
   },
   {
     title: 'Table of Contents',
     content:
-      'The right-side table of contents shows the headings on the current page. Click any heading to scroll directly to that section. The active heading is highlighted as you scroll.',
+      'The right-side table of contents shows the headings on the current page. Selecting any heading scrolls directly to that section, and the active heading highlights as you read.',
     selector: '.table-of-contents',
     selectorFallback: '.col--3',
+    padding: { left: -2, right: 26 },
     placement: 'left',
     icon: 'toc',
-    requiresDocPage: true,
+    page: 'doc',
   },
   {
     title: 'Breadcrumb Trail',
-    content: 'Breadcrumbs at the top of each page show your current location in the documentation hierarchy. Click any segment to navigate back up to that level.',
+    content:
+      'Breadcrumbs at the top of each page show your current location in the documentation hierarchy. Each segment is a link back up to that level.',
     selector: '.breadcrumbs, nav[aria-label="Breadcrumbs"]',
     placement: 'bottom',
     icon: 'breadcrumb',
-    requiresDocPage: true,
-  },
-  {
-    title: 'Interactive Figure Previews',
-    content:
-      'Throughout the documents, figure references (e.g., "Figure 3") are clickable links. Hover over them to see a preview popup of the figure without leaving the page. Click to jump to the full figure.',
-    icon: 'image',
-  },
-  {
-    title: 'Version Control',
-    content:
-      'Many documents have multiple versions. Look for the version selector dropdown near the top of document pages. If you\u2019re viewing an older version, a notice banner will appear with a link to the latest version.',
-    icon: 'version',
+    page: 'doc',
   },
   {
     title: 'Document Information',
     content:
-      'Each document includes a "Document Information" page with metadata such as the report date, authors, abstract, and citation guide. Look for it in the sidebar, usually as the first entry.',
+      'The Document Information page provides metadata for each document including the report date, type, title, authors, and acknowledgments. Look for it as the first entry in the sidebar.',
+    selector: '.table-container',
+    placement: 'top',
     icon: 'info',
+    page: 'doc-info',
+  },
+  {
+    title: 'Version History',
+    content:
+      'Each document includes a Version History page that tracks revisions, dates, authors, and reviewers. This table makes it easy to see what changed between versions and who was responsible. Archived versions can be accessed from the links in the Version History table.',
+    selector: '.table-container',
+    placement: 'top',
+    icon: 'version',
+    page: 'version-history',
+  },
+  {
+    title: 'Document Reading Area',
+    content:
+      'The central reading area displays the document content. This is where you will find the text, figures, tables, and equations for each section of the document.',
+    selector: 'article',
+    placement: 'left',
+    icon: 'document',
+    page: 'doc',
+  },
+  {
+    title: 'Figures, Tables & Equations',
+    content:
+      'Documents include numbered figures, tables, and equations. In-text references are clickable links that jump to the full element. Figure references also show a preview popup on hover. Tables and equations follow the same clickable reference pattern throughout every document.',
+    selector: 'figure',
+    placement: 'top',
+    icon: 'image',
+    page: 'doc',
   },
   {
     title: 'References & Citations',
     content:
-      'Academic citations appear as numbered superscripts (e.g., [1]) next to the in-text reference. Click the number to jump to the full reference in the bibliography section at the end of the document.',
+      'Academic citations appear as numbered superscripts (e.g., [1]) next to the in-text reference. Selecting a citation link jumps to the full reference in the footnotes at the end of the current page.',
+    selector: '.citation-link',
+    padding: { top: 6, right: 10, bottom: 8, left: 8 },
+    placement: 'bottom',
     icon: 'citation',
+    page: 'doc',
   },
   {
-    title: 'You\u2019re All Set!',
+    title: 'References Page',
     content:
-      'You now know the essentials of navigating this site. Remember, you can always restart this tour from the homepage. Happy reading!',
+      'Each document ends with a References page listing all cited sources. The bibliography is auto-generated from the citations used throughout the document.',
+    selector: '.theme-doc-markdown',
+    placement: 'left',
+    icon: 'book',
+    page: 'references',
+  },
+
+  // ── Return to homepage (14) ──────────────────────────────────
+  {
+    title: 'You\u2019re All Set!',
+    content: 'You now know the essentials of navigating this site. Remember, you can always restart this tour from the home page. Happy reading!',
     icon: 'check',
+    page: 'home',
   },
 ];
+
+/* ── URL helper: derive the required URL for a step ──────────────── */
+
+const LIFESIM_BASE = 'docs/desktop-applications/lifesim/users-guide/v1.0';
+
+function getRequiredUrl(step, baseUrl) {
+  if (!step?.page) return null;
+  switch (step.page) {
+    case 'doc':
+      return `${baseUrl}${LIFESIM_BASE}/hydraulic-data`;
+    case 'version-history':
+      return `${baseUrl}${LIFESIM_BASE}/version-history`;
+    case 'doc-info':
+      return `${baseUrl}${LIFESIM_BASE}/document-info`;
+    case 'references':
+      return `${baseUrl}${LIFESIM_BASE}/references`;
+    case 'home':
+      return baseUrl;
+    default:
+      return null;
+  }
+}
+
+function normalizePath(p) {
+  return (p || '').replace(/\/+$/, '') || '/';
+}
 
 /* ── SVG icon map ─────────────────────────────────────────────────── */
 
@@ -202,8 +278,23 @@ const icons = {
   ),
   citation: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
-      <path d="M3 21c3-3 3-6 3-9V6a2 2 0 0 1 2-2h2" />
-      <path d="M14 21c3-3 3-6 3-9V6a2 2 0 0 1 2-2h2" />
+      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+    </svg>
+  ),
+  document: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+      <line x1="16" y1="13" x2="8" y2="13" />
+      <line x1="16" y1="17" x2="8" y2="17" />
+      <polyline points="10 9 9 9 8 9" />
+    </svg>
+  ),
+  book: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
     </svg>
   ),
   check: (
@@ -251,23 +342,43 @@ function getTooltipStyle(rect, placement, tooltipW, tooltipH) {
   return { top, left };
 }
 
+/* ── Clip a rect to the visible viewport ──────────────────────────── */
+
+function clipToViewport(rect) {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const top = Math.max(0, rect.top);
+  const left = Math.max(0, rect.left);
+  const bottom = Math.min(vh, rect.top + rect.height);
+  const right = Math.min(vw, rect.left + rect.width);
+  return { top, left, bottom, right, width: right - left, height: bottom - top };
+}
+
 /* ── Spotlight overlay (four rects around the target) ─────────────── */
 
-function SpotlightOverlay({ rect }) {
+function SpotlightOverlay({ rect, padding }) {
   if (!rect) {
-    return <div className="tour-overlay tour-overlay--full" />;
+    return <div className="pointer-events-none fixed inset-0 z-[10001] bg-black/55" />;
   }
 
-  const pad = 8;
+  const defaultPad = 8;
+  const pt = padding?.top ?? defaultPad;
+  const pr = padding?.right ?? defaultPad;
+  const pb = padding?.bottom ?? defaultPad;
+  const pl = padding?.left ?? defaultPad;
   const r = {
-    top: Math.max(0, rect.top - pad),
-    left: Math.max(0, rect.left - pad),
-    width: rect.width + pad * 2,
-    height: rect.height + pad * 2,
+    top: Math.max(0, rect.top - pt),
+    left: Math.max(0, rect.left - pl),
+    width: rect.width + pl + pr,
+    height: rect.height + pt + pb,
   };
 
   return (
-    <svg className="tour-overlay" viewBox={`0 0 ${window.innerWidth} ${window.innerHeight}`} preserveAspectRatio="none">
+    <svg
+      className="pointer-events-none fixed inset-0 z-[10001]"
+      viewBox={`0 0 ${window.innerWidth} ${window.innerHeight}`}
+      preserveAspectRatio="none"
+    >
       <defs>
         <mask id="tour-spotlight-mask">
           <rect x="0" y="0" width="100%" height="100%" fill="white" />
@@ -284,7 +395,7 @@ function SpotlightOverlay({ rect }) {
         fill="none"
         stroke="var(--ifm-color-primary)"
         strokeWidth="2"
-        className="tour-spotlight-ring"
+        className="animate-[tour-pulse_2s_ease-in-out_infinite]"
       />
     </svg>
   );
@@ -299,7 +410,11 @@ function ProgressDots({ current, total }) {
         <span
           key={i}
           className={`inline-block h-1.5 rounded-full transition-all duration-300 ${
-            i === current ? 'w-5 bg-[var(--ifm-color-primary)]' : i < current ? 'w-1.5 bg-[var(--ifm-color-primary-light)]' : 'w-1.5 bg-gray-300 dark:bg-gray-600'
+            i === current
+              ? 'w-5 bg-[var(--ifm-color-primary)]'
+              : i < current
+                ? 'w-1.5 bg-[var(--ifm-color-primary-light)]'
+                : 'w-1.5 bg-gray-300 dark:bg-gray-600'
           }`}
         />
       ))}
@@ -312,32 +427,109 @@ function ProgressDots({ current, total }) {
 export default function SiteTour() {
   const { isTourActive, currentStep, totalSteps, nextStep, prevStep, endTour, startTour } = useTour();
   const baseUrl = useBaseUrl('/');
+  const history = useHistory();
+  const location = useLocation();
   const steps = useMemo(() => buildSteps(baseUrl), [baseUrl]);
   const tooltipRef = useRef(null);
   const [targetRect, setTargetRect] = useState(null);
+  const [spotlightPadding, setSpotlightPadding] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 });
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [isFadingOut, setIsFadingOut] = useState(false);
 
-  // Register step count on mount
+  // Wrap endTour so exiting always returns to the homepage
+  const handleEndTour = (markComplete) => {
+    endTour(markComplete);
+    const currentPath = normalizePath(location.pathname);
+    const homePath = normalizePath(baseUrl);
+    if (currentPath !== homePath) {
+      history.push(baseUrl);
+    }
+  };
+
+  // Register step count on mount and play entrance animation
   useEffect(() => {
     if (isTourActive && totalSteps !== steps.length) {
       startTour(steps.length);
+      setIsAnimating(true);
+      setTimeout(() => setIsAnimating(false), 300);
     }
   }, [isTourActive, totalSteps, steps.length, startTour]);
 
-  // Find and position the tooltip relative to the target element
+  // Navigate when the current step requires a different page
   useEffect(() => {
     if (!isTourActive) return;
 
-    setIsAnimating(true);
-    const timer = setTimeout(() => setIsAnimating(false), 300);
+    const step = steps[currentStep];
+    const requiredUrl = getRequiredUrl(step, baseUrl);
+    if (!requiredUrl) return;
+
+    const currentPath = normalizePath(location.pathname);
+    const targetPath = normalizePath(requiredUrl);
+
+    if (currentPath !== targetPath) {
+      // Fade out tooltip first, then navigate
+      setIsFadingOut(true);
+      const navTimer = setTimeout(() => {
+        setIsFadingOut(false);
+        setIsNavigating(true);
+        setTargetRect(null);
+        document.documentElement.style.overflow = '';
+        document.body.style.overflowY = '';
+        history.push(requiredUrl);
+      }, 200);
+      return () => clearTimeout(navTimer);
+    }
+  }, [isTourActive, currentStep, steps, baseUrl, history, location.pathname]);
+
+  // Detect when navigation completes and let the page settle
+  useEffect(() => {
+    if (!isNavigating) return;
+
+    const step = steps[currentStep];
+    const requiredUrl = getRequiredUrl(step, baseUrl);
+    if (!requiredUrl) {
+      setIsNavigating(false);
+      return;
+    }
+
+    const currentPath = normalizePath(location.pathname);
+    const targetPath = normalizePath(requiredUrl);
+
+    if (currentPath === targetPath) {
+      const timer = setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflowY = 'scroll';
+        setIsAnimating(true);
+        setIsNavigating(false);
+        setTimeout(() => setIsAnimating(false), 300);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [location.pathname, isNavigating, currentStep, steps, baseUrl]);
+
+  // Find and position the tooltip relative to the target element
+  useEffect(() => {
+    if (!isTourActive || isNavigating) return;
 
     const step = steps[currentStep];
     if (!step) return;
 
-    const findTarget = () => {
+    const findTarget = (attempt = 0) => {
       if (!step.selector) {
         setTargetRect(null);
+        setSpotlightPadding(null);
+        // Calculate explicit center coordinates so CSS transition works
+        requestAnimationFrame(() => {
+          if (!tooltipRef.current) return;
+          const tRect = tooltipRef.current.getBoundingClientRect();
+          setTooltipPos({
+            top: (window.innerHeight - tRect.height) / 2,
+            left: (window.innerWidth - tRect.width) / 2,
+          });
+        });
         return;
       }
 
@@ -345,13 +537,21 @@ export default function SiteTour() {
       if (!el && step.selectorFallback) {
         el = document.querySelector(step.selectorFallback);
       }
+
+      // Retry a few times after navigation in case DOM hasn't rendered
+      if (!el && attempt < 3) {
+        setTimeout(() => findTarget(attempt + 1), 200);
+        return;
+      }
+
       if (!el) {
         setTargetRect(null);
         return;
       }
 
-      const rect = el.getBoundingClientRect();
+      const rect = clipToViewport(el.getBoundingClientRect());
       setTargetRect(rect);
+      setSpotlightPadding(step.padding);
 
       // Position tooltip after a tick so the ref is sized
       requestAnimationFrame(() => {
@@ -362,38 +562,47 @@ export default function SiteTour() {
       });
     };
 
-    // Small delay to let any page transitions settle
-    const posTimer = setTimeout(findTarget, 50);
+    // Longer delay after a navigation to let the page fully render
+    const delay = step.page !== 'home' ? 200 : 50;
+    const posTimer = setTimeout(findTarget, delay);
 
     // Reposition on resize
     const handleResize = () => findTarget();
     window.addEventListener('resize', handleResize);
 
     return () => {
-      clearTimeout(timer);
       clearTimeout(posTimer);
       window.removeEventListener('resize', handleResize);
     };
-  }, [isTourActive, currentStep, steps]);
+  }, [isTourActive, currentStep, steps, isNavigating]);
 
   // Keyboard navigation
   useEffect(() => {
-    if (!isTourActive) return;
+    if (!isTourActive || isNavigating) return;
 
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') endTour(false);
+      if (e.key === 'Escape') handleEndTour(false);
       if (e.key === 'ArrowRight' || e.key === 'Enter') {
         if (currentStep < steps.length - 1) nextStep();
-        else endTour(true);
+        else handleEndTour(true);
       }
       if (e.key === 'ArrowLeft') prevStep();
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isTourActive, currentStep, steps.length, nextStep, prevStep, endTour]);
+  }, [isTourActive, currentStep, steps.length, nextStep, prevStep, handleEndTour, isNavigating]);
 
   if (!isTourActive) return null;
+
+  // Dark overlay only while navigating between pages
+  if (isNavigating) {
+    return (
+      <div className="fixed inset-0 z-[10000]" role="dialog" aria-modal="true" aria-label="Site tour">
+        <div className="pointer-events-none fixed inset-0 z-[10001] bg-black/55" />
+      </div>
+    );
+  }
 
   const step = steps[currentStep];
   const isFirst = currentStep === 0;
@@ -401,37 +610,29 @@ export default function SiteTour() {
   const isCentered = !step.selector || !targetRect;
 
   return (
-    <div className="tour-container" role="dialog" aria-modal="true" aria-label="Site tour">
-      <SpotlightOverlay rect={isCentered ? null : targetRect} />
+    <div className="fixed inset-0 z-[10000]" role="dialog" aria-modal="true" aria-label="Site tour">
+      <SpotlightOverlay rect={isCentered ? null : targetRect} padding={spotlightPadding} />
 
       {/* Click-shield: clicking the overlay advances or dismisses */}
-      <div className="tour-click-shield" onClick={() => (isLast ? endTour(true) : nextStep())} />
+      <div className="fixed inset-0 z-[10002] cursor-pointer" onClick={() => (isLast ? handleEndTour(true) : nextStep())} />
 
       {/* Tooltip card */}
       <div
         ref={tooltipRef}
-        className={`tour-tooltip ${isAnimating ? 'tour-tooltip--entering' : ''} ${isCentered ? 'tour-tooltip--centered' : ''}`}
-        style={
-          isCentered
-            ? {}
-            : {
-                position: 'fixed',
-                top: tooltipPos.top,
-                left: tooltipPos.left,
-              }
-        }
+        className={`tour-tooltip ${isAnimating ? 'tour-tooltip--entering' : ''} ${isCentered ? 'tour-tooltip--centered' : ''} ${isFadingOut ? 'tour-tooltip--exiting' : ''}`}
+        style={{
+          position: 'fixed',
+          top: tooltipPos.top,
+          left: tooltipPos.left,
+        }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex items-start gap-3">
-          <span className="tour-icon">{icons[step.icon] || icons.compass}</span>
-          <div className="flex-1">
-            <h3 className="m-0 font-usace text-base font-semibold text-font-color dark:text-gray-100">{step.title}</h3>
-          </div>
+        <div key={currentStep} className="relative animate-[tour-content-fade_0.45s_ease-out]">
+          {/* Close button */}
           <button
             type="button"
-            onClick={() => endTour(false)}
-            className="tour-close"
+            onClick={() => handleEndTour(false)}
+            className="absolute right-0 top-0 flex h-6 w-6 shrink-0 items-center justify-center rounded text-[var(--font-color-description)] transition-colors hover:bg-[var(--surface-card)] hover:text-[var(--font-color)]"
             aria-label="Close tour"
             title="Close tour"
           >
@@ -440,29 +641,42 @@ export default function SiteTour() {
               <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
-        </div>
 
-        {/* Body */}
-        <p className="mt-3 mb-4 font-usace text-sm leading-relaxed text-gray-600 dark:text-gray-300">{step.content}</p>
+          {/* Header */}
+          <div className="flex items-center gap-3">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--ifm-color-primary-lightest)] text-[var(--ifm-color-primary)] dark:bg-[var(--ifm-color-primary-darkest)] dark:text-[var(--ifm-color-primary-light)]">
+              {icons[step.icon] || icons.compass}
+            </span>
+            <div className="flex-1">
+              <h3 className="m-0 font-usace text-base font-semibold text-font-color dark:text-gray-100">{step.title}</h3>
+            </div>
+          </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between">
-          <ProgressDots current={currentStep} total={steps.length} />
+          {/* Body */}
+          <p className="mb-4 mt-3 font-usace text-sm leading-relaxed text-gray-600 dark:text-gray-300">{step.content}</p>
 
-          <div className="flex items-center gap-2">
-            {!isFirst && (
-              <button type="button" onClick={prevStep} className="tour-btn tour-btn--secondary">
-                Back
+          {/* Footer */}
+          <div className="flex items-center justify-between">
+            <ProgressDots current={currentStep} total={steps.length} />
+
+            <div className="flex items-center gap-2">
+              {!isFirst && (
+                <button
+                  type="button"
+                  onClick={prevStep}
+                  className="cursor-pointer rounded-lg border-none bg-transparent px-4 py-1.5 font-usace text-sm font-medium text-[var(--font-color-description)] transition-all duration-150 hover:bg-[var(--surface-card)] hover:text-[var(--font-color)]"
+                >
+                  Back
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => (isLast ? handleEndTour(true) : nextStep())}
+                className="cursor-pointer rounded-lg border-none bg-[var(--ifm-color-primary)] px-4 py-1.5 font-usace text-sm font-medium text-white transition-all duration-150 hover:bg-[var(--ifm-color-primary-dark)]"
+              >
+                {isLast ? 'Finish' : 'Next'}
               </button>
-            )}
-            {isFirst && (
-              <button type="button" onClick={() => endTour(false)} className="tour-btn tour-btn--secondary">
-                Skip
-              </button>
-            )}
-            <button type="button" onClick={() => (isLast ? endTour(true) : nextStep())} className="tour-btn tour-btn--primary">
-              {isLast ? 'Finish' : 'Next'}
-            </button>
+            </div>
           </div>
         </div>
       </div>

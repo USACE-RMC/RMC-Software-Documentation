@@ -90,7 +90,7 @@ export default function Dev() {
       <Hero
         image={[addBaseUrl('nww-lucky-peak-dam.jpg'), addBaseUrl('taylorsville-SPPRu4Rw.jpg')]}
         alt={['Lucky Peak Dam', 'Taylorsville Dam']}
-        title="RMC SoftwareDeveloper Resources"
+        title="RMC Software Developer Resources"
         subtitle="Internal development guides and technical references"
         imgHeight="18vh"
       />
