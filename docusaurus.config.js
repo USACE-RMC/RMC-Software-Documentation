@@ -81,14 +81,7 @@ export default {
         alt: 'RMC Logo',
         src: 'img/USACE.png',
       },
-      items: [
-        {
-          label: 'RMC Website',
-          to: 'https://www.rmc.usace.army.mil/',
-          position: 'right',
-          className: 'rmc-home-link',
-        },
-      ],
+      items: [],
     },
     footer: {
       style: 'light',

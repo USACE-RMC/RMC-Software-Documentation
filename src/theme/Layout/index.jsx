@@ -6,6 +6,7 @@ import '@usace/groundwork/dist/style.css';
 import { useEffect } from 'react';
 import '../../css/custom.css';
 
+import SiteTour from '../../components/SiteTour';
 import buildNavLinks from './buildNavLinks';
 import externalLinks from './externalLinks';
 import ThemeToggle from './ThemeToggle';
@@ -61,6 +62,7 @@ export default function LayoutWrapper({ children, ...rest }) {
         usace250Logo={true}
       >
         {children}
+        <SiteTour latestVersions={latestVersions} />
       </SiteWrapper>
     </Layout>
   );

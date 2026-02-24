@@ -2,6 +2,7 @@ import addBaseUrl from '@docusaurus/useBaseUrl';
 import Layout from '@theme/Layout';
 import { Hero } from '@usace/groundwork';
 import ContentBoxLarge from '../components/ContentBoxLarge';
+import TourButton from '../components/TourButton';
 import DesktopAppIcon from '../components/icons/DesktopAppIcon';
 import DSTIcon from '../components/icons/DSTIcon';
 import InternalErosionIcon from '../components/icons/InternalErosionIcon';
@@ -63,6 +64,7 @@ export default function Home() {
         imgHeight="18vh"
       />
       <main className="main-content-container">
+        <TourButton />
         <ContentBoxLarge contentData={homepageData} />
       </main>
     </Layout>

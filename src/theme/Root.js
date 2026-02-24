@@ -1,18 +1,18 @@
 import React from "react";
 import Root from "@theme-original/Root";
-import SearchBar from "@theme/SearchBar";
 import { CounterProvider } from "../components/Counters";
 import { ReportIdProvider } from "@site/src/contexts/ReportIdContext";
-import { SiteWrapper } from "@usace/groundwork";
-import "@usace/groundwork/dist/style.css";
+import { TourProvider } from "@site/src/contexts/TourContext";
 import "../css/custom.css";
 
 export default function CustomRoot(props) {
   return (
-    <CounterProvider>
-      <ReportIdProvider>
-        <Root {...props} />
-      </ReportIdProvider>
-    </CounterProvider>
+    <TourProvider>
+      <CounterProvider>
+        <ReportIdProvider>
+          <Root {...props} />
+        </ReportIdProvider>
+      </CounterProvider>
+    </TourProvider>
   );
 }

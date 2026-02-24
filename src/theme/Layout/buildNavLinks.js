@@ -299,8 +299,8 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
       ],
     },
     {
-      id: 'help',
-      text: 'Help',
+      id: 'resources',
+      text: 'Resources',
       children: [
         {
           id: 'changelog',
