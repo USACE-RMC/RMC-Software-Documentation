@@ -1,0 +1,1281 @@
+---
+title: Example 3 - Multiple Failure Modes
+---
+
+import Link from "@docusaurus/Link";
+import addBaseUrl from "@docusaurus/useBaseUrl";
+import Citation from "@site/src/components/Citation";
+import CitationFootnote from "@site/src/components/CitationFootnote";
+import Figure from "@site/src/components/Figure";
+import FigureInline from "@site/src/components/FigureInline";
+import FigReference from "@site/src/components/FigureReference";
+import NavContainer from "@site/src/components/NavContainer";
+import ProcessList from "@site/src/components/ProcessList";
+import TableReference from "@site/src/components/TableReference";
+import TableVertical from "@site/src/components/TableVertical";
+import VersionSelector from "@site/src/components/VersionSelector";
+
+<NavContainer 
+  link="/desktop-applications/rmc-totalrisk"
+  linkTitle="RMC-TotalRisk" 
+  document="desktop-applications/rmc-totalrisk/applications-guide"
+></NavContainer>
+
+# Example 3 - Multiple Failure Modes
+
+This example starts with the completed risk analysis from [Example 2](./04-example-2.mdx) and adds three additional PFMs: overtopping erosion (OT), 
+internal migration (IM) of embankment soils into the underlying rock foundation, and concrete lined spillway erosion (CLSE). 
+Each failure mode is evaluated with and without intervention. New RMC-TotalRisk concepts covered by this example include the use 
+of transform functions and system component options to combine multiple failure modes.
+
+## Hazards
+
+The hydrologic hazard for this example is the same as [Example 1](./03-example-1.mdx). Reference procedure in [Hazards](./03-example-1.mdx#hazards) 
+from Example 1 to create the hazard function for this risk analysis.
+
+## Transforms
+
+The hydrologic hazard has a **Hazard** of _Stage_ and **Hazard Units** of _ft_. The BEP, IM, and OT system response relationships are functions of stage; 
+however, the CLSE system response is a function of spillway discharge. Therefore, a transform function is required to convert the original hazard 
+of stage to spillway discharge for that PFM.
+
+<ProcessList
+	items={[
+    { //Step 1
+      title: (
+        <>
+          Right-click on the <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/folder.png"/> <strong>Transforms</strong> folder in 
+          the Project Explorer window and select <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/addtabtransform.png"/> <strong> Add Tabular Transform…</strong> Name the transform function in the
+          prompt (e.g., Stage to Spillway Discharge) and press <strong>OK</strong>.
+        </> 
+      )
+    },
+    { //Step 2
+      title: (
+        <>
+          The stage frequency hazard is stage and is measured in feet. The hazard for the concrete lined spillway erosion is spillway discharge and is measured
+          in cubic feet per second (cfs). In the <strong>Tabular Transform Properties</strong> section of the Properties window, <FigReference figKey="example-3-stage-spillway-discharge"/>(a), select <em>Stage</em> for <strong>Hazard Type</strong>, <em>ft</em> for <strong>Hazard Units</strong>, <em>Flow</em> for <strong>Transformed Hazard</strong>, and <em>cfs</em> for <strong>Transformed Units</strong>.
+        </> 
+      )
+    },
+    { //Step 3
+      title: (
+        <>
+          The <strong>Interpolation Transforms</strong> are set to <em>None</em> (linear interpolation) for both the <strong>Hazard</strong> and <strong>Transformed Hazard</strong>, <FigReference figKey="example-3-stage-spillway-discharge"/>(b).
+        </> 
+      )
+    },
+    { //Step 4
+      title: (
+        <>
+          The relationship between stage and spillway discharge is defined by the dataset in <TableReference tableKey="example-3-stage-spillway-discharge"/>. There is no uncertainty for the hazard or the transformed hazard, 
+          so the Distribution drop-down menu is set to <em>Deterministic</em>, <FigReference figKey="example-3-stage-spillway-discharge"/>(c). Copy and paste the stage and spillway discharge 
+          data from <TableReference tableKey="example-3-stage-spillway-discharge"/> into the table, <FigReference figKey="example-3-stage-spillway-discharge"/>(d).
+        </> 
+      ),
+      freeform: ( 
+        <> 
+          {/*Figure 23*/}
+          <Figure figKey="example-3-stage-spillway-discharge"
+            caption="Stage to spillway discharge transform function." 
+            docId="05-example-3.mdx"
+            src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure23.png" 
+            fullWidth={true}
+            alt="Stage to spillway discharge transform function." 
+          />
+          {/*Table 6*/}
+          <TableVertical tableKey="example-3-stage-spillway-discharge"
+            caption="Stage to spillway discharge transform data."
+            alt="Stage to spillway discharge transform data."
+            widthMode="intrinsic"
+            headers={
+              [
+                [
+                  { value: 'Stage (ft)' },
+                  { value: 'Spillway Discharge (cfs)' },
+                  { value: 'Stage (ft)' },
+                  { value: 'Spillway Discharge (cfs)' }
+                ]
+              ]
+            }
+            columns={[       
+              [ //Stage (ft)
+                640.06, '640.60', 641.14, 641.68, 642.23, 643.31, 643.85, 643.92, 
+                643.98, 644.04,'644.10', 644.16, 644.22, 644.35, 644.41, 644.47, 
+                644.53, '644.60', 644.66, 644.72, 644.78, 644.84, '644.90', 644.97,
+                '645.10', 645.12, 645.15, 645.17, 645.22, 645.24, 645.27, '645.30', 
+                645.32, 645.35, 645.37
+              ],
+              [ //Spillway Discharge (cfs)
+                "1,976", "4,512", "6,214", "7,147", "7,793", "8,104", "8,568", "9,139",
+                "9,726", "10,439", "12,543", "16,055", "22,158", "28,177", "30,881", "33,986",
+                "38,701", "46,070", "58,272", "76,183", "81,064", "83,861", "86,659", "89,456",
+                "98,296", "99,952", "101,608", "102,013", "102,630", "102,939", "103,247", "103,607",
+                "103,650", "103,694", "103,738"
+              ],
+              [ //Stage (ft)
+                645.39, 645.42, 645.44, 645.47, 645.51, 645.54, 645.56, 645.59,
+                645.61, 645.64, 645.66, 645.68, 645.71, 645.73, 645.76, '645.80',
+                646.35, 646.91, 647.46, 648.01, 648.57, 649.12, 649.67, 650.23,
+                650.78, 651.33, 651.89, 652.44, 652.99, 653.55, '654.10', 654.67,
+                655.25, 655.82, 656.39
+              ],
+              [ //Spillway Discharge (cfs)
+                "103,781", "103,825", "103,868", "103,912", "103,999", "104,043", "104,086", "104,130",
+                "104,173", "104,217", "104,260", "104,304", "104,348", "104,391", "104,435", "104,515",
+                "105,513", "106,473", "107,421", "108,368", "109,316", "110,264", "111,211", "112,157",
+                "113,081", "113,983", "114,885", "115,785", "116,666", "117,526", "118,385", "119,275",
+                "120,152", "121,027", "121,901"
+              ]
+            ]}
+          />
+        </>
+      )   
+    },
+		{ //Step 5
+			title: (
+        <>
+          The consequence relationship for CLSE is a function of stage. Therefore, a transform function is also required to convert from spillway discharge back to stage. 
+          Create a new transform by repeating steps 1 through 4, but with <em>Flow</em> for <strong>Hazard Type</strong>, <em>cfs</em> for <strong>Hazard Units</strong>, <em>Stage</em> for Transformed Hazard, and <em>ft</em> for <strong>Transformed Units</strong>. 
+          Copy and paste the spillway discharge and stage data into the appropriate column of the table, <FigReference figKey="example-3-spillway-discharge-stage"/>. <em>Flow</em> will 
+          be in the <strong>X</strong> column and <em>Stage</em> will be in the <strong>Value</strong> column.
+        </> 
+      ),
+      freeform: ( 
+        <> 
+          {/*Figure 24*/}
+          <Figure figKey="example-3-spillway-discharge-stage"
+            caption="Spillway discharge to stage transform function." 
+            docId="05-example-3.mdx"
+            src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure24.png" 
+            fullWidth={true}
+            alt="A graph depicting the spillway discharge to stage transform function; flow is on the x-axis and stage is on the y-axis." 
+          />
+        </>
+      )
+    }
+	]}
+/>
+
+## System Responses
+
+The system response probabilities for each PFM were obtained from team elicitation using the event tree method. The elicited system response probabilities and the corresponding 
+failure mode event tree added to the analysis in this example are provided in the following tables and figures.
+
+The procedure for building the event trees for the PFMs in this example follows the same steps described in [System Responses](./03-example-1.mdx#system-responses) 
+from Example 1 for with intervention and from [Example 2](./04-example-2.mdx#system-responses) for without intervention. The **Hazard Type**, **Hazard Units**, and **Interpolation Transforms**, however, will be different for the CLSE failure mode. 
+<TableReference tableKey="example-3-overtop-erosion-prob"/> compares the inputs of the PFMs added for Example 3 to the inputs for the BEP PFM that was created in Examples 1 and 2.
+
+{/*Table 7*/}
+<TableVertical tableKey="example-3-overtop-erosion-prob"
+  caption="Overtopping erosion system response probabilities."
+  alt="Overtopping erosion system response probabilities."
+  headerAlign={["center", "center", "center", "center", "center", "center", "center", "center"]}
+  headers={[
+    [
+      { value: "Stage (ft)", colSpan: 2, rowSpan: 1 },
+      { value: 649.65, colSpan: 1, rowSpan: 1 },
+      { value: 650.15, colSpan: 1, rowSpan: 1 },
+      { value: 651.15, colSpan: 1, rowSpan: 1 },
+      { value: 652.15, colSpan: 1, rowSpan: 1 },
+      { value: 654.15, colSpan: 1, rowSpan: 1 },
+      { value: 656.50, colSpan: 1, rowSpan: 1 },
+    ]
+  ]}
+  columns={[
+    [ //Stage (ft)
+      { //Node 1
+        value: (
+          <>
+            <b>Node 1</b><br/> 
+            Unsuccessful Intervention<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+        rowSpan: 4 
+      }, 
+      null, null, null,
+      { //Node 2
+        value: (
+          <>
+            <b>Node 2</b><br/> 
+            Slope Protection Failure<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+        rowSpan: 4 
+      }, 
+      null, null, null,
+      { //Node 3
+        value: (
+          <>
+            <b>Node 3</b><br/> 
+            Initiation<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+        rowSpan: 4 
+      }, 
+      null, null, null,
+      { //Node 4
+        value: (
+          <>
+            <b>Node 4</b><br/> 
+            Continuation<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+        rowSpan: 4 
+      }, 
+      null, null, null,
+      { //Node 5
+        value: (
+          <>
+            <b>Node 5</b><br/> 
+            Breach<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+        rowSpan: 4 
+      }, 
+      null, null, null,
+      { //Mean SRP w/ Intervention
+        value: (
+        <>
+          <b>Mean SRP w/ Intervention</b>
+        </>
+        ),
+        colSpan: 2 
+      },
+      { //Mean SRP w/o Intervention
+        value: (
+        <>
+          <b>Mean SRP w/o Intervention</b>
+        </>
+        ),
+        colSpan: 2 
+      }
+    ],
+    [ // Stage (ft)
+      "LRV", "MLV", "HRV", "EV", "LRV", "MLV", "HRV", "EV",
+      "LRV", "MLV", "HRV", "EV", "LRV", "MLV", "HRV", "EV",
+      "LRV", "MLV", "HRV", "EV", "LRV", "MLV", "HRV", "EV",
+      "LRV", "MLV", "HRV", "EV", null, null
+    ],
+    [ //649.65
+      '0.000', '0.000', '0.000', '0.000', '0.000', '0.000', '0.000', '0.000',
+      '0.500', '0.000', '0.000', '0.000', '0.000', '0.000', '0.000', '0.000',
+      '0.000', '0.000', '0.000', '0.000', "0.00E+00", "0.00E+00"
+    ],
+    [ // 650.15
+      0.003, 0.075, 0.225, 0.101, 0.001, 0.008, '0.060', 0.023,
+      '0.050', '0.350', '0.600', 0.333, 0.002, '0.010', '0.100', 0.037,
+      '0.000', '0.000', 0.001, '0.000', "4.82E-09", "4.77E-08"
+    ],
+    [ // 651.15
+      '0.500', 0.775, '0.900', 0.725,'0.450', '0.680', '0.900', 0.677,
+      0.055, '0.500', '0.850', 0.468, '0.050', '0.100', '0.580', 0.243,
+      '0.020', '0.300', '0.500', 0.273, "1.53E-02", "2.11E-02"
+    ],
+    [ // 652.15
+      '0.850', 0.945, 0.999, 0.931,'0.750', '0.900', 0.999, 0.883,
+      '0.500', '0.750', '0.900', 0.717,'0.450', '0.780', '0.990', '0.740',
+      '0.500', '0.680', '0.900', 0.693, "3.02E-01", "3.25E-01"
+    ],
+    [ // 654.15
+      0.945, 0.995, 0.999, '0.980', '0.850', '0.900', 0.999, 0.916,
+      '0.750', '0.900', '0.990', '0.880', '0.900', '0.990', 0.999, 0.963,
+      '0.580', '0.750', '0.950', '0.760', "5.78E-01", "5.90E-01"
+    ],
+    [ // 656.60
+      0.995, 0.999, 0.999, 0.998, '0.990', 0.999, 0.999, 0.996,
+      0.995, 0.999, 0.999, 0.998, '0.990', 0.999, 0.999, 0.996,
+      '0.700', '0.900', '0.990', 0.863, "8.52E-01", "8.54E-01"
+    ]
+  ]}
+/>
+{/*Figure 25*/}
+<Figure figKey="example-3-overtop-erosion-tree"
+  caption="Overtopping erosion event tree."
+  docId="05-example-3.mdx"
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure25.png" 
+  fullWidth={true}
+  alt="Overtopping erosion event tree." 
+/>
+{/*Figure 26*/}
+<Figure figKey="example-3-overtop-erosion-properties"
+  caption="Overtopping erosion event tree properties and hazard levels."
+  docId="05-example-3.mdx"
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure26.png" 
+  fullWidth={true}
+  alt="Overtopping erosion event tree properties and hazard levels." 
+/>
+{/*Figure 27*/}
+<Figure figKey="example-3-overtop-erosion-intervene"
+  caption="Overtopping erosion with intervention system response curve."
+  docId="05-example-3.mdx"
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure27.png" 
+  fullWidth={true}
+  alt="Overtopping erosion with intervention system response curve; stage is on the x-axis and Conditional Probability is on the y-axis." 
+/>
+{/*Figure 28*/}
+<Figure figKey="example-3-overtop-erosion-wo-intervene"
+  docId="05-example-3.mdx"
+  caption="Overtopping erosion without intervention system response curve."
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure28.png" 
+  fullWidth={true}
+  alt="Overtopping erosion without intervention system response curve; stage is on the x-axis and Conditional Probability is on the y-axis." 
+/>
+{/*Table 8*/}
+<TableVertical tableKey="example-3-internal-migration-prob"
+  caption="Internal migration system response probabilities."
+  alt="Internal migration system response probabilities."
+  headerAlign={["center", "center", "center", "center", "center", "center", "center", "center"]}
+  headers={[
+    [
+      { value: "Stage (ft)", colSpan: 2 },
+      { value: '641.00' },
+      { value: '642.50' },
+      { value: '644.00' },
+      { value: '645.50' },
+      { value: '647.50' },
+      { value: 649.65 }
+    ]
+  ]}
+  columns={[
+    [ // First column 
+      { 
+        value: (
+          <>
+            <b>Node 1</b><br/> 
+            Open Defects<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+      rowSpan: 4 
+      }, 
+      null, null, null,
+      { 
+        value: (
+          <>
+            <b>Node 2</b><br/> 
+            Ineffective Treatment<br/>
+            <i>Distribution: Deterministic</i>
+          </>
+        ), 
+      rowSpan: 4 
+      }, 
+      null, null, null,
+      { 
+        value: (
+          <>
+            <b>Node 3</b><br/> 
+            Initiation<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+      rowSpan: 4 
+      }, 
+      null, null, null,
+      { 
+        value: (
+          <>
+            <b>Node 4</b><br/> 
+            Downstream Transport<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+      rowSpan: 4 
+      }, 
+      null, null, null,
+      { 
+        value: (
+          <>
+            <b>Node 5</b><br/> 
+            Continuation<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+      rowSpan: 4 
+      }, 
+      null, null, null,
+      { 
+        value: (
+          <>
+            <b>Node 6</b><br/> 
+            Progession (No Clogging)<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+      rowSpan: 4 
+      }, 
+      null, null, null,
+      { 
+        value: (
+          <>
+            <b>Node 7</b><br/> 
+            Unsuccessful Intervention<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+      rowSpan: 4 
+      }, 
+      null, null, null,
+      { 
+        value: (
+          <>
+            <b>Node 8</b><br/> 
+            Breach<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+      rowSpan: 4 
+      }, 
+      null, null, null,
+      { //Mean SRP w/ Intervention
+        value: (
+        <>
+          <b>Mean SRP w/ Intervention</b>
+        </>
+        ),
+        colSpan: 2 
+      },
+      { //Mean SRP w/o Intervention
+        value: (
+        <>
+          <b>Mean SRP w/o Intervention</b>
+        </>
+        ),
+        colSpan: 2 
+      }
+    ],
+    [ //Stage (ft)
+      "LRV", "MLV", "HRV", "EV", "LRV", "MLV", "HRV", "EV",
+      "LRV", "MLV", "HRV", "EV", "LRV", "MLV", "HRV", "EV",
+      "LRV", "MLV", "HRV", "EV", "LRV", "MLV", "HRV", "EV",
+      "LRV", "MLV", "HRV", "EV", "LRV", "MLV", "HRV", "EV",
+      null, null
+    ],
+    [ //641.00
+      '0.040', '0.150', '0.450', 0.213, '0.100', '0.450', '0.750', 0.433, 
+      '0.800', 0.895, 0.999, 0.898, 0.075, 0.225, '0.500', 0.267, 
+      0.003, 0.008, 0.075, 0.029, 0.068, 0.162, 0.681, 0.304, 
+      0.008, 0.045, '0.200', 0.084, 0.001, 0.002, 0.008, 0.004,
+      "5.96E-08", "7.07E-07"
+    ],
+    [ //642.50
+      '0.040', '0.150', '0.450', 0.213, '0.100', '0.450', '0.750', 0.433, 
+      0.825, 0.945, 0.999, 0.923, '0.100', 0.238, '0.500', 0.279, 
+      0.003, 0.008, 0.075, 0.029, 0.068, 0.162, 0.681, 0.304, 
+      0.018, '0.050', '0.250', 0.106, 0.001, 0.004, '0.010', 0.005,
+      "1.10E-07", "1.04E-06"
+    ],
+    [ //644.00
+      '0.040', '0.150', '0.450', 0.213, '0.100', '0.450', '0.750', 0.433, 
+      0.825, 0.945, 0.999, 0.923, 0.125, 0.275, 0.563, 0.321, 
+      0.003, 0.008, 0.075, 0.029, 0.068, 0.162, 0.681, 0.304, 
+      0.025, 0.075, '0.250', 0.117, 0.003, '0.010', 0.035, 0.016,
+      "4.45E-07", "3.81E-06"
+    ],
+    [ //645.50
+      '0.040', '0.150', '0.450', 0.213, '0.100', '0.450', '0.750', 0.433, 
+      0.825, 0.945, 0.999, 0.923, 0.138, 0.313, 0.625, 0.359, 
+      0.003, 0.008, 0.075, 0.029, 0.068, 0.162, 0.681, 0.304, 
+      '0.050', '0.100', '0.300', '0.150', 0.006, 0.025, 0.075, 0.035,
+      "1.41E-06", "9.41E-06"
+    ],
+    [ //647.50
+      '0.040', '0.150', '0.450', 0.213, '0.100', '0.450', '0.750', 0.433, 
+      '0.850', '0.960', 0.999, 0.936, '0.150', '0.400', '0.700', 0.417, 
+      0.003, 0.008, 0.075, 0.029, 0.068, 0.162, 0.681, 0.304, 
+      '0.100', '0.250', '0.500', 0.283, '0.020', '0.080', '0.250', 0.117,
+      "1.04E-05", "3.66E-05"
+    ],
+    [ //649.65
+      '0.040', '0.150', '0.450', 0.213, '0.100', '0.450', '0.750', 0.433, 
+      0.875, '0.970', 0.999, 0.948, 0.213, '0.450', 0.775, 0.479, 
+      0.003, 0.008, 0.075, 0.029, 0.068, 0.162, 0.681, 0.304, 
+      0.845, '0.900', 0.999, 0.915, '0.100', '0.250', 0.825, 0.392,
+      "1.31E-04", "1.43E-04"
+    ]
+  ]}
+/>
+{/*Figure 29*/}
+<Figure figKey="example-3-internal-migration-tree"
+  caption="Internal migration event tree."
+  docId="05-example-3.mdx"
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure29.png" 
+  fullWidth={true}
+  alt="Internal migration event tree." 
+/>
+{/*Figure 30*/}
+<Figure figKey="example-3-internal-migration-properties"
+  docId="05-example-3.mdx"
+  caption="Internal migration event tree properties and hazard levels."
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure30.png" 
+  fullWidth={true}
+  alt="Internal migration event tree properties and hazard levels."
+/>
+{/*Figure 31*/}
+<Figure figKey="example-3-internal-migration-intervene"
+  docId="05-example-3.mdx"
+  caption="Internal migration with intervention system response curve."
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure31.png" 
+  fullWidth={true}
+  alt="Internal migration with intervention system response curve." 
+/>
+{/*Figure 32*/}
+<Figure figKey="example-3-internal-migration-wo-intervene"
+  docId="05-example-3.mdx"
+  caption="Internal migration without intervention system response curve."
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure32.png" 
+  fullWidth={true}
+  alt="Internal migration without intervention system response curve." 
+/>
+{/*Table 9*/}
+<TableVertical tableKey="example-3-concrete-erosion-prob"
+  caption="Concrete lined spillway erosion system response probabilities."
+  alt="Concrete lined spillway erosion system response probabilities."
+  headerAlign={["center", "center", "center", "center", "center", "center", "center", "center"]}
+  headers={[
+    [
+      { value: "Spillway Discharge (cfs)", colSpan: 2},
+      { value: "25,000" },
+      { value: "40,000" },
+      { value: "90,000" },
+      { value: "180,000" },
+      { value: "235,000" },
+    ]
+  ]}
+  columns={[
+    [ //Spillway Discharge (cfs)
+      { 
+        value: (
+          <>
+            <b>Node 1</b><br/> 
+            Uplift<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+        rowSpan: 4 
+      }, 
+      null, null, null,
+      { 
+        value: (
+          <>
+            <b>Node 2a</b><br/> 
+            Stagnation Pressure<br/>
+            <i>Distribution: Deterministic</i>
+          </>
+        ), 
+        rowSpan: 4 
+      }, 
+      null, null, null,
+      { 
+        value: (
+          <>
+            <b>Node 2b</b><br/> 
+            Stagnation Pressure<br/>
+            <i>Distribution: Deterministic</i>
+          </>
+        ), 
+        rowSpan: 4 
+      }, 
+      null, null, null,
+      { 
+        value: (
+          <>
+            <b>Node 3a</b><br/> 
+            Scour Initiates<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+        rowSpan: 4 
+      }, 
+      null, null, null,
+      { 
+        value: (
+          <>
+            <b>Node 3b</b><br/> 
+            Scour Initiates<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+        rowSpan: 4 
+      }, 
+      null, null, null,
+      { 
+        value: (
+          <>
+            <b>Node 4a</b><br/> 
+            Unsuccessful Intervention<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+        rowSpan: 4 
+      }, 
+      null, null, null,
+      { 
+        value: (
+          <>
+            <b>Node 4b</b><br/> 
+            Unsuccessful Intervention<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+        rowSpan: 4 
+      }, 
+      null, null, null,
+      { 
+        value: (
+          <>
+            <b>Node 5a</b><br/> 
+            Scour Depth<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+        rowSpan: 4 
+      }, 
+      null, null, null,{ 
+        value: (
+          <>
+            <b>Node 5b</b><br/> 
+            Scour Depth<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+        rowSpan: 4 
+      }, 
+      null, null, null,{ 
+        value: (
+          <>
+            <b>Node 6a</b><br/> 
+            Undermining<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+        rowSpan: 4 
+      }, 
+      null, null, null,{ 
+        value: (
+          <>
+            <b>Node 6b</b><br/> 
+            Undermining<br/>
+            <i>Distribution: Deterministic</i>
+          </>
+        ), 
+        rowSpan: 4 
+      }, 
+      null, null, null,{ 
+        value: (
+          <>
+            <b>Node 7a</b><br/> 
+            Scour Width<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+        rowSpan: 4 
+      }, 
+      null, null, null,{ 
+        value: (
+          <>
+            <b>Node 7b</b><br/> 
+            Scour Width<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+        rowSpan: 4 
+      }, 
+      null, null, null,{ 
+        value: (
+          <>
+            <b>Node 8a</b><br/> 
+            Breach<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+        rowSpan: 4 
+      }, 
+      null, null, null,{ 
+        value: (
+          <>
+            <b>Node 8b</b><br/> 
+            Breach<br/>
+            <i>Distribution: Triangular</i>
+          </>
+        ), 
+        rowSpan: 4 
+      }, 
+      null, null, null,
+      { //Mean SRP w/ Intervention
+        value: (
+        <>
+          <b>Mean SRP w/ Intervention</b>
+        </>
+        ),
+        colSpan: 2 
+      },
+      { //Mean SRP w/o Intervention
+        value: (
+        <>
+          <b>Mean SRP w/o Intervention</b>
+        </>
+        ),
+        colSpan: 2 
+      }
+    ],
+    [ //Stage (ft)
+      "LRV", "MLV", "HRV", "EV", "LRV", "MLV", "HRV", "EV",
+      "LRV", "MLV", "HRV", "EV", "LRV", "MLV", "HRV", "EV",
+      "LRV", "MLV", "HRV", "EV", "LRV", "MLV", "HRV", "EV",
+      "LRV", "MLV", "HRV", "EV", "LRV", "MLV", "HRV", "EV",
+      "LRV", "MLV", "HRV", "EV", "LRV", "MLV", "HRV", "EV",
+      "LRV", "MLV", "HRV", "EV", "LRV", "MLV", "HRV", "EV",
+      "LRV", "MLV", "HRV", "EV", "LRV", "MLV", "HRV", "EV",
+      "LRV", "MLV", "HRV", "EV", "LRV", "MLV", "HRV", "EV",
+      null, null
+    ],
+    [ //25,000
+      '0.000','0.000','0.000','0.000','0.000','0.000','0.000','0.000',
+      '0.000','0.000','0.000','0.000',0.001,0.001,0.005,0.002,
+      0.001,0.001,0.005,0.002, 0.001, 0.001,0.006,0.003,
+      0.001,0.001,0.006,0.003, '0.900','0.950','0.990',0.947,
+      '0.900','0.950','0.990',0.947,'0.100','0.250','0.600',0.317,
+      '0.100','0.250','0.600',0.317,'0.050','0.100','0.400',0.183,
+      '0.050','0.100','0.400',0.183,'0.010','0.050','0.100',0.053,
+      '0.010','0.050','0.100',0.053,"0.00E+00","0.00E+00"
+    ],
+    [ //40,000
+      '0.000','0.000',0.001,'0.000',0.006,'0.030','0.150',0.062,
+      '0.000','0.000','0.000','0.000',0.001,0.005,'0.010',0.005,
+      0.001,0.005,'0.010',0.005,0.003,'0.030','0.100',0.044,
+      0.003,'0.030','0.100',0.044,'0.990','0.990',0.999,0.993,
+      '0.990','0.990',0.999,0.993,'0.250','0.500','0.850',0.533,
+      '0.250','0.500','0.850',0.533,'0.080','0.150','0.450',0.227,
+      '0.080','0.150','0.450',0.227,0.025,0.075,'0.150',0.083,
+      0.025,0.075,'0.150',0.083,"4.89E-11","1.10E-09"
+    ],
+    [ //90,000
+      0.001,0.001,0.003,0.002,0.035,'0.100',0.275,0.137,
+      '0.000',0.001,0.003,0.001,0.004,0.075,0.182,0.087,
+      0.004,0.075,0.182,0.087,'0.150','0.500',0.825,0.492,
+      '0.150','0.500',0.825,0.492,0.999,0.999,0.999,0.999,
+      0.999,0.999,0.999,0.999,'0.400','0.750','0.900',0.683,
+      '0.400','0.750','0.900',0.683,'0.090','0.200','0.550','0.280',
+      '0.090','0.200','0.550','0.280','0.050','0.090','0.250','0.130',
+      '0.050','0.090','0.250','0.130',"1.66E-06","3.37E-06"
+    ],
+    [ //180,000
+      '0.010',0.075,0.175,0.087,'0.250','0.600','0.800','0.550',
+      0.006,0.035,'0.200','0.080','0.100','0.350',0.696,0.382,
+      '0.100','0.350',0.696,0.382,0.775,0.925,0.995,0.898,
+      0.775,0.925,0.995,0.898,0.999,0.999,0.999,0.999,
+      0.999,0.999,0.999,0.999,'0.650','0.900','0.990',0.847,
+      '0.650','0.900','0.990',0.847,'0.100','0.450','0.750',0.433,
+      '0.100','0.450','0.750',0.433,'0.080','0.100','0.400',0.193,
+      '0.080','0.100','0.400',0.193,"2.94E-03","3.28E-03"
+    ],
+    [ //235,000
+      '0.100','0.600',0.825,0.508,'0.550','0.800',0.945,0.765,
+      '0.010',0.075,0.325,0.137,0.325,0.688,0.878,'0.630',
+      0.325,0.688,0.878,'0.630','0.900','0.970',0.999,0.956,
+      '0.900','0.970',0.999,0.956,0.999,0.999,0.999,0.999,
+      0.999,0.999,0.999,0.999,'0.800','0.900','0.990',0.897,
+      '0.800','0.900','0.990',0.897,'0.250','0.700','0.900',0.617,
+      '0.250','0.700','0.900',0.617,'0.090','0.150','0.500',0.247,
+      '0.090','0.150','0.500',0.247,"3.75E-02","3.92E-02"
+    ]
+  ]}
+/>  
+{/*Figure 33*/}
+<Figure figKey="example-3-concrete-erosion-tree"
+  caption="Concrete lined spillway erosion event tree."
+  alt="Concrete lined spillway erosion event tree."
+  docId="05-example-3.mdx"
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure33.png" 
+  fullWidth={true}
+/>
+{/*Figure 34*/}
+<Figure figKey="example-3-concrete-erosion-properties"
+  caption="Concrete lined spillway erosion event tree properties and hazard levels."
+  docId="05-example-3.mdx"
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure34.png" 
+  fullWidth={true}
+  alt="Concrete lined spillway erosion event tree properties and hazard levels." 
+/>
+{/*Figure 35*/}
+<Figure figKey="example-3-concrete-erosion-intervene"
+  caption="Concrete lined spillway erosion with intervention system response curve."
+  docId="05-example-3.mdx" 
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure35.png" 
+  fullWidth={true}
+  alt="Concrete lined spillway erosion with intervention system response curve; Flow is on the x-axis and Conditional Probability is on the y-axis." 
+/>
+{/*Figure 36*/}
+<Figure figKey="example-3-concrete-erosion-wo-intervene"
+  caption="Concrete lined spillway erosion without intervention system response curve."
+  docId="05-example-3.mdx"
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure36.png" 
+  fullWidth={true}
+  alt="Concrete lined spillway erosion without intervention system response curve; Flow is on the x-axis and Conditional Probability is on the y-axis." 
+/>
+{/*Table 10*/}
+<TableVertical tableKey="example-3-compare-pfm-inputs"
+  caption="Comparison of PFM system response inputs."
+  headerAlign={["center", "center", "center", "center", "center", "center"]}
+  alt="Comparison of PFM system response inputs."
+  widthMode="intrinsic"
+  headers={
+    [
+      [
+        { value: 'Input' },
+        { value:
+          <>
+            Step(s) from Example 1, <br/>
+            System Responses
+          </>
+        },
+        { value: 'Backward Erosion</br>Piping' },
+        { value: 'Overtopping Erosion' },
+        { value: 'Internal Migration' },
+        { value: 'Concrete Lined</br>Spillway Erosion' }
+      ]
+    ]
+  }
+  columns={[
+    [ //Input
+      "Event Tree Category", "Event Tree Template", "Hazard Type", "Hazard Units", "Hazard Interpolation <br/>Transform", "Probability Interpolation <br/>Transform",
+      "Hazard Levels", "System Response<br/>Probabilities"
+    ],
+    [ //Step(s) from Example 1, System Responses
+      "Step 1", "Step 1", "Step 2", "Step 2", "Step 3", "Step 3", "Step 4", "Step 7"
+    ],
+    [ //Backward Erosion Piping
+      "Flood", "Backward Erosion</br>Piping", "Stage", "ft", "None (linear)", "Logarithmic", 
+      { value: <> 6<br/> (See <TableReference tableKey="example-1-bep-srp"/> & <FigReference figKey="example-1-bep-hazard-levels"/>) </> },
+       { value: <> See <TableReference tableKey="example-1-bep-srp"/> </> }
+    ],
+    [ //Overtopping Erosion
+      "Flood", "Embankment Overtopping</br>Erosion", "Stage", "ft", "None (linear)", "None (linear)", { value: <>6<br/> (See <TableReference tableKey="example-3-overtop-erosion-prob"/> & <FigReference figKey="example-3-overtop-erosion-properties"/>)</> }, 
+      { value: <>See <TableReference tableKey="example-3-overtop-erosion-prob"/></> }
+    ],
+    [ //Internal Migration
+      "Flood", "Internal Migration of</br>Embankment into</br>the Foundation", "Stage", "ft", "None (linear)", "Logarithmic", 
+      { value: <>6<br/> (See <TableReference tableKey="example-3-internal-migration-prob"/> & <FigReference figKey="example-3-internal-migration-properties"/>)</> }, 
+      { value: <>See <TableReference tableKey="example-3-internal-migration-prob"/></> }
+    ],
+    [ //Concrete Lined Spillway Erosion
+      "Flood", "Concrete Lined</br>Spillway Erosion", "Flow", "cfs", "None (linear)", "Logarithmic", 
+      { value: <>5<br/> (See <TableReference tableKey="example-3-concrete-erosion-prob"/> & <FigReference figKey="example-3-concrete-erosion-properties"/>)</> }, 
+      { value: <>See <TableReference tableKey="example-3-concrete-erosion-prob"/></> }
+    ]
+  ]}
+/>
+
+## Consequences
+
+For this example, daytime and nighttime life loss estimates were developed for a range of reservoir stages for non-breach 
+(<TableReference tableKey="example-1-non-breach-life-loss"/>) and the following breach scenarios: 
+internal erosion breach (<TableReference tableKey="example-1-internal-erosion-breach-life-loss"/>, applies to BEP and IM PFM), overtopping breach (<TableReference tableKey="example-3-overtop-breach-loss"/>, applies to OT PFM) and concrete lined spillway erosion breach (<TableReference tableKey="example-3-concrete-erosion-breach-loss"/>, 
+applies to CLSE PMF). The daytime exposure scenario rate was assumed to be 45% while the nighttime exposure rate was assumed to be 55%. No economic costs were modeled 
+for this example. The procedure for creating a tabular life loss consequence function is detailed in [Life Loss Function](./03-example-1.mdx#life-loss-function) 
+from Example 1 and each input is accompanied by its procedural step. 
+A comparison of inputs between the life loss consequence functions is provided in <TableReference tableKey="example-3-compare-pfm-conseq"/>.
+
+{/*Table 11*/}
+<TableVertical tableKey="example-3-overtop-breach-loss"
+  caption="Overtopping breach life loss."
+  alt="Overtopping breach life loss."
+  headerAlign={["center", "center", "center", "center", "center", "center", "center", "center", "center"]}
+  headers={[
+    [
+      { value: "Stage (ft)", rowSpan: 2 },
+      { value: "Day Life Loss", colSpan: 3 },
+      { value: "Night Life Loss", colSpan: 3 }
+    ],
+    [
+      { value: "Minimum"},
+      { value: "Most Likely"},
+      { value: "Maximum"},
+      { value: "Minimum"},
+      { value: "Most Likely"},
+      { value: "Maximum"}
+    ]
+  ]}
+  columns={[
+    [ //Stage (ft)
+      649.65, '650.50', '651.50', '652.50', '653.50', '655.00', '656.50'
+    ],
+    [ //DLL Minimum
+      61, 67, 71, 83, 100, 124, 156
+    ],
+    [ //DLL Most Likely
+      117, 121, 128, 141, 159, 191, 231
+    ],
+    [ //DLL Maximum
+      170, 178, 189, 197, 219, 258, 302
+    ],
+    [ //NLL Minimum
+      70, 77, 81, 96, 116, 143, 179
+    ],
+    [ //NLL Most Likely
+      135, 139, 147, 162, 183, 220, 266
+    ],
+    [ //NLL Maximum
+      196, 205, 217, 227, 252, 296, 347
+    ]
+  ]}
+/>
+{/*Table 12*/}
+<TableVertical tableKey="example-3-concrete-erosion-breach-loss"
+  caption="Concrete lined spillway erosion breach life loss."
+  alt="Concrete lined spillway erosion breach life loss."
+  headerAlign={["center", "center", "center", "center", "center", "center", "center", "center", "center"]}
+  headers={[
+    [
+      { value: "Stage (ft)", rowSpan: 2 },
+      { value: "Day Life Loss", colSpan: 3, },
+      { value: "Night Life Loss", colSpan: 3, }
+    ],
+    [
+      { value: "Minimum"},
+      { value: "Most Likely"},
+      { value: "Maximum"},
+      { value: "Minimum"},
+      { value: "Most Likely"},
+      { value: "Maximum"}
+    ]
+  ]}
+  columns={[
+    [ //Stage (ft) 
+      '641.00', '642.50', '644.00', '647.00', 649.65
+    ],
+    [ //DLL Minimum
+      25, 29, 32, 38, 40
+    ],
+    [ //DLL Most Likely
+      60, 76, 82, 95, 115
+    ],
+    [ //DLL Maximum
+      30, 38, 42, 45, 48
+    ],
+    [ //NLL Minimum
+      70, 77, 81, 96, 116, 143, 179
+    ],
+    [ //NLL Most Likely
+      55, 60, 65, 73, 84
+    ],
+    [ //NLL Maximum
+      73, 84, 92, 102, 109
+    ]
+  ]}
+/>
+{/*Figure 37*/}
+<Figure figKey="example-3-overtop-erosion-loss"
+  caption="Overtopping erosion breach composite life loss consequence function."
+  docId="05-example-3.mdx"
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure37.png" 
+  fullWidth={true}
+  alt="Overtopping erosion breach composite life loss consequence function; Stage is on the x-axis and Live Loss is on the y-axis." 
+/>
+{/*Figure 38*/}
+<Figure figKey="example-3-concrete-erosion-loss"
+  caption="Concrete lined spillway erosion breach composite life loss consequence function."
+  docId="05-example-3.mdx"
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure38.png" 
+  fullWidth={true}
+  alt="Concrete lined spillway erosion breach composite life loss consequence function; Stage is on the x-axis and Life Loss is on the y-axis." 
+/>
+{/*Table 13*/}
+<TableVertical tableKey="example-3-compare-pfm-conseq"
+  caption="Comparison of PFM consequences."
+  headerAlign={["center", "center", "center", "center", "center", "center"]}
+  alt="Comparison of PFM consequences."
+  widthMode="intrinsic"
+  headers={
+    [
+      [
+        { value: 'Input' },
+        { value:
+          <>
+            Step(s) from Example 1, <br/>
+            Life Loss Function
+          </>
+        },
+        { value: 'Backward Erosion</br>Piping' },
+        { value: 'Overtopping Erosion' },
+        { value: 'Internal Migration' },
+        { value: 'Concrete Lined</br>Spillway Erosion' }
+      ]
+  ]
+  }
+  columns={[
+    [//Input
+      "Hazard Type", "Hazard Units", "Hazard Interpolation <br/>Transform", "Probability Interpolation <br/>Transform",
+      "Distribution", "Life Loss", "Composite Type"
+    ],
+    [//Step(s) from Example 1, Life Loss Function
+      "Step 2", "Steps 2 & 7", "Steps 3 & 8", "Steps 3 & 8", "Step 4", "Steps 4 & 5", "Step 9"
+    ],
+    [//Backward Erosion Piping
+      "Stage", "ft", "None (linear)", "None (linear)", "PERT", { value: <>See <a href="/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1#life-loss-function" target="_blank" rel="noopener noreferrer">Table 5</a></>}
+      , "Mixture"
+    ],
+    [//Overtopping Erosion
+      "Stage", "ft", "None (linear)", "None (linear)", "PERT", { value: <>See <TableReference tableKey="example-3-overtop-breach-loss"/></> }, "Mixture"
+    ],
+    [//Internal Migration
+      "Stage", "ft", "None (linear)", "None (linear)", "PERT", 
+      { value: <>See <a href="/RMC-Software-Documentation/docs/desktop-applications/rmc-totalrisk/applications-guide/v1.0/example-1#life-loss-function" target="_blank" rel="noopener noreferrer">Table 5</a></>}, 
+      "Mixture"
+    ],
+    [//Concrete Lined Spillway Erosion
+      "Stage", "ft", "None (linear)", "None (linear)", "PERT", { value: <>See <TableReference tableKey="example-3-concrete-erosion-breach-loss"/></> }, "Mixture"
+    ]
+  ]}
+/>
+
+## Risk Analyses 
+
+Once all necessary components have been added, a risk analysis is created using the following procedure. To evaluate the risk without and with 
+the consideration of intervention, two risk analyses will be needed: one with intervention and one without intervention. 
+
+<ProcessList
+	items={[
+    { //Step 1
+      title: (
+        <>
+          Right-click on <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/addriskanalysis.png"/> <strong>BEP with Intervention...</strong> 
+          Rename the risk analysis in the prompt (e.g., Total Risk with Intervention) and press <strong>OK</strong>.
+        </>
+      )
+    },
+    { //Step 2
+      title: (
+        <>
+          Right-click on <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/addriskanalysis.png"/> <strong>BEP without Intervention...</strong> 
+          Rename the risk analysis in the prompt (e.g., Total Risk with Intervention) and press <strong>OK</strong>.
+        </>
+      )
+    },
+    { //Step 3
+      title: (
+        <>
+          For <strong>Consequence</strong> and <strong>Consequence Unit</strong> in the <strong>Risk Analysis Properties</strong> section of the Properties window, select <em>Life Loss</em> and <em>Lives</em>.
+        </>
+      )
+    },
+    { //Step 4
+      title: (
+        <>
+          For this risk analysis one hazard function, four system response functions, and five consequence functions are required. Add components to the risk analysis <strong>Diagram</strong> by 
+          clicking the <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/newbranch.png"/> green plus sign, clicking on a node output connector, or right-clicking anywhere in the diagram.
+        </>
+      ),
+      child: [
+        { //Step 4a
+          title: (
+            <>
+            Add the overtopping erosion and internal migration potential failure modes and their associated breach conditions (backward erosion piping should 
+            already be present). These PFMs have the same hazard (stage) as the hazard function and can be added to the risk analysis without a transform function.
+            </>
+          ),
+          child: [
+            { //Step 4a.i
+              title: (
+                <>
+                  For each new PFM, add a response node <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/responseIcon.png"/> by clicking 
+                  on the hazard node output connector and select the appropriate system response function from the drop-down box.
+                </>
+              )
+            },
+            { //Step 4a.ii
+              title: (
+                <>
+                  Add the breach condition to each response function by clicking on the response node output connector and adding a consequence node <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/consequenceIcon.png"/> 
+                  and selecting the corresponding composite breach life loss function from the drop-down box.
+                </>
+              )
+            },
+          ] 
+        },
+        { //Step 4b
+          title: ( 
+            <>
+              Add the concrete lined spillway erosion potential failure mode and its associated breach condition. Since this PFM is a function of spillway discharge (flow) 
+              and the hazard and consequences are functions of stage, transform functions are required.
+            </>
+          ),
+          child: [
+            { //Step 4b.i
+              title : (
+                <>
+                  Add a transform node <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/transformIcon.png"/> by clicking on the hazard node 
+                  output connector and select the <em>Stage to Spillway Discharge</em> function from the drop-down box. 
+                  This transforms the hazard from the hazard function (stage) to the hazard of the CLSE PFM (spillway discharge).
+                </>
+              )
+            },
+            { //Step 4b.ii
+              title : (
+                <>
+                  Add a response node <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/responseIcon.png"/> by clicking on the <em>Stage to Spillway Discharge</em> transform node output connector and select the appropriate 
+                  system response function (e.g., CLSE with Intervention) from the drop-down box.
+                </>
+              )
+            },
+            { //Step 4b.iii
+              title: 
+              (
+                <>
+                  Add a transform node <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/transformIcon.png"/> by clicking on the 
+                  CLSE response node output connector and select the <em>Spillway Discharge to Stage</em> function from the drop-down box. This transforms the hazard from the 
+                  system response function (spillway discharge) to the hazard of the CLSE consequences (stage).
+                </>
+              )
+            },
+            { //Step 4b.iv
+              title: 
+              (
+                <>
+                Add the CLSE breach condition by clicking on the Spillway Discharge to Stage node output connector and adding a consequence node  
+                <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/consequenceIcon.png"/> and selecting 
+                the composite breach life loss function (e.g., CLSE Breach) from the drop-down box.
+                </>
+              )
+            }
+          ]
+        },
+        { //Step 4c
+          title: (
+            <>
+              Re-arrange the nodes (click and hold, then drag) as desired to personalize the diagram. The final risk analysis diagram is shown in <FigReference figKey="example-3-tot-proj-intervene"/>.
+            </>
+          )
+        }
+      ], 
+      freeform: ( 
+        <> 
+        {/*Figure 39*/}
+          <Figure figKey="example-3-tot-proj-intervene"
+            caption="Total project with intervention risk diagram (Example 3)."
+            docId="05-example-3.mdx"
+            src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure39.png" 
+            fullWidth={true}
+            alt="Total project with intervention risk diagram (Example 3)." 
+          />
+        </> 
+      )
+    },
+		{ //Step 5
+			title: (
+        <>
+          Before running a risk analysis, the simulation options can be adjusted within the <strong>Option</strong>s tab of the Properties window.
+        </> 
+      ),
+      child: [
+        { //Step 5a
+          title: (
+            <>
+              Within the <strong>System Component Options</strong> section, set the <strong>Failure Mode Method</strong> to <em>Joint Failures</em> and set the <strong>Joint Consequences</strong> to <em>Maximum</em>, <FigReference figKey="example-3-tot-risk-intervene-ops" />(a).
+              Additional options for Failure Mode Method include <em>Common Cause Failures</em> and <em>Competing Failures</em> (the <strong>Joint Consequences</strong> option will not be displayed if
+              either <strong>Common Cause Failures</strong> or <strong>Competing Failures</strong> is selected).
+            </>
+          )
+        },
+        { //Step 5b
+          title: (
+            <>
+              Within the <strong>Simulation Options</strong> section, set the <strong>Confidence Interval</strong> to <em>90%</em> and set 
+              the <strong>Realizations</strong> to <em>10,000</em>, <FigReference figKey="example-3-tot-risk-intervene-ops" />(b). 
+            </>
+          )
+        },
+        { //Step 5c
+          title: (
+            <>
+              The <strong>Integration Options</strong>, <FigReference figKey="example-3-tot-risk-intervene-ops" />(c), <strong>System Options</strong>, <FigReference figKey="example-3-tot-risk-intervene-ops" />(d), 
+              and <strong>Risk Measure Options</strong>, <FigReference figKey="example-3-tot-risk-intervene-ops" />(e), are set to their default values. 
+            </> 
+          )
+        }
+      ],
+      freeform: ( 
+        <> 
+          {/*Figure 40*/}
+          <Figure figKey="example-3-tot-risk-intervene-ops"
+            caption="Total risk with intervention risk analysis options tab (Example 3)."
+            docId="05-example-3.mdx"
+            src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure40.png" 
+            fullWidth={true}
+            alt="Total risk with intervention risk analysis options tab (Example 3)." 
+          />
+        </>
+      )     
+    },
+    { //Step 6
+      title: (
+        <>
+          To run the risk analysis without uncertainty, select <em>Simulate Mean Risk Only</em> in the <strong>Simulation</strong> section of the Properties window and click
+          <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/estimate.png"/> <strong>Estimate</strong>. 
+          To run the risk analysis with uncertainty, select <em>Simulate Risk with Full Uncertainty</em> and click <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/estimate.png"/> <strong>Estimate</strong>. 
+        </>
+      )
+    },
+    { //Step 7
+      title: (
+        <>
+          Follow the same procedure outlined in Steps 1 through 6 to create and run a second risk analysis for the without intervention scenario. The hazard and consequence 
+          functions for this risk analysis are identical, while the responses are changed to the corresponding “without intervention” functions.
+        </>
+      )
+    }
+  ]}
+/>
+
+# Results
+
+Once the risk analysis model has been simulated, the **Summary Statistics** tab provides a table of summary results. In the Alternatives filter menu, 
+select “Total Risk without Intervention” to display the results in the same table as “Total Risk with Intervention” as 
+shown in <FigReference figKey="example-3-sum-stats-tot-risk" />. This table shows the incremental _Mean, E[N]_ (also referred to as the average annual life loss, AALL), of 
+1.02E-02 without intervention and 4.75E-03 with intervention and an _Exceedance Probability, α_ (also referred to as annual 
+probability of failure, APF) of 9.63E-05 without intervention and 6.34E-05 with intervention. 
+
+{/*Figure 41*/}
+<Figure figKey="example-3-sum-stats-tot-risk"
+  caption="Summary statistics for total project risk (Example 3)."
+  docId="05-example-3.mdx"
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure41.png" 
+  fullWidth={true}
+  alt="Summary statistics for total project risk (Example 3)." 
+/>
+
+The incremental F-N Plot with uncertainty is shown in <FigReference figKey="example-3-inc-fn-uncertain-tot-risk" />, the mean α-ƞ Plot is shown in 
+<FigReference figKey="example-3-mean-an-tot-risk"/>, and the α-ƞ Plot with uncertainty is shown in <FigReference figKey="example-3-an-uncertain-scatter-tot-risk"/>.
+
+{/*Figure 42*/}
+<Figure figKey="example-3-inc-fn-uncertain-tot-risk"
+  caption="Incremental F-N plot with full uncertainty for total project risk (Example 3)."
+  docId="05-example-3.mdx"
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure42.png" 
+  fullWidth={true}
+  alt="Incremental F-N plot with full uncertainty for total project risk; Life Loss, N is on the x-axis and Exceedance Probability is on the y-axis (Example 3)." 
+/>
+
+{/*Figure 43*/}
+<Figure figKey="example-3-mean-an-tot-risk"
+  caption="Mean α-ƞ plot for total project risk (Example 3)."
+  docId="05-example-3.mdx"
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure43.png" 
+  fullWidth={true}
+  alt="Mean α-ƞ plot for total project risk; Conditional Mean Life Loss is on the x-axis and Exceedance Probability is on the y-axis (Example 3)." 
+/>
+
+{/*Figure 44*/}
+<Figure figKey="example-3-an-uncertain-scatter-tot-risk"
+  caption="α-ƞ plot with uncertainty scatter for total project risk (Example 3)."
+  docId="05-example-3.mdx"
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure44.png" 
+  fullWidth={true}
+  alt="α-ƞ plot with uncertainty scatter for total project risk; Conditonal Mean Life Loss is on the x-axis and Exceedance Probability is on the y-axis (Example 3)." 
+/>

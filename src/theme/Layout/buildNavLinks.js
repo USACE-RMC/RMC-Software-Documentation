@@ -156,6 +156,7 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
           href: totalRiskHref,
           children: [
             { id: 'tr-users-guide', text: "RMC-TotalRisk User's Guide", href: trUserGuideHref },
+            { id: 'tr-apps-guide', text: "RMC-TotalRisk Applications Guide", href: trAppHref },
             // Optionally add trAppHref/trVerifHref if needed in the menu
           ],
         },

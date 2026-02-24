@@ -1,0 +1,664 @@
+---
+title: Example 4 - Spillway Gate Inoperability
+---
+
+import Link from "@docusaurus/Link";
+import addBaseUrl from "@docusaurus/useBaseUrl";
+import Citation from "@site/src/components/Citation";
+import CitationFootnote from "@site/src/components/CitationFootnote";
+import Figure from "@site/src/components/Figure";
+import FigureInline from "@site/src/components/FigureInline";
+import FigReference from "@site/src/components/FigureReference";
+import NavContainer from "@site/src/components/NavContainer";
+import ProcessList from "@site/src/components/ProcessList";
+import TableReference from "@site/src/components/TableReference";
+import TableVertical from "@site/src/components/TableVertical";
+import VersionSelector from "@site/src/components/VersionSelector";
+
+<NavContainer 
+  link="/desktop-applications/rmc-totalrisk"
+  linkTitle="RMC-TotalRisk" 
+  document="desktop-applications/rmc-totalrisk/applications-guide"
+></NavContainer>
+
+# Example 4 - Spillway Gate Inoperability
+
+This example starts with the completed risk analysis from [Example 3](./05-example-3.mdx) and adds spillway gate inoperability. New RMC-TotalRisk concepts covered by this 
+example include weighting stage frequency relationships and the development of composite hazard curves. 
+
+## Hazards
+
+In this example, the dam has three spillway Tainter gates. Inoperability of the Tainter gates impacts the hazard and introduces the following scenarios to the 
+risk analysis: 0 gates inoperable, 1 gate inoperable, 2 gates inoperable, and 3 gates inoperable. Based on a fault tree analysis, each gate was assumed to have the 
+same 0.48 probability of being inoperable. Binomial theorem was used to calculate the probability of each gate inoperability scenario, and the probabilities are shown in <TableReference tableKey="example-4-prob-gate-inop"/>.
+
+{/*Table 14*/}
+<TableVertical tableKey="example-4-prob-gate-inop"
+  caption="Probability of gate inoperability scenarios."
+  alt="Probability of gate inoperability scenarios."
+  widthMode="intrinsic"
+  headers={
+    [
+      [
+        { value: 'Inoperability Scenario' },
+        { value: 'Probability' }
+      ]
+    ]
+  }
+  columns={[
+    [ //Interoperability Scenario
+      "0 Gates Inoperable", "1 Gates Inoperable", "2 Gates Inoperable", "3 Gates Inoperable",
+    ],
+    [ //Probability
+      0.141, 0.389, 0.359, 0.111
+    ]
+  ]}
+/>
+
+First, create a hazard function for each gate inoperability scenario using the stage frequency relationships in <TableReference tableKey="example-4-zero-gate-inop-freq"/> through <TableReference tableKey="example-4-three-gate-inop-freq"/> and the procedure in [Hazards](./03-example-1.mdx#hazards) from Example 1. 
+
+To build a composite stage frequency curve, the stage frequency curves either need to extend to the same maximum stage or the stage frequency curves need to be bounded 
+at their maximum stage. In this example, because the stage frequency curves stop at different maximum stages, each curve needs to be bounded using the following procedure. 
+Once bounded, the stage frequency curve will become horizontal at the maximum elevation.
+
+{/*Table 15*/}
+<TableVertical tableKey="example-4-zero-gate-inop-freq"
+  caption="Zero gates inoperable stage frequency hazard function."
+  alt="Zero gates inoperable stage frequency hazard function."
+  widthMode="intrinsic"
+  headers={
+    [
+      [
+        { value: 'Stage (ft)' },
+        { value: '5<sup>th</sup> Percentile AEP' },
+        {value: '50<sup>th</sup> Percentile AEP'},
+        {value: '95<sup>th</sup> Percentile AEP'}
+      ]
+    ]
+  }
+  columns={[
+    [//Stage (ft)
+      640.35,640.89,641.16,641.28,641.62,641.86,642.77,642.93,
+      643.12,'643.30',643.58,643.72,643.86,'644.00',644.14,644.16,
+      644.26,644.51,644.53,644.56,644.58,644.71,644.78,644.87,
+      644.95,645.04,645.13,645.29,645.87,646.64,648.14,650.65,
+      650.93,652.01,652.37,652.77,653.14,653.78,653.96,'654.10'
+    ],
+    [//5th Percentile AEP
+      "9.33E-01","7.49E-01","5.56E-01","4.68E-01","2.73E-01","1.92E-01","9.32E-02","8.43E-02",
+      "7.50E-02","6.49E-02","4.59E-02","3.60E-02","2.70E-02","1.75E-02","8.28E-03","6.99E-03",
+      "2.56E-03","1.04E-03","9.48E-04","7.93E-04","6.99E-04","1.63E-04","1.00E-04","8.68E-05",
+      "7.52E-05","6.21E-05","5.00E-05","4.58E-05","3.32E-05","2.52E-05","1.60E-05","7.33E-06",
+      "6.54E-06","3.48E-06","2.71E-06","2.01E-06","1.33E-06","6.00E-07","4.81E-07","3.95E-07"
+    ],
+    [//50th Percentile AEP
+      "9.48E-01","7.88E-01","5.92E-01","4.93E-01","3.12E-01","2.20E-01","1.20E-01","1.08E-01",
+      "9.60E-02","8.52E-02","6.45E-02","5.37E-02","4.17E-02","2.79E-02","1.43E-02","1.24E-02",
+      "6.18E-03","3.00E-03","2.75E-03","2.40E-03","2.19E-03","6.92E-04","6.41E-04","5.77E-04",
+      "5.20E-04","4.58E-04","4.00E-04","3.75E-04","2.99E-04","2.52E-04","1.83E-04","1.13E-04",
+      "1.07E-04","7.37E-05","6.31E-05","5.16E-05","4.03E-05","2.49E-05","2.14E-05","1.90E-05"
+    ],
+    [//(5th Percentile AEP)
+      "9.66E-01","8.22E-01","6.32E-01","5.39E-01","3.49E-01","2.68E-01","1.45E-01","1.33E-01",
+      "1.19E-01","1.06E-01","8.49E-02","7.32E-02","5.74E-02","4.00E-02","2.34E-02","2.11E-02",
+      "1.40E-02","6.23E-03","5.78E-03","5.18E-03","4.72E-03","2.45E-03","1.98E-03","1.91E-03",
+      "1.84E-03","1.76E-03","1.68E-03","1.59E-03","1.23E-03","9.50E-04","7.68E-04","5.39E-04",
+      "5.17E-04","3.92E-04","3.49E-04","3.07E-04","2.56E-04","1.78E-04","1.58E-04","1.43E-04"
+    ]
+  ]}
+/>
+{/*Table 16*/}
+<TableVertical tableKey="example-4-one-gate-inop-freq"
+  caption="One gate inoperable stage frequency hazard function."
+  alt="One gate inoperable stage frequency hazard function."
+  widthMode="intrinsic"
+  headers={
+    [
+      [
+        { value: 'Stage (ft)' },
+        { value: '5<sup>th</sup> Percentile AEP' },
+        {value: '50<sup>th</sup> Percentile AEP'},
+        {value: '95<sup>th</sup> Percentile AEP'}
+      ]
+    ]
+  }
+  columns={[
+    [//Stage (ft)
+      640.35,640.67,641.31,641.63,642.27,642.59,642.90,643.22,
+      643.54,643.86,'644.50',644.82,645.14,645.46,645.78,'646.10',
+      646.42,646.74,647.06,647.38,647.69,648.01,648.33,648.65,
+      648.97,649.29,649.61,649.93,650.25,650.57,650.89,651.21,
+      651.53,651.85,652.16,652.48,'652.80',653.12,653.76,'654.40'
+    ],
+    [//5th Percentile AEP
+      "9.33E-01","8.60E-01","4.51E-01","2.70E-01","1.41E-01","1.08E-01","8.56E-02","7.03E-02",
+      "5.09E-02","2.98E-02","1.79E-03","2.61E-04","1.75E-04","1.30E-04","9.83E-05","8.62E-05",
+      "7.72E-05","6.93E-05","6.31E-05","5.74E-05","5.22E-05","4.75E-05","4.33E-05","3.95E-05",
+      "3.59E-05","3.27E-05","2.98E-05","2.73E-05","2.50E-05","2.29E-05","2.09E-05","1.81E-05",
+      "1.47E-05","1.19E-05","9.50E-06","7.50E-06","5.76E-06","4.07E-06","1.77E-06","6.81E-07"
+    ],
+    [//50th Percentile AEP
+      "9.48E-01","8.79E-01","4.73E-01","3.09E-01","1.65E-01","1.36E-01","1.10E-01","9.03E-02",
+      "6.89E-02","4.32E-02","4.53E-03","1.39E-03","7.95E-04","6.79E-04","6.18E-04","5.70E-04",
+      "5.28E-04","4.92E-04","4.62E-04","4.34E-04","4.08E-04","3.84E-04","3.62E-04","3.41E-04",
+      "3.22E-04","3.03E-04","2.84E-04","2.65E-04","2.47E-04","2.31E-04","2.16E-04","2.01E-04",
+      "1.76E-04","1.53E-04","1.34E-04","1.16E-04","1.01E-04","8.04E-05","4.72E-05","2.65E-05"
+    ],
+    [//95th Percentile AEP
+      "9.64E-01","8.97E-01","5.17E-01","3.45E-01","1.91E-01","1.62E-01","1.35E-01","1.12E-01",
+      "8.89E-02","5.97E-02","8.70E-03","3.20E-03","2.56E-03","2.12E-03","1.93E-03","1.84E-03",
+      "1.75E-03","1.67E-03","1.59E-03","1.51E-03","1.44E-03","1.37E-03","1.30E-03","1.24E-03",
+      "1.18E-03","1.12E-03","1.06E-03","1.01E-03","9.66E-04","9.25E-04","8.79E-04","8.22E-04",
+      "7.48E-04","6.73E-04","6.10E-04","5.51E-04","4.94E-04","4.15E-04","2.84E-04","1.84E-04"
+    ]
+  ]}
+/>
+{/*Table 17*/}
+<TableVertical tableKey="example-4-two-gate-inop-freq"
+  caption="Two gates inoperable stage frequency hazard function."
+  alt="Two gates inoperable stage frequency hazard function."
+  widthMode="intrinsic"
+  headers={
+    [
+      [
+        { value: 'Stage (ft)' },
+        { value: '5<sup>th</sup> Percentile AEP' },
+        {value: '50<sup>th</sup> Percentile AEP'},
+        {value: '95<sup>th</sup> Percentile AEP'}
+      ]
+    ]
+  }
+  columns={[
+    [//Stage (ft)
+      640.35,640.69,641.37,641.71,642.39,642.73,643.07,643.41,
+      643.75,644.09,644.77,645.11,645.45,645.79,646.13,646.47,
+      646.81,647.15,647.49,647.82,648.16,'648.50',648.84,649.18,
+      649.52,649.86,'650.20',650.54,650.88,651.22,651.56,'651.90',
+      652.24,652.58,652.92,653.26,'653.60',653.94,654.62,'655.30'
+    ],
+    [//5th Percentile AEP
+      "9.33E-01","8.51E-01","4.12E-01","2.38E-01","1.28E-01","9.60E-02","7.74E-02","5.95E-02",
+      "3.91E-02","1.75E-02","1.45E-03","7.25E-04","5.90E-04","4.95E-04","4.47E-04","4.03E-04",
+      "3.64E-04","3.28E-04","2.96E-04","2.72E-04","2.51E-04","2.30E-04","2.12E-04","1.93E-04",
+      "1.73E-04","1.56E-04","1.40E-04","1.25E-04","1.12E-04","1.01E-04","8.17E-05","6.43E-05",
+      "4.96E-05","3.85E-05","2.96E-05","2.00E-05","1.19E-05","7.32E-06","2.43E-06","6.67E-07"
+    ],
+    [//50th Percentile AEP
+      "9.48E-01","8.72E-01","4.31E-01","2.77E-01","1.53E-01","1.24E-01","9.90E-02","7.94E-02",
+      "5.69E-02","2.74E-02","3.65E-03","2.71E-03","2.22E-03","1.94E-03","1.81E-03","1.69E-03",
+      "1.58E-03","1.48E-03","1.38E-03","1.29E-03","1.20E-03","1.12E-03","1.04E-03","9.71E-04",
+      "9.04E-04","8.52E-04","8.04E-04","7.53E-04","7.04E-04","6.31E-04","5.52E-04","4.73E-04",
+      "4.00E-04","3.36E-04","2.72E-04","2.06E-04","1.53E-04","1.13E-04","5.62E-05","2.56E-05"
+    ],
+    [//95th Percentile AEP
+      "9.65E-01","8.92E-01","4.78E-01","3.09E-01","1.80E-01","1.50E-01","1.24E-01","1.01E-01",
+      "7.51E-02","4.02E-02","7.50E-03","5.79E-03","4.94E-03","4.61E-03","4.30E-03","4.00E-03",
+      "3.81E-03","3.62E-03","3.45E-03","3.28E-03","3.12E-03","2.96E-03","2.82E-03","2.68E-03",
+      "2.55E-03","2.43E-03","2.31E-03","2.20E-03","2.09E-03","1.96E-03","1.73E-03","1.52E-03",
+      "1.34E-03","1.17E-03","1.03E-03","8.36E-04","6.64E-04","5.24E-04","3.19E-04","1.80E-04"
+    ]
+  ]}  
+/>
+{/*Table 18*/}
+<TableVertical tableKey="example-4-three-gate-inop-freq"
+  caption="Three gates inoperable stage frequency hazard function."
+  alt="Three gates inoperable stage frequency hazard function."
+  widthMode="intrinsic"
+  headers={
+    [
+      [
+        { value: 'Stage (ft)' },
+        { value: '5<sup>th</sup> Percentile AEP' },
+        {value: '50<sup>th</sup> Percentile AEP'},
+        {value: '95<sup>th</sup> Percentile AEP'}
+      ]
+    ]
+  }
+  columns={[
+    [//Stage (ft)
+      640.35,640.72,641.45,641.82,642.55,642.92,643.29,643.65,
+      644.02,644.39,645.12,645.49,645.86,646.22,646.59,646.96,
+      647.32,647.69,648.06,648.42,648.79,649.16,649.53,649.89,
+      650.26,650.63,650.99,651.36,651.73,'652.10',652.46,652.83,
+      '653.20',653.56,653.93,'654.30',654.66,655.03,655.77,'656.50'
+    ],
+    [//5th Percentile AEP
+      "9.33E-01","8.39E-01","3.63E-01","1.99E-01","1.11E-01","8.48E-02","6.74E-02","5.21E-02",
+      "3.53E-02","2.25E-02","1.09E-02","9.06E-03","8.10E-03","7.25E-03","6.61E-03","6.08E-03",
+      "5.59E-03","5.13E-03","4.72E-03","4.35E-03","4.01E-03","3.68E-03","3.39E-03","3.11E-03",
+      "2.81E-03","2.51E-03","2.23E-03","1.97E-03","1.55E-03","1.21E-03","9.36E-04","6.83E-04",
+      "4.34E-04","2.56E-04","1.39E-04","7.64E-05","4.06E-05","1.99E-05","3.74E-06","7.26E-07"
+    ],
+    [//50th Percentile AEP
+      "9.49E-01","8.63E-01","3.82E-01","2.35E-01","1.38E-01","1.09E-01","8.76E-02","7.03E-02",
+      "5.15E-02","3.50E-02","1.98E-02","1.83E-02","1.69E-02","1.56E-02","1.44E-02","1.32E-02",
+      "1.22E-02","1.12E-02","1.03E-02","9.57E-03","8.96E-03","8.42E-03","7.92E-03","7.49E-03",
+      "7.08E-03","6.55E-03","6.03E-03","5.26E-03","4.48E-03","3.74E-03","3.06E-03","2.36E-03",
+      "1.71E-03","1.15E-03","7.81E-04","5.07E-04","3.26E-04","2.02E-04","7.39E-05","2.82E-05"
+    ],
+    [//95th Percentile AEP
+      "9.64E-01","8.83E-01","4.32E-01","2.81E-01","1.66E-01","1.37E-01","1.11E-01","9.03E-02",
+      "6.87E-02","4.92E-02","2.98E-02","2.77E-02","2.57E-02","2.39E-02","2.21E-02","2.05E-02",
+      "1.92E-02","1.82E-02","1.72E-02","1.62E-02","1.53E-02","1.45E-02","1.36E-02","1.28E-02",
+      "1.21E-02","1.14E-02","1.07E-02","1.01E-02","8.99E-03","7.80E-03","6.63E-03","5.45E-03",
+      "4.17E-03","3.07E-03","2.24E-03","1.62E-03","1.16E-03","8.06E-04","3.87E-04","1.94E-04"
+    ]
+  ]}
+/>
+
+To build a composite stage frequency curve, the stage frequency curves either need to extend to the same maximum stage 
+or the stage frequency curves need to be bounded at their maximum stage. In this example, because the stage frequency 
+curves stop at different maximum stages, each curve needs to be bounded using the following procedure. Once bounded, 
+the stage frequency curve will become horizontal at the maximum elevation.
+
+<ProcessList 
+  items={[
+    {//Step 1
+      title: (
+        <>
+          Click the add row <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/addrow.png"/> symbol to add a new row to the bottom of the hazard function table.
+        </>
+      )
+    },
+    {//Step 2
+      title: (
+        <>
+          Input a stage minimally higher than maximum stage in the relationship (e.g. maximum stage plus 0.001), <FigReference figKey="example-4-bound-stage-freq"/>(a).
+        </>
+      )
+    },
+    {//Step 3
+      title: (
+        <>
+          Assign an exceedance probability of 1E-16 for the 5<sup>th</sup> percentile, the 50<sup>th</sup> percentile, and the 95<sup>th</sup> percentile values, <FigReference figKey="example-4-bound-stage-freq"/>(b).
+        </>
+      ),
+      freeform: (
+        <>
+         {/*Figure 45*/}
+          <Figure figKey="example-4-bound-stage-freq"
+            caption="Bounding of a stage frequency function (Example 4)."
+            docId="06-example-4.mdx"
+            src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure45.png" 
+            fullWidth={true}
+            alt="Bounding of a stage frequency function; Exceedance Probability is the x-axis and Stage is the y-axis (Example 4)." 
+          />
+        </>
+      )
+    }
+  ]}
+/>
+
+Next, build the composite hazard function.
+
+<ProcessList
+  items = {[
+    {//Step 1
+      title: (
+        <>
+          Right-click on the <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/folder.png"/> <strong>Hazards</strong> folder
+          in the Project Explorer window and select <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/addcompositehazard.png"/> 
+          <strong>Add Composite Hazard…</strong> Name the hazard function in the prompt (e.g., Composite Hazard) and press <strong>OK</strong>.
+        </>
+      )
+    },
+    {//Step 2
+      title: (
+        <>
+          The hazard for the composite stage frequency curve is stage and is measured in feet. In the <strong>Composite Hazard Properties</strong> section of the Properties 
+          window, <FigReference figKey="example-4-comp-hazard-fn"/>(a), select <em>Stage</em> for <strong>Hazard Type</strong> and <em>ft</em> for <strong>Hazard Units</strong>. 
+        </>
+      )
+    },
+    {//Step 3
+      title: (
+        <>
+          The stage frequency curve is generally plotted on a normal probability-linear scale (i.e., AEP plotted on the x-axis on a normal probability scale and stage 
+          plotted on the y-axis on a linear scale). In the <strong>Interpolation Transforms</strong> section of the Properties window, the <strong>Hazard</strong> is set to <em>None</em>
+          &nbsp; (linear interpolation), and the <strong>Probability</strong> is set to <em>Normal Z-variate</em>, <FigReference figKey="example-4-comp-hazard-fn"/>(b).
+        </>
+      )
+    },
+    {//Step 4
+      title: (
+        <>
+          In the <strong>Hazard Functions</strong> section of the Properties window, check the box for <em>Is Mixture</em>, then click the add 
+          row <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/addrow.png"/> symbol to add rows to hazard function table. 
+          Add a row for each gate inoperability scenario. Use the drop-down menu under <strong>Hazard Function</strong> in each row to select a gate inoperability scenario and input 
+          the probability of that scenario under <strong>Weight</strong>, <FigReference figKey="example-4-comp-hazard-fn"/>(c).
+        </>
+      ),
+      freeform: (
+        <>
+          {/*Figure 46*/}
+          <Figure figKey="example-4-comp-hazard-fn"
+            caption="Composite hazard function for gate inoperability. "
+            docId="06-example-4.mdx"
+            src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure46.png" 
+            fullWidth={true}
+            alt="Composite hazard function for gate inoperability."   
+          />
+        </>
+      )
+    }
+  ]}
+/>
+
+## Transforms
+
+The addition of gate inoperability requires three transform functions: composite stage to spillway discharge, spillway discharge to composite stage, 
+and composite stage to the stage associated with 100% gate reliability.
+
+The composite hydrologic hazard has a **Hazard** of _Stage_ and **Hazard Units** of _ft_. The BEP, IM, and OT system response relationships are functions of stage;
+however, the CLSE system response is a function of spillway discharge. Therefore, a transform function is required to convert the composite stage to 
+spillway discharge accounting for gate inoperability. The data for this transform is provided in <TableReference tableKey="example-4-comp-stage-spill-transform"/>. [Example 3](./05-example-3.mdx) already includes transform functions for 
+stage to spillway discharge and spillway discharge to stage, but these relationships are for 100% gate reliability. To update these relations to account for 
+gate inoperability, copy the data from <TableReference tableKey="example-4-comp-stage-spill-transform"/> and paste it into the transform table. For the stage to spillway discharge transform function, paste stage 
+into the **X** column and paste flow into the **Value** column <FigReference figKey="example-4-comp-stage-spill-transform-fn"/>. For the spillway discharge to stage transform function, paste the flow into the **X** column 
+and paste stage into the **Value** column, <FigReference figKey="example-4-spill-dischar-comp-fn"/>.
+
+{/*Table 19*/}
+<TableVertical tableKey="example-4-comp-stage-spill-transform"
+  caption="Composite stage to spillway discharge transform data."
+  alt="Composite stage to spillway discharge transform data."
+  widthMode="intrinsic"
+  headers={
+    [
+      [
+        { value: 'Composite Stage (ft)' },
+        { value: 'Spillway Discharge (cfs)' },
+        {value: 'Composite Stage (ft)'},
+        {value: 'Spillway Discharge (cfs)'}
+      ]
+    ]
+  }
+  columns={[
+    [//Composite Stage (ft)
+      640.06,'640.60',641.14,641.68,642.23,643.31,643.85,643.92,
+      643.98,644.04,'644.10',644.16,644.22,644.35,644.41,644.47,
+      644.53,'644.60',644.66,644.72,644.78,644.84,'644.90',644.97,
+      '645.10',645.12,645.15,645.17,645.22,645.24,645.27,'645.30',
+      645.32,645.35,645.37
+    ],
+    [//Spillway Discharge (cfs)
+      "1,976","4,512","6,214","7,147","7,793","8,104","8,568","9,139",
+      "9,726","10,439","12,543","16,055","22,158","28,177","30,881","33,986",
+      "38,701","46,070","58,272","76,183","81,064","83,861","86,659","89,456",
+      "98,296","99,952","101,608","102,013","102,630","102,939","103,247","103,607",
+      "103,650","103,694","103,738"
+    ],
+    [//Composite Stage (ft)
+      645.39,645.42,645.44,645.47,645.49,645.51,645.54,645.56,
+      645.59,645.61,645.64,645.66,645.68,645.71,645.73,645.76,
+      '645.80',646.35,646.91,647.46,648.01,648.57,649.12,649.67,
+      650.23,650.78,651.33,651.89,652.44,652.99,653.55,'654.10',
+      654.67,655.25,655.82
+    ],
+    [//Spillway Discharge (cfs)
+      "103,781","103,825","103,868","103,912","103,955","103,999","104,043","104,086",
+      "104,130","104,173","104,217","104,260","104,304","104,348","104,391","104,435",
+      "104,515","105,513","106,473","107,421","108,368","109,316","110,264","111,211",
+      "112,157","113,081","113,983","114,885","115,785","116,666","117,526","118,385",
+      "119,275","120,152","121,027"
+    ]
+  ]}
+/>
+{/*Figure 47*/}
+<Figure figKey="example-4-comp-stage-spill-transform-fn"
+  caption="Composite stage to spillway discharge transform function (Example 4)."
+  docId="06-example-4.mdx"
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure47.png" 
+  fullWidth={true}
+  alt="Composite stage to spillway discharge transform function; Stage is the x-axis and Flow is th y-axis (Example 4)." 
+/>
+{/*Figure 48*/}
+<Figure figKey="example-4-spill-dischar-comp-fn"
+  caption="Spillway discharge to composite stage transform function (Example 4)."
+  docId="06-example-4.mdx"
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure48.png" 
+  fullWidth={true}
+  alt="Spillway discharge to composite stage transform function; flow is the x-axis and stage is the y-axis (Example 4)." 
+/>
+
+Non-breach life loss is a function of stage for 0 gates inoperable or 100% gate reliability. A transform function is necessary to move from the composite or average 
+stage across all gate inoperability scenarios to the stage associated with 100% gate reliability. The data for this transform is provided in <TableReference tableKey="example-4-comp-stage-100-reliable"/>.
+
+{/*Table 20*/}
+<TableVertical tableKey="example-4-comp-stage-100-reliable"
+  caption="Composite stage to 100% gate reliability stage transform data."
+  alt="Composite stage to 100% gate reliability stage transform data."
+  widthMode="intrinsic"
+  headers={
+    [
+      [
+        { value: 'Composite Stage (ft)' },
+        { value: '100% Reliable Stage (ft)' },
+        {value: 'Composite Stage (ft)'},
+        {value: '100% Reliable Stage (ft)'}
+      ]
+    ]
+  }
+  columns={[
+    [//Composite Stage (ft)
+      '640.060','640.600','641.140','641.680','642.230','643.310','643.850','643.920',
+      '643.980','644.040','644.100','644.160','644.220','644.350','644.410','644.470',
+      '644.530','644.600','644.660','644.720','644.780','644.840','644.900','644.970',
+      '645.100','645.120','645.150','645.170','645.220','645.240','645.270','645.300',
+      '645.320','645.350','645.370'
+    ],
+    [//100% Reliable Stage (ft)
+      640.352,640.588,641.138,641.671,642.238,643.302,643.801,643.875,
+      643.926,643.978,644.021,644.059,644.095,644.159,644.184,644.207,
+      644.229,644.253,'644.290',644.331,644.363,644.387,644.404,644.424,
+      644.458,644.463,644.469,644.471,644.477,644.479,644.482,644.486,
+      644.488,644.492,644.494
+    ],
+    [//Composite Stage (ft)
+      '645.390','645.420','645.440','645.470','645.510','645.540','645.560','645.590',
+      '645.610','645.640','645.660','645.680','645.710','645.730','645.760','645.800',
+      '646.350','646.910','647.460','648.010','648.570','649.120','649.670','650.230',
+      '650.780','651.330','651.890','652.440','652.990','653.550','654.100','654.670',
+      '655.250','655.820','656.500'
+    ],
+    [//100% Reliable Stage (ft)
+      644.496,644.499,644.502,644.505,644.508,'644.510',644.512,644.514,
+      644.515,644.517,644.518,644.519,644.521,644.523,644.525,644.527,
+      644.556,'644.580',644.596,644.611,644.626,644.639,644.653,644.667,
+      644.681,'644.700',644.768,645.044,645.731,647.679,650.728,652.974,
+      653.954,'654.100',654.101
+    ]
+  ]}
+/>
+
+<ProcessList
+  items= {[
+    {//Step 1
+      title:(
+        <>
+          Right-click on the <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/folder.png"/> <strong>Transforms</strong> folder in the Project Explorer 
+          window and select <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/addtabtransform.png"/> <strong>Add Tabular Transform…</strong> Name the 
+          transform function in the prompt (e.g., Composite Stage to 100% Reliable Stage) and press <strong>OK</strong>.
+        </>
+      )
+    },
+    {//Step 2
+      title:(
+        <>
+          In the <strong>Tabular Transform Properties</strong> section of the Properties window, <FigReference figKey="example-4-comp-stage-100-reliable"/>(a), select <em>Stage</em> for <strong>Hazard Type</strong>, 
+          <em>ft</em> for <strong>Hazard Units</strong>, <em>Stage</em> for <strong>Transformed Hazard</strong>, and <em>ft</em> for <strong>Transformed Units</strong>.
+        </>
+      )
+    },
+    {//Step 3
+      title:(
+        <>
+          The <strong>Interpolation Transforms</strong> are set to <em>None</em> (linear interpolation) for both the <strong>Hazard</strong> and <strong>Transformed Hazard</strong>, <FigReference figKey="example-4-comp-stage-100-reliable"/>(b).
+        </>
+      )
+    },
+    {//Step 4
+      title:(
+        <>
+          There is no uncertainty for the hazard or transformed hazard, so the Distribution drop-down menu is set to Deterministic, <FigReference figKey="example-4-comp-stage-100-reliable"/>(c). Copy and paste 
+          the data from <TableReference tableKey="example-4-comp-stage-100-reliable"/> into the table, <FigReference figKey="example-4-comp-stage-100-reliable"/>(d).
+        </>
+      ),
+      freeform: (
+        <>
+          {/*Figure 49*/}
+          <Figure figKey="example-4-comp-stage-100-reliable"
+            caption="Composite stage to 100% reliable stage transform function."
+            docId="06-example-4.mdx"
+            src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure49.png" 
+            fullWidth={true}
+            alt="Composite stage to 100% reliable stage transform function; stage is the x-axis and y-axis." 
+          />
+        </>
+      )
+    }
+  ]}
+/>
+
+## System Responses
+
+:::note
+Add paragraph to discuss how overtopping and concrete lined spillway erosion system response probabilities could change
+ when using composite hazard. Composite hazard will affect durations of overtopping and spillway flow compared to example 3. 
+ Best practice is to add multiple branches to the PFM sub-event tree for each operational performance scenario and assign the 
+ operational performance probabilities to those branches. From there, the remainder of the event tree would be evaluated for 
+ each scenario discretely to obtain the system response probability.
+ :::
+
+ The system response functions for this example are the same as those in [Example 3](./05-example-3.mdx#system-responses). 
+ Reference the procedure in System Responses from [Example 1](./03-example-1.mdx#system-responses), [Example 2](./04-example-2.mdx#system-responses), and [Example 3](./05-example-3.mdx#system-responses) 
+ to create the system response functions for this risk analysis.
+
+## Consequences
+
+ The consequence functions for this example are the same as those in [Example 3](./05-example-3.mdx#consequences). 
+ Reference the procedure in Consequences from [Example 1](./03-example-1.mdx#consequences), [Example 2](./04-example-2.mdx#consequences), and [Example 3](./05-example-3.mdx#consequences) 
+ to create the system response functions for this risk analysis.
+
+ ## Risk Analyses
+
+ The risk analyses for Example 4 are setup in a similar fashion to those [Example 3](./05-example-3.mdx#risk-analyses), but the hazard function will now reference _Composite Hazard_
+ and the _Composite Stage to 100% Reliable Stage_ transform is required between the hazard and the non-breach consequences. 
+
+ <ProcessList 
+    items={[
+      {//Step 1
+        title:(
+          <>
+            Delete the existing non-breach consequence function at the top of the diagram by clicking the “x” in the top left corner of the box.
+          </>
+        )
+      },
+      {//Step 2
+        title:(
+          <>
+            Add a transform node <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/transformicon.png"/> by clicking on the hazard node 
+            output connector and select the <em>Composite Stage to 100% Reliable Stage</em> function from the drop-down box. 
+          </>
+        )
+      },
+      {//Step 3
+        title:(
+          <>
+            Add the non-breach condition by clicking on the transform function output connector and adding a 
+            consequence node <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/consequenceIcon.png"/> and selecting the composite 
+            non-breach life loss function (e.g., Non-Breach) from the drop-down box to complete the diagram, <FigReference figKey="example-4-tot-proj-intervene-risk"/>.
+          </>
+        ),
+        freeform: (
+          <>
+          {/*Figure 50*/}
+            <Figure figKey="example-4-tot-proj-intervene-risk"
+              caption="Total project with intervention risk diagram (Example 4)."
+              docId="06-example-4.mdx"
+              src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure50.png" 
+              fullWidth={true}
+              alt="Total project with intervention risk diagram (Example 4)." 
+            />
+          </>
+        )
+      },
+      {//Step 4
+        title:(
+          <>
+            To run the risk analysis without uncertainty, select <em>Simulate Mean Risk Only</em> in the <strong>Simulation</strong> section of the Properties window and
+            click <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/estimate.png"/> <strong>Estimate</strong>. To run the risk analysis with 
+            uncertainty, select <em>Simulate Risk with Full Uncertainty</em> and click <FigureInline src="/figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/icons/estimate.png"/> <strong>Estimate</strong>. 
+          </>
+        )
+      },
+      {//Step 5
+        title:(
+          <>
+            Follow the same procedure outlined in Steps 1 through 4 to create and run a second risk analysis for the without intervention scenario. 
+            The hazard, transform, and consequence functions for this risk analysis are identical, while the responses are changed to the corresponding 
+            “without intervention” functions, <FigReference figKey="example-4-tot-proj-wo-intervene-risk"/>.
+          </>
+        ),
+        freeform:(
+          <>
+            {/*Figure 51*/}
+            <Figure figKey="example-4-tot-proj-wo-intervene-risk"
+              caption="Total project without intervention risk diagram (Example 4)."
+              docId="06-example-4.mdx"
+              src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure51.png" 
+              fullWidth={true}
+              alt="Total project without intervention risk diagram (Example 4)."           
+              />
+          </>
+        )
+      }
+    ]}
+  />
+
+## Results
+
+Once the risk analysis model has been simulated, the **Summary Statistics** tab provides a table of summary results. In the Alternatives filter menu, 
+select “Total Risk without Intervention” to display the results in the same table as “Total Risk with Intervention” as shown in <FigReference figKey="example-4-sum-stats-tot-risk"/>. 
+This table shows the incremental _Mean, E[N]_ (also referred to as the average annual life loss, AALL), of 6.53E-02 without intervention and 5.67E-02 with 
+intervention and an _Exceedance Probability, α_ (also referred to as annual probability of failure, APF) of 4.68E-04 without intervention and 4.15E-04 with intervention. 
+
+{/*Figure 52*/}
+<Figure 
+  docId="06-example-4.mdx"
+  figKey="example-4-sum-stats-tot-risk"
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure52.png" 
+  fullWidth={true}
+  alt="Summary statistics for total project risk (Example 4)." 
+  caption="Summary statistics for total project risk (Example 4)."
+/>
+
+The incremental F-N Plot with uncertainty is shown in <FigReference figKey="example-4-inc-fn-full-uncertain-tot-risk"/>, the mean α-ƞ Plot is shown 
+in <FigReference figKey="example-4-mean-an-tot-risk"/>, and the α-ƞ Plot with uncertainty is shown in <FigReference figKey="example-4-an-uncertain-scatter-tot-risk"/>.
+
+{/*Figure 53*/}
+<Figure 
+  docId="06-example-4.mdx"
+  figKey="example-4-inc-fn-full-uncertain-tot-risk"
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure53.png" 
+  fullWidth={true}
+  alt="Incremental F-N plot with full uncertainty for total project risk (Example 4)." 
+  caption="Incremental F-N plot with full uncertainty for total project risk (Example 4)."
+/>
+{/*Figure 54*/}
+<Figure 
+  docId="06-example-4.mdx"
+  figKey="example-4-mean-an-tot-risk"
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure54.png" 
+  fullWidth={true}
+  alt="Mean α-ƞ plot for total project risk (Example 4)." 
+  caption="Mean α-ƞ plot for total project risk (Example 4)."
+/>
+{/*Figure 55*/}
+<Figure 
+  docId="06-example-4.mdx"
+  figKey="example-4-an-uncertain-scatter-tot-risk"
+  src="figures/desktop-applications/rmc-totalrisk/applications-guide/v1.0/figures/figure55.png" 
+  fullWidth={true}
+  alt="α-ƞ plot with uncertainty scatter for total project risk (Example 4)." 
+  caption="α-ƞ plot with uncertainty scatter for total project risk (Example 4)."
+/>

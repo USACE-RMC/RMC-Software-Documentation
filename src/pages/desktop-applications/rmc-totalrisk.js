@@ -20,7 +20,7 @@ const totalRiskData = [
     preserveIconColor: true,
     doc_location: 'desktop-applications/rmc-totalrisk/applications-guide',
     doc_name: 'RMC TotalRisk Applications Guide',
-    active: false,
+    active: true,
     draft: true,
   },
   {
