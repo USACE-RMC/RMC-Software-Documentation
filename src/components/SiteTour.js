@@ -17,7 +17,7 @@ const buildSteps = (baseUrl) => [
   {
     title: 'Welcome to RMC Software Documentation',
     content:
-      'This quick tour will show you how to navigate the site, find documents, and use the interactive features built into every page. You can revisit this tour anytime from the help menu.',
+      'This quick tour will show you how to navigate the site, find documents, and use the interactive features built into every page. You can revisit this tour anytime from the homepage.',
     icon: 'compass',
   },
   {
@@ -106,7 +106,7 @@ const buildSteps = (baseUrl) => [
   {
     title: 'You\u2019re All Set!',
     content:
-      'You now know the essentials of navigating this site. Remember, you can always restart this tour from the help menu in the top-right corner. Happy reading!',
+      'You now know the essentials of navigating this site. Remember, you can always restart this tour from the homepage. Happy reading!',
     icon: 'check',
   },
 ];
