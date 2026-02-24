@@ -1,5 +1,4 @@
 import React from 'react';
-import '../css/custom.css';
 import '../css/tables.css';
 
 const TableChangelog = ({ dates = [], categories = [], documents = [], versions = [], descriptions = [] }) => {
@@ -29,6 +28,7 @@ const TableChangelog = ({ dates = [], categories = [], documents = [], versions 
 
   return (
     <div className="table-container" style={{ borderBottom: 'none' }}>
+      <div className="table-scroller">
       <table className="table-base table-zebra" aria-label="Change Log" style={{ tableLayout: 'fixed', minWidth: '100%' }}>
         <colgroup>
           {COL_WIDTHS.map((w, idx) => (
@@ -107,6 +107,7 @@ const TableChangelog = ({ dates = [], categories = [], documents = [], versions 
           })}
         </tbody>
       </table>
+      </div>
     </div>
   );
 };

@@ -83,17 +83,6 @@ export default {
       },
       items: [
         {
-          type: 'dropdown',
-          label: 'Help',
-          position: 'right',
-          items: [
-            {
-              label: 'Changelog',
-              to: '/changelog',
-            },
-          ],
-        },
-        {
           label: 'RMC Website',
           to: 'https://www.rmc.usace.army.mil/',
           position: 'right',

@@ -1,6 +1,5 @@
 import Layout from '@theme/Layout';
 import TableChangelog from '../components/TableChangelog';
-import '../css/custom.css';
 
 export default function Changelog() {
   return (
