@@ -54,9 +54,9 @@ Thanks,
 
 ---
 
-## Tester 3 — Versioning
+## Tester 3 — Versioning & Site Tour
 
-**Subject:** RMC Software Documentation Site — Soft Launch Testing (Versioning)
+**Subject:** RMC Software Documentation Site — Soft Launch Testing (Versioning & Site Tour)
 
 ---
 
@@ -64,17 +64,15 @@ Hi [Name],
 
 We're preparing to launch a new documentation website for the RMC suite of tools. The site consolidates user's guides, technical manuals, validation studies, and other reference documents for RMC software — including desktop applications (LifeSim, RMC-TotalRisk, RMC-RFA, RMC-BestFit), web applications, and the full set of toolbox technical manuals (Internal Erosion, Overtopping, Risk Calculations, Seismic Hazard). The goal is to provide a single, searchable, version-managed home for all of this documentation, replacing scattered PDFs and legacy formats.
 
-One important feature of the site is **version management** — some documents have multiple published versions, and users need to be able to switch between them and clearly see when they're viewing an older version. Before we open this up more broadly, we're running a small round of hands-on testing, and your focus area is making sure versioning works correctly.
-
-The document with the most version history is the **Typical Event Tree Database** (under the Risk Calculations Suite), which has versions 1.0 through 1.5.
+Before we open this up more broadly, we're running a small round of hands-on testing. You have two focus areas: **version management** and the **guided site tour**.
 
 Here's what I'd like you to do:
 
-1. **Test the version selector.** Navigate to the Typical Event Tree Database (you'll find it under Risk Calculations Suite from the homepage). You should land on v1.5 by default. Use the version selector dropdown to switch to v1.0. Confirm the URL changes to include `/v1.0/` and that the page content updates. Then switch to v1.3 and confirm again.
+1. **Test versioning on the Typical Event Tree Database.** Navigate to the Typical Event Tree Database (under Risk Calculations Suite from the homepage). You should land on v1.5 by default. Open the Version History page from the sidebar — it should show entries for all versions (v1.0 through v1.5) with dates, descriptions, and reviewer information. Use the table to navigate to an older version (e.g., v1.0). Confirm the URL changes to include `/v1.0/` and that a red warning banner appears at the top of the page telling you you're viewing an old version. Click the link in that banner and confirm it takes you back to v1.5.
 
-2. **Check the old-version warning.** While viewing v1.0 of the Event Tree Database, look for a red warning banner at the top of the page that tells you you're viewing an old version. Click the link in that banner to go to the latest version and confirm it takes you to v1.5.
+2. **Take the guided site tour.** Go to the homepage and start the site tour (look for a tour button or check the Help menu in the navigation bar). Follow the tour through each step — it should guide you across multiple pages with spotlight highlights and explanatory text. Confirm the tour navigates smoothly between pages, that each step is readable and points to the right area of the screen, and that you can dismiss the tour early without issues.
 
-3. **Review the Version History page.** Open the Version History page for the Event Tree Database (in the sidebar under Document Information). Confirm the table shows entries for all versions — v1.0 through v1.5 — with dates, descriptions, and reviewer information.
+3. **Check the Change Log page.** Open the Change Log from the Help menu in the navigation bar. Confirm the page loads and displays a table of recent site changes with dates, descriptions, and affected documents. Verify that the entries are in reverse chronological order (newest first) and that any links in the table navigate to the correct documents.
 
 If anything feels confusing, broken, or just off, please note it — that kind of feedback is exactly what we're looking for at this stage.
 
@@ -128,7 +126,7 @@ Here's what I'd like you to do:
 
 2. **Compare sidebar structure across two documents.** Open any two documents from different categories — for example, one desktop application guide and one toolbox technical manual. In each, confirm that the sidebar has a collapsible "Document Information" section at the top and that chapters are listed and numbered in order.
 
-3. **Check table rendering in a toolbox technical manual.** Open any module from the Internal Erosion Suite (e.g., Backward Erosion Piping or Soil Classification) and find pages that contain data tables. Verify they render with proper formatting, headers, and borders — not as raw markdown text or broken layouts.
+3. **Check table rendering in a toolbox technical manual.** Open any module from the Internal Erosion Suite (e.g., Backward Erosion Piping Initiation or Soil Classification) and find pages that contain data tables. Verify they render with proper formatting, headers, and borders — not as raw markdown text or broken layouts.
 
 If anything feels confusing, broken, or just off, please note it — that kind of feedback is exactly what we're looking for at this stage.
 
@@ -193,14 +191,14 @@ Thanks,
 
 ## Coverage Summary
 
-| Area | Tester | Focus | Tasks |
-|------|--------|-------|-------|
-| Homepage & navigation flow | 1 | Main site | 3 |
-| Search (relevance, cross-doc, continuity) | 2 | Main site | 3 |
-| Version switching, warnings & history | 3 | Main site | 3 |
-| Figures, equations, citations, bibliography | 4 | Main site | 3 |
-| Document metadata, sidebars, tables | 5 | Main site | 3 |
-| Visual consistency, layout, spacing & mobile | 6 | Look & Feel | 3 |
-| Dev docs: access, links, display & search exclusion | 7 | Developer Resources | 3 |
+| Area                                                | Tester | Focus               | Tasks |
+| --------------------------------------------------- | ------ | ------------------- | ----- |
+| Homepage & navigation flow                          | 1      | Main site           | 3     |
+| Search (relevance, cross-doc, continuity)           | 2      | Main site           | 3     |
+| Versioning, site tour & change log                  | 3      | Main site           | 3     |
+| Figures, equations, citations, bibliography         | 4      | Main site           | 3     |
+| Document metadata, sidebars, tables                 | 5      | Main site           | 3     |
+| Visual consistency, layout, spacing & mobile        | 6      | Look & Feel         | 3     |
+| Dev docs: access, links, display & search exclusion | 7      | Developer Resources | 3     |
 
 **21 tasks across 7 testers**, 3 each.

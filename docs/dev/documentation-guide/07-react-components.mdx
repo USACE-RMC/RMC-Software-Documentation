@@ -137,10 +137,21 @@ responsiblePersonNumber: 555-0100
 
 import DocumentMetadata from '@site/src/components/DocumentMetadata';
 
-<DocumentMetadata />
+<DocumentMetadata metadata={frontMatter} />
 ```
 
-**Props:** None - reads from front matter
+**Props:**
+
+<TableVerticalNoRef
+  alt="Table: Prop, Type, Required, Description"
+  headers={[[{ value: 'Prop' }, { value: 'Type' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['<code>metadata</code>'],
+    ['Object'],
+    ['Yes'],
+    ['Front matter object — pass <code>{`{frontMatter}`}</code>'],
+  ]}
+/>
 
 **Front Matter Fields:**
 
@@ -158,8 +169,10 @@ import DocumentMetadata from '@site/src/components/DocumentMetadata';
       '<code>reportSubjectTerms</code>',
       '<code>responsiblePersonName</code>',
       '<code>responsiblePersonNumber</code>',
+      '<code>citationGuide</code>',
+      '<code>reportAcknowledgments</code>',
     ],
-    ['String', 'String', 'String', 'String', 'Array', 'String', 'Array', 'String', 'String'],
+    ['String', 'String', 'String', 'String', 'Array', 'String', 'Array', 'String', 'String', 'String', 'String'],
     [
       'Publication date',
       'Document type (User&#x27;s Guide, Technical Manual, etc.)',
@@ -170,6 +183,8 @@ import DocumentMetadata from '@site/src/components/DocumentMetadata';
       'Keywords/topics',
       'Point of contact',
       'Contact phone number',
+      'How to cite this document',
+      'Acknowledgment text',
     ],
   ]}
 />
@@ -827,19 +842,6 @@ import TableAcronyms from '@site/src/components/TableAcronyms';
   headers={[[{ value: 'Prop' }, { value: 'Type' }, { value: 'Required' }, { value: 'Description' }]]}
   columns={[['<code>acronyms</code>'], ['Array'], ['Yes'], ['Array of <code>{acronym, definition}</code> objects']]}
 />
-
----
-
-### TableVerticalLeftAlign
-
-**Purpose:** Left-aligned variant of TableVertical.
-
-**When to use:**
-
-- Tables with long text entries
-- Text-heavy tables
-
-**Usage:** Same as TableVertical with left-aligned content.
 
 ---
 
@@ -3236,9 +3238,11 @@ import NavContainer from '@site/src/components/NavContainer';
 **Usage:**
 
 ```jsx
-<NavContainer navLink="../" navTitle="User's Guide" navDoc="lifesim-users-guide">
-  <p>Navigation content here</p>
-</NavContainer>
+<NavContainer
+  link="/desktop-applications/lifesim"
+  linkTitle="User's Guide"
+  document="desktop-applications/lifesim/users-guide"
+/>
 ```
 
 **Props:**
@@ -3247,10 +3251,10 @@ import NavContainer from '@site/src/components/NavContainer';
   alt="Table: Prop, Type, Required, Description"
   headers={[[{ value: 'Prop' }, { value: 'Type' }, { value: 'Required' }, { value: 'Description' }]]}
   columns={[
-    ['<code>navLink</code>', '<code>navTitle</code>', '<code>navDoc</code>', '<code>children</code>'],
-    ['String', 'String', 'String', 'ReactNode'],
-    ['Yes', 'Yes', 'Yes', 'Yes'],
-    ['Parent link URL', 'Navigation title', 'Document identifier', 'Navigation content'],
+    ['<code>link</code>', '<code>linkTitle</code>', '<code>document</code>'],
+    ['String', 'String', 'String'],
+    ['Yes', 'Yes', 'Yes'],
+    ['Parent link URL', 'Navigation title', 'Document identifier for version resolution'],
   ]}
 />
 
@@ -3272,6 +3276,160 @@ import VersionSelector from '@site/src/components/VersionSelector';
 ```
 
 **Usage:** Typically used internally by NavContainer.
+
+---
+
+## Specialized Components
+
+### EventTree
+
+**Purpose:** Displays an event tree image with an optional download link to the associated spreadsheet. Used extensively in the Typical Event Tree Database.
+
+**When to use:**
+
+- Typical Event Tree Database pages
+- Displaying event tree diagrams with download links
+
+**Import:**
+
+```jsx
+import EventTree from '@site/src/components/EventTree';
+```
+
+**Usage:**
+
+```jsx
+<EventTree base="embankment-overtopping" />
+```
+
+**Props:**
+
+<TableVerticalNoRef
+  alt="Table: Prop, Type, Required, Default, Description"
+  headers={[[{ value: 'Prop' }, { value: 'Type' }, { value: 'Required' }, { value: 'Default' }, { value: 'Description' }]]}
+  columns={[
+    ['<code>base</code>', '<code>text</code>', '<code>imgExt</code>', '<code>sheetExt</code>', '<code>imgDir</code>', '<code>sheetDir</code>', '<code>width</code>', '<code>pngScale</code>'],
+    ['String', 'String', 'String', 'String', 'String', 'String', 'String', 'Number'],
+    ['Yes', 'No', 'No', 'No', 'No', 'No', 'No', 'No'],
+    ['-', '-', '<code>"png"</code>', '<code>"xlsm"</code>', '<code>"/event-trees/images"</code>', '<code>"/event-trees/spreadsheets"</code>', '<code>"100%"</code>', '<code>4</code>'],
+    ['Base filename for the event tree image and spreadsheet', 'Display text', 'Image file extension', 'Spreadsheet file extension', 'Directory path for images', 'Directory path for spreadsheets', 'Image width', 'Scale factor for SVG-to-PNG rasterization'],
+  ]}
+/>
+
+:::tip
+In most cases, you only need the `base` prop. The component automatically constructs image and spreadsheet paths from the base filename.
+:::
+
+---
+
+### EventTreeTOC
+
+**Purpose:** Renders an auto-generated table of contents for the Typical Event Tree Database. Reads TOC data from `src/data/eventTreeToc.json`.
+
+**When to use:**
+
+- Table of contents pages in the Typical Event Tree Database
+
+**Import:**
+
+```jsx
+import EventTreeTOC from '@site/src/components/EventTreeTOC';
+```
+
+**Usage:**
+
+```jsx
+<EventTreeTOC />
+```
+
+**Props:** None — reads the current URL path to determine the version and loads data automatically.
+
+---
+
+### CategoryList
+
+**Purpose:** Renders a styled list of category items with optional icons, descriptions, and badges. Supports multiple layout variants.
+
+**When to use:**
+
+- Displaying categorized navigation or feature lists
+- Tool or application listings with descriptions
+
+**Import:**
+
+```jsx
+import CategoryList from '@site/src/components/CategoryList';
+```
+
+**Usage:**
+
+```jsx
+<CategoryList
+  items={[
+    { title: 'Getting Started', description: 'Learn the basics', href: './getting-started' },
+    { title: 'Advanced Topics', description: 'Deep dive into features', href: './advanced' },
+  ]}
+  variant="accentTiles"
+/>
+```
+
+**Props:**
+
+<TableVerticalNoRef
+  alt="Table: Prop, Type, Required, Default, Description"
+  headers={[[{ value: 'Prop' }, { value: 'Type' }, { value: 'Required' }, { value: 'Default' }, { value: 'Description' }]]}
+  columns={[
+    ['<code>items</code>', '<code>variant</code>', '<code>columns</code>'],
+    ['Array', 'String', 'Object'],
+    ['Yes', 'No', 'No'],
+    ['<code>[]</code>', '<code>"accentTiles"</code>', '<code>{`{base: 1, md: 2, xl: 3}`}</code>'],
+    ['Array of <code>{`{title, description?, href?, onClick?, icon?, badge?}`}</code> objects', 'Layout variant: <code>"accentTiles"</code>, <code>"pills"</code>, or <code>"menu"</code>', 'Grid column configuration for accentTiles variant'],
+  ]}
+/>
+
+---
+
+### TableBestFitDistributions
+
+**Purpose:** Specialized table component for displaying distribution comparison data in RMC-BestFit documentation. Supports header config with column spans.
+
+**When to use:**
+
+- RMC-BestFit probability distribution comparison tables
+
+**Import:**
+
+```jsx
+import TableBestFitDistributions from '@site/src/components/TableBestFitDistributions';
+```
+
+**Usage:**
+
+```jsx
+<TableBestFitDistributions
+  headers={['Distribution', 'Parameters', 'AIC', 'BIC']}
+  columns={[
+    ['Normal', 'Log-Normal', 'Weibull'],
+    ['μ=5.2, σ=1.1', 'μ=1.6, σ=0.4', 'k=3.2, λ=5.8'],
+    ['125.3', '118.7', '121.2'],
+    ['129.1', '122.5', '125.0'],
+  ]}
+/>
+```
+
+**Props:**
+
+<TableVerticalNoRef
+  alt="Table: Prop, Type, Required, Default, Description"
+  headers={[[{ value: 'Prop' }, { value: 'Type' }, { value: 'Required' }, { value: 'Default' }, { value: 'Description' }]]}
+  columns={[
+    ['<code>headerConfig</code>', '<code>headers</code>', '<code>columns</code>', '<code>fullWidth</code>', '<code>colWidths</code>', '<code>colAlign</code>', '<code>widthMode</code>'],
+    ['Array', 'Array', 'Array', 'Boolean', 'Array', 'Array', 'String'],
+    ['No', 'No', 'Yes', 'No', 'No', 'No', 'No'],
+    ['-', '-', '-', '<code>true</code>', '-', '-', '<code>"full"</code>'],
+    ['Header config with <code>colSpan</code> support', 'Plain string headers (fallback)', 'Column data arrays', 'Whether table spans full width', 'Column width specifications', 'Column alignment specifications', 'Width mode: <code>"full"</code> or <code>"intrinsic"</code>'],
+  ]}
+/>
 
 ---
 

@@ -26,14 +26,17 @@ The `src/` folder contains all source code for custom React components, styles, 
 
 ```
 src/
-├── components/      → React components used in MDX
-├── contexts/        → React context for state management
-├── css/             → Global stylesheets
-├── data/            → Build-generated data files
-├── pages/           → Custom web pages (homepage, hubs)
-├── theme/           → Docusaurus theme overrides
-├── draftDocs.js     → Draft document tracking
-└── reportIdMap.js   → Auto-generated ID mappings
+├── components/        → React components used in MDX
+│   └── icons/         → SVG icon components for landing pages
+├── contexts/          → React context for state management
+├── clientModules/     → Client-side modules (analytics, scroll behavior)
+├── css/               → Global stylesheets
+├── data/              → Build-generated data files
+├── pages/             → Custom web pages (homepage, landing pages)
+├── theme/             → Docusaurus theme overrides
+├── draftDocs.js       → Draft document tracking
+├── imageDimensions.js → Auto-generated image metadata
+└── reportIdMap.js     → Auto-generated ID mappings
 ```
 
 ---
@@ -49,7 +52,6 @@ Contains all custom React components used throughout the documentation site. The
 **Document Metadata:**
 
 - `DocumentMetadata.js`
-- `TableVersionHistory.js`
 
 **Figures & Images:**
 
@@ -57,15 +59,18 @@ Contains all custom React components used throughout the documentation site. The
 - `FigureReference.js`
 - `FigureInline.js`
 - `FigureNoRef.js`
+- `GIF.js`
 
 **Tables:**
 
 - `TableVertical.js`
-- `TableVerticalLeftAlign.js`
 - `TableVerticalNoRef.js`
 - `TableHorizontal.js`
 - `TableAcronyms.js`
 - `TableReference.js`
+- `TableVersionHistory.js`
+- `TableBestFitDistributions.js`
+- `TableChangelog.js`
 
 **Equations:**
 
@@ -102,7 +107,33 @@ Contains all custom React components used throughout the documentation site. The
 **Specialized:**
 
 - `EventTree.js` - Event tree diagrams with download
-- `ContentBubble.js` / `ContentBox.js` - Dashboard cards
+- `EventTreeTOC.js` - Event tree table of contents
+- `Counters.js` - Build-time counter utility
+- `ModuleMap.js` - Module diagram rendering
+
+**Landing Page Components:**
+
+- `ContentBox.js` / `ContentBoxLarge.js` - Dashboard cards
+- `ContentBubble.js` / `ContentBubbleLarge.js` - Dashboard card sub-components
+- `ContentCard.js` - Content card layout
+
+**Site Features:**
+
+- `SiteTour.js` - Guided site tour overlay
+- `TourButton.js` - Tour launch button
+- `VersionNotice.js` - Version mismatch notice (used internally by NavContainer)
+
+**Schema Components (DST Database):**
+
+- `SchemaGroup.js` - Schema group container
+- `SchemaTable.js` - Database schema table
+- `SchemaTableCompact.js` - Compact schema table variant
+- `SchemaTag.js` - Schema tag labels
+- `SchemaRelationshipDiagram.js` - Entity relationship diagrams
+
+**Icon Components (`src/components/icons/`):**
+
+18 SVG icon components for landing pages and navigation: `CodeIcon`, `DesktopAppIcon`, `DocumentationGuideIcon`, `DSTDatabaseIcon`, `DSTIcon`, `GitHubIcon`, `InternalErosionIcon`, `LSTIcon`, `OvertoppingIcon`, `RiskCalculationsIcon`, `RiverineErosionIcon`, `RRFTIcon`, `SeismicHazardIcon`, `SparkleIcon`, `SpillwayErosionIcon`, `StructuralIcon`, `ToolboxIcon`, `WebAppIcon`
 
 ### Component Architecture
 
@@ -181,6 +212,38 @@ function MyComponent() {
 
 Only modify if adding new context providers or changing report ID logic. Requires understanding of React Context API and Docusaurus plugin system.
 
+### TourContext.js
+
+**Purpose:** Manages state for the guided site tour feature (SiteTour component).
+
+**Provides:**
+
+- Tour active/inactive state
+- Current tour step tracking
+- Tour start/stop/navigation functions
+
+**Used By:** `SiteTour.js`, `TourButton.js`, and `Root.js` theme wrapper.
+
+---
+
+## Client Modules Directory
+
+**Location:** `src/clientModules/`
+
+Client modules run on every page load and are registered in `docusaurus.config.js`.
+
+### analyticsEvents.js
+
+**Purpose:** Sends custom Google Analytics 4 events for page views, search interactions, and tour tracking.
+
+### gtagPolyfill.js
+
+**Purpose:** Provides a polyfill for the `gtag()` function to prevent errors when the Google Analytics script hasn't loaded yet.
+
+### scrollToAnchor.js
+
+**Purpose:** Handles smooth scrolling to anchor links on page navigation, ensuring hash-based navigation works correctly.
+
 ---
 
 ## CSS Directory
@@ -235,6 +298,14 @@ Global styles for table components:
 - Responsive table behavior
 - Table caption formatting
 
+**schema.css**
+
+Global styles for DST database schema components:
+
+- Schema table and group layout
+- Schema tag colors and sizing
+- Relationship diagram styling
+
 ### Tailwind CSS Integration
 
 **Configuration:** `tailwind.config.js` (root directory)
@@ -287,11 +358,14 @@ Contains JSON files generated during the build process.
 
 The primary use case is for the RMC Typical Event Tree Database document, which requires structured data for rendering event trees.
 
-**File:** `eventTreeData.json` (or similar)
+**Files:**
 
-**Generated By:** Event tree processing scripts during build
+- `eventTreeToc.json` — Table of contents data for the Typical Event Tree Database
+- `dstSchemaData.js` — Schema metadata for DST database documentation
 
-**Used By:** `EventTree` component for rendering interactive event tree diagrams
+**Generated By:** `scripts/generateEventTreeTOC.js` and build-time data extraction
+
+**Used By:** `EventTreeTOC` and schema components for rendering structured data
 
 :::info Auto-Generated
 Files in this directory are typically auto-generated and should not be manually edited.
@@ -323,14 +397,30 @@ The main landing page for the RMC Software Documentation website.
 
 ### Landing Pages
 
-Additional pages for organizing documentation sections:
+Additional pages for organizing documentation by category:
 
-**Examples:**
+**Category Hub Pages:**
 
-- `software-hub.js` - Landing page for software documentation
-- `guides-hub.js` - Landing page for user guides
-- `about.js` - About page
-- `404.js` - Custom 404 error page
+- `desktop-applications.js` - Hub page for all desktop applications
+- `toolboxes.js` - Hub page for all toolbox technical manuals
+- `web-applications.js` - Hub page for all web applications
+- `changelog.js` - Site changelog page
+
+**Application-Specific Pages (`desktop-applications/`):**
+
+- `lifesim.js`, `rmc-bestfit.js`, `rmc-rfa.js`, `rmc-totalrisk.js`
+
+**Toolbox-Specific Pages (`toolboxes/`):**
+
+- `internal-erosion-suite.js`, `overtopping-suite.js`, `risk-calculations-suite.js`, `seismic-hazard-suite.js`
+
+**Web Application Pages (`web-applications/`):**
+
+- `dst.js`, `lst.js`, `rrft.js`
+
+**Developer Pages (`docs/`):**
+
+- `dev.js` - Developer resources landing page
 
 **Page Structure:**
 
@@ -392,6 +482,37 @@ npm run swizzle @docusaurus/theme-classic ComponentName
 ```
 
 ### Current Theme Overrides
+
+**Root.js**
+
+**File:** `src/theme/Root.js`
+
+**Purpose:** Wraps the entire application with context providers (ReportIdContext, TourContext) and global components (SiteTour).
+
+---
+
+**Layout Override**
+
+**Files:** `src/theme/Layout/index.jsx` and supporting modules:
+
+- `buildNavLinks.js` — Constructs navigation link data
+- `externalLinks.js` — External link configuration
+- `ThemeToggle.jsx` — Light/dark theme toggle component
+- `usaceLinks.js` — USACE-specific navigation links
+- `useHeaderOffsets.js` — Header offset calculation hook
+- `useLatestVersions.js` — Latest version resolution hook
+
+**Purpose:** Custom layout wrapper that adds USACE branding, navigation links, and version-aware header behavior.
+
+---
+
+**NotFound Override**
+
+**File:** `src/theme/NotFound/Content/index.js`
+
+**Purpose:** Custom 404 page content with site-specific messaging and navigation.
+
+---
 
 **DocItem Theme Component**
 
@@ -740,15 +861,18 @@ The `src/` folder contains the technical foundation of the RMC Software Document
 
 **Key Directories:**
 
-- `components/` - React components for use in MDX
+- `components/` - React components for use in MDX (including `icons/` subdirectory)
+- `contexts/` - React context providers (ReportIdContext, TourContext)
+- `clientModules/` - Client-side modules (analytics, scroll behavior)
 - `css/` - Global stylesheets
-- `pages/` - Custom web pages
-- `theme/` - Docusaurus theme overrides
-- `contexts/` - React context providers
+- `data/` - Build-generated data files
+- `pages/` - Custom web pages and landing pages
+- `theme/` - Docusaurus theme overrides (Root, Layout, DocItem, NotFound, SearchBar)
 
 **Auto-Generated Files:**
 
 - `reportIdMap.js` - Document ID mappings
+- `imageDimensions.js` - Image dimension metadata
 - `draftDocs.js` - Draft document tracking (may be manual)
 
 **Important Principles:**
