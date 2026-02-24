@@ -29,7 +29,7 @@ const TableChangelog = ({ dates = [], categories = [], documents = [], versions 
   return (
     <div className="table-container" style={{ borderBottom: 'none' }}>
       <div className="table-scroller">
-      <table className="table-base table-zebra" aria-label="Change Log" style={{ tableLayout: 'fixed', minWidth: '100%' }}>
+      <table className="table-base table-zebra" aria-label="Change Log" style={{ tableLayout: 'fixed', minWidth: '600px' }}>
         <colgroup>
           {COL_WIDTHS.map((w, idx) => (
             <col key={idx} style={{ width: w }} />
@@ -59,7 +59,7 @@ const TableChangelog = ({ dates = [], categories = [], documents = [], versions 
               <tr key={rowIndex}>
                 {dateSpan > 0 && (
                   <td
-                    className="table-body-cell border table-cell-nowrap"
+                    className="table-body-cell border"
                     style={{ textAlign: 'left', verticalAlign: 'top' }}
                     title={date}
                     rowSpan={dateSpan}
@@ -68,7 +68,7 @@ const TableChangelog = ({ dates = [], categories = [], documents = [], versions 
                   </td>
                 )}
 
-                <td className="table-body-cell border table-cell-nowrap" style={{ textAlign: 'left' }} title={category}>
+                <td className="table-body-cell border" style={{ textAlign: 'left' }} title={category}>
                   {category}
                 </td>
 
