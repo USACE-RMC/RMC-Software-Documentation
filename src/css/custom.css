@@ -806,3 +806,215 @@ figure + .table-container,
   margin-top: 0;
   margin-bottom: 0;
 }
+
+/* ===== Help Menu ===== */
+
+.help-menu-trigger {
+  @apply flex h-8 w-8 items-center justify-center rounded-md transition-colors duration-150;
+  color: var(--font-color-inverse);
+}
+
+.help-menu-trigger:hover {
+  @apply bg-white/10;
+}
+
+.help-menu-dropdown {
+  @apply absolute right-0 top-full z-50 mt-2 w-52 overflow-hidden rounded-lg border bg-white py-1 shadow-xl;
+  border-color: var(--border-color);
+  animation: help-menu-in 0.15s ease-out;
+}
+
+[data-theme='dark'] .help-menu-dropdown {
+  @apply border-gray-700 bg-gray-800;
+}
+
+.help-menu-item {
+  @apply flex w-full items-center gap-2.5 px-4 py-2.5 text-left font-usace text-sm transition-colors duration-100;
+  color: var(--font-color);
+  text-decoration: none;
+}
+
+.help-menu-item:hover {
+  background: var(--surface-card);
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.help-menu-divider {
+  @apply mx-3 my-1;
+  border-top: 1px solid var(--border-color);
+}
+
+@keyframes help-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ===== Site Tour ===== */
+
+.tour-container {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+}
+
+.tour-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  pointer-events: none;
+}
+
+.tour-overlay--full {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.tour-click-shield {
+  position: fixed;
+  inset: 0;
+  z-index: 10002;
+  cursor: pointer;
+}
+
+.tour-spotlight-ring {
+  animation: tour-pulse 2s ease-in-out infinite;
+}
+
+@keyframes tour-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.tour-tooltip {
+  position: fixed;
+  z-index: 10003;
+  width: 380px;
+  max-width: calc(100vw - 32px);
+  padding: 20px;
+  border-radius: 12px;
+  background: var(--ifm-background-color-theme, #fff);
+  border: 1px solid var(--border-color);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.15),
+    0 4px 16px rgba(0, 0, 0, 0.08);
+  transition:
+    top 0.3s ease,
+    left 0.3s ease;
+}
+
+[data-theme='dark'] .tour-tooltip {
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.tour-tooltip--centered {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%);
+  width: 440px;
+}
+
+.tour-tooltip--entering {
+  animation: tour-tooltip-in 0.3s ease-out;
+}
+
+@keyframes tour-tooltip-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tour-tooltip--centered.tour-tooltip--entering {
+  animation: tour-tooltip-center-in 0.3s ease-out;
+}
+
+@keyframes tour-tooltip-center-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.tour-icon {
+  @apply flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg;
+  background: var(--ifm-color-primary-lightest);
+  color: var(--ifm-color-primary);
+}
+
+[data-theme='dark'] .tour-icon {
+  background: var(--ifm-color-primary-darkest);
+  color: var(--ifm-color-primary-light);
+}
+
+.tour-close {
+  @apply flex h-6 w-6 flex-shrink-0 items-center justify-center rounded transition-colors;
+  color: var(--font-color-description);
+}
+
+.tour-close:hover {
+  color: var(--font-color);
+  background: var(--surface-card);
+}
+
+.tour-btn {
+  @apply cursor-pointer rounded-lg px-4 py-1.5 font-usace text-sm font-medium transition-all duration-150;
+  border: none;
+}
+
+.tour-btn--primary {
+  background: var(--ifm-color-primary);
+  color: #fff;
+}
+
+.tour-btn--primary:hover {
+  background: var(--ifm-color-primary-dark);
+}
+
+.tour-btn--secondary {
+  background: transparent;
+  color: var(--font-color-description);
+}
+
+.tour-btn--secondary:hover {
+  background: var(--surface-card);
+  color: var(--font-color);
+}
+
+/* Mobile: make tour tooltip full-width at bottom of screen */
+@media (max-width: 639px) {
+  .tour-tooltip {
+    width: calc(100vw - 24px) !important;
+    left: 12px !important;
+    bottom: 12px !important;
+    top: auto !important;
+    transform: none !important;
+  }
+
+  .tour-tooltip--centered {
+    top: auto !important;
+    left: 12px !important;
+    transform: none !important;
+  }
+}

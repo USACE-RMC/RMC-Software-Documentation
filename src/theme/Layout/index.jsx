@@ -6,6 +6,8 @@ import '@usace/groundwork/dist/style.css';
 import { useEffect } from 'react';
 import '../../css/custom.css';
 
+import HelpMenu from '../../components/HelpMenu';
+import SiteTour from '../../components/SiteTour';
 import buildNavLinks from './buildNavLinks';
 import externalLinks from './externalLinks';
 import ThemeToggle from './ThemeToggle';
@@ -51,6 +53,7 @@ export default function LayoutWrapper({ children, ...rest }) {
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <SearchBar />
+            <HelpMenu />
           </div>
         }
         missionText="Deliver vital engineering solutions, in collaboration with our partners, to secure our Nation, energize our economy, and reduce disaster risk."
@@ -61,6 +64,7 @@ export default function LayoutWrapper({ children, ...rest }) {
         usace250Logo={true}
       >
         {children}
+        <SiteTour />
       </SiteWrapper>
     </Layout>
   );
