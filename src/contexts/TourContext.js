@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 const STORAGE_KEY = 'rmc-site-tour-completed';
 
@@ -19,6 +19,12 @@ export function TourProvider({ children }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [totalSteps, setTotalSteps] = useState(0);
   const [hasCompletedTour, setHasCompletedTour] = useState(false);
+
+  // Refs for analytics — avoids adding state to useCallback deps
+  const currentStepRef = useRef(0);
+  const totalStepsRef = useRef(0);
+  useEffect(() => { currentStepRef.current = currentStep; }, [currentStep]);
+  useEffect(() => { totalStepsRef.current = totalSteps; }, [totalSteps]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -41,12 +47,22 @@ export function TourProvider({ children }) {
     if (stepCount) setTotalSteps(stepCount);
     setIsTourActive(true);
     lockScroll();
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      window.gtag('event', 'tour_start');
+    }
   }, [lockScroll]);
 
   const endTour = useCallback((markComplete = true) => {
     setIsTourActive(false);
     setCurrentStep(0);
     unlockScroll();
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      if (markComplete) {
+        window.gtag('event', 'tour_complete', { steps_completed: totalStepsRef.current });
+      } else {
+        window.gtag('event', 'tour_exit', { exit_step: currentStepRef.current });
+      }
+    }
     if (markComplete && typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEY, 'true');
       setHasCompletedTour(true);

@@ -24,7 +24,11 @@ export default {
   organizationName: 'USACE-RMC', // Your GitHub organization or username
   projectName: 'RMC-Software-Documentation', // Your project name, make sure this matches your GitHub repo name
 
-  clientModules: [require.resolve('./src/clientModules/gtagPolyfill.js'), require.resolve('./src/clientModules/scrollToAnchor.js')],
+  clientModules: [
+    require.resolve('./src/clientModules/gtagPolyfill.js'),
+    require.resolve('./src/clientModules/analyticsEvents.js'),
+    require.resolve('./src/clientModules/scrollToAnchor.js'),
+  ],
 
   presets: [
     [
