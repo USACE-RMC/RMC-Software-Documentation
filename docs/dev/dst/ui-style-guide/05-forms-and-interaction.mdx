@@ -2,31 +2,109 @@
 title: Forms and Interaction
 ---
 
-import NavContainer from '@site/src/components/NavContainer';
 import DocTabs from '@site/src/components/DocTabs';
+import NavContainer from '@site/src/components/NavContainer';
 import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
 
 <NavContainer link="/dev" linkTitle="Developer Resources" />
 
 # Forms and Interaction
 
-Patterns for form inputs, auto-save behavior, chart styling, and naming conventions.
+Patterns for form composition, input states, auto-save behavior, chart styling, and naming conventions.
+
+---
+
+## Building Forms
+
+The standard pattern for forms uses `Section` as the container and `InputField` as the input wrapper. Do not use raw Tier 1 primitives directly — always use `InputField` or `CheckboxRow`.
+
+### InputField Layouts
+
+`InputField` supports two layouts and auto-detects the input type from props:
+
+```jsx
+{/* Stacked layout (default) — label above input */}
+<Section title="Dam Overview">
+  <div className="flex flex-col gap-4">
+    <InputField label="Year Completed" inputType="number" align="left" value={year} onValueChange={setYear} />
+    <InputField label="Dam Height (ft)" decimals={1} value={height} onValueChange={setHeight} />
+    <InputField label="Dam Type" options={damTypeOptions} value={type} onChange={setType} />
+  </div>
+</Section>
+
+{/* Grid layout — multiple fields in columns */}
+<Section title="Embankment Overtopping Parameters">
+  <div className="grid grid-cols-2 gap-x-4 gap-y-4">
+    <InputField label="Embankment Height (ft)" inputType="number" inputVariant="compact" ... />
+    <InputField label="Downstream Slope (H:V)" inputType="number" inputVariant="compact" ... />
+    <InputField label="Crest Width (ft)" inputType="number" inputVariant="compact" ... />
+    <InputField label="Tailwater Depth (ft)" inputType="number" inputVariant="compact" ... />
+  </div>
+</Section>
+```
+
+Use `inputVariant="compact"` for dense grid layouts. Use `inputVariant="default"` (or omit) for standard spacing.
+
+### CheckboxRow Patterns
+
+`CheckboxRow` is used for toggle-with-optional-input patterns:
+
+```jsx
+<Section title="Embankment Components" hint="(check all that apply)" contentClassName="space-y-2">
+  <CheckboxRow
+    label={
+      <>
+        Conduit through Embankment <InfoPopover title="Conduit">...</InfoPopover>
+      </>
+    }
+    checked={components.hasConduit}
+    onChange={(e) => onComponentChange('hasConduit', e.target.checked)}
+  />
+  <CheckboxRow
+    label="Vertical or Inclined Drain/Filter"
+    checked={components.hasVerticalDrain}
+    onChange={(e) => onComponentChange('hasVerticalDrain', e.target.checked)}
+    {...(components.hasVerticalDrain && {
+      inputType: 'number',
+      decimals: 1,
+      align: 'left',
+      inputValue: components.verticalDrainElevation,
+      onInputValueChange: (v) => onComponentChange('verticalDrainElevation', v),
+      inputPlaceholder: 'Top Elevation (ft)',
+      inputVariant: 'xs',
+      inputClassName: 'ml-4 w-40',
+    })}
+  />
+</Section>
+```
+
+Key patterns:
+
+- Use `contentClassName="space-y-2"` on the Section for tight vertical spacing
+- Use conditional spread syntax `{...(condition && props)}` to show/hide the inline input
+- The `disableInputWhenUnchecked` prop auto-disables the input when the checkbox is unchecked
 
 ---
 
 ## Form Input States
 
 <TableVerticalNoRef
-  headers={[[{value: 'State'}, {value: 'Border'}, {value: 'Ring'}, {value: 'Usage'}]]}
+  headers={[[{ value: 'State' }, { value: 'Border' }, { value: 'Ring' }, { value: 'Usage' }]]}
   columns={[
     ['Default', 'Focus', 'Invalid', 'Warning', 'Disabled'],
-    ['<code>border-dst-border</code>', '<code>border-dst-steel</code>', '<code>border-rose-500</code>', '<code>border-amber-500</code>', '<code>bg-dst-disabled-bg</code>'],
+    [
+      '<code>border-dst-border</code>',
+      '<code>border-dst-steel</code>',
+      '<code>border-rose-500</code>',
+      '<code>border-amber-500</code>',
+      '<code>bg-dst-disabled-bg</code>',
+    ],
     ['none', '<code>ring-1 ring-dst-focus-ring</code>', '<code>ring-2 ring-rose-500</code>', '<code>ring-1 ring-amber-500</code>', 'none'],
     ['Normal state', 'Active editing', 'Validation error', 'Out-of-bounds warning', 'Not editable'],
   ]}
 />
 
-These states are built into the Tier 1 input primitives (`InputNumber`, `InputText`, `Select`). You don't need to implement them manually.
+These states are built into the Tier 1 input primitives (`InputNumber`, `InputText`, `Select`) and are inherited by `InputField` and `CheckboxRow`. You don't need to implement them manually.
 
 ---
 
@@ -42,8 +120,12 @@ The application uses debounced auto-save for user inputs. No "Save" button for n
       child: (
         <ul>
           <li>Save on change with 500ms debounce</li>
-          <li>Use <code>useDebounce</code> hook from <code>hooks/common/useDebounce.js</code></li>
-          <li>Track changes with <code>userEditedRef</code> to prevent duplicate saves</li>
+          <li>
+            Use <code>useDebounce</code> hook from <code>hooks/common/useDebounce.js</code>
+          </li>
+          <li>
+            Track changes with <code>userEditedRef</code> to prevent duplicate saves
+          </li>
           <li>Use hash comparison to skip saves when data hasn't changed</li>
         </ul>
       ),
@@ -53,7 +135,9 @@ The application uses debounced auto-save for user inputs. No "Save" button for n
       label: 'Text Areas',
       child: (
         <ul>
-          <li>Save on <strong>blur</strong> instead of debounced change</li>
+          <li>
+            Save on <strong>blur</strong> instead of debounced change
+          </li>
           <li>Prevents saving partial text while the user is typing</li>
         </ul>
       ),
@@ -63,7 +147,6 @@ The application uses debounced auto-save for user inputs. No "Save" button for n
       label: 'Explicit Actions',
       child: (
         <ul>
-          <li>"Run" buttons trigger calculations and save results</li>
           <li>Modal "Save" buttons for rename operations</li>
           <li>Never require a "Save" button for normal parameter entry</li>
         </ul>
@@ -119,11 +202,27 @@ tooltip: {
 ## Naming Conventions
 
 <TableVerticalNoRef
-  headers={[[{value: 'Type'}, {value: 'Convention'}, {value: 'Example'}]]}
+  headers={[[{ value: 'Type' }, { value: 'Convention' }, { value: 'Example' }]]}
   columns={[
     ['Components', 'Custom hooks', 'Functions/Variables', 'Constants', 'Visual constants', 'Event handler props', 'CSS tokens'],
-    ['PascalCase', '<code>use*</code> prefix', 'camelCase', 'SCREAMING_SNAKE_CASE', 'SCREAMING_SNAKE_CASE', '<code>on*</code> prefix', 'kebab-case with <code>dst-</code> prefix'],
-    ['<code>HydrologicHazardTable</code>', '<code>useHydrologicHazardData</code>', '<code>calculateRisk</code>, <code>userName</code>', '<code>MAX_RETRIES</code>, <code>DEBOUNCE_MS</code>', '<code>ACCENT_BAR</code>, <code>HEADING</code>', '<code>onClick</code>, <code>onSubmit</code>, <code>onValueChange</code>', '<code>--color-dst-steel</code>, <code>bg-dst-page-bg</code>'],
+    [
+      'PascalCase',
+      '<code>use*</code> prefix',
+      'camelCase',
+      'SCREAMING_SNAKE_CASE',
+      'SCREAMING_SNAKE_CASE',
+      '<code>on*</code> prefix',
+      'kebab-case with <code>dst-</code> prefix',
+    ],
+    [
+      '<code>HydrologicHazardTable</code>',
+      '<code>useHydrologicHazardData</code>',
+      '<code>calculateRisk</code>, <code>userName</code>',
+      '<code>MAX_RETRIES</code>, <code>DEBOUNCE_MS</code>',
+      '<code>ACCENT_BAR</code>, <code>HEADING</code>',
+      '<code>onClick</code>, <code>onSubmit</code>, <code>onValueChange</code>',
+      '<code>--color-dst-steel</code>, <code>bg-dst-page-bg</code>',
+    ],
   ]}
 />
 
@@ -136,16 +235,31 @@ For the complete naming conventions across all languages (C#, JavaScript, Python
 <DocTabs
   items={[
     {
-      title: "Do",
-      label: "Do",
+      title: 'Do',
+      label: 'Do',
       child: (
         <ul>
-          <li>Use <code>Section</code> for new page sections (not <code>Panel</code>)</li>
-          <li>Use Tailwind's <code>slate</code> scale for neutrals</li>
+          <li>
+            Use <code>Section</code> for page sections
+          </li>
+          <li>
+            Use <code>InputField</code> for form inputs (not raw <code>InputNumber</code>/<code>InputText</code>)
+          </li>
+          <li>
+            Use <code>CheckboxRow</code> for checkbox + label + optional input patterns
+          </li>
+          <li>
+            Use Tailwind's <code>slate</code> scale for neutrals
+          </li>
           <li>Declare visual constants at the top of component files</li>
-          <li>Use <code>dst-*</code> tokens for brand colors</li>
+          <li>
+            Use <code>dst-*</code> tokens for brand colors
+          </li>
           <li>Test at all 5 reference device sizes</li>
           <li>Keep page components thin — extract complex JSX to sub-components</li>
+          <li>
+            Add <code>min-w-0</code> to grid children to prevent overflow
+          </li>
         </ul>
       ),
     },
@@ -154,10 +268,21 @@ For the complete naming conventions across all languages (C#, JavaScript, Python
       label: "Don't",
       child: (
         <ul>
-          <li>Use arbitrary hex values in components (<code>text-[#94a3b8]</code>)</li>
+          <li>
+            Use legacy layout wrappers — use <code>Section</code> instead
+          </li>
+          <li>
+            Use raw Tier 1 primitives (<code>InputNumber</code>, <code>InputText</code>, <code>Select</code>) directly in page layouts — wrap them in{' '}
+            <code>InputField</code>
+          </li>
+          <li>
+            Use arbitrary hex values in components (<code>text-[#94a3b8]</code>)
+          </li>
           <li>Use red for anything other than errors/warnings/USACE branding</li>
           <li>Put business logic in page components</li>
-          <li>Create custom tokens for neutrals (use <code>slate-*</code>)</li>
+          <li>
+            Create custom tokens for neutrals (use <code>slate-*</code>)
+          </li>
           <li>Skip the visual constants pattern</li>
           <li>Use inline styles — use Tailwind classes</li>
         </ul>

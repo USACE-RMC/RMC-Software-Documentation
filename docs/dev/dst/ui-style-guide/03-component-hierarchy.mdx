@@ -23,12 +23,41 @@ For the full frontend architecture (five-layer data flow, controller hooks, etc.
         <>
           <p><strong>Location:</strong> <code>components/common/ui/</code></p>
           <p>Atomic UI elements with <strong>no business logic</strong>. Shared across everything.</p>
+          <h4>Inputs</h4>
           <TableVerticalNoRef
             headers={[[{value: 'Component'}, {value: 'Purpose'}, {value: 'Key Props'}]]}
             columns={[
-              ['<code>Button</code>', '<code>InputNumber</code>', '<code>InputText</code>', '<code>InputTextArea</code>', '<code>Select</code>', '<code>Checkbox</code>', '<code>CheckboxRow</code>', '<code>Modal</code>'],
-              ['Clickable actions', 'Numeric input', 'Text input', 'Multi-line text', 'Dropdown', 'Toggle', 'Checkbox + label + optional input', 'Dialog overlay'],
-              ['<code>variant</code>, <code>disabled</code>, <code>to</code> (link), <code>onClick</code>', '<code>value</code>, <code>onValueChange</code>, <code>format</code>, <code>decimals</code>, <code>variant</code>, <code>min</code>, <code>max</code>', '<code>value</code>, <code>onValueChange</code>, <code>variant</code>, <code>pattern</code>', '<code>value</code>, <code>onValueChange</code>, <code>rows</code>, <code>maxLength</code>, <code>showCounter</code>', '<code>value</code>, <code>onChange</code>, <code>options</code>, <code>variant</code>', '<code>checked</code>, <code>onChange</code>, <code>size</code>', '<code>label</code>, <code>checked</code>, <code>onChange</code>, <code>inputType</code>, <code>inputValue</code>', '<code>isOpen</code>, <code>title</code>, <code>onClose</code>, <code>onSave</code>'],
+              ['<code>InputNumber</code>', '<code>InputText</code>', '<code>InputTextArea</code>', '<code>Select</code>', '<code>TextInput</code>', '<code>Checkbox</code>'],
+              ['Numeric input with scientific notation, min/max validation', 'Text input with pattern validation and status warnings', 'Multi-line text with optional character counter', 'Dropdown with option normalization', 'Bare text input (no wrapper) — basic HTML input styling', 'Native checkbox with size variants'],
+              ['<code>value</code>, <code>onValueChange</code>, <code>format</code>, <code>decimals</code>, <code>variant</code>, <code>min</code>, <code>max</code>', '<code>value</code>, <code>onValueChange</code>, <code>variant</code>, <code>pattern</code>, <code>warnWhen</code>', '<code>value</code>, <code>onValueChange</code>, <code>rows</code>, <code>maxLength</code>, <code>showCounter</code>', '<code>value</code>, <code>onChange</code>, <code>options</code>, <code>variant</code>, <code>fullWidth</code>', '<code>variant</code>, <code>type</code>', '<code>checked</code>, <code>onChange</code>, <code>size</code> (<code>sm</code>/<code>md</code>/<code>lg</code>)'],
+            ]}
+          />
+          <h4>Actions &amp; Overlays</h4>
+          <TableVerticalNoRef
+            headers={[[{value: 'Component'}, {value: 'Purpose'}, {value: 'Key Props'}]]}
+            columns={[
+              ['<code>Button</code>', '<code>Modal</code>'],
+              ['Clickable actions with variant support and optional link behavior', 'Full-screen overlay dialog with header, footer, and close button'],
+              ['<code>variant</code> (<code>default</code>/<code>bare</code>), <code>disabled</code>, <code>to</code> (converts to Link)', '<code>isOpen</code>, <code>title</code>, <code>onClose</code>, <code>onSave</code>, <code>showFooter</code>'],
+            ]}
+          />
+          <h4>Popovers</h4>
+          <p>All popovers share the same props: <code>title</code>, <code>children</code>, <code>placement</code> (<code>left</code>/<code>center</code>/<code>right</code>), <code>width</code>, <code>offset</code>, <code>id</code>.</p>
+          <TableVerticalNoRef
+            headers={[[{value: 'Component'}, {value: 'Trigger'}, {value: 'Usage'}]]}
+            columns={[
+              ['<code>InfoPopover</code>', '<code>NotesPopover</code>', '<code>DemoPopover</code>', '<code>FeaturePopover</code>'],
+              ['"?" button (steel blue)', '"!" button (red)', '"Demo" toggle button', '"!" button (purple)'],
+              ['Contextual help alongside labels and checkboxes', 'Notes and warnings about a field or section', 'Demo/placeholder content indicators', 'Feature request information'],
+            ]}
+          />
+          <h4>Display</h4>
+          <TableVerticalNoRef
+            headers={[[{value: 'Component'}, {value: 'Purpose'}, {value: 'Key Props'}]]}
+            columns={[
+              ['<code>Bubble</code>'],
+              ['Rounded display bubble with inset shading — used for gradation classification results'],
+              ['<code>value</code>, <code>size</code> (<code>sm</code>/<code>md</code>/<code>lg</code>), <code>variant</code> (<code>neutral</code>/<code>meets</code>/<code>fails</code>/etc.)'],
             ]}
           />
           <h4>Input Variants</h4>
@@ -49,35 +78,80 @@ For the full frontend architecture (five-layer data flow, controller hooks, etc.
       label: 'Tier 2 — Patterns',
       child: (
         <>
-          <p>Reusable within a content pattern. Know about a <em>type</em> of content but not about specific pages.</p>
+          <p>Reusable compositions that know about a <em>type</em> of content but not about specific pages.</p>
+          <h4>Layout</h4>
           <TableVerticalNoRef
             headers={[[{value: 'Component'}, {value: 'Location'}, {value: 'Purpose'}]]}
             columns={[
-              ['<code>Section</code>', '<code>FormFieldGroup</code>', '<code>PageContainer</code>', '<code>EditableGridTable</code>', '<code>BaseChart</code>', '<code>ScreeningQuestion</code>'],
-              ['<code>components/common/layout/</code>', '<code>components/common/layout/</code>', '<code>components/common/layout/</code>', '<code>components/common/table/</code>', '<code>components/common/chart/</code>', '<code>components/screening/</code>'],
-              ['Section wrapper with blue accent bar, title, optional collapse', 'Responsive grid for form fields (1–4 columns)', 'Page-level wrapper with background and padding', 'Full-featured editable table with Excel-like behavior', 'Chart.js wrapper for all chart types', 'Questionnaire pattern for screening questions'],
+              ['<code>Section</code>', '<code>PageContainer</code>', '<code>FormFieldGroup</code>', '<code>HorizontalSubNav</code>'],
+              ['<code>components/common/layout/</code>', '<code>components/common/layout/</code>', '<code>components/common/layout/</code>', '<code>components/common/layout/</code>'],
+              ['Primary content container with steel accent bar, title, optional collapse', 'Root page wrapper with background color and padding', 'Responsive grid for form fields (1–4 columns)', 'Sticky sub-navigation bar with tab links'],
+            ]}
+          />
+          <h4>Form Patterns</h4>
+          <TableVerticalNoRef
+            headers={[[{value: 'Component'}, {value: 'Location'}, {value: 'Purpose'}]]}
+            columns={[
+              ['<code>InputField</code>', '<code>CheckboxRow</code>', '<code>CheckboxOptionsPanel</code>'],
+              ['<code>components/common/ui/</code>', '<code>components/common/ui/</code>', '<code>components/common/ui/</code>'],
+              ['Label + input wrapper that auto-detects input type from props', 'Checkbox + label + optional inline input (number, text, or select)', 'Container for a group of checkbox options with title and spacing'],
+            ]}
+          />
+          <h4>Data Display</h4>
+          <TableVerticalNoRef
+            headers={[[{value: 'Component'}, {value: 'Location'}, {value: 'Purpose'}]]}
+            columns={[
+              ['<code>EditableGridTable</code>', '<code>BaseChart</code>', '<code>MessagesBanner</code>'],
+              ['<code>components/common/table/</code>', '<code>components/common/chart/</code>', '<code>components/common/feedback/</code>'],
+              ['Full-featured editable table with clipboard and keyboard support', 'Chart.js wrapper for all chart types', 'Collapsible banner for validation messages (inputs/warnings/errors)'],
             ]}
           />
           <h4>Section Component</h4>
-          <p>Use <code>Section</code> (not the legacy <code>Panel</code>) for all new pages:</p>
+          <p><code>Section</code> is the standard container for organizing page content. Use it for all new pages.</p>
           <pre><code>{`import Section from '@components/common/layout/Section';
 
 <Section
-  title="Hydrologic Hazard"
-  hint="User-defined stage-AEP curve"
-  description="Enter the hydrologic hazard curve for this screening."
-  collapsible={false}
+  title="Embankment Components"
+  hint="(check all that apply)"
+  description="Select the structural features present in the embankment."
+  collapsible={true}
+  defaultExpanded={true}
+  contentClassName="space-y-2"
 >
   {/* Your content here */}
 </Section>`}</code></pre>
-          <p>Features:</p>
-          <ul>
-            <li>Blue accent bar above the title</li>
-            <li>Optional hint text (inline, gray)</li>
-            <li>Optional description (below title)</li>
-            <li>Optional collapse/expand with chevron icon</li>
-            <li>Disabled state (reduces opacity)</li>
-          </ul>
+          <TableVerticalNoRef
+            headers={[[{value: 'Prop'}, {value: 'Type'}, {value: 'Description'}]]}
+            columns={[
+              ['<code>title</code>', '<code>hint</code>', '<code>description</code>', '<code>collapsible</code>', '<code>defaultExpanded</code>', '<code>expanded</code>', '<code>onExpandedChange</code>', '<code>disabled</code>', '<code>className</code>', '<code>contentClassName</code>'],
+              ['string', 'string', 'string', 'boolean', 'boolean', 'boolean', 'function', 'boolean', 'string', 'string'],
+              ['Section heading text', 'Inline secondary text next to title (e.g., "(required)")', 'Description text below the title', 'Enable collapse/expand toggle (<code>false</code> by default)', 'Initial expanded state when uncontrolled (<code>true</code> by default)', 'Controlled expanded state (overrides internal state)', 'Callback when expand/collapse toggles', 'Reduces opacity and disables pointer events', 'Additional classes on the <code>&lt;section&gt;</code> element', 'Additional classes on the content wrapper (e.g., <code>space-y-2</code>)'],
+            ]}
+          />
+          <h4>InputField Component</h4>
+          <p><code>InputField</code> is the standard form input for all pages. It wraps Tier 1 primitives with a label, error text, and layout control.</p>
+          <pre><code>{`import InputField from '@components/common/ui/InputField';
+
+{/* Stacked layout (default) */}
+<InputField
+  label="Dam Height (ft)"
+  inputType="number"
+  decimals={1}
+  align="left"
+  value={height}
+  onValueChange={setHeight}
+/>
+
+{/* Auto-detects number from decimals prop */}
+<InputField label="Crest Width (ft)" decimals={1} value={width} onValueChange={setWidth} />
+
+{/* Select — auto-detects from options prop */}
+<InputField label="Erodibility" options={erodibilityOptions} value={val} onChange={setVal} />
+
+{/* Inline layout */}
+<InputField label="Override" layout="inline" inputType="number" value={v} onValueChange={setV} />`}</code></pre>
+          <p>Key props: <code>label</code>, <code>layout</code> (<code>stacked</code>/<code>inline</code>), <code>inputType</code> (<code>number</code>/<code>text</code>/<code>select</code>/<code>textarea</code>), <code>inputVariant</code>, <code>required</code>, <code>error</code>, <code>helpText</code>. All remaining props are forwarded to the underlying input primitive.</p>
+
         </>
       ),
     },
@@ -88,7 +162,7 @@ For the full frontend architecture (five-layer data flow, controller hooks, etc.
         <>
           <p><strong>Location:</strong> <code>pages/</code></p>
           <p>One per route. Thin orchestration layers that fetch data and compose Tier 2 components. Should be mostly JSX with minimal logic.</p>
-          <p><strong>Feature-specific components</strong> are one-off extractions that only exist on a single page but are complex enough to warrant their own file. They live alongside their page component.</p>
+          <p><strong>Feature-specific components</strong> are one-off extractions that only exist on a single page but are complex enough to warrant their own file. They live alongside their page component (e.g., <code>ScreeningQuestion</code> lives in the failure-mode-selection page directory, not in <code>components/common/</code>).</p>
         </>
       ),
     },

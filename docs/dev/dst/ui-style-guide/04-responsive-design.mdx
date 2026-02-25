@@ -76,7 +76,16 @@ Pixel-specific breakpoints for table and component overflow. **Do not modify the
 
 ## JS Tier System
 
-`Layout.jsx` exposes a `tier` prop (`'phone' | 'tablet' | 'laptop' | 'desktop'`) to child components. Use this for navigation and layout tier decisions in JavaScript instead of raw `window.innerWidth` checks.
+`Layout.jsx` computes a `tier` value (`'phone' | 'tablet' | 'laptop' | 'desktop'`) from the viewport width and passes it to layout components like `TabNavigation`. Use the tier system for navigation and layout decisions in JavaScript instead of raw `window.innerWidth` checks.
+
+<TableVerticalNoRef
+  headers={[[{value: 'Tier'}, {value: 'Viewport'}, {value: 'Maps To'}]]}
+  columns={[
+    ['<code>phone</code>', '<code>tablet</code>', '<code>laptop</code>', '<code>desktop</code>'],
+    ['&lt; 640px', '640–1023px', '1024–1535px', '≥ 1536px'],
+    ['<code>sm</code> breakpoint', '<code>lg</code> breakpoint', '<code>2xl</code> breakpoint', 'Above <code>2xl</code>'],
+  ]}
+/>
 
 ### Navigation by Tier
 
@@ -93,10 +102,32 @@ Pixel-specific breakpoints for table and component overflow. **Do not modify the
 ## Common Responsive Patterns
 
 ```jsx
-{/* Stack on phone, side-by-side on laptop+ */}
-<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-  <HazardTable />
-  <HazardChart />
+{/* Two-column section layout (dam-information pattern) */}
+<PageContainer>
+  <div className="w-full divide-y divide-slate-200 *:pt-6 *:first:pt-0 *:pb-6 *:last:pb-0">
+    <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+      <DamOverviewSection />
+      <EmbankmentComponentsSection />
+    </div>
+    <EmbankmentMaterialsSection />
+  </div>
+</PageContainer>
+
+{/* Form inputs beside diagram (pfm01 pattern) */}
+<Section title="Embankment overtopping parameters">
+  <div className="grid grid-cols-1 items-center gap-4 lg:grid-cols-[45%_1fr]">
+    <div className="grid grid-cols-2 gap-x-4 gap-y-4">
+      <InputField label="Embankment Height (ft)" inputVariant="compact" ... />
+      <InputField label="Downstream Slope (H:V)" inputVariant="compact" ... />
+    </div>
+    <OvertoppingProfileDiagram ... />
+  </div>
+</Section>
+
+{/* Table + chart side-by-side (40/60 split) */}
+<div className="grid grid-cols-1 gap-6 xl:grid-cols-[40%_60%]">
+  <div className="min-w-0"><SRPTable /></div>
+  <div className="h-96 min-w-0"><SRPChart /></div>
 </div>
 
 {/* Responsive form grid */}
@@ -106,9 +137,18 @@ Pixel-specific breakpoints for table and component overflow. **Do not modify the
   <InputField label="Field 3" ... />
 </FormFieldGroup>
 
-{/* Hide on small screens */}
-<div className="hidden lg:block">Desktop-only content</div>
+{/* Two-column with divider (failure-mode-screening pattern) */}
+<div className="grid grid-cols-1 gap-8 xl:grid-cols-2 xl:gap-6">
+  <div className="space-y-6">{/* Column 1 */}</div>
+  <div className="space-y-6 xl:border-l xl:border-slate-300 xl:pl-6">{/* Column 2 */}</div>
+</div>
 ```
+
+**Key patterns:**
+- Use `divide-y divide-slate-200` with `*:pt-6 *:pb-6` for vertically stacked sections with dividers
+- Always add `min-w-0` to grid children to prevent content overflow
+- Use `grid-cols-[45%_1fr]` or `grid-cols-[minmax(0,2fr)_minmax(0,3fr)]` for flexible asymmetric splits
+- Use `space-y-2` for tight checkbox lists, `space-y-6` for section spacing
 
 ---
 
