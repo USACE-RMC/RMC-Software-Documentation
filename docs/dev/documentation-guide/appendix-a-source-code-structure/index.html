@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-dev/documentation-guide/appendix-a-source-code-structure" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.9.2">
+<title data-rh="true">Appendix A: Source Code Structure | RMC Software Documentation</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://USACE-RMC.github.io/RMC-Software-Documentation/docs/dev/documentation-guide/appendix-a-source-code-structure"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Appendix A: Source Code Structure | RMC Software Documentation"><meta data-rh="true" name="description" content="This appendix is intended for advanced users, developers, and site administrators who need to understand or modify the underlying source code structure."><meta data-rh="true" property="og:description" content="This appendix is intended for advanced users, developers, and site administrators who need to understand or modify the underlying source code structure."><link data-rh="true" rel="icon" href="/RMC-Software-Documentation/img/USACE.png"><link data-rh="true" rel="canonical" href="https://USACE-RMC.github.io/RMC-Software-Documentation/docs/dev/documentation-guide/appendix-a-source-code-structure"><link data-rh="true" rel="alternate" href="https://USACE-RMC.github.io/RMC-Software-Documentation/docs/dev/documentation-guide/appendix-a-source-code-structure" hreflang="en"><link data-rh="true" rel="alternate" href="https://USACE-RMC.github.io/RMC-Software-Documentation/docs/dev/documentation-guide/appendix-a-source-code-structure" hreflang="x-default"><link data-rh="true" rel="preconnect" href="https://5IPYQGAW1I-dsn.algolia.net" crossorigin="anonymous"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Appendix A: Source Code","item":"https://USACE-RMC.github.io/RMC-Software-Documentation/docs/dev/documentation-guide/appendix-a-source-code-structure"}]}</script><link rel="search" type="application/opensearchdescription+xml" title="RMC Software Documentation" href="/RMC-Software-Documentation/opensearch.xml">
+<link rel="preconnect" href="https://www.google-analytics.com">
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LB2BWWGDTB"></script>
+<script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","G-LB2BWWGDTB",{anonymize_ip:!0})</script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.24/dist/katex.min.css" integrity="sha384-odtC+0UGzzFL/6PNoE8rX/SPcQDXBJ+uRepguP4QkPCm2LBxH3FA3y+fKSiJ+AmM" crossorigin="anonymous"><link rel="stylesheet" href="/RMC-Software-Documentation/assets/css/styles.133e3d7a.css">
+<script src="/RMC-Software-Documentation/assets/js/runtime~main.802912b9.js" defer="defer"></script>
+<script src="/RMC-Software-Documentation/assets/js/main.e37c9c17.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<svg style="display: none;"><defs>
+<symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||"light"),document.documentElement.setAttribute("data-theme-choice",t||"light")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><a class="navbar__brand" href="/RMC-Software-Documentation/"><div class="navbar__logo"><img src="/RMC-Software-Documentation/img/USACE.png" alt="RMC Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/RMC-Software-Documentation/img/USACE.png" alt="RMC Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">RMC Software Documentation</b></a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"><div class="search-wrapper relative w-full min-w-[12rem] max-w-md"><img src="/RMC-Software-Documentation/img/Magnifying_glass_icon.svg" alt="" aria-hidden="true" class="pointer-events-none absolute left-5 top-1/2 h-[13px] w-[13px] -translate-y-1/2 opacity-80"><button type="button" class="DocSearch DocSearch-Button" aria-label="Search (Meta+k)" aria-keyshortcuts="Meta+k"><span class="DocSearch-Button-Container"><svg width="20" height="20" class="DocSearch-Search-Icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8" stroke="currentColor" fill="none" stroke-width="1.4"></circle><path d="m21 21-4.3-4.3" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="DocSearch-Button-Placeholder">Search</span></span><span class="DocSearch-Button-Keys"></span></button></div></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="gw-grid gw-min-h-[100vh] gw-grid-rows-1fr-auto"><div><header class="gw-flex gw-flex-col gw-w-full gw-sticky gw-top-0 gw-z-20"><div><div class="gw-min-h-12 gw-bg-nav-black gw-text-white"><div class="gw-w-full gw-mx-auto gw-px-4 gw-box-border gw-max-w-screen"><div class="gw-flex gw-justify-between gw-items-center"><div class="gw-relative gw-w-[70px] sm:gw-w-[82px] gw-shrink-0 sm:gw-top-3"><a href="/"><img class="gw-w-[50px] sm:gw-w-[60px] gw-h-auto" src="data:image/svg+xml,%3csvg%20xmlns=&#x27;http://www.w3.org/2000/svg&#x27;%20viewBox=&#x27;0%200%20105.52%2080.94&#x27;%3e%3cdefs%3e%3cstyle%3e.cls-1{fill:%23DE1E2E;}.cls-2{fill:%23fff;}%3c/style%3e%3c/defs%3e%3ctitle%3eusace-logo%3c/title%3e%3cg%20id=&#x27;Layer_2&#x27;%20data-name=&#x27;Layer%202&#x27;%3e%3cg%20id=&#x27;Layer_1-2&#x27;%20data-name=&#x27;Layer%201&#x27;%3e%3crect%20class=&#x27;cls-1&#x27;%20width=&#x27;105.52&#x27;%20height=&#x27;80.94&#x27;%20rx=&#x27;10.67&#x27;%20ry=&#x27;10.67&#x27;/%3e%3cpath%20class=&#x27;cls-2&#x27;%20d=&#x27;M95.07,74.83H11A4.9,4.9,0,0,1,6.1,69.94V11A4.9,4.9,0,0,1,11,6.1H95.07A4.9,4.9,0,0,1,100,11v59A4.89,4.89,0,0,1,95.07,74.83ZM11,8.1A2.9,2.9,0,0,0,8.1,11v59A2.9,2.9,0,0,0,11,72.83H95.07A2.9,2.9,0,0,0,98,69.94V11A2.9,2.9,0,0,0,95.07,8.1Z&#x27;/%3e%3cpath%20class=&#x27;cls-2&#x27;%20d=&#x27;M84.5,52V26.42l4.12-4.12V16.42H83.69v4.33L80,20.68V16.42c0-.05-4.53,0-4.53,0v4.33H71.81V16.42c0-.06-4.87,0-4.87,0V22.3L71,26.42s.06,12.83.06,12.7-10.92,0-10.94,0,0-5.07,0-5.07l2.77-2.77V24.06c0-.14-4.12.06-4.39,0-.09,0,0,4.25,0,4.25H55.06V24.12H50.6a40.46,40.46,0,0,0,.07,4.12H46.82V24.12H42.49c-.13,0,0,7,0,7l3.11,3.11.07,4.86h-11V26.42l3.92-3.92V16.42H33.71v4.33l-3.78-.07V16.42H25.68s0,4.34,0,4.33-3.45-.07-3.78-.07V16.42s-4.93-.06-4.93,0v6.22l3.78,3.71V52.83s-3.92,3.85-3.92,4,.07,6.42.07,6.42H89V56.48ZM29.19,56.41h-3V45.74h3Zm.07-17.29h-3V28.45h3ZM41.08,53.23h-3V45.67h3ZM60.8,60.66H45.74V50.06s2.89-7.51,7.16-7.57l.13,0,.14-.15.17.17c4.65.38,7.46,7.53,7.46,7.53Zm7.29-7.36h-3V45.74h3Zm11.75,3.11h-3V45.74h3ZM80,37.9H77V27.23h3Z&#x27;/%3e%3c/g%3e%3c/g%3e%3c/svg%3e" alt="U.S. Army Corps of Engineers" aria-label="Visit the homepage of this site"></a><div class="gw-absolute gw-left-[55px] sm:gw-left-[65px] gw-bottom-[-10px] sm:gw-bottom-[-9px] gw-text-sm gw-text-gray-400">®</div></div><div class="gw-hidden md:gw-flex gw-flex-row gw-content-center gw-justify-between gw-w-full gw-min-h-12 gw-pr-3"><ul role="list" class="gw-flex gw-flex-row gw-flex-wrap gw-justify-start gw-m-0 gw-pl-0 gw-w-full"><li class="gw-relative" data-headlessui-state=""><a href="/RMC-Software-Documentation/" class="gw-inline-block gw-relative gw-h-12 gw-inline-flex gw-w-auto gw-justify-center gw-items-center gw-px-3 gw-text-sm gw-text-nowrap gw-text-nav-light-gray">Home</a></li><li class="gw-relative" data-headlessui-state=""><a class="gw-inline-block gw-relative gw-h-12 gw-inline-flex gw-w-auto gw-justify-center gw-items-center gw-px-3 gw-text-sm gw-text-nowrap gw-text-nav-light-gray after:gw-content-[&#x27;▼&#x27;] after:gw-text-[10px] after:gw-ml-2">Desktop Applications</a></li><li class="gw-relative" data-headlessui-state=""><a class="gw-inline-block gw-relative gw-h-12 gw-inline-flex gw-w-auto gw-justify-center gw-items-center gw-px-3 gw-text-sm gw-text-nowrap gw-text-nav-light-gray after:gw-content-[&#x27;▼&#x27;] after:gw-text-[10px] after:gw-ml-2">Toolbox Technical Manuals</a></li><li class="gw-relative" data-headlessui-state=""><a class="gw-inline-block gw-relative gw-h-12 gw-inline-flex gw-w-auto gw-justify-center gw-items-center gw-px-3 gw-text-sm gw-text-nowrap gw-text-nav-light-gray after:gw-content-[&#x27;▼&#x27;] after:gw-text-[10px] after:gw-ml-2">Web Applications</a></li><li class="gw-relative" data-headlessui-state=""><a class="gw-inline-block gw-relative gw-h-12 gw-inline-flex gw-w-auto gw-justify-center gw-items-center gw-px-3 gw-text-sm gw-text-nowrap gw-text-nav-light-gray after:gw-content-[&#x27;▼&#x27;] after:gw-text-[10px] after:gw-ml-2">Resources</a></li></ul></div><span class="gw-flex gw-flex-row-reverse gw-justify-end gw-items-center gw-w-full md:gw-max-w-[300px] gw-mr-2"><div class="flex items-center gap-2"><div class="search-wrapper relative w-full min-w-[12rem] max-w-md"><img src="/RMC-Software-Documentation/img/Magnifying_glass_icon.svg" alt="" aria-hidden="true" class="pointer-events-none absolute left-5 top-1/2 h-[13px] w-[13px] -translate-y-1/2 opacity-80"><button type="button" class="DocSearch DocSearch-Button" aria-label="Search (Meta+k)" aria-keyshortcuts="Meta+k"><span class="DocSearch-Button-Container"><svg width="20" height="20" class="DocSearch-Search-Icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8" stroke="currentColor" fill="none" stroke-width="1.4"></circle><path d="m21 21-4.3-4.3" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="DocSearch-Button-Placeholder">Search</span></span><span class="DocSearch-Button-Keys"></span></button></div></div></span><button class="gw-relative gw-isolate gw-inline-flex gw-items-center gw-justify-center gw-gap-x-2 gw-font-semibold data-[disabled]:gw-cursor-not-allowed data-[disabled]:gw-opacity-50 gw-rounded-sm gw-px-4 gw-py-2 gw-text-sm gw-bg-transparent gw-text-white md:gw-hidden cursor-default" type="button" data-headlessui-state=""><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M32 96v64h448V96H32zm0 128v64h448v-64H32zm0 128v64h448v-64H32z"></path></svg><span class="gw-absolute gw-left-1/2 gw-top-1/2 gw-size-[max(gw-100%,gw-2.gw-75rem)gw-] gw--translate-x-1/2 gw--translate-y-1/2 gw-[@gw-media(gw-pointer:gw-fine)]:gw-hidden" aria-hidden="true"></span></button></div></div></div><div class="gw-min-h-4 gw-py-2 sm:gw-py-0 gw-bg-nav-dark-gray sm:gw-bg-nav-gray"><div class="gw-w-full gw-mx-auto gw-px-4 gw-box-border gw-max-w-screen"><div class="gw-flex gw-justify-between gw-items-center"><span class="sm:gw-w-[94px] gw-shrink-0"></span><div style="order:2" class="gw-w-full gw-text-white sm:gw-text-usace-black"><strong class="gw-font-normal sm:gw-font-bold gw-text-lg sm:gw-text-sm gw-leading-4 sm:gw-leading-normal gw-block sm:gw-inline gw-mr-1">US Army Corps of Engineers</strong><span class="gw-text-md sm:gw-text-sm gw-mt-2 sm:gw-mt-0 gw-font-thin sm:gw-font-normal gw-block sm:gw-inline">Institute for Water Resources, Risk Management Center</span></div></div></div></div></div></header><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role="button" aria-expanded="true" href="/RMC-Software-Documentation/docs/dev/documentation-guide/introduction"><span title="Documentation Guide" class="categoryLinkLabel_W154">Documentation Guide</span></a></div><ul class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/RMC-Software-Documentation/docs/dev/documentation-guide/introduction"><span title="Introduction" class="linkLabel_WmDU">Introduction</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/RMC-Software-Documentation/docs/dev/documentation-guide/getting-started"><span title="Getting Started" class="linkLabel_WmDU">Getting Started</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/RMC-Software-Documentation/docs/dev/documentation-guide/versioning-system"><span title="Versioning System" class="linkLabel_WmDU">Versioning System</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/RMC-Software-Documentation/docs/dev/documentation-guide/project-structure"><span title="Project Structure" class="linkLabel_WmDU">Project Structure</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/RMC-Software-Documentation/docs/dev/documentation-guide/creating-new-document-walkthrough"><span title="Creating New Documents" class="linkLabel_WmDU">Creating New Documents</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/RMC-Software-Documentation/docs/dev/documentation-guide/docx-converter"><span title="DOCX Converter" class="linkLabel_WmDU">DOCX Converter</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/RMC-Software-Documentation/docs/dev/documentation-guide/creating-editing-pages"><span title="Creating and Editing Pages" class="linkLabel_WmDU">Creating and Editing Pages</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/RMC-Software-Documentation/docs/dev/documentation-guide/react-components"><span title="React Components" class="linkLabel_WmDU">React Components</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/RMC-Software-Documentation/docs/dev/documentation-guide/troubleshooting-faq"><span title="Troubleshooting &amp; FAQ" class="linkLabel_WmDU">Troubleshooting &amp; FAQ</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/RMC-Software-Documentation/docs/dev/documentation-guide/appendix-a-source-code-structure"><span title="Appendix A: Source Code" class="linkLabel_WmDU">Appendix A: Source Code</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/RMC-Software-Documentation/docs/dev/documentation-guide/appendix-b-build-process-overview"><span title="Appendix B: Build Process" class="linkLabel_WmDU">Appendix B: Build Process</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/RMC-Software-Documentation/docs/dev/documentation-guide/appendix-c-search-configuration"><span title="Appendix C: Search" class="linkLabel_WmDU">Appendix C: Search</span></a></li></ul></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_z5aJ"><div class="docItemContainer_c0TR"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/RMC-Software-Documentation/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><span class="breadcrumbs__link">Documentation Guide</span></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">Appendix A: Source Code</span></li></ul></nav><div class="chapter-nav"><button type="button" class="clean-btn chapter-nav__button" aria-expanded="false" aria-label="Show document chapters">In this document</button></div><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><div class="flex justify-between items-center p-[10px]"><div class="flex-1"><div class="flex mb-[var(--ifm-leading)]"><div class="font-usace text-normal cursor-pointer text-ifm-link"><a class="navlink-back" href="/RMC-Software-Documentation/dev"><svg class="navlink-back__chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 0 1 0 1.414L9.414 10l3.293 3.293a1 1 0 0 1-1.414 1.414l-4-4a1 1 0 0 1 0-1.414l4-4a1 1 0 0 1 1.414 0z" clip-rule="evenodd"></path></svg>Developer Resources</a></div></div></div></div>
+<header><h1>Appendix A: Source Code Structure</h1></header>
+<div class="theme-admonition theme-admonition-warning admonition_xJq3 alert alert--warning"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"></path></svg></span>Advanced Topic</div><div class="admonitionContent_BuS1"><p>This appendix is intended for <strong>advanced users, developers, and site administrators</strong> who need to understand or modify the underlying source code structure.</p><p><strong>Contributors writing documentation do NOT need to read this section.</strong> All necessary information for contributing MDX documentation is covered in the main guide.</p></div></div>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="overview">Overview<a href="#overview" class="hash-link" aria-label="Direct link to Overview" title="Direct link to Overview" translate="no">​</a></h2>
+<p>The <code>src/</code> folder contains all source code for custom React components, styles, pages, and theme files used in the RMC Software Documentation project. This folder is part of the project&#x27;s <strong>⛔ Off-Limits Areas</strong> for regular contributors.</p>
+<p><strong>Directory Structure:</strong></p>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">src/</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">├── components/        → React components used in MDX</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">│   └── icons/         → SVG icon components for landing pages</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">├── contexts/          → React context for state management</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">├── clientModules/     → Client-side modules (analytics, scroll behavior)</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">├── css/               → Global stylesheets</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">├── data/              → Build-generated data files</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">├── pages/             → Custom web pages (homepage, landing pages)</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">├── theme/             → Docusaurus theme overrides</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">├── draftDocs.js       → Draft document tracking</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">├── imageDimensions.js → Auto-generated image metadata</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">└── reportIdMap.js     → Auto-generated ID mappings</span><br></span></code></pre></div></div>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="components-directory">Components Directory<a href="#components-directory" class="hash-link" aria-label="Direct link to Components Directory" title="Direct link to Components Directory" translate="no">​</a></h2>
+<p><strong>Location:</strong> <code>src/components/</code></p>
+<p>Contains all custom React components used throughout the documentation site. These components are imported and used within MDX files by contributors.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="component-categories">Component Categories<a href="#component-categories" class="hash-link" aria-label="Direct link to Component Categories" title="Direct link to Component Categories" translate="no">​</a></h3>
+<p><strong>Document Metadata:</strong></p>
+<ul>
+<li class=""><code>DocumentMetadata.js</code></li>
+</ul>
+<p><strong>Figures &amp; Images:</strong></p>
+<ul>
+<li class=""><code>Figure.js</code></li>
+<li class=""><code>FigureReference.js</code></li>
+<li class=""><code>FigureInline.js</code></li>
+<li class=""><code>FigureNoRef.js</code></li>
+<li class=""><code>GIF.js</code></li>
+</ul>
+<p><strong>Tables:</strong></p>
+<ul>
+<li class=""><code>TableVertical.js</code></li>
+<li class=""><code>TableVerticalNoRef.js</code></li>
+<li class=""><code>TableHorizontal.js</code></li>
+<li class=""><code>TableAcronyms.js</code></li>
+<li class=""><code>TableReference.js</code></li>
+<li class=""><code>TableVersionHistory.js</code></li>
+<li class=""><code>TableBestFitDistributions.js</code></li>
+<li class=""><code>TableChangelog.js</code></li>
+</ul>
+<p><strong>Equations:</strong></p>
+<ul>
+<li class=""><code>Equation.js</code></li>
+<li class=""><code>EquationNoRef.js</code></li>
+<li class=""><code>EquationReference.js</code></li>
+<li class=""><code>EquationChip.js</code></li>
+</ul>
+<p><strong>Citations:</strong></p>
+<ul>
+<li class=""><code>Citation.js</code></li>
+<li class=""><code>CitationFootnote.js</code></li>
+<li class=""><code>Bibliography.js</code></li>
+</ul>
+<p><strong>Content Organization:</strong></p>
+<ul>
+<li class=""><code>ProcessList.js</code> - Step-by-step procedures</li>
+<li class=""><code>DocTabs.js</code> - Tabbed content panels</li>
+<li class=""><code>CollectionList.js</code> - Expandable grouped items</li>
+<li class=""><code>CategoryList.js</code> - Navigation tiles/menus</li>
+</ul>
+<p><strong>Multimedia:</strong></p>
+<ul>
+<li class=""><code>Video.js</code> - Numbered video embeds</li>
+<li class=""><code>VideoReference.js</code> - Video cross-references</li>
+</ul>
+<p><strong>Navigation:</strong></p>
+<ul>
+<li class=""><code>Button.js</code></li>
+<li class=""><code>NavLink.js</code></li>
+<li class=""><code>NavContainer.js</code></li>
+<li class=""><code>VersionSelector.js</code></li>
+</ul>
+<p><strong>Specialized:</strong></p>
+<ul>
+<li class=""><code>EventTree.js</code> - Event tree diagrams with download</li>
+<li class=""><code>EventTreeTOC.js</code> - Event tree table of contents</li>
+<li class=""><code>Counters.js</code> - Build-time counter utility</li>
+<li class=""><code>ModuleMap.js</code> - Module diagram rendering</li>
+<li class=""><code>DocChapterNav.js</code> - Chapter-level navigation</li>
+</ul>
+<p><strong>Landing Page Components:</strong></p>
+<ul>
+<li class=""><code>ContentBox.js</code> / <code>ContentBoxLarge.js</code> - Dashboard cards</li>
+<li class=""><code>ContentBubble.js</code> / <code>ContentBubbleLarge.js</code> - Dashboard card sub-components</li>
+<li class=""><code>ContentCard.js</code> - Content card layout</li>
+</ul>
+<p><strong>Site Features:</strong></p>
+<ul>
+<li class=""><code>SiteTour.js</code> - Guided site tour overlay</li>
+<li class=""><code>TourButton.js</code> - Tour launch button</li>
+<li class=""><code>VersionNotice.js</code> - Version mismatch notice (used internally by NavContainer)</li>
+</ul>
+<p><strong>Schema Components (DST Database):</strong></p>
+<ul>
+<li class=""><code>SchemaGroup.js</code> - Schema group container</li>
+<li class=""><code>SchemaTable.js</code> - Database schema table</li>
+<li class=""><code>SchemaTableCompact.js</code> - Compact schema table variant</li>
+<li class=""><code>SchemaTag.js</code> - Schema tag labels</li>
+<li class=""><code>SchemaRelationshipDiagram.js</code> - Entity relationship diagrams</li>
+</ul>
+<p><strong>Icon Components (<code>src/components/icons/</code>):</strong></p>
+<p>19 SVG icon components for landing pages and navigation: <code>CodeIcon</code>, <code>DesktopAppIcon</code>, <code>DocumentationGuideIcon</code>, <code>DSTDatabaseIcon</code>, <code>DSTIcon</code>, <code>GitHubIcon</code>, <code>InternalErosionIcon</code>, <code>LSTIcon</code>, <code>OvertoppingIcon</code>, <code>RiskCalculationsIcon</code>, <code>RiverineErosionIcon</code>, <code>RRFTIcon</code>, <code>SeismicHazardIcon</code>, <code>SparkleIcon</code>, <code>SpillwayErosionIcon</code>, <code>StructuralIcon</code>, <code>StyleGuideIcon</code>, <code>ToolboxIcon</code>, <code>WebAppIcon</code></p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="component-architecture">Component Architecture<a href="#component-architecture" class="hash-link" aria-label="Direct link to Component Architecture" title="Direct link to Component Architecture" translate="no">​</a></h3>
+<p><strong>Common Patterns:</strong></p>
+<ol>
+<li class="">
+<p><strong>Automatic Numbering:</strong></p>
+<ul>
+<li class="">Components like <code>Figure</code>, <code>TableVertical</code>, <code>Equation</code>, <code>Video</code> use automatic numbering</li>
+<li class="">Numbers stored in JSON counter files in <code>static/counters/</code></li>
+<li class="">Updated by <code>scripts/counters.js</code> script</li>
+</ul>
+</li>
+<li class="">
+<p><strong>Cross-Referencing:</strong></p>
+<ul>
+<li class="">Reference components (<code>FigureReference</code>, <code>TableReference</code>, etc.) link to numbered items</li>
+<li class="">Use React Context to share data between components</li>
+<li class="">Require matching keys between item and reference</li>
+</ul>
+</li>
+<li class="">
+<p><strong>Styling:</strong></p>
+<ul>
+<li class="">Primarily use Tailwind CSS utility classes</li>
+<li class="">Props allow customization (colors, sizes, alignment)</li>
+<li class="">Support light/dark themes via CSS variables</li>
+</ul>
+</li>
+</ol>
+<p><strong>Creating New Components:</strong></p>
+<div class="theme-admonition theme-admonition-danger admonition_xJq3 alert alert--danger"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"></path></svg></span>Site Administrators Only</div><div class="admonitionContent_BuS1"><p>Only experienced React developers and site administrators should create or modify components. Improper changes can break the entire documentation site.</p></div></div>
+<p><strong>Requirements for New Components:</strong></p>
+<ul>
+<li class="">Must be compatible with Docusaurus MDX processing</li>
+<li class="">Must support server-side rendering (SSR)</li>
+<li class="">Should use Tailwind CSS for styling consistency</li>
+<li class="">Must be documented in <a class="" href="/RMC-Software-Documentation/docs/dev/documentation-guide/react-components">React Components Reference</a></li>
+<li class="">Should follow existing naming and API conventions</li>
+</ul>
+<p><strong>Testing New Components:</strong></p>
+<ol>
+<li class="">Create component file in <code>src/components/</code></li>
+<li class="">Test in isolation with simple MDX file</li>
+<li class="">Verify SSR compatibility (test production build)</li>
+<li class="">Add TypeScript/PropTypes for prop validation</li>
+<li class="">Document all props and usage examples</li>
+<li class="">Test with different themes (light/dark)</li>
+<li class="">Verify accessibility (keyboard navigation, screen readers)</li>
+</ol>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="contexts-directory">Contexts Directory<a href="#contexts-directory" class="hash-link" aria-label="Direct link to Contexts Directory" title="Direct link to Contexts Directory" translate="no">​</a></h2>
+<p><strong>Location:</strong> <code>src/contexts/</code></p>
+<p>Contains React Context files for state management and sharing data across components.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="reportidcontextjs">ReportIdContext.js<a href="#reportidcontextjs" class="hash-link" aria-label="Direct link to ReportIdContext.js" title="Direct link to ReportIdContext.js" translate="no">​</a></h3>
+<p><strong>Purpose:</strong> Provides report ID information to components that need it.</p>
+<p><strong>Usage in Components:</strong></p>
+<div class="language-javascript codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-javascript codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token keyword module" style="font-style:italic">import</span><span class="token plain"> </span><span class="token imports punctuation" style="color:rgb(199, 146, 234)">{</span><span class="token imports"> useReportId </span><span class="token imports punctuation" style="color:rgb(199, 146, 234)">}</span><span class="token plain"> </span><span class="token keyword module" style="font-style:italic">from</span><span class="token plain"> </span><span class="token string" style="color:rgb(195, 232, 141)">&#x27;@site/src/contexts/ReportIdContext&#x27;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain"></span><span class="token keyword" style="font-style:italic">function</span><span class="token plain"> </span><span class="token function maybe-class-name" style="color:rgb(130, 170, 255)">MyComponent</span><span class="token punctuation" style="color:rgb(199, 146, 234)">(</span><span class="token punctuation" style="color:rgb(199, 146, 234)">)</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(199, 146, 234)">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token keyword" style="font-style:italic">const</span><span class="token plain"> reportId </span><span class="token operator" style="color:rgb(137, 221, 255)">=</span><span class="token plain"> </span><span class="token function" style="color:rgb(130, 170, 255)">useReportId</span><span class="token punctuation" style="color:rgb(199, 146, 234)">(</span><span class="token punctuation" style="color:rgb(199, 146, 234)">)</span><span class="token punctuation" style="color:rgb(199, 146, 234)">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token comment" style="color:rgb(105, 112, 152);font-style:italic">// Use reportId for component logic</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain"></span><span class="token punctuation" style="color:rgb(199, 146, 234)">}</span><br></span></code></pre></div></div>
+<p><strong>How It Works:</strong></p>
+<ol>
+<li class=""><code>reportIdMap.js</code> (auto-generated) contains mappings of document paths to report IDs</li>
+<li class="">Context provider wraps the entire site via Docusaurus plugin</li>
+<li class="">Components access report ID via <code>useReportId()</code> hook</li>
+<li class="">Used for automatic counter numbering scoped to documents</li>
+</ol>
+<p><strong>Modifying Context:</strong></p>
+<p>Only modify if adding new context providers or changing report ID logic. Requires understanding of React Context API and Docusaurus plugin system.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="tourcontextjs">TourContext.js<a href="#tourcontextjs" class="hash-link" aria-label="Direct link to TourContext.js" title="Direct link to TourContext.js" translate="no">​</a></h3>
+<p><strong>Purpose:</strong> Manages state for the guided site tour feature (SiteTour component).</p>
+<p><strong>Provides:</strong></p>
+<ul>
+<li class="">Tour active/inactive state</li>
+<li class="">Current tour step tracking</li>
+<li class="">Tour start/stop/navigation functions</li>
+</ul>
+<p><strong>Used By:</strong> <code>SiteTour.js</code>, <code>TourButton.js</code>, and <code>Root.js</code> theme wrapper.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="client-modules-directory">Client Modules Directory<a href="#client-modules-directory" class="hash-link" aria-label="Direct link to Client Modules Directory" title="Direct link to Client Modules Directory" translate="no">​</a></h2>
+<p><strong>Location:</strong> <code>src/clientModules/</code></p>
+<p>Client modules run on every page load and are registered in <code>docusaurus.config.js</code>.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="analyticseventsjs">analyticsEvents.js<a href="#analyticseventsjs" class="hash-link" aria-label="Direct link to analyticsEvents.js" title="Direct link to analyticsEvents.js" translate="no">​</a></h3>
+<p><strong>Purpose:</strong> Sends custom Google Analytics 4 events for page views, search interactions, and tour tracking.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="gtagpolyfilljs">gtagPolyfill.js<a href="#gtagpolyfilljs" class="hash-link" aria-label="Direct link to gtagPolyfill.js" title="Direct link to gtagPolyfill.js" translate="no">​</a></h3>
+<p><strong>Purpose:</strong> Provides a polyfill for the <code>gtag()</code> function to prevent errors when the Google Analytics script hasn&#x27;t loaded yet.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="scrolltoanchorjs">scrollToAnchor.js<a href="#scrolltoanchorjs" class="hash-link" aria-label="Direct link to scrollToAnchor.js" title="Direct link to scrollToAnchor.js" translate="no">​</a></h3>
+<p><strong>Purpose:</strong> Handles smooth scrolling to anchor links on page navigation, ensuring hash-based navigation works correctly.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="css-directory">CSS Directory<a href="#css-directory" class="hash-link" aria-label="Direct link to CSS Directory" title="Direct link to CSS Directory" translate="no">​</a></h2>
+<p><strong>Location:</strong> <code>src/css/</code></p>
+<p>The RMC Software Documentation site primarily uses <a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer" class="">Tailwind CSS</a> for styling. However, some global styles require traditional CSS files.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="global-style-files">Global Style Files<a href="#global-style-files" class="hash-link" aria-label="Direct link to Global Style Files" title="Direct link to Global Style Files" translate="no">​</a></h3>
+<p><strong>custom.css</strong></p>
+<p>Contains global styles applied across the entire site:</p>
+<ul>
+<li class="">CSS variable definitions for theming</li>
+<li class="">Base element styles (body, html)</li>
+<li class="">Utility classes not covered by Tailwind</li>
+<li class="">Print styles</li>
+<li class="">Overrides for Docusaurus default styles</li>
+</ul>
+<p><strong>Key CSS Variables:</strong></p>
+<div class="language-css codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-css codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token selector pseudo-class" style="color:rgb(199, 146, 234)">:root</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(199, 146, 234)">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token variable" style="color:rgb(191, 199, 213)">--ifm-color-primary</span><span class="token punctuation" style="color:rgb(199, 146, 234)">:</span><span class="token plain"> </span><span class="token hexcode color">#0078d4</span><span class="token punctuation" style="color:rgb(199, 146, 234)">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token variable" style="color:rgb(191, 199, 213)">--ifm-font-family-base</span><span class="token punctuation" style="color:rgb(199, 146, 234)">:</span><span class="token plain"> </span><span class="token string" style="color:rgb(195, 232, 141)">&#x27;Roboto&#x27;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">,</span><span class="token plain"> sans-serif</span><span class="token punctuation" style="color:rgb(199, 146, 234)">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token comment" style="color:rgb(105, 112, 152);font-style:italic">/* ...and more theme variables */</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain"></span><span class="token punctuation" style="color:rgb(199, 146, 234)">}</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain"></span><span class="token selector attribute punctuation" style="color:rgb(199, 146, 234)">[</span><span class="token selector attribute attr-name" style="color:rgb(255, 203, 107)">data-theme</span><span class="token selector attribute operator" style="color:rgb(137, 221, 255)">=</span><span class="token selector attribute attr-value" style="color:rgb(199, 146, 234)">&#x27;dark&#x27;</span><span class="token selector attribute punctuation" style="color:rgb(199, 146, 234)">]</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(199, 146, 234)">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token variable" style="color:rgb(191, 199, 213)">--ifm-color-primary</span><span class="token punctuation" style="color:rgb(199, 146, 234)">:</span><span class="token plain"> </span><span class="token hexcode color">#4dabf7</span><span class="token punctuation" style="color:rgb(199, 146, 234)">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token comment" style="color:rgb(105, 112, 152);font-style:italic">/* Dark theme overrides */</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain"></span><span class="token punctuation" style="color:rgb(199, 146, 234)">}</span><br></span></code></pre></div></div>
+<p><strong>equation.css</strong></p>
+<p>Global styles for equation components:</p>
+<ul>
+<li class="">KaTeX equation rendering styles</li>
+<li class="">Equation numbering appearance</li>
+<li class="">Equation caption formatting</li>
+<li class="">Equation reference link styles</li>
+</ul>
+<p><strong>tables.css</strong></p>
+<p>Global styles for table components:</p>
+<ul>
+<li class="">Table border and spacing</li>
+<li class="">Header row styling</li>
+<li class="">Alternating row colors</li>
+<li class="">Responsive table behavior</li>
+<li class="">Table caption formatting</li>
+</ul>
+<p><strong>schema.css</strong></p>
+<p>Global styles for DST database schema components:</p>
+<ul>
+<li class="">Schema table and group layout</li>
+<li class="">Schema tag colors and sizing</li>
+<li class="">Relationship diagram styling</li>
+</ul>
+<p><strong>chapter-nav.css</strong></p>
+<p>Styles for the <code>DocChapterNav</code> chapter navigation component:</p>
+<ul>
+<li class="">Navigation layout and spacing</li>
+<li class="">Active state indicators</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="tailwind-css-integration">Tailwind CSS Integration<a href="#tailwind-css-integration" class="hash-link" aria-label="Direct link to Tailwind CSS Integration" title="Direct link to Tailwind CSS Integration" translate="no">​</a></h3>
+<p><strong>Configuration:</strong> <code>tailwind.config.js</code> (root directory)</p>
+<p><strong>Custom Theme Extensions:</strong></p>
+<div class="language-javascript codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-javascript codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token comment" style="color:rgb(105, 112, 152);font-style:italic">// Example from tailwind.config.js</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain"></span><span class="token literal-property property">theme</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(199, 146, 234)">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token literal-property property">extend</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(199, 146, 234)">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    </span><span class="token literal-property property">colors</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(199, 146, 234)">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">      </span><span class="token string-property property">&#x27;ifm-primary&#x27;</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token string" style="color:rgb(195, 232, 141)">&#x27;var(--ifm-color-primary)&#x27;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">      </span><span class="token comment" style="color:rgb(105, 112, 152);font-style:italic">// Custom colors</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    </span><span class="token punctuation" style="color:rgb(199, 146, 234)">}</span><span class="token punctuation" style="color:rgb(199, 146, 234)">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    </span><span class="token literal-property property">fontFamily</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(199, 146, 234)">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">      </span><span class="token string-property property">&#x27;usace&#x27;</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(199, 146, 234)">[</span><span class="token string" style="color:rgb(195, 232, 141)">&#x27;Roboto&#x27;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">,</span><span class="token plain"> </span><span class="token string" style="color:rgb(195, 232, 141)">&#x27;sans-serif&#x27;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">]</span><span class="token punctuation" style="color:rgb(199, 146, 234)">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    </span><span class="token punctuation" style="color:rgb(199, 146, 234)">}</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token punctuation" style="color:rgb(199, 146, 234)">}</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain"></span><span class="token punctuation" style="color:rgb(199, 146, 234)">}</span><br></span></code></pre></div></div>
+<p><strong>Using Tailwind in Components:</strong></p>
+<div class="language-javascript codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-javascript codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token operator" style="color:rgb(137, 221, 255)">&lt;</span><span class="token plain">div className</span><span class="token operator" style="color:rgb(137, 221, 255)">=</span><span class="token string" style="color:rgb(195, 232, 141)">&quot;flex items-center justify-between bg-gray-100 p-4 dark:bg-gray-800&quot;</span><span class="token operator" style="color:rgb(137, 221, 255)">&gt;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token operator" style="color:rgb(137, 221, 255)">&lt;</span><span class="token plain">h2 className</span><span class="token operator" style="color:rgb(137, 221, 255)">=</span><span class="token string" style="color:rgb(195, 232, 141)">&quot;text-primary text-2xl font-bold&quot;</span><span class="token operator" style="color:rgb(137, 221, 255)">&gt;</span><span class="token maybe-class-name">Title</span><span class="token operator" style="color:rgb(137, 221, 255)">&lt;</span><span class="token operator" style="color:rgb(137, 221, 255)">/</span><span class="token plain">h2</span><span class="token operator" style="color:rgb(137, 221, 255)">&gt;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain"></span><span class="token operator" style="color:rgb(137, 221, 255)">&lt;</span><span class="token operator" style="color:rgb(137, 221, 255)">/</span><span class="token plain">div</span><span class="token operator" style="color:rgb(137, 221, 255)">&gt;</span><br></span></code></pre></div></div>
+<p><strong>Resources:</strong></p>
+<ul>
+<li class=""><a href="https://tailwindcss.com/docs" target="_blank" rel="noopener noreferrer" class="">Tailwind CSS Documentation</a></li>
+<li class=""><a href="https://nerdcave.com/tailwind-cheat-sheet" target="_blank" rel="noopener noreferrer" class="">Tailwind CSS Cheat Sheet</a></li>
+</ul>
+<div class="theme-admonition theme-admonition-danger admonition_xJq3 alert alert--danger"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"></path></svg></span>Style Modifications</div><div class="admonitionContent_BuS1"><p><strong>Do not modify global CSS files or Tailwind configuration unless you are a site administrator.</strong> Improper changes can break styling across the entire site.</p><p>For component-specific styles, prefer Tailwind utility classes or component-level CSS-in-JS.</p></div></div>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="data-directory">Data Directory<a href="#data-directory" class="hash-link" aria-label="Direct link to Data Directory" title="Direct link to Data Directory" translate="no">​</a></h2>
+<p><strong>Location:</strong> <code>src/data/</code></p>
+<p>Contains JSON files generated during the build process.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="event-tree-data">Event Tree Data<a href="#event-tree-data" class="hash-link" aria-label="Direct link to Event Tree Data" title="Direct link to Event Tree Data" translate="no">​</a></h3>
+<p>The primary use case is for the RMC Typical Event Tree Database document, which requires structured data for rendering event trees.</p>
+<p><strong>Files:</strong></p>
+<ul>
+<li class=""><code>eventTreeToc.json</code> — Table of contents data for the Typical Event Tree Database</li>
+<li class=""><code>dstSchemaData.js</code> — Schema metadata for DST database documentation</li>
+</ul>
+<p><strong>Generated By:</strong> <code>scripts/generateEventTreeTOC.js</code> and build-time data extraction</p>
+<p><strong>Used By:</strong> <code>EventTreeTOC</code> and schema components for rendering structured data</p>
+<div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Auto-Generated</div><div class="admonitionContent_BuS1"><p>Files in this directory are typically auto-generated and should not be manually edited.</p></div></div>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="pages-directory">Pages Directory<a href="#pages-directory" class="hash-link" aria-label="Direct link to Pages Directory" title="Direct link to Pages Directory" translate="no">​</a></h2>
+<p><strong>Location:</strong> <code>src/pages/</code></p>
+<p>Contains custom web pages that are not part of the documentation structure. These pages have their own routes and do not follow the versioned documentation pattern.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="homepage">Homepage<a href="#homepage" class="hash-link" aria-label="Direct link to Homepage" title="Direct link to Homepage" translate="no">​</a></h3>
+<p><strong>File:</strong> <code>index.js</code> or <code>index.jsx</code></p>
+<p><strong>Route:</strong> <code>https://your-site.com/</code></p>
+<p>The main landing page for the RMC Software Documentation website.</p>
+<p><strong>Typical Contents:</strong></p>
+<ul>
+<li class="">Welcome message</li>
+<li class="">Featured documentation</li>
+<li class="">Quick links to software manuals</li>
+<li class="">Search functionality</li>
+<li class="">Recent updates or announcements</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="landing-pages">Landing Pages<a href="#landing-pages" class="hash-link" aria-label="Direct link to Landing Pages" title="Direct link to Landing Pages" translate="no">​</a></h3>
+<p>Additional pages for organizing documentation by category:</p>
+<p><strong>Category Hub Pages:</strong></p>
+<ul>
+<li class=""><code>desktop-applications.js</code> - Hub page for all desktop applications</li>
+<li class=""><code>toolboxes.js</code> - Hub page for all toolbox technical manuals</li>
+<li class=""><code>web-applications.js</code> - Hub page for all web applications</li>
+<li class=""><code>changelog.js</code> - Site changelog page</li>
+<li class=""><code>feedback.js</code> - User feedback form page</li>
+</ul>
+<p><strong>Application-Specific Pages (<code>desktop-applications/</code>):</strong></p>
+<ul>
+<li class=""><code>lifesim.js</code>, <code>rmc-bestfit.js</code>, <code>rmc-rfa.js</code>, <code>rmc-totalrisk.js</code></li>
+</ul>
+<p><strong>Toolbox-Specific Pages (<code>toolboxes/</code>):</strong></p>
+<ul>
+<li class=""><code>internal-erosion-suite.js</code>, <code>overtopping-suite.js</code>, <code>risk-calculations-suite.js</code>, <code>seismic-hazard-suite.js</code></li>
+</ul>
+<p><strong>Web Application Pages (<code>web-applications/</code>):</strong></p>
+<ul>
+<li class=""><code>dst.js</code>, <code>lst.js</code>, <code>rrft.js</code></li>
+</ul>
+<p><strong>Developer Pages (<code>docs/</code>):</strong></p>
+<ul>
+<li class=""><code>dev.js</code> - Developer resources landing page</li>
+</ul>
+<p><strong>Page Structure:</strong></p>
+<div class="language-javascript codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-javascript codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token keyword module" style="font-style:italic">import</span><span class="token plain"> </span><span class="token imports maybe-class-name">React</span><span class="token plain"> </span><span class="token keyword module" style="font-style:italic">from</span><span class="token plain"> </span><span class="token string" style="color:rgb(195, 232, 141)">&#x27;react&#x27;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain"></span><span class="token keyword module" style="font-style:italic">import</span><span class="token plain"> </span><span class="token imports maybe-class-name">Layout</span><span class="token plain"> </span><span class="token keyword module" style="font-style:italic">from</span><span class="token plain"> </span><span class="token string" style="color:rgb(195, 232, 141)">&#x27;@theme/Layout&#x27;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain"></span><span class="token keyword module" style="font-style:italic">export</span><span class="token plain"> </span><span class="token keyword module" style="font-style:italic">default</span><span class="token plain"> </span><span class="token keyword" style="font-style:italic">function</span><span class="token plain"> </span><span class="token function maybe-class-name" style="color:rgb(130, 170, 255)">MyPage</span><span class="token punctuation" style="color:rgb(199, 146, 234)">(</span><span class="token punctuation" style="color:rgb(199, 146, 234)">)</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(199, 146, 234)">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token keyword control-flow" style="font-style:italic">return</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(199, 146, 234)">(</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    </span><span class="token operator" style="color:rgb(137, 221, 255)">&lt;</span><span class="token maybe-class-name">Layout</span><span class="token plain"> title</span><span class="token operator" style="color:rgb(137, 221, 255)">=</span><span class="token string" style="color:rgb(195, 232, 141)">&quot;Page Title&quot;</span><span class="token plain"> description</span><span class="token operator" style="color:rgb(137, 221, 255)">=</span><span class="token string" style="color:rgb(195, 232, 141)">&quot;Page description&quot;</span><span class="token operator" style="color:rgb(137, 221, 255)">&gt;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">      </span><span class="token operator" style="color:rgb(137, 221, 255)">&lt;</span><span class="token plain">main</span><span class="token operator" style="color:rgb(137, 221, 255)">&gt;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">        </span><span class="token operator" style="color:rgb(137, 221, 255)">&lt;</span><span class="token plain">h1</span><span class="token operator" style="color:rgb(137, 221, 255)">&gt;</span><span class="token maybe-class-name">Page</span><span class="token plain"> </span><span class="token maybe-class-name">Content</span><span class="token operator" style="color:rgb(137, 221, 255)">&lt;</span><span class="token operator" style="color:rgb(137, 221, 255)">/</span><span class="token plain">h1</span><span class="token operator" style="color:rgb(137, 221, 255)">&gt;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">        </span><span class="token punctuation" style="color:rgb(199, 146, 234)">{</span><span class="token comment" style="color:rgb(105, 112, 152);font-style:italic">/* Page components and content */</span><span class="token punctuation" style="color:rgb(199, 146, 234)">}</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">      </span><span class="token operator" style="color:rgb(137, 221, 255)">&lt;</span><span class="token operator" style="color:rgb(137, 221, 255)">/</span><span class="token plain">main</span><span class="token operator" style="color:rgb(137, 221, 255)">&gt;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    </span><span class="token operator" style="color:rgb(137, 221, 255)">&lt;</span><span class="token operator" style="color:rgb(137, 221, 255)">/</span><span class="token maybe-class-name">Layout</span><span class="token operator" style="color:rgb(137, 221, 255)">&gt;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token punctuation" style="color:rgb(199, 146, 234)">)</span><span class="token punctuation" style="color:rgb(199, 146, 234)">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain"></span><span class="token punctuation" style="color:rgb(199, 146, 234)">}</span><br></span></code></pre></div></div>
+<p><strong>Routing:</strong></p>
+<ul>
+<li class="">Files in <code>src/pages/</code> automatically become routes</li>
+<li class=""><code>index.js</code> → <code>/</code></li>
+<li class=""><code>about.js</code> → <code>/about</code></li>
+<li class=""><code>subfolder/page.js</code> → <code>/subfolder/page</code></li>
+</ul>
+<p><strong>Adding New Pages:</strong></p>
+<ol>
+<li class="">Create <code>.js</code> or <code>.jsx</code> file in <code>src/pages/</code></li>
+<li class="">Use Layout component for consistent header/footer</li>
+<li class="">Add page to navigation if needed (modify <code>docusaurus.config.js</code>)</li>
+<li class="">Build and test: <code>npm run build &amp;&amp; npm run serve</code></li>
+</ol>
+<div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Growing Pages</div><div class="admonitionContent_BuS1"><p>This directory continues to grow as the site expands with new hubs and navigation pages.</p></div></div>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="theme-directory">Theme Directory<a href="#theme-directory" class="hash-link" aria-label="Direct link to Theme Directory" title="Direct link to Theme Directory" translate="no">​</a></h2>
+<p><strong>Location:</strong> <code>src/theme/</code></p>
+<p>Docusaurus uses a theme system called &quot;Swizzling&quot; that allows overriding default theme components with custom implementations.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="what-is-theme-swizzling">What is Theme Swizzling?<a href="#what-is-theme-swizzling" class="hash-link" aria-label="Direct link to What is Theme Swizzling?" title="Direct link to What is Theme Swizzling?" translate="no">​</a></h3>
+<p><strong>Swizzling</strong> lets you customize or replace any component from the default Docusaurus theme by creating a file with the same name in <code>src/theme/</code>.</p>
+<p><strong>Swizzle Levels:</strong></p>
+<ul>
+<li class=""><strong>Safe:</strong> Docusaurus guarantees API stability</li>
+<li class=""><strong>Unsafe:</strong> Component may change in future Docusaurus versions</li>
+</ul>
+<p><strong>Command to Swizzle:</strong></p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">npm run swizzle @docusaurus/theme-classic ComponentName</span><br></span></code></pre></div></div>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="current-theme-overrides">Current Theme Overrides<a href="#current-theme-overrides" class="hash-link" aria-label="Direct link to Current Theme Overrides" title="Direct link to Current Theme Overrides" translate="no">​</a></h3>
+<p><strong>Root.js</strong></p>
+<p><strong>File:</strong> <code>src/theme/Root.js</code></p>
+<p><strong>Purpose:</strong> Wraps the entire application with context providers (ReportIdContext, TourContext) and global components (SiteTour).</p>
+<hr>
+<p><strong>Layout Override</strong></p>
+<p><strong>Files:</strong> <code>src/theme/Layout/index.jsx</code> and supporting modules:</p>
+<ul>
+<li class=""><code>buildNavLinks.js</code> — Constructs navigation link data</li>
+<li class=""><code>externalLinks.js</code> — External link configuration</li>
+<li class=""><code>ThemeToggle.jsx</code> — Light/dark theme toggle component</li>
+<li class=""><code>usaceLinks.js</code> — USACE-specific navigation links</li>
+<li class=""><code>useHeaderOffsets.js</code> — Header offset calculation hook</li>
+<li class=""><code>useLatestVersions.js</code> — Latest version resolution hook</li>
+</ul>
+<p><strong>Purpose:</strong> Custom layout wrapper that adds USACE branding, navigation links, and version-aware header behavior.</p>
+<hr>
+<p><strong>NotFound Override</strong></p>
+<p><strong>File:</strong> <code>src/theme/NotFound/Content/index.js</code></p>
+<p><strong>Purpose:</strong> Custom 404 page content with site-specific messaging and navigation.</p>
+<hr>
+<p><strong>DocItem Theme Component</strong></p>
+<p><strong>Files:</strong> <code>src/theme/DocItem/index.js</code>, <code>src/theme/DocItem/Layout/index.js</code>, <code>src/theme/DocItem/Layout/styles.module.css</code></p>
+<p><strong>Purpose:</strong> Override the default documentation page wrapper to add DRAFT watermark functionality and custom layout styles.</p>
+<p><strong>Custom Functionality:</strong></p>
+<ul>
+<li class="">Checks if current document is marked as <code>draft: true</code> in front matter</li>
+<li class="">Applies watermark overlay for draft documents</li>
+<li class="">Preserves all default DocItem behavior</li>
+</ul>
+<p><strong>How It Works:</strong></p>
+<div class="language-javascript codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-javascript codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token keyword module" style="font-style:italic">import</span><span class="token plain"> </span><span class="token imports punctuation" style="color:rgb(199, 146, 234)">{</span><span class="token imports"> useDoc </span><span class="token imports punctuation" style="color:rgb(199, 146, 234)">}</span><span class="token plain"> </span><span class="token keyword module" style="font-style:italic">from</span><span class="token plain"> </span><span class="token string" style="color:rgb(195, 232, 141)">&#x27;@docusaurus/theme-common&#x27;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain"></span><span class="token keyword module" style="font-style:italic">import</span><span class="token plain"> </span><span class="token imports">draftDocs</span><span class="token plain"> </span><span class="token keyword module" style="font-style:italic">from</span><span class="token plain"> </span><span class="token string" style="color:rgb(195, 232, 141)">&#x27;@site/src/draftDocs&#x27;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain"></span><span class="token keyword module" style="font-style:italic">export</span><span class="token plain"> </span><span class="token keyword module" style="font-style:italic">default</span><span class="token plain"> </span><span class="token keyword" style="font-style:italic">function</span><span class="token plain"> </span><span class="token function maybe-class-name" style="color:rgb(130, 170, 255)">DocItem</span><span class="token punctuation" style="color:rgb(199, 146, 234)">(</span><span class="token parameter">props</span><span class="token punctuation" style="color:rgb(199, 146, 234)">)</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(199, 146, 234)">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token keyword" style="font-style:italic">const</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(199, 146, 234)">{</span><span class="token plain"> metadata </span><span class="token punctuation" style="color:rgb(199, 146, 234)">}</span><span class="token plain"> </span><span class="token operator" style="color:rgb(137, 221, 255)">=</span><span class="token plain"> </span><span class="token function" style="color:rgb(130, 170, 255)">useDoc</span><span class="token punctuation" style="color:rgb(199, 146, 234)">(</span><span class="token punctuation" style="color:rgb(199, 146, 234)">)</span><span class="token punctuation" style="color:rgb(199, 146, 234)">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token keyword" style="font-style:italic">const</span><span class="token plain"> isDraft </span><span class="token operator" style="color:rgb(137, 221, 255)">=</span><span class="token plain"> draftDocs</span><span class="token punctuation" style="color:rgb(199, 146, 234)">.</span><span class="token method function property-access" style="color:rgb(130, 170, 255)">includes</span><span class="token punctuation" style="color:rgb(199, 146, 234)">(</span><span class="token plain">metadata</span><span class="token punctuation" style="color:rgb(199, 146, 234)">.</span><span class="token property-access">id</span><span class="token punctuation" style="color:rgb(199, 146, 234)">)</span><span class="token punctuation" style="color:rgb(199, 146, 234)">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token keyword control-flow" style="font-style:italic">return</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(199, 146, 234)">(</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    </span><span class="token operator" style="color:rgb(137, 221, 255)">&lt;</span><span class="token plain">div</span><span class="token operator" style="color:rgb(137, 221, 255)">&gt;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">      </span><span class="token punctuation" style="color:rgb(199, 146, 234)">{</span><span class="token plain">isDraft </span><span class="token operator" style="color:rgb(137, 221, 255)">&amp;&amp;</span><span class="token plain"> </span><span class="token operator" style="color:rgb(137, 221, 255)">&lt;</span><span class="token maybe-class-name">DraftWatermark</span><span class="token plain"> </span><span class="token operator" style="color:rgb(137, 221, 255)">/</span><span class="token operator" style="color:rgb(137, 221, 255)">&gt;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">}</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">      </span><span class="token operator" style="color:rgb(137, 221, 255)">&lt;</span><span class="token maybe-class-name">OriginalDocItem</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(199, 146, 234)">{</span><span class="token spread operator" style="color:rgb(137, 221, 255)">...</span><span class="token plain">props</span><span class="token punctuation" style="color:rgb(199, 146, 234)">}</span><span class="token plain"> </span><span class="token operator" style="color:rgb(137, 221, 255)">/</span><span class="token operator" style="color:rgb(137, 221, 255)">&gt;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    </span><span class="token operator" style="color:rgb(137, 221, 255)">&lt;</span><span class="token operator" style="color:rgb(137, 221, 255)">/</span><span class="token plain">div</span><span class="token operator" style="color:rgb(137, 221, 255)">&gt;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token punctuation" style="color:rgb(199, 146, 234)">)</span><span class="token punctuation" style="color:rgb(199, 146, 234)">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain"></span><span class="token punctuation" style="color:rgb(199, 146, 234)">}</span><br></span></code></pre></div></div>
+<p><strong>SearchBar Theme Component</strong></p>
+<p><strong>File:</strong> <code>src/theme/SearchBar/index.js</code> or similar</p>
+<p><strong>Purpose:</strong> Replace default search bar with custom Algolia search integration.</p>
+<p><strong>Custom Functionality:</strong></p>
+<ul>
+<li class="">Integrates with Algolia DocSearch API</li>
+<li class="">Applies custom styling matching site theme</li>
+<li class="">Adds search result categorization</li>
+<li class="">Implements keyboard shortcuts (Ctrl+K)</li>
+</ul>
+<p><strong>Configuration:</strong></p>
+<ul>
+<li class="">Algolia credentials in <code>docusaurus.config.js</code></li>
+<li class="">Custom search styling in component</li>
+<li class="">See <a class="" href="/RMC-Software-Documentation/docs/dev/documentation-guide/appendix-c-search-configuration">Appendix C: Search Configuration</a></li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="creating-new-theme-overrides">Creating New Theme Overrides<a href="#creating-new-theme-overrides" class="hash-link" aria-label="Direct link to Creating New Theme Overrides" title="Direct link to Creating New Theme Overrides" translate="no">​</a></h3>
+<div class="theme-admonition theme-admonition-warning admonition_xJq3 alert alert--warning"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"></path></svg></span>Advanced Customization</div><div class="admonitionContent_BuS1"><p>Only swizzle theme components if absolutely necessary. Theme overrides can break during Docusaurus updates and require maintenance.</p></div></div>
+<p><strong>Best Practices:</strong></p>
+<ol>
+<li class="">Check if your goal can be achieved without swizzling (custom components, plugins, CSS)</li>
+<li class="">Prefer &quot;safe&quot; swizzles over &quot;unsafe&quot; when possible</li>
+<li class="">Document all customizations</li>
+<li class="">Test thoroughly after Docusaurus updates</li>
+<li class="">Minimize changes to original theme component code</li>
+</ol>
+<p><strong>Resources:</strong></p>
+<ul>
+<li class=""><a href="https://docusaurus.io/docs/swizzling" target="_blank" rel="noopener noreferrer" class="">Docusaurus Swizzling Guide</a></li>
+<li class=""><a href="https://docusaurus.io/docs/api/themes/configuration" target="_blank" rel="noopener noreferrer" class="">Theme Component List</a></li>
+</ul>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="draftdocsjs">draftDocs.js<a href="#draftdocsjs" class="hash-link" aria-label="Direct link to draftDocs.js" title="Direct link to draftDocs.js" translate="no">​</a></h2>
+<p><strong>Location:</strong> <code>src/draftDocs.js</code></p>
+<p><strong>Purpose:</strong> Aggregates all documents marked with <code>draft: true</code> in their front matter and exports an array of draft document IDs.</p>
+<p><strong>Generated By:</strong> Build process (may be manual or scripted)</p>
+<p><strong>Used By:</strong> <code>DocItem</code> theme component to determine whether to display DRAFT watermark</p>
+<p><strong>Example Structure:</strong></p>
+<div class="language-javascript codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-javascript codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token comment" style="color:rgb(105, 112, 152);font-style:italic">// draftDocs.js</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain"></span><span class="token keyword" style="font-style:italic">const</span><span class="token plain"> draftDocs </span><span class="token operator" style="color:rgb(137, 221, 255)">=</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(199, 146, 234)">[</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token string" style="color:rgb(195, 232, 141)">&#x27;lifesim/v1.0/05-advanced-features&#x27;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token string" style="color:rgb(195, 232, 141)">&#x27;watersim/v2.0/03-calibration&#x27;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token comment" style="color:rgb(105, 112, 152);font-style:italic">// ...more draft document IDs</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain"></span><span class="token punctuation" style="color:rgb(199, 146, 234)">]</span><span class="token punctuation" style="color:rgb(199, 146, 234)">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain"></span><span class="token keyword module" style="font-style:italic">export</span><span class="token plain"> </span><span class="token keyword module" style="font-style:italic">default</span><span class="token plain"> draftDocs</span><span class="token punctuation" style="color:rgb(199, 146, 234)">;</span><br></span></code></pre></div></div>
+<p><strong>How Documents Are Identified:</strong></p>
+<ul>
+<li class="">Document with front matter <code>draft: true</code> gets added to array</li>
+<li class="">Array contains base paths (no file extension)</li>
+<li class="">Theme component checks if current page matches any draft path</li>
+</ul>
+<p><strong>Updating Draft List:</strong></p>
+<p>Depending on implementation, this may be:</p>
+<ul>
+<li class="">Auto-generated during build</li>
+<li class="">Manually updated by site administrators</li>
+<li class="">Generated by a dedicated script</li>
+</ul>
+<p>Check with site maintainers for the specific update process.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="reportidmapjs">reportIdMap.js<a href="#reportidmapjs" class="hash-link" aria-label="Direct link to reportIdMap.js" title="Direct link to reportIdMap.js" translate="no">​</a></h2>
+<p><strong>Location:</strong> <code>src/reportIdMap.js</code></p>
+<p><strong>Purpose:</strong> Auto-generated file that maps documentation base paths (including version) to unique report IDs.</p>
+<div class="theme-admonition theme-admonition-danger admonition_xJq3 alert alert--danger"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"></path></svg></span>Auto-Generated File</div><div class="admonitionContent_BuS1"><p><strong>Do not edit this file manually.</strong> It is automatically regenerated by the <code>generateReportIdMap.js</code> script.</p></div></div>
+<p><strong>Generated By:</strong> <code>scripts/generateReportIdMap.js</code></p>
+<p><strong>When Generated:</strong></p>
+<ul>
+<li class="">Before each build (<code>npm run build</code>)</li>
+<li class="">Manually via <code>npm run build</code> (which runs all pre-build scripts)</li>
+</ul>
+<p><strong>Example Structure:</strong></p>
+<div class="language-javascript codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-javascript codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token comment" style="color:rgb(105, 112, 152);font-style:italic">// reportIdMap.js</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain"></span><span class="token keyword" style="font-style:italic">const</span><span class="token plain"> reportIdMap </span><span class="token operator" style="color:rgb(137, 221, 255)">=</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(199, 146, 234)">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token string-property property">&#x27;lifesim/v1.0&#x27;</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token string" style="color:rgb(195, 232, 141)">&#x27;lifesim-v10&#x27;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token string-property property">&#x27;lifesim/v1.1&#x27;</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token string" style="color:rgb(195, 232, 141)">&#x27;lifesim-v11&#x27;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token string-property property">&#x27;watersim/v2.0&#x27;</span><span class="token operator" style="color:rgb(137, 221, 255)">:</span><span class="token plain"> </span><span class="token string" style="color:rgb(195, 232, 141)">&#x27;watersim-v20&#x27;</span><span class="token punctuation" style="color:rgb(199, 146, 234)">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  </span><span class="token comment" style="color:rgb(105, 112, 152);font-style:italic">// ...more mappings</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain"></span><span class="token punctuation" style="color:rgb(199, 146, 234)">}</span><span class="token punctuation" style="color:rgb(199, 146, 234)">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain"></span><span class="token keyword module" style="font-style:italic">export</span><span class="token plain"> </span><span class="token keyword module" style="font-style:italic">default</span><span class="token plain"> reportIdMap</span><span class="token punctuation" style="color:rgb(199, 146, 234)">;</span><br></span></code></pre></div></div>
+<p><strong>How It&#x27;s Used:</strong></p>
+<ol>
+<li class=""><strong>ReportIdContext</strong> provides current document&#x27;s report ID</li>
+<li class=""><strong>Counter Components</strong> use report ID to scope numbering (e.g., Figure 1 in lifesim-v10, Figure 1 in lifesim-v11)</li>
+<li class=""><strong>Counter Files</strong> organized by report ID: <code>static/counters/lifesim-v10-counters.json</code></li>
+</ol>
+<p><strong>Mapping Rules:</strong></p>
+<ul>
+<li class="">Each version folder gets unique report ID</li>
+<li class="">Format: <code>{software}-{version}</code> with special characters removed</li>
+<li class="">Ensures figure/table/equation numbers are independent per version</li>
+</ul>
+<p><strong>Regenerating Map:</strong></p>
+<p>If you add new version folders or documentation:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain"># Regenerate all build artifacts</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">npm run build</span><br></span></code></pre></div></div>
+<p>The report ID map will be automatically updated as part of the build process.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="technical-architecture-notes">Technical Architecture Notes<a href="#technical-architecture-notes" class="hash-link" aria-label="Direct link to Technical Architecture Notes" title="Direct link to Technical Architecture Notes" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="build-process-integration">Build Process Integration<a href="#build-process-integration" class="hash-link" aria-label="Direct link to Build Process Integration" title="Direct link to Build Process Integration" translate="no">​</a></h3>
+<p>The <code>src/</code> folder is integrated into the Docusaurus build process:</p>
+<ol>
+<li class="">
+<p><strong>Pre-Build Scripts:</strong></p>
+<ul>
+<li class="">Generate <code>reportIdMap.js</code></li>
+<li class="">Update counter files</li>
+<li class="">Generate sidebar configuration</li>
+</ul>
+</li>
+<li class="">
+<p><strong>Build Phase:</strong></p>
+<ul>
+<li class="">Webpack bundles all components</li>
+<li class="">Tailwind processes utility classes</li>
+<li class="">CSS files compiled and minified</li>
+<li class="">React components optimized and split</li>
+</ul>
+</li>
+<li class="">
+<p><strong>Post-Build:</strong></p>
+<ul>
+<li class="">Static HTML generated for all pages</li>
+<li class="">Components hydrated on client side</li>
+<li class="">Service worker generated (if enabled)</li>
+</ul>
+</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="component-development-workflow">Component Development Workflow<a href="#component-development-workflow" class="hash-link" aria-label="Direct link to Component Development Workflow" title="Direct link to Component Development Workflow" translate="no">​</a></h3>
+<p>For site administrators adding new components:</p>
+<ol>
+<li class="">
+<p><strong>Design Component API:</strong></p>
+<ul>
+<li class="">Determine required and optional props</li>
+<li class="">Design consistent with existing components</li>
+<li class="">Consider accessibility requirements</li>
+</ul>
+</li>
+<li class="">
+<p><strong>Implement Component:</strong></p>
+<ul>
+<li class="">Create file in <code>src/components/</code></li>
+<li class="">Use Tailwind for styling</li>
+<li class="">Add prop validation (PropTypes or TypeScript)</li>
+<li class="">Support light/dark themes</li>
+</ul>
+</li>
+<li class="">
+<p><strong>Test Component:</strong></p>
+<ul>
+<li class="">Create test MDX file</li>
+<li class="">Test in development: <code>npm start</code></li>
+<li class="">Test production build: <code>npm run build &amp;&amp; npm run serve</code></li>
+<li class="">Verify SSR compatibility</li>
+<li class="">Test on different screen sizes</li>
+</ul>
+</li>
+<li class="">
+<p><strong>Document Component:</strong></p>
+<ul>
+<li class="">Add to <a class="" href="/RMC-Software-Documentation/docs/dev/documentation-guide/react-components">React Components Reference</a></li>
+<li class="">Include all props with types and defaults</li>
+<li class="">Provide usage examples</li>
+<li class="">Note any special considerations</li>
+</ul>
+</li>
+<li class="">
+<p><strong>Deploy:</strong></p>
+<ul>
+<li class="">Commit to repository</li>
+<li class="">Update deployment</li>
+<li class="">Announce new component to contributors</li>
+</ul>
+</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="state-management">State Management<a href="#state-management" class="hash-link" aria-label="Direct link to State Management" title="Direct link to State Management" translate="no">​</a></h3>
+<p>Current state management approach:</p>
+<p><strong>React Context:</strong></p>
+<ul>
+<li class="">Used for report ID sharing</li>
+<li class="">Minimal context to avoid re-render issues</li>
+<li class="">Provided at app root level</li>
+</ul>
+<p><strong>Component State:</strong></p>
+<ul>
+<li class="">Local state with <code>useState</code> for component-specific needs</li>
+<li class="">Keep state close to where it&#x27;s used</li>
+<li class="">Avoid prop drilling with composition</li>
+</ul>
+<p><strong>External State:</strong></p>
+<ul>
+<li class="">Counter files (JSON) for figure/table/equation numbers</li>
+<li class="">Bibliography files (JSON) for citations</li>
+<li class="">Configuration files (JS) for site settings</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="performance-considerations">Performance Considerations<a href="#performance-considerations" class="hash-link" aria-label="Direct link to Performance Considerations" title="Direct link to Performance Considerations" translate="no">​</a></h3>
+<p><strong>Code Splitting:</strong></p>
+<ul>
+<li class="">Components automatically split by Webpack</li>
+<li class="">Lazy loading for heavy components (if implemented)</li>
+<li class="">Tree shaking removes unused code</li>
+</ul>
+<p><strong>CSS Optimization:</strong></p>
+<ul>
+<li class="">Tailwind purges unused styles in production</li>
+<li class="">Global CSS minimized</li>
+<li class="">Critical CSS inlined for faster first paint</li>
+</ul>
+<p><strong>Image Optimization:</strong></p>
+<ul>
+<li class="">Images should be properly sized before adding</li>
+<li class="">Use appropriate formats (PNG for screenshots, JPG for photos, SVG for graphics)</li>
+<li class="">Consider lazy loading for many images</li>
+</ul>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="when-to-modify-source-code">When to Modify Source Code<a href="#when-to-modify-source-code" class="hash-link" aria-label="Direct link to When to Modify Source Code" title="Direct link to When to Modify Source Code" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="contributors-never">Contributors: NEVER<a href="#contributors-never" class="hash-link" aria-label="Direct link to Contributors: NEVER" title="Direct link to Contributors: NEVER" translate="no">​</a></h3>
+<p>Regular documentation contributors should <strong>never</strong> need to modify anything in the <code>src/</code> folder.</p>
+<p><strong>If You Think You Need To:</strong></p>
+<ul>
+<li class="">Review existing components - one likely already does what you need</li>
+<li class="">Check component props for customization options</li>
+<li class="">Ask site administrators for help</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="site-administrators-rarely">Site Administrators: RARELY<a href="#site-administrators-rarely" class="hash-link" aria-label="Direct link to Site Administrators: RARELY" title="Direct link to Site Administrators: RARELY" translate="no">​</a></h3>
+<p>Even administrators should modify source code sparingly:</p>
+<p><strong>Good Reasons to Modify:</strong></p>
+<ul>
+<li class="">Adding genuinely new functionality not possible with existing components</li>
+<li class="">Fixing bugs in existing components</li>
+<li class="">Updating for major Docusaurus version changes</li>
+<li class="">Performance optimizations</li>
+</ul>
+<p><strong>Bad Reasons to Modify:</strong></p>
+<ul>
+<li class="">Making one-off customizations (use props instead)</li>
+<li class="">Styling changes (use Tailwind classes or global CSS)</li>
+<li class="">Adding content (use MDX files, not components)</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="testing-requirements">Testing Requirements<a href="#testing-requirements" class="hash-link" aria-label="Direct link to Testing Requirements" title="Direct link to Testing Requirements" translate="no">​</a></h3>
+<p><strong>Before Committing Source Code Changes:</strong></p>
+<ul>
+<li class="">✓ Component renders correctly in development</li>
+<li class="">✓ Production build succeeds: <code>npm run build</code></li>
+<li class="">✓ Component works in production: <code>npm run serve</code></li>
+<li class="">✓ No console errors or warnings</li>
+<li class="">✓ Accessible via keyboard navigation</li>
+<li class="">✓ Works with light and dark themes</li>
+<li class="">✓ Responsive on mobile/tablet/desktop</li>
+<li class="">✓ Documentation updated in components guide</li>
+<li class="">✓ Changes committed with clear description</li>
+<li class="">✓ Tested by at least one other person</li>
+</ul>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="additional-resources">Additional Resources<a href="#additional-resources" class="hash-link" aria-label="Direct link to Additional Resources" title="Direct link to Additional Resources" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="docusaurus-documentation">Docusaurus Documentation<a href="#docusaurus-documentation" class="hash-link" aria-label="Direct link to Docusaurus Documentation" title="Direct link to Docusaurus Documentation" translate="no">​</a></h3>
+<ul>
+<li class=""><a href="https://docusaurus.io/docs" target="_blank" rel="noopener noreferrer" class="">Docusaurus Official Docs</a></li>
+<li class=""><a href="https://docusaurus.io/docs/swizzling" target="_blank" rel="noopener noreferrer" class="">Docusaurus Swizzling</a></li>
+<li class=""><a href="https://docusaurus.io/docs/api/plugin-methods" target="_blank" rel="noopener noreferrer" class="">Docusaurus Plugin Development</a></li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="react-resources">React Resources<a href="#react-resources" class="hash-link" aria-label="Direct link to React Resources" title="Direct link to React Resources" translate="no">​</a></h3>
+<ul>
+<li class=""><a href="https://react.dev/" target="_blank" rel="noopener noreferrer" class="">React Documentation</a></li>
+<li class=""><a href="https://react.dev/reference/react" target="_blank" rel="noopener noreferrer" class="">React Hooks</a></li>
+<li class=""><a href="https://react.dev/learn/passing-data-deeply-with-context" target="_blank" rel="noopener noreferrer" class="">React Context</a></li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="styling-resources">Styling Resources<a href="#styling-resources" class="hash-link" aria-label="Direct link to Styling Resources" title="Direct link to Styling Resources" translate="no">​</a></h3>
+<ul>
+<li class=""><a href="https://tailwindcss.com/docs" target="_blank" rel="noopener noreferrer" class="">Tailwind CSS Documentation</a></li>
+<li class=""><a href="https://nerdcave.com/tailwind-cheat-sheet" target="_blank" rel="noopener noreferrer" class="">Tailwind CSS Cheat Sheet</a></li>
+<li class=""><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/--*" target="_blank" rel="noopener noreferrer" class="">CSS Custom Properties</a></li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="build-tools">Build Tools<a href="#build-tools" class="hash-link" aria-label="Direct link to Build Tools" title="Direct link to Build Tools" translate="no">​</a></h3>
+<ul>
+<li class=""><a href="https://webpack.js.org/concepts/" target="_blank" rel="noopener noreferrer" class="">Webpack Documentation</a></li>
+<li class=""><a href="https://babeljs.io/docs/" target="_blank" rel="noopener noreferrer" class="">Babel Documentation</a></li>
+<li class=""><a href="https://docs.npmjs.com/cli/v8/using-npm/scripts" target="_blank" rel="noopener noreferrer" class="">npm Scripts</a></li>
+</ul>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="summary">Summary<a href="#summary" class="hash-link" aria-label="Direct link to Summary" title="Direct link to Summary" translate="no">​</a></h2>
+<p>The <code>src/</code> folder contains the technical foundation of the RMC Software Documentation site:</p>
+<p><strong>Key Directories:</strong></p>
+<ul>
+<li class=""><code>components/</code> - React components for use in MDX (including <code>icons/</code> subdirectory)</li>
+<li class=""><code>contexts/</code> - React context providers (ReportIdContext, TourContext)</li>
+<li class=""><code>clientModules/</code> - Client-side modules (analytics, scroll behavior)</li>
+<li class=""><code>css/</code> - Global stylesheets</li>
+<li class=""><code>data/</code> - Build-generated data files</li>
+<li class=""><code>pages/</code> - Custom web pages and landing pages</li>
+<li class=""><code>theme/</code> - Docusaurus theme overrides (Root, Layout, DocItem, NotFound, SearchBar)</li>
+</ul>
+<p><strong>Auto-Generated Files:</strong></p>
+<ul>
+<li class=""><code>reportIdMap.js</code> - Document ID mappings</li>
+<li class=""><code>imageDimensions.js</code> - Image dimension metadata</li>
+<li class=""><code>draftDocs.js</code> - Draft document tracking (may be manual)</li>
+</ul>
+<p><strong>Important Principles:</strong></p>
+<ul>
+<li class="">Contributors don&#x27;t need to touch this folder</li>
+<li class="">Only administrators should modify source code</li>
+<li class="">Changes require thorough testing</li>
+<li class="">Document all customizations</li>
+</ul>
+<p><strong>For More Information:</strong></p>
+<ul>
+<li class="">Component usage: <a class="" href="/RMC-Software-Documentation/docs/dev/documentation-guide/react-components">React Components Reference</a></li>
+<li class="">Build process: <a class="" href="/RMC-Software-Documentation/docs/dev/documentation-guide/appendix-b-build-process-overview">Appendix B: Build Process Overview</a></li>
+<li class="">Project structure: <a class="" href="/RMC-Software-Documentation/docs/dev/documentation-guide/project-structure">Project Structure</a></li>
+</ul>
+<hr>
+<p><strong>Questions about source code structure?</strong> Contact site administrators or maintainers for guidance.</p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"></div><div class="col lastUpdated_JAkA"><span class="theme-last-updated">Last updated<!-- --> on <b><time datetime="2026-02-25T21:26:59.000Z" itemprop="dateModified">Feb 25, 2026</time></b></span></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/RMC-Software-Documentation/docs/dev/documentation-guide/troubleshooting-faq"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Troubleshooting &amp; FAQ</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/RMC-Software-Documentation/docs/dev/documentation-guide/appendix-b-build-process-overview"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Appendix B: Build Process</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#overview" class="table-of-contents__link toc-highlight">Overview</a></li><li><a href="#components-directory" class="table-of-contents__link toc-highlight">Components Directory</a><ul><li><a href="#component-categories" class="table-of-contents__link toc-highlight">Component Categories</a></li><li><a href="#component-architecture" class="table-of-contents__link toc-highlight">Component Architecture</a></li></ul></li><li><a href="#contexts-directory" class="table-of-contents__link toc-highlight">Contexts Directory</a><ul><li><a href="#reportidcontextjs" class="table-of-contents__link toc-highlight">ReportIdContext.js</a></li><li><a href="#tourcontextjs" class="table-of-contents__link toc-highlight">TourContext.js</a></li></ul></li><li><a href="#client-modules-directory" class="table-of-contents__link toc-highlight">Client Modules Directory</a><ul><li><a href="#analyticseventsjs" class="table-of-contents__link toc-highlight">analyticsEvents.js</a></li><li><a href="#gtagpolyfilljs" class="table-of-contents__link toc-highlight">gtagPolyfill.js</a></li><li><a href="#scrolltoanchorjs" class="table-of-contents__link toc-highlight">scrollToAnchor.js</a></li></ul></li><li><a href="#css-directory" class="table-of-contents__link toc-highlight">CSS Directory</a><ul><li><a href="#global-style-files" class="table-of-contents__link toc-highlight">Global Style Files</a></li><li><a href="#tailwind-css-integration" class="table-of-contents__link toc-highlight">Tailwind CSS Integration</a></li></ul></li><li><a href="#data-directory" class="table-of-contents__link toc-highlight">Data Directory</a><ul><li><a href="#event-tree-data" class="table-of-contents__link toc-highlight">Event Tree Data</a></li></ul></li><li><a href="#pages-directory" class="table-of-contents__link toc-highlight">Pages Directory</a><ul><li><a href="#homepage" class="table-of-contents__link toc-highlight">Homepage</a></li><li><a href="#landing-pages" class="table-of-contents__link toc-highlight">Landing Pages</a></li></ul></li><li><a href="#theme-directory" class="table-of-contents__link toc-highlight">Theme Directory</a><ul><li><a href="#what-is-theme-swizzling" class="table-of-contents__link toc-highlight">What is Theme Swizzling?</a></li><li><a href="#current-theme-overrides" class="table-of-contents__link toc-highlight">Current Theme Overrides</a></li><li><a href="#creating-new-theme-overrides" class="table-of-contents__link toc-highlight">Creating New Theme Overrides</a></li></ul></li><li><a href="#draftdocsjs" class="table-of-contents__link toc-highlight">draftDocs.js</a></li><li><a href="#reportidmapjs" class="table-of-contents__link toc-highlight">reportIdMap.js</a></li><li><a href="#technical-architecture-notes" class="table-of-contents__link toc-highlight">Technical Architecture Notes</a><ul><li><a href="#build-process-integration" class="table-of-contents__link toc-highlight">Build Process Integration</a></li><li><a href="#component-development-workflow" class="table-of-contents__link toc-highlight">Component Development Workflow</a></li><li><a href="#state-management" class="table-of-contents__link toc-highlight">State Management</a></li><li><a href="#performance-considerations" class="table-of-contents__link toc-highlight">Performance Considerations</a></li></ul></li><li><a href="#when-to-modify-source-code" class="table-of-contents__link toc-highlight">When to Modify Source Code</a><ul><li><a href="#contributors-never" class="table-of-contents__link toc-highlight">Contributors: NEVER</a></li><li><a href="#site-administrators-rarely" class="table-of-contents__link toc-highlight">Site Administrators: RARELY</a></li><li><a href="#testing-requirements" class="table-of-contents__link toc-highlight">Testing Requirements</a></li></ul></li><li><a href="#additional-resources" class="table-of-contents__link toc-highlight">Additional Resources</a><ul><li><a href="#docusaurus-documentation" class="table-of-contents__link toc-highlight">Docusaurus Documentation</a></li><li><a href="#react-resources" class="table-of-contents__link toc-highlight">React Resources</a></li><li><a href="#styling-resources" class="table-of-contents__link toc-highlight">Styling Resources</a></li><li><a href="#build-tools" class="table-of-contents__link toc-highlight">Build Tools</a></li></ul></li><li><a href="#summary" class="table-of-contents__link toc-highlight">Summary</a></li></ul></div></div></div></div></main></div></div></div><footer class="gw-relative gw-text-footer-light-gray gw-text-sm gw-bg-footer-black gw-border-t-gray-600 gw-border-t-4 gw-pb-[128px]"><img aria-label="USACE Castle" alt="USACE Castle" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHAAAAB9CAMAAABNoBenAAACQFBMVEUAAAAuLy4yMzEqKyk2NjUvMC4sLSoxMTAxMjE0NDMiIiAzMzInJyYxMTA1NTQ2NjUlJSM4ODcjIyEnJyY3NzYgHx0wMC8lJSQ4ODcjIyIhIh83NzcgIB4cHRsvLy4uLi03NzY4ODcqKig2NjUoKCczMzI2NjU3NzY0NjM4ODc2NjWTlZg3NzaSlJeRk5Y4ODc5OTiQkpUdHRscGxkiIR8fHxwsLCoyMzI0NTQhIB4aGhctLSwZGBanqa0yMjErKikkJCIjIyGSk5YvLy00MzIXFxWJiYyVlpgxMTApKSetr7N/foCGhog8OzqbnaAWFRMoJyYqKiivsrYrLCl8e3ygoqWTlJelqKyWmJuRkpWYmp6oqq6NjpCeoKMlJSM6Ojmxs7eLi44nJiQwMC+am56anJ+Ki42hpKh9fX+usbWHiIqqrLCCgoSho6d2dneBgYOPkJKjpamcnqKMjI9PTk6XmZyAgIGEhIarrbF0dHV5eHqIiIp4d3lAPz5zcnQTExCGhYeOj5KjpqqXl5lDQUGQkpRHRkZfXl6oq68+PTxMS0t9fH2Cg4Vvbm+rrbBFRENsa2xXVlZZWVmytblgYGF6enxJSEiUl5ptbG2rr7O1t7tRUVBjY2M4OThpaWo5ODdlZWWeoaQ3NjWlpqqYmZyTlpkNDAmEhYednqFbW1uRkZNycHFwcHEREA0CAQC6vMBYWFehoqVnZ2e+wMSOjpFTUlJdXF0ICAUxMC5VVVU6OTjAw8e3ub3Ex8zJzNLU190tu49hAAAAKnRSTlMAkluYL4L+anBH6VKqYkEkyA3SshL0eb8J3eMZ7fiiix0Dvjml7Nq9wL5TSNpkAAAZlUlEQVR42rSWBX/aWh/H5+7uriTnpBC0vcHCOmArVZoMBhOg8qGwwspt6t6yurdMoStzd3lzDxZqZ89lV35V/vY9fs6y39LWLeuObNt/U2NPSK3esGPT6vWrji/7D7R9/dqdBxSaAl1Tzbv7w976xsb6+oHw83udgkK1eMPe1euP/YuwLWv3HpLYv3W+C9dfvfjMGrJSTEyPGcrKuc1sW8XwaLeuQHF4256N+/4xa9eK5RtItb7p+avagNnIMR6/BYNQmxKEwOL3tLuNvtmrzeOTupui3ZvWbv2bqOO7jm0+IlcX/Lj3sMr53sj5bJYYCQCALVDMEOOyfk+w6LEr99Vok0pDn1+3atfv93X7GQHuuFZC+ajKdr8FwEWoJVgIp0zloUGPtbpbigsEJ3+Ptirxa89pee+fY5E2iGAhVApANTvWNYIrl6/ni2SmtQdUK1LgE/m9PjPEMhQMGB9mH9qYzN3nUBw9nhFOcrNnyM5/2tgyGQyADIGAe9iynM/cOxN2kMv/Erdxt+Jz9duL4m28YX1+Mwcz5Jk/iVfyeXv+qPvZ0aMi9/xf3MFtZHduqB2ELpEneNuOSetUaWYj6g6TfNbmC19C0UgR+11yeP2vecv/0NVz1qgQYGPeCzzxRKePBZkBQz08cF3+SMgkBNBTmTuUfWI7GrdeJB73GdkYDgPR6xPk/kTcwZawMdMh9d0i1yVKncofrfQLYyYhZuW8OdmrUefyOXVn9XV/DBcXjF7PpS9s2rxidQtuNmW6aKaCI6+PrNh8NFvx6rpJmGyEkK20fbefXrov19vv32WgNj080G3uIWgp/dnku5LxtjBRYV1xjvJeaREL0/0W2t7eMhxZ2sXd4ett87oChH7OFog6B81dGErIeYUWzgaipsH2RMt5VburNIhpXCl3uRYUAZjF7zdFhcijLPI4IkQgAea0+V2Lc4L3NqAuIXWDDyw4HkvBLw5QLbje/6iDgyhnMmd+InC5fqxEXQ+Kaeu8gTcFbaguJHyWsf6br/Xaoikh9ouIiNufzga+3ALkXtwwGuKBAHKB56VFTuSoQYZ7KCrIU9/0VpYjOgkAtF0vG2WNgVRzINUoPogC7p1kLvJzP3Zb95p+5TP6oRYsqmYu0nZnO7LwrELy82yljQ9I+zFfpe2DoeWbl2Ng0kbd1yxDaeUdkyWRDALPhhWavGIya8AZCrqiEIKEtBALMJWz43YFTggEgiy5SPrwWSVlwVIBEGKsORQUjn8j6TwD2V3riibKWUf2I4HrdB3+JJCaeJKTheNEAflt9E8TZXR7Ii6Lydwe4jyXn0vJWPcEceFZOSTdc9njDlHlEbO5PBbo66rrLSClsQCCeDJTnrhntO6abUjgZloYSQJNszPFeLwiIZUoZmqGK3JfmDzO27Xe53fEIjqFSyAfSElx3rtXFQ1d1S8aLjU/71SJxPpEAO4w3C5PjjbTuxMN1JdGAL9x1ESqE4JiDSkupOUPdNKbIolBPodLBcgNClJsoHNog5qUFDgIPBmQJRq/DhPNtzzrXPmXwLCEECQ1gxOEXE9LVTkOmYCvtgCZDKBpvZyY8+PKgrZ2bRJoavoFkIYpIOS8JLGwaEwI2MKAmfkGezcTLU0e6b7JTei3he6iPwWkKjRywT8SobgfTO1qIXdvLxJ4NM/p4oEl/xgomXCngMD6eQcSuGnIw/5rQJ29ltHywJ5DSOCOzxzkD6O+fwjE9dJcT2oFaqkBMfK9KB5PAzmviPiHQPqqOQWETJVmK4K3SzzBDwIcfLgQiOP8L4RQblypaigH6ddjzloEcIXqEz8IGDUqngPKZXK9Q0bIHXqZTJY2L3DrY279QrfmFpMar1LW03QKtWaa3vNP7CjTbcfn5l+pVBn0WUqDyvFNj1ge3xwqA03IVCpar8TnVmk9v0oxrXsEtWp2v+Ou8Fe0iShMHxmFn7//+BQZfTNk006+C6cbwrulQw87LzvDX/Nmr4xM3k+7CfE4haUEg42SXUt4xxT1FORn+bJdNsNXLLjnHfG9bSZ73jLj9cMSYhGwcKi2xzl2STEyRk1PT6enHlf3poHArJUuncQ9jikbv6zcr0QP0hUNd0JsrcXlMVn6u+5+ViwGqgSMr7ba5Xlmqbr68X52Giidcc69Z6nJpVt/Q40V42Wt0RCCuczIs1yWdbGWBowburl4SB2qrmAVCDhZZ9mLse/z2qOpYiA/ptz/KLEKv8a1LLzu7u5ad8Fp+y6SIOUFnRS2SAghFRq4oU0p8qZYWuibmdq49Remfcp2Xf62DRbrrB1cTr5+x8+p2FosKjr5pjIkZgIuxXNtlU6K22Vwgo6kHJ6WGma/1xkTsuKf2UUu2C/pWZwHmybZpt2f0c4XXUsJo1RnvDpZLLY7gyhdrk8DdvNhaz0w9653hln9bj1Md6YcSuc+ebYo2fTwWBuntldV2QAfOJ8oNP2BnVQBkmQjxezPGy5bkfjx3HAp4p8XEAFLIWSarK87zAo9L3lolRa5tF1dbD4/35y0TlxbdFFlUUPgzQJg2SSnj0GPX/xDsKd9rnvBHPR45ue7RIT5c5wmSI6K0UPdCr1H3vVNeelYG/q6JmTGTiaNpqv2lVQZztDleifLhSGsITuP2g0699b+0MDtOf9pV//pqcFt8IwWUIblYHMndqQENPTP43vTV3jjq+/nnSqCbvPROnWrdllmbu33GtSA+Qlul4taSW6uXSyS8X9m3qsfbJ+5Fu7+br3H7Bl9vLOL4ViYQ4ZcSkWL/c6Y6RJvb+OPW3Ndv1buFZ/59Ed/2JHsNIoEJymHpwWQMZHhSYwTn9jvit+NFxZBJoRh44N/6BUBC1wtKxCJHeToTZXiwvzEnuhFYyQ80PGLb336Y9rM+Lr/TByETSsfiFmvEIPblY+nYwKGRmmD3xBwZVC+ztN4EQCM2+o2eAbOcwjGIBBB/ipaXEXxD2N68YmHxz98fcc/imwYxZQZ8Bs0gJVmhmQK0Siic+nMs/sTIIayOVFePnWIfx54ClOFbCaDYE80mv1eIBrN1/nqm6+947VVqla9cfWV3aKuJV3t5ywPoxBEY+aeP3uC9seAghROCDgb7O3yBGefxiDkkRzPz6kZisl/cZAwLnO9Utor5LuBD5eMF72r16wBDPKh7AYxs7yhH4k+GCG8Tzv3cMj1JQ712/njEdR5fuibmRj2lV8eBTVTsr/9Ynuoba53tOL9zCbcusjTkwdeDaB7VtiE1vEcuzy1lSBLK2/nq2wSZtLYM7CVSJcGH6Q6WXqR4WciTyRAVQU3jS/5f/gdTbv/phOrXhQi0+AdWwvDaI3D6XCfAE44fA+G6nQjHoqbMlR4kciG4DIAAKeaHF6X8lCahk8vm7q1s+/Pb3xG2RJ/3H6bOdH7LovQQ4dB68MCVURSLHgHQyGf45HYOw2So2NpjCd5HknH0mmSpmlIwiGND822twcvO4J18uwP7b9Ulu6hwdWrZdY3mRYrsDZK40Ua5GGDbTDYebmSS5GcUETxYhHbLVaahWQmlsczWAyT0kJuNNcV2jr++zvKUP3o1mT5Ek/MUnxUnEy0iR/Xx3LLUaIGUCTMmTAwbUX7cAzomzQroHR6A3DsDIBi4qtf6jxxM5cZTw4+pzTpXGjmGnBm/Gi2BbBOA8jN5KGJwQEAaAbFm3QdT2IUIRAxCiYJgqOsUCptkgu3Xshz2QNl0//0n+s3m9p09Y56bjG4u9+ZoAFIE8kdsgkb5bSQRK1ZYSKbJtFdGMWjWBSksrywAzWA5rbzFes1wZdrp8p28aV5dO+m33emvFqGBYbP0Um2waYoMo9H+QwtUDzgklGEwKJUI5qJpdEoAnm1Dw0Lo3XJojPPLB9VXtRt6ZObXWd4OBBU6bn9j2kSNtBmA8tGU0yFIDM0B8gwSEeJZFGohFNFSKUEloRH6m5he1A1SkNG3KUq3t6DQ73U8P9os6gA7cU1pFlGOaOVzebYKZg/hwDEAJGvINkwPcUiMyw71cT0L/0DZqVeLzEpt/yi8yeqOrO/V5YPRz1u5StdCMTGY80pFtW/BesUH+IojkJRagcVdundLJ3AdsosO0EgvqXTbhXB9ap88a8+VM9tn3H5pMVCv3rstChK/uzEqjAtXuxxLMGww2dIMdGnN/p8el9tI4xsLKHIMkcN+6ay9PKawhmGhZ7mnvUGr/zi9rfVrcKZkVYBayfq9BhkwCBmLOZQgYIZHEkRAEEIVBKWAnwmzhcJAY1F4yDQLRNsO1gxyrfi3dEvfkQl3zs+lPjXBo8lLxrcQSoisD6GYd7CYmUU8bGACN8IQzMA6neRcJPB8V2m72zrhqJltisSks+9g4/t2jPUQFay6fRk3LFguEmKgem/z0x1RpYjJ+G+6ktftcbEJZlGI6H64V722dqyKJFbm7evAQ3uNli1SgSn9rZajlH2pyvSP5jGDt6QKAZ0nkDA3eXu8rjd4jeB53MKMYu/8Yi/dF9IV0DnDlwT7PhgTD+hv2FwmPN+qWWiCYSk5cOUeBHokeLGH3S1u0Tp9rd3t/tdKhH/4L94vxGP+QrPoZt8ZtJLUn3gbZ0w7O/IFK1V1N4vLUL/h1zz63bGV6WHic2J6XnNzv2V5//q1az/09a/P851d3f9iRtIGgESAiENwdY0lEmFFmiqlLH61vZbyv0OakyK1ajLqLvb3b/2GXA3YJfrcn7lwfv51nNOzuu4nyxRcs0R5cXAX63RyMluhzRDzTFNwLkEQ2I3lbemNtXlgaG/xgMUfH9kVJpe4EAD/lLONJFadJemt2GZsv0lIgCSAVNhWuuQtLuGNKKchhxYHkjSx6jDqL9ABKaQQevVjOp7nrOH+BW99C3kpjP9dqSWbpL580QI07pvZ/KaC2Uv5FYOn33+U0NzXZr4wDHNq8E/y8NlNQNNaZ6kzNFGvvHa879U8hDjlJbeDMTSEo+0xDFJysE/y6se6M3UhSOzmwKowD996uG/iq+76yp8u0eHMWnaQZRFtr1/hgjYUar6fqZ6Iinu1PQsu92+AJulzqKyhfuH3FCPyq3tGc94sYWmftIw9Yd5EEZVd+Rdy+DVVHY2+6Ief9feFeK5jM8Ko+X/CbJIYJF1R6ChOINYE5vkq6A/ej9hQ00W71p7aVl7H48UCd7TvUv8s08iBVLRvkElhIqq+KHb33I1g1jtCJJ/7HUAYmLG7crk5ZeU6UtRGIAAcIrQnvUT6UCxQ8iglNvcaF2ft9SU/pBxjsO4DQJ+358p2L7i4qz9HLXe8/Uh9mRtk2NHrOqfE8WXBNUoSadWAWmGFshQpEyaJj6w1FIw+HtEqIoNdbiz7ovEMntSCqdyB1DMzp/dg1PdCK+O+Fpd83iSOK9AC1c2g5YMYr50vIYj5dBvXxcjMm1ZzuJJLQ1H13uI1M4p2ElT7S3jM++LRF+a4XBlvHGLSXlOkGyoJ4lpRwZRknfbGiaNv7GtAIjaLlnas3nOShTbmUh9NgBk9OxUW8NolG+KjNN9/gpzfL8CTn7DgNi9BhtDTkcy/57XYrmhwUDw17ZTQQIPxn+QZq+vUgMPVqRyHIj2n7VtruiR9UeCgs10Dy724HTHbjIcAZp+vQ2sYqdjNQli+iD1HMvkXCQAUezJgipL25RKHJW0mQr45AyQ2FC44pIX7myIW3s+Fwl1BfHFkJmIWm2GxI+2gzmZGqpiJyMtvZkia7FrFsOBmV/eThBDeyJzWeJs6YNYI2zm8EO9IE+MSZ+YjEq4N0ieR18V0Xf28PVhRG52b9NgogA8VDOjBECDd9tyNeGE014n0sqxsl+Iawx7es1RksXLK4t1IWYIhNevwakKZ+8lViHziQ8u2j4RaQ7Ouqu7SI5oLIATQEbuCwhA4lmNDBRn7pNUOtARFBB5JhIEUWz2vipbCc5rcUyTMrsYwK9cR5JDqt0Bm7zId8nd8ihSfYi2XtwzVtnp/kIhmeOh1ZMYmHg5BFcxLs1qJahxlBxg+BMJEYBkJLcfKcw6PklesymUcodoaxBPjESHlovkkNmuvwgnXqJGO9AFwzQr+PyJIgQI362HweRdh5Wtzgelmfq9tNlZ0IehSSQAVRHUPdWAVJqtgQ/M+UnFVOIbQVkxISRGxHsajzQ4qb56E3shkTzh6kJX/eREv7VNkzzhw2paPp9cgI3utrRkH88D1UBjHw1fFoMyxBwucz6lvOeNOvePESD5wNCDHVlVYkR8OL9te7c81om8l0rXPoFPCkpq9t0hGkjsOGOdwKBkOgrJkMOB4qd2bHRAVRCWo/DxSpPpajZOkniwqAZKAOdBVldAJLcKv7VcWiPtGiSehMRn38VoauNKZ7JCM4V0zbGPzsCgZBR2OeFZdCZbKzKRCx1lw92L43VJCT9zO63F24iSkyuVWoCD/RGPOUGWm2vaNigUfz2zCP3x12+i9Xew5IQYwXXFa8MYTouj4BRmro9UPLUQSX5hsaolicuwvHaHdIYQqxGzfcaGYhrLDRJIjmdYbHvv669/KVx0NqSKXhDNnd1Dbzbv7LRP8AxnJMIql7Q0V4tH9sJvO9ZRmqPx9Z2dnbkVesAHG5JAJaQfytWK9el6OQL+nAlp9VurAdDfudWIoJyWFLdG0r0cuS2vxFIxwjIgDywMhO32/oR4pAR/Fot89pzly+AqLk4BZRs1ug1MJnjtLtUMr+VobHLAJcla5NPLq3N0GxE7xU/uLcEkVeSlIv3xKSAF9Pu4XMC3oz6NIuk+DKxvjlVCAGjH4ca9ad7GVbFcq+NXF3ktr92yHCAvg6Ss5PyAZyAAsMODeyESSgKFturjZ3MD0QQQEPM3YkIqOkIM3xapUPByDoX7m8cfZGQQme6guKOTgkEjuxK7RhFiKJlQ8StnHJaKPweFVK5+mvdOfDI1kPx43Rt8XMaAAMT2f1tjMGo3ENp6022pJEezjmV/iJBpSYP+/JBPxunUtLsdghlKAEOLRW/m6m5p0xsYQAxhnr1tMq3mQUXeNldzHyvjBCSQb5l7+qmXOZcPaVRMY8FYuYxQQE/8uoHULxPMjBhAo3pNLtH5BU81dxmYMptNnSwApPVkSIzRXbEChlSDmCZa48zw1ZK8kvHi9WNEbSQDda6DxPLSoQSi6IE7/KMB0Olazfu5WjHULSMCaECaGo5Yoxh4nIyhcpDTbEKjljENolUjTNDtrJFKUrh2l/XSICJTkvZ9RydGACBIXQYfpzlqW1xmChFTINx1Cc3ZxGorOUQhIvqTvrLeQwhgqilmcFssRodm496TBWsUR+QMMtPZ7FyWluZLy8at9X5MoFjDdUer4oimKEjuHzSk/L4CQ7dbGzpiagFCmtY/FeUy7FYjy4gddz3Ra/evAMngDmCTD/0k7X64xrPobIcqihJKM2y/t+wsrnM2XxnCUQ0prje1D5FswOnoQ+nCZlqRjMvIwaqrcaLP0gArle6J3A08756YhI17Dhqh41Rsb/jRUBBgsLcV8csFzJn+WEloglbVupZAMUIbbc1fHyRZEutrcJSNkEgRZ70X7iOxiTCjACCl1+/7aSnOm+MnW4NH0QXzs7m/SLGdps1wsRcn4Ot6bjEW8hohSI1udD3Mj4tXZSSmQdBooas8rMDiR15y84j23Ft21Q6RtGIQ90TaThzLasQGggCCNu6NBVxtXjQ+aCKwrUlElNuKtJb8kKqr7979BcUGsbu1SpFiwNxjVTZcaI/mmxq0lBbGRhp3dkovzW6HxmoX6xbHFKRgxNDlnqPprathSbtGATHegGNh0OvtP88PB3bKD84b4Jd/Bfgxrrx1LU/VIt1FP//4NV7pi4V4s9LqjMd7hmB9+WKzjDHSNGLsW/9xf7W38mbUjhO0nAmNxdu2GF7h2QyeU1qMvrt3j/z0/VeQmXrfgrtycRf+9tebyd+DKRkjQz9Iph5v85Nb5YK3yLfXx9Ow8xC/8JATbYJBIRCYYDRqEIIp0tip+PrDWnz41kZRzXksjLB99+tO+UQ0+uw9xHwskwlfvCD6Dfv4lddeeuWxW3iJ0JY5Dza9JTfJtsDJRWiQnuyIDQtiuUCBNg2gNDDHtecLYDw/UnJlwYP0dQbicNdWD/LJZ49r948G+1Md5h+/SwS3lsi4HK50b9Y3x22xQ+anAMZc6ydu9MdDi3i9Y6TJ4u3baWu90FNm9shvVXnIF0R/w15mT5udfV4kej7ZXottDG95AkN86OHS5o0zXvfDRnP/JmYZ2/T1HHWr/Cy8vncH++B50d+yrz8levbqsfiks5SR7WqGt+SwubWp3OyVlJX5vctjJH+jZAM6a+NlG9yCc4R/RvS37QWeu23p24TNGsVPbZuxsc2VMtniED+zdxeGeyzIps6H05MhL9uzdx3/4s2/jUt+Ij9aZAHNym3dMatb622N6U0BDanrhBlKtdBwEaI59mjE2jHiTXce//1FVsSiBEH33/VszO4FRqzdCKlbxWds6tqWsKaKlBVsdcFffCf6x+ytd4n+yFyfd4OUyaLT5FH3KI11/iiI7UbMBhP4bmx5kH9O9I/aS4T50lbTKWmDKBRUGDixgmEUAGCvIrEVq2mFfPct0T9tX/LcfqTWj2AMCKkZYEauhcRGRHNYZ7pnQ94Q/Qv29Uesv9ykjx7DmEapVBahGObpXLCum4mvRP+SPf82cTq801w5NjFot/tXbowu6PvNyL+GS96eLxGhrUtf6PP5qmtqg4Pw5x+K/m179lsMr/IMDXEC/Olzz4v+C/vslRe+f/315176S+/ufyvkpIkNbqoiAAAAAElFTkSuQmCC" class="gw-absolute gw-bottom-[56px] gw-left-[50%] gw-h-[125px] gw-w-[112px] gw-ml-[-56px]" role="presentation"><div class="gw-bg-footer-gray gw-pt-8 gw-pb-16"><div class="gw-w-full gw-mx-auto gw-px-4 gw-box-border gw-max-w-screen"><div class="gw-grid gw-grid-cols-12 gw-gap-2 lg:gw-gap-10"><div class="gw-col-span-12 lg:gw-col-span-6"><div class="gw-grid gw-grid-cols-12 gw-gap-2"><div class="gw-col-span-12 lg:gw-col-span-12"><h2 class="gw-text-lg">Our Mission</h2><p data-slot="text" class="gw-text-sm/6 gw-text-zinc-500 md:gw-text-base/6 dark:gw-text-zinc-400">Deliver vital engineering solutions, in collaboration with our partners, to secure our Nation, energize our economy, and reduce disaster risk.</p></div><div class="gw-col-span-12 gw-mt-4"><h2 class="gw-text-lg">About this Website</h2><p data-slot="text" class="gw-text-sm/6 gw-text-zinc-500 md:gw-text-base/6 dark:gw-text-zinc-400">The official website of the Institute for Water Resources, Risk Management Center</p></div></div></div><div class="gw-col-span-12 gw-mt-8 lg:gw-mt-2 md:gw-col-span-4"><ul class="gw-text-2xl gw-flex gw-flex-row gw-flex-wrap gw-gap-2 gw-list-none gw-mb-6"></ul><ul class="gw-list-none" style="column-count:2;column-gap:40px;margin:0;padding:0 0 0 2px"><li class="gw-mb-2"><a href="https://www.esd.whs.mil/DD/plainlanguage/" target="_blank" rel="noopener noreferrer" class="gw-hover:gw-underline">Plain Language</a></li><li class="gw-mb-2"><a href="https://dodcio.defense.gov/DoDSection508/Std_Stmt.aspx" target="_blank" rel="noopener noreferrer" class="gw-hover:gw-underline">Accessibility</a></li><li class="gw-mb-2"><a href="https://www.rmc.usace.army.mil/About-the-Center/Contact/" target="_blank" rel="noopener noreferrer" class="gw-hover:gw-underline">Contact Us</a></li><li class="gw-mb-2"><a href="https://www.usace.army.mil/Resources/Information-Quality-Act/" target="_blank" rel="noopener noreferrer" class="gw-hover:gw-underline">Quality Facts</a></li><li class="gw-mb-2"><a href="https://www.usace.army.mil/Link-Disclaimer/" target="_blank" rel="noopener noreferrer" class="gw-hover:gw-underline">Link Disclaimer</a></li><li class="gw-mb-2"><a href="https://www.usace.army.mil/Privacy-and-Security/" target="_blank" rel="noopener noreferrer" class="gw-hover:gw-underline">Privacy &amp; Security</a></li><li class="gw-mb-2"><a href="https://www.rmc.usace.army.mil/Site-Index/" target="_blank" rel="noopener noreferrer" class="gw-hover:gw-underline">Site Map</a></li><li class="gw-mb-2"><a href="https://www.usa.gov/" target="_blank" rel="noopener noreferrer" class="gw-hover:gw-underline">USA.gov</a></li><li class="gw-mb-2"><a href="https://prhome.defense.gov/NoFear/" target="_blank" rel="noopener noreferrer" class="gw-hover:gw-underline">No Fear Act</a></li><li class="gw-mb-2"><a href="https://www.sapr.mil/" target="_blank" rel="noopener noreferrer" class="gw-hover:gw-underline">EEO &amp; SHARP</a></li><li class="gw-mb-2"><a href="https://www.usace.army.mil/Business-With-Us/Small-Business/" target="_blank" rel="noopener noreferrer" class="gw-hover:gw-underline">Small Business</a></li><li class="gw-mb-2"><a href="https://open.defense.gov/" target="_blank" rel="noopener noreferrer" class="gw-hover:gw-underline">Open Government</a></li></ul></div><div class="gw-col-span-8 md:gw-mt-20 lg:gw-mt-14 md:gw-col-span-2"><ul class="gw-list-none" style="column-count:1;column-gap:40px;margin:0;padding:0 0 0 2px"><li class="gw-mb-2"><a href="https://www.usace.army.mil/Who-We-Are/Engineer-Inspector-General/" target="_blank" rel="noopener noreferrer" class="gw-hover:gw-underline">IG</a></li><li class="gw-mb-2"><a href="https://www.usace.army.mil/Resources/FOIA/" target="_blank" rel="noopener noreferrer" class="gw-hover:gw-underline">FOIA</a></li><li class="gw-mb-2"><a href="https://www.usainscom.army.mil/isalute/" target="_blank" rel="noopener noreferrer" class="gw-hover:gw-underline">iSalute</a></li><li class="gw-mb-2"><a href="/RMC-Software-Documentation/dev" target="" rel="" class="gw-hover:gw-underline">Dev</a></li></ul></div></div></div><div class="gw-flex gw-flex-row gw-justify-center gw-align-middle gw-gap-6 gw-mb-4 gw-mt-4"><a href="https://www.army.mil" target="_blank" rel="noopener"><img src="data:image/svg+xml,%3csvg%20width=&#x27;73&#x27;%20height=&#x27;90&#x27;%20viewBox=&#x27;0%200%2073%2090&#x27;%20fill=&#x27;none&#x27;%20xmlns=&#x27;http://www.w3.org/2000/svg&#x27;%3e%3cpath%20d=&#x27;M6.4603%2078.0566H8.9683V87.1841C8.9683%2088.6848%207.91987%2089.5893%206.37807%2089.5893H3.2328C1.67044%2089.5893%200.642578%2088.6848%200.642578%2087.1841V78.0566H3.19169V86.8346C3.19169%2087.0402%203.35615%2087.2252%203.58228%2087.2252H6.09027C6.29584%2087.2252%206.48086%2087.0607%206.48086%2086.8346V78.0566H6.4603ZM9.99616%2087.0402H12.5042V89.5893H9.99616V87.0402ZM13.5526%2080.174C13.5526%2078.9612%2014.4365%2078.0566%2015.8139%2078.0566H19.4525C20.8299%2078.0566%2021.7138%2078.9612%2021.7138%2080.174V81.8597H19.2675V80.6674C19.2675%2080.4618%2019.1031%2080.2768%2018.8769%2080.2768H16.3895C16.1634%2080.2768%2015.9989%2080.4413%2015.9989%2080.6674V81.7364C15.9989%2081.9009%2016.0811%2082.0653%2016.3484%2082.1475L20.1104%2083.2576C21.3849%2083.6277%2021.7138%2084.2033%2021.7138%2085.5395V87.4719C21.7138%2088.6642%2020.8299%2089.5893%2019.4731%2089.5893H15.7728C14.416%2089.5893%2013.532%2088.6642%2013.532%2087.4719V85.6012H15.9578V86.9785C15.9578%2087.1841%2016.1222%2087.3691%2016.3484%2087.3691H18.8564C19.0825%2087.3691%2019.247%2087.2047%2019.247%2086.9785V85.7862C19.247%2085.6217%2019.1236%2085.4573%2018.8975%2085.3956L15.1355%2084.2855C13.8609%2083.9155%2013.532%2083.3399%2013.532%2082.0036L13.5526%2080.174ZM22.7417%2087.0402H25.2497V89.5893H22.7417V87.0402ZM35.7545%2087.6569H31.7047L31.1702%2089.5893H28.5594L32.0131%2078.0566H35.6517L38.9614%2089.5893H36.3095L35.7545%2087.6569ZM35.1378%2085.4367L33.7399%2080.3179L32.3214%2085.4367H35.1378ZM47.5339%2084.82L46.9171%2085.3339L48.9523%2089.5893H46.1565L44.3475%2085.6423H42.6823V89.5893H40.1332V78.0566H45.9715C47.4105%2078.0566%2048.4178%2078.9406%2048.4178%2080.2563V82.5176C48.4384%2083.6688%2048.315%2084.1622%2047.5339%2084.82ZM45.9098%2083.0521V80.7702C45.9098%2080.5646%2045.7454%2080.3796%2045.5192%2080.3796H42.7029V83.4221H45.5192C45.7454%2083.4221%2045.9098%2083.2576%2045.9098%2083.0521ZM57.5453%2078.0566H60.8139V89.5893H58.3881V82.3942L55.9007%2089.5893H55.1812L52.6937%2082.3942V89.5893H50.3502V78.0566H53.6188L55.5923%2084.3061L57.5453%2078.0566ZM72.1204%2078.0566L68.2351%2085.1695V89.5687H65.686V85.19L61.9034%2078.0566H64.8637L67.0633%2082.5176L69.2424%2078.0566H72.1204Z&#x27;%20fill=&#x27;white&#x27;/%3e%3cpath%20d=&#x27;M71.0913%2025.6761H44.5312L36.3289%200.411133L28.1265%2025.6761H1.56641L23.0488%2041.2791L14.8464%2066.5441L36.3289%2050.9411L57.8113%2066.5441L49.6089%2041.2791L71.0913%2025.6761ZM36.3289%2043.1704L26.7697%2050.1188L30.4289%2038.8739L20.8697%2031.9255H32.6902L36.3494%2020.6807L40.0086%2031.9255H51.8291L42.2699%2038.8739L45.9291%2050.1188L36.3289%2043.1704Z&#x27;%20fill=&#x27;%23FFCC01&#x27;/%3e%3c/svg%3e" aria-label="U.S. Army Logo" alt="U.S. Army" class="gw-max-h-[75px]"></a><a href="https://www.usace.army.mil" target="_blank" rel="noopener"><img src="data:image/svg+xml,%3csvg%20xmlns=&#x27;http://www.w3.org/2000/svg&#x27;%20viewBox=&#x27;0%200%20105.52%2080.94&#x27;%3e%3cdefs%3e%3cstyle%3e.cls-1{fill:%23DE1E2E;}.cls-2{fill:%23fff;}%3c/style%3e%3c/defs%3e%3ctitle%3eusace-logo%3c/title%3e%3cg%20id=&#x27;Layer_2&#x27;%20data-name=&#x27;Layer%202&#x27;%3e%3cg%20id=&#x27;Layer_1-2&#x27;%20data-name=&#x27;Layer%201&#x27;%3e%3crect%20class=&#x27;cls-1&#x27;%20width=&#x27;105.52&#x27;%20height=&#x27;80.94&#x27;%20rx=&#x27;10.67&#x27;%20ry=&#x27;10.67&#x27;/%3e%3cpath%20class=&#x27;cls-2&#x27;%20d=&#x27;M95.07,74.83H11A4.9,4.9,0,0,1,6.1,69.94V11A4.9,4.9,0,0,1,11,6.1H95.07A4.9,4.9,0,0,1,100,11v59A4.89,4.89,0,0,1,95.07,74.83ZM11,8.1A2.9,2.9,0,0,0,8.1,11v59A2.9,2.9,0,0,0,11,72.83H95.07A2.9,2.9,0,0,0,98,69.94V11A2.9,2.9,0,0,0,95.07,8.1Z&#x27;/%3e%3cpath%20class=&#x27;cls-2&#x27;%20d=&#x27;M84.5,52V26.42l4.12-4.12V16.42H83.69v4.33L80,20.68V16.42c0-.05-4.53,0-4.53,0v4.33H71.81V16.42c0-.06-4.87,0-4.87,0V22.3L71,26.42s.06,12.83.06,12.7-10.92,0-10.94,0,0-5.07,0-5.07l2.77-2.77V24.06c0-.14-4.12.06-4.39,0-.09,0,0,4.25,0,4.25H55.06V24.12H50.6a40.46,40.46,0,0,0,.07,4.12H46.82V24.12H42.49c-.13,0,0,7,0,7l3.11,3.11.07,4.86h-11V26.42l3.92-3.92V16.42H33.71v4.33l-3.78-.07V16.42H25.68s0,4.34,0,4.33-3.45-.07-3.78-.07V16.42s-4.93-.06-4.93,0v6.22l3.78,3.71V52.83s-3.92,3.85-3.92,4,.07,6.42.07,6.42H89V56.48ZM29.19,56.41h-3V45.74h3Zm.07-17.29h-3V28.45h3ZM41.08,53.23h-3V45.67h3ZM60.8,60.66H45.74V50.06s2.89-7.51,7.16-7.57l.13,0,.14-.15.17.17c4.65.38,7.46,7.53,7.46,7.53Zm7.29-7.36h-3V45.74h3Zm11.75,3.11h-3V45.74h3ZM80,37.9H77V27.23h3Z&#x27;/%3e%3c/g%3e%3c/g%3e%3c/svg%3e" aria-label="U.S. Army Corps of Engineers" alt="U.S. Army Corps of Engineers" class="gw-max-h-[75px] gw-h-[75px] gw-w-auto"></a></div></div></footer></div></div></div>
+</body>
+</html>
