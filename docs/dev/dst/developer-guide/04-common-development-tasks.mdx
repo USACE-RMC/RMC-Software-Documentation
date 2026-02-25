@@ -1,0 +1,136 @@
+---
+title: Common Development Tasks
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import DocTabs from '@site/src/components/DocTabs';
+import ProcessList from '@site/src/components/ProcessList';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" />
+
+# Common Development Tasks
+
+Quick reference for tasks you'll perform regularly during DST development.
+
+For Git branching, commit message standards, pull request workflows, and code review process, see the [GitHub Workflows SOP](/docs/dev/github-workflows/overview).
+
+---
+
+## Creating a Database Migration
+
+After adding a new entity and its EF configuration:
+
+```bash
+cd backend/src/DST.API
+dotnet ef migrations add YourMigrationName --project ../DST.Infrastructure
+dotnet ef database update
+```
+
+:::tip
+Always run migrations from the `DST.API` directory with the `--project ../DST.Infrastructure` flag. The migration files are generated in the Infrastructure project, but the EF tools need the API project as the startup project to resolve the connection string.
+:::
+
+---
+
+## Running the Frontend Linter
+
+```bash
+cd frontend
+npm run lint
+```
+
+---
+
+## Building the Backend
+
+```bash
+cd backend/src/DST.API
+dotnet build
+```
+
+To build the entire solution from the backend root:
+
+```bash
+cd backend/src
+dotnet build DST.API/DST.API.csproj
+```
+
+---
+
+## Testing an API Endpoint
+
+<DocTabs
+  items={[
+    {
+      title: 'VS Code REST Client',
+      label: 'VS Code REST Client',
+      child: (
+        <>
+          <p>Create a <code>.http</code> file anywhere in the project:</p>
+          <pre><code>{`### Get hydrologic hazard for demo screening
+GET http://localhost:5250/api/screenings/demo01/hydrologic-hazard
+
+### Save hydrologic hazard data
+PUT http://localhost:5250/api/screenings/demo01/hydrologic-hazard
+Content-Type: application/json
+
+{
+  "curve": [
+    { "aep": 0.01, "stage": 496.5 },
+    { "aep": 0.001, "stage": 500.5 }
+  ]
+}`}</code></pre>
+          <p>Click "Send Request" above any request block to execute it.</p>
+        </>
+      ),
+    },
+    {
+      title: 'curl',
+      label: 'curl',
+      child: (
+        <pre><code>curl http://localhost:5250/api/screenings/demo01/hydrologic-hazard</code></pre>
+      ),
+    },
+    {
+      title: 'Visual Studio',
+      label: 'Visual Studio',
+      child: (
+        <>
+          <p>Visual Studio includes a built-in HTTP client. Create a <code>.http</code> file in the API project and use the same syntax as VS Code REST Client.</p>
+          <p>Alternatively, use the <strong>Endpoints Explorer</strong> (View → Other Windows → Endpoints Explorer) to discover and test API routes automatically.</p>
+        </>
+      ),
+    },
+  ]}
+/>
+
+---
+
+## Connecting to the Database
+
+Use any PostgreSQL client (pgAdmin, DBeaver, VS Code PostgreSQL extension, or Azure Data Studio with the PostgreSQL extension):
+
+```
+Host:     localhost
+Port:     5432
+Database: dst_db
+User:     dst_user
+Password: dst_password
+```
+
+---
+
+## Running the Backend from Visual Studio
+
+<ProcessList
+  items={[
+    { title: <>Open the <code>backend/src/</code> folder in Visual Studio</> },
+    { title: <>Set <strong>DST.API</strong> as the startup project</> },
+    { title: <>Press <code>F5</code> (debug) or <code>Ctrl+F5</code> (no debug)</> },
+    { title: <>Visual Studio will launch the API with hot reload on <code>http://localhost:5250</code></> },
+  ]}
+/>
+
+:::info
+The frontend and System-Response services still need to be started separately via their scripts or manually in a terminal. Visual Studio only runs the DST backend.
+:::

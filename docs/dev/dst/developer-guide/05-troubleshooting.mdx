@@ -1,0 +1,160 @@
+---
+title: Troubleshooting
+---
+
+import CategoryList from '@site/src/components/CategoryList';
+import CollectionList from '@site/src/components/CollectionList';
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" />
+
+# Troubleshooting
+
+Common issues and how to resolve them.
+
+<CollectionList
+  showExpandAll={true}
+  defaultOpen="none"
+  items={[
+    {
+      title: "Frontend Won't Start",
+      child: (
+        <ul>
+          <li>
+            Make sure you ran <code>npm install</code> in the <code>frontend/</code> directory
+          </li>
+          <li>
+            Check that port 5174 isn't already in use (<code>netstat -ano | findstr :5174</code>)
+          </li>
+          <li>
+            Delete <code>node_modules</code> and reinstall: <code>rm -rf node_modules && npm install</code>
+          </li>
+        </ul>
+      ),
+    },
+    {
+      title: "Backend Won't Start",
+      child: (
+        <ul>
+          <li>Make sure Docker is running (PostgreSQL needs it)</li>
+          <li>
+            Check that the .NET 10 SDK is installed: <code>dotnet --version</code>
+          </li>
+          <li>Check the backend terminal tab for error messages</li>
+          <li>If using Visual Studio, make sure DST.API is set as the startup project</li>
+        </ul>
+      ),
+    },
+    {
+      title: 'Database Connection Fails',
+      child: (
+        <ul>
+          <li>Verify Docker Desktop is running</li>
+          <li>
+            Run <code>docker ps</code> to check if the <code>dst-postgres</code> container is running
+          </li>
+          <li>
+            Try restarting: <code>./scripts/end-db.bat && ./scripts/start-db.bat</code>
+          </li>
+          <li>Check that no other service is using port 5432</li>
+        </ul>
+      ),
+    },
+    {
+      title: 'Migration Fails',
+      child: (
+        <ul>
+          <li>
+            Make sure you're in the <code>backend/src/DST.API</code> directory
+          </li>
+          <li>
+            Make sure the <code>--project ../DST.Infrastructure</code> flag is included
+          </li>
+          <li>Check that the database is running</li>
+          <li>
+            If the migration is out of sync, check for pending migrations: <code>dotnet ef migrations list --project ../DST.Infrastructure</code>
+          </li>
+        </ul>
+      ),
+    },
+    {
+      title: 'API Returns 404',
+      child: (
+        <ul>
+          <li>
+            Verify the route matches your controller attribute (<code>[Route("api/...")]</code>)
+          </li>
+          <li>
+            Check that your service and repository are registered in dependency injection (<code>DependencyInjection.cs</code> in both Application and
+            Infrastructure)
+          </li>
+          <li>Check the backend terminal for error logs</li>
+          <li>
+            Make sure the controller class has the <code>[ApiController]</code> attribute
+          </li>
+        </ul>
+      ),
+    },
+    {
+      title: "System-Response Won't Start",
+      child: (
+        <ul>
+          <li>
+            Verify the <code>SYSTEM_RESPONSE_PATH</code> in <code>start-dev.bat</code> points to the correct location
+          </li>
+          <li>Make sure the System-Response repository is cloned and builds successfully</li>
+          <li>Check that port 5001 isn't already in use</li>
+        </ul>
+      ),
+    },
+    {
+      title: 'Hot Reload Not Working',
+      child: (
+        <>
+          <p>
+            <strong>Backend (.NET):</strong> The <code>start-dev.bat</code> script launches the backend with <code>dotnet watch run</code>. If hot
+            reload stops working, restart the backend:
+          </p>
+          <pre>
+            <code>./scripts/end-backend.bat && ./scripts/start-backend.bat</code>
+          </pre>
+          <p>
+            <strong>Frontend (Vite):</strong> Vite's HMR is usually reliable. If changes aren't reflecting, check the terminal for errors. A full page
+            refresh (<code>Ctrl+Shift+R</code>) may help.
+          </p>
+        </>
+      ),
+    },
+  ]}
+/>
+
+---
+
+## Additional Resources
+
+<CategoryList
+  variant="accentTiles"
+  columns={{ base: 1, md: 2 }}
+  items={[
+    {
+      title: 'Chart.js Documentation',
+      description: 'Chart configuration and plugins',
+      href: 'https://www.chartjs.org/docs/latest/',
+    },
+    {
+      title: 'Tailwind CSS v4 Docs',
+      description: 'Utility class reference',
+      href: 'https://tailwindcss.com/docs',
+    },
+    {
+      title: 'Entity Framework Core Docs',
+      description: 'Migrations, configuration, and querying',
+      href: 'https://learn.microsoft.com/en-us/ef/core/',
+    },
+    {
+      title: 'ASP.NET Core Quick Reference',
+      description: 'Common patterns and templates',
+      href: '/RMC-Software-Documentation/docs/dev/architecture/aspnet-quick-reference',
+    },
+  ]}
+/>

@@ -1,0 +1,179 @@
+---
+title: Development Environment
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
+import DocTabs from '@site/src/components/DocTabs';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" />
+
+# Development Environment
+
+This page covers cloning the repo, starting and stopping services, and your daily development workflow.
+
+---
+
+## Clone and Install
+
+```bash
+# Clone the repository
+git clone <repo-url>
+cd DST-Dev
+
+# Install frontend dependencies
+cd frontend
+npm install
+cd ..
+```
+
+---
+
+## Set Your Developer Name
+
+Each developer needs a unique name for database snapshot isolation. Run this once per machine:
+
+```bash
+echo yourname > db\.dev-name
+```
+
+Replace `yourname` with your actual first name (e.g., `sarah`). This file is gitignored — it stays local to your machine. If you skip this, the scripts will prompt you on first run.
+
+---
+
+## Starting the Environment
+
+From the repo root:
+
+```bash
+./start-dev.bat
+```
+
+This single command does everything in order:
+
+<ProcessList
+  items={[
+    { title: 'Starts the PostgreSQL Docker container' },
+    { title: 'Waits for the database to be healthy' },
+    { title: 'Restores your database snapshot (or seeds demo data on first run)' },
+    { title: 'Starts the System-Response API (new Windows Terminal tab)' },
+    { title: 'Starts the .NET backend with hot reload (new Windows Terminal tab)' },
+    { title: 'Starts the React frontend (new Windows Terminal tab)' },
+    { title: <>Opens Chrome to <a href="http://localhost:5174">http://localhost:5174</a></> },
+  ]}
+/>
+
+All three services open as **named tabs in a single Windows Terminal window**.
+
+### Service URLs
+
+<TableVerticalNoRef
+  headers={[[{value: 'Service'}, {value: 'URL'}, {value: 'Purpose'}]]}
+  columns={[
+    ['Frontend', 'Backend API', 'System-Response', 'PostgreSQL'],
+    ['<a href="http://localhost:5174">http://localhost:5174</a>', '<a href="http://localhost:5250">http://localhost:5250</a>', '<a href="http://localhost:5001">http://localhost:5001</a>', 'localhost:5432'],
+    ['React dev server (Vite)', 'ASP.NET Core API', 'Calculation engine', 'Database (user: <code>dst_user</code>, pass: <code>dst_password</code>, db: <code>dst_db</code>)'],
+  ]}
+/>
+
+### Verify Everything Works
+
+<ProcessList
+  items={[
+    { title: 'The browser should open to the DST application' },
+    { title: 'You should see the sidebar navigation on the left' },
+    { title: <>Click through <strong>Hazards</strong> in the sidebar — data entry pages for hazard parameters</> },
+    { title: <>Click <strong>Response {'>'} Evaluation</strong> — you'll see the fully-implemented PFM-01 module (your reference)</> },
+  ]}
+/>
+
+---
+
+## Stopping the Environment
+
+When you're done working:
+
+```bash
+./end-dev.bat
+```
+
+This snapshots your database, stops all services, and cleans up Docker. **Always use this command** — if you kill Docker manually, your database changes will be lost.
+
+---
+
+## Daily Workflow
+
+```
+./start-dev.bat       ← start of day (restores your DB)
+  ... work ...
+./end-dev.bat         ← end of day (snapshots your DB)
+```
+
+---
+
+## Script Reference
+
+<DocTabs
+  items={[
+    {
+      title: 'Start Scripts',
+      label: 'Start Scripts',
+      child: (
+        <TableVerticalNoRef
+          headers={[[{value: 'Script'}, {value: 'Description'}]]}
+          columns={[
+            ['<code>start-dev.bat</code>', '<code>scripts/start-db.bat</code>', '<code>scripts/start-backend.bat</code>', '<code>scripts/start-frontend.bat</code>'],
+            ['Start everything (DB, System-Response, Backend, Frontend, Browser)', 'Start PostgreSQL container only', 'Start .NET API only (new window)', 'Start React dev server only (new window)'],
+          ]}
+        />
+      ),
+    },
+    {
+      title: 'End Scripts',
+      label: 'End Scripts',
+      child: (
+        <TableVerticalNoRef
+          headers={[[{value: 'Script'}, {value: 'Description'}]]}
+          columns={[
+            ['<code>end-dev.bat</code>', '<code>scripts/end-db.bat</code>', '<code>scripts/end-backend.bat</code>', '<code>scripts/end-frontend.bat</code>'],
+            ['Stop everything (snapshots DB first)', 'Stop PostgreSQL container only', 'Stop .NET API only', 'Stop React dev server only'],
+          ]}
+        />
+      ),
+    },
+  ]}
+/>
+
+### Restarting Individual Services
+
+If one service crashes or you need to restart just one part:
+
+<DocTabs
+  items={[
+    {
+      title: 'Frontend',
+      label: 'Frontend',
+      child: <pre><code>./scripts/end-frontend.bat && ./scripts/start-frontend.bat</code></pre>,
+    },
+    {
+      title: 'Backend',
+      label: 'Backend',
+      child: <pre><code>./scripts/end-backend.bat && ./scripts/start-backend.bat</code></pre>,
+    },
+    {
+      title: 'Database',
+      label: 'Database',
+      child: (
+        <>
+          <pre><code>./scripts/end-db.bat && ./scripts/start-db.bat</code></pre>
+          <p>This will snapshot, tear down, and restore the database.</p>
+        </>
+      ),
+    },
+  ]}
+/>
+
+:::warning Configuration
+Before running `start-dev.bat` for the first time, verify the `SYSTEM_RESPONSE_PATH` variable at the top of the script points to your local System-Response repository. See [Prerequisites and IDE Setup](./prerequisites-and-ide-setup) for details.
+:::
