@@ -31,6 +31,7 @@ const TableBestFitDistributions = ({ headerConfig, headers, columns, fullWidth =
 
   return (
     <div className="table-container">
+      <div className="table-scroller">
       <table className={`table-base bestfit-table table-zebra`} style={styleVars}>
         <colgroup>
           {Array.from({ length: colCount }).map((_, i) => (
@@ -110,6 +111,7 @@ const TableBestFitDistributions = ({ headerConfig, headers, columns, fullWidth =
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 };

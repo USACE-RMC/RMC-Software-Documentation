@@ -33,6 +33,7 @@ const TableVerticalNoRef = ({ headers = [], columns = [], fullWidth = true, alt,
 
   return (
     <div className="table-container">
+      <div className="table-scroller">
       <table aria-label={alt} className="table-base table-zebra" style={styleVars}>
         {/* Widths via CSS vars (one <col> per data column) */}
         <colgroup>
@@ -106,6 +107,7 @@ const TableVerticalNoRef = ({ headers = [], columns = [], fullWidth = true, alt,
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 };

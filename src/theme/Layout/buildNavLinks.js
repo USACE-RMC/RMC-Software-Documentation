@@ -140,6 +140,7 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
 
   /* Help links */
   const changelogHref = useBaseUrl('/changelog');
+  const feedbackHref = useBaseUrl('/feedback');
 
   /* -------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
@@ -315,6 +316,11 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
           id: 'changelog',
           text: 'Change Log',
           href: changelogHref,
+        },
+        {
+          id: 'feedback',
+          text: 'Feedback',
+          href: feedbackHref,
         },
       ],
     },

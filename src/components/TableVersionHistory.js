@@ -30,7 +30,8 @@ const TableVersionHistory = ({ versions = [], dates = [], descriptions = [], mod
 
   return (
     <div className="table-container">
-      <table className="table-base table-zebra" aria-label="Version History" style={{ tableLayout: "fixed", minWidth: "100%" }}>
+      <div className="table-scroller">
+      <table className="table-base table-zebra" aria-label="Version History" style={{ tableLayout: "fixed" }}>
         {/* Column sizing */}
         <colgroup>
           {COL_WIDTHS.map((w, i) => (
@@ -124,6 +125,7 @@ const TableVersionHistory = ({ versions = [], dates = [], descriptions = [], mod
           })}
         </tbody>
       </table>
+      </div>
     </div>
   );
 };

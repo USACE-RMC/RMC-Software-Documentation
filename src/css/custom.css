@@ -145,12 +145,25 @@
 /* Make flex children shrink instead of forcing the page wider */
 .theme-doc-markdown, /* main markdown container */
 .markdown,
-.container, 
-.row, 
+.container,
+.row,
 .col,
 .main-wrapper,
 .theme-doc-markdown > div {
   min-width: 0; /* critical */
+}
+
+/* Prevent any content from causing horizontal page overflow on mobile.
+   Tables still scroll via their own .table-scroller wrapper. */
+.theme-doc-markdown {
+  overflow-wrap: break-word;
+  overflow-x: clip;
+}
+
+/* Images should never exceed their container */
+.theme-doc-markdown img {
+  max-width: 100%;
+  height: auto;
 }
 
 /* Code blocks & inline code shouldn’t widen the page */
@@ -319,7 +332,7 @@ code,
 }
 
 .container {
-  @apply mx-auto my-0 max-w-full pl-10;
+  @apply mx-auto my-0 max-w-full pl-4 lg:pl-10;
 }
 
 html {
@@ -372,6 +385,8 @@ html {
 /* Gently restore Markdown formatting inside .theme-doc-markdown */
 :where(.theme-doc-markdown) :is(p, table, th, td) {
   all: revert;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
 }
 
 .theme-doc-markdown ul,
@@ -653,7 +668,8 @@ html[data-theme='dark'] .DocSearch-Button {
 
 /* Prevent 100vw-based elements from causing horizontal scrollbar
    (100vw includes scrollbar width on non-overlay-scrollbar browsers) */
-html {
+html,
+body {
   overflow-x: clip;
 }
 
@@ -915,17 +931,138 @@ figure + .table-container,
   }
 }
 
-/* Mobile: make tour tooltip full-width at bottom of screen */
+/* Phone tier: full-width tooltip, position handled by JS for reliable mobile rendering */
+.tour-tooltip--phone {
+  width: calc(100vw - 24px) !important;
+  transform: none !important;
+  transition: none !important; /* no slide animation — always pinned at bottom */
+}
+
+/* Fallback media query for phone (covers non-tour contexts) */
 @media (max-width: 639px) {
   .tour-tooltip {
     width: calc(100vw - 24px) !important;
-    left: 12px !important;
-    bottom: 12px !important;
-    top: auto !important;
     transform: none !important;
   }
 
   .tour-tooltip--centered {
     transform: none !important;
   }
+}
+
+/* Tablet: slightly narrower tooltip for tighter viewports */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .tour-tooltip {
+    width: 340px;
+  }
+
+  .tour-tooltip--centered {
+    width: 380px;
+  }
+}
+
+/* Phone landscape: constrain tooltip height when vertical space is limited */
+@media (max-height: 500px) and (orientation: landscape) {
+  .tour-tooltip {
+    max-height: 45vh;
+    overflow-y: auto;
+    padding: 14px;
+  }
+}
+
+/* ===== Feedback Page (card & grid styles — layout handled by Tailwind in JSX) ===== */
+
+.feedback-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 600px) {
+  .feedback-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.feedback-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--ifm-background-color-theme);
+  text-decoration: none !important;
+  color: inherit;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.feedback-card:hover {
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 4px 16px rgba(74, 124, 155, 0.15);
+  transform: translateY(-2px);
+  text-decoration: none !important;
+  color: inherit;
+}
+
+[data-theme='dark'] .feedback-card:hover {
+  box-shadow: 0 4px 16px rgba(127, 181, 208, 0.12);
+}
+
+.feedback-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: var(--ifm-color-primary-lightest);
+  color: var(--ifm-color-primary);
+  flex-shrink: 0;
+}
+
+[data-theme='dark'] .feedback-card-icon {
+  background: rgba(127, 181, 208, 0.12);
+  color: var(--ifm-color-primary-light);
+}
+
+.feedback-card-content {
+  flex: 1;
+}
+
+.feedback-card-title {
+  font-family: 'Roboto', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--font-color);
+  margin: 0 0 0.25rem;
+}
+
+.feedback-card-description {
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--font-color-description);
+  margin: 0;
+}
+
+.feedback-card-arrow {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  color: var(--border-color);
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.feedback-card:hover .feedback-card-arrow {
+  color: var(--ifm-color-primary);
+  transform: translateX(3px);
 }
