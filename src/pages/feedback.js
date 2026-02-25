@@ -1,4 +1,3 @@
-import useBaseUrl from '@docusaurus/useBaseUrl';
 import Layout from '@theme/Layout';
 
 const FEEDBACK_EMAIL = 'Adam.c.gohs@usace.army.mil';
@@ -166,24 +165,28 @@ function FeedbackCard({ category }) {
 export default function Feedback() {
   return (
     <Layout title="Feedback" description="Provide feedback on the RMC Software Documentation site.">
-      <main className="feedback-page">
-        <div className="feedback-header">
-          <h1>Feedback</h1>
-          <p>
-            Help us improve the RMC Software Documentation. Choose a category below to send us your feedback via email. Your input helps us maintain
-            accurate, useful, and accessible documentation.
-          </p>
+      <main>
+        <div className="border-b border-border-color bg-ifm-primary-lightest px-6 py-10 text-center dark:bg-surface-card">
+          <div className="mx-auto max-w-[600px]">
+            <h1 className="m-0 mb-3 font-usace text-h1 font-bold text-font-color">Feedback</h1>
+            <p className="m-0 font-usace text-base leading-relaxed text-font-color-description">
+              Help us improve the RMC Software Documentation. Choose a category below to send us your feedback via email. Your input helps us
+              maintain accurate, useful, and accessible documentation.
+            </p>
+          </div>
         </div>
-        <div className="feedback-grid">
-          {feedbackCategories.map((category) => (
-            <FeedbackCard key={category.id} category={category} />
-          ))}
-        </div>
-        <div className="feedback-footer">
-          <p>
-            Clicking a button above will open your default email application with a pre-filled template. Fill in the details and send the email to
-            submit your feedback.
-          </p>
+        <div className="mx-auto max-w-[800px] px-6 pb-16 pt-8">
+          <div className="feedback-grid">
+            {feedbackCategories.map((category) => (
+              <FeedbackCard key={category.id} category={category} />
+            ))}
+          </div>
+          <div className="mt-6 border-t border-border-color pt-4 text-center">
+            <p className="m-0 font-usace text-[0.8rem] leading-normal text-font-color-description">
+              Clicking a button above will open your default email application with a pre-filled template. Fill in the details and send the email
+              to submit your feedback.
+            </p>
+          </div>
         </div>
       </main>
     </Layout>
