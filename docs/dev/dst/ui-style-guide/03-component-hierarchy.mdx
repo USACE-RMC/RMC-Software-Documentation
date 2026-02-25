@@ -1,0 +1,124 @@
+---
+title: Component Hierarchy
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import DocTabs from '@site/src/components/DocTabs';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" />
+
+# Component Hierarchy
+
+Components are organized into three tiers based on reusability and abstraction level.
+
+For the full frontend architecture (five-layer data flow, controller hooks, etc.), see the [Frontend Architecture](/docs/dev/architecture/frontend-architecture) guide.
+
+<DocTabs
+  items={[
+    {
+      title: 'Tier 1 — Primitives',
+      label: 'Tier 1 — Primitives',
+      child: (
+        <>
+          <p><strong>Location:</strong> <code>components/common/ui/</code></p>
+          <p>Atomic UI elements with <strong>no business logic</strong>. Shared across everything.</p>
+          <TableVerticalNoRef
+            headers={[[{value: 'Component'}, {value: 'Purpose'}, {value: 'Key Props'}]]}
+            columns={[
+              ['<code>Button</code>', '<code>InputNumber</code>', '<code>InputText</code>', '<code>InputTextArea</code>', '<code>Select</code>', '<code>Checkbox</code>', '<code>CheckboxRow</code>', '<code>Modal</code>'],
+              ['Clickable actions', 'Numeric input', 'Text input', 'Multi-line text', 'Dropdown', 'Toggle', 'Checkbox + label + optional input', 'Dialog overlay'],
+              ['<code>variant</code>, <code>disabled</code>, <code>to</code> (link), <code>onClick</code>', '<code>value</code>, <code>onValueChange</code>, <code>format</code>, <code>decimals</code>, <code>variant</code>, <code>min</code>, <code>max</code>', '<code>value</code>, <code>onValueChange</code>, <code>variant</code>, <code>pattern</code>', '<code>value</code>, <code>onValueChange</code>, <code>rows</code>, <code>maxLength</code>, <code>showCounter</code>', '<code>value</code>, <code>onChange</code>, <code>options</code>, <code>variant</code>', '<code>checked</code>, <code>onChange</code>, <code>size</code>', '<code>label</code>, <code>checked</code>, <code>onChange</code>, <code>inputType</code>, <code>inputValue</code>', '<code>isOpen</code>, <code>title</code>, <code>onClose</code>, <code>onSave</code>'],
+            ]}
+          />
+          <h4>Input Variants</h4>
+          <p>All input primitives (<code>InputNumber</code>, <code>InputText</code>, <code>Select</code>) share a consistent size variant system:</p>
+          <TableVerticalNoRef
+            headers={[[{value: 'Variant'}, {value: 'Height'}, {value: 'Usage'}]]}
+            columns={[
+              ['<code>default</code>', '<code>compact</code>', '<code>condensed</code>', '<code>xs</code>', '<code>table</code>', '<code>tablePlain</code>', '<code>none</code>'],
+              ['36px', '32px', '32px', '28px', '40px', '—', '—'],
+              ['Standard form fields', 'Inline fields, tight spaces', 'Very tight spaces, minimal padding', 'Smallest (badges, mini forms)', 'Inside table cells', 'Transparent, borderless table editing', 'Custom styling only'],
+            ]}
+          />
+        </>
+      ),
+    },
+    {
+      title: 'Tier 2 — Pattern Components',
+      label: 'Tier 2 — Patterns',
+      child: (
+        <>
+          <p>Reusable within a content pattern. Know about a <em>type</em> of content but not about specific pages.</p>
+          <TableVerticalNoRef
+            headers={[[{value: 'Component'}, {value: 'Location'}, {value: 'Purpose'}]]}
+            columns={[
+              ['<code>Section</code>', '<code>FormFieldGroup</code>', '<code>PageContainer</code>', '<code>EditableGridTable</code>', '<code>BaseChart</code>', '<code>ScreeningQuestion</code>'],
+              ['<code>components/common/layout/</code>', '<code>components/common/layout/</code>', '<code>components/common/layout/</code>', '<code>components/common/table/</code>', '<code>components/common/chart/</code>', '<code>components/screening/</code>'],
+              ['Section wrapper with blue accent bar, title, optional collapse', 'Responsive grid for form fields (1–4 columns)', 'Page-level wrapper with background and padding', 'Full-featured editable table with Excel-like behavior', 'Chart.js wrapper for all chart types', 'Questionnaire pattern for screening questions'],
+            ]}
+          />
+          <h4>Section Component</h4>
+          <p>Use <code>Section</code> (not the legacy <code>Panel</code>) for all new pages:</p>
+          <pre><code>{`import Section from '@components/common/layout/Section';
+
+<Section
+  title="Hydrologic Hazard"
+  hint="User-defined stage-AEP curve"
+  description="Enter the hydrologic hazard curve for this screening."
+  collapsible={false}
+>
+  {/* Your content here */}
+</Section>`}</code></pre>
+          <p>Features:</p>
+          <ul>
+            <li>Blue accent bar above the title</li>
+            <li>Optional hint text (inline, gray)</li>
+            <li>Optional description (below title)</li>
+            <li>Optional collapse/expand with chevron icon</li>
+            <li>Disabled state (reduces opacity)</li>
+          </ul>
+        </>
+      ),
+    },
+    {
+      title: 'Tier 3 — Page Components',
+      label: 'Tier 3 — Pages',
+      child: (
+        <>
+          <p><strong>Location:</strong> <code>pages/</code></p>
+          <p>One per route. Thin orchestration layers that fetch data and compose Tier 2 components. Should be mostly JSX with minimal logic.</p>
+          <p><strong>Feature-specific components</strong> are one-off extractions that only exist on a single page but are complex enough to warrant their own file. They live alongside their page component.</p>
+        </>
+      ),
+    },
+  ]}
+/>
+
+---
+
+## Extraction Rule of Thumb
+
+If a component's JSX exceeds ~80–100 lines, or if you're using `{/* Section */}` comments to demarcate regions, those regions should be extracted to their own components.
+
+---
+
+## Visual Constants Pattern
+
+Every component with visual styling declares named constants at the **top of the file**:
+
+```javascript
+// ─── Visual constants ────────────────────────────────────────────
+const ACCENT_BAR = 'w-16 h-1 rounded-sm bg-dst-steel mb-2';
+const HEADING    = 'text-xl font-bold text-slate-900';
+const HINT       = 'text-base font-normal text-dst-text-tertiary';
+const LABEL      = 'text-sm font-medium text-slate-700';
+```
+
+**Rules:**
+- Name constants by **purpose**, not color: `TAB_ACTIVE`, not `BLUE_BG_WHITE_TEXT`
+- Use Tailwind built-in names for neutrals: `text-slate-400`, `bg-white`
+- Use `dst-` tokens for brand colors: `bg-dst-steel`, `text-dst-steel-dark`
+- If multiple components in a feature share styling, extract to `shared/styles.js`
+
+For naming convention details, see [Case Conventions by Language](/docs/dev/architecture/case-conventions-by-language).

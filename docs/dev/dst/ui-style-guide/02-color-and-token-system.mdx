@@ -1,0 +1,115 @@
+---
+title: Color and Token System
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import DocTabs from '@site/src/components/DocTabs';
+import ProcessList from '@site/src/components/ProcessList';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" />
+
+# Color and Token System
+
+The DST uses a structured token system built on Tailwind CSS custom properties. All colors are defined as global tokens in `frontend/src/app/index.css` and consumed via Tailwind classes.
+
+---
+
+## Color Palette
+
+<DocTabs
+  items={[
+    {
+      title: 'Primary Accent',
+      label: 'Primary Accent',
+      child: (
+        <>
+          <p>The <code>dst-steel-*</code> family is the application's primary accent color. Use it for buttons, active states, links, and indicators.</p>
+          <TableVerticalNoRef
+            headers={[[{value: 'Token'}, {value: 'Hex'}, {value: 'Usage'}]]}
+            columns={[
+              ['<code>dst-steel-lightest</code>', '<code>dst-steel-light</code>', '<code>dst-steel</code>', '<code>dst-steel-dark</code>', '<code>dst-steel-darkest</code>'],
+              ['<code>#e4edf3</code>', '<code>#7fb5d0</code>', '<code>#4a7c9b</code>', '<code>#3a6a88</code>', '<code>#2a5068</code>'],
+              ['Panel headers, cell highlights, tinted backgrounds', 'Icons on dark surfaces, subtle accents, focus rings', '<strong>Primary accent</strong> — buttons, active borders, indicators', 'Active link text, hover states, tab labels', 'Deep hover, pressed states'],
+            ]}
+          />
+        </>
+      ),
+    },
+    {
+      title: 'Neutrals',
+      label: 'Neutrals',
+      child: (
+        <>
+          <p>Use Tailwind's built-in <code>slate</code> scale for all grays. <strong>Do not create custom neutral tokens.</strong></p>
+          <pre><code>{`text-slate-900    — Primary headings
+text-slate-700    — Body text (alternative)
+text-slate-500    — Secondary/hint text
+text-slate-400    — Tertiary text, icons
+bg-slate-100      — Subtle backgrounds
+border-slate-200  — Borders, dividers`}</code></pre>
+          <h4>Red: Restricted</h4>
+          <p>Red is <strong>reserved exclusively</strong> for:</p>
+          <ul>
+            <li>USACE branding elements (castle icon, avatar)</li>
+            <li>Error, warning, and destructive states</li>
+          </ul>
+          <p>Never use red as a decorative accent in application UI.</p>
+        </>
+      ),
+    },
+    {
+      title: 'Semantic Surfaces',
+      label: 'Surfaces',
+      child: (
+        <TableVerticalNoRef
+          headers={[[{value: 'Token'}, {value: 'Hex'}, {value: 'Purpose'}]]}
+          columns={[
+            ['<code>dst-page-bg</code>', '<code>dst-panel-bg</code>', '<code>dst-panel-header-bg</code>', '<code>dst-nav-bg</code>', '<code>dst-text</code>', '<code>dst-text-secondary</code>', '<code>dst-text-tertiary</code>', '<code>dst-border</code>', '<code>dst-disabled-bg</code>', '<code>dst-disabled-text</code>'],
+            ['<code>#f7f8fa</code>', '<code>#ffffff</code>', '<code>#e4edf3</code>', '<code>#1e293b</code>', '<code>#333333</code>', '<code>#4b5563</code>', '<code>#666666</code>', '<code>#bfbfbf</code>', '<code>#f2f2f2</code>', '<code>#9aa0a6</code>'],
+            ['Page background', 'Card/panel backgrounds', 'Panel header backgrounds', 'Sidebar navigation background', 'Primary body text', 'Secondary text', 'Hint/caption text', 'Standard borders', 'Disabled input backgrounds', 'Disabled text'],
+          ]}
+        />
+      ),
+    },
+    {
+      title: 'Interactive & Chart',
+      label: 'Interactive & Chart',
+      child: (
+        <>
+          <h4>Interactive Tokens</h4>
+          <TableVerticalNoRef
+            headers={[[{value: 'Token'}, {value: 'Usage'}]]}
+            columns={[
+              ['<code>dst-button</code>', '<code>dst-button-hover</code>', '<code>dst-link</code>', '<code>dst-focus-ring</code>', '<code>dst-cell-highlight</code>', '<code>dst-cell-selected</code>'],
+              ['Button background', 'Button hover background', 'Link text color', 'Focus ring color', 'Table cell highlight', 'Table cell selection'],
+            ]}
+          />
+          <h4>Chart Tokens</h4>
+          <TableVerticalNoRef
+            headers={[[{value: 'Token'}, {value: 'Purpose'}]]}
+            columns={[
+              ['<code>chart-primary</code>', '<code>chart-revised</code>', '<code>chart-text</code>', '<code>chart-grid-major</code>', '<code>chart-grid-minor</code>', '<code>chart-bg</code>', '<code>chart-tooltip-bg</code>', '<code>chart-tooltip-border</code>'],
+              ['Primary data line (steel blue)', 'Revised/user estimate line (amber)', 'Axis labels, tick marks', 'Major grid lines', 'Minor grid lines', 'Chart background', 'Tooltip background', 'Tooltip border'],
+            ]}
+          />
+          <p>All chart colors are resolved at render time from CSS custom properties via <code>getChartColors()</code> in <code>components/common/chart/utils.js</code>.</p>
+        </>
+      ),
+    },
+  ]}
+/>
+
+---
+
+## Token Architecture Rules
+
+<ProcessList
+  items={[
+    { title: <><strong>Global tokens in <code>index.css</code></strong> define the palette — they describe color values, not component behavior.</> },
+    { title: <><strong>Component-level constants</strong> at the top of each file map global tokens to component-specific roles using Tailwind class names.</> },
+    { title: <><strong>No arbitrary hex values in components.</strong> If you're typing <code>#</code> inside a component, it should become a Tailwind class or a new global token. Seeing <code>text-[#94a3b8]</code> in a component means there's a gap in the token system that should be filled.</> },
+    { title: <><strong>Nav-specific tokens do not belong in <code>index.css</code>.</strong> Tab hover backgrounds, icon colors, and active states are component concerns owned by the component's constants block.</> },
+  ]}
+  numberStyle="bubble"
+/>

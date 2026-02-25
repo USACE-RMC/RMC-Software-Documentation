@@ -1,0 +1,117 @@
+---
+title: Responsive Design
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" />
+
+# Responsive Design
+
+The responsive system has three layers: reference devices for testing, Tailwind breakpoints for CSS, and a JS tier system for component logic.
+
+---
+
+## Reference Devices
+
+These are the specific viewports used for screenshots, manual QA, and design review. Every layout must look correct at these sizes.
+
+<TableVerticalNoRef
+  headers={[[{value: 'Tier'}, {value: 'Width'}, {value: 'Height'}, {value: 'DPR'}]]}
+  columns={[
+    ['Phone', 'Tablet', 'Laptop', 'Desktop 16:9', 'Desktop 16:10'],
+    ['393px', '820px', '1280px', '1920px', '1920px'],
+    ['852px', '1180px', '720px', '1080px', '1200px'],
+    ['3', '2', '1.5', '1', '1'],
+  ]}
+  colAlign={['left', 'center', 'center', 'center']}
+/>
+
+---
+
+## Tailwind Breakpoints
+
+These are defined in `index.css` and used in Tailwind classes (`sm:`, `lg:`, `2xl:`, etc.).
+
+### Device-Tier Breakpoints
+
+Control layout, navigation, and grid structure:
+
+<TableVerticalNoRef
+  headers={[[{value: 'Breakpoint'}, {value: 'CSS min-width'}, {value: 'Transition'}]]}
+  columns={[
+    ['<code>sm</code>', '<code>lg</code>', '<code>2xl</code>'],
+    ['640px', '1024px', '1536px'],
+    ['Phone → tablet', 'Tablet → laptop', 'Laptop → desktop'],
+  ]}
+/>
+
+### Fine-Grained Breakpoints
+
+Adjustments within a tier:
+
+<TableVerticalNoRef
+  headers={[[{value: 'Breakpoint'}, {value: 'CSS min-width'}, {value: 'Usage'}]]}
+  columns={[
+    ['<code>md</code>', '<code>xl</code>'],
+    ['768px', '1280px'],
+    ['Mid-tablet adjustments', 'Mid-laptop adjustments'],
+  ]}
+/>
+
+### Custom Component Breakpoints
+
+Pixel-specific breakpoints for table and component overflow. **Do not modify these** without updating the corresponding components:
+
+<TableVerticalNoRef
+  headers={[[{value: 'Breakpoint'}, {value: 'Component'}]]}
+  columns={[
+    ['<code>1235px</code>', '<code>1315px</code>', '<code>1375px</code>', '<code>1415px</code>', '<code>1655px</code>', '<code>1730px</code>'],
+    ['FMEvaluationTable layout', 'FMEvaluationTable label display', 'PFM01GeometrySection layout', 'Failure Mode Selection page layout', 'FMEvaluationTable APF/EALL/EAD labels', 'EmbankmentMaterialTable horizontal scrolling'],
+  ]}
+/>
+
+---
+
+## JS Tier System
+
+`Layout.jsx` exposes a `tier` prop (`'phone' | 'tablet' | 'laptop' | 'desktop'`) to child components. Use this for navigation and layout tier decisions in JavaScript instead of raw `window.innerWidth` checks.
+
+### Navigation by Tier
+
+<TableVerticalNoRef
+  headers={[[{value: 'Tier'}, {value: 'Navigation Style'}]]}
+  columns={[
+    ['Phone', 'Tablet', 'Laptop/Desktop'],
+    ['Hamburger menu with slide-out drawer (no sidebar)', 'Collapsed icon sidebar (56px, always collapsed, no toggle)', 'Full expandable sidebar (240px, with collapse toggle)'],
+  ]}
+/>
+
+---
+
+## Common Responsive Patterns
+
+```jsx
+{/* Stack on phone, side-by-side on laptop+ */}
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+  <HazardTable />
+  <HazardChart />
+</div>
+
+{/* Responsive form grid */}
+<FormFieldGroup columns={3}>
+  <InputField label="Field 1" ... />
+  <InputField label="Field 2" ... />
+  <InputField label="Field 3" ... />
+</FormFieldGroup>
+
+{/* Hide on small screens */}
+<div className="hidden lg:block">Desktop-only content</div>
+```
+
+---
+
+## Fluid Typography
+
+Font sizes use `clamp()` for responsive scaling between 375px and 1920px viewport widths. These are defined in `index.css` and override Tailwind's defaults — just use standard Tailwind text size classes (`text-sm`, `text-lg`, etc.) and the responsive scaling is automatic.

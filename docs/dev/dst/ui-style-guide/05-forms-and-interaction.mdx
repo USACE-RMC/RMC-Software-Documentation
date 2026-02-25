@@ -1,0 +1,167 @@
+---
+title: Forms and Interaction
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import DocTabs from '@site/src/components/DocTabs';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" />
+
+# Forms and Interaction
+
+Patterns for form inputs, auto-save behavior, chart styling, and naming conventions.
+
+---
+
+## Form Input States
+
+<TableVerticalNoRef
+  headers={[[{value: 'State'}, {value: 'Border'}, {value: 'Ring'}, {value: 'Usage'}]]}
+  columns={[
+    ['Default', 'Focus', 'Invalid', 'Warning', 'Disabled'],
+    ['<code>border-dst-border</code>', '<code>border-dst-steel</code>', '<code>border-rose-500</code>', '<code>border-amber-500</code>', '<code>bg-dst-disabled-bg</code>'],
+    ['none', '<code>ring-1 ring-dst-focus-ring</code>', '<code>ring-2 ring-rose-500</code>', '<code>ring-1 ring-amber-500</code>', 'none'],
+    ['Normal state', 'Active editing', 'Validation error', 'Out-of-bounds warning', 'Not editable'],
+  ]}
+/>
+
+These states are built into the Tier 1 input primitives (`InputNumber`, `InputText`, `Select`). You don't need to implement them manually.
+
+---
+
+## Auto-Save Pattern
+
+The application uses debounced auto-save for user inputs. No "Save" button for normal parameter entry.
+
+<DocTabs
+  items={[
+    {
+      title: 'Standard Fields',
+      label: 'Standard Fields',
+      child: (
+        <ul>
+          <li>Save on change with 500ms debounce</li>
+          <li>Use <code>useDebounce</code> hook from <code>hooks/common/useDebounce.js</code></li>
+          <li>Track changes with <code>userEditedRef</code> to prevent duplicate saves</li>
+          <li>Use hash comparison to skip saves when data hasn't changed</li>
+        </ul>
+      ),
+    },
+    {
+      title: 'Text Areas',
+      label: 'Text Areas',
+      child: (
+        <ul>
+          <li>Save on <strong>blur</strong> instead of debounced change</li>
+          <li>Prevents saving partial text while the user is typing</li>
+        </ul>
+      ),
+    },
+    {
+      title: 'Explicit Actions',
+      label: 'Explicit Actions',
+      child: (
+        <ul>
+          <li>"Run" buttons trigger calculations and save results</li>
+          <li>Modal "Save" buttons for rename operations</li>
+          <li>Never require a "Save" button for normal parameter entry</li>
+        </ul>
+      ),
+    },
+    {
+      title: 'Indicators',
+      label: 'Indicators',
+      child: (
+        <ul>
+          <li>A small "Saving..." indicator may appear during saves</li>
+          <li>The UI remains interactive (non-blocking)</li>
+          <li>On success, the indicator disappears</li>
+          <li>On error, an error message appears</li>
+        </ul>
+      ),
+    },
+  ]}
+/>
+
+---
+
+## Chart Styling
+
+Charts use Chart.js with consistent styling. All chart colors are resolved from CSS custom properties at render time.
+
+```javascript
+import { getChartColors, FONT_FAMILY } from '@components/common/chart/utils';
+
+const C = getChartColors();
+
+// Axis styling
+ticks: { color: C.text, font: { family: FONT_FAMILY, size: 15 } }
+grid:  { color: C.gridMinor, drawBorder: false }
+title: { color: C.text, font: { family: FONT_FAMILY, size: 16 } }
+
+// Tooltip styling
+tooltip: {
+  backgroundColor: C.tooltipBg,
+  borderColor: C.tooltipBorder,
+  borderWidth: 1,
+  titleColor: C.text,
+  bodyColor: C.text,
+}
+```
+
+**Font family:** `'Aptos Narrow, system-ui, sans-serif'` (from the `FONT_FAMILY` constant)
+
+**Line colors:** Use `C.primary` (steel blue) for DST estimates, `C.revised` (amber) for user-modified values.
+
+---
+
+## Naming Conventions
+
+<TableVerticalNoRef
+  headers={[[{value: 'Type'}, {value: 'Convention'}, {value: 'Example'}]]}
+  columns={[
+    ['Components', 'Custom hooks', 'Functions/Variables', 'Constants', 'Visual constants', 'Event handler props', 'CSS tokens'],
+    ['PascalCase', '<code>use*</code> prefix', 'camelCase', 'SCREAMING_SNAKE_CASE', 'SCREAMING_SNAKE_CASE', '<code>on*</code> prefix', 'kebab-case with <code>dst-</code> prefix'],
+    ['<code>HydrologicHazardTable</code>', '<code>useHydrologicHazardData</code>', '<code>calculateRisk</code>, <code>userName</code>', '<code>MAX_RETRIES</code>, <code>DEBOUNCE_MS</code>', '<code>ACCENT_BAR</code>, <code>HEADING</code>', '<code>onClick</code>, <code>onSubmit</code>, <code>onValueChange</code>', '<code>--color-dst-steel</code>, <code>bg-dst-page-bg</code>'],
+  ]}
+/>
+
+For the complete naming conventions across all languages (C#, JavaScript, Python, R), see [Case Conventions by Language](/docs/dev/architecture/case-conventions-by-language).
+
+---
+
+## Do's and Don'ts
+
+<DocTabs
+  items={[
+    {
+      title: "Do",
+      label: "Do",
+      child: (
+        <ul>
+          <li>Use <code>Section</code> for new page sections (not <code>Panel</code>)</li>
+          <li>Use Tailwind's <code>slate</code> scale for neutrals</li>
+          <li>Declare visual constants at the top of component files</li>
+          <li>Use <code>dst-*</code> tokens for brand colors</li>
+          <li>Test at all 5 reference device sizes</li>
+          <li>Keep page components thin — extract complex JSX to sub-components</li>
+        </ul>
+      ),
+    },
+    {
+      title: "Don't",
+      label: "Don't",
+      child: (
+        <ul>
+          <li>Use arbitrary hex values in components (<code>text-[#94a3b8]</code>)</li>
+          <li>Use red for anything other than errors/warnings/USACE branding</li>
+          <li>Put business logic in page components</li>
+          <li>Create custom tokens for neutrals (use <code>slate-*</code>)</li>
+          <li>Skip the visual constants pattern</li>
+          <li>Use inline styles — use Tailwind classes</li>
+        </ul>
+      ),
+    },
+  ]}
+/>
