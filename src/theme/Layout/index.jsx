@@ -56,8 +56,8 @@ export default function LayoutWrapper({ children, ...rest }) {
         aboutText="The official website of the Institute for Water Resources, Risk Management Center"
         usaceLinks={USACELinks}
         externalLinks={footerExternalLinks}
-        usaceLogo={false}
-        usace250Logo={true}
+        usaceLogo={true}
+        usace250Logo={false}
       >
         {children}
         <SiteTour latestVersions={latestVersions} />
