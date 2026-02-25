@@ -166,12 +166,12 @@ export default function Feedback() {
   return (
     <Layout title="Feedback" description="Provide feedback on the RMC Software Documentation site.">
       <main>
-        <div className="border-b border-border-color bg-ifm-primary-lightest px-6 py-10 text-center dark:bg-surface-card">
+        <div className="border-b border-border-color bg-ifm-primary-lightest px-6 py-4 text-center dark:bg-surface-card lg:py-10">
           <div className="mx-auto max-w-[600px]">
             <h1 className="m-0 mb-3 font-usace text-h1 font-bold text-font-color">Feedback</h1>
             <p className="m-0 font-usace text-base leading-relaxed text-font-color-description">
-              Help us improve the RMC Software Documentation. Choose a category below to send us your feedback via email. Your input helps us
-              maintain accurate, useful, and accessible documentation.
+              Help us improve the RMC Software Documentation. Choose a category below to send us your feedback via email. Your input helps us maintain
+              accurate, useful, and accessible documentation.
             </p>
           </div>
         </div>
@@ -183,8 +183,8 @@ export default function Feedback() {
           </div>
           <div className="mt-6 border-t border-border-color pt-4 text-center">
             <p className="m-0 font-usace text-[0.8rem] leading-normal text-font-color-description">
-              Clicking a button above will open your default email application with a pre-filled template. Fill in the details and send the email
-              to submit your feedback.
+              Clicking a button above will open your default email application with a pre-filled template. Fill in the details and send the email to
+              submit your feedback.
             </p>
           </div>
         </div>
