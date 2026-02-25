@@ -2,14 +2,15 @@ import addBaseUrl from '@docusaurus/useBaseUrl';
 import Layout from '@theme/Layout';
 import { Hero } from '@usace/groundwork';
 import { useEffect, useState } from 'react';
-import ContentBoxLarge from '../../components/ContentBoxLarge';
-import CodeIcon from '../../components/icons/CodeIcon';
-import DocumentationGuideIcon from '../../components/icons/DocumentationGuideIcon';
-import DSTDatabaseIcon from '../../components/icons/DSTDatabaseIcon';
-import GitHubIcon from '../../components/icons/GitHubIcon';
-import SparkleIcon from '../../components/icons/SparkleIcon';
-import WebAppIcon from '../../components/icons/WebAppIcon';
-import '../../css/custom.css';
+import ContentBoxLarge from '../components/ContentBoxLarge';
+import CodeIcon from '../components/icons/CodeIcon';
+import DocumentationGuideIcon from '../components/icons/DocumentationGuideIcon';
+import DSTDatabaseIcon from '../components/icons/DSTDatabaseIcon';
+import StyleGuideIcon from '../components/icons/StyleGuideIcon';
+import GitHubIcon from '../components/icons/GitHubIcon';
+import SparkleIcon from '../components/icons/SparkleIcon';
+import WebAppIcon from '../components/icons/WebAppIcon';
+import '../css/custom.css';
 
 export default function Dev() {
   const [latestVersions, setLatestVersions] = useState({});
@@ -74,6 +75,20 @@ export default function Dev() {
       IconComponent: CodeIcon,
       doc_name: 'Dam Screening Tool Documents',
       contentCardData: [
+        {
+          IconComponent: CodeIcon,
+          title: 'DST Developer Guide',
+          description: 'Development setup, project structure, and common tasks for the Dam Screening Tool',
+          href: addBaseUrl('docs/dev/dst/developer-guide/prerequisites-and-ide-setup'),
+          active: true,
+        },
+        {
+          IconComponent: StyleGuideIcon,
+          title: 'DST UI Style Guide',
+          description: 'Design philosophy, color system, components, and responsive patterns for the Dam Screening Tool',
+          href: addBaseUrl('docs/dev/dst/ui-style-guide/design-philosophy'),
+          active: true,
+        },
         {
           IconComponent: DSTDatabaseIcon,
           title: 'DST Database Schema Reference',

@@ -441,6 +441,44 @@ function generateGitHubWorkflowsSidebar() {
   return items;
 }
 
+/* --- Custom Logic: DST Developer Guide Sidebar --- */
+
+function generateDstDeveloperGuideSidebar() {
+  const dir = path.join(DOCS_DIR, 'dev/dst/developer-guide');
+  if (!fs.existsSync(dir)) return null;
+
+  const ids = [
+    '01-prerequisites-and-ide-setup',
+    '02-development-environment',
+    '03-project-structure-and-key-files',
+    '04-common-development-tasks',
+    '05-troubleshooting',
+  ];
+  const files = getDevFilesInDir(dir);
+
+  const items = ids.map((id) => buildDevDocItem(dir, 'dev/dst/developer-guide', files, id)).filter(Boolean);
+  return items.length ? items : null;
+}
+
+/* --- Custom Logic: DST UI Style Guide Sidebar --- */
+
+function generateDstUiStyleGuideSidebar() {
+  const dir = path.join(DOCS_DIR, 'dev/dst/ui-style-guide');
+  if (!fs.existsSync(dir)) return null;
+
+  const ids = [
+    '01-design-philosophy',
+    '02-color-and-token-system',
+    '03-component-hierarchy',
+    '04-responsive-design',
+    '05-forms-and-interaction',
+  ];
+  const files = getDevFilesInDir(dir);
+
+  const items = ids.map((id) => buildDevDocItem(dir, 'dev/dst/ui-style-guide', files, id)).filter(Boolean);
+  return items.length ? items : null;
+}
+
 /* --- Custom Logic: AI Development Sidebar --- */
 
 function generateAiDevelopmentSidebar() {
@@ -572,6 +610,22 @@ function generateSidebars() {
   if (archSidebar) {
     sidebarContent.webAppArchitecture = {
       'Web Application Architecture': archSidebar,
+    };
+  }
+
+  // Add DST Developer Guide sidebar if present
+  const dstDevGuideSidebar = generateDstDeveloperGuideSidebar();
+  if (dstDevGuideSidebar) {
+    sidebarContent.dstDeveloperGuide = {
+      'DST Developer Guide': dstDevGuideSidebar,
+    };
+  }
+
+  // Add DST UI Style Guide sidebar if present
+  const dstUiStyleGuideSidebar = generateDstUiStyleGuideSidebar();
+  if (dstUiStyleGuideSidebar) {
+    sidebarContent.dstUiStyleGuide = {
+      'DST UI Style Guide': dstUiStyleGuideSidebar,
     };
   }
 

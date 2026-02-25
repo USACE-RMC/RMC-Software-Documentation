@@ -25,7 +25,7 @@ export default function LayoutWrapper({ children, ...rest }) {
   const links = buildNavLinks(useBaseUrl, latestVersions);
 
   const homeHref = useBaseUrl('/');
-  const devHref = useBaseUrl('/docs/dev');
+  const devHref = useBaseUrl('/dev');
 
   // Append dev resources link to footer external links
   const footerExternalLinks = [...externalLinks, { id: 'dev', text: 'Dev', href: devHref }];

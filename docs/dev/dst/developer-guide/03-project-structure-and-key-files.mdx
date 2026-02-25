@@ -1,0 +1,172 @@
+---
+title: Project Structure and Key Files
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" />
+
+# Project Structure and Key Files
+
+This page covers the DST directory layout, key files to study, and the reference implementation you should model new features after.
+
+For detailed explanations of the architecture layers, see the [Frontend Architecture](/docs/dev/architecture/frontend-architecture) and [Backend Architecture](/docs/dev/architecture/backend-architecture) guides.
+
+---
+
+## Directory Structure
+
+```
+DST-Dev/
+├── backend/                      # ASP.NET Core application
+│   ├── src/
+│   │   ├── DST.Domain/           # Entities (POCOs, no EF attributes)
+│   │   ├── DST.Application/      # Services, Interfaces, DTOs
+│   │   ├── DST.Infrastructure/   # DbContext, Repositories, EF Config
+│   │   └── DST.API/              # Controllers, Program.cs
+│   └── tests/
+├── frontend/                     # React 19 + Vite + Tailwind CSS 4
+│   └── src/
+│       ├── api/                  # HTTP utility and API modules
+│       ├── app/                  # App shell (Layout, router, index.css)
+│       ├── components/
+│       │   ├── common/           # Shared UI primitives and patterns
+│       │   └── screening/        # Feature-specific components
+│       ├── contexts/             # React context providers
+│       ├── data/                 # Static configuration data
+│       ├── demo/                 # Demo data for "Example Dam"
+│       ├── hooks/common/         # Shared utility hooks
+│       ├── pages/                # Page components (one per route)
+│       └── utils/                # Utility functions
+├── db/                           # Database snapshots
+├── docs/                         # Documentation
+├── scripts/                      # Start/stop scripts
+├── CLAUDE.md                     # Architecture standards
+├── docker-compose.yml            # PostgreSQL container
+├── start-dev.bat                 # Start everything
+└── end-dev.bat                   # Stop everything
+```
+
+---
+
+## Reference Implementation: PFM-01
+
+PFM-01 (Overtopping Erosion) is the fully-implemented module you should model new features after. It demonstrates the complete five-layer frontend architecture and four-layer backend Clean Architecture.
+
+### Frontend Layers
+
+<TableVerticalNoRef
+  headers={[[{value: 'Layer'}, {value: 'File'}]]}
+  columns={[
+    ['Page component', 'Controller hook', 'Data hook'],
+    [
+      '<code>frontend/src/pages/screening/response/failure-mode-evaluation/pfm-01/Pfm01Page.jsx</code>',
+      '<code>frontend/src/pages/.../pfm-01/hooks/usePfm01Controller.js</code>',
+      '<code>frontend/src/pages/.../pfm-01/hooks/usePfm01Data.js</code>',
+    ],
+  ]}
+/>
+
+### Backend Layers
+
+<TableVerticalNoRef
+  headers={[[{value: 'Layer'}, {value: 'File'}]]}
+  columns={[
+    ['Domain entity', 'EF configuration', 'Repository', 'Controller'],
+    [
+      '<code>backend/src/DST.Domain/Entities/Screening/Response/FmEvaluation/Pfm01/Pfm01.cs</code>',
+      '<code>backend/src/DST.Infrastructure/Configurations/.../Pfm01Configuration.cs</code>',
+      '<code>backend/src/DST.Infrastructure/Repositories/.../Pfm01Repository.cs</code>',
+      '<code>backend/src/DST.API/Controllers/.../Pfm01Controller.cs</code>',
+    ],
+  ]}
+/>
+
+---
+
+## Shared Components
+
+These are the most commonly used building blocks for new pages:
+
+<TableVerticalNoRef
+  headers={[[{value: 'Component'}, {value: 'Location'}, {value: 'Purpose'}]]}
+  columns={[
+    [
+      '<code>Section</code>',
+      '<code>PageContainer</code>',
+      '<code>FormFieldGroup</code>',
+      '<code>EditableGridTable</code>',
+      '<code>BaseChart</code>',
+      '<code>useDebounce</code>',
+    ],
+    [
+      '<code>components/common/layout/Section.jsx</code>',
+      '<code>components/common/layout/PageContainer.jsx</code>',
+      '<code>components/common/layout/FormFieldGroup.jsx</code>',
+      '<code>components/common/table/EditableGridTable.jsx</code>',
+      '<code>components/common/chart/BaseChart.jsx</code>',
+      '<code>hooks/common/useDebounce.js</code>',
+    ],
+    [
+      'Section wrapper with blue accent bar, title, optional collapse',
+      'Page-level wrapper with background and padding',
+      'Responsive grid for form fields',
+      'Full-featured editable table',
+      'Chart.js wrapper for all chart types',
+      'Debounced auto-save hook',
+    ],
+  ]}
+/>
+
+---
+
+## Key Backend Files
+
+These are the files you'll need to modify when adding a new feature:
+
+<TableVerticalNoRef
+  headers={[[{value: 'File'}, {value: 'Purpose'}]]}
+  columns={[
+    [
+      '<code>DST.Application/DTOs/Common/ApiResponse.cs</code>',
+      '<code>DST.Application/DTOs/Common/JsonDefaults.cs</code>',
+      '<code>DST.Infrastructure/Data/DSTDbContext.cs</code>',
+      '<code>DST.Infrastructure/DependencyInjection.cs</code>',
+      '<code>DST.Application/DependencyInjection.cs</code>',
+      '<code>DST.API/Program.cs</code>',
+    ],
+    [
+      'Standard API response envelope',
+      'JSON serialization settings for JSONB',
+      'Database context (register your entity here)',
+      'Register your repository here',
+      'Register your service here',
+      'Application entry point',
+    ],
+  ]}
+/>
+
+For details on the standard messaging contract (`ApiResponse<T>`), dependency injection, and database configuration patterns, see the [Backend Architecture](/docs/dev/architecture/backend-architecture) guide.
+
+---
+
+## Import Aliases
+
+The frontend uses path aliases so you don't need relative paths like `../../../components/common/ui/Button`:
+
+```javascript
+import Button from '@components/common/ui/Button';
+import Section from '@components/common/layout/Section';
+import PageContainer from '@components/common/layout/PageContainer';
+import { useDebounce } from '@hooks/common/useDebounce';
+import { http } from '@api/http';
+```
+
+The full list of aliases is in `frontend/vite.config.js` under `resolve.alias`.
+
+---
+
+## Database Schema
+
+For details on the database table structure, naming conventions, and design patterns (including the three-table SRP pattern for PFM modules), see the [DST Database Schema Reference](/docs/dev/dst/database-schema/v1.0/schema-reference).
