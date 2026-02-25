@@ -21,6 +21,9 @@ const TableVerticalNoRef = ({ headers = [], columns = [], fullWidth = true, alt,
       styleVars[`--a${i + 1}`] = colAlign[i];
     }
   }
+  // Compute per-table min-width from column count
+  styleVars["--table-min-width"] = `${Math.max(colCount * 120, 300)}px`;
+
   if (widthMode === "intrinsic") {
     styleVars["--table-width"] = "max-content";
     styleVars["--table-display"] = "inline-table";

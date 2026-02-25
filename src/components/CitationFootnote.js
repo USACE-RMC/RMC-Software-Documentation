@@ -118,7 +118,7 @@ const CitationFootnote = () => {
         {citations.map((citation) => (
           <li value={citation.number} key={citation.citationKey} id={`footnote-${citation.citationKey}`} className="flex items-start mb-2.5">
             <span className="min-w-[40px] flex-shrink-0">[{citation.number}]</span>
-            <span className="block">{formatCitation(citation)}</span>
+            <span className="block min-w-0 break-all">{formatCitation(citation)}</span>
           </li>
         ))}
       </ol>

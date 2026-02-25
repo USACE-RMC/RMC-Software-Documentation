@@ -31,7 +31,7 @@ const TableVersionHistory = ({ versions = [], dates = [], descriptions = [], mod
   return (
     <div className="table-container">
       <div className="table-scroller">
-      <table className="table-base table-zebra" aria-label="Version History" style={{ tableLayout: "fixed" }}>
+      <table className="table-base table-zebra" aria-label="Version History" style={{ tableLayout: "fixed", "--table-min-width": "720px" }}>
         {/* Column sizing */}
         <colgroup>
           {COL_WIDTHS.map((w, i) => (

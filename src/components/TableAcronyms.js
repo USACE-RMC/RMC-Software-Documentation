@@ -14,6 +14,7 @@ const TableAcronyms = ({ headers, columns }) => {
         style={{
           ["--table-width"]: "fit-content",
           ["--table-display"]: "block",
+          ["--table-min-width"]: "300px",
           maxWidth: "100%",
         }}
       >

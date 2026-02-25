@@ -28,7 +28,7 @@ const TableChangelog = ({ dates = [], categories = [], documents = [], versions 
   return (
     <div className="table-container" style={{ borderBottom: 'none' }}>
       <div className="table-scroller">
-        <table className="table-base table-zebra" aria-label="Change Log" style={{ tableLayout: 'fixed' }}>
+        <table className="table-base table-zebra" aria-label="Change Log" style={{ tableLayout: 'fixed', '--table-min-width': '600px' }}>
           <colgroup>
             {COL_WIDTHS.map((w, idx) => (
               <col key={idx} style={{ width: w }} />

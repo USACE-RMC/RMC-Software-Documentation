@@ -72,6 +72,9 @@ const TableVertical = ({
       styleVars[`--hv${i + 1}`] = headerVAlign[i]; // header vertical
     }
   }
+  // Compute per-table min-width from column count
+  styleVars['--table-min-width'] = `${Math.max(colCount * 120, 300)}px`;
+
   if (widthMode === 'intrinsic') {
     styleVars['--table-width'] = 'max-content';
     styleVars['--table-display'] = 'inline-table';
