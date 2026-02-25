@@ -1,0 +1,180 @@
+---
+title: Prerequisites and IDE Setup
+---
+
+import CategoryList from '@site/src/components/CategoryList';
+import DocTabs from '@site/src/components/DocTabs';
+import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" />
+
+# Prerequisites and IDE Setup
+
+Install all of these before doing anything else.
+
+## Required Tools
+
+<TableVerticalNoRef
+  headers={[[{value: 'Tool'}, {value: 'Version'}, {value: 'Purpose'}, {value: 'Install From'}]]}
+  columns={[
+    ['<b>Docker Desktop</b>', '<b>.NET 10.0 SDK</b>', '<b>Node.js</b>', '<b>Windows Terminal</b>', '<b>Git</b>'],
+    ['Latest', '10.0+', '20+', 'Latest', 'Latest'],
+    ['Runs PostgreSQL database in a container', 'Backend API runtime and build tools', 'Frontend build tools and dev server', 'Multi-tab terminal for running services', 'Version control'],
+    ['<a href="https://www.docker.com/products/docker-desktop/">docker.com</a>', '<a href="https://dot.net/download">dot.net</a>', '<a href="https://nodejs.org/">nodejs.org</a>', 'Ships with Windows 11; <a href="https://aka.ms/terminal">Microsoft Store</a> for Windows 10', '<a href="https://git-scm.com/">git-scm.com</a>'],
+  ]}
+/>
+
+---
+
+## IDE Options
+
+You can use either **VS Code** or **Visual Studio** for backend development. Most developers use VS Code for frontend work regardless of their backend IDE preference.
+
+<DocTabs
+  items={[
+    {
+      title: 'VS Code',
+      label: 'VS Code (Recommended)',
+      child: (
+        <>
+          <p>
+            Download from <a href="https://code.visualstudio.com/">code.visualstudio.com</a>.
+          </p>
+          <p>VS Code is lightweight, works well for both frontend and backend development, and is what most of the team uses.</p>
+          <p>
+            <strong>Recommended Extensions:</strong>
+          </p>
+          <TableVerticalNoRef
+            headers={[[{value: 'Extension'}, {value: 'Purpose'}]]}
+            columns={[
+              ['<b>C# Dev Kit</b>', '<b>ESLint</b>', '<b>Tailwind CSS IntelliSense</b>', '<b>REST Client</b>', '<b>PostgreSQL</b>', '<b>GitLens</b>'],
+              ['IntelliSense, debugging, and project management for .NET', 'JavaScript/React linting', 'Autocomplete for Tailwind classes', 'Test API endpoints directly from <code>.http</code> files', 'Database explorer and query runner', 'Enhanced git integration'],
+            ]}
+          />
+        </>
+      ),
+    },
+    {
+      title: 'Visual Studio',
+      label: 'Visual Studio',
+      child: (
+        <>
+          <p>
+            Download from <a href="https://visualstudio.microsoft.com/">visualstudio.microsoft.com</a>.
+          </p>
+          <p>
+            Visual Studio is a full IDE with deeper .NET integration. It works well for backend development but is not well-suited for frontend React
+            work — you'll still want a terminal or VS Code for that.
+          </p>
+          <p>
+            <strong>Required Workloads</strong> (select during installation):
+          </p>
+          <TableVerticalNoRef
+            headers={[[{value: 'Workload'}, {value: 'Purpose'}]]}
+            columns={[
+              ['<b>ASP.NET and web development</b>', '<b>.NET desktop development</b>'],
+              ['Backend API development, debugging, hot reload', '.NET SDK tools and build support'],
+            ]}
+          />
+          <p>
+            <strong>Recommended Extensions:</strong>
+          </p>
+          <TableVerticalNoRef
+            headers={[[{value: 'Extension'}, {value: 'Purpose'}]]}
+            columns={[
+              ['<b>EF Core Power Tools</b>', '<b>Markdown Editor</b>'],
+              ['Visual migration management and DbContext scaffolding', 'Preview markdown files in the IDE'],
+            ]}
+          />
+          <h4>Opening the Project</h4>
+          <p>
+            Visual Studio can open individual <code>.csproj</code> files or the <code>backend/src/</code> folder directly. There is no{' '}
+            <code>.sln</code> file in the repository — Visual Studio will create a temporary solution when you open a folder.
+          </p>
+          <ProcessList
+            items={[
+              { title: 'Open Visual Studio' },
+              {
+                title: (
+                  <>
+                    Select <strong>Open a local folder</strong> and navigate to <code>DST-Dev/backend/src/</code>
+                  </>
+                ),
+              },
+              { title: 'Visual Studio will detect all four .csproj projects automatically' },
+              {
+                title: (
+                  <>
+                    Set <strong>DST.API</strong> as the startup project (right-click → Set as Startup Project)
+                  </>
+                ),
+              },
+              {
+                title: (
+                  <>
+                    Use <code>F5</code> to run with debugger or <code>Ctrl+F5</code> to run without
+                  </>
+                ),
+              },
+            ]}
+          />
+          <h4>Frontend Development with Visual Studio</h4>
+          <p>Visual Studio does not provide good tooling for React + Vite projects. For frontend work, use a terminal:</p>
+          <pre>
+            <code>{`cd frontend\nnpm run dev`}</code>
+          </pre>
+          <p>Or use VS Code alongside Visual Studio for frontend editing.</p>
+        </>
+      ),
+    },
+  ]}
+  defaultValue={0}
+/>
+
+---
+
+## System-Response Service
+
+The System-Response calculation service is a separate repository. You need it cloned locally:
+
+```bash
+git clone <system-response-repo-url> C:\GitHub\System-Response
+```
+
+The start scripts expect it at `C:\GitHub\System-Response`. If it's elsewhere, update the `SYSTEM_RESPONSE_PATH` variable at the top of `start-dev.bat`:
+
+```batch
+set SYSTEM_RESPONSE_PATH=C:\GitHub\System-Response\SystemResponse\SystemResponse.API
+```
+
+:::tip
+For details on how calculation libraries work and how the DST backend calls System-Response, see the [Calculation Libraries](/docs/dev/architecture/calculation-libraries) architecture guide.
+:::
+
+---
+
+## Related Documentation
+
+<CategoryList
+  variant="pills"
+  columns={{ base: 1, md: 3 }}
+  items={[
+    {
+      title: 'Web Application Architecture',
+      description: 'Three-tier architecture pattern',
+      href: '/docs/dev/architecture/web-app-architecture',
+    },
+    {
+      title: 'Frontend Architecture',
+      description: 'React five-layer architecture',
+      href: '/docs/dev/architecture/frontend-architecture',
+    },
+    {
+      title: 'Backend Architecture',
+      description: 'ASP.NET Core Clean Architecture',
+      href: '/docs/dev/architecture/backend-architecture',
+    },
+  ]}
+/>
