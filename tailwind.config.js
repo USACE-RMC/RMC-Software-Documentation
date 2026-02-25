@@ -109,15 +109,16 @@ export default {
     /* ── Breakpoints ──────────────────────────────────────────────────────
      *
      * Reference devices (CSS viewport width × height, DPR):
-     *   Phone:         393 × 852,  DPR 3
-     *   Tablet:        820 × 1180, DPR 2
-     *   Laptop:       1280 × 720,  DPR 1.5
-     *   Desktop 16:9: 1920 × 1080, DPR 1
+     *   Phone:          393 × 852,  DPR 3
+     *   Tablet:         820 × 1180, DPR 2
+     *   iPad Pro 13":  1032 × 1376, DPR 2
+     *   Laptop:        1280 × 720,  DPR 1.5
+     *   Desktop 16:9:  1920 × 1080, DPR 1
      *   Desktop 16:10: 1920 × 1200, DPR 1
      *
      * Device-tier transitions (used for layout, navigation, grids):
      *   sm  (640px)  — phone → tablet
-     *   lg  (1024px) — tablet → laptop
+     *   lg  (1080px) — tablet → laptop  (above iPad Pro 13" portrait @ 1032px)
      *   2xl (1536px) — laptop → desktop
      *
      * Fine-grained breakpoints within tiers:
@@ -127,7 +128,7 @@ export default {
     screens: {
       sm: '640px',
       md: '768px',
-      lg: '1024px',
+      lg: '1080px',
       xl: '1280px',
       '2xl': '1536px',
     },

@@ -10,14 +10,14 @@ import { useTour } from '../contexts/TourContext';
  *  Determined once when the tour starts and locked for the session.
  *  Breakpoints align with tailwind.config.js:
  *    phone  : < 640px  (sm)
- *    tablet : 640 – 1024px  (sm → lg, includes iPad Pro portrait)
- *    desktop: >= 1025px
+ *    tablet : 640 – 1079px  (sm → lg, includes iPad Pro 13" portrait @ 1032px)
+ *    desktop: >= 1080px
  * ────────────────────────────────────────────────────────────────────
  */
 function getTier() {
   const w = typeof window !== 'undefined' ? window.innerWidth : 1200;
   if (w < 640) return 'phone';
-  if (w <= 1024) return 'tablet';
+  if (w < 1080) return 'tablet';
   return 'desktop';
 }
 
