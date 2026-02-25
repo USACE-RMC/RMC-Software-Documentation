@@ -136,7 +136,18 @@ const buildSteps = (baseUrl, tier) => {
       phone: false,
     },
 
-    // 6 — Table of Contents
+    // 6 — Chapter Navigation (phone/tablet only)
+    {
+      title: 'Chapter Navigation',
+      content: 'The "In this document" dropdown lists every chapter and section of the current document. Tap it to jump to any page\u2014just like the sidebar on a wider screen.',
+      selector: '.chapter-nav',
+      placement: 'bottom',
+      icon: 'navigate',
+      page: 'doc',
+      desktop: false,
+    },
+
+    // 7 — Table of Contents
     {
       title: 'Table of Contents',
       content: 'The right-side table of contents shows the headings on the current page. Selecting any heading scrolls directly to that section, and the active heading highlights as you read.',
@@ -162,17 +173,6 @@ const buildSteps = (baseUrl, tier) => {
         padding: null,
         placement: 'bottom',
       },
-    },
-
-    // 7 — Page Navigation (phone/tablet only)
-    {
-      title: 'Page Navigation',
-      content: 'Use the Previous and Next links at the bottom of each page to move between chapters. Breadcrumbs at the top let you jump back up the document hierarchy.',
-      selector: '.pagination-nav',
-      placement: 'top',
-      icon: 'navigate',
-      page: 'doc',
-      desktop: false,
     },
 
     // 8 — Breadcrumbs
