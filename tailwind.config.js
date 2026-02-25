@@ -133,5 +133,8 @@ export default {
       '2xl': '1536px',
     },
   },
+  corePlugins: {
+    container: false,
+  },
   plugins: [require('@tailwindcss/forms')],
 };
