@@ -33,9 +33,7 @@ export default function LayoutWrapper({ children, ...rest }) {
   // Ensure Groundwork logo returns to base URL
   useEffect(() => {
     if (typeof document === 'undefined') return;
-    const logoAnchor = document
-      .querySelector('header a[href="/"] img[alt="U.S. Army Corps of Engineers"]')
-      ?.closest('a');
+    const logoAnchor = document.querySelector('header a[href="/"] img[alt="U.S. Army Corps of Engineers"]')?.closest('a');
     if (logoAnchor && logoAnchor.getAttribute('href') !== homeHref) {
       logoAnchor.setAttribute('href', homeHref);
     }
@@ -46,7 +44,7 @@ export default function LayoutWrapper({ children, ...rest }) {
       <SiteWrapper
         usaBanner={false}
         fluidNav={true}
-        subtitle="Institute for Water Resources, Risk Management Center Website"
+        subtitle="Institute for Water Resources, Risk Management Center"
         links={links}
         navRight={
           <div className="flex items-center gap-2">

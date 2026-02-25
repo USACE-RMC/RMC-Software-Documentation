@@ -2,13 +2,13 @@ import addBaseUrl from '@docusaurus/useBaseUrl';
 import Layout from '@theme/Layout';
 import { useEffect, useState } from 'react';
 import ContentBox from '../../components/ContentBox';
-import WebAppIcon from '../../components/icons/WebAppIcon';
+import LSTIcon from '../../components/icons/LSTIcon';
 import '../../css/custom.css';
 
 // Create the list of documents dynamically
 const lstData = [
   {
-    IconComponent: WebAppIcon,
+    IconComponent: LSTIcon,
     doc_location: 'web-applications/lst/users-guide',
     doc_name: 'Levee Screening Tool Users Guide',
     active: false,
@@ -38,7 +38,7 @@ export default function LST() {
     <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
       <main>
         <div className="title-container">
-          <WebAppIcon className="h-[80px] w-[80px] text-ifm-primary" />
+          <LSTIcon className="h-[80px] w-[80px] text-ifm-primary" />
           <div className="text-container">
             <h1 className="text-title">Levee Screening Tool</h1>
             <p className="text-description">Risk screening for levee hazard exposure, performance, and consequences</p>

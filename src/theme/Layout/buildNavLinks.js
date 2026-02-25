@@ -123,7 +123,6 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
   /* Web Applications links (second level) */
   const rrftHref = useBaseUrl('/web-applications/rrft');
   const lstHref = useBaseUrl('/web-applications/lst');
-
   const dstHref = useBaseUrl('/web-applications/dst');
 
   /* RRFT document links (third level) */
@@ -285,16 +284,26 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
       text: 'Web Applications',
       children: [
         {
+          id: 'dst',
+          text: 'Dam Screening Tool (Coming Soon)',
+          /*href: dstHref,*/
+        },
+        {
           id: 'lst',
-          text: 'Levee Screening Tool',
-          href: lstHref,
-          children: [
+          text: 'Levee Screening Tool (Coming Soon)',
+          /*href: lstHref,*/
+          /*children: [
             {
               id: 'users-guide',
               text: 'LST Users Guide',
               href: lstUsersGuideHref,
             },
-          ],
+          ],*/
+        },
+        {
+          id: 'rrft',
+          text: 'Rainfall Runoff Frequency Tool (Coming Soon)',
+          /*href: rrftHref,*/
         },
       ],
     },

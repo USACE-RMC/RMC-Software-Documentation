@@ -2,13 +2,13 @@ import addBaseUrl from '@docusaurus/useBaseUrl';
 import Layout from '@theme/Layout';
 import { useEffect, useState } from 'react';
 import ContentBox from '../../components/ContentBox';
-import WebAppIcon from '../../components/icons/WebAppIcon';
+import DSTIcon from '../../components/icons/DSTIcon';
 import '../../css/custom.css';
 
 // Create the list of documents dynamically
 const dstData = [
   {
-    IconComponent: WebAppIcon,
+    IconComponent: DSTIcon,
     doc_location: 'web-applications/dst/users-guide',
     doc_name: 'Dam Screening Tool Users Guide',
     active: false,
@@ -31,19 +31,14 @@ export default function DST() {
 
   const dstData = dstDocs.map((doc) => ({
     ...doc,
-    doc_location: addBaseUrl(
-      `docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`,
-    ),
+    doc_location: addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`),
   }));
 
   return (
-    <Layout
-      title="RMC Software Documentation"
-      description="Documentation for RMC Software Packages"
-    >
+    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
       <main>
         <div className="title-container">
-          <WebAppIcon className="h-[80px] w-[80px] text-ifm-primary" />
+          <DSTIcon className="h-[80px] w-[80px] text-ifm-primary" />
           <div className="text-container">
             <h1 className="text-title">Dam Screening Tool</h1>
             <p className="text-description">Dam Screening Tool</p>
