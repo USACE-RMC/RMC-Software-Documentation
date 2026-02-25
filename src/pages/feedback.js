@@ -147,13 +147,19 @@ function buildMailtoHref(category) {
 
 function FeedbackCard({ category }) {
   return (
-    <a href={buildMailtoHref(category)} className="feedback-card group" aria-label={`${category.title} - opens your email client`}>
-      <div className="feedback-card-icon">{category.icon}</div>
-      <div className="feedback-card-content">
-        <h3 className="feedback-card-title">{category.title}</h3>
-        <p className="feedback-card-description">{category.description}</p>
+    <a
+      href={buildMailtoHref(category)}
+      className="group relative flex cursor-pointer flex-col items-start gap-3 rounded-[10px] border border-border-color bg-[var(--ifm-background-color-theme)] p-6 text-inherit !no-underline transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-ifm-primary hover:text-inherit hover:shadow-[0_4px_16px_rgba(74,124,155,0.15)] dark:hover:shadow-[0_4px_16px_rgba(127,181,208,0.12)]"
+      aria-label={`${category.title} - opens your email client`}
+    >
+      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[10px] bg-ifm-primary-lightest text-ifm-primary dark:bg-[rgba(127,181,208,0.12)] dark:text-ifm-primary-light">
+        {category.icon}
       </div>
-      <div className="feedback-card-arrow">
+      <div className="flex-1">
+        <h3 className="m-0 mb-1 font-usace text-[1.05rem] font-semibold text-font-color">{category.title}</h3>
+        <p className="m-0 font-usace text-sm leading-normal text-font-color-description">{category.description}</p>
+      </div>
+      <div className="absolute right-5 top-5 text-border-color transition-[color,transform] duration-200 group-hover:translate-x-[3px] group-hover:text-ifm-primary">
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
         </svg>
@@ -176,7 +182,7 @@ export default function Feedback() {
           </div>
         </div>
         <div className="mx-auto max-w-[800px] px-6 pb-16 pt-8">
-          <div className="feedback-grid">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {feedbackCategories.map((category) => (
               <FeedbackCard key={category.id} category={category} />
             ))}
