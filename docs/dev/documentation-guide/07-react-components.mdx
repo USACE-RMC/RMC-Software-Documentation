@@ -384,7 +384,12 @@ See <FigureReference figKey="fig-results" /> for detailed results.
 <TableVerticalNoRef
   alt="Table: Prop, Type, Required, Description"
   headers={[[{ value: 'Prop' }, { value: 'Type' }, { value: 'Required' }, { value: 'Description' }]]}
-  columns={[['<code>figKey</code>'], ['String'], ['Yes'], ['Must match a Figure&#x27;s figKey']]}
+  columns={[
+    ['<code>figKey</code>', '<code>suffix</code>'],
+    ['String', 'String'],
+    ['Yes', 'No'],
+    ['Must match a Figure&#x27;s figKey', 'Text appended after the number (e.g., <code>"a"</code> renders "Figure 1a")'],
+  ]}
 />
 
 **Output:** Renders as clickable link: "Figure 1", "Figure 2", etc.
@@ -778,17 +783,11 @@ import TableHorizontal from '@site/src/components/TableHorizontal';
 <TableHorizontal
   tableKey="table-software-comparison"
   alt="Software feature comparison"
+  headers={['Platform', 'Open Source', 'Runtime']}
   rows={[
-    {
-      header: 'Software A',
-      data: ['Windows', 'Yes', '&lt; 1 hour'],
-    },
-    {
-      header: 'Software B',
-      data: ['Windows, Mac', 'No', '2-3 hours'],
-    },
+    ['Windows', 'Yes', '< 1 hour'],
+    ['Windows, Mac', 'No', '2-3 hours'],
   ]}
-  columnHeaders={['Platform', 'Open Source', 'Runtime']}
   caption="Comparison of software features"
 />
 ```
@@ -799,10 +798,10 @@ import TableHorizontal from '@site/src/components/TableHorizontal';
   alt="Table: Prop, Type, Required, Description"
   headers={[[{ value: 'Prop' }, { value: 'Type' }, { value: 'Required' }, { value: 'Description' }]]}
   columns={[
-    ['<code>tableKey</code>', '<code>alt</code>', '<code>rows</code>', '<code>columnHeaders</code>', '<code>caption</code>'],
-    ['String', 'String', 'Array', 'Array', 'String'],
-    ['Yes', 'Yes', 'Yes', 'Yes', 'Yes'],
-    ['Unique identifier', 'Accessibility description', 'Array of row objects', 'Column header labels', 'Table caption'],
+    ['<code>tableKey</code>', '<code>alt</code>', '<code>headers</code>', '<code>rows</code>', '<code>caption</code>', '<code>colWidths</code>', '<code>colAlign</code>', '<code>headerAlign</code>', '<code>widthMode</code>', '<code>footnotes</code>'],
+    ['String', 'String', 'Array', 'Array', 'String/Node', 'Array', 'Array', 'Array', 'String', 'Array'],
+    ['Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'No', 'No', 'No', 'No', 'No'],
+    ['Unique identifier', 'Accessibility description', 'Array of row header labels (first column)', 'Array of arrays — each inner array is one row of data cells', 'Table caption', 'Column widths (e.g., <code>["30%", "70%"]</code>)', 'Column text alignment', 'Header text alignment', '<code>"full"</code> (default) or <code>"auto"</code>', 'Array of footnote strings'],
   ]}
 />
 
@@ -827,10 +826,10 @@ import TableAcronyms from '@site/src/components/TableAcronyms';
 
 ```jsx
 <TableAcronyms
-  acronyms={[
-    { acronym: 'USACE', definition: 'U.S. Army Corps of Engineers' },
-    { acronym: 'RMC', definition: 'Risk Management Center' },
-    { acronym: 'DST', definition: 'Dam Safety Toolbox' },
+  headers={['Acronym', 'Full Form']}
+  columns={[
+    ['USACE', 'RMC', 'DST'],
+    ['U.S. Army Corps of Engineers', 'Risk Management Center', 'Dam Safety Toolbox'],
   ]}
 />
 ```
@@ -840,7 +839,12 @@ import TableAcronyms from '@site/src/components/TableAcronyms';
 <TableVerticalNoRef
   alt="Table: Prop, Type, Required, Description"
   headers={[[{ value: 'Prop' }, { value: 'Type' }, { value: 'Required' }, { value: 'Description' }]]}
-  columns={[['<code>acronyms</code>'], ['Array'], ['Yes'], ['Array of <code>{acronym, definition}</code> objects']]}
+  columns={[
+    ['<code>headers</code>', '<code>columns</code>'],
+    ['Array', 'Array'],
+    ['Yes', 'Yes'],
+    ['Column header labels (e.g., <code>["Acronym", "Full Form"]</code>)', 'Array of arrays — each inner array is one column of values'],
+  ]}
 />
 
 ---
@@ -888,10 +892,10 @@ import Equation from '@site/src/components/Equation';
   alt="Table: Prop, Type, Required, Description"
   headers={[[{ value: 'Prop' }, { value: 'Type' }, { value: 'Required' }, { value: 'Description' }]]}
   columns={[
-    ['<code>equationKey</code>', '<code>equation</code>'],
-    ['String', 'String'],
-    ['Yes', 'Yes'],
-    ['Unique identifier', 'LaTeX equation string'],
+    ['<code>equationKey</code>', '<code>equation</code>', '<code>inline</code>', '<code>id</code>'],
+    ['String', 'String', 'Boolean', 'String'],
+    ['Yes', 'Yes', 'No', 'No'],
+    ['Unique identifier', 'LaTeX equation string', 'Render inline instead of block (default: <code>false</code>)', 'Custom HTML id attribute'],
   ]}
 />
 
@@ -1083,7 +1087,12 @@ import EquationNoRef from '@site/src/components/EquationNoRef';
 <TableVerticalNoRef
   alt="Table: Prop, Type, Required, Description"
   headers={[[{ value: 'Prop' }, { value: 'Type' }, { value: 'Required' }, { value: 'Description' }]]}
-  columns={[['<code>equation</code>'], ['String'], ['Yes'], ['LaTeX equation string']]}
+  columns={[
+    ['<code>equation</code>', '<code>inline</code>'],
+    ['String', 'Boolean'],
+    ['Yes', 'No'],
+    ['LaTeX equation string', 'Render inline instead of block (default: <code>true</code>)'],
+  ]}
 />
 
 ---
@@ -1672,6 +1681,7 @@ Control the starting number and indentation levels:
   columns={[
     [
       '<code>items</code>',
+      '<code>numberStyle</code>',
       '<code>startAt</code>',
       '<code>indentPx</code>',
       '<code>maxIndentPx</code>',
@@ -1679,11 +1689,12 @@ Control the starting number and indentation levels:
       '<code>bubbleGapPx</code>',
       '<code>nowrap</code>',
     ],
-    ['Array', 'Number', 'Number', 'Number', 'Number', 'Number', 'Boolean'],
-    ['Yes', 'No', 'No', 'No', 'No', 'No', 'No'],
-    ['-', '<code>1</code>', '<code>0</code>', 'Auto', '<code>28</code>', '<code>10</code>', '<code>false</code>'],
+    ['Array', 'String', 'Number', 'Number', 'Number', 'Number', 'Number', 'Boolean'],
+    ['Yes', 'No', 'No', 'No', 'No', 'No', 'No', 'No'],
+    ['-', '<code>"bubble"</code>', '<code>1</code>', '<code>0</code>', 'Auto', '<code>28</code>', '<code>10</code>', '<code>false</code>'],
     [
       'Array of step objects (see Item Object Structure below)',
+      'Number display style: <code>"bubble"</code>, <code>"plain"</code>, or <code>"chevron"</code>',
       'Starting number (e.g., 5 starts at &quot;5&quot;)',
       'Indentation per level in pixels',
       'Maximum total indentation (auto: 40% of container width)',
@@ -3429,6 +3440,111 @@ import TableBestFitDistributions from '@site/src/components/TableBestFitDistribu
     ['-', '-', '-', '<code>true</code>', '-', '-', '<code>"full"</code>'],
     ['Header config with <code>colSpan</code> support', 'Plain string headers (fallback)', 'Column data arrays', 'Whether table spans full width', 'Column width specifications', 'Column alignment specifications', 'Width mode: <code>"full"</code> or <code>"intrinsic"</code>'],
   ]}
+/>
+
+---
+
+## Schema Components (DST Database)
+
+These components are used exclusively in the DST database schema documentation (`docs/dev/dst/database-schema/`).
+
+### SchemaTableCompact
+
+**Purpose:** Compact table displaying a database table's schema — column names, types, constraints, and optional grouping.
+
+**Import:**
+
+```jsx
+import SchemaTableCompact from '@site/src/components/SchemaTableCompact';
+```
+
+**Usage:**
+
+```jsx
+<SchemaTableCompact
+  name="Locations"
+  description="Stores geographic location data."
+  status="implemented"
+  columns={[
+    { name: 'LocationID', type: 'int', pk: true, description: 'Primary key' },
+    { name: 'Name', type: 'nvarchar(200)', description: 'Location name' },
+  ]}
+/>
+```
+
+**Props:**
+
+<TableVerticalNoRef
+  alt="Table: Prop, Type, Required, Description"
+  headers={[[{ value: 'Prop' }, { value: 'Type' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['<code>name</code>', '<code>description</code>', '<code>status</code>', '<code>columns</code>', '<code>notes</code>', '<code>jsonSchemas</code>', '<code>id</code>'],
+    ['String', 'String', 'String', 'Array', 'String', 'Array', 'String'],
+    ['Yes', 'No', 'No', 'Yes', 'No', 'No', 'No'],
+    ['Table name', 'Table description', '<code>"implemented"</code> (default), <code>"partial"</code>, or <code>"planned"</code>', 'Array of column definition objects', 'Additional notes', 'JSON schema examples', 'Custom HTML id'],
+  ]}
+/>
+
+---
+
+### SchemaTag
+
+**Purpose:** Inline colored tag/badge for labeling schema elements (e.g., primary keys, foreign keys, data types).
+
+**Import:**
+
+```jsx
+import SchemaTag from '@site/src/components/SchemaTag';
+```
+
+**Usage:**
+
+```jsx
+<SchemaTag type="pk">Primary Key</SchemaTag>
+<SchemaTag type="fk" href="#locations-table">LocationID</SchemaTag>
+```
+
+**Props:**
+
+<TableVerticalNoRef
+  alt="Table: Prop, Type, Required, Description"
+  headers={[[{ value: 'Prop' }, { value: 'Type' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['<code>type</code>', '<code>children</code>', '<code>href</code>', '<code>title</code>'],
+    ['String', 'Node', 'String', 'String'],
+    ['Yes', 'Yes', 'No', 'No'],
+    ['Tag style type (e.g., <code>"pk"</code>, <code>"fk"</code>)', 'Label content', 'If provided, renders as a link', 'Tooltip text'],
+  ]}
+/>
+
+---
+
+### SchemaRelationshipDiagram
+
+**Purpose:** Data-driven entity relationship diagram rendered with CSS flexbox, showing table relationships within DST database modules.
+
+**Import:**
+
+```jsx
+import SchemaRelationshipDiagram from '@site/src/components/SchemaRelationshipDiagram';
+```
+
+**Usage:**
+
+```jsx
+{/* Show all modules and relationships */}
+<SchemaRelationshipDiagram />
+
+{/* Filter to a single module */}
+<SchemaRelationshipDiagram moduleId="common" />
+```
+
+**Props:**
+
+<TableVerticalNoRef
+  alt="Table: Prop, Type, Required, Description"
+  headers={[[{ value: 'Prop' }, { value: 'Type' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[['<code>moduleId</code>'], ['String'], ['No'], ['Filter diagram to a single module. When omitted, all modules are shown.']]}
 />
 
 ---
