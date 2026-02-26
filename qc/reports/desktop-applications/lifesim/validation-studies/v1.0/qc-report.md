@@ -761,7 +761,7 @@ No issues found. The file correctly imports and renders the Bibliography compone
 
 ### Citation Placement Convention
 
-**30 instances** of incorrect Citation component placement were found across 7 of 10 case study files. The Citation component is placed inside the author-year parentheses instead of outside them. This is the most common issue category in the document. Only 05-katrina-east-bowl.mdx and 08-midland-dams.mdx consistently use the correct placement. **All 30 instances have been corrected.**
+**29 instances** of incorrect Citation component placement were found across 7 of 10 case study files. The Citation component is placed inside the author-year parentheses instead of outside them. This is the most common issue category in the document. Only 05-katrina-east-bowl.mdx and 08-midland-dams.mdx consistently use the correct placement. **All 29 instances have been corrected.**
 
 | File                | Incorrect Placements | Fixed |
 | ------------------- | -------------------- | ----- |
@@ -769,10 +769,10 @@ No issues found. The file correctly imports and renders the Bibliography compone
 | 03-johnstown.mdx    | 6                    | Yes   |
 | 10-teton.mdx        | 6                    | Yes   |
 | 07-malpasset.mdx    | 2                    | Yes   |
-| 04-joso.mdx         | 1                    | Yes   |
+| 04-joso.mdx         | 2                    | Yes   |
 | 06-kelly-barnes.mdx | 1                    | Yes   |
 | 09-oroville.mdx     | 1                    | Yes   |
-| **Total**           | **30**               | **All** |
+| **Total**           | **29**               | **All** |
 
 ### Unused Boilerplate Imports
 
