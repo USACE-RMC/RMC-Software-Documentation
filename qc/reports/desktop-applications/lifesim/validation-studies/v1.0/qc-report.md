@@ -792,5 +792,4 @@ Two of nine case study chapters (05-katrina-east-bowl.mdx and 07-malpasset.mdx) 
 
 - **Total issues:** 67
 - **Fixes applied:** 61
-- **Not applied (human response — no revision required):** 5 (Issues 6, 35, 39, 54, 62)
-- **Not applied (editorial suggestion — deferred):** 1 (Issue 47)
+- **Not applied (human response — no revision required):** 6 (Issues 6, 35, 39, 47, 54, 62)

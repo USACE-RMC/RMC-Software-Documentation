@@ -184,7 +184,7 @@ Perform all Universal Checks, PLUS compare MDX against the source PDF:
    - Raw author-year text MUST be preserved where source has citations
    - Citation placement matches source document locations
    - No citations are missing compared to source
-   - All Universal Check 6 rules still apply (placement, format, keys)
+   - All Universal Check 7 rules still apply (placement, format, keys)
 
 **Level 2 Restrictions:**
 - Do NOT suggest improvements beyond matching the source
