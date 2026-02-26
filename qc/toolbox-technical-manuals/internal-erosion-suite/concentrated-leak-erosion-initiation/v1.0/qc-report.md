@@ -3,6 +3,8 @@
 **Source PDF:** `RMC-CPD-2023-08 - RMC Concentrated Leak Erosion (Initiation) Toolbox.pdf`
 **Review Date:** 2025-12-21
 **Reviewer:** Codex (Automated QC)
+**Secondary Review Date:** 2026-02-25
+**Secondary Reviewer:** AI Assistant (Level 1 — Syntax & Grammar)
 
 ---
 
@@ -163,6 +165,94 @@
 - **Human Verification Required:** No
 - **Addressed:** [x]
 
+### Issue 5: Outdated Section Reference — "section 5.1"
+
+- **Location:** Line 25
+- **Category:** Text
+- **Severity:** Major
+- **Problem:** PDF-style section reference: `"the same as that described for the Cylindrical Pipe worksheet in section 5.1."` should be a Docusaurus link.
+- **Recommended Fix:** Replace `section 5.1` with `the [Method of Analysis](05-cylindrical-pipe.mdx#method-of-analysis) section`. Full line becomes: `The method of analysis is the same as that described for the Cylindrical Pipe worksheet in the [Method of Analysis](05-cylindrical-pipe.mdx#method-of-analysis) section.`
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
+### Issue 6: Outdated Section Reference — "section 5.2"
+
+- **Location:** Line 29
+- **Category:** Text
+- **Severity:** Major
+- **Problem:** PDF-style section reference: `"very similar to that described for the Cylindrical Pipe worksheet in section 5.2."` should be a Docusaurus link.
+- **Recommended Fix:** Replace `section 5.2` with `the [Critical Shear Stress and Initial Pipe Diameter](05-cylindrical-pipe.mdx#critical-shear-stress-and-initial-pipe-diameter) section`. Full line becomes: `The critical shear stress and initial crack dimensions are very similar to that described for the Cylindrical Pipe worksheet in the [Critical Shear Stress and Initial Pipe Diameter](05-cylindrical-pipe.mdx#critical-shear-stress-and-initial-pipe-diameter) section. Instead`
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
+### Issue 7: Outdated Section Reference — "section 5.3"
+
+- **Location:** Line 42
+- **Category:** Text
+- **Severity:** Major
+- **Problem:** PDF-style section reference: `"the same as that described for the Cylindrical Pipe worksheet in section 5.3."` should be a Docusaurus link.
+- **Recommended Fix:** Replace `section 5.3` with `the [Core Geometry](05-cylindrical-pipe.mdx#core-geometry) section`. Full line becomes: `The core geometry is the same as that described for the Cylindrical Pipe worksheet in the [Core Geometry](05-cylindrical-pipe.mdx#core-geometry) section.`
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
+### Issue 8: Outdated Section Reference — "section 5.4"
+
+- **Location:** Lines 46–47
+- **Category:** Text
+- **Severity:** Major
+- **Problem:** PDF-style section reference: `"the same as that described for the Cylindrical Pipe worksheet in section 5.4"` — note this reference spans a line break. Text reads: `...the same as that described for the Cylindrical Pipe\nPipe worksheet in section 5.4, but using a different equation...`
+- **Recommended Fix:** Replace `the Cylindrical\nPipe worksheet in section 5.4` with `the Cylindrical Pipe worksheet in the [Hydraulic Shear Stress](05-cylindrical-pipe.mdx#hydraulic-shear-stress) section`. Full rewritten text: `The hydraulic shear stress on the surface of the horizontal crack from flow of water in the crack is the same as that described for the Cylindrical Pipe worksheet in the [Hydraulic Shear Stress](05-cylindrical-pipe.mdx#hydraulic-shear-stress) section, but using a different equation and crack width instead of pipe diameter.`
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
+### Issue 9: Outdated Section Reference — "section 5.5"
+
+- **Location:** Line 58
+- **Category:** Text
+- **Severity:** Major
+- **Problem:** PDF-style section reference: `"the same as that described for the Cylindrical Pipe worksheet in section 5.5"` should be a Docusaurus link.
+- **Recommended Fix:** Replace `section 5.5` with `the [Likelihood of Initiation of Concentrated Leak Erosion](05-cylindrical-pipe.mdx#likelihood-of-initiation-of-concentrated-leak-erosion) section`. Full line becomes: `The likelihood of initiation of concentrated leak erosion is the same as that described for the Cylindrical Pipe worksheet in the [Likelihood of Initiation of Concentrated Leak Erosion](05-cylindrical-pipe.mdx#likelihood-of-initiation-of-concentrated-leak-erosion) section, but using`
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
+### Issue 10: Outdated Section Reference — "section 5.6"
+
+- **Location:** Line 63
+- **Category:** Text
+- **Severity:** Major
+- **Problem:** PDF-style section reference: `"the same as that described for the Cylindrical Pipe worksheet in section 5.6"` should be a Docusaurus link.
+- **Recommended Fix:** Replace `section 5.6` with `the [Headwater Level for Initiation of Concentrated Leak Erosion](05-cylindrical-pipe.mdx#headwater-level-for-initiation-of-concentrated-leak-erosion) section`. Full line becomes: `The headwater level for initiation of concentrated leak erosion is the same as that described for the Cylindrical Pipe worksheet in the [Headwater Level for Initiation of Concentrated Leak Erosion](05-cylindrical-pipe.mdx#headwater-level-for-initiation-of-concentrated-leak-erosion) section, but`
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
+### Issue 11: Incorrect Terminology — "critical pipe diameter" in Horizontal Crack Chapter
+
+- **Location:** Line 68
+- **Category:** Text
+- **Severity:** Major
+- **Problem:** Under the heading "Critical Crack Width for Initiation of Concentrated Leak Erosion," the text reads `"The critical pipe diameter for initiation of concentrated leak erosion is the same as..."` — this should say "crack width," not "pipe diameter," to match the heading and context. Current text: `The critical pipe diameter for initiation of concentrated leak erosion is the same as that described for the Cylindrical Pipe worksheet in section`
+- **Recommended Fix:** Change `The critical pipe diameter for initiation` to `The critical crack width for initiation`.
+- **Fix Applied:** Yes
+- **Human Verification Required:** Yes
+- **Addressed:** [x]
+
+### Issue 12: Outdated Section Reference — "section 5.7"
+
+- **Location:** Lines 68–69
+- **Category:** Text
+- **Severity:** Major
+- **Problem:** PDF-style section reference: `"the same as that described for the Cylindrical Pipe worksheet in section\n5.7"` (spans line break) should be a Docusaurus link.
+- **Recommended Fix:** Replace `section\n5.7` with `the [Critical Pipe Diameter for Initiation of Concentrated Leak Erosion](05-cylindrical-pipe.mdx#critical-pipe-diameter-for-initiation-of-concentrated-leak-erosion) section`. Combined with Issue 11 fix, full rewritten text: `The critical crack width for initiation of concentrated leak erosion is the same as that described for the Cylindrical Pipe worksheet in the [Critical Pipe Diameter for Initiation of Concentrated Leak Erosion](05-cylindrical-pipe.mdx#critical-pipe-diameter-for-initiation-of-concentrated-leak-erosion) section, but using a different equation and crack width instead of pipe diameter.`
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
 ---
 
 ## File: 07-vertical-rectangular-crack.mdx
@@ -200,6 +290,72 @@
 - **Human Verification Required:** No
 - **Addressed:** [x]
 
+### Issue 4: Outdated Section Reference — "section 5.1"
+
+- **Location:** Line 27
+- **Category:** Text
+- **Severity:** Major
+- **Problem:** PDF-style section reference: `"the same as that described for the Cylindrical Pipe worksheet in section 5.1."` should be a Docusaurus link.
+- **Recommended Fix:** Replace `section 5.1` with `the [Method of Analysis](05-cylindrical-pipe.mdx#method-of-analysis) section`. Full line becomes: `The method of analysis is the same as that described for the Cylindrical Pipe worksheet in the [Method of Analysis](05-cylindrical-pipe.mdx#method-of-analysis) section.`
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
+### Issue 5: Outdated Section Reference — "section 5.3"
+
+- **Location:** Line 82
+- **Category:** Text
+- **Severity:** Major
+- **Problem:** PDF-style section reference: `"the same as that described for the Cylindrical Pipe worksheet in section 5.3"` should be a Docusaurus link.
+- **Recommended Fix:** Replace `section 5.3` with `the [Core Geometry](05-cylindrical-pipe.mdx#core-geometry) section`. Full line becomes: `The core geometry is the same as that described for the Cylindrical Pipe worksheet in the [Core Geometry](05-cylindrical-pipe.mdx#core-geometry) section, but the base elevation of the crack is not an input`
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
+### Issue 6: Incorrect Terminology — "pipe diameters" in Vertical Rectangular Crack Chapter
+
+- **Location:** Line 121
+- **Category:** Text
+- **Severity:** Major
+- **Problem:** In the Vertical Rectangular Crack chapter under Hydraulic Shear Stress, the text reads: `"the hydraulic shear stress using the same hydraulic conditions as the first table but for pipe diameters ranging from 1 millimeter to 150 millimeters."` This should say "crack widths" since the context is about rectangular cracks, not cylindrical pipes. The surrounding text (line 124) correctly uses "crack width."
+- **Recommended Fix:** Change `pipe diameters` to `crack widths`. Full corrected text: `the hydraulic shear stress using the same hydraulic conditions as the first table but for crack widths ranging from 1 millimeter to 150 millimeters.`
+- **Fix Applied:** Yes
+- **Human Verification Required:** Yes
+- **Addressed:** [x]
+
+### Issue 7: Outdated Section Reference — "section 5.5"
+
+- **Location:** Line 128
+- **Category:** Text
+- **Severity:** Major
+- **Problem:** PDF-style section reference: `"the same as that described for the Cylindrical Pipe worksheet in section 5.5"` should be a Docusaurus link.
+- **Recommended Fix:** Replace `section 5.5` with `the [Likelihood of Initiation of Concentrated Leak Erosion](05-cylindrical-pipe.mdx#likelihood-of-initiation-of-concentrated-leak-erosion) section`. Full line becomes: `The likelihood of initiation of concentrated leak erosion is the same as that described for the Cylindrical Pipe worksheet in the [Likelihood of Initiation of Concentrated Leak Erosion](05-cylindrical-pipe.mdx#likelihood-of-initiation-of-concentrated-leak-erosion) section, but using a`
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
+### Issue 8: Outdated Section Reference — "section 5.6"
+
+- **Location:** Line 133
+- **Category:** Text
+- **Severity:** Major
+- **Problem:** PDF-style section reference: `"the same as that described for the Cylindrical Pipe worksheet in section 5.6"` should be a Docusaurus link.
+- **Recommended Fix:** Replace `section 5.6` with `the [Headwater Level for Initiation of Concentrated Leak Erosion](05-cylindrical-pipe.mdx#headwater-level-for-initiation-of-concentrated-leak-erosion) section`. Full line becomes: `The headwater level for initiation of concentrated leak erosion is the same as that described for the Cylindrical Pipe worksheet in the [Headwater Level for Initiation of Concentrated Leak Erosion](05-cylindrical-pipe.mdx#headwater-level-for-initiation-of-concentrated-leak-erosion) section, but`
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
+### Issue 9: Outdated Section Reference — "section 5.7"
+
+- **Location:** Lines 138–139
+- **Category:** Text
+- **Severity:** Major
+- **Problem:** PDF-style section reference: `"the same as that described for the Cylindrical Pipe\nworksheet in section 5.7"` (spans line break) should be a Docusaurus link.
+- **Recommended Fix:** Replace `section 5.7` with `the [Critical Pipe Diameter for Initiation of Concentrated Leak Erosion](05-cylindrical-pipe.mdx#critical-pipe-diameter-for-initiation-of-concentrated-leak-erosion) section`. Full rewritten text: `The critical crack width at the top of the core for initiation of concentrated leak erosion is the same as that described for the Cylindrical Pipe worksheet in the [Critical Pipe Diameter for Initiation of Concentrated Leak Erosion](05-cylindrical-pipe.mdx#critical-pipe-diameter-for-initiation-of-concentrated-leak-erosion) section, but using a different equation and crack width instead of pipe diameter.`
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
 ---
 
 ## File: 08-vertical-triangular-crack.mdx
@@ -226,6 +382,83 @@
 - **Human Verification Required:** Yes
 - **Addressed:** [x]
 
+### Issue 3: Outdated Section Reference — "section 5.1"
+
+- **Location:** Line 23
+- **Category:** Text
+- **Severity:** Major
+- **Problem:** PDF-style section reference: `"the same as that described for the Cylindrical Pipe worksheet in section 5.1."` should be a Docusaurus link.
+- **Recommended Fix:** Replace `section 5.1` with `the [Method of Analysis](05-cylindrical-pipe.mdx#method-of-analysis) section`. Full line becomes: `The method of analysis is the same as that described for the Cylindrical Pipe worksheet in the [Method of Analysis](05-cylindrical-pipe.mdx#method-of-analysis) section.`
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
+### Issue 4: Outdated Section Reference — "section 7.2"
+
+- **Location:** Line 27
+- **Category:** Text
+- **Severity:** Major
+- **Problem:** PDF-style section reference: `"the same as that described for the Vertical Rectangular Crack worksheet in section 7.2."` should be a Docusaurus link.
+- **Recommended Fix:** Replace `section 7.2` with `the [Critical Shear Stress and Initial Crack Dimensions](07-vertical-rectangular-crack.mdx#critical-shear-stress-and-initial-crack-dimensions) section`. Full line becomes: `The critical shear stress and initial crack dimensions are the same as that described for the Vertical Rectangular Crack worksheet in the [Critical Shear Stress and Initial Crack Dimensions](07-vertical-rectangular-crack.mdx#critical-shear-stress-and-initial-crack-dimensions) section.`
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
+### Issue 5: Outdated Section Reference — "section 7.3"
+
+- **Location:** Line 31
+- **Category:** Text
+- **Severity:** Major
+- **Problem:** PDF-style section reference: `"the same as that described for the Vertical Rectangular Crack worksheet in section 7.3."` should be a Docusaurus link.
+- **Recommended Fix:** Replace `section 7.3` with `the [Core Geometry](07-vertical-rectangular-crack.mdx#core-geometry) section`. Full line becomes: `The core geometry is the same as that described for the Vertical Rectangular Crack worksheet in the [Core Geometry](07-vertical-rectangular-crack.mdx#core-geometry) section.`
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
+### Issue 6: Outdated Section Reference — "section 7.4"
+
+- **Location:** Lines 35–36
+- **Category:** Text
+- **Severity:** Major
+- **Problem:** PDF-style section reference: `"the same as that described for the\nVertical Rectangular Crack worksheet in section 7.4"` (spans line break) should be a Docusaurus link.
+- **Recommended Fix:** Replace `section 7.4` with `the [Hydraulic Shear Stress](07-vertical-rectangular-crack.mdx#hydraulic-shear-stress) section`. Full rewritten text: `The hydraulic shear stress on the surface of the vertical triangular crack from flow of water in the crack is the same as that described for the Vertical Rectangular Crack worksheet in the [Hydraulic Shear Stress](07-vertical-rectangular-crack.mdx#hydraulic-shear-stress) section, but using a different equation.`
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
+### Issue 7: Outdated Section Reference — "section 5.5"
+
+- **Location:** Line 46
+- **Category:** Text
+- **Severity:** Major
+- **Problem:** PDF-style section reference: `"the same as that described for the Cylindrical Pipe worksheet in section 5.5"` should be a Docusaurus link.
+- **Recommended Fix:** Replace `section 5.5` with `the [Likelihood of Initiation of Concentrated Leak Erosion](05-cylindrical-pipe.mdx#likelihood-of-initiation-of-concentrated-leak-erosion) section`. Full line becomes: `The likelihood of initiation of concentrated leak erosion is the same as that described for the Cylindrical Pipe worksheet in the [Likelihood of Initiation of Concentrated Leak Erosion](05-cylindrical-pipe.mdx#likelihood-of-initiation-of-concentrated-leak-erosion) section, but using a`
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
+### Issue 8: Outdated Section Reference — "section 5.6"
+
+- **Location:** Line 51
+- **Category:** Text
+- **Severity:** Major
+- **Problem:** PDF-style section reference: `"the same as that described for the Cylindrical Pipe worksheet in section 5.6"` should be a Docusaurus link.
+- **Recommended Fix:** Replace `section 5.6` with `the [Headwater Level for Initiation of Concentrated Leak Erosion](05-cylindrical-pipe.mdx#headwater-level-for-initiation-of-concentrated-leak-erosion) section`. Full line becomes: `The headwater level for initiation of concentrated leak erosion is the same as that described for the Cylindrical Pipe worksheet in the [Headwater Level for Initiation of Concentrated Leak Erosion](05-cylindrical-pipe.mdx#headwater-level-for-initiation-of-concentrated-leak-erosion) section, but`
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
+### Issue 9: Outdated Section Reference — "section 7.7"
+
+- **Location:** Lines 56–57
+- **Category:** Text
+- **Severity:** Major
+- **Problem:** PDF-style section reference: `"the same as that described for the Vertical Rectangular\nCrack worksheet in section 7.7"` (spans line break) should be a Docusaurus link.
+- **Recommended Fix:** Replace `section 7.7` with `the [Critical Crack Width for Initiation of Concentrated Leak Erosion](07-vertical-rectangular-crack.mdx#critical-crack-width-for-initiation-of-concentrated-leak-erosion) section`. Full rewritten text: `The critical crack width at the top of the core for initiation of concentrated leak erosion is the same as that described for the Vertical Rectangular Crack worksheet in the [Critical Crack Width for Initiation of Concentrated Leak Erosion](07-vertical-rectangular-crack.mdx#critical-crack-width-for-initiation-of-concentrated-leak-erosion) section, but using a different equation.`
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
 ---
 
 ## File: 09-probability-tables.mdx
@@ -248,6 +481,28 @@
 - **Severity:** Major
 - **Problem:** Caption includes "Fell et al. (2008)" but no `<Citation>` component is present in the caption.
 - **Recommended Fix:** Add `<Citation citationKey="Fell2008" />` in the caption text alongside the author-year.
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
+### Issue 3: Duplicate Preposition — "from by"
+
+- **Location:** Line 24
+- **Category:** Grammar
+- **Severity:** Major
+- **Problem:** Text reads `"using the probability tables from by Fell et al. (2008)"` — duplicate preposition "from by". Current text: `This worksheet estimates the probability of initiation of concentrated leak erosion using the probability tables from by Fell et al. (2008)`
+- **Recommended Fix:** Remove `by`. Corrected text: `...using the probability tables from Fell et al. (2008)`
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
+### Issue 4: Incorrect Preposition — "diameter of crack width"
+
+- **Location:** Line 152
+- **Category:** Grammar
+- **Severity:** Major
+- **Problem:** Text reads `"the user-specified pipe diameter of crack width at the top of the core"` — "of" should be "or". Current text: `...the best estimate of the probability of initiation of concentrated leak erosion as a function of the\nuser-specified pipe diameter of crack width at the top of the core and headwater level`
+- **Recommended Fix:** Change `of crack width` to `or crack width`. Corrected text: `...pipe diameter or crack width at the top of the core...`
 - **Fix Applied:** Yes
 - **Human Verification Required:** No
 - **Addressed:** [x]
@@ -454,6 +709,50 @@
 - **Human Verification Required:** No
 - **Addressed:** [x]
 
+### Issue 19: Missing Preposition — "as shown Equation A-64"
+
+- **Location:** Line 390
+- **Category:** Grammar
+- **Severity:** Major
+- **Problem:** Text reads `"the hydraulic shear stress along a crack as shown Equation A-64."` — missing preposition "in". Current text: `...the average hydraulic shear stress acting on the walls of the crack can be approximated by a more general formula for the hydraulic\nshear stress along a crack as shown Equation A-64.`
+- **Recommended Fix:** Change `as shown Equation A-64` to `as shown in Equation A-64`. Corrected text: `...shear stress along a crack as shown in Equation A-64.`
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
+### Issue 20: Figure A-9 Caption Prefix Inconsistency
+
+- **Location:** Lines 385–386
+- **Category:** Figure
+- **Severity:** Minor
+- **Problem:** The Figure component caption reads `"Figure A-9. Hydrostatic force on a triangular face."` which will render as "Figure 55: Figure A-9. Hydrostatic force on a triangular face." — a redundant "Figure" prefix. All other appendix figure captions in this file use the format "A-N. Caption text" (without the "Figure" prefix), e.g., "A-1. Cylindrical pipe geometry."
+- **Recommended Fix:** Change caption from `"Figure A-9. Hydrostatic force on a triangular face."` to `"A-9. Hydrostatic force on a triangular face."` to match the convention used by all other figures in this appendix. Also update the alt text to match.
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
+### Issue 21: Internal Equation Inconsistency — Equation A-74 (equation-85)
+
+- **Location:** Line 440
+- **Category:** Equation
+- **Severity:** Major
+- **Problem:** In Equation A-74 (equation-85), one term reads `2H_{1}L` but should be `2H_{1}^{2}L` based on the derivation chain. Equation A-74 is an intermediate expansion step that should simplify to Equation A-75 (equation-86): `A = \frac{W}{12D}(2H_{1}^2+2H_{1}H_{2}+2H_{2}^2)`. Collecting like terms in equation-85 currently yields `(0)H_1^2 L + 2H_1 L + ...` which does not simplify to `2H_1^2` in equation-86. Current equation-85 text: `A=\frac{W}{12DL}\left(...+ 2H_{1}L - 2H_{1}H_{2}L + ...\right)`
+- **Recommended Fix:** Change `2H_{1}L` to `2H_{1}^{2}L` in the equation string. Locate the substring `+ 2H_{1}L -` and replace with `+ 2H_{1}^{2}L -`.
+- **Fix Applied:** Yes
+- **Human Verification Required:** Yes
+- **Addressed:** [x]
+
+### Issue 22: Internal Equation Inconsistency — Equation A-87 (equation-98)
+
+- **Location:** Line 496
+- **Category:** Equation
+- **Severity:** Major
+- **Problem:** In Equation A-87 (equation-98), the second term on the left side uses `\tau^{2}` (without subscript) instead of `\tau_{c}^{2}`. This equation expands from Equation A-86 (equation-97): `\tau_{c}^{2}(H_{1}+H_{2})^{2}\left(1+\frac{W^2}{4D^2}\right)`. Distributing should give `\tau_{c}^{2}` in both terms. Current equation-98 text: `\tau_{c}^{2}(H_{1}+H_{2})^{2}+\frac{\tau^{2}(H_{1}+H_2)^{2}W^2}{4D^2} = ...`
+- **Recommended Fix:** Change `\tau^{2}` to `\tau_{c}^{2}` in the second term of the left side. Locate `\frac{\tau^{2}(H_{1}` and replace with `\frac{\tau_{c}^{2}(H_{1}`.
+- **Fix Applied:** Yes
+- **Human Verification Required:** Yes
+- **Addressed:** [x]
+
 ---
 
 ## File: 13-appendix-acronym-list.mdx
@@ -469,6 +768,39 @@
 - **Human Verification Required:** No
 - **Addressed:** [x]
 
+### Issue 2: USCS Acronym Expansion — "United" Should Be "Unified"
+
+- **Location:** Line 52
+- **Category:** Text
+- **Severity:** Major
+- **Problem:** The acronym expansion for USCS reads `'United Soil Classification System'` but the correct name is "Unified Soil Classification System." This is confirmed by usage in `09-probability-tables.mdx` line 136–137: "Unified Soil Classification (USCS)".
+- **Recommended Fix:** Change `'United Soil Classification System'` to `'Unified Soil Classification System'`.
+- **Fix Applied:** Yes
+- **Human Verification Required:** No
+- **Addressed:** [x]
+
 ---
 
-_Report will be appended as additional files are reviewed._
+## Section Reference Mapping
+
+For convenience, the complete mapping from PDF section numbers to Docusaurus link targets:
+
+| PDF Section | Target Page | Target Heading | Docusaurus Link |
+|-------------|-------------|----------------|-----------------|
+| 5.1 | 05-cylindrical-pipe | Method of Analysis | `(05-cylindrical-pipe.mdx#method-of-analysis)` |
+| 5.2 | 05-cylindrical-pipe | Critical Shear Stress and Initial Pipe Diameter | `(05-cylindrical-pipe.mdx#critical-shear-stress-and-initial-pipe-diameter)` |
+| 5.3 | 05-cylindrical-pipe | Core Geometry | `(05-cylindrical-pipe.mdx#core-geometry)` |
+| 5.4 | 05-cylindrical-pipe | Hydraulic Shear Stress | `(05-cylindrical-pipe.mdx#hydraulic-shear-stress)` |
+| 5.5 | 05-cylindrical-pipe | Likelihood of Initiation of Concentrated Leak Erosion | `(05-cylindrical-pipe.mdx#likelihood-of-initiation-of-concentrated-leak-erosion)` |
+| 5.6 | 05-cylindrical-pipe | Headwater Level for Initiation of Concentrated Leak Erosion | `(05-cylindrical-pipe.mdx#headwater-level-for-initiation-of-concentrated-leak-erosion)` |
+| 5.7 | 05-cylindrical-pipe | Critical Pipe Diameter for Initiation of Concentrated Leak Erosion | `(05-cylindrical-pipe.mdx#critical-pipe-diameter-for-initiation-of-concentrated-leak-erosion)` |
+| 7.2 | 07-vertical-rectangular-crack | Critical Shear Stress and Initial Crack Dimensions | `(07-vertical-rectangular-crack.mdx#critical-shear-stress-and-initial-crack-dimensions)` |
+| 7.3 | 07-vertical-rectangular-crack | Core Geometry | `(07-vertical-rectangular-crack.mdx#core-geometry)` |
+| 7.4 | 07-vertical-rectangular-crack | Hydraulic Shear Stress | `(07-vertical-rectangular-crack.mdx#hydraulic-shear-stress)` |
+| 7.7 | 07-vertical-rectangular-crack | Critical Crack Width for Initiation of Concentrated Leak Erosion | `(07-vertical-rectangular-crack.mdx#critical-crack-width-for-initiation-of-concentrated-leak-erosion)` |
+
+---
+
+## Informational Note: Unused Imports
+
+Many files in this document import components that are never used (e.g., `Link`, `addBaseUrl`, `VersionSelector`). This appears to be a repo-wide pattern across the toolbox technical manuals and is not flagged as individual issues. Consider a bulk cleanup if desired.
