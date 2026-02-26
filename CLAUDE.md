@@ -69,7 +69,7 @@ Content with <Figure figKey="fig1" src="path" alt="text" caption="..." />
 - **Figures**: `<Figure figKey="unique-key" src="path" alt="text" caption="..." />`
 - **Tables**: `<TableHorizontal tableKey="key" />` or `<TableVertical tableKey="key" />`
 - **Equations**: `<Equation equationKey="key">\LaTeX</Equation>`
-- **Citations**: `(Author, Year) <Citation citationKey="key" />` - the text citation is preserved alongside the component (renders as "(Author, Year) [1]"). Include `<Bibliography />` on the References page.
+- **Citations**: `(Author, Year) <Citation citationKey="key" />` - the text citation is preserved alongside the component (renders as "(Author, Year) [1]"). The Citation component must be placed OUTSIDE the author-year parentheses, not inside. Include `<Bibliography />` on the References page.
 - **References**: `<FigureReference figKey="key" />`, `<TableReference tableKey="key" />`
 
 ### File Naming

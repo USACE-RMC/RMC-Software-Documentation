@@ -69,13 +69,13 @@ QC OUTPUT:   qc/toolbox-technical-manuals/internal-erosion-suite/backward-erosio
 
 ## SCOPE BY LEVEL
 
-### Level 1 - Syntax & Grammar Review (No Source Document)
+### Universal Checks (All Levels)
 
-Review MDX files for:
+These checks apply to **every** review level (1, 2, and 3):
 
 1. **MDX/JSX Syntax**
    - Valid JSX syntax (properly closed tags, correct attribute formatting)
-   - Correct import statements
+   - Correct import statements (no unused imports, no missing imports)
    - Proper component usage (Figure, Table*, Equation, Citation, etc.)
    - Link and anchor correctness
 
@@ -110,18 +110,35 @@ Review MDX files for:
      ```
    - Incorrect formats: inline text with semicolons, bullet lists, plain paragraphs
 
-6. **Citation Component Usage**
+6. **External Link Targets**
+   - Links navigating within the documentation site (internal links) should open in the same browser tab
+   - Links navigating to an external website (outside `RMC-Software-Documentation`) must include `target="_blank" rel="noopener noreferrer"` to open in a new browser tab
+   - Check `<a href="https://...">` tags — if the URL points outside the documentation site, flag missing `target="_blank"`
+   - The `Button` component already handles this automatically via its `href` prop, so `<Button href="...">` does not need to be flagged
+   - Docusaurus `<Link>` components are for internal navigation and should NOT have `target="_blank"`
+
+7. **Citation Component Usage**
    - Locate the bibliography file (`bib.json`) for the document
    - Search MDX files for author-year text patterns (e.g., "Efron 1979", "(Smith, 2020)", "Smith et al. (2015)")
    - **IMPORTANT**: The `<Citation citationKey="..."/>` component must ACCOMPANY the author-year text, NOT replace it
+   - **IMPORTANT**: The `<Citation>` component must be placed OUTSIDE the author-year parentheses, not inside them
    - Correct format: `(Author, Year) <Citation citationKey="AuthorYear"/>` → renders as "(Author, Year) [1]"
-   - Incorrect format: `<Citation citationKey="AuthorYear"/>` alone (without author-year text)
+   - Incorrect formats:
+     - `<Citation citationKey="AuthorYear"/>` alone (without author-year text)
+     - `(Author, Year <Citation citationKey="AuthorYear"/>)` (Citation inside parentheses)
    - Citation keys must exist in the document's `bib.json` file
    - Check both body text and figure/table captions for citation references
    - Common patterns to search for:
      - `(Author YYYY)` or `(Author, YYYY)`
      - `Author (YYYY)` or `Author, YYYY`
      - `(Author et al. YYYY)` or `Author et al. (YYYY)`
+   - Common incorrect pattern to flag: `<Citation.../>)` — a Citation component followed by a closing parenthesis indicates it was placed inside the parenthetical reference
+
+---
+
+### Level 1 - Syntax & Grammar Review (No Source Document)
+
+Perform all Universal Checks above.
 
 **Level 1 Restrictions:**
 - Do NOT suggest rewording or rephrasing
@@ -132,7 +149,7 @@ Review MDX files for:
 
 ### Level 2 - Source Comparison Review (Source Document Available)
 
-Perform all Level 1 checks, PLUS:
+Perform all Universal Checks, PLUS compare MDX against the source PDF:
 
 1. **Text Accuracy**
    - Spelling/typos that differ from source
@@ -151,7 +168,7 @@ Perform all Level 1 checks, PLUS:
    - Every equation in source appears in MDX
    - LaTeX content matches source exactly
    - Equation numbering/keys are sequential
-   - "Where" blocks use blockquote format (see Level 1 formatting rules)
+   - "Where" blocks use blockquote format (see Universal Check 5)
    - All symbols, operators, sub/superscripts match source
    - Variable definitions in "where" blocks match source exactly
 
@@ -162,12 +179,12 @@ Perform all Level 1 checks, PLUS:
    - Merged cells replicated correctly
    - Header configuration matches source structure
 
-5. **Citations**
+5. **Citations (Source Comparison)**
+   - Every citation in the source PDF appears in the MDX with `<Citation>` component
    - Raw author-year text MUST be preserved where source has citations
-   - `<Citation citationKey="..."/>` component is ADDED alongside the text (not replacing it)
-   - Correct format: `(Author, Year) <Citation citationKey="AuthorYear"/>` → renders as "(Author, Year) [1]"
-   - Citation keys exist in bibliography file
-   - Citations appear at every occurrence (including captions)
+   - Citation placement matches source document locations
+   - No citations are missing compared to source
+   - All Universal Check 6 rules still apply (placement, format, keys)
 
 **Level 2 Restrictions:**
 - Do NOT suggest improvements beyond matching the source
@@ -177,7 +194,7 @@ Perform all Level 1 checks, PLUS:
 
 ### Level 3 - Technical Edit Review (Full Editorial Review)
 
-Perform all Level 1 and Level 2 checks, PLUS:
+Perform all Universal Checks and all Level 2 source comparison checks, PLUS:
 
 1. **Clarity & Readability**
    - Suggest clearer phrasing where appropriate
@@ -299,22 +316,17 @@ File,Issue,Location,Category,Severity,Problem,Recommended Fix,Human Verification
 
 ### Levels 2 & 3 Only
 
-5. **Citation content verification:** Beyond Level 1 citation component checks, verify:
-   - Every citation in the source PDF appears in the MDX with `<Citation>` component
-   - Citation placement matches source document locations
-   - No citations are missing compared to source
-
-6. **Deep-dive requirements:**
+5. **Deep-dive requirements:**
    - Tables: verify every cell, header, ordering, merged cells, units
    - Equations: verify every symbol, operator, sub/superscript, constant, unit
 
-7. **Full-review requirement:** Review every page and element. Do not skip sections or sample.
+6. **Full-review requirement:** Review every page and element. Do not skip sections or sample.
 
-8. **Precision requirement:** Verify every numeric value, unit, symbol against source.
+7. **Precision requirement:** Verify every numeric value, unit, symbol against source.
 
-9. **Completeness requirement:** Every figure/table in source must appear in MDX with correct placement.
+8. **Completeness requirement:** Every figure/table in source must appear in MDX with correct placement.
 
-10. **Equation "where" content:** In addition to format (rule 4), verify "where" block content matches source exactly.
+9. **Equation "where" content:** In addition to format (rule 4), verify "where" block content matches source exactly.
 
 ---
 
