@@ -1,0 +1,1252 @@
+---
+title: "Estimating Consequences for Levees and Floodwalls"
+---
+
+import NavContainer from "@site/src/components/NavContainer";
+import VersionSelector from "@site/src/components/VersionSelector";
+import Link from "@docusaurus/Link";
+import addBaseUrl from "@docusaurus/useBaseUrl";
+import CitationFootnote from "@site/src/components/CitationFootnote";
+import Figure from "@site/src/components/Figure";
+import FigureInline from "@site/src/components/FigureInline";
+
+<NavContainer 
+  link="/desktop-applications/lifesim/applications-guide"
+  linkTitle="Applications Guide"
+  document="desktop-applications/lifesim/applications-guide"
+></NavContainer>
+
+# Estimating Consequences for Levees and Floodwalls
+
+## Purpose
+
+This example demonstrates the process for estimating consequences for levees or floodwalls in LifeSim. The general process is similar to , but there
+are modeling nuances specific to levees or floodwalls. This chapter focuses on the Cache Creek Levee located in Yolo County, CA. This levee system was
+ originally modeled in 2021 by the U.S. Army Corps of Engineers’ (USACE) Modeling, Mapping and Consequences (MMC) Production Center. This chapter
+includes step-by-step instructions for importing the required data into LifeSim for a levee or floodwall breach model, how to choose appropriate
+warning and evacuation data for a study area, how to simulate evacuation, and how to interpret model results.
+
+## Input Data
+
+The subsequent sections discuss the input data required to calculate direct damages and life loss for a levee or floodwall in LifeSim. The input data
+sections include hydraulic data, emergency planning zones (EPZ), structure inventories, road networks, destinations, creating alternatives, and
+simulating alternatives.
+
+## Hydraulic Data
+
+The Cache Creek Levee utilized output from the Hydrologic Engineering Center’s River Analysis System (HEC-RAS). When using HEC-RAS data in LifeSim,
+the hydraulic data should be in the form of Hierarchical Data Format (HDF) files. HDF files are essentially a file package of depths, velocities, and
+hydraulic timing. Using HDF files allows you to simulate evacuation in LifeSim easily and with greater detail. For most levees/floodwalls, it is
+recommended to simulate evacuation to accurately capture potential life loss in structures <em>and</em> on roads. The HEC-RAS plan HDF file and the
+HEC-RAS terrain HDF file are needed for each hydraulic scenario.
+
+To import the hydraulic data from HEC-RAS, right click on <strong>Hydraulic Data </strong>in the study pane, and select <strong>Import from
+HEC-RAS</strong>.
+
+<Figure
+  figKey="figure-2"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure2.png"
+  alt="Importing hydraulic data from HEC-RAS"
+  caption="Importing hydraulic data from HEC-RAS"
+/>
+
+From the Import from HEC-RAS window, map to the project’s HEC-RAS Plan(s) Directory by clicking on the button with the three dots. The file directory
+selected should contain plan HDF files from HEC-RAS (e.g., p01.hdf). Then, map to the project’s HEC-RAS Terrain File (e.g., terrain.hdf) by clicking
+on the button with three dots. Note, you will also need all terrain Tagged Image Format (TIF) files. Then, you will select the specific HEC-RAS plan
+you want to import by using the dropdown next to HEC-RAS Plan. Once selected, the Name of the hydraulic scenario automatically populates, but the user
+ can alter the Name. Once you have the hydraulic data selected in the Import from HEC-RAS window, you can either select <strong>Import from
+RAS</strong> or <strong>Import from Map</strong>.
+
+<Figure
+  figKey="figure-3"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure3.png"
+  alt="Import from HEC-RAS window"
+  caption="Import from HEC-RAS window"
+/>
+
+### Import HEC-RAS Data – Import from RAS
+
+If you select <strong>Import from RAS</strong>, select the cross section where the hazard (e.g., overtopping or breach) occurs within the study area.
+The hydraulic engineer should supply you with the project’s breach locations, which correspond to a cross section. After selecting the correct cross
+section, click <strong>OK</strong>.
+
+<Figure
+  figKey="figure-4"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure4.png"
+  alt="Import from RAS – RAS Results Selector window"
+  caption="Import from RAS – RAS Results Selector window"
+/>
+
+You automatically return to the Import from HEC-RAS window. A representative hydrograph is now shown in the window along with hydraulic timing
+information and corresponding depths at each timestep. Within this window, enter the Hazard Occurrence date and time. The Hazard Occurrence date and
+time should match the time that breach or overtopping (if applicable) begins within the study area. This information can be found in the HEC-RAS model
+ or provided to you by the hydraulic engineer. Press <strong>OK</strong>; the hydraulic scenario is processed and imported into LifeSim.
+
+<Figure
+  figKey="figure-5"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure5.png"
+  alt="Import from HEC-RAS window after selecting a cross section from the RAS Results Selector"
+  caption="Import from HEC-RAS window after selecting a cross section from the RAS Results Selector"
+/>
+
+### Import HEC-RAS Data – Import from Map
+
+Alternatively, if you select <strong>Import from Map</strong>, the RAS Map Data Selector window opens.
+
+<Figure
+  figKey="figure-6"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure6.png"
+  alt="RAS Map Data Selector window"
+  caption="RAS Map Data Selector window"
+/>
+
+To view a hydrograph along with its hydraulic timing and depths, use the <strong>Select Hydrograph Tool</strong> in the toolbar (shown below).
+
+<Figure
+  figKey="figure-7"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure7.png"
+  alt="Select Hydrograph Tool in the RAS Map Data Selector"
+  caption="Select Hydrograph Tool in the RAS Map Data Selector"
+/>
+
+The RAS Map Data Selector map window automatically displays the 2D areas used in the RAS modeling, the cross sections, the hydraulic animation, and a
+base map. The user can change the base map and add data to the map window (e.g., breach locations shapefile, leveed area shapefile, structure
+inventory, etc.) by clicking on the <strong>Add Data</strong> button (see below).
+
+<Figure
+  figKey="figure-8"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure8.png"
+  alt="Add Data feature in the RAS Map Data Selector"
+  caption="Add Data feature in the RAS Map Data Selector"
+/>
+
+For the Cache Creek Levee, adding the breach location shapefile (“LCL” in the layers shown in the figure below) and the leveed area shapefile
+(“POLYGON” in the layers shown in the figure below) to the map window was useful in finding the where the hazard first occurs near the breach
+location.
+
+<Figure
+  figKey="figure-9"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure9.png"
+  alt="Progress Window in the RAS Map Data Selector after clicking on an area with the Select Hydrograph Tool"
+  caption="Progress Window in the RAS Map Data Selector after clicking on an area with the Select Hydrograph Tool"
+/>
+
+Once you find a representative hydrograph for the hydraulic scenario, click <strong>OK</strong>. The Import from HEC-RAS window is now shown. The new
+window displays hydraulic timing information as well as the same representative hydrograph. Again, the Hazard Occurrence date and time should match
+the time that breach or overtopping (if applicable) begins within the study area. Press <strong>OK</strong>; the hydraulic scenario will be processed
+and imported into LifeSim.
+
+<Figure
+  figKey="figure-10"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure10.png"
+  alt="Import from HEC-RAS window after selecting a representative hydrograph from RAS Map Data Selector"
+  caption="Import from HEC-RAS window after selecting a representative hydrograph from RAS Map Data Selector"
+/>
+
+Repeat this process for each of the study’s hydraulic scenarios.
+
+## Emergency Planning Zones
+
+As discussed in the , EPZs are polygons that allow LifeSim to have different warning and mobilization parameters for different geographic areas and/or
+ for areas that experience different flooding characteristics. For most levees and floodwalls, the shapefile used for the EPZ should represent the
+estimated leveed area. Otherwise, it is likely that both economic damages and life loss estimates would be inflated due to including consequences that
+ are outside of the leveed area. Presumably you are estimating the risk of a levee or floodwall; therefore, you need to understand where the
+incremental risk (i.e., “levee risk” or the risk associated with the levee) is, which is within the leveed area.
+
+For most levees and floodwalls, the shapefile used for the EPZ should represent the estimated leveed area. The National Levee Database (NLD) is a
+resource that includes most floodwalls and levees within the U.S. (). The NLD shows the leveed area for each project and allows you to download the
+leveed area as a shapefile, which should be used as the EPZ for the entire study.
+
+If the project is not included in the NLD or you are unable to access the NLD, it is recommended to obtain the HEC-RAS model’s 2D mesh area and use
+this shapefile as the EPZ. It’s also recommended to discuss what should be considered the leveed area with your hydraulic engineer and any other team
+members on the study.
+
+### EPZ Warning and Protective Action Parameters
+
+Once you have a representative shapefile for the EPZ, the next step is to assign the Warning and Protective Action Data, including the Warning
+Issuance Delay, Warning Diffusion (First Alert Curves), and Protective Action Initiation (PAI) parameters.
+
+There are a few types of resources to consider when gathering information about the area’s warning and evacuation procedures: (1) any expert opinion
+consequence elicitation  conducted in the city or county in question within 5 years of the current analysis, (2) the USACE Levee Screening Tool (LST),
+ and (3) local, county, and/or state Emergency Management Agency (EMA) websites and social media. Reaching out to communities directly, or the
+responsible USACE districts, and asking questions to gauge the need for a more formal consequence elicitation is perfectly acceptable if the data
+available is in question.
+
+If these resources are not available for your project, you should select LifeSim’s preset Unknown parameters for Warning Issuance Delay, Hazard
+Communication Delay, and Protective Action Initiation curves within the EPZ editor.
+
+The subsequent sections discuss the three resources that should be considered when developing your warning and evacuation parameters.
+
+#### Using Existing Consequence Elicitation Data to Inform LifeSim Parameters
+
+Over recent years, many consequence elicitations have been conducted within the U.S. to support risk assessments. The consequence elicitations are
+generally conducted for various high-risk cities and/or counties. When starting a new LifeSim model or risk assessment, check if an elicitation was
+already conducted within your study area. The current consequence elicitation directory is stored on a  and is for internal use only. Reaching out to
+the responsible USACE district is a perfectly acceptable way to assess whether or not an elicitation has been or needs to be conducted for your study.
+ If an elicitation was completed, you can likely use most of these same parameters for your LifeSim model. It is recommended to review the elicitation
+ results, including the meeting notes and elicited LifeSim parameters, to ensure the parameters are logical for your levee project. If the elicitation
+ was conducted for a dam, review the notes to ensure that the elicitation could be applied to a levee. There may be instances in which you do not feel
+ confident that the previous elicitation results directly apply to your project, which could cause you to gather other resources to make an informed
+decision.
+
+#### Using the Levee Screening Tool to Inform LifeSim Parameters
+
+The Levee Screening Tool (LST) () can contain helpful information regarding expected emergency action plans, community awareness, and warning systems
+to inform the EPZ’s warning and evacuation data. Within the LST, a levee may have several segments with individual screenings. It is recommended to
+look at the segment with the most screenings, or to identify the screening that was completed most recently; this screening will have the most
+up-to-date information. Generally, all levee units are rescreened as a system, but there can be special instances in which this is not the case.
+
+If you attempt to login to the LST and are unable, there are instructions on the login page to request/create an account.
+
+The figure below shows the screenings for the segments of Cache Creek Levee available in the LST.
+
+<Figure
+  figKey="figure-11"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure11.png"
+  alt="Levee Screening Tool - Cache Creek levee screenings"
+  caption="Levee Screening Tool - Cache Creek levee screenings"
+/>
+
+As shown in the figure below, Cache Creek Levee was last screened several years ago in 2015. The user may find that this information is not recent
+enough to use in the LifeSim study. Since the 6 levee segments were all screened at the same, I selected the segment that has the most screenings:
+Willow Slough Bypass – Unit 1, left bank.
+
+<Figure
+  figKey="figure-12"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure12.png"
+  alt="Willow Slough Bypass - Unit 1, Left Bank levee screening"
+  caption="Willow Slough Bypass - Unit 1, Left Bank levee screening"
+/>
+
+After selecting a levee unit screening, navigate to the Consequences section of the LST.
+
+<Figure
+  figKey="figure-13"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure13.png"
+  alt="Willow Slough Bypass's LST Consequences section"
+  caption="Willow Slough Bypass's LST Consequences section"
+/>
+
+This Consequences section of the LST shows key consequences information such as Evacuation Planning, Community Awareness, and Flood Warning
+Effectiveness. Each of these elements can be helpful in determining preset LifeSim curves if the explanations of the scores are detailed, recent, and
+logical. The details for Cache Creek Levee’s Evacuation Effectiveness Information are shown below.
+
+<Figure
+  figKey="figure-14"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure14.png"
+  alt="Evacuation Effectiveness Information for the Cache Creek levee system"
+  caption="Evacuation Effectiveness Information for the Cache Creek levee system"
+/>
+
+The Evacuation Planning factor may help determine the Warning Issuance Delay. As shown above, the latest Evacuation Planning information is from 2012
+and 2013. This may not be the most up-to-date information; it is recommended to confirm the information by looking into the Emergency Management
+Agency’s website (see next section for details). If the Evacuation Planning factor was given an Acceptable rating (with quality reasoning) you would
+select an optimistic Warning Issuance Delay curve, such as Well Prepared.
+
+The Community Awareness factor can be used to inform the Protective Action Initiation curve. If the rating is Acceptable and the explanation includes
+information about recent flood events/evacuations, public education campaigns, and flood preparedness as a topic in the media, then an optimistic PAI
+curve could be warranted, such as the Perception: High / Preparedness: High. However, if the rating is Unacceptable and none of the previously stated
+factors are included in the explanation, a more pessimistic PAI curve may be warranted, such as the Perception: Low / Preparedness: Low.
+
+The Flood Warning Effectiveness factor can be used to inform the Warning Diffusion/First Alert curves. If this factor received an Acceptable rating
+and the explanation details several different types of warning channels (e.g., radio, media, reverse 911, and texts), then an optimistic Warning
+Diffusion curve should be used, such as the Moderately Fast or the Fast curves.
+
+If the ratings and explanations could defend a variety of LifeSim parameters, it is recommended performing sensitivity runs using a variety of
+parameters to determine if life loss changes significantly and then seek additional information from the local sponsor and/or the project’s district
+office. The local personnel should be able to provide more information to determine final LifeSim parameters if necessary. Additionally, you can
+provide a variety of results in your study and clearly state the differences between the sets of alternatives and simulations. The variety of
+scenarios provide uncertainty to the life loss estimates, especially if there is some uncertainty regarding some of the warning and evacuation
+parameters. Ensure there is defensible reasoning for each uncertainty parameter.
+
+#### Using Emergency Management Agency Websites to Inform LifeSim Parameters
+
+Looking through the county’s Emergency Management Agency’s (EMA) website or social media provides insight on the area’s emergency procedures, recent
+updates to emergency action plans or hazard mitigation plans (if applicable), and what warning channels are available, which can inform the EPZ’s
+warning and evacuation data.
+
+The Cache Creek Levee is in Yolo County, CA. This section discusses the emergency procedures and resources from Yolo County Emergency Management and
+demonstrates how to use this type of information to select appropriate warning and evacuation parameters. As shown in the screenshot below, Yolo
+County’s website links to Current Emergencies and Incidents (listed in both English and Spanish), Flooding Resources, and the county’s relatively
+recent updates to emergency preparedness and resources.
+
+<Figure
+  figKey="figure-15"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure15.png"
+  alt="Yolo County, California, Office of Emergency Services website"
+  caption="Yolo County, California, Office of Emergency Services website"
+/>
+
+As you scroll down this webpage, there are additional links about how to prepare for an emergency, signing up for Yolo Alert, and contact information
+for the Office of Emergency Services. After clicking on the link to sign up for emergency alerts, you are sent to a webpage to sign up for Yolo
+County’s warning system, Everbridge, which is an advanced public warning system.
+
+<Figure
+  figKey="figure-16"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure16.png"
+  alt="Yolo County, California, Office of Emergency Services: Sign up for emergency alerts"
+  caption="Yolo County, California, Office of Emergency Services: Sign up for emergency alerts"
+/>
+
+While selecting uncertainty parameters for your EPZ, consider if the area experienced flooding recently, especially large flood events that resulted
+in evacuations. This information helps select warning and evacuation data in LifeSim (e.g., heightened community awareness, recent experience writing
+and sending out warnings, etc.). Regardless of the curves you select for your study, defensible reasoning for each warning and evacuation parameter is
+ needed.
+
+### Importing an Emergency Planning Zone
+
+This section discusses importing an EPZ into LifeSim and how to use the information discussed in the previous sections to determine the final
+parameters used in the study. For Cache Creek Levee, the readily available warning and evacuation data, the local EMA website, and recent flood
+warnings and evacuations are heavily relied upon to determine appropriate warning and evacuation parameters.
+
+Once you determine the EPZ shapefile and gather information on the area’s warning and evacuation data, import the EPZ shapefile into LifeSim. Right
+click on <strong>Emergency Planning Zones </strong>in the study tree and select<strong> Import EPZs from Shapefile</strong>.
+
+<Figure
+  figKey="figure-17"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure17.png"
+  alt="How to Import an emergency planning zone from the LifeSim study tree"
+  caption="How to Import an emergency planning zone from the LifeSim study tree"
+/>
+
+The Import Emergency Planning Zones window opens. First, map to the EPZ shapefile. You can do this by either utilizing the Emergency Planning Zone
+Polygon Shapefile dropdown, which displays the polygon shapefiles that are currently in your Map Layers, or you can map to the shapefile by clicking
+on the button with the three dots next to dropdown.
+
+<Figure
+  figKey="figure-18"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure18.png"
+  alt="Selecting an emergency planning zone Polygon Shapefile from the dropdown"
+  caption="Selecting an emergency planning zone Polygon Shapefile from the dropdown"
+/>
+
+Then, designate one of the shapefile’s fields as the Emergency Planning Zone Name Field. If you are importing a shapefile composed of multiple areas,
+or EPZs (e.g., two counties), the Emergency Planning Zone Name Field needs to have unique values. After selecting the Name Field, select the warning
+and evacuation data for the EPZ(s). For the Cache Creek Levee, the National Levee Database named the leveed area “Sugarfield – Woodland NE”.
+
+As stated previously, information from the Yolo County Office of Emergency Services website is heavily utilized to select warning and evacuation data.
+ To accurately select the Warning Issuance Delay curve to be used in the study, consider if there are message templates, if the county has recently
+(within the past 10 years) sent out an evacuation warning, especially within the leveed area, and if there are trainings or standard operating
+procedures for writing warning messages.
+
+When utilizing only the local emergency management website, some of this information may be difficult to find. It is recommended to do additional
+research about the leveed area and any flooding that may have occurred in this area. For example, after a brief internet search, there multiple
+articles reporting that the Cache Creek Levee was overtopped in 2019. Yolo County Sheriff’s Office released evacuation notices via Twitter (see
+screenshot below) and through Yolo County AlertSense (Everbridge). Yolo County emergency managers have recently sent out warning and evacuation
+messages directly related to a levee safety emergency occurring at Cache Creek Levee.
+
+<Figure
+  figKey="figure-19"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure19.png"
+  alt="Evacuation order from Yolo County Sheriff’s Office via Twitter during the 2019 Cache Creek Levee overtopping event"
+  caption="Evacuation order from Yolo County Sheriff’s Office via Twitter during the 2019 Cache Creek Levee overtopping event"
+/>
+
+Because we don’t fully understand how quickly the warning was sent out relative to when Yolo County was notified of the emergency, the Moderately
+Prepared warning issuance delay curve was selected to allow for more uncertainty in the delay time. The most likely sampled warning issuance delay
+time is 16 minutes (about 21% likelihood), but there is still probability that the delay is longer or shorter (e.g., there is a 12% likelihood that
+the delay is 50 minutes; there is a 15% likelihood the delay is 10 minutes.)
+
+<Figure
+  figKey="figure-20"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure20.png"
+  alt="Moderately Prepared Warning Issuance Delay curve"
+  caption="Moderately Prepared Warning Issuance Delay curve"
+/>
+
+Next, select First Alert Diffusion curves for the EPZ. This parameter is heavily influenced by the amount of communication channels the county would
+use during a levee safety emergency. As shown in the  section above, Yolo County has an opt-in alert system. The website also shows Yolo County uses
+Everbridge, which is a robust mass alert system. Everbridge distributes messages via phone calls, texts, and emails. Additionally, following the 2019
+Cache Creek Levee overtopping, it’s likely that several people signed up for alert messages through AlertSense. It is known that Yolo County utilizes
+social media, radio, and news to distribute a warning message.
+
+Given what we do know about the available communication channels, the warning message would likely be distributed to the relatively small leveed area
+quickly. However, since AlertSense (Everbridge) is an opt-in system, and it is unclear what percentage of the population protected by Cache Creek has
+signed up for this system, it is not recommended to assume the most optimistic First Alert curve. With our baseline understanding of Yolo County’s
+available warning channels, the Moderately Fast First Alert Diffusion curve was selected.
+
+<Figure
+  figKey="figure-21"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure21.png"
+  alt="Moderately Fast Daytime First Alert Diffusion curve"
+  caption="Moderately Fast Daytime First Alert Diffusion curve"
+/>
+
+Finally, select the PAI curve. Recent experiences (within the past decade) with flooding and/or evacuation are reason to assume more optimistic PAI
+curves; conversely, if the community doesn’t have a history of flooding, the selected PAI curves should be more pessimistic. The residents protected
+by Cache Creek Levee experienced flooding due to levee overtopping in 2019. As shown in the evacuation order posted by the Yolo County’s Sheriff
+Office on Twitter, approximately 100 people were asked to evacuate from the Cache Creek leveed area. However, because the effectiveness of the
+evacuation order is unknown, it is recommended to allow for more uncertainty in the PAI curve. The Perception: High / Preparedness: Low PAI curve was
+selected for Cache Creek Levee to both account for the area’s recent experience with flooding and witnessing the potential consequences (Perception:
+High) and uncertainty regarding the population’s readiness to mobilize (Preparedness: Low) since there is limited knowledge on preparedness.
+
+<Figure
+  figKey="figure-22"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure22.png"
+  alt="Perception: High / Preparedness: Low Protective Action Delay Curve"
+  caption="Perception: High / Preparedness: Low Protective Action Delay Curve"
+/>
+
+The user is encouraged to perform additional sensitivity tests on parameters that have significant knowledge uncertainty. In this example, there is
+limited information on the community’s preparedness during a flood emergency. Therefore, the user should run simulations with the Perception: High /
+Preparedness: Low PAI curve as well as the Perception: High / Preparedness: Moderate PAI curve to better understand the model’s sensitivity to the
+selected PAI curve. Then, the user may want to run the Perception: Unknown / Preparedness: Unknown curve as an additional sensitivity test. Regardless
+ of your final model parameters, ensure there is ample justification for the selected warning evacuation parameters and that they accurately represent
+ the impacted areas.
+
+Ensure the warning and evacuation parameter assumptions are clearly documented.
+
+After selecting your uncertainty parameters, enter a name for the EPZ, press <strong>OK</strong>, and the EPZ is imported into the LifeSim study.
+
+## Structure Inventory
+
+### Importing a Structure Inventory
+
+To import a structure inventory from an existing point shapefile, navigate to the Study pane in your model, right click on <strong>Structure
+Inventories</strong>, and select <strong>Import from Point Shapefile</strong>.
+
+<Figure
+  figKey="figure-23"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure23.png"
+  alt="Importing Structures from Shapefile from the Study Pane"
+  caption="Importing Structures from Shapefile from the Study Pane"
+/>
+
+Then, either select the Structure Inventory Shapefile from the dropdown, which is available if the shapefile is in the Map Layers pane of the LifeSim
+model, or map to the shapefile by clicking on the button with the three dots next to the dropdown. Notably, there are several required attributes in
+order for LifeSim to properly calculate economic damages and life loss. The list of required attributes from the Import from Point Shapefile window is
+ shown below.
+
+<Figure
+  figKey="figure-24"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure24.png"
+  alt="Import from Point Shapefile window"
+  caption="Import from Point Shapefile window"
+/>
+
+Once you match up your shapefile’s attributes (Import Attributes) with the corresponding LifeSim Required Attributes (an example of matched up
+attributes using the NSI is shown in the figure below), click <strong>Next </strong>at the bottom right. If the shapefile is missing certain
+attributes (e.g., Other Value in the figure below), you can check the “Missing” checkbox and enter a default value. This value will be the same for
+each structure in the inventory.
+
+<Figure
+  figKey="figure-25"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure25.png"
+  alt="Importing National Structure Inventory 2.0 into LifeSim – Defining structure attributes"
+  caption="Importing National Structure Inventory 2.0 into LifeSim – Defining structure attributes"
+/>
+
+Then, match the occupancy types in LifeSim with the occupancy types included in your structure inventory shapefile. If using the NSI, typically the
+occupancy types exactly match the occupancy type names in LifeSim, but the user should scan through the list to ensure everything is matched up
+correctly. If these are mismatched, the depth-damage functions, evacuation parameters, and submergence criteria will not be correct for that structure
+ type, which impacts the accuracy of your economic damages and life loss results.
+
+<Figure
+  figKey="figure-26"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure26.png"
+  alt="Importing National Structure Inventory 2.0 – assigning occupancy types"
+  caption="Importing National Structure Inventory 2.0 – assigning occupancy types"
+/>
+
+After the occupancy types are assigned and reviewed, click <strong>Next</strong>. The final step for importing the inventory is the Stability Criteria
+ Assignment. LifeSim has default stability criteria assignments for wood unanchored structures (e.g., mobile homes), wood anchored structures, masonry
+ structures, and steel structures. For NSI users, you should use the default stability criteria shown below.
+
+<Figure
+  figKey="figure-27"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure27.png"
+  alt="Importing National Structure Inventory 2.0 – assigning stability criteria"
+  caption="Importing National Structure Inventory 2.0 – assigning stability criteria"
+/>
+
+You can create additional criteria rules by clicking <strong>Create Rule</strong>. A new rule appears in the Rule List; enter a Rule Name and set the
+logic for the new stability criteria. For example, if you want to adjust the criteria for Wood 2-story structures to use the USACE – Wood 2-story
+stability criteria, select the following information:
+
+<Figure
+  figKey="figure-28"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure28.png"
+  alt="Example of creating a new stability criteria rule"
+  caption="Example of creating a new stability criteria rule"
+/>
+
+Once all structures have been assigned a stability criterion, click <strong>Finish</strong>. The structure inventory is then imported into LifeSim.
+
+### Editing the Structure Inventory
+
+After importing a structure inventory into LifeSim, edits to the attribute table and/or structure placement are likely needed. To edit the imported
+structure inventory, right click on the study’s structure inventory and click <strong>Show in Map Window</strong>.
+
+<Figure
+  figKey="figure-29"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure29.png"
+  alt="How to show a study’s structure inventory in the Map Layers pane"
+  caption="How to show a study’s structure inventory in the Map Layers pane"
+/>
+
+Navigate to the Map Layers pane. Right click on the structure inventory (NSI2_CacheCreek below) and select <strong>Edit</strong>. You can now edit the
+ placement of structure points in the map window and edit structure attributes in the attribute table.
+
+<Figure
+  figKey="figure-30"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure30.png"
+  alt="How to edit an existing structure inventory via the Map Layers pane"
+  caption="How to edit an existing structure inventory via the Map Layers pane"
+/>
+
+Once you are done editing the structure inventory, right click on the structure inventory in the Map Layers pane (NSI2_CacheCreek in the figure below)
+ and select <strong>Stop Editing</strong>.
+
+<Figure
+  figKey="figure-31"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure31.png"
+  alt="How to stop editing a layer in LifeSim"
+  caption="How to stop editing a layer in LifeSim"
+/>
+
+A pop-up window then asks if you want to save your changes to the study’s structure inventory file. Select <strong>Yes</strong> and the changes are
+reflected in the structure inventory both in the Study pane and Map Layers pane.
+
+<Figure
+  figKey="figure-32"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure32.png"
+  alt="Save Map Edits dialog box"
+  caption="Save Map Edits dialog box"
+/>
+
+## Simulating Evacuation
+
+For most levee/floodwall projects, evacuation is simulated in LifeSim. In addition to the hydraulic data, EPZs, and structure inventory, you need to import
+ (1) a road network and (2) destination points to simulate evacuation in LifeSim. The recommended workflow is to begin with importing a road network
+and then create destination points.
+
+### Road Network
+
+There are two ways to import a road network: (1) download and import a road network from OpenStreetMap (OSM) within LifeSim and (2) import a polyline
+shapefile. Unless you have detailed data from a previous study or from local stakeholders, you will download and import a road network from
+OpenStreetMap.
+
+#### Downloading a Road Network in LifeSim
+
+To download and import a road network, navigate to the Study Pane, right click on <strong>Road Networks</strong>, and select <strong>Import Road
+Network From OpenStreetMap</strong>.
+
+<Figure
+  figKey="figure-33"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure33.png"
+  alt="Import a Road Network from Study pane"
+  caption="Import a Road Network from Study pane"
+/>
+
+The Import Road Network From OpenStreetMap window opens. The primary data needed to import a road network is a bounding polygon shapefile. The
+bounding polygon determines what roads are downloaded from OpenStreetMap. The easiest bounding polygon to use for import is the shapefile used for the
+ EPZ; additionally, the bounding polygon needs to be in the same projection as the LifeSim study Once you select the polygon, type in a bounding
+polygon buffer (the value represents miles).
+
+As shown below, the Cache Creek EPZ shapefile is being used for import. The Bounding Polygon Buffer is set to 1 mile. The additional mile of road
+network allows for more realistic traffic congestion in the simulation and increases the accuracy of potential evacuation routes. There should be some
+ amount of buffer included on the bounding polygon for import, unless the selected shapefile is already buffered or larger than the leveed area.
+Selecting an appropriate buffer size depends on the size of the study area, inundation extents, the density of the population, and known evacuation
+routes. Do not make the buffer too large as this imports many additional road segments that (1) may not improve the evacuation accuracy and (2) can
+significantly increase simulation run times as depths and velocities on each road segment are calculated (i.e., more road segments lead to longer
+simulation times).
+
+<Figure
+  figKey="figure-34"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure34.png"
+  alt="Import Road Network from OpenStreetMap – Selecting Census Feature Class Codes (CFCC)"
+  caption="Import Road Network from OpenStreetMap – Selecting Census Feature Class Codes (CFCC)"
+/>
+
+As shown above, there are several types of road segments included in OpenStreetMap road networks. LifeSim has certain road types automatically
+selected and deselected for import. However, depending on the study area, you may need to include additional road segment types. For example, if the
+study area is primarily rural or farmland, you would want to select tertiary (“The next most important roads in a country’s system”), residential
+(“Roads which serve as an access to housing without function connecting settlements. Often lined with housing”), and track (“Roads for mostly
+agricultural or forestry uses”) for import. For larger or primarily urban study areas, it is recommended to import only the default, or baseline road
+types to reduce simulation run times. Once you have selected or deselected the road segment types that should be included in your road network, select
+ <strong>OK</strong>, and the road network downloads and imports into the study.
+
+#### Import Road Network from Shapefile
+
+The other method of importing a road network is to use an existing polyline shapefile. Navigate to the study pane, right click on <strong>Road
+Networks</strong>, and select <strong>Import Road Network from Shapefile</strong>.
+
+<Figure
+  figKey="figure-35"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure35.png"
+  alt="Import a Road Network from Study pane"
+  caption="Import a Road Network from Study pane"
+/>
+
+The Import Road Network window opens. Map to the Road Network Shapefile by either using the dropdown (only polyline shapefiles that are in the map
+window are shown) or by clicking the button with the three dots next to the dropdown. Then, match the CFCC Name Field to the corresponding attribute from
+ the polyline shapefile, which should be an already existing attribute if you are importing a road network from a previous study. Then, match the
+One-Way Field (with an identifier) and the Vertical Offset attribute. These fields are optional but increase the accuracy of the road network. Once
+you match up the field(s) with your shapefile’s attribute(s), select <strong>OK</strong> and the road network imports.
+
+<Figure
+  figKey="figure-36"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure36.png"
+  alt="Import Road Network from Existing Shapefile window"
+  caption="Import Road Network from Existing Shapefile window"
+/>
+
+#### Editing a Road Network
+
+After importing a road network into LifeSim, edits to the polygon and/or the road network’s attributes are likely needed. OSM provides a base for an
+accurate road network. However, there are aspects to the data that may need to be edited and confirmed. One of the key components of a road network is
+ the “Vertical Offset” field, which is found in the road network attribute table. This field accounts for if a road segment should have some amount of
+ vertical offset relative to the terrain elevation, such as a bridge or highway overpass. The default vertical offset for all road segments in OSM is
+0. Vertical offsets should be confirmed and edited throughout the study area. Focus on areas you can visibly see road segments over waterways (i.e.,
+bridges) and areas where highways are most concentrated (there may be overpasses). To view the attribute table and the Vertical Offset field, right
+click on the imported road network from the Study pane and select <strong>Show in Map Window</strong>. Navigate to the Map Layers pane, right click on
+ the road network, and select <strong>Open Attribute Table</strong>.
+
+<Figure
+  figKey="figure-37"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure37.png"
+  alt="Showing a road network in the map window"
+  caption="Showing a road network in the map window"
+/>
+
+<Figure
+  figKey="figure-38"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure38.png"
+  alt="Opening a road network’s attribute table"
+  caption="Opening a road network’s attribute table"
+/>
+
+For Cache Creek Levee, there are several highway overpasses in the study’s road network. Many of these overpasses lead to destination points and need
+to have accurate vertical offsets. The highlighted road segments shown below are parts of highways located over a different highway. A vertical offset
+ of 40 feet was given to both segments. Without accounting for the 40 feet of vertical offset within the attribute table, LifeSim may wrongly show
+this overpass as inundated.  This could negatively and incorrectly impact evacuation to the south, potentially affecting estimated direct life loss.
+Use best available data to determine accurate vertical offsets (e.g., Google Street View).
+
+<Figure
+  figKey="figure-39"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure39.png"
+  alt="Cache Creek Levee road network – highway overpasses on Route 113"
+  caption="Cache Creek Levee road network – highway overpasses on Route 113"
+/>
+
+<Figure
+  figKey="figure-40"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure40.png"
+  alt="Updating vertical offsets in the Cache Creek Levee road network"
+  caption="Updating vertical offsets in the Cache Creek Levee road network"
+/>
+
+It is recommended to save the road network edits as you progress. For example, save the road network and the LifeSim study after making a few road
+network edits, then make additional edits to the road network and save again. Several edits to one shapefile can overload LifeSim’s memory and may
+crash the program prior to saving your edits.
+
+### Destination Points
+
+The other key element for simulating evacuation is destination points, which represent where the evacuating population should/will go to reach safety.
+ To import destinations, a point shapefile is needed. You can create the required point shapefile in LifeSim or in another geospatial software (e.g.,
+ArcGIS Pro or QGIS).
+
+#### Creating a Point Shapefile in LifeSim
+
+Locate the toolbar at the top of the map window. Click on the down arrow next to the folder with a plus sign (
+{"\n"}<FigureInline src="figures/desktop-applications/lifesim/applications-guide/v1.0/inline-images/inline-f3c0d94c.png" />) and select <strong>Create
+ New</strong>.
+
+<Figure
+  figKey="figure-41"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure41.png"
+  alt="Create new vector features file in LifeSim"
+  caption="Create new vector features file in LifeSim"
+/>
+
+The Create New Vector Features File window opens. Click on the button with three dots to select the file output location.
+
+<Figure
+  figKey="figure-42"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure42.png"
+  alt="Create New Vector Features File window"
+  caption="Create New Vector Features File window"
+/>
+
+A new window opens that allows you to map to your desired file location. Name the shapefile and click<strong> Save</strong>.
+
+<Figure
+  figKey="figure-43"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure43.png"
+  alt="Saving new vector features file"
+  caption="Saving new vector features file"
+/>
+
+Select the appropriate Feature Type from the dropdown (Point for a Destinations file) and either use the map projection (recommended) or map to
+another project file. Press <strong>OK</strong> and your new point shapefile is added to the map window.
+
+<Figure
+  figKey="figure-44"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure44.png"
+  alt="Example of new vector file"
+  caption="Example of new vector file"
+/>
+
+To add features within the point shapefile, navigate to the map pane, right click on the point shapefile you created, and select
+<strong>Edit</strong>. Navigate to the toolbar at the top of the map window and click the <strong>Add New Features</strong> button. This now allows
+you to create new points, which represent evacuation destinations.
+
+<Figure
+  figKey="figure-45"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure45.png"
+  alt="Newly created destinations point shapefile in the Map Layers pane"
+  caption="Newly created destinations point shapefile in the Map Layers pane"
+/>
+
+It is best to place destination points directly on road segments, so it is recommended to also have your road network in the map window. If the point
+is not placed directly on a road segment, the closest road segment is assumed to be the destination point. When creating destination points, most of
+the points should be on major highways and roadways. The destination points should generally not be shelters or large buildings because there is no
+way to set a limit on how many people can evacuate to each destination point. This would lead to inaccuracies in your evacuation simulation.
+
+In general, attempt to place each of the destination points an equal distance away from the study area. If one destination is significantly closer to
+the study area, LifeSim will direct most of the population  to this destination point since it is the closest distance and most likely the quickest
+evacuation route. The group evacuating selects which destination point to evacuate based on the shortest travel time (i.e., accounting for traffic
+congestion), not the shortest travel distance. Depending on the study area and available information, you may want to place some destination points
+closer or farther away from the study area (e.g., If you want more people to evacuate east rather than north, place the destination points to the east
+ closer to the study area than the northern destination points).
+
+For Cache Creek, the study area is most densely populated in the western portion of the leveed area. The flooding source is along the eastern portion
+of the leveed area, so the destination points located to the west are the preferred destination routes, therefore the northern and western destination
+ points are closer to the population center compared to the destination points to the east of the leveed area.
+
+<Figure
+  figKey="figure-46"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure46.png"
+  alt="Destination point shapefile for Cache Creek Levee"
+  caption="Destination point shapefile for Cache Creek Levee"
+/>
+
+Once you have placed all your initial destination points in the map window, edit the attribute table to give each feature unique attributes. As you
+place destinations, new rows are automatically created in the point shapefile’s attribute table. The figure below shows that as two new points are
+placed in the map window, two new rows are created. The attribute shown in the attribute table (“Id”) automatically populates as a blank attribute;
+each point needs a unique “Id” value.
+
+<Figure
+  figKey="figure-47"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure47.png"
+  alt="Destinations_CacheCreek Shapefile Attribute Table"
+  caption="Destinations_CacheCreek Shapefile Attribute Table"
+/>
+
+To import a destinations file, at least one of the fields in the attribute table needs to have unique naming (Destinations Naming Identifier). The Id
+field could be used, but it’s recommended to create a new field in the shapefile’s attribute table. To create a new field, click <strong>Open Field
+Calculator</strong>.
+
+<Figure
+  figKey="figure-48"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure48.png"
+  alt="Open Field Calculator tool within shapefile attribute table"
+  caption="Open Field Calculator tool within shapefile attribute table"
+/>
+
+The Field Calculator window opens. Select <strong>Create New Column</strong> and type a field title (e.g., Name). Within the Expression box, type “=”
+with some text, which automatically sets the field type to be text rather than an integer (e.g., type “=RoadName”). Then press
+<strong>Execute</strong>.
+
+<Figure
+  figKey="figure-49"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure49.png"
+  alt="Field Calculator window – Creating a new field"
+  caption="Field Calculator window – Creating a new field"
+/>
+
+The attribute table should now include a new field with placeholder text. You are now able to edit each attribute’s name.
+
+<Figure
+  figKey="figure-50"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure50.png"
+  alt="Attributes Table following field calculator edits"
+  caption="Attributes Table following field calculator edits"
+/>
+
+For clarity and ease of use, each destination point should be named based on the road it’s placed on.
+
+<Figure
+  figKey="figure-51"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure51.png"
+  alt="Attributes Table following entering unique names"
+  caption="Attributes Table following entering unique names"
+/>
+
+Press the <strong>Stop Editing Feature Session</strong> button (
+{"\n"}<FigureInline src="figures/desktop-applications/lifesim/applications-guide/v1.0/inline-images/inline-0397febc.png" />) and click
+<strong>Yes</strong> after the Save Map Edit dialog box pops up.
+
+#### Importing and Editing Destinations File(s)
+
+After creating a point shapefile that represents the study area’s destination points, you can import the shapefile into LifeSim as a destinations
+file. Navigate to the Study pane, right click on <strong>Destinations</strong>, click <strong>Import Destinations from Shapefile</strong>.
+
+<Figure
+  figKey="figure-52"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure52.png"
+  alt="Importing Destinations from Shapefile"
+  caption="Importing Destinations from Shapefile"
+/>
+
+The Import Destinations from Point Shapefile window opens. Enter a name for the destinations file. Then, select the point shapefile you want to import.
+ If the shapefile is in the Map Layers pane, it will be available via the dropdown. Otherwise, click on the three dots next to the dropdown to map to
+the destinations shapefile file location.
+
+<Figure
+  figKey="figure-53"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure53.png"
+  alt="Import Destinations from Point Shapefile window"
+  caption="Import Destinations from Point Shapefile window"
+/>
+
+Then, select the Destination Identifier Field. For the destinations to import into LifeSim, each destination must have a unique name (i.e., the field
+cannot contain blank attributes and the selected field cannot contain duplicate names). Press <strong>OK</strong> and the destinations import into the
+ study.
+
+<Figure
+  figKey="figure-54"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure54.png"
+  alt="Import Destinations from Point Shapefile - Destination Identifier Field dropdown"
+  caption="Import Destinations from Point Shapefile - Destination Identifier Field dropdown"
+/>
+
+Once the destinations file is imported, ensure you edit the study’s destination file, not the original shapefile created in the Map Layer pane. Like
+editing the study’s structure inventory, add the newly imported destination file to the map window, right click on the file (in the Map Layers pane),
+and select <strong>Edit</strong>. You can now add destinations, edit the destination placement, and edit the attribute table. After saving any edits,
+these changes are reflected in the study’s destinations file.
+
+## Creating Alternatives
+
+Once you have all the input data imported in the LifeSim study, you can begin creating alternatives. To create an alternative, navigate to the Study
+pane, right click on <strong>Alternatives</strong>, and click <strong>Create New Alternative</strong>.
+
+<Figure
+  figKey="figure-55"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure55.png"
+  alt="Create New Alternatives from Study pane"
+  caption="Create New Alternatives from Study pane"
+/>
+
+To create an alternative for a levee, include all input data required to calculate life loss and simulate evacuation. For most levee studies, this
+includes hydraulic data, a structure inventory, an EPZ, a road network, and destinations. Select the input data through the dropdown menus within the
+Create New Alternative window. In addition to the input data, other warning and evacuation parameters need to be entered for each alternative. Two
+other inputs required to create an alternative are the Imminent Hazard Identification Time and the Hazard Communication Delay. Input values (in hour
+units) for both parameters. If you have multiple EPZs, enter the information for these parameters for each EPZ.
+
+<Figure
+  figKey="figure-56"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure56.png"
+  alt="Create New Alternative window"
+  caption="Create New Alternative window"
+/>
+
+The example alternative below (LCL_TOL_Min; i.e., a minimal warning scenario for a hazard occurrence at the Levee Control Location during a Top of
+Levee hydraulic loading) shows the selected data inputs required to simulate traffic and calculate life loss for the LCL TOL hydraulic scenario as
+well as the entries for the relative hazard identification time and hazard communication delay. The relative hazard identification time should be
+reflective of the community’s ability to monitor the project, how early the event could be forecasted in advance, and the type of failure mode. For
+example, if the emergency managers would have little time to identify a rapidly developing breach, the relative hazard identification time would be
+close to the time the hazard occurs.  The example alternative (LCL_TOL_Min) is representative of a situation in which the breach occurs relatively
+quickly. You can create multiple alternatives for each hydraulic scenario with various warning times if there is uncertainty surrounding the relative
+hazard identification time. This provides a range of possible life loss outcomes.
+
+Additionally, determining the hazard communication delay depends on how quickly the hazard would be communicated from the project personnel to local
+emergency managers. A smaller delay (or no delay) would occur if the local emergency managers were onsite with other project personnel while the
+situation develops. A longer delay would occur if the local emergency managers were unaware of the hazard, there are power and electricity outages,
+and there are no redundant technologies available to maintain communication with project personnel. The project’s emergency action plan provides
+insight regarding the potential hazard communication delay. The hazard communication delay in the example alternative represents a situation in which
+the project personnel are able to contact the local emergency managers relatively quickly, but there is still a slight delay.
+
+<Figure
+  figKey="figure-57"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure57.png"
+  alt="LCL_TOL_Min Alternative for Cache Creek"
+  caption="LCL_TOL_Min Alternative for Cache Creek"
+/>
+
+## Creating Simulations
+
+Once you have created alternatives, you need to simulate the alternatives to compute life loss and economic damages results. To create a simulation,
+navigate to the Study Pane, scroll to the bottom, right click on <strong>Simulations</strong>, and select <strong>Create New Simulation</strong>.
+
+<Figure
+  figKey="figure-58"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure58.png"
+  alt="Creating a New Simulation"
+  caption="Creating a New Simulation"
+/>
+
+The Create New Simulation window will open. From this window, you can simulate at various hazard occurrence times of day to account for interpolating
+population estimates within structures. Additionally, you can specify the number of iterations, select summary polygons for result aggregation, and
+select which alternatives to run.
+
+Below is an example of a simulation for breach location 2 (BL2) alternatives, including a daytime (2pm) and a nighttime (2am) hazard occurrence, that
+simulates each hazard occurrence time with 1,000 iterations. LifeSim simulates the alternatives assuming the hazard occurrence time is at 2am and then
+ again assuming the hazard occurrence time is at 2pm. These times are generally selected because there is no interpolation of daytime and nighttime
+population at these times in the model. If other times are selected, LifeSim will interpolate between the daytime and nighttime population values
+included in the structure inventory.
+
+In the example, only one summary polygon is included, which is the EPZ shapefile. You can include multiple summary polygons if you want to see results
+ by county, city, census tract, arrival time, depth, etc. You can include any shapefile as a summary polygon, but the Summary Name Field must include
+a unique name for each attribute.
+
+<Figure
+  figKey="figure-59"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure59.png"
+  alt="Creating Breach Location 2 simulation for day (2 PM) and night (2 AM) hazard occurrence times"
+  caption="Creating Breach Location 2 simulation for day (2 PM) and night (2 AM) hazard occurrence times"
+/>
+
+Within the Create New Simulation window, there are an array of options that the user can customize for each simulation. Click on
+<strong>Options</strong> (located in the top left corner) and select <strong>Computation Engine Options</strong>.
+
+<Figure
+  figKey="figure-60"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure60.png"
+  alt="Locating Computation Engine Options in the Create New Simulation window"
+  caption="Locating Computation Engine Options in the Create New Simulation window"
+/>
+
+The Computation Engine Options window opens, and you can customize (1) the number of threads for the simulation (the higher the number of threads, the
+ faster the simulation runs), (2) whether the simulation generates structure summary results, (3) whether the simulation generates road summary
+results, and (4) whether you want to enforce vehicular spillback. More information about the appropriate times to uncheck these boxes is discussed in
+the LifeSim 2.0 User Manual (See the Simulation – Computation Engine Options section).
+
+<Figure
+  figKey="figure-61"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure61.png"
+  alt="Editing Computation Engine Options"
+  caption="Editing Computation Engine Options"
+/>
+
+Click <strong>Save</strong> in the Computation Engine Options window after you make changes. Press <strong>OK</strong> in the Create New Simulation
+window after selecting the hazard occurrence times, entering the number of iterations, selecting a summary polygon, and checking the alternatives to
+be included in the simulation. The simulation you created is now located under Simulations in the study pane. Right click on the new simulation’s name
+ and select <strong>Run Simulation</strong>.
+
+<Figure
+  figKey="figure-62"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure62.png"
+  alt="Running a simulation"
+  caption="Running a simulation"
+/>
+
+## Understanding and Interpreting Results
+
+After running simulations, you can view your results by result plots, result tables, and result maps. Each way to view results is uniquely beneficial
+in (1) understanding your life loss and economic damage estimates and (2) quality checking your results. It is unlikely that your first simulation
+will be your last simulation—edits to the structure inventory, EPZs, road network and/or destination points may be needed to obtain accurate and
+representative results.
+
+### Result Plots
+
+The first way to view results is by result plots. Right click on the already run simulation and select <strong>View Results Plots</strong>. The
+Simulation Results Plots window opens. The first tab of the window display is the Box and Whisker – Time of Day. The user can toggle which alternative
+ results are displayed in the whisker plot and what data is shown in the plot (Plot Summary Data By dropdown in the bottom right corner). You can also
+ view results across various summary polygons or summary zones.
+
+This tab is helpful in seeing if the results fall within the expected order of life loss magnitude. As an example (from the figure below), the BL2 TOL
+ breach scenario should result in more life loss than the BL2 75% breach due to the higher water surface elevation and because they use the same data
+inputs and warning time. If the BL2 75% breach resulted in more life loss than the BL2 TOL breach, the alternatives may include the wrong hydraulic
+scenarios, or the user would need to confer with the hydraulic engineer about the issue. Additionally, this tab helps the user understand if life loss
+ is likely to be higher at various times of day (e.g., daytime versus nighttime life loss).
+
+<Figure
+  figKey="figure-63"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure63.png"
+  alt="Simulation Results Plots: Box and Whisker – Time of Day"
+  caption="Simulation Results Plots: Box and Whisker – Time of Day"
+/>
+
+The next tab is the Box and Whisker – Alternatives. This tab is similar to the Box and Whisker – Time of Day plot in terms of the data displayed, but
+the data is displayed differently. The key difference between the two tabs is you can toggle which Time of Day results are displayed in the Box and
+Whisker – Alternatives tab. You can view just the 02:00 or 14:00 results. In the example below, only the 14:00 results are shown.
+
+<Figure
+  figKey="figure-64"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure64.png"
+  alt="Simulation Results Plots: Box and Whisker – Alternatives"
+  caption="Simulation Results Plots: Box and Whisker – Alternatives"
+/>
+
+Another key result to analyze and review is the Life Loss on Roads, which is shown in the figure below. Overall, there is little estimated life loss
+on roads within the BL2 results. If the life loss on roads makes up most of the total life loss, the user should review the road network and
+destinations to ensure the simulated evacuations are logical, that there is not high life loss on particular road segments, and that all the road
+segments are connected properly. For example, ensure most of the life loss on roads is not incorrectly occurring on a single bridge that should have a
+ vertical offset.,
+
+<Figure
+  figKey="figure-65"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure65.png"
+  alt="Simulation Results Plots: Box and Whisker – Time of Day Life Loss on Roads"
+  caption="Simulation Results Plots: Box and Whisker – Time of Day Life Loss on Roads"
+/>
+
+#### Generating and Viewing Detailed Output in Results Plots
+
+The best ways to identify whether there are issues with the evacuation data are to (1) animate the simulated evacuation and observe if there are
+traffic issues of any kind and (2) understand which destinations were utilized the most by evacuees and ensure the most used destinations make sense
+given the study area. To view both the evacuation animation and the cumulation destination arrivals, you’ll need to generate detailed output. To get
+this output, go to the Iterations tab from the Results Plot window, left click on the iteration that you want more detailed information for, such as
+animating evacuation, and click <strong>Generate Detailed Output</strong> in the bottom right corner.
+
+As you can see in the example below, I selected an iteration that has the highest life loss on roads to better understand potential evacuation issues.
+ If there are several iterations with high life loss on roads, it may be best to select an iteration that is representative of the average life loss
+on roads. Sometimes high life loss on roads in some iterations is solely due to a timing issue rather than a traffic issue; the highest life loss on
+roads results may occur when there is little warning and many people are on the road minutes prior of the floodwaters arriving.
+
+<Figure
+  figKey="figure-66"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure66.png"
+  alt="Simulation Results Plots: Iterations"
+  caption="Simulation Results Plots: Iterations"
+/>
+
+Within the Results Plots window, go to the Detailed Output Results to see additional information specific to the iteration you generated detailed
+output for. Within this tab, there are three sub-tabs (Time Evacuating Histogram, Cumulative Evacuation Outflow, and Cumulative Destination Arrivals).
+ Each iteration you create detailed output for is included as an option for viewing on the left side of the tab. The first sub-tab you can view is the
+ Time Evacuating Histogram, which shows you how long it takes for people to evacuate safely to a destination point. This histogram can be very
+informative, especially if you think traffic would be an issue in your study area. For example, if the study area is very populated and everyone
+evacuates within 5 minutes, this may indicate that your destination points should be placed farther away from the EPZ to allow more realistic traffic
+conditions to occur in the model.
+
+<Figure
+  figKey="figure-67"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure67.png"
+  alt="Simulation Results Plots: Detailed Output Results – Time Evacuating Histogram"
+  caption="Simulation Results Plots: Detailed Output Results – Time Evacuating Histogram"
+/>
+
+The second sub-tab is the Cumulative Evacuation Outflow, which shows the relationship between the number of evacuees and the duration of the
+evacuation and compares the number of mobilized individuals to the number of people who reach safety. This provides additional information on how long
+ it generally takes the Population at Risk (PAR) to initiate protective action and when the hazard begins to disrupt evacuation.
+
+<Figure
+  figKey="figure-68"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure68.png"
+  alt="Simulation Results Plots: Detailed Output Results – Cumulative Evacuation Outflow"
+  caption="Simulation Results Plots: Detailed Output Results – Cumulative Evacuation Outflow"
+/>
+
+The third and final sub-tab is the Cumulative Destination Arrivals. This shows how many vehicles traveled to each destination point. This plot can be
+very useful when conducting a quality control review of the evacuation results and life loss on roads. As you can see in the example plot below, the
+113-S destination point was overwhelmingly utilized compared to the other destination points. To understand if the destination arrivals are logical,
+you need to understand your study area. Depending on the project, the terrain of the area, the location of the hazard, and the availability of egress
+routes dictates if there are viable destination points in all directions. In many situations, only a couple of directions are likely to offer
+favorable destination points. For Cache Creek Levee, the inundation extents cut off egress routes to the north, east, and west. Therefore, most of the
+ vehicles were expected to evacuate to the south, which is exactly what is shown in the plot.
+
+<Figure
+  figKey="figure-69"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure69.png"
+  alt="Simulation Results Plots: Detailed Output Results – Cumulative Destinations Arrivals"
+  caption="Simulation Results Plots: Detailed Output Results – Cumulative Destinations Arrivals"
+/>
+
+#### Animating Evacuation
+
+The other key data available following generating detailed output is Evacuation Animation. To view the animation, right click on the already run
+simulation, select <strong>View Results Maps</strong>, and the Result Map Selector window opens. Scroll to the alternative that you generated detailed
+ output for, check the box that includes “Evacuation Animation” in the title, and select the corresponding hydraulic scenario (02:00 BL2 TOL scenario
+in this example). Then click <strong>Send Selected To Map Window</strong>.
+
+<Figure
+  figKey="figure-70"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure70.png"
+  alt="Results Map Selector: What to select to animate evacuation"
+  caption="Results Map Selector: What to select to animate evacuation"
+/>
+
+You can then view the evacuation for this specific iteration. You can play and pause the animation by utilizing the button in the middle. You can make
+ the animation speed up or slow down by using the Slower to Faster scroller bar; you can also manually speed up and slow down the animation by using
+the top scroller bar.  The animation shows when structures are warned (yellow structures by default), when structures are inundated (red structures),
+when vehicles evacuate (blue cars), and when vehicles are caught (red cars). This is a useful tool for understanding if your road network and
+destinations are set up appropriately. When animating evacuation, you can zoom into specific areas to see if there is significant traffic or
+significant life loss on roads and confirm if the life loss results are valid or if there are potential issues with the road network. Examples of
+potential issues are disconnected road segments, road segments that may be too long and are showing  vehicles as caught that are not actually
+inundated, and vertical offsets that have not been appropriately added.
+
+<Figure
+  figKey="figure-71"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure71.png"
+  alt="Animating evacuation"
+  caption="Animating evacuation"
+/>
+
+### Result Maps
+
+Another way to view if life loss on roads appears reasonable is to view various Roads Summary maps. These layers are accessible in the Result Maps
+Selector.
+
+<Figure
+  figKey="figure-72"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure72.png"
+  alt="Simulation Results Maps – Sending Roads Summary maps to the Map window"
+  caption="Simulation Results Maps – Sending Roads Summary maps to the Map window"
+/>
+
+Select the alternative results you want to add to the map window, adjust the value bins and corresponding symbols as needed (these can also be
+adjusted later in the Map Layer pane) and click <strong>Send Selected to Map Window</strong>. The Roads Summary polyline shapefile should now be in
+the Map Layers pane. You can see in the map window if there are roads with high average life loss. Additionally, it’s helpful to look through Roads
+Summary attribute table (right click on the shapefile; click <strong>Open Attribute Table</strong>).
+
+<Figure
+  figKey="figure-73"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure73.png"
+  alt="Opening the Roads Summary Attribute Table"
+  caption="Opening the Roads Summary Attribute Table"
+/>
+
+Within the Roads Summary Attribute table, scroll to the right and find the field titled Life_Loss_Mean. Double click on this field name to sort from
+the lowest life loss to the highest life loss; double click on the field name again to sort from the highest life loss to the lowest life loss (you
+can also right click on the field’s header and select ascending or descending). As shown in the example below, life loss occurs on only five road
+segments for Cache Creek Levee. If the mean life loss for one of these segments was high relative to the total mean life loss, this would indicate
+that there may be a road network connectivity issue or an unwanted traffic build-up. You would then look at the evacuation animation again, focusing
+on those high life loss road segments to identify the potential issue.
+
+<Figure
+  figKey="figure-74"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure74.png"
+  alt="Roads Summary Attribute Table – sorting mean life loss in descending order"
+  caption="Roads Summary Attribute Table – sorting mean life loss in descending order"
+/>
+
+In addition to performing a quality check on the life loss on roads and evacuation data inputs, you should always review the life loss in structures
+results. Common issues or errors that can be caught when looking through the results is (1) a high amount of population within structures that should
+have a relatively small population (e.g., a RES1 structure containing a total population of 25), (2) the structure stability was not linked to the
+correct structure types (e.g., a RES2 structure having an engineered structure stability assignment), (3) a field was not linked properly when importing
+ a structure inventory (e.g., absence of values assigned to vehicles, resulting in all values being  populated as $0), or (4) structure points are not
+ placed accurately.
+
+An efficient way of reviewing the life loss in structures results is to look through various results maps. To add these layers to the map window,
+right click on the already run simulation, and select <strong>View Results Maps</strong>. The Result Map Selector window opens. Select the structure
+summaries from the scenarios you want to add to the Map Layers pane and click <strong>Send Selected to Map Window</strong>. To conduct a full quality
+check on the structures, add structure summaries for all times of day. If you only analyze the daytime Structure Summary (14:00), you could miss any
+errors occurring with the nighttime population (02:00).
+
+<Figure
+  figKey="figure-75"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure75.png"
+  alt="Simulation Results Maps – Sending Structure Summary maps to the Map window"
+  caption="Simulation Results Maps – Sending Structure Summary maps to the Map window"
+/>
+
+Once the Structure Summary shapefile(s) have been added to the Map Layers pane, right click on the shapefile, and select <strong>Open Attribute
+Table</strong>.
+
+<Figure
+  figKey="figure-76"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure76.png"
+  alt="Opening the Structure Summary Attribute Table"
+  caption="Opening the Structure Summary Attribute Table"
+/>
+
+Similar to viewing the Road Summary results, scroll to the Life_Loss_Total_Mean field. Double click on the field name to sort from the lowest to the
+highest life loss; double click on the field name again to sort from the highest to the lowest life loss. Then, confirm that the life loss results
+align with the structure type and that the structure point placement for the structures with relatively high average life loss is accurate.
+
+<Figure
+  figKey="figure-77"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure77.png"
+  alt="Structure Summary Attribute Table – sorting mean life loss in descending order"
+  caption="Structure Summary Attribute Table – sorting mean life loss in descending order"
+/>
+
+Begin confirming the placement of structure points by selecting the first structure while the life loss is sorted from highest to lowest. Right click
+on the row number (3569 in the example below) and select <strong>Zoom to Selected</strong>.
+
+<Figure
+  figKey="figure-78"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure78.png"
+  alt="Zooming to the structure with highest mean life loss at 2 PM"
+  caption="Zooming to the structure with highest mean life loss at 2 PM"
+/>
+
+LifeSim then zooms to the selected structure, and you can confirm the point placement of the structure with the highest life loss. For Cache Creek
+Levee, the highest life loss occurs in a commercial building as shown in the figure below. The structure placement is in the middle of the building
+footprint, which confirms that the life loss estimate for this structure is valid in terms of  its location. This process should be repeated as often
+as necessary to confirm that the life loss estimates in structures are reasonable for the various hydraulic scenarios.
+
+<Figure
+  figKey="figure-79"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure79.png"
+  alt="Zoomed in to the highest mean life loss structure"
+  caption="Zoomed in to the highest mean life loss structure"
+/>
+
+### Result Tables
+
+The final way to view results is by table. This is most helpful to clearly see results for various alternatives at once and is the easiest way to export
+ results for report writing. To see the results table, right click on the already run simulation and select <strong>View Results Table</strong>. The
+Results Table window opens.
+
+<Figure
+  figKey="figure-80"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure80.png"
+  alt="Simulation Results Tables – Summary Averaged Results"
+  caption="Simulation Results Tables – Summary Averaged Results"
+/>
+
+There are four tabs that each show results in a different way. The first tab shows average results for each alternative and each time of day that was
+included in the simulation. This table is most useful when reporting out PAR estimates, the number of structures inundated, average structure depth,
+average mobilization rates, and average life loss.
+
+The Iteration Results table shows you the life loss and economic results for each specific iteration of each alternative and time of day. You can also
+ generate detailed output from this tab by right clicking on the row you want to obtain detailed output for and clicking <strong>Generate Detailed
+Output</strong>.
+
+<Figure
+  figKey="figure-81"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure81.png"
+  alt="Simulation Results Tables – Iteration Results – Generate Detailed Output"
+  caption="Simulation Results Tables – Iteration Results – Generate Detailed Output"
+/>
+
+The EPZ Results table shows iteration results as well but highlights the parameter sampling results (in hours) in addition to the total life loss
+results. As you scroll through this table, you can see the sampled relative warning issuance time, sampled hazard communication delay, sampled warning
+ issuance delay, sampled warning curve, and sampled mobilization curve for each iteration. This provides insight into which parameters drive life
+loss.
+
+<Figure
+  figKey="figure-82"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure82.png"
+  alt="Simulation Results Tables – EPZ Results"
+  caption="Simulation Results Tables – EPZ Results"
+/>
+
+Finally, the Detailed Output Results table shows detailed output  results by evacuation group for specific iterations. This table details if a group
+received warning, if they mobilized, if they mobilized safely, how quickly they mobilized, which life loss probability zone (low hazard or high
+hazard) was used for sampling, what kind of vehicle was used during evacuation, and the various stability thresholds. This provides significant detail
+ surrounding evacuation and the life loss probability zones, which allows the user to understand why life loss occurred (or why there is little life
+loss) for that specific iteration.
+
+<Figure
+  figKey="figure-83"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure83.png"
+  alt="Simulation Results Tables – Detailed Output Results"
+  caption="Simulation Results Tables – Detailed Output Results"
+/>
+
+You can export any of the four tabulated tables into various formats by clicking on the <strong>Export Table </strong>button (see below). After
+clicking on this button, name the file and select the file format. Then click <strong>Save</strong>.
+
+<Figure
+  figKey="figure-84"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure84.png"
+  alt="Export Table tool within the Results Table window"
+  caption="Export Table tool within the Results Table window"
+/>
+
+<Figure
+  figKey="figure-85"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure85.png"
+  alt="Simulation Summary Average Results table as an Excel file"
+  caption="Simulation Summary Average Results table as an Excel file"
+/>
+
+Following any edits made during the quality control check, you need to <strong>rerun all simulations</strong>. Once you confirm the new life loss and
+economic results, your levee/floodwall LifeSim model is complete.
+
+		(Page is intentionally left blank)
+
+<CitationFootnote />

@@ -42,6 +42,9 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
   const lifeSimValStudiesHref = useBaseUrl(
     `/docs/desktop-applications/lifesim/validation-studies/${latestVersions['desktop-applications/lifesim/validation-studies'] || 'v1.0'}/preface`,
   );
+  const lifeSimAppGuideHref = useBaseUrl(
+    `/docs/desktop-applications/lifesim/applications-guide/${latestVersions['desktop-applications/lifesim/applications-guide'] || 'v1.0'}/preface`,
+  );
 
   /* -------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
@@ -187,6 +190,11 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
               id: 'lifesim-validation-studies',
               text: 'LifeSim Validation Studies',
               href: lifeSimValStudiesHref,
+            },
+            {
+              id: 'lifesim-applications-guide',
+              text: 'LifeSim Applications Guide',
+              href: lifeSimAppGuideHref,
             },
           ],
         },

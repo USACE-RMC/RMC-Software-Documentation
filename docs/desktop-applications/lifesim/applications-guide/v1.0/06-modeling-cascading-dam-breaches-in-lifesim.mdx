@@ -1,0 +1,339 @@
+---
+title: "Modeling Cascading Dam Breaches in LifeSim"
+---
+
+import NavContainer from "@site/src/components/NavContainer";
+import VersionSelector from "@site/src/components/VersionSelector";
+import Link from "@docusaurus/Link";
+import addBaseUrl from "@docusaurus/useBaseUrl";
+import CitationFootnote from "@site/src/components/CitationFootnote";
+import TableVertical from "@site/src/components/TableVertical";
+import Figure from "@site/src/components/Figure";
+import TableReference from "@site/src/components/TableReference";
+import FigReference from "@site/src/components/FigureReference";
+
+<NavContainer 
+  link="/desktop-applications/lifesim/applications-guide"
+  linkTitle="Applications Guide"
+  document="desktop-applications/lifesim/applications-guide"
+></NavContainer>
+
+# Modeling Cascading Dam Breaches in LifeSim
+
+## Purpose
+
+This chapter demonstrates the process for estimating consequences for a scenario in which multiple dams breach within the same modeling extents. An
+example of this is a dam breaching due to extreme inflow from an upstream dam breach. This chapter focuses on a breach at Oahe Dam, located along the
+Missouri River in South Dakota, and the other dams located downstream that could breach following a breach at Oahe Dam.
+
+There are several dams downstream of Oahe Dam that are at risk of a cascading breach. The modeled cascading breaches (originally modeled by the
+Modeling, Mapping, and Consequences (MMC) Production Center of the U.S. Army Corps of Engineers’ (USACE) in 2022) include three other dams that could
+potentially breach: Big Bend Dam (85 miles downstream of Oahe Dam), Fort Randall Dam (192 miles downstream of Oahe Dam), and Gavins Point Dam (261
+miles downstream of Oahe Dam). Since this example assumes there are three dams that breach following the initial Oahe Dam breach, there are multiple
+ways to model this scenario in LifeSim.
+
+This chapter focuses on two options: (1) warning the entire downstream area relative to the Oahe Dam breach and (2) warning the in-pool area, areas
+downstream of Oahe Dam, and areas downstream of Big Bend Dam relative to the Oahe Dam breach, as well as warning areas downstream of Fort Randall Dam
+and Gavins Point Dam relative to the Fort Randall Dam breach.  Another modeling option that is not detailed in this chapter is warning areas
+downstream of specific dams relative to specific dam breaches (e.g., Warn the population between Oahe Dam and Big Bend Dam relative to the Oahe Dam
+breach, warn the population between Big Bend Dam and Fort Randall Dam relative to the Big Bend Dam breach, etc.).
+
+## Input Data and Pre-Processing
+
+The subsequent sections discuss the input data required to calculate damages and life loss for a cascading dam breach. Most of the input data remains
+similar to the non-cascading dam LifeSim modeling (see the  for more information). The subsequent sections discuss hydraulic data, emergency planning
+zones (EPZ), structure inventories, creating alternatives, and simulating alternatives.
+
+### Hydraulic Data
+
+Importing hydraulic data for a cascading dam breach follows the same process as importing hydraulic data for a standard dam breach. Although there are
+ multiple hazard occurrence times (i.e., multiple dam breaches), LifeSim currently only allows the user to select one hazard occurrence time. For
+cascading dam breaches, the most upstream dam is often the focus of the dam safety study. To model cascading breaches, it is easiest to select the
+hazard occurrence time based on the upstream dam breach, which is Oahe Dam in this example.
+
+Fort Randall Dam will have a separate breach time, but this will come into play when selecting warning times for the EPZs rather than the hazard
+occurrence time (if using Option 2 discussed in the Purpose section). Similarly, for all LifeSim models, the hazard occurrence time is the first step
+in the warning and evacuation timeline. The imminent hazard identification times in the alternatives are relative to the hazard occurrence time
+selected for each hydraulic scenario. This is discussed in more detail later in the Alternatives section.
+
+### Structure Inventory
+
+The structure inventory for a cascading dam breach is the same inventory used for standard hydraulic scenarios (i.e., the breach of only Oahe Dam).
+However, if the cascading breaches scenarios are tacked on later in the study/modeling process, the structure inventory may need to be expanded as
+these inundation boundaries are larger than those from the Oahe Dam breach alone. If you have the cascading breach inundation boundaries from the
+start of the study, it is recommended to use the highest loading breach scenario with cascading breach to select the structure inventory. Including a
+buffer on this inundation boundary is recommended to accommodate any changes to the hydraulic model.
+
+### Emergency Planning Zones
+
+EPZs are a key input that are likely to differ for a cascading dam breach scenario. There are two EPZ options for this type of event: (1) use the same
+ double warning EPZ as the standard hydraulic scenario (see the ) and (2) create a new double warning EPZ that includes a separate zone(s) for the
+area(s) downstream of a cascading dam breach(es).
+
+Option 1 is recommended if you believe the entire downstream area would be warned relative to the upstream dam breaching. Option 2 is recommended if
+you believe portions of the downstream area would only receive an evacuation order following the breach of a downstream dam (i.e., the population and
+emergency managers view the risk of the downstream dam breaching as low; they also believe risk is low following the upstream dam breach).
+
+For the Missouri River dams downstream of Oahe, it is possible that emergency managers believe Big Bend (85 miles downstream of Oahe Dam) is at higher
+ risk for breaching since it is within 100 miles of the dam. However, emergency managers in areas downstream of Fort Randall Dam may initially believe
+ the dam will not breach. They would then send out a warning much closer to when Fort Randall Dam breaches compared to when Oahe Dam breaches. The
+rest of this chapter focuses on modeling Option 2 and separating the EPZ at Fort Randall Dam.
+
+#### Modeling Option 2: Creating a New Double Warning EPZ
+
+To model the cascading breach following modeling Option 2, you need to first create a double warning EPZ that includes a separate zone for downstream
+of Fort Randall Dam. The base shapefile of any cascading breach EPZ is the non-cascading double warning EPZ; the non-breach flows remain the same
+between a cascading breach and non-cascading breach. The easiest way to do this is to duplicate the existing double warning EPZ / save the existing
+double warning polygon as a new shape. Then, begin an  edit session in ArcGIS on the duplicate double warning shapefile, cut the polygon at Fort
+Randall Dam, edit the attribute table to include an appropriate name (e.g., FtRandall_Downstream), and save edits.
+
+<Figure
+  figKey="figure-147"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure147.png"
+  alt="Splitting the existing MHP EPZ double warning shapefile at Ft. Randall Dam"
+  caption="Splitting the existing MHP EPZ double warning shapefile at Ft. Randall Dam"
+/>
+
+Then, import the new shapefile into LifeSim with an appropriate name; <FigReference figKey="figure-148" /> exemplifies different EPZ names, including
+ an EPZ specifically for modeling Option 2:  MHP_breach_casc_FtRandall_Warn.
+
+<Figure
+  figKey="figure-148"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure148.png"
+  alt="EPZ naming examples"
+  caption="EPZ naming examples"
+/>
+
+### Alternatives
+
+Creating and setting up alternatives in LifeSim varies significantly depending on which modeling method you are using. Both modeling options are
+detailed in the subsequent sections.
+
+#### Modeling Option 1: Warning Relative to Oahe Dam Breach
+
+For Option 1, the cascading dam breach alternative is almost identical to the standard hydraulic scenario. As shown in the figures below, the only
+difference in the alternatives is which Hydraulic Event is selected (non-cascading breach, labeled “NC”, versus cascading, labeled “C”, breach). Both
+use the Maximum High Pool (MHP) double warning EPZ, the same structure inventory, and the same Imminent Hazard ID Times.
+
+<Figure
+  figKey="figure-149"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure149.png"
+  alt="MHP NonCascading Breach Minimal Warning Alternative"
+  caption="MHP NonCascading Breach Minimal Warning Alternative"
+/>
+
+<Figure
+  figKey="figure-150"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure150.png"
+  alt="Modeling Option 1: MHP Cascading alternative for Option 1 Breach Minimal Warning alternative"
+  caption="Modeling Option 1: MHP Cascading alternative for Option 1 Breach Minimal Warning alternative"
+/>
+
+#### Modeling Option 2: Warning Areas Relative to Specific Dam Breaches
+
+For Option 2, first you need to use the new double warning polygon that was created for the cascading dam breaches. The only difference between the
+two EPZs will be that the polygon is cut at the cascading dam (i.e., Fort Randall Dam). The separate zones are necessary in order to include different
+ Imminent Hazard ID Times relative to 1) Oahe Dam breaching and 2) Fort Randall Dam breaching.
+
+For Option 2, the key difference is warning the areas downstream of the other dam breach (e.g., Fort Randall Dam) relative to its hazard occurrence
+time (i.e., overtopping or breach time). The hydraulic engineer can provide the downstream dam’s breach time and/or overtopping time. Recall, however,
+ that LifeSim can only have one hazard occurrence time per hydraulic scenario. A cascading dam breach has multiple hazard occurrence times; one for
+each dam that overtops/breaches in the scenario. To account for the hazard occurrence time of Fort Randall Dam breaching, the Imminent Hazard ID Time
+needs to be calculated to warn areas downstream of Fort Randall Dam relative to when it breaches. To obtain this information, calculate the time
+difference (in hours) between the two dams breaching (shown in green in the following table).
+
+:::danger
+This table contains cells that span multiple rows or columns. Manually update the React component to properly format the table.
+:::
+
+<TableVertical
+  tableKey="table-4"
+  headers={
+[
+    [
+      { value: "Hydraulic Timing Information", rowSpan: 1, colSpan: 6 },
+      null,
+      { value: "Hydraulic Timing Information", rowSpan: 1, colSpan: 4 },
+      null,
+      { value: "Hydraulic Timing Information", rowSpan: 1, colSpan: 2 },
+      null
+    ]
+  ]
+  }
+  columns={
+[
+    [
+      { value: "Event", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "Maximum High Pool", rowSpan: 1, colSpan: 1 },
+      { value: "Intermediate High Pool", rowSpan: 1, colSpan: 1 },
+      { value: "Top of Active Storage", rowSpan: 1, colSpan: 1 },
+      { value: "Security Scenario Pool", rowSpan: 1, colSpan: 1 },
+      { value: "Normal High Pool", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "Oahe Dam Breach Initiation", rowSpan: 1, colSpan: 2 },
+      { value: "Date", rowSpan: 1, colSpan: 1 },
+      { value: "21 FEB 2099", rowSpan: 1, colSpan: 1 },
+      { value: "20 FEB 2099", rowSpan: 1, colSpan: 1 },
+      { value: "21 FEB 2099", rowSpan: 1, colSpan: 1 },
+      { value: "20 FEB 2099", rowSpan: 1, colSpan: 1 },
+      { value: "04 FEB 2099", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      null,
+      { value: "Time", rowSpan: 1, colSpan: 1 },
+      { value: "8:00", rowSpan: 1, colSpan: 1 },
+      { value: "16:00", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "2:00", rowSpan: 1, colSpan: 1 },
+      { value: "0:00", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "Fort Randall Dam Breach Initiation", rowSpan: 1, colSpan: 2 },
+      { value: "Date", rowSpan: 1, colSpan: 1 },
+      { value: "22 FEB 2099", rowSpan: 1, colSpan: 1 },
+      { value: "21 FEB 2099", rowSpan: 1, colSpan: 1 },
+      { value: "22 FEB 2099", rowSpan: 1, colSpan: 1 },
+      { value: "21 FEB 2099", rowSpan: 1, colSpan: 1 },
+      { value: "04 FEB 2099", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      null,
+      { value: "Time", rowSpan: 1, colSpan: 1 },
+      { value: "0:00", rowSpan: 1, colSpan: 1 },
+      { value: "8:00", rowSpan: 1, colSpan: 1 },
+      { value: "12:30", rowSpan: 1, colSpan: 1 },
+      { value: "22:30", rowSpan: 1, colSpan: 1 },
+      { value: "22:00", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "Ft Randall Breach Time relative to Oahe Dam Breach Time (Hours)", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "16.00", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "20.50", rowSpan: 1, colSpan: 1 },
+      { value: "44.50", rowSpan: 1, colSpan: 1 },
+      { value: "22.00", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  alt="Hazard occurrence times for Oahe Dam and Fort Randall Dam"
+  caption="Hazard occurrence times for Oahe Dam and Fort Randall Dam"
+/>
+
+From here, you can determine the Imminent Hazard ID Times for the various warning scenarios. The following table shows the calculated Imminent Hazard
+ID Times for the Downstream of Fort Randall EPZ. The warning times shown below warn the population downstream of Fort Randall Dam between 2 hours
+prior to breach and the time of breach (minimal warning) and 6 hours prior to breach to 2 hours prior to breach (ample warning) -- relative to the
+time of Fort Randall Dam’s breach initiation.
+
+:::danger
+This table contains cells that span multiple rows or columns. Manually update the React component to properly format the table.
+:::
+
+<TableVertical
+  tableKey="table-5"
+  headers={
+[
+    [
+      { value: "Imminent Hazard ID Times for the Downstream of Fort Randall Dam EPZ", rowSpan: 1, colSpan: 5 },
+      null,
+      { value: "Imminent Hazard ID Times for the Downstream of Fort Randall Dam EPZ", rowSpan: 1, colSpan: 3 },
+      null,
+      { value: "Imminent Hazard ID Times for the Downstream of Fort Randall Dam EPZ", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  columns={
+[
+    [
+      { value: "Event", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "Maximum High Pool", rowSpan: 1, colSpan: 1 },
+      { value: "Intermediate High Pool", rowSpan: 1, colSpan: 1 },
+      { value: "Top of Active Storage", rowSpan: 1, colSpan: 1 },
+      { value: "Security Scenario Pool", rowSpan: 1, colSpan: 1 },
+      { value: "Normal High Pool", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "Minimal Warning Time", rowSpan: 1, colSpan: 2 },
+      { value: "Min", rowSpan: 1, colSpan: 1 },
+      { value: "+14", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "+18.5", rowSpan: 1, colSpan: 1 },
+      { value: "+42.5", rowSpan: 1, colSpan: 1 },
+      { value: "+20", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      null,
+      { value: "Max", rowSpan: 1, colSpan: 1 },
+      { value: "+16", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "+20.5", rowSpan: 1, colSpan: 1 },
+      { value: "+44.5", rowSpan: 1, colSpan: 1 },
+      { value: "+22", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "Ample Warning Time", rowSpan: 1, colSpan: 2 },
+      { value: "Min", rowSpan: 1, colSpan: 1 },
+      { value: "+10", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "+14.5", rowSpan: 1, colSpan: 1 },
+      { value: "+38.5", rowSpan: 1, colSpan: 1 },
+      { value: "+16", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      null,
+      { value: "Max", rowSpan: 1, colSpan: 1 },
+      { value: "+14", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "+18.5", rowSpan: 1, colSpan: 1 },
+      { value: "+42.5", rowSpan: 1, colSpan: 1 },
+      { value: "+20", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  alt="Imminent hazard ID times for the Downstream area of Fort Randall Dam EPZ"
+  caption="Imminent hazard ID times for the Downstream area of Fort Randall Dam EPZ"
+/>
+
+Implementing the warning times from <TableReference tableKey="table-3" /> into your alternatives is shown in <FigReference figKey="figure-151" />
+and <FigReference figKey="figure-152" />. The figures show the Maximum High Pool cascading breach. As shown in the figures, the “DS_Oahe_Fail” EPZ is
+ assigned the standard time of -2 to 0 hours. The “DS_FtRandall_Fail” EPZ is assigned the calculated time of +14 to +16 hours. Again, the +14 to +16
+hours is relative to the hazard occurrence, which is Oahe Dam’s breach initiation time.
+
+If you are unsure of which modeling method to use, implement both methods in the study to understand how the different EPZs impact life loss results.
+
+<Figure
+  figKey="figure-151"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure151.png"
+  alt="Modeling Option 2: MHP Cascading Breach Minimal Warning Alternative – Warning for areas between Oahe Dam and Ft Randall Dam"
+  caption="Modeling Option 2: MHP Cascading Breach Minimal Warning Alternative – Warning for areas between Oahe Dam and Ft Randall Dam"
+/>
+
+<Figure
+  figKey="figure-152"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0\figures\figure152.png"
+  alt="Modeling Option 2: MHP Cascading Breach Minimal Warning alternative – Warning for areas downstream of Ft Randall Dam relative to Ft Randall’s breach time"
+  caption="Modeling Option 2: MHP Cascading Breach Minimal Warning alternative – Warning for areas downstream of Ft Randall Dam relative to Ft Randall’s breach time"
+/>
+
+As previously mentioned, an additional modeling method is to warn the populations separately downstream of each dam (e.g., the EPZ would include a
+zone downstream of Oahe Dam, a zone downstream of Big Bend Dam, a zone downstream of Fort Randall Dam, and a zone downstream of Gavins Point dam—each
+with imminent hazard ID times calculated based on the respective dam’s breach initiation relative to the Oahe Dam’s breach initiation time.). The
+local emergency managers and dam operators may have a general understanding of how they would respond to a breach of an upstream dam, including
+if/when they would send out evacuation orders. This type of information can help inform which LifeSim modeling method is most appropriate for your
+study’s cascading dam breach scenarios.
+
+### Simulations
+
+For both modeling options, creating a simulation and running it follows the same standard practice. Reference the  for more detailed information on
+creating simulations.  The only additional reporting consideration is if you want to include unique summary polygons. For example, it may be
+beneficial to summarize results by dam breach area (e.g., one area between Oahe Dam and Fort Randall Dam and another area for everything downstream of
+ Fort Randall Dam, etc.) If you created new EPZs for the cascading dam breach, these shapefiles may be used as the summary polygon.
+
+
+
+(Page intentionally left blank)
+
+<CitationFootnote />
