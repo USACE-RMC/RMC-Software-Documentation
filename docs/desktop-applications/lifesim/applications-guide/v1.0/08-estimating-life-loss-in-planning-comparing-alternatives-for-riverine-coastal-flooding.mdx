@@ -1,0 +1,359 @@
+---
+title: "Estimating Life Loss in Planning: Comparing Alternatives for Riverine & Coastal Flooding"
+---
+
+import NavContainer from "@site/src/components/NavContainer";
+import VersionSelector from "@site/src/components/VersionSelector";
+import Link from "@docusaurus/Link";
+import addBaseUrl from "@docusaurus/useBaseUrl";
+import CitationFootnote from "@site/src/components/CitationFootnote";
+import TableVertical from "@site/src/components/TableVertical";
+import Figure from "@site/src/components/Figure";
+import TableReference from "@site/src/components/TableReference";
+
+<NavContainer 
+  link="/desktop-applications/lifesim/applications-guide"
+  linkTitle="Applications Guide"
+  document="desktop-applications/lifesim/applications-guide"
+></NavContainer>
+
+# Estimating Life Loss in Planning: Comparing Alternatives for Riverine & Coastal Flooding
+
+## Purpose
+
+This example demonstrates the process for estimating consequences and comparing expected life loss across alternatives for planning studies in
+LifeSim. This chapter focuses on the Ala Wai Flood Risk Management General Investigations Study, which is an ongoing Planning study in the U.S. Army
+Corps of Engineers (USACE) Honolulu District. The LifeSim model was completed in 2023 by the USACE Omaha District. The Ala Wai LifeSim model compares
+life loss results across four different alternatives. Notably, there is no existing infrastructure in the study area.
+
+For each of the alternatives, the eight flow-frequency events used in the study’s other flood risk management model were imported into LifeSim. The
+alternatives included the Future Without-Project (FWOP) condition and three structural alternatives. The structural alternatives’ hydraulic scenarios
+represent the Future With-Project (FWP) and do not include breaches in the proposed flood protection infrastructure.
+
+Reference USACE’s , , and  for more information on including life loss estimates in USACE planning studies.
+
+This LifeSim model was built prior to the Tentatively Selected Plan (TSP) milestone to compare the change in expected life loss and how flood risk
+changes. Eventually incremental risk of the TSP will need to be understood, but this phase of the planning study focuses on changes in flood risk
+across the final array of alternatives.
+
+This chapter includes instructions for importing the required data into LifeSim, how to choose appropriate warning and evacuation data for a study
+area, and how to interpret modeling results. Additional considerations for LifeSim modeling for planning studies are identified throughout the
+chapter.
+
+## Input Data
+
+The subsequent sections discuss the input data required to calculate damages and life loss across various alternatives for planning studies. The input
+ data sections include hydraulic data, emergency planning zones (EPZ), structure inventories, road networks, destinations, creating alternatives, and
+simulating alternatives.
+
+### Hydraulic Data
+
+The Ala Wai LifeSim model utilized output from the Hydrologic Engineering Center’s River Analysis System (HEC-RAS). Ideally, the HEC-RAS inputs should
+ be in the form of Hierarchical Data Format (HDF) files so the user can easily simulate evacuation in LifeSim. However, summary grids or other output from
+ other hydraulic models could be utilized in LifeSim (reference the  and ). For planning studies, simulating evacuation can help address other
+planning objectives or opportunities, such as improving emergency action planning and identifying safe evacuation routes. Including evacuation more
+accurately captures potential life loss in structures and life loss on roads. The HEC-RAS plan HDF file and the HEC-RAS terrain HDF file (and terrain
+TIF files) are needed for each hydraulic scenario. Reference the  for step-by-step instructions on importing hydraulic data from HEC-RAS.
+
+It is recommended to include all the hydraulic events used in the economic modeling (most likely 8 different flow-frequency events) in the LifeSim
+model. Similar to the economic damage modeling typically completed in HEC-FDA, it is critical to understand the potential life loss for events of varying
+ frequency and magnitude. Eventually, the life loss ranges computed in LifeSim will be used to estimate Expected Annual Life Loss (EALL), similar to
+how Expected Annual Damages are computed, either in a spreadsheet or a tool like TotalRisk 1.0 (link to TotalRisk here). The more events included in
+the EALL calculation in TotalRisk, the more accurate the EALL is. The resulting EALL is another metric by which planning alternatives can be compared.
+ Refer to the TotalRisk Application Guide to set up the EALL calculation (link to TR app guide here)
+
+Below are some of the hydraulic events included in the Ala Wai LifeSim model (FWOP, Alternative 2B, and Alternative A5). As shown in the figure, the
+0.5 Annual Exceedance Probability (AEP), 0.2 AEP, 0.1 AEP, 0.05 AEP, 0.02 AEP, 0.01 AEP, 0.005 AEP, and 0.002 AEP events are included for each
+alternative.
+
+<Figure
+  figKey="figure-172"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/figure172.png"
+  alt="Ala Wai LifeSim model - hydrualic events"
+  caption="Ala Wai LifeSim model - hydrualic events"
+/>
+
+#### Other Considerations for Hydraulic Data
+
+For the Ala Wai study area, there are multiple flood sources that flood various areas at different times. It is important to understand the various
+timings involved in the flooding when selecting the Hazard Occurrence time. Be consistent in where you select the hydrograph (i.e., For all hydraulic
+scenarios, the Hazard Occurrence time represents when out-of-bank flooding begins for the same flood source). Separating your EPZ is further discussed
+ in the Emergency Planning Zones section below.
+
+### Emergency Planning Zones
+
+If your planning study includes levees, coastal structures, and/or dams, reference the EPZ Section in the other Application Guide chapters. For
+planning studies, the EPZ shapefile should represent the entire study area. Coordinate with other Project Delivery Team members, especially the
+hydraulic engineer and lead planner to ensure your EPZ matches the study area. The LifeSim model should account for the same flooding and structures
+as other economic models used in the study, such as Hydraulic Engineering Centers’ Flood Damage Reduction Analysis (HEC-FDA) or Generation II Coastal
+Risk Model (G2CRM).
+
+Otherwise, the shapefile used for the EPZ should represent the entire study area. Coordinate with other Project Delivery Team members, especially the
+hydraulic engineer and lead planner to ensure your EPZ matches the study area. The LifeSim model should account for the same flooding and structures
+as other economic models used in the study, such as Hydraulic Engineering Centers’ Flood Damage Reduction Analysis (HEC-FDA) or Generation II Coastal
+Risk Model (G2CRM).
+
+Refer to the  for examples of what to consider when assigning warning and evacuation parameters in your EPZ(s).
+
+#### Delineating EPZs
+
+As mentioned in the Hydraulic Data section, oftentimes there are various flooding sources in planning studies. The various flooding sources may flood
+different areas and the flooding may begin at different times. Therefore, each of these areas would have differing hazard occurrence times (i.e.,
+flooding begins at different times in various parts of the study area.) In LifeSim, each hydraulic scenario can technically only have one Hazard
+Occurrence time identified in the Hydraulic Data. However, you can account for various Hazard Occurrence times in the EPZs. By delineating the EPZs
+based on flood timing/flood sources, you can warn various areas relative to when specific hazards occur. It is recommended to work with the Project
+Delivery Team’s (PDT) hydraulic engineer to better understand the flooding sources and flooding timing across the study area (see the  for additional
+information).
+
+##### Ala Wai EPZs
+
+In the Ala Wai Planning Study there are several flood sources including tidal surge, riverine flooding from the Mānoa Stream, Makiki Stream, Palolo
+Streams, and flooding along the Mānoa-Palolo and Ala Wai Canals. Following an analysis of the hydraulic timing and flow, the EPZ was delineated into 4
+ zones (see ). This decision was made by both the LifeSim modeler and the PDT’s hydraulic engineer. The delineation of EPZs is critical for study
+areas with various flood timings and/or flood sources. Delineating EPZs is the best way to model various warning times for various impact areas and
+should generally be done with the team’s hydraulic engineer.
+
+As shown in the figure below, there are 4 EPZs in the Ala Wai LifeSim model; this EPZ polygon is used for all hydraulic scenarios, including both FWOP
+ and FWP conditions. They are divided by flood source and hydraulic timing:
+
+The main flood source in EPZ 1 is the Makiki Stream
+
+The main flood source in EPZ 2 is tidal surge
+
+The main flood source in EPZ 3 is the Mānoa Stream
+
+The main flood source in EPZ 4 is the Palolo Streams
+
+The difference in hydraulic timing between the four EPZs is generally less than an hour, which may not seem like a large difference, but the flooding
+in the study area is quite flashy. Advanced forecasting and early warning are unlikely. The life loss estimates are highly sensitive to the hazard
+identification time (i.e., early hazard identification is correlated with lower life loss and late hazard identification is correlated with higher
+life loss), which is why delineating the EPZs for Ala Wai based on flood source and flood timing is important. The warning times for each EPZ are
+discussed more in the  section below.
+
+<Figure
+  figKey="figure-173"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/figure173.png"
+  alt="Ala Wai EPZs"
+  caption="Ala Wai EPZs"
+/>
+
+#### Importing an Emergency Planning Zone
+
+Refer to the  and/or the  for information on importing EPZs into LifeSim.
+
+### Structure Inventory
+
+To use LifeSim to calculate life loss and/or economic damages, a structure inventory needs to be imported into the study. LifeSim will not compute if
+any structure points are located outside of the EPZ.
+
+#### Importing a Structure Inventory
+
+Refer to the  and the  for information on importing  a structure inventory into LifeSim and editing it.
+
+### Simulating Evacuation
+
+Refer to the  for how to simulate evacuation. The Simulating Evacuation section covers (1) importing and editing the road network and (2) creating, importing,
+ and editing the destinations.
+
+### Creating Alternatives
+
+Refer to the , the , and/or the  for how to create alternatives.
+
+#### Ala Wai EPZ Imminent Hazard Identification Times
+
+As discussed in the Ala Wai EPZ section, the LifeSim model utilized 4 different EPZs—all with unique hazard occurrence times (i.e., flooding begins at
+ different times in each zone) in the alternatives. Since only one hazard occurrence time can be identified for each hydraulic scenario, you need to
+utilize various imminent hazard identification times for each zone while creating alternatives.
+
+To find the various zones’ hazard occurrence times, add your EPZ polygon to the RAS Map Data Selector Map Window. Then, find each zone’s hazard
+occurrence times by finding where/when flooding first begins in each EPZ. Then, identify which EPZ’s hazard occurrence time will be the hydraulic
+scenario’s hazard occurrence time identified in the hydraulic data. For Ala Wai, EPZ 1 (shown in the following figure) was selected as the “control”
+hazard occurrence time for every hydraulic scenario, which means the imminent hazard ID times for EPZs 2, 3, and 4 were relative to EPZ 1’s hazard
+occurrence time. The figure below shows the hazard occurrence times for each EPZ and each event for Alternative 2B; the figure also shows where the
+Hydrograph Tool pulled the hazard occurrence times for each EPZ (red circles in the figure below).
+
+<Figure
+  figKey="figure-174"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/figure174.png"
+  alt="Hazard occurrence times by reach and event – Alternative 2B"
+  caption="Hazard occurrence times by reach and event – Alternative 2B"
+/>
+
+<TableReference tableKey="table-4" /> below highlights the various hazard occurrence times in each EPZ for Alternative 2B for the 0.02 AEP, 0.05 AEP,
+and 0.01 AEP events. <TableReference tableKey="table-5" /> highlights the calculated imminent hazard identification times.
+
+For the 0.02 AEP and 0.05 AEP events in EPZ 1, a relatively small amount of warning time was given to the public; a uniform distribution of -2 to 0
+hours was used. For the 0.01 AEP event in EPZ 1, the warning time distribution was expanded to potentially give the population more warning; -4 to 0
+hours was used. The same amount of warning time was used for all zones, but zones 2 through 4 were warned relative to EPZ 1’s hazard occurrence time.
+
+For example, for the 0.05 AEP event, EPZ 2’s hazard occurrence time occurs 1.83 hours <em>prior </em>to EPZ 1’s hazard occurrence time. This indicates
+ that EPZ 2 needs to be warned 1.83 hours <em>earlier</em> than EPZ 1. The final Imminent Hazard Identification Times (i.e., warning times) used in
+the alternatives reflect the difference in hazard occurrence times to ensure each EPZ receives the same amount of warning relative to each zone’s
+unique hazard.
+
+:::danger
+This table contains cells that span multiple rows or columns. Manually update the React component to properly format the table.
+:::
+
+<TableVertical
+  tableKey="table-6"
+  headers={
+[
+    [
+      { value: "Event", rowSpan: 1, colSpan: 1 },
+      { value: "EPZ 1 Hazard Occurrence Time*", rowSpan: 1, colSpan: 1 },
+      { value: "EPZ 2 Hazard Occurrence Time", rowSpan: 1, colSpan: 1 },
+      { value: "EPZ 3 Hazard Occurrence Time", rowSpan: 1, colSpan: 1 },
+      { value: "EPZ 4 Hazard Occurrence Time", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  columns={
+[
+    [
+      { value: "0.02 AEP", rowSpan: 1, colSpan: 1 },
+      { value: "0.05 AEP", rowSpan: 1, colSpan: 1 },
+      { value: "0.01 AEP", rowSpan: 1, colSpan: 1 },
+      { value: "*All Hazard Occurrence Times occur on the same date in HEC-RAS", rowSpan: 1, colSpan: 5 }
+    ],
+    [
+      { value: "11:50", rowSpan: 1, colSpan: 1 },
+      { value: "11:30", rowSpan: 1, colSpan: 1 },
+      { value: "11:10", rowSpan: 1, colSpan: 1 },
+      null
+    ],
+    [
+      { value: "10:00", rowSpan: 1, colSpan: 1 },
+      { value: "09:45", rowSpan: 1, colSpan: 1 },
+      { value: "09:10", rowSpan: 1, colSpan: 1 },
+      { value: "*All Hazard Occurrence Times occur on the same date in HEC-RAS", rowSpan: 1, colSpan: 3 }
+    ],
+    [
+      { value: "11:45", rowSpan: 1, colSpan: 2 },
+      { value: "11:20", rowSpan: 1, colSpan: 1 },
+      { value: "10:55", rowSpan: 1, colSpan: 2 },
+      null
+    ],
+    [
+      null,
+      { value: "11:25", rowSpan: 1, colSpan: 1 },
+      null,
+      { value: "*All Hazard Occurrence Times occur on the same date in HEC-RAS", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  alt="Sample of Alternative 2B’s hazard occurrence times"
+  caption="Sample of Alternative 2B’s hazard occurrence times"
+/>
+
+:::danger
+This table contains cells that span multiple rows or columns. Manually update the React component to properly format the table.
+:::
+
+<TableVertical
+  tableKey="table-7"
+  headers={
+[
+    [
+      { value: "Example Imminent Hazard Identification Times for Alternative 1", rowSpan: 1, colSpan: 9 },
+      null,
+      { value: "Example Imminent Hazard Identification Times for Alternative 1", rowSpan: 1, colSpan: 7 },
+      null,
+      { value: "Example Imminent Hazard Identification Times for Alternative 1", rowSpan: 1, colSpan: 5 },
+      null,
+      { value: "Example Imminent Hazard Identification Times for Alternative 1", rowSpan: 1, colSpan: 3 },
+      null,
+      { value: "Example Imminent Hazard Identification Times for Alternative 1", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  columns={
+[
+    [
+      { value: "Event", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "0.02 AEP", rowSpan: 1, colSpan: 1 },
+      { value: "0.05 AEP", rowSpan: 1, colSpan: 1 },
+      { value: "0.01 AEP", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "EPZ 1", rowSpan: 1, colSpan: 2 },
+      { value: "Min", rowSpan: 1, colSpan: 1 },
+      { value: "-2", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "-4", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      null,
+      { value: "Max", rowSpan: 1, colSpan: 1 },
+      { value: "0", rowSpan: 3, colSpan: 1 },
+      null,
+      { value: "0", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "EPZ 2", rowSpan: 1, colSpan: 2 },
+      { value: "Min", rowSpan: 1, colSpan: 1 },
+      { value: "-3.83", rowSpan: 1, colSpan: 1 },
+      { value: "-3.75", rowSpan: 1, colSpan: 1 },
+      { value: "-6", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      null,
+      { value: "Max", rowSpan: 1, colSpan: 1 },
+      { value: "-1.83", rowSpan: 1, colSpan: 1 },
+      { value: "-1.75", rowSpan: 1, colSpan: 1 },
+      { value: "-2", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "EPZ 3", rowSpan: 1, colSpan: 2 },
+      { value: "Min", rowSpan: 1, colSpan: 1 },
+      { value: "-2.08", rowSpan: 1, colSpan: 1 },
+      { value: "-2.17", rowSpan: 1, colSpan: 1 },
+      { value: "-4.25", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      null,
+      { value: "Max", rowSpan: 1, colSpan: 1 },
+      { value: "-0.8", rowSpan: 1, colSpan: 1 },
+      { value: "-0.17", rowSpan: 1, colSpan: 1 },
+      { value: "-0.25", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "EPZ 4", rowSpan: 1, colSpan: 2 },
+      { value: "Min", rowSpan: 1, colSpan: 1 },
+      { value: "-2.08", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "-4.25", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      null,
+      { value: "Max", rowSpan: 1, colSpan: 1 },
+      { value: "-0.08", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "-0.25", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  alt="Sample of Alternative 2B’s imminent hazard identification time"
+  caption="Sample of Alternative 2B’s imminent hazard identification time"
+/>
+
+### Creating Simulations
+
+Refer to the  for creating simulations, selecting the appropriate options, and running simulations.
+
+## Understanding and Interpreting Results
+
+After running simulations, you can view your results in various ways, including by result plots, result tables, and result maps. Each way you view
+results helps understand your life loss and economic damage results and quality check your results. It is unlikely that your first simulation will be
+your last simulation—edits to the structure inventory, EPZs, road network and/or destination points are frequently needed to obtain accurate and
+representative results.
+
+Refer to the , the , and/or the  for understanding results and finalizing the LifeSim model.
+
+LifeSim utilizes an event-based approach, so there is no annualization across the various flow-frequency events. Use a tool like TotalRisk 1.0 or
+another certified annualization tool to produce expected annual life loss values for each alternative.
+
+(Page intentionally left blank)
+
+<CitationFootnote />

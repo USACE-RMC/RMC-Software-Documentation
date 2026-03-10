@@ -1,0 +1,231 @@
+---
+title: "Summary of LifeSim Inputs"
+---
+
+import NavContainer from "@site/src/components/NavContainer";
+import VersionSelector from "@site/src/components/VersionSelector";
+import Link from "@docusaurus/Link";
+import addBaseUrl from "@docusaurus/useBaseUrl";
+import CitationFootnote from "@site/src/components/CitationFootnote";
+import TableVertical from "@site/src/components/TableVertical";
+import Figure from "@site/src/components/Figure";
+
+<NavContainer 
+  link="/desktop-applications/lifesim/applications-guide"
+  linkTitle="Applications Guide"
+  document="desktop-applications/lifesim/applications-guide"
+></NavContainer>
+
+# Summary of LifeSim Inputs
+
+## Purpose
+
+LifeSim requires an array of inputs in order to calculate life loss and/or economic consequences. This section details the general requirements to run
+ a LifeSim model and some of the recommended pre-processing that should take place outside of LifeSim. The major inputs that require pre-processing
+are the emergency planning zones (EPZ), structure inventory, and the summary output polygon(s) used in the simulations. Inputs required to simulate
+evacuation (i.e., road network and destinations) are discussed in the .
+
+## Hydraulic Data
+
+Each of the applications in this guide details how to import hydraulic data from Hydrologic Engineering Center’s River Analysis System (HEC-RAS),
+including various import sources (e.g., summary grids and Hierarchical Data Format files) from HEC-RAS. There are nuances in selecting the correct
+hazard occurrence time for dams, levees, cascading dam failures, etc. The hazard occurrence time is defined as the point in time in which the hazard
+(e.g., dam breach, levee overtopping) occurs. It is the anchor point for all other time-dependent warning and evacuation parameters within the
+simulation.
+
+It is recommended to reference the Hydraulic Data section for your specific application. There are other hydraulic data sources that can be imported
+into LifeSim that are not discussed in the Applications Guide (e.g. FLO2D). However, they are discussed in the .
+
+## Structure Inventory
+
+To use LifeSim to calculate direct life loss and/or economic damages, a structure inventory must be imported into the study. LifeSim will not simulate
+ if any structure points are located outside of the EPZ.
+
+For LifeSim users located in the U.S., the best available structure inventory data is the most recent version of the National Structure Inventory
+(NSI). The NSI is now public facing and can be leveraged by all U.S. LifeSim users from the . See the  for additional information. This dataset
+includes each of the LifeSim required attributes except for Ground Floor Height, Above Ground Floor Height, and Attic Height, which typically use the
+default values shown above.  An alternative approach to the base NSI dataset can include various county and state data including local tax assessor,
+parcel, or footprint data that could help inform building location as well as some of the other attributes. Conducting a survey (direct observation or
+ virtually using a tool like Google Earth) within the study area could also inform the structure inventory.
+
+Occasionally, there may be a local dataset (e.g., from a local university, municipality, or some other study unrelated to your own) that has been
+calibrated specifically for the area of interest and surpasses the precision of some of the NSI’s more general assumptions. If a local dataset is
+available, either using GIS software to incorporate the localized data into your inventory or choosing to only use the localized data is often
+preferred.
+
+The NSI was developed using parcel data, building footprints, and several other data sources to create a comprehensive statistical structure
+inventory. LifeSim has the capability of downloading a base NSI inventory based on a provided study area polygon, and other methods for accessing NSI
+data will likely become available in the future. If using an alternative to the NSI, a point structure inventory must be created with the following
+data fields for each structure:
+
+Occupancy Type
+
+Number of Stories
+
+Construction Type
+
+Foundation Height
+
+Population Under 65 (Night)
+
+Population Over 65 (Night)
+
+Population Under 65 (Day)
+
+Population Over 65 (Day)
+
+Structure Value
+
+Content Value
+
+Vehicle Value
+
+The first four fields listed above define the structure types and directly impact the life loss calculations. The occupancy type and construction type
+ fields help to define the structure stability criteria in LifeSim (discussed in more detail in the following sections). Construction type
+specifically denotes outer wall materials such as wood, steel, manufactured, or concrete. The number of stories and foundation height fields help
+define the potential for vertical evacuation and the first-floor elevation of the structure. Population values are required to calculate life loss.
+
+By default, LifeSim uses the 40 occupancy types from HAZUS listed and described below, although they can be customized. The user can also add new
+occupancy types in LifeSim.
+
+<TableVertical
+  tableKey="table-1"
+  headers={
+[
+    [
+      { value: "Occupancy Type", rowSpan: 1, colSpan: 1 },
+      { value: "Description", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  columns={
+[
+    [
+      { value: "RES1-1SNB", rowSpan: 1, colSpan: 1 },
+      { value: "RES1-1SWB", rowSpan: 1, colSpan: 1 },
+      { value: "RES1-2SNB", rowSpan: 1, colSpan: 1 },
+      { value: "RES1-2SWB", rowSpan: 1, colSpan: 1 },
+      { value: "RES1-3SNB", rowSpan: 1, colSpan: 1 },
+      { value: "RES1-3SWB", rowSpan: 1, colSpan: 1 },
+      { value: "RES1-SLNB", rowSpan: 1, colSpan: 1 },
+      { value: "RES1-SLWB", rowSpan: 1, colSpan: 1 },
+      { value: "RES2", rowSpan: 1, colSpan: 1 },
+      { value: "RES3A", rowSpan: 1, colSpan: 1 },
+      { value: "RES3B", rowSpan: 1, colSpan: 1 },
+      { value: "RES3C", rowSpan: 1, colSpan: 1 },
+      { value: "RES3D", rowSpan: 1, colSpan: 1 },
+      { value: "RES3E", rowSpan: 1, colSpan: 1 },
+      { value: "RES3F", rowSpan: 1, colSpan: 1 },
+      { value: "RES4", rowSpan: 1, colSpan: 1 },
+      { value: "RES5", rowSpan: 1, colSpan: 1 },
+      { value: "RES6", rowSpan: 1, colSpan: 1 },
+      { value: "COM1", rowSpan: 1, colSpan: 1 },
+      { value: "COM2", rowSpan: 1, colSpan: 1 },
+      { value: "COM3", rowSpan: 1, colSpan: 1 },
+      { value: "COM4", rowSpan: 1, colSpan: 1 },
+      { value: "COM5", rowSpan: 1, colSpan: 1 },
+      { value: "COM6", rowSpan: 1, colSpan: 1 },
+      { value: "COM7", rowSpan: 1, colSpan: 1 },
+      { value: "COM8", rowSpan: 1, colSpan: 1 },
+      { value: "COM9", rowSpan: 1, colSpan: 1 },
+      { value: "COM10", rowSpan: 1, colSpan: 1 },
+      { value: "IND1", rowSpan: 1, colSpan: 1 },
+      { value: "IND2", rowSpan: 1, colSpan: 1 },
+      { value: "IND3", rowSpan: 1, colSpan: 1 },
+      { value: "IND4", rowSpan: 1, colSpan: 1 },
+      { value: "IND5", rowSpan: 1, colSpan: 1 },
+      { value: "IND6", rowSpan: 1, colSpan: 1 },
+      { value: "AGR1", rowSpan: 1, colSpan: 1 },
+      { value: "REL1", rowSpan: 1, colSpan: 1 },
+      { value: "GOV1", rowSpan: 1, colSpan: 1 },
+      { value: "GOV2", rowSpan: 1, colSpan: 1 },
+      { value: "EDU1", rowSpan: 1, colSpan: 1 },
+      { value: "EDU2", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "Single Family, 1 Story no Basement", rowSpan: 1, colSpan: 1 },
+      { value: "Single Family, 1 Story w/ Basement", rowSpan: 1, colSpan: 1 },
+      { value: "Single Family, 2 Story no Basement", rowSpan: 1, colSpan: 1 },
+      { value: "Single Family, 2 Story w/ Basement", rowSpan: 1, colSpan: 1 },
+      { value: "Single Family, 3 Story no Basement", rowSpan: 1, colSpan: 1 },
+      { value: "Single Family, 3 Story w/ Basement", rowSpan: 1, colSpan: 1 },
+      { value: "Single Family, Split Level no Basement", rowSpan: 1, colSpan: 1 },
+      { value: "Single Family, Split Level w/ Basement", rowSpan: 1, colSpan: 1 },
+      { value: "Mobile home", rowSpan: 1, colSpan: 1 },
+      { value: "Multi Family Dwelling, Duplex", rowSpan: 1, colSpan: 1 },
+      { value: "Multi Family Dwelling, 3-4 Units", rowSpan: 1, colSpan: 1 },
+      { value: "Multi Family Dwelling, 5-9 Units", rowSpan: 1, colSpan: 1 },
+      { value: "Multi Family Dwelling, 10-19 Units", rowSpan: 1, colSpan: 1 },
+      { value: "Multi Family Dwelling, 20-49 Units", rowSpan: 1, colSpan: 1 },
+      { value: "Multi Family Dwelling, 50+ Units", rowSpan: 1, colSpan: 1 },
+      { value: "Average Hotel, & Motel", rowSpan: 1, colSpan: 1 },
+      { value: "Institutional Dormitory", rowSpan: 1, colSpan: 1 },
+      { value: "Nursing Home", rowSpan: 1, colSpan: 1 },
+      { value: "Average Retail", rowSpan: 1, colSpan: 1 },
+      { value: "Average wholesale", rowSpan: 1, colSpan: 1 },
+      { value: "Average Personal & Repair Services", rowSpan: 1, colSpan: 1 },
+      { value: "Average Prof/Tech Services", rowSpan: 1, colSpan: 1 },
+      { value: "Bank", rowSpan: 1, colSpan: 1 },
+      { value: "Hospital", rowSpan: 1, colSpan: 1 },
+      { value: "Average Medical Office", rowSpan: 1, colSpan: 1 },
+      { value: "Average Entertainment/Recreation", rowSpan: 1, colSpan: 1 },
+      { value: "Average Theatre", rowSpan: 1, colSpan: 1 },
+      { value: "Parking Garage", rowSpan: 1, colSpan: 1 },
+      { value: "Average heavy industrial", rowSpan: 1, colSpan: 1 },
+      { value: "Average light industrial", rowSpan: 1, colSpan: 1 },
+      { value: "Average Food/Drug/Chem", rowSpan: 1, colSpan: 1 },
+      { value: "Average Metals/Minerals processing", rowSpan: 1, colSpan: 1 },
+      { value: "Average High Technology", rowSpan: 1, colSpan: 1 },
+      { value: "Average Construction", rowSpan: 1, colSpan: 1 },
+      { value: "Average Agriculture", rowSpan: 1, colSpan: 1 },
+      { value: "Church", rowSpan: 1, colSpan: 1 },
+      { value: "Average government services", rowSpan: 1, colSpan: 1 },
+      { value: "Average emergency response", rowSpan: 1, colSpan: 1 },
+      { value: "Average school", rowSpan: 1, colSpan: 1 },
+      { value: "Average college/university", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  alt="HAZUS Occupancy Types Used in LifeSim"
+  caption="HAZUS Occupancy Types Used in LifeSim"
+/>
+
+When importing a structure inventory into LifeSim, if structure, content, and/or vehicle values are not readily available, you can check the “Missing”
+ box and enter a default value. In the example below, all structures in the structure inventory have a value of $200,000. If the purpose of the study
+is only to evaluate life loss and not monetary damages, it is appropriate to set these values to $0.
+
+<Figure
+  figKey="figure-1"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/figure1.png"
+  alt="Importing a structure inventory with missing values"
+  caption="Importing a structure inventory with missing values"
+/>
+
+## Emergency Planning Zones
+
+An EPZ is a geospatial area where the warning and evacuation characteristics are homogeneous; the Emergency Management Agency responsible for
+evacuating people within the EPZ will have the same evacuation planning and preparedness, community participation and awareness, and types of flood
+warning systems available. EPZs also allow LifeSim to have different warning and mobilization parameters for areas that experience different flooding
+characteristics (e.g., breach flows and non-breach flows). Depending on the study’s purpose and level of detail there could be different parameters
+for different areas, communities, or counties. Refer to the  for additional information regarding EPZs.
+
+## Alternatives
+
+Each of the applications in this guide include specific details regarding creating alternatives, including selecting imminent hazard identification
+times (i.e., warning times), simulating evacuation, and how many alternatives to include per hydraulic scenario. There are nuances to creating
+alternatives for different types of LifeSim models.
+
+It is recommended to reference the Alternatives section for each application.
+
+## Simulations
+
+There are limited options to select in the Simulations window. However, a key part of LifeSim Simulations is the summary output polygon. A summary
+output polygon is required when creating a simulation. The user may enter multiple summary output polygons in a single simulation. Similar to the
+EPZs, the summary output polygon is a geospatial area and LifeSim will generate results based on the areas in the summary output polygon. The summary
+output polygon can be a shapefile that is not an input for LifeSim. An example of this is using the U.S. Census city boundaries shapefiles to receive
+LifeSim results by city. Another example is simply using the study’s EPZ as the summary output polygon if the results do not need to be specifically
+delineated by area.
+
+(Page is intentionally left blank)
+
+<CitationFootnote />
