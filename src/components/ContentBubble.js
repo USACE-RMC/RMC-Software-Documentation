@@ -46,9 +46,9 @@ const ContentBubble = ({ icon, iconLight, iconDark, IconComponent, doc_location,
           {doc_name}
         </p>
         {comingSoon && (
-          <p className="mb-0 mt-1 font-usace text-[0.8rem] leading-none text-white/70 xl:text-[0.85rem]">
-            Coming soon!
-          </p>
+          <span className="mt-2 inline-block rounded-full bg-white/20 px-3 py-0.5 font-usace text-[0.7rem] leading-none text-white/70">
+            Coming Soon
+          </span>
         )}
       </div>
     </div>

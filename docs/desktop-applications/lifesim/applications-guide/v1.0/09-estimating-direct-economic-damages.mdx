@@ -1,0 +1,276 @@
+---
+title: "Estimating Direct Economic Damages"
+---
+
+import NavContainer from "@site/src/components/NavContainer";
+import VersionSelector from "@site/src/components/VersionSelector";
+import Link from "@docusaurus/Link";
+import addBaseUrl from "@docusaurus/useBaseUrl";
+import CitationFootnote from "@site/src/components/CitationFootnote";
+import Figure from "@site/src/components/Figure";
+import FigureInline from "@site/src/components/FigureInline";
+import FigReference from "@site/src/components/FigureReference";
+
+<NavContainer 
+  link="/desktop-applications/lifesim/applications-guide"
+  linkTitle="Applications Guide"
+  document="desktop-applications/lifesim/applications-guide"
+></NavContainer>
+
+# Estimating Direct Economic Damages
+
+## Purpose
+
+This example demonstrates the process for estimating economic consequences in LifeSim. This chapter applies to dam and levee safety, planning studies,
+ and other analyses that focus on economic consequences. This chapter focuses on the Ala Wai Flood Risk Management General Investigations Study, which
+ is an ongoing Planning study in the U.S. Army Corps of Engineers Honolulu District. The LifeSim model was modeled in 2023 by the USACE Omaha
+District. The Ala Wai LifeSim model compares economic damage results across four different alternatives.
+
+For each of the alternatives, the eight flow-frequency events used in the study’s economic damage modeling were imported into LifeSim. The
+alternatives included the Future Without-Project (FWOP) condition and three structural alternatives. The structural alternatives’ hydraulic scenarios
+utilized in LifeSim represent the Future With-Project (FWP) and do not include breaches in the proposed flood protection infrastructure.
+
+This chapter includes instructions on importing the required data into LifeSim, how to edit structures and occupancy types, and how to interpret
+modeling results. Additional considerations for LifeSim modeling for planning studies are identified throughout the chapter.
+
+## Input Data
+
+The subsequent sections discuss the input data required to calculate direct economic damages across various alternatives for planning studies. The
+input data sections include hydraulic data, structure inventories, creating alternatives, and simulating alternatives. The structure inventory section
+ includes significant detail on editing and creating structure occupancy types in LifeSim.
+
+### Hydraulic Data
+
+The Ala Wai LifeSim model utilized output from the Hydrologic Engineering Center’s River Analysis System (HEC-RAS). Ideally, the HEC-RAS inputs should
+ be in the form of Hierarchical Data Format (HDF) to streamline the process; this is the easiest way to calculate both direct economic damages and
+life loss in one LifeSim model. However, summary grids (Reference the ), and other hydraulic models could be utilized in LifeSim (reference the  and
+). The HEC-RAS plan HDF file and the HEC-RAS terrain HDF file are needed for each hydraulic scenario. Reference the  for step-by-step instructions on importing
+ hydraulic data from HEC-RAS.
+
+It is recommended to include several hydraulic events (greater than 6 different flow-frequency events) in the LifeSim model. Eventually, the life loss
+ estimates will be used to estimate Expected Annual Damages (EAD) in a tool like TotalRisk 1.0, and the more hydraulic events included in that
+calculation, the more accurate the EAD is. Below are some of the hydraulic events included in the Ala Wai LifeSim model (for the FWOP, Alternative 2B,
+ and Alternative A5). As shown in the figure, the 0.5 Annual Exceedance Probability (AEP), 0.2 AEP, 0.1 AEP, 0.05 AEP, 0.02 AEP, 0.01 AEP, 0.005 AEP,
+and 0.002 AEP events are included for each alternative.
+
+<Figure
+  figKey="figure-175"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/figure175.png"
+  alt="Ala Wai hydrualic events and alternatives"
+  caption="Ala Wai hydrualic events and alternatives"
+/>
+
+### Emergency Planning Zones
+
+For calculating only economic damages, an emergency planning zone (EPZ) is not required in the LifeSim model.
+
+### Structure Inventory
+
+To calculate economic damages in LifeSim, a structure inventory needs to be imported into the study. There are key additionall things to consider and
+edit in the structure inventory to accurately calculate economic damages. The follow sections focus on viewing, editing, and creating occupancy types.
+ For information on importing a structure inventory, refer to the  and .
+
+#### Creating and Editing Occupancy Types
+
+When estimating direct economic damages in LifeSim, additional edits to the structure inventory and occupancy types may be needed to allow for more
+uncertainty in the economic damage computation. The following sections describe the editable aspects of occupancy types in LifeSim, including the
+Depth-Damage Functions (Structure, Content, and Vehicle), Foundation Height Offset, Value Uncertainty (Structure, Content, and Vehicle), Evacuation
+Parameters, and Submergence Criteria. Additionally, you can create new occupancy types (
+{"\n"}<FigureInline src="figures/desktop-applications/lifesim/applications-guide/v1.0/inline-images/inline-d11b4ce6.png" />), copy occupancy types (
+{"\n"}<FigureInline src="figures/desktop-applications/lifesim/applications-guide/v1.0/inline-images/inline-5467c87b.png" />), and delete occupancy
+types (<FigureInline src="figures/desktop-applications/lifesim/applications-guide/v1.0/inline-images/inline-a29d856f.png" />).
+
+To view, edit, and create occupancy types, right click on <strong>Occupancy Types</strong> under <strong>Structure Inventories</strong> in the Study
+Pane. Select Edit Occupancy Type Data from the options.
+
+<Figure
+  figKey="figure-176"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/figure176.png"
+  alt="Occupancy types in the Study pane"
+  caption="Occupancy types in the Study pane"
+/>
+
+The Occupancy Type Editor window opens (shown in the figure below) and displays the various attributes associated with the selected occupancy type.
+The figure below shows the RES1-1SNB (Residential Structure with 1-Story, No Basement) occupancy type.
+
+<Figure
+  figKey="figure-177"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/figure177.png"
+  alt="RES1-1SNB default depth-damage function from EGM 04-01"
+  caption="RES1-1SNB default depth-damage function from EGM 04-01"
+/>
+
+##### Occupancy Type Depth-Damage Function Uncertainty
+
+Notably, most of the default structure occupancy types do not include uncertainty in the depth-damage function. The only occupancy types that include
+uncertainty are the RES1 occupancy types (as seen in the figure above). The RES1 depth-damage functions (structure and content) are the default
+depth-damage functions defined in Economic Guidance Memorandum (EGM) 04-01. All commercial, public, industrial, and the other residential occupancy
+types (e.g., manufactured homes, apartment buildings, etc.) do not have uncertainty in the depth-damage functions. However, all existing occupancy
+types can be edited to include uncertainty and new occupancy types can be added by the user.
+
+This example will step through adding uncertainty to the existing EDU1 occupancy type. <FigReference figKey="figure-179" /> shows the default
+occupancy type for an educational structure with 1-story (EDU1). Although the default depth-damage functions for EDU1 do not include uncertainty, an
+uncertainty distribution can be defined by the user for each of the depth-damage functions (Structure, Content, and Vehicle).
+
+<Figure
+  figKey="figure-178"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/figure178.png"
+  alt="EDU1 default depth-damage function from HAZUS"
+  caption="EDU1 default depth-damage function from HAZUS"
+/>
+
+<FigReference figKey="figure-180" /> shows the variety of uncertainty distributions for the depth-damage functions. You can choose from a triangular,
+uniform, normal, and lognormal distribution.
+
+<Figure
+  figKey="figure-179"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/figure179.png"
+  alt="EDU1 default depth-damage function – uncertainty distribution options"
+  caption="EDU1 default depth-damage function – uncertainty distribution options"
+/>
+
+<FigReference figKey="figure-179" /> shows an example of a uniform distribution (minimum % damage and maximum % damage). As shown in the function
+plot, there is more uncertainty included in shallower flood depths (the 0ft to 10ft range), with less uncertainty included in the higher depths. It’s
+recommended to coordinate with other economists, your reviewers, and/or technical experts on representative uncertainty in the depth-damage functions.
+ Alternatively, you could utilize other developed depth-damage functions (e.g., from other Corps studies, FEMA curves, or other published depth-damage
+ functions) and enter the values into LifeSim.
+
+<Figure
+  figKey="figure-180"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/figure180.png"
+  alt="EDU1 depth-damage function with uniform uncertainty distribution"
+  caption="EDU1 depth-damage function with uniform uncertainty distribution"
+/>
+
+#### Variation in Structure Values
+
+In addition to including an uncertainty distribution to the depth-damage function, uncertainty can be added to the values of each of the damage
+categories (Structure, Damage, and Vehicle). As shown in the figure below, you can select the Uncertainty Type for the Structure Value. Note the variation
+ is a percentage, not a dollar value. This variation percentage will be applied to each structure with the same occupancy type.
+
+
+
+<Figure
+  figKey="figure-181"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/figure181.png"
+  alt="EDU1 default depth-damage function – variation in structure value as % uncertainty distribution options"
+  caption="EDU1 default depth-damage function – variation in structure value as % uncertainty distribution options"
+/>
+
+In this example, the user wants to include uncertainty regarding the structure values of all EDU1 structures. A triangular distribution is selected,
+and the uncertainty distribution is as follows:  -15% as the lower bounds, 0% (no change) as the most likely, and 20% as the upper bounds. For
+example, if an EDU1 structure has a defined structure value of $100K, the structure value will be randomly sampled between $85K and $120K—with $100K
+being the most likely sampled value. This triangular uncertainty distribution is applied to all EDU1 structure values.
+
+<Figure
+  figKey="figure-182"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/figure182.png"
+  alt="EDU1 variation in structure value as % – triangular distribution"
+  caption="EDU1 variation in structure value as % – triangular distribution"
+/>
+
+#### Foundation Height Offset Uncertainty
+
+The final uncertainty parameter that can be defined at the occupancy type level is the Foundation Height Offset. Similar to the Variation in Structure
+ Value uncertainty, you can choose a triangular, normal, or uniform uncertainty distribution (shown in <FigReference figKey="figure-184" />).
+Notably, the defined uncertainty bounds are based on feet, not a percentage of the foundation height. The example uniform distribution below is a
+range of -1ft to 1.5ft, which indicates the defined foundation height for each EDU1 structure will sample that offset relative to the defined
+foundation height. For example, if an EDU1 structure has a defined foundation height of 2ft, in each iteration, the foundation height would be sampled
+ as a number between 1ft and 3.5ft. The uncertainty distribution should be informed by either a foundation height sample or by information from real
+estate. Justification of the selected distribution and uncertainty bounds needs to be included in any documentation.
+
+<Figure
+  figKey="figure-183"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/figure183.png"
+  alt="EDU1 depth-damage function – foundation height offset uncertainty type options"
+  caption="EDU1 depth-damage function – foundation height offset uncertainty type options"
+/>
+
+<Figure
+  figKey="figure-184"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/figure184.png"
+  alt="EDU1 depth-damage function with a defined foundation height offset uncertainty"
+  caption="EDU1 depth-damage function with a defined foundation height offset uncertainty"
+/>
+
+An additional consideration:  If there are several variations in a single occupancy type, the user may want to create copies of that same occupancy
+type, with each having the variable attribute(s) defined . For example, you may need multiple occupancy types for schools. If you have sampled
+foundation heights for EDU1 buildings built on slab and sampled foundation heights for EDU1 buildings with basements, this may prompt the user to
+create two EDU1 occupancy types (e.g., EDU1-SLAB and EDU1-WithBSNT) to accurately account for the two foundation height samples and include two
+different depth-damage functions (i.e., the EDU1-WithBSNT would incur damage at lower flood depths).
+
+### Creating Alternatives
+
+After editing your occupancy types and structure inventory, you will create alternatives for each scenario for which you want to calculate economic
+damages. For computing only economic damages, relatively simple alternatives are required. As shown in <FigReference figKey="figure-186" /> below,
+you only need to link the structure inventory and correct hydraulic scenario in the Alternative Editor window. Ensure both the Simulate Traffic and
+Calculate Life Loss boxes are unchecked.
+
+<Figure
+  figKey="figure-185"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/figure185.png"
+  alt="LifeSim alternative to compute economic damages"
+  caption="LifeSim alternative to compute economic damages"
+/>
+
+### Creating Simulations
+
+Refer to the  for creating simulations, selecting the appropriate options, and running simulations. An additional consideration for estimating direct
+economic damages is selecting an appropriate Output Summary Polygon. Similar to how HEC-FDA requires a delineation of reaches to accurately account
+for uncertainty in the hydraulic data, this should be a consideration in calculating economic damages in LifeSim—especially if the user is going to
+use TotalRisk following the LifeSim modeling. The damage reaches polygon should be incorporated into the Simulations by selecting it as the Output
+Summary Polygon.
+
+#### Delineating Reaches
+
+As stated in , delineating damage reaches is part of the overall study strategy and is an integral part of computing expected annual damages. This is
+a step that the user must consider and it is highly recommended to coordinate with the team’s hydraulic engineer. There are several factors to
+consider when delineating damage reaches including, but not limited to, the following:
+
+Existing levees and proposed levees (i.e., existing and proposed levees should have separate damage reaches)
+
+Flooding sources (i.e., coastal, streams, rivers, etc.)
+
+Flooding characteristics (i.e., higher depths vs shallow depths; fast velocities vs slow velocities)
+
+Population centers (i.e., urban vs rural areas)
+
+Inundation Boundaries (i.e., 0.04 Annual Exceedance Probability (AEP) floodplain and 0.01 AEP floodplain)
+
+ includes additional information on delineating damage reaches in Section 3.3. The TotalRisk application guide chapter xx discusses how to use the
+LifeSim results by damage reach to accurately incorporate hydraulic uncertainty by reach.
+
+#### Ala Wai Damage Reaches
+
+In the Ala Wai Planning Study there are several flood sources including tidal surge; riverine flooding from the Mānoa Stream, Makiki Stream, and the
+Palolo Streams; and flooding along the Mānoa-Palolo and Ala Wai Canals. The flooding sources alone indicate several damage reaches are needed for this
+ study. An additional consideration is if a reach represents the right bank, left bank, or both. The figure below shows each of the Ala Wai reaches
+and is color coded to show which bank(s) the reach includes. With all hydraulic, economic, engineering, and planning considerations, the study has a
+total of 13 damage reaches. The reaches shown in <FigReference figKey="figure-185" /> would then be used as your Summary Output Polygon in all
+LifeSim simulations, which allows LifeSim to show results by reach and can be easily used in TotalRisk to estimate expected annual damages (see
+TotalRisk Application Guide).
+
+<FigureInline src="figures/desktop-applications/lifesim/applications-guide/v1.0/inline-images/inline-bc62a99e.png" />
+
+<Figure
+  figKey="figure-186"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/figure186.png"
+  alt="Ala Wai economic damage reaches"
+  caption="Ala Wai economic damage reaches"
+/>
+
+## Understanding and Interpreting Results
+
+After running simulations, you can view your results in various ways, including by result plots, result tables, and result maps. Each way you view
+results is beneficial to understanding your economic damage results as well as conducting a quality check on your results. It is unlikely that your
+first simulation will be your last simulation—edits to the structure inventory are often needed to obtain accurate and representative results.
+Reference the  for additional information on understanding and interpreting your results.
+
+The results provided by the LifeSim model are event-based and include uncertainty in the economic damages. However, hydraulic data uncertainty is not
+accounted for. To calculate Expected Annual Damages with uncertainty in the hydraulic data, a tool like TotalRisk 1.0 should be utilized. Reference
+the TotalRisk Applications Guide for more information; the Flood Risk Management Chapter uses the Ala Wai LifeSim results. This specific chapter of
+the TotalRisk Applications Guide discusses how to interpret Expected Annual Damage when using LifeSim economic damage results.
+
+(Page intentionally left blank)
+
+<CitationFootnote />

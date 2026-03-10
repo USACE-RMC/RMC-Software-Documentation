@@ -23,6 +23,14 @@ const lifeSimData = [
     active: true,
     draft: false,
   },
+  {
+    icon: 'img/LifeSim.png',
+    preserveIconColor: true,
+    doc_location: 'desktop-applications/lifesim/applications-guide',
+    doc_name: 'LifeSim Applications Guide',
+    active: false,
+    draft: false,
+  },
 ];
 
 export const lifeSimDocs = lifeSimData;
