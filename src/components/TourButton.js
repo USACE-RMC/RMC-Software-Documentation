@@ -1,7 +1,21 @@
+import { useLocation } from '@docusaurus/router';
+import { useEffect, useRef } from 'react';
 import { useTour } from '../contexts/TourContext';
 
 export default function TourButton() {
-  const { startTour } = useTour();
+  const { startTour, isTourActive } = useTour();
+  const location = useLocation();
+  const hasAutoStarted = useRef(false);
+
+  // Auto-start tour when ?tour=true is in the URL
+  useEffect(() => {
+    if (hasAutoStarted.current || isTourActive) return;
+    const params = new URLSearchParams(location.search);
+    if (params.get('tour') === 'true') {
+      hasAutoStarted.current = true;
+      startTour();
+    }
+  }, [location.search, startTour, isTourActive]);
 
   return (
     <div className="mx-auto flex w-[94%] max-w-[1600px] justify-end pt-4 pr-1">
