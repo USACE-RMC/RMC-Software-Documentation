@@ -140,21 +140,26 @@ export default function EventTree({ base, text, imgExt = "png", sheetExt = "xlsm
 
   async function handleCopyImage(e) {
     e.preventDefault();
-    setCopyLabel("Copied!");
     try {
+      if (!("clipboard" in navigator) || typeof window.ClipboardItem !== "function") {
+        throw new Error("Clipboard API not available");
+      }
+
       if (imgExt.toLowerCase() === "svg") {
-        const svgText = await fetchAsText(imgUrl);
-        if ("clipboard" in navigator && typeof window.ClipboardItem === "function") {
-          const svgBlob = new Blob([svgText], { type: "image/svg+xml" });
-          await navigator.clipboard.write([new window.ClipboardItem({ "image/svg+xml": svgBlob })]);
-        }
+        const svgBlob = await fetchAsBlob(imgUrl);
+        const pngBlob = await svgBlobToPngBlob(svgBlob, { scale: pngScale });
+        await navigator.clipboard.write([new window.ClipboardItem({ "image/png": pngBlob })]);
       } else {
         const srcBlob = await fetchAsBlob(imgUrl);
         const pngBlob = await imageBlobToPngBlobAny(srcBlob);
         await navigator.clipboard.write([new window.ClipboardItem({ "image/png": pngBlob })]);
       }
-    } finally {
+
+      setCopyLabel("Copied!");
       setTimeout(() => setCopyLabel("Copy image"), 2000);
+    } catch {
+      setCopyLabel("Right-click image to copy");
+      setTimeout(() => setCopyLabel("Copy image"), 4000);
     }
   }
 
