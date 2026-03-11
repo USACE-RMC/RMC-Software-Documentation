@@ -92,7 +92,7 @@ const Bibliography = () => {
           <>
             {" "}
             doi:{" "}
-            <a href={`https://doi.org/${doi}`} target="_blank" rel="noopener noreferrer" className="no-underline text-ifm-link hover:text-ifm-link-hover hover:underline">
+            <a href={`https://doi.org/${doi}`} target="_blank" rel="noopener noreferrer" className="no-underline break-all text-ifm-link hover:text-ifm-link-hover hover:underline">
               {doi}
             </a>
           </>
@@ -101,7 +101,7 @@ const Bibliography = () => {
           <>
             {" "}
             Available:{" "}
-            <a href={url} target="_blank" rel="noopener noreferrer" className="no-underline text-ifm-link hover:text-ifm-link-hover hover:underline">
+            <a href={url} target="_blank" rel="noopener noreferrer" className="no-underline break-all text-ifm-link hover:text-ifm-link-hover hover:underline">
               {url}
             </a>
           </>
@@ -114,9 +114,9 @@ const Bibliography = () => {
     <div>
       <ol className="list-none pl-0 mt-5">
         {citations.map((citation) => (
-          <li key={citation.citationKey} className="flex items-start mb-2.5">
+          <li key={citation.citationKey} className="flex items-start min-w-0 mb-2.5">
             <span className="min-w-[40px] flex-shrink-0">[{citation.number}]</span>
-            <span className="block break-words">{formatCitation(citation)}</span>
+            <span className="block min-w-0 break-words">{formatCitation(citation)}</span>
           </li>
         ))}
       </ol>
