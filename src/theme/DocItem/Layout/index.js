@@ -1,7 +1,12 @@
 /**
  * Swizzled from @docusaurus/theme-classic DocItem/Layout.
- * Only change: added DocChapterNav above the mobile TOC for
- * document-level navigation on mobile/tablet viewports.
+ * Changes:
+ *  - Replaced the separate DocChapterNav ("In this document") and
+ *    DocItemTOCMobile ("On this page") dropdowns with a single unified
+ *    InlineNav tabbed panel for narrow viewports.
+ *  - Added FloatingNav FAB + bottom-sheet drawer so users can reach
+ *    the same navigation without scrolling to the top when the
+ *    viewport is narrow (< 1080 px).
  */
 import React from 'react';
 import clsx from 'clsx';
@@ -11,12 +16,11 @@ import DocItemPaginator from '@theme/DocItem/Paginator';
 import DocVersionBanner from '@theme/DocVersionBanner';
 import DocVersionBadge from '@theme/DocVersionBadge';
 import DocItemFooter from '@theme/DocItem/Footer';
-import DocItemTOCMobile from '@theme/DocItem/TOC/Mobile';
 import DocItemTOCDesktop from '@theme/DocItem/TOC/Desktop';
 import DocItemContent from '@theme/DocItem/Content';
 import DocBreadcrumbs from '@theme/DocBreadcrumbs';
 import ContentVisibility from '@theme/ContentVisibility';
-import DocChapterNav from '@site/src/components/DocChapterNav';
+import FloatingNav, { InlineNav } from '@site/src/components/FloatingNav';
 import styles from './styles.module.css';
 
 function useDocTOC() {
@@ -24,9 +28,8 @@ function useDocTOC() {
   const windowSize = useWindowSize();
   const hidden = frontMatter.hide_table_of_contents;
   const canRender = !hidden && toc.length > 0;
-  const mobile = canRender ? <DocItemTOCMobile /> : undefined;
   const desktop = canRender && (windowSize === 'desktop' || windowSize === 'ssr') ? <DocItemTOCDesktop /> : undefined;
-  return { hidden, mobile, desktop };
+  return { hidden, desktop };
 }
 
 export default function DocItemLayout({ children }) {
@@ -41,8 +44,7 @@ export default function DocItemLayout({ children }) {
           <article>
             <DocBreadcrumbs />
             <DocVersionBadge />
-            <DocChapterNav />
-            {docTOC.mobile}
+            <InlineNav />
             <DocItemContent>{children}</DocItemContent>
             <DocItemFooter />
           </article>
@@ -50,6 +52,7 @@ export default function DocItemLayout({ children }) {
         </div>
       </div>
       {docTOC.desktop && <div className="col col--3">{docTOC.desktop}</div>}
+      <FloatingNav />
     </div>
   );
 }
