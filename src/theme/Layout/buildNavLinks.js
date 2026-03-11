@@ -191,11 +191,11 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
               text: 'LifeSim Validation Studies',
               href: lifeSimValStudiesHref,
             },
-            {
+            /* {
               id: 'lifesim-applications-guide',
               text: 'LifeSim Applications Guide',
               href: lifeSimAppGuideHref,
-            },
+            }, */
           ],
         },
       ],
