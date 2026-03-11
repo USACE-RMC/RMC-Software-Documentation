@@ -2,13 +2,18 @@
 title: "Estimating Consequences for Levees and Floodwalls"
 ---
 
-import NavContainer from "@site/src/components/NavContainer";
-import VersionSelector from "@site/src/components/VersionSelector";
 import Link from "@docusaurus/Link";
 import addBaseUrl from "@docusaurus/useBaseUrl";
+import Citation from "@site/src/components/Citation";
 import CitationFootnote from "@site/src/components/CitationFootnote";
 import Figure from "@site/src/components/Figure";
 import FigureInline from "@site/src/components/FigureInline";
+import FigReference from "@site/src/components/FigureReference";
+import NavContainer from "@site/src/components/NavContainer";
+import ProcessList from "@site/src/components/ProcessList";
+import TableReference from "@site/src/components/TableReference";
+import TableVertical from "@site/src/components/TableVertical";
+import VersionSelector from "@site/src/components/VersionSelector";
 
 <NavContainer 
   link="/desktop-applications/lifesim/applications-guide"
@@ -20,7 +25,7 @@ import FigureInline from "@site/src/components/FigureInline";
 
 ## Purpose
 
-This example demonstrates the process for estimating consequences for levees or floodwalls in LifeSim. The general process is similar to , but there
+This example demonstrates the process for estimating consequences for levees or floodwalls in LifeSim. The general process is similar to the ***Estimating Consequences for Dams*** section, but there
 are modeling nuances specific to levees or floodwalls. This chapter focuses on the Cache Creek Levee located in Yolo County, CA. This levee system was
  originally modeled in 2021 by the U.S. Army Corps of Engineers’ (USACE) Modeling, Mapping and Consequences (MMC) Production Center. This chapter
 includes step-by-step instructions for importing the required data into LifeSim for a levee or floodwall breach model, how to choose appropriate
@@ -34,7 +39,7 @@ simulating alternatives.
 
 ## Hydraulic Data
 
-The Cache Creek Levee utilized output from the Hydrologic Engineering Center’s River Analysis System (HEC-RAS). When using HEC-RAS data in LifeSim,
+The Cache Creek Levee utilized output from the Hydrologic Engineering Center’s River Analysis System (HEC-RAS) <Citation citationKey="HECRAS2024"/>. When using HEC-RAS data in LifeSim,
 the hydraulic data should be in the form of Hierarchical Data Format (HDF) files. HDF files are essentially a file package of depths, velocities, and
 hydraulic timing. Using HDF files allows you to simulate evacuation in LifeSim easily and with greater detail. For most levees/floodwalls, it is
 recommended to simulate evacuation to accurately capture potential life loss in structures <em>and</em> on roads. The HEC-RAS plan HDF file and the
@@ -154,7 +159,7 @@ estimated leveed area. Otherwise, it is likely that both economic damages and li
 incremental risk (i.e., “levee risk” or the risk associated with the levee) is, which is within the leveed area.
 
 For most levees and floodwalls, the shapefile used for the EPZ should represent the estimated leveed area. The National Levee Database (NLD) is a
-resource that includes most floodwalls and levees within the U.S. (). The NLD shows the leveed area for each project and allows you to download the
+resource that includes most floodwalls and levees within the U.S. <Citation citationKey="NLD"/>. The NLD shows the leveed area for each project and allows you to download the
 leveed area as a shapefile, which should be used as the EPZ for the entire study.
 
 If the project is not included in the NLD or you are unable to access the NLD, it is recommended to obtain the HEC-RAS model’s 2D mesh area and use
@@ -166,11 +171,35 @@ members on the study.
 Once you have a representative shapefile for the EPZ, the next step is to assign the Warning and Protective Action Data, including the Warning
 Issuance Delay, Warning Diffusion (First Alert Curves), and Protective Action Initiation (PAI) parameters.
 
-There are a few types of resources to consider when gathering information about the area’s warning and evacuation procedures: (1) any expert opinion
-consequence elicitation  conducted in the city or county in question within 5 years of the current analysis, (2) the USACE Levee Screening Tool (LST),
- and (3) local, county, and/or state Emergency Management Agency (EMA) websites and social media. Reaching out to communities directly, or the
-responsible USACE districts, and asking questions to gauge the need for a more formal consequence elicitation is perfectly acceptable if the data
-available is in question.
+There are a few types of resources to consider when gathering information about the area’s warning and evacuation procedures: 
+<ProcessList
+  items={[
+    { // STEP 1
+      title: (
+        <>
+          Any expert opinion consequence elicitations conducted in the relevent city or county within 5 years of the current analysis
+        </>
+      ),
+    },
+    { // STEP 2
+      title: (
+        <>
+          The Levee Screening Tool (LST) <Citation citationKey="LST"/>
+        </>
+      ),
+    },
+    { // STEP 3
+      title: (
+        <>
+          Local, county, and/or state Emergency Management Agency (EMA) websites and social media
+        </>
+      ),
+    },
+  ]}
+/>
+
+Reaching out to communities directly, or the responsible USACE districts, and asking questions to gauge the need for a more formal consequence elicitation 
+is perfectly acceptable if there is some uncertainty regarding the best available data.
 
 If these resources are not available for your project, you should select LifeSim’s preset Unknown parameters for Warning Issuance Delay, Hazard
 Communication Delay, and Protective Action Initiation curves within the EPZ editor.
@@ -181,17 +210,17 @@ The subsequent sections discuss the three resources that should be considered wh
 
 Over recent years, many consequence elicitations have been conducted within the U.S. to support risk assessments. The consequence elicitations are
 generally conducted for various high-risk cities and/or counties. When starting a new LifeSim model or risk assessment, check if an elicitation was
-already conducted within your study area. The current consequence elicitation directory is stored on a  and is for internal use only. Reaching out to
-the responsible USACE district is a perfectly acceptable way to assess whether or not an elicitation has been or needs to be conducted for your study.
- If an elicitation was completed, you can likely use most of these same parameters for your LifeSim model. It is recommended to review the elicitation
- results, including the meeting notes and elicited LifeSim parameters, to ensure the parameters are logical for your levee project. If the elicitation
- was conducted for a dam, review the notes to ensure that the elicitation could be applied to a levee. There may be instances in which you do not feel
- confident that the previous elicitation results directly apply to your project, which could cause you to gather other resources to make an informed
+already conducted within your study area. The current consequence elicitation directory is stored on a USACE shared drive and is for internal use only. 
+
+If an elicitation was completed, you can likely use most of these same parameters for your LifeSim model. It is recommended to review the elicitation
+results, including the meeting notes and elicited LifeSim parameters, to ensure the parameters are logical for your levee project. If the elicitation
+was conducted for a dam, review the notes to ensure that the elicitation could be applied to a levee. There may be instances in which you do not feel
+confident that the previous elicitation results directly apply to your project, which could cause you to gather other resources to make an informed
 decision.
 
 #### Using the Levee Screening Tool to Inform LifeSim Parameters
 
-The Levee Screening Tool (LST) () can contain helpful information regarding expected emergency action plans, community awareness, and warning systems
+The LST can contain helpful information regarding expected emergency action plans, community awareness, and warning systems
 to inform the EPZ’s warning and evacuation data. Within the LST, a levee may have several segments with individual screenings. It is recommended to
 look at the segment with the most screenings, or to identify the screening that was completed most recently; this screening will have the most
 up-to-date information. Generally, all levee units are rescreened as a system, but there can be special instances in which this is not the case.
@@ -343,8 +372,8 @@ messages directly related to a levee safety emergency occurring at Cache Creek L
 />
 
 Because we don’t fully understand how quickly the warning was sent out relative to when Yolo County was notified of the emergency, the Moderately
-Prepared warning issuance delay curve was selected to allow for more uncertainty in the delay time. The most likely sampled warning issuance delay
-time is 16 minutes (about 21% likelihood), but there is still probability that the delay is longer or shorter (e.g., there is a 12% likelihood that
+Prepared Warning Issuance Delay curve was selected to allow for more uncertainty in the delay time. The most likely sampled warning issuance delay
+time is 16 minutes (about 21% likelihood), but there is still probability that the delay is longer or shorter (i.e., there is a 12% likelihood that
 the delay is 50 minutes; there is a 15% likelihood the delay is 10 minutes.)
 
 <Figure
@@ -355,7 +384,7 @@ the delay is 50 minutes; there is a 15% likelihood the delay is 10 minutes.)
 />
 
 Next, select First Alert Diffusion curves for the EPZ. This parameter is heavily influenced by the amount of communication channels the county would
-use during a levee safety emergency. As shown in the  section above, Yolo County has an opt-in alert system. The website also shows Yolo County uses
+use during a levee safety emergency. As shown in (<FigReference figKey="figure-16"/>), Yolo County has an opt-in alert system. The website also shows Yolo County uses
 Everbridge, which is a robust mass alert system. Everbridge distributes messages via phone calls, texts, and emails. Additionally, following the 2019
 Cache Creek Levee overtopping, it’s likely that several people signed up for alert messages through AlertSense. It is known that Yolo County utilizes
 social media, radio, and news to distribute a warning message.
@@ -383,18 +412,18 @@ High) and uncertainty regarding the population’s readiness to mobilize (Prepar
 <Figure
   figKey="figure-22"
   src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/figure22.png"
-  alt="Perception: High / Preparedness: Low Protective Action Delay Curve"
-  caption="Perception: High / Preparedness: Low Protective Action Delay Curve"
+  alt="Perception: High / Preparedness: Low Protective Action Initiation Curve"
+  caption="Perception: High / Preparedness: Low Protective Action Initiation Curve"
 />
 
 The user is encouraged to perform additional sensitivity tests on parameters that have significant knowledge uncertainty. In this example, there is
 limited information on the community’s preparedness during a flood emergency. Therefore, the user should run simulations with the Perception: High /
 Preparedness: Low PAI curve as well as the Perception: High / Preparedness: Moderate PAI curve to better understand the model’s sensitivity to the
 selected PAI curve. Then, the user may want to run the Perception: Unknown / Preparedness: Unknown curve as an additional sensitivity test. Regardless
- of your final model parameters, ensure there is ample justification for the selected warning evacuation parameters and that they accurately represent
- the impacted areas.
+of your final model parameters, ensure there is ample justification for the selected warning evacuation parameters and that they accurately represent
+the impacted areas.
 
-Ensure the warning and evacuation parameter assumptions are clearly documented.
+*Regardless of how you select your parameters, ensure the warning and evacuation parameter assumptions are clearly documented.*
 
 After selecting your uncertainty parameters, enter a name for the EPZ, press <strong>OK</strong>, and the EPZ is imported into the LifeSim study.
 
@@ -484,7 +513,7 @@ structure inventory, right click on the study’s structure inventory and click 
   caption="How to show a study’s structure inventory in the Map Layers pane"
 />
 
-Navigate to the Map Layers pane. Right click on the structure inventory (NSI2_CacheCreek below) and select <strong>Edit</strong>. You can now edit the
+Navigate to the Map Layers pane. Right click on the structure inventory (labeled NSI2_CacheCreek in (<FigReference figKey="figure-30"/>)) and select <strong>Edit</strong>. You can now edit the
  placement of structure points in the map window and edit structure attributes in the attribute table.
 
 <Figure
@@ -494,8 +523,8 @@ Navigate to the Map Layers pane. Right click on the structure inventory (NSI2_Ca
   caption="How to edit an existing structure inventory via the Map Layers pane"
 />
 
-Once you are done editing the structure inventory, right click on the structure inventory in the Map Layers pane (NSI2_CacheCreek in the figure below)
- and select <strong>Stop Editing</strong>.
+Once you are done editing the structure inventory, right click on the structure inventory in the Map Layers pane (labeled NSI2_CacheCreek in (<FigReference figKey="figure-31"/>))
+and select <strong>Stop Editing</strong>.
 
 <Figure
   figKey="figure-31"
@@ -516,14 +545,51 @@ reflected in the structure inventory both in the Study pane and Map Layers pane.
 
 ## Simulating Evacuation
 
-For most levee/floodwall projects, evacuation is simulated in LifeSim. In addition to the hydraulic data, EPZs, and structure inventory, you need to import
- (1) a road network and (2) destination points to simulate evacuation in LifeSim. The recommended workflow is to begin with importing a road network
-and then create destination points.
+For most levee/floodwall projects, it is recommended to simulate evacuation in LifeSim. In addition to the hydraulic data, EPZs, and structure inventory, you need to import two key inputs:
+<ProcessList
+  items={[
+    { // STEP 1
+      title: (
+        <>
+          A road network
+        </>
+      ),
+    }, 
+     { // STEP 2
+      title: (
+        <>
+          Destination points
+        </>
+      ),
+    },
+  ]}
+/>
+
+The recommended workflow is to begin with importing a road network and then create destination points.
 
 ### Road Network
 
-There are two ways to import a road network: (1) download and import a road network from OpenStreetMap (OSM) within LifeSim and (2) import a polyline
-shapefile. Unless you have detailed data from a previous study or from local stakeholders, you will download and import a road network from
+There are two ways to import a road network:
+<ProcessList
+  items={[
+    { // STEP 1
+      title: (
+        <>
+          Download and import a road network from OpenStreetMap <Citation citationKey="OSM"/> within LifeSim 
+        </>
+      ),
+    }, 
+     { // STEP 2
+      title: (
+        <>
+          Import a polyline shapefile
+        </>
+      ),
+    },
+  ]}
+/>
+
+Unless you have detailed data from a previous study or from local stakeholders, you will download and import a road network from
 OpenStreetMap.
 
 #### Downloading a Road Network in LifeSim
@@ -540,12 +606,12 @@ Network From OpenStreetMap</strong>.
 
 The Import Road Network From OpenStreetMap window opens. The primary data needed to import a road network is a bounding polygon shapefile. The
 bounding polygon determines what roads are downloaded from OpenStreetMap. The easiest bounding polygon to use for import is the shapefile used for the
- EPZ; additionally, the bounding polygon needs to be in the same projection as the LifeSim study Once you select the polygon, type in a bounding
+EPZ; additionally, the bounding polygon needs to be in the same projection as the LifeSim study Once you select the polygon, type in a bounding
 polygon buffer (the value represents miles).
 
 As shown below, the Cache Creek EPZ shapefile is being used for import. The Bounding Polygon Buffer is set to 1 mile. The additional mile of road
 network allows for more realistic traffic congestion in the simulation and increases the accuracy of potential evacuation routes. There should be some
- amount of buffer included on the bounding polygon for import, unless the selected shapefile is already buffered or larger than the leveed area.
+amount of buffer included on the bounding polygon for import, unless the selected shapefile is already buffered or larger than the leveed area.
 Selecting an appropriate buffer size depends on the size of the study area, inundation extents, the density of the population, and known evacuation
 routes. Do not make the buffer too large as this imports many additional road segments that (1) may not improve the evacuation accuracy and (2) can
 significantly increase simulation run times as depths and velocities on each road segment are calculated (i.e., more road segments lead to longer
@@ -579,8 +645,8 @@ Networks</strong>, and select <strong>Import Road Network from Shapefile</strong
 />
 
 The Import Road Network window opens. Map to the Road Network Shapefile by either using the dropdown (only polyline shapefiles that are in the map
-window are shown) or by clicking the button with the three dots next to the dropdown. Then, match the CFCC Name Field to the corresponding attribute from
- the polyline shapefile, which should be an already existing attribute if you are importing a road network from a previous study. Then, match the
+window are shown) or by clicking the button with the three dots next to the dropdown. Then, match the Census Feature Class Code (CFCC) Name Field to the corresponding attribute from
+the polyline shapefile, which should be an already existing attribute if you are importing a road network from a previous study. Then, match the
 One-Way Field (with an identifier) and the Vertical Offset attribute. These fields are optional but increase the accuracy of the road network. Once
 you match up the field(s) with your shapefile’s attribute(s), select <strong>OK</strong> and the road network imports.
 
@@ -593,14 +659,14 @@ you match up the field(s) with your shapefile’s attribute(s), select <strong>O
 
 #### Editing a Road Network
 
-After importing a road network into LifeSim, edits to the polygon and/or the road network’s attributes are likely needed. OSM provides a base for an
+After importing a road network into LifeSim, edits to the polygon and/or the road network’s attributes are likely needed. OpenStreetMap provides a base for an
 accurate road network. However, there are aspects to the data that may need to be edited and confirmed. One of the key components of a road network is
- the “Vertical Offset” field, which is found in the road network attribute table. This field accounts for if a road segment should have some amount of
- vertical offset relative to the terrain elevation, such as a bridge or highway overpass. The default vertical offset for all road segments in OSM is
+the “Vertical Offset” field, which is found in the road network attribute table. This field accounts for if a road segment should have some amount of
+vertical offset relative to the terrain elevation, such as a bridge or highway overpass. The default vertical offset for all road segments in OpenStreetMap is
 0. Vertical offsets should be confirmed and edited throughout the study area. Focus on areas you can visibly see road segments over waterways (i.e.,
 bridges) and areas where highways are most concentrated (there may be overpasses). To view the attribute table and the Vertical Offset field, right
 click on the imported road network from the Study pane and select <strong>Show in Map Window</strong>. Navigate to the Map Layers pane, right click on
- the road network, and select <strong>Open Attribute Table</strong>.
+the road network, and select <strong>Open Attribute Table</strong>.
 
 <Figure
   figKey="figure-37"
@@ -701,10 +767,11 @@ you to create new points, which represent evacuation destinations.
 It is best to place destination points directly on road segments, so it is recommended to also have your road network in the map window. If the point
 is not placed directly on a road segment, the closest road segment is assumed to be the destination point. When creating destination points, most of
 the points should be on major highways and roadways. The destination points should generally not be shelters or large buildings because there is no
-way to set a limit on how many people can evacuate to each destination point. This would lead to inaccuracies in your evacuation simulation.
+way to set a limit on how many people can evacuate to each destination point. This would lead to inaccuracies in your evacuation simulation, potentially
+resulting in inaccurate life loss estimates.
 
 In general, attempt to place each of the destination points an equal distance away from the study area. If one destination is significantly closer to
-the study area, LifeSim will direct most of the population  to this destination point since it is the closest distance and most likely the quickest
+the study area, LifeSim will direct most of the population to this destination point since it is the shortest distance and most likely the quickest
 evacuation route. The group evacuating selects which destination point to evacuate based on the shortest travel time (i.e., accounting for traffic
 congestion), not the shortest travel distance. Depending on the study area and available information, you may want to place some destination points
 closer or farther away from the study area (e.g., If you want more people to evacuate east rather than north, place the destination points to the east
@@ -712,7 +779,7 @@ closer or farther away from the study area (e.g., If you want more people to eva
 
 For Cache Creek, the study area is most densely populated in the western portion of the leveed area. The flooding source is along the eastern portion
 of the leveed area, so the destination points located to the west are the preferred destination routes, therefore the northern and western destination
- points are closer to the population center compared to the destination points to the east of the leveed area.
+ points are closer to the population center compared to the destination points to the east of the leveed area as shown in <FigReference figKey="figure-46"/>.
 
 <Figure
   figKey="figure-46"
@@ -828,11 +895,16 @@ pane, right click on <strong>Alternatives</strong>, and click <strong>Create New
   caption="Create New Alternatives from Study pane"
 />
 
-To create an alternative for a levee, include all input data required to calculate life loss and simulate evacuation. For most levee studies, this
-includes hydraulic data, a structure inventory, an EPZ, a road network, and destinations. Select the input data through the dropdown menus within the
-Create New Alternative window. In addition to the input data, other warning and evacuation parameters need to be entered for each alternative. Two
-other inputs required to create an alternative are the Imminent Hazard Identification Time and the Hazard Communication Delay. Input values (in hour
-units) for both parameters. If you have multiple EPZs, enter the information for these parameters for each EPZ.
+To create an alternative for a levee, include all input data required to calculate life loss and simulate evacuation. Your alternative should include the following inputs:
+- Hydraulic data
+- Structure inventory 
+- EPZ
+- Road network
+- Destinations 
+
+Select the input data through the dropdown menus within the Create New Alternative window. In addition to the input data, other warning and evacuation 
+parameters need to be entered for each alternative. Two other inputs required to create an alternative are the Imminent Hazard Identification Time and the Hazard Communication Delay. Input values (in hour
+units) for both parameters. If you have multiple EPZs, you will need to include an Imminent Hazard Identification Time and Hazard Communication Delay for each EPZ.
 
 <Figure
   figKey="figure-56"
@@ -841,20 +913,20 @@ units) for both parameters. If you have multiple EPZs, enter the information for
   caption="Create New Alternative window"
 />
 
-The example alternative below (LCL_TOL_Min; i.e., a minimal warning scenario for a hazard occurrence at the Levee Control Location during a Top of
+The example alternative shown in <FigReference figKey="figure-57"/>(LCL_TOL_Min; i.e., a minimal warning scenario for a hazard occurrence at the Levee Control Location during a Top of
 Levee hydraulic loading) shows the selected data inputs required to simulate traffic and calculate life loss for the LCL TOL hydraulic scenario as
-well as the entries for the relative hazard identification time and hazard communication delay. The relative hazard identification time should be
+well as the entries for the Imminent Hazard Identification Time and Hazard Communication Delay. The Imminent Hazard Identification Time should be
 reflective of the community’s ability to monitor the project, how early the event could be forecasted in advance, and the type of failure mode. For
-example, if the emergency managers would have little time to identify a rapidly developing breach, the relative hazard identification time would be
+example, if the emergency managers would have little time to identify a rapidly developing breach, the Imminent Hazard Identification Time would be
 close to the time the hazard occurs.  The example alternative (LCL_TOL_Min) is representative of a situation in which the breach occurs relatively
 quickly. You can create multiple alternatives for each hydraulic scenario with various warning times if there is uncertainty surrounding the relative
 hazard identification time. This provides a range of possible life loss outcomes.
 
-Additionally, determining the hazard communication delay depends on how quickly the hazard would be communicated from the project personnel to local
+Additionally, determining the Hazard Communication Delay depends on how quickly the hazard would be communicated from the project personnel to local
 emergency managers. A smaller delay (or no delay) would occur if the local emergency managers were onsite with other project personnel while the
 situation develops. A longer delay would occur if the local emergency managers were unaware of the hazard, there are power and electricity outages,
 and there are no redundant technologies available to maintain communication with project personnel. The project’s emergency action plan provides
-insight regarding the potential hazard communication delay. The hazard communication delay in the example alternative represents a situation in which
+insight regarding the potential communication delay. The Hazard Communication Delay in the example alternative represents a situation in which
 the project personnel are able to contact the local emergency managers relatively quickly, but there is still a slight delay.
 
 <Figure
@@ -880,7 +952,7 @@ The Create New Simulation window will open. From this window, you can simulate a
 population estimates within structures. Additionally, you can specify the number of iterations, select summary polygons for result aggregation, and
 select which alternatives to run.
 
-Below is an example of a simulation for breach location 2 (BL2) alternatives, including a daytime (2pm) and a nighttime (2am) hazard occurrence, that
+<FigReference figKey="figure-59"/> is an example of a New Simulation for breach location 2 (BL2) alternatives, including a daytime (2pm) and a nighttime (2am) hazard occurrence, that
 simulates each hazard occurrence time with 1,000 iterations. LifeSim simulates the alternatives assuming the hazard occurrence time is at 2am and then
  again assuming the hazard occurrence time is at 2pm. These times are generally selected because there is no interpolation of daytime and nighttime
 population at these times in the model. If other times are selected, LifeSim will interpolate between the daytime and nighttime population values
@@ -907,10 +979,42 @@ Within the Create New Simulation window, there are an array of options that the 
   caption="Locating Computation Engine Options in the Create New Simulation window"
 />
 
-The Computation Engine Options window opens, and you can customize (1) the number of threads for the simulation (the higher the number of threads, the
- faster the simulation runs), (2) whether the simulation generates structure summary results, (3) whether the simulation generates road summary
-results, and (4) whether you want to enforce vehicular spillback. More information about the appropriate times to uncheck these boxes is discussed in
-the LifeSim 2.0 User Manual (See the Simulation – Computation Engine Options section).
+The Computation Engine Options window opens, and you can customize:
+<ProcessList
+  items={[
+    { // STEP 1
+      title: (
+        <>
+          The number of threads for the simulation (the higher the number of threads, the faster the simulation runs)
+        </>
+      ),
+    }, 
+     { // STEP 2
+      title: (
+        <>
+          Whether or not the simulation generates structure summary results
+        </>
+      ),
+    },
+         { // STEP 3
+      title: (
+        <>
+          Whether or not the simulation generates road summary results
+        </>
+      ),
+    },
+         { // STEP 4
+      title: (
+        <>
+          If vehicular spillback is enforced
+        </>
+      ),
+    }
+  ]}
+/> 
+
+More information about the appropriate times to uncheck these boxes is discussed in
+the LifeSim Technical Reference Manual.
 
 <Figure
   figKey="figure-61"
@@ -935,10 +1039,12 @@ be included in the simulation. The simulation you created is now located under S
 
 After running simulations, you can view your results by result plots, result tables, and result maps. Each way to view results is uniquely beneficial
 in (1) understanding your life loss and economic damage estimates and (2) quality checking your results. It is unlikely that your first simulation
-will be your last simulation—edits to the structure inventory, EPZs, road network and/or destination points may be needed to obtain accurate and
+will be your last simulation; edits to the structure inventory, EPZs, road network and/or destination points may be needed to obtain accurate and
 representative results.
 
-### Result Plots
+*Note:  The model results included in the subsequent sections are for example purposes only and are not representative of actual life loss and economic damage estimates for the Cache Creek Levee project.*
+
+### Results Plots
 
 The first way to view results is by result plots. Right click on the already run simulation and select <strong>View Results Plots</strong>. The
 Simulation Results Plots window opens. The first tab of the window display is the Box and Whisker – Time of Day. The user can toggle which alternative
@@ -969,11 +1075,13 @@ Whisker – Alternatives tab. You can view just the 02:00 or 14:00 results. In t
   caption="Simulation Results Plots: Box and Whisker – Alternatives"
 />
 
-Another key result to analyze and review is the Life Loss on Roads, which is shown in the figure below. Overall, there is little estimated life loss
+Another key set of results to analyze and review is the Life Loss on Roads, which is shown in the figure below. Overall, there is little estimated life loss
 on roads within the BL2 results. If the life loss on roads makes up most of the total life loss, the user should review the road network and
 destinations to ensure the simulated evacuations are logical, that there is not high life loss on particular road segments, and that all the road
-segments are connected properly. For example, ensure most of the life loss on roads is not incorrectly occurring on a single bridge that should have a
- vertical offset.,
+segments are connected properly. 
+
+- Example 1: If there is significant life loss on a bridge, ensure the road segment has been assigned an appropriate vertical offset. 
+- Example 2: If there is a single road segment with abnormally high life loss, this may indicate that the road segment is not connected to the rest of the road network.
 
 <Figure
   figKey="figure-65"
@@ -990,10 +1098,10 @@ given the study area. To view both the evacuation animation and the cumulation d
 this output, go to the Iterations tab from the Results Plot window, left click on the iteration that you want more detailed information for, such as
 animating evacuation, and click <strong>Generate Detailed Output</strong> in the bottom right corner.
 
-As you can see in the example below, I selected an iteration that has the highest life loss on roads to better understand potential evacuation issues.
+As shown in<FigReference figKey="figure-66"/>, the iteration with the highest life loss on roads was selected to better understand potential evacuation issues.
  If there are several iterations with high life loss on roads, it may be best to select an iteration that is representative of the average life loss
-on roads. Sometimes high life loss on roads in some iterations is solely due to a timing issue rather than a traffic issue; the highest life loss on
-roads results may occur when there is little warning and many people are on the road minutes prior of the floodwaters arriving.
+on roads. Sometimes high life loss on roads in some iterations is solely due to a timing issue rather than a traffic issue; iterations with high life loss on
+roads results may occur due to little advanced warning causing many people to enter the road network only minutes prior of the floodwaters arriving.
 
 <Figure
   figKey="figure-66"
@@ -1029,7 +1137,7 @@ evacuation and compares the number of mobilized individuals to the number of peo
 />
 
 The third and final sub-tab is the Cumulative Destination Arrivals. This shows how many vehicles traveled to each destination point. This plot can be
-very useful when conducting a quality control review of the evacuation results and life loss on roads. As you can see in the example plot below, the
+very useful when conducting a quality control review of the evacuation results and life loss on roads. As you can see in the example plot in <FigReference figKey="figure-69"/>, the
 113-S destination point was overwhelmingly utilized compared to the other destination points. To understand if the destination arrivals are logical,
 you need to understand your study area. Depending on the project, the terrain of the area, the location of the hazard, and the availability of egress
 routes dictates if there are viable destination points in all directions. In many situations, only a couple of directions are likely to offer
@@ -1073,7 +1181,7 @@ inundated, and vertical offsets that have not been appropriately added.
   caption="Animating evacuation"
 />
 
-### Result Maps
+### Results Maps
 
 Another way to view if life loss on roads appears reasonable is to view various Roads Summary maps. These layers are accessible in the Result Maps
 Selector.
@@ -1174,7 +1282,7 @@ as necessary to confirm that the life loss estimates in structures are reasonabl
   caption="Zoomed in to the highest mean life loss structure"
 />
 
-### Result Tables
+### Results Tables
 
 The final way to view results is by table. This is most helpful to clearly see results for various alternatives at once and is the easiest way to export
  results for report writing. To see the results table, right click on the already run simulation and select <strong>View Results Table</strong>. The
@@ -1227,7 +1335,7 @@ loss) for that specific iteration.
   caption="Simulation Results Tables – Detailed Output Results"
 />
 
-You can export any of the four tabulated tables into various formats by clicking on the <strong>Export Table </strong>button (see below). After
+You can export any of the four tabulated tables into various formats by clicking on the <strong>Export Table </strong>button (see <FigReference figKey="figure-84"/>). After
 clicking on this button, name the file and select the file format. Then click <strong>Save</strong>.
 
 <Figure
@@ -1247,6 +1355,5 @@ clicking on this button, name the file and select the file format. Then click <s
 Following any edits made during the quality control check, you need to <strong>rerun all simulations</strong>. Once you confirm the new life loss and
 economic results, your levee/floodwall LifeSim model is complete.
 
-		(Page is intentionally left blank)
 
 <CitationFootnote />
