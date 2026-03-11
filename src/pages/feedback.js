@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Layout from '@theme/Layout';
 
 const FEEDBACK_EMAIL = 'Adam.c.gohs@usace.army.mil';
@@ -145,10 +146,141 @@ function buildMailtoHref(category) {
   return `mailto:${FEEDBACK_EMAIL}?subject=${encodeURIComponent(category.subject)}&body=${encodeURIComponent(category.body)}`;
 }
 
-function FeedbackCard({ category }) {
+/* ---------- Feedback Modal ---------- */
+
+const ANIMATION_MS = 250;
+
+const BACKDROP_BASE = 'fixed inset-0 z-50 overflow-y-auto bg-black/35 px-4 py-8 sm:px-16 sm:py-16 transition-opacity';
+const BACKDROP_VISIBLE = 'opacity-100';
+const BACKDROP_HIDDEN = 'opacity-0';
+
+const DIALOG_BASE = 'bg-[var(--ifm-background-color)] mx-auto max-w-lg rounded-xl shadow-lg transition-all px-5 sm:px-7';
+const DIALOG_VISIBLE = 'translate-y-0 scale-100 opacity-100';
+const DIALOG_HIDDEN = '-translate-y-2 scale-95 opacity-0';
+
+function FeedbackModal({ isOpen, category, onClose }) {
+  const dialogRef = useRef(null);
+  const [visible, setVisible] = useState(false);
+  const closingRef = useRef(false);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
+  useEffect(() => {
+    if (!isOpen) {
+      setVisible(false);
+      closingRef.current = false;
+      return;
+    }
+    const raf = requestAnimationFrame(() => setVisible(true));
+    return () => cancelAnimationFrame(raf);
+  }, [isOpen]);
+
+  const animateClose = useCallback(() => {
+    if (closingRef.current) return;
+    closingRef.current = true;
+    setVisible(false);
+    setTimeout(() => {
+      onCloseRef.current();
+      closingRef.current = false;
+    }, ANIMATION_MS);
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        animateClose();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, animateClose]);
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (!isOpen) return;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  if (!isOpen || !category) return null;
+
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) animateClose();
+  };
+
+  return (
+    <div className={`${BACKDROP_BASE} duration-500 ${visible ? BACKDROP_VISIBLE : BACKDROP_HIDDEN}`} onClick={handleBackdropClick}>
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="feedback-modal-title" className={`${DIALOG_BASE} duration-500 ${visible ? DIALOG_VISIBLE : DIALOG_HIDDEN}`}>
+        {/* Header */}
+        <div className="-mx-5 flex items-start justify-between border-b border-border-color px-5 sm:-mx-7 sm:px-7">
+          <div id="feedback-modal-title" className="flex items-center gap-2 py-4 font-usace text-lg font-semibold text-font-color">{category.title}</div>
+          <button type="button" onClick={animateClose} className="cursor-pointer px-2 py-2 -mr-4 text-2xl text-[var(--ifm-color-emphasis-500)] hover:text-red-500" aria-label="Close modal">
+            &times;
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="pb-6 pt-5">
+          <p className="m-0 mb-4 font-usace text-sm leading-normal text-font-color-description">
+            If your email client didn't open, copy the details below into a new email.
+          </p>
+
+          <div className="space-y-3">
+            <div>
+              <label className="mb-1 block font-usace text-xs font-semibold uppercase tracking-wide text-font-color-description">To</label>
+              <div className="select-all rounded-lg border border-border-color bg-[var(--ifm-background-surface-color)] px-3 py-2 font-usace text-sm text-font-color">{FEEDBACK_EMAIL}</div>
+            </div>
+
+            <div>
+              <label className="mb-1 block font-usace text-xs font-semibold uppercase tracking-wide text-font-color-description">Subject</label>
+              <div className="select-all rounded-lg border border-border-color bg-[var(--ifm-background-surface-color)] px-3 py-2 font-usace text-sm text-font-color">{category.subject}</div>
+            </div>
+
+            <div>
+              <label className="mb-1 block font-usace text-xs font-semibold uppercase tracking-wide text-font-color-description">Body</label>
+              <pre className="select-all overflow-auto whitespace-pre-wrap rounded-lg border border-border-color bg-[var(--ifm-background-surface-color)] px-3 py-2 font-usace text-sm leading-relaxed text-font-color" style={{ maxHeight: '250px' }}>
+                {category.body}
+              </pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Feedback Card ---------- */
+
+function FeedbackCard({ category, onMailtoFailed }) {
+  function handleClick(e) {
+    e.preventDefault();
+    let blurred = false;
+
+    const onBlur = () => {
+      blurred = true;
+    };
+    window.addEventListener('blur', onBlur);
+
+    // Fire the mailto link
+    window.location.href = buildMailtoHref(category);
+
+    // If the browser hasn't lost focus after 1.5s, the mailto likely failed
+    setTimeout(() => {
+      window.removeEventListener('blur', onBlur);
+      if (!blurred) {
+        onMailtoFailed(category);
+      }
+    }, 1500);
+  }
+
   return (
     <a
       href={buildMailtoHref(category)}
+      onClick={handleClick}
       className="group relative flex cursor-pointer flex-col items-start gap-3 rounded-[10px] border border-border-color bg-[var(--ifm-background-color-theme)] p-6 text-inherit !no-underline transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-ifm-primary hover:text-inherit hover:shadow-[0_4px_16px_rgba(74,124,155,0.15)] dark:hover:shadow-[0_4px_16px_rgba(127,181,208,0.12)]"
       aria-label={`${category.title} - opens your email client`}
     >
@@ -168,7 +300,11 @@ function FeedbackCard({ category }) {
   );
 }
 
+/* ---------- Page ---------- */
+
 export default function Feedback() {
+  const [modalCategory, setModalCategory] = useState(null);
+
   return (
     <Layout title="Feedback" description="Provide feedback on the RMC Software Documentation site.">
       <main>
@@ -184,7 +320,7 @@ export default function Feedback() {
         <div className="mx-auto max-w-[800px] px-6 pb-16 pt-8">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {feedbackCategories.map((category) => (
-              <FeedbackCard key={category.id} category={category} />
+              <FeedbackCard key={category.id} category={category} onMailtoFailed={setModalCategory} />
             ))}
           </div>
           <div className="mt-6 border-t border-border-color pt-4 text-center">
@@ -195,6 +331,8 @@ export default function Feedback() {
           </div>
         </div>
       </main>
+
+      <FeedbackModal isOpen={!!modalCategory} category={modalCategory} onClose={() => setModalCategory(null)} />
     </Layout>
   );
 }
