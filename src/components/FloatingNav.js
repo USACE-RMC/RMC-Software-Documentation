@@ -244,18 +244,18 @@ export default function FloatingNav() {
   const [visible, setVisible] = useState(false);
   const [narrow, setNarrow] = useState(false);
 
-  // Nothing to show
-  if (!hasTOC && !hasSidebar) return null;
+  const hasContent = hasTOC || hasSidebar;
 
   /* --- viewport width check --- */
   useEffect(() => {
+    if (!hasContent) return;
     function check() {
       setNarrow(window.innerWidth < DESKTOP_BREAKPOINT);
     }
     check();
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
-  }, []);
+  }, [hasContent]);
 
   /* --- show/hide based on scroll --- */
   useScrollPosition(({ scrollY }, lastPosition) => {
@@ -302,8 +302,8 @@ export default function FloatingNav() {
     setOpen(false);
   }, []);
 
-  // Only render in narrow viewports
-  if (!narrow) return null;
+  // Nothing to show, or desktop viewport (sidebars visible)
+  if (!hasContent || !narrow) return null;
 
   const showButton = visible || open;
 
