@@ -11,7 +11,7 @@ export default function DocTabs({
   gap = '',
 
   // Outer card
-  containerClass = 'rounded-lg bg-background-color shadow-md mx-3',
+  containerClass = 'rounded-lg bg-background-color shadow-md dark:shadow-lg dark:shadow-black/50 mx-3',
 
   // Tabs row (doesn't style the tabs themselves)
   tabListClass = '!pl-0 !my-0 flex rounded-t-lg overflow-hidden border-b border-border-color bg-background-color dark:bg-background-color-theme',
