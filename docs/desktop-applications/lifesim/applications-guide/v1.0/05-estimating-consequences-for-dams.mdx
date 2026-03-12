@@ -4,12 +4,17 @@ title: "Estimating Consequences for Dams"
 
 import Link from "@docusaurus/Link";
 import addBaseUrl from "@docusaurus/useBaseUrl";
+import Citation from "@site/src/components/Citation";
 import CitationFootnote from "@site/src/components/CitationFootnote";
 import Figure from "@site/src/components/Figure";
+import FigureInline from "@site/src/components/FigureInline";
 import FigReference from "@site/src/components/FigureReference";
 import NavContainer from "@site/src/components/NavContainer";
+import ProcessList from "@site/src/components/ProcessList";
+import TableReference from "@site/src/components/TableReference";
 import TableVertical from "@site/src/components/TableVertical";
 import VersionSelector from "@site/src/components/VersionSelector";
+
 
 <NavContainer 
   link="/desktop-applications/lifesim/applications-guide"
@@ -26,14 +31,17 @@ Clearfield County, PA. This was originally modeled by the Modeling, Mapping and 
 Corps of Engineers (USACE) in 2022. This chapter walks through developing and importing the needed data and how to choose appropriate warning and
 evacuation data for a LifeSim study.
 
+*Note:  The model results included in the subsequent sections are for example purposes only and are not representative of actual life loss and 
+economic damage estimates for the Curwensville Dam project.*
+
 ## Data Requirements
 
-To take full advantage of LifeSim capabilities, an unsteady Hydrologic Engineering Center’s River Analysis System (HEC-RAS) dam breach model with a
-range of breach and corresponding non-breach events is required. Non-breach events are needed to identify any areas flooded prior to the breach, which
- allows you to understand incremental life loss and incremental risk of the dam. Alternatively, the inundation footprint from a breach model time step
- just before the breach occurs can be used to identify areas flooded prior to the breach, but for this example the non-breach inundation footprint is
-used to identify pre-breach flooding. This example also assumes that both maximum depth grids and inundation boundary polygons for each event have
-been created in the HEC-RAS model directory using RAS Mapper.
+To take full advantage of LifeSim capabilities, an unsteady Hydrologic Engineering Center’s River Analysis System (HEC-RAS) <Citation citationKey="HECRAS2024"/> 
+dam breach model with arange of breach and corresponding non-breach events is required. Non-breach events are needed to identify any areas flooded prior 
+to the breach, which allows you to understand incremental life loss and incremental risk of the dam. Alternatively, the inundation footprint from a breach 
+model time step just before the breach occurs can be used to identify areas flooded prior to the breach, but for this example the non-breach inundation 
+footprint issued to identify pre-breach flooding. This example also assumes that both maximum depth grids and inundation boundary polygons for each event 
+have been created in the HEC-RAS model directory using RAS Mapper.
 
 The hydraulic events used in the example are shown in the table below.
 
@@ -75,11 +83,17 @@ The hydraulic events used in the example are shown in the table below.
   }
   alt="Hydraulic Events in Curwensville Dam LifeSim Model"
   caption="Hydraulic Events in Curwensville Dam LifeSim Model"
+  colWidths={[12, 22, 53]}
+  widthMode="intrinsic"
 />
 
-LifeSim requires a structure inventory that includes the following characteristics at a minimum, (1) a structure occupancy type, (2) a construction
-type, (3) the number of stories, and (4) the population within the structure. This example uses the USACE National Structure Inventory (NSI) as the
-base dataset for the structure inventory.
+LifeSim requires a structure inventory that includes the following characteristics at a minimum:
+- A structure occupancy type
+- A construction type
+- The number of stories
+- The population within the structure. 
+
+This example uses the USACE National Structure Inventory (NSI) <Citation citationKey="NSI"/> as the base dataset for the structure inventory.
 
 ## Input Data and Pre-Processing
 
@@ -87,7 +101,7 @@ base dataset for the structure inventory.
 
 The first step in modeling a dam breach in LifeSim is to identify a study area polygon that can be used as a basis for emergency planning zones (EPZ),
  the structure inventory boundary, and output polygons. There are several ways to do this, but the most common methods include buffering the maximum
-inundation, manually drawing a polygon boundary in GIS software (e.g., ArcGIS Pro or QGIS), or exporting a Geometry Bounding Polygon from RAS Mapper
+inundation, manually drawing a polygon boundary in GIS software (e.g., ArcGIS Pro or QGIS) <Citation citationKey="ESRI2015"/>, or exporting a Geometry Bounding Polygon from RAS Mapper
 within HEC-RAS. The RAS Mapper geometry polygon method does not always produce an acceptable study area when there are complex geometries. When using
 this method, the output must be checked for areas where inundation is not covered and for gaps within the polygon requiring vertex edits. This example
  uses a method of buffering and then simplifying the maximum inundation polygon in ArcGIS Pro.
@@ -96,15 +110,15 @@ Create a map in ArcGIS Pro and use the <strong>Add Data</strong> button to add t
 Geoprocessing tools pane, navigate to Analysis Tools > Pairwise Overlay > Pairwise Buffer. Select the maximum inundation polygon as the Input Features
  and designate an output shapefile name (it is not recommended to save into the default geodatabase location). The buffer will be set at 1,500 feet.
 This allows for (1) a reasonable number of structure points outside the inundation for use in calibration of the inventory and (2) the case that a
-larger breach event might be added in the future. The Dissolve Type is set to “Dissolve all output features into a single feature”. Reference the
-ArcGIS Pro technical documents for additional information on tool inputs.  The tool setup is shown in <FigReference figKey="figure-85" />.
+larger breach event might be added in the future. The Dissolve Type is set to “Dissolve all output features into a single feature”. The tool setup 
+is shown on the left-hand side of <FigReference figKey="figure-86"/>.
 
 Once the dissolve is complete, the Simplify Polygon tool is used to reduce the complexity and file size of the buffered polygon for a final study
 area, which allows follow-on GIS processes and the LifeSim modeling to run more efficiently. The tool is found by navigating to Cartography Tools >
 Generalization in the default Geoprocessing toolboxes. The output of this tool should be your final study area polygon. The simplification tolerance
 determines how far the new simplified line can move. A larger number will make a simpler polygon. Make sure this number is less than the original
 buffer distance. The inundation boundary can be used as an Input Barrier to ensure than the study area is larger than the inundation. The tool setup
-is shown in <FigReference figKey="figure-86" />.
+is shown on the right-hand side of <FigReference figKey="figure-86"/>.
 
 <Figure
   figKey="figure-86"
@@ -115,9 +129,10 @@ is shown in <FigReference figKey="figure-86" />.
 
 Once the simplify polygon tool has been run, the study area is visually checked to look for areas that need to be cleaned up. Several spots had open
 areas near the center of the polygon. Those vertices were removed using the Edit ribbon and the Edit Vertices tool. Vertices can be selected and
-deleted by right clicking on the selected group and using the option to delete the selected vertices. This is shown in
-{"\n"}<FigReference figKey="figure-3" />. There were also several disconnected polygons caused by very small spots of disconnected inundation which
-were deleted from the final study area. The edits were saved. <FigReference figKey="figure-87" /> shows some of the vertices that were removed.
+deleted by right clicking on the selected group and using the option to delete the selected vertices. This is shown in the left-hand side of
+{"\n"}<FigReference figKey="figure-87" />. There were also several disconnected polygons caused by very small spots of disconnected inundation which
+were deleted from the final study area. The edits were saved. The right-hand side of <FigReference figKey="figure-87" /> shows some of the vertices that 
+were removed.
 
 <Figure
   figKey="figure-87"
@@ -128,10 +143,10 @@ were deleted from the final study area. The edits were saved. <FigReference figK
 
 Alternative Methods to Get a Study Area:
 
-Create a new shapefile and draw a polygon around the maximum inundation. This can be accomplished in the LifeSim map viewer or in ArcGIS, QGIS, or
+- Create a new shapefile and draw a polygon around the maximum inundation. This can be accomplished in the LifeSim map viewer or in ArcGIS, QGIS, or
 another GIS software.
 
-Export the Geometry Bounding Polygon from HEC-RAS/RAS-Mapper. Check and edit the polygon for completeness).
+- Export the Geometry Bounding Polygon from HEC-RAS/RAS-Mapper. Check and edit the polygon for completeness.
 
 ### Emergency Planning Zones
 
@@ -139,23 +154,28 @@ EPZs are polygons that allow LifeSim to have different warning and mobilization 
 experience different flooding characteristics (e.g., breach flows and non-breach flows). Depending on the study’s purpose and level of detail there
 could be different parameters for different communities or counties. For this example, we will focus our geographic areas on the flood characteristics
  only and assume that parameters influenced by emergency response capability and demographic characteristics can be captured by using the default
-“unknown” curves in LifeSim. Reference the  for additional information regarding the software’s default parameters.
+“unknown” curves in LifeSim. Reference the LifeSim 2.0 Technical Reference Manual <Citation citationKey="LifeSimTech2021"/> for additional information 
+regarding the software’s default parameters.
 
 In a standard dam breach scenario where no detailed information about the communities is known, there are three primary areas that may have different
-warning and mobilization characteristics:  (1) the area upstream of the dam (or the reservoir), (2) the area that experiences flooding downstream of
-the dam prior to (or regardless of) a breach, and (3) the area that is only flooded in the event of a breach. People living near the pool of a
-reservoir would typically be more aware of the flood risk than areas downstream and would have more time to mobilize as the reservoir rises, so their
-perception of risk is higher. Downstream areas subject to flooding prior to a breach (i.e., spillway flow or non-breach flows from dam releases) may
-not necessarily have a higher risk perception, but they would receive flood warnings relative to when spillway flow begins. The non-breach flows rate
-of rise would also be more gradual than a breach, meaning they would have more warning time and a higher likelihood of mobilization than areas only
-flooded in the event of a breach.
+warning and mobilization characteristics:  
+
+- The area upstream of the dam (or the reservoir)
+- The area that experiences flooding downstream of the dam prior to (or regardless of) a breach
+- The area that is only flooded in the event of a breach 
+
+People living near the pool of a reservoir would typically be more aware of the flood risk than areas downstream and would have more time to mobilize 
+as the reservoir rises, so their perception of risk is higher. Downstream areas subject to flooding prior to a breach (i.e., spillway flow or non-breach 
+flows from dam releases) may not necessarily have a higher risk perception, but they would receive flood warnings relative to when spillway flow begins. 
+The non-breach flows rate of rise would also be more gradual than a breach, meaning they would have more warning time and a higher likelihood of mobilization 
+than areas only flooded in the event of a breach.
 
 To simulate this effect in LifeSim, each unique event with different levels of spillway flow needs a unique EPZ polygon because the areas flooded
 prior to a breach are different—this is why you need corresponding non-breach events for each of your breach events. If an event has no flooding prior
  to the breach, the EPZ only needs two areas: (1) the area upstream in the reservoir and (2) the area downstream. However, this requires the hydraulic
  modeling and structure inventory to be adequately calibrated so that no structures are flooded in the corresponding non-breach event (e.g., For the
 Top of Active Storage breach scenario to only have two zones, there should be zero inundated damages during the Top of Active Storage non-breach
-scenario. Otherwise, the EPZ would need to include the 3 zones identified above.).
+scenario. Otherwise, the EPZ would need to include the three zones identified above.).
 
 The first step in creating the two zone EPZ is to make a copy of the Study Area and call it “EPZ_NoDoubleWarning”. This is done by right clicking on
 the layer name, selecting <strong>Data</strong> menu near the bottom, and clicking on <strong>Export Features</strong>. Save the file in a folder, not
@@ -244,13 +264,14 @@ the inundation.
 To make the milage reach polygon, start by exporting the “EPZ_NoDoubleWarning” layer as a new shapefile by right clicking on it in the Layers Pane and
  navigating to Data > Export Features. Save to a folder and name it “Milage_Reaches.shp”. Next, identify a point along the river three miles
 downstream of the dam. This can be done by looking at cross section stations from the RAS geometry, creating points along a river centerline every
-mile, or simply by using the measure a path tool in ArcGIS Pro or Google Earth. For this example, the cross sections were exported from RAS Mapper and
- included in a Geometry folder in the RAS model data. These are added to the ArcGIS Pro map and labeled with the “River Stat” field. Since the dam is
-at river station 185.7, the downstream polygon needs to be split close to 182.7 (3 miles), 178.7 (7 miles), 170.7 (15 miles) and 125.7 (60 miles).
-There are no cross sections with these exact river station values, but they are close enough to visually estimate a location to split the polygon. The
- cross sections also provide a guide for splitting the polygons perpendicular to the river inundation. To split the polygon, use the
-<strong>Split</strong> tool in the Edit ribbon, select the polygon, and draw the split between stations 182.63 and 182.79 to delineate the first reach
- three miles downstream of the dam.
+mile, or simply by using the measure a path tool in ArcGIS Pro or Google Earth. 
+
+For this example, the cross sections were exported from RAS Mapper and  included in a Geometry folder in the RAS model data. These are added to the 
+ArcGIS Pro map and labeled with the “River Stat” field. Since the dam is at river station 185.7, the downstream polygon needs to be split close to 
+182.7 (3 miles), 178.7 (7 miles), 170.7 (15 miles) and 125.7 (60 miles). There are no cross sections with these exact river station values, but they are 
+close enough to visually estimate a location to split the polygon. The  cross sections also provide a guide for splitting the polygons perpendicular to 
+the river inundation. To split the polygon, use the <strong>Split</strong> tool in the Edit ribbon, select the polygon, and draw the split between stations 
+182.63 and 182.79 to delineate the first reach three miles downstream of the dam.
 
 <Figure
   figKey="figure-94"
@@ -297,28 +318,22 @@ in the Edit ribbon. Another method of removing cities is to run a test simulatio
 not have any life loss. The latter was done for this example and based on those results and user judgement the following nine cities were retained for
  the city boundary results output polygon:
 
-Clearfield, PA
-
-Curwensville, PA
-
-Hyde, PA
-
-Jersey Shore, PA
-
-Lock Haven, PA
-
-Milton, PA
-
-Muncy, PA
-
-Plymptonville, PA
-
-South Renevo, PA
+- Clearfield, PA
+- Curwensville, PA
+- Hyde, PA
+- Jersey Shore, PA
+- Lock Haven, PA
+- Milton, PA
+- Muncy, PA
+- Plymptonville, PA
+- South Renevo, PA
 
 ### Structure Inventory
 
-The Curwensville Dam structure inventory is developed using the USACE NSI dataset. Reference the  for additional information on the NSI and/or importing
- structure inventories into LifeSim.
+The Curwensville Dam structure inventory is developed using the USACE NSI dataset. Reference the 
+<Link to="/docs/desktop-applications/lifesim/applications-guide/v1.0/estimating-consequences-for-levees-and-floodwalls/#structure-inventory">Estimating 
+ Consequences for Levees and Floodwalls, Structure Inventory</Link> section for additional information on the NSI and/or importing structure inventories 
+ into LifeSim.
 
 ## LifeSim Model Setup
 
@@ -358,7 +373,9 @@ you can either select <strong>Import from RAS</strong> or <strong>Import from Ma
 
 To specify the timing of the hazard being evaluated, in this case dam breach, the user can either import a hydrograph from a specific cross section or
  a storage area using the Import from RAS option or select a point on the map to generate a hydrograph using the Import from Map option. This example
-uses the Import from Map option for simplicity. Refer to the   for guidance on utilizing the Import from RAS option.
+uses the Import from Map option for simplicity. Refer to the 
+<Link to="/docs/desktop-applications/lifesim/applications-guide/v1.0/estimating-consequences-for-levees-and-floodwalls/#hydraulic-data">Estimating 
+ Consequences for Levees and Floodwalls, Hydraulic Data</Link> section for guidance on utilizing the Import from RAS option.
 
 When you select <strong>Import from Map</strong>, the RAS Map Data Selector window will open.
 
@@ -421,7 +438,7 @@ non-breach results from breach results.
 ### Importing a Structure Inventory
 
 To import a structure inventory from an existing point shapefile, the user will navigate to the Study pane in their model, right click on
-<strong>Structure Inventories</strong>, and select <strong>Import Structures from  Shapefile</strong>.
+<strong>Structure Inventories</strong>, and select <strong>Import Structures from Shapefile</strong>.
 
 <Figure
   figKey="figure-104"
@@ -442,9 +459,9 @@ is shown in the figure below), click <strong>Next </strong>at the bottom right.
   caption="Importing National Structure Inventory 2.0 into LifeSim – Defining structure attributes"
 />
 
-You will then need to match the occupancy types in LifeSim with the occupancy types included in your structure inventory shapefile. If using NSI 2019
-or NSI 2022, the occupancy types will typically exactly match the occupancy type names in LifeSim, but the user should scan through the list to ensure
- everything is matched up correctly. If these are mismatched, the depth-damage functions, evacuation parameters, and submergence criteria will not be
+You will then need to match the occupancy types in LifeSim with the occupancy types included in your structure inventory shapefile. If using a version of 
+NSI from 2019 or later, the occupancy types will typically exactly match the occupancy type names in LifeSim, but the user should scan through the list to 
+ensure everything is matched up correctly. If these are mismatched, the depth-damage functions, evacuation parameters, and submergence criteria will not be
 correct for that structure, which would impact the accuracy of your economic damages and life loss. If an occupancy type is missing, the user can add
 occupancy types or edit the existing occupancy types, which is discussed in the next subsection.
 
@@ -466,8 +483,9 @@ After the occupancy types are assigned and reviewed, click <strong>Next</strong>
   caption="Importing National Structure Inventory 2.0 – Assigning stability criteria"
 />
 
-Reference the  for creating new structure criteria rules. Once all structures have been assigned a stability criterion, click <strong>Finish</strong>.
- The inventory will then be imported into LifeSim.
+Reference the <Link to="/docs/desktop-applications/lifesim/applications-guide/v1.0/estimating-consequences-for-levees-and-floodwalls/#structure-inventory">
+Estimating  Consequences for Levees and Floodwalls, Structure Inventory</Link> section for creating new structure criteria rules. Once all structures have 
+been assigned a stability criterion, click <strong>Finish</strong>. The inventory will then be imported into LifeSim.
 
 ### Emergency Planning Zones
 
@@ -485,8 +503,12 @@ When conducting a detailed consequence analysis in LifeSim, the analyst would wo
 determine the most appropriate curves to select for the entire study area or for specific areas with the study area. However, LifeSim contains generic
  “unknown” curves that represent a maximum amount of uncertainty (relative to the other preset curves) regarding EPZ parameters. The unknown warning
 diffusion and PAI curves are uniform distributions, so given enough iterations the range of results should provide reasonable upper and lower bounds
-of life loss. These unknown parameters are used for most MMC level LifeSim models and are used in this example. Reference the  and <strong>
-</strong>for more information on how to develop Warning and Protective Action parameters for your specific impact areas.
+of life loss. These unknown parameters are used for most MMC level LifeSim models and are used in this example. Reference the 
+ <Link to="/docs/desktop-applications/lifesim/applications-guide/v1.0/estimating-consequences-for-levees-and-floodwalls/#emergency-planning-zones">Estimating 
+ Consequences for Levees and Floodwalls, Emergency Planning Zones</Link> section and the 
+ <Link to="/docs/desktop-applications/lifesim/applications-guide/v1.0/estimating-consequences-for-coastal-infrastructure/#emergency-planning-zones">Estimating 
+ Consequences for Coastal Infrastructure, Emergency Planning Zones</Link> section for more information on how to develop Warning and Protective Action 
+ parameters for your specific impact areas.
 
 To import an EPZ, right click on Emergency Planning Zones and select Import EPZs From Shapefile.
 
@@ -512,7 +534,7 @@ emergency planning zones named BreachEPZ, InPoolEPZ, and NonBreachEPZ.
 Each of the three EPZs are now assigned a Warning Issuance Delay curve, a First Alert Curve, and a PAI curve. Each area will have the same assigned
 curves for each uncertainty parameter.
 
-There is a check box for Simulate Traffic (If Applicable). The “if applicable” statement is here because there is also a checkbox in the Alternative
+There is a check box for Simulate Traffic (if applicable). The “if applicable” statement is here because there is also a checkbox in the Alternative
 window to either simulate traffic or not simulate traffic for each alternative. Regardless of whether this box in the EPZ editor is checked, the
 primary option for simulating evacuation is the one in the Alternative window.
 
@@ -612,7 +634,7 @@ This table contains cells that span multiple rows or columns. Manually update th
     [
       { value: "-2", rowSpan: 1, colSpan: 1 },
       { value: "-6", rowSpan: 1, colSpan: 1 },
-      { value: "-72 hours prior (Upper end of mobilization potential)", rowSpan: 1, colSpan: 2 }
+      { value: "-72 hours prior (upper end of mobilization potential)", rowSpan: 1, colSpan: 2 }
     ],
     [
       { value: "0", rowSpan: 1, colSpan: 1 },
@@ -623,6 +645,8 @@ This table contains cells that span multiple rows or columns. Manually update th
   }
   alt="Warning Times used for Curwensville Dam Alternatives"
   caption="Warning Times used for Curwensville Dam Alternatives"
+  colWidths={[25, 25, 25, 25]}
+  widthMode="intrinsic"
 />
 
 To create the first alternative, right click on <strong>Alternatives</strong> and select <strong>Create New Alternative</strong> to bring up the
@@ -1054,8 +1078,9 @@ structure inventory.
 Once all structure edits have been completed, the three non-test simulations can be computed. Once complete, results can be viewed by right clicking
 on the simulations and selecting <strong>View Results Plots</strong>, <strong>Tables</strong>, or <strong>Maps</strong>. The results tables can be
 copied into Microsoft Excel and analyzed using pivot tables and formulas. Results can be displayed and compared by downstream reaches and city
-boundaries; additionally, the IHP and MHP results can be viewed by non-breach and breach EPZs.
-
-(Page is intentionally left blank)
+boundaries; additionally, the IHP and MHP results can be viewed by non-breach and breach EPZs. Reference the 
+<Link to="/docs/desktop-applications/lifesim/applications-guide/v1.0/estimating-consequences-for-levees-and-floodwalls/#understanding-and-interpreting-results">Estimating 
+Consequences for Levees and Floodwalls, Understanding and Interpreting Results</Link> section for more information on analyzing results and 
+calibrating data inputs.
 
 <CitationFootnote />
