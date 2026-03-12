@@ -23,14 +23,14 @@ const totalRiskData = [
     active: false,
     draft: true,
   },
-  {
+  /*{
     icon: 'img/TotalRisk.png',
     preserveIconColor: true,
     doc_location: 'desktop-applications/rmc-totalrisk/vertification-report',
     doc_name: 'RMC TotalRisk Verification Report',
     active: false,
     draft: true,
-  },
+  },*/
 ];
 
 export const totalRiskDocs = totalRiskData;

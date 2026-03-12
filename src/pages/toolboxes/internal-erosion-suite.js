@@ -44,24 +44,10 @@ const internalErosionSuite = [
   },
   {
     IconComponent: ToolboxIcon,
-    doc_location: `toolbox-technical-manuals/internal-erosion-suite/erodibility-parameters`,
-    doc_name: 'Erodibility Parameters Toolbox Technical Manual',
-    active: false,
-    draft: true,
-  },
-  {
-    IconComponent: ToolboxIcon,
     doc_location: `toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation`,
     doc_name: 'Filter Evaluation (Continuation) Toolbox Technical Manual',
     active: true,
     draft: false,
-  },
-  {
-    IconComponent: ToolboxIcon,
-    doc_location: `toolbox-technical-manuals/internal-erosion-suite/hydraulic-fracture`,
-    doc_name: 'Hydraulic Fracture Toolbox Technical Manual',
-    active: false,
-    draft: true,
   },
   {
     IconComponent: ToolboxIcon,
@@ -76,13 +62,6 @@ const internalErosionSuite = [
     doc_name: 'Pipe Service Life (Flaw) Toolbox Technical Manual',
     active: true,
     draft: false,
-  },
-  {
-    IconComponent: ToolboxIcon,
-    doc_location: `toolbox-technical-manuals/internal-erosion-suite/soil-classification`,
-    doc_name: 'Soil Classification Toolbox Technical Manual',
-    active: false,
-    draft: true,
   },
   {
     IconComponent: ToolboxIcon,

@@ -6,40 +6,26 @@ import ToolboxIcon from '../../components/icons/ToolboxIcon';
 import '../../css/custom.css';
 
 // Create the list of documents dynamically
-const overtoppingSuite = [
+const spillwayErosionSuite = [
   {
     IconComponent: ToolboxIcon,
-    doc_location: `toolbox-technical-manuals/overtopping-suite/riprap-stability`,
-    doc_name: 'Riprap Stability Toolbox Technical Manual',
+    doc_location: `toolbox-technical-manuals/spillway-erosion-suite/erodibility-index`,
+    doc_name: 'Erodibility Index Toolbox Technical Manual',
     active: false,
     draft: true,
   },
   {
     IconComponent: ToolboxIcon,
-    doc_location: `toolbox-technical-manuals/overtopping-suite/wave-overtopping`,
-    doc_name: 'Wave Overtopping Toolbox Technical Manual',
+    doc_location: `toolbox-technical-manuals/spillway-erosion-suite/rock-mass-erosion`,
+    doc_name: 'Rock Mass Erosion Toolbox Technical Manual',
     active: false,
     draft: true,
-  },
-  {
-    IconComponent: ToolboxIcon,
-    doc_location: `toolbox-technical-manuals/overtopping-suite/scour-behind-floodwalls`,
-    doc_name: 'Scour Behind Floodwalls Toolbox Technical Manual',
-    active: false,
-    draft: true,
-  },
-  {
-    IconComponent: ToolboxIcon,
-    doc_location: `toolbox-technical-manuals/overtopping-suite/overtopping-erosion-toolbox-notes`,
-    doc_name: 'Overtopping Erosion Toolbox User Notes',
-    active: true,
-    draft: false,
   },
 ];
 
-export const overtoppingSuiteDocs = overtoppingSuite;
+export const spillwayErosionSuiteDocs = spillwayErosionSuite;
 
-export default function OvertoppingSuite() {
+export default function SpillwayErosionSuite() {
   const [latestVersions, setLatestVersions] = useState({});
 
   useEffect(() => {
@@ -49,7 +35,7 @@ export default function OvertoppingSuite() {
       .catch((error) => console.error('Error loading latest versions:', error));
   }, []);
 
-  const overtoppingSuite = overtoppingSuiteDocs.map((doc) => ({
+  const spillwayErosionSuite = spillwayErosionSuiteDocs.map((doc) => ({
     ...doc,
     doc_location: addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`),
   }));
@@ -60,11 +46,11 @@ export default function OvertoppingSuite() {
         <div className="title-container">
           <ToolboxIcon className="h-[80px] w-[80px] text-ifm-primary" />
           <div className="text-container">
-            <h1 className="text-title">Overtopping Erosion Suite</h1>
-            <p className="text-description">Assessing overtopping erosion failure modes for dam and levee safety</p>
+            <h1 className="text-title">Spillway Erosion Suite</h1>
+            <p className="text-description">Assessing spillway erosion failure modes for dam and levee safety</p>
           </div>
         </div>
-        <ContentBox contentData={overtoppingSuite} />
+        <ContentBox contentData={spillwayErosionSuite} />
       </main>
     </Layout>
   );

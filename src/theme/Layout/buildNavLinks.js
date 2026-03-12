@@ -54,7 +54,7 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
   const riskCalcHref = useBaseUrl('/toolboxes/risk-calculations-suite');
   const riverineHref = useBaseUrl('/toolboxes/rivering-erosion-toolbox');
   const seismicHref = useBaseUrl('/toolboxes/seismic-hazard-suite');
-  const spillwayHref = useBaseUrl('/toolboxes/spillway-erosion-suite');
+  const spillwayErosionHref = useBaseUrl('/toolboxes/spillway-erosion-suite');
   const structuralHref = useBaseUrl('/toolboxes/structural-suite');
 
   /* Internal Erosion Suite document links (third level) */
@@ -119,6 +119,14 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
   );
   const seismicHazardCurvesHref = useBaseUrl(
     `/docs/toolbox-technical-manuals/seismic-hazard-suite/seismic-hazard-curves/${latestVersions['toolbox-technical-manuals/seismic-hazard-suite/seismic-hazard-curve'] || 'v1.0'}/preface`,
+  );
+
+  /* Spillway Erosion Suite document links (third level) */
+  const erodibilityIndexHref = useBaseUrl(
+    `/docs/toolbox-technical-manuals/spillway-erosion-suite/erodibility-index/${latestVersions['toolbox-technical-manuals/spillway-erosion-suite/erodibility-index'] || 'v1.0'}/preface`,
+  );
+  const rockMassErosionHref = useBaseUrl(
+    `/docs/toolbox-technical-manuals/spillway-erosion-suite/rock-mass-erosion/${latestVersions['toolbox-technical-manuals/spillway-erosion-suite/rock-mass-erosion'] || 'v1.0'}/preface`,
   );
 
   /* -------------------------------------------------------------------------------------------------------------------------------------------------------------- */
@@ -285,6 +293,23 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
               href: siteClassHref,
             },
           ],
+        },
+        {
+          id: 'spillway-erosion-suite',
+          text: 'Spillway Erosion Suite',
+          href: spillwayErosionHref,
+          /*children: [
+            {
+              id: 'erodibility-index',
+              text: 'Erodibility Index Toolbox Technical Manual',
+              href: erodibilityIndexHref,
+            },
+            {
+              id: 'rock-mass-erodibility',
+              text: 'Rock Mass Erosion Toolbox Technical Manual',
+              href: rockMassErosionHref,
+            },
+          ],*/
         },
       ],
     },
