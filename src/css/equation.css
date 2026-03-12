@@ -12,12 +12,62 @@
   }
 }
 
+/* Prevent KaTeX MathML (hidden accessibility markup) from inflating page width */
+.katex-mathml {
+  overflow: hidden;
+}
+
 .katex-display {
   max-width: 100%;
-  overflow-x: auto;
 }
 
 .katex-display > .katex {
   padding-left: 25px;
   margin-bottom: 25px;
+}
+
+/* Equation container must be block with containment to prevent
+   KaTeX content from inflating page width on narrow viewports */
+.equation-container {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  contain: inline-size;
+}
+
+/* Equation row: flex layout separates math from tag number */
+.equation-row {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  margin: 1em 0;
+  max-width: 100%;
+}
+
+/* Math content fills available space; overflow hidden prevents page-width inflation.
+   position:relative ensures absolutely-positioned KaTeX MathML is properly clipped. */
+.equation-row .equation-math {
+  display: block;
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.equation-row .equation-math .katex-display {
+  margin: 0;
+}
+
+.equation-row .equation-math .katex-display > .katex {
+  transform-origin: center left;
+  margin-bottom: 0;
+}
+
+/* Equation number stays to the right, never shrinks */
+.equation-row .equation-tag {
+  flex: 0 0 auto;
+  font-family: KaTeX_Main, Times New Roman, serif;
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  white-space: nowrap;
+  padding-right: 0.5em;
 }

@@ -1,0 +1,315 @@
+/* ===== Floating Navigation Button & Drawer ===== */
+/* Shown when viewport < 1080px (sidebars hidden) — mobile, tablet, or desktop split-screen */
+
+/* ---- FAB (Floating Action Button) ---- */
+.floating-nav__fab {
+  position: fixed;
+  /* Sits above the Back-to-Top button */
+  right: 1.3rem;
+  bottom: 6.7rem;
+  z-index: calc(var(--ifm-z-index-fixed) - 1);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+
+  background-color: var(--ifm-color-primary);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+
+  /* Hidden by default — mirroring BackToTopButton pattern */
+  opacity: 0;
+  transform: scale(0);
+  visibility: hidden;
+  transition:
+    opacity var(--ifm-transition-fast) var(--ifm-transition-timing-default),
+    transform var(--ifm-transition-fast) var(--ifm-transition-timing-default),
+    visibility var(--ifm-transition-fast) var(--ifm-transition-timing-default),
+    background-color 0.15s ease;
+}
+
+.floating-nav__fab--visible {
+  opacity: 1;
+  transform: scale(1);
+  visibility: visible;
+}
+
+.floating-nav__fab--active {
+  background-color: var(--ifm-color-emphasis-700);
+}
+
+@media (hover: hover) {
+  .floating-nav__fab:hover {
+    background-color: var(--ifm-color-primary-dark);
+  }
+  .floating-nav__fab--active:hover {
+    background-color: var(--ifm-color-emphasis-800);
+  }
+}
+
+.floating-nav__fab-icon {
+  display: block;
+  pointer-events: none;
+}
+
+/* ---- Backdrop ---- */
+.floating-nav__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--ifm-z-index-fixed));
+  background: rgba(0, 0, 0, 0.35);
+  animation: floatingNavFadeIn 0.2s ease;
+}
+
+@keyframes floatingNavFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---- Bottom-sheet drawer ---- */
+.floating-nav__drawer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: calc(var(--ifm-z-index-fixed) + 1);
+
+  display: flex;
+  flex-direction: column;
+  max-height: 70vh;
+  background-color: #ffffff;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25);
+
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.floating-nav__drawer--open {
+  transform: translateY(0);
+}
+
+[data-theme='dark'] .floating-nav__drawer {
+  background-color: #1b1b1d;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* ---- Tab bar ---- */
+.floating-nav__tabs {
+  display: flex;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  flex-shrink: 0;
+  background-color: inherit;
+}
+
+.floating-nav__tab {
+  flex: 1;
+  padding: 0.85rem 1rem;
+  min-height: 44px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-600);
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.floating-nav__tab--active {
+  color: var(--ifm-color-primary);
+  border-bottom-color: var(--ifm-color-primary);
+}
+
+@media (hover: hover) {
+  .floating-nav__tab:hover {
+    color: var(--ifm-color-primary);
+  }
+}
+
+/* ---- Single-section header (when only TOC or only sidebar) ---- */
+.floating-nav__header {
+  padding: 0.85rem 1rem;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-700);
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  flex-shrink: 0;
+}
+
+/* ---- Scrollable body ---- */
+.floating-nav__body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 0.4rem 0;
+  background-color: inherit;
+}
+
+/* ---- TOC links (page headings) ---- */
+.floating-nav__toc-list,
+.floating-nav__toc-sublist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.floating-nav__toc-link {
+  display: flex;
+  align-items: center;
+  padding: 0.45rem 1rem 0.45rem 1.2rem;
+  min-height: 44px;
+  font-size: 15px;
+  font-family: 'Roboto', sans-serif;
+  color: var(--ifm-color-emphasis-800);
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.floating-nav__toc-link:hover {
+  background-color: var(--ifm-menu-color-background-hover, rgba(0, 0, 0, 0.05));
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.floating-nav__toc-link--nested {
+  padding-left: 2rem;
+  font-size: 14px;
+  color: var(--ifm-color-emphasis-700);
+}
+
+/* ---- Sidebar links (document chapters) ---- */
+.floating-nav__sidebar-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.floating-nav__sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 0.45rem 1rem 0.45rem 1.2rem;
+  min-height: 44px;
+  font-size: 15px;
+  font-family: 'Roboto', sans-serif;
+  color: var(--ifm-color-emphasis-800);
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.floating-nav__sidebar-link:hover {
+  background-color: var(--ifm-menu-color-background-hover, rgba(0, 0, 0, 0.05));
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.floating-nav__sidebar-link--active {
+  color: var(--ifm-color-primary);
+  font-weight: 600;
+  border-left-color: var(--ifm-color-primary);
+  background-color: var(--ifm-menu-color-background-active);
+}
+
+.floating-nav__sidebar-link--nested {
+  padding-left: 2rem;
+  font-size: 14px;
+}
+
+.floating-nav__category-label {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--font-color-description);
+  padding: 0.6rem 1rem 0.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  list-style: none;
+}
+
+/* ===== Inline Navigation Panel (top of page) ===== */
+/* Replaces the separate DocChapterNav and TOCMobile dropdowns */
+
+.floating-nav-inline {
+  background-color: var(--ifm-menu-color-background-active);
+  border-radius: var(--ifm-global-radius);
+  margin: 0.5rem 0;
+}
+
+/* Toggle button — matches the old chapter-nav / TOCCollapsible look */
+.floating-nav-inline__toggle {
+  font-size: inherit;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0.8rem;
+  width: 100%;
+  min-height: 44px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 600;
+  color: var(--ifm-menu-color);
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+/* Chevron icon */
+.floating-nav-inline__toggle::after {
+  content: '';
+  background: var(--ifm-menu-link-sublist-icon) 50% 50% / 2rem 2rem no-repeat;
+  filter: var(--ifm-menu-link-sublist-icon-filter);
+  height: 1.25rem;
+  width: 1.25rem;
+  transform: rotate(180deg);
+  transition: transform var(--ifm-transition-fast);
+}
+
+.floating-nav-inline__toggle--expanded::after {
+  transform: none;
+}
+
+/* Content area inside the collapsible */
+.floating-nav-inline__content {
+  border-top: 1px solid var(--ifm-color-emphasis-300);
+}
+
+/* Constrain the scrollable body height in the inline panel */
+.floating-nav-inline__body {
+  max-height: 50vh;
+}
+
+/* Hide on desktop (sidebars visible) */
+@media (min-width: 1080px) {
+  .floating-nav-inline {
+    display: none;
+  }
+}
+
+/* ---- Hide on desktop (sidebars visible) ---- */
+@media (min-width: 1080px) {
+  .floating-nav__fab,
+  .floating-nav__backdrop,
+  .floating-nav__drawer {
+    display: none !important;
+  }
+}

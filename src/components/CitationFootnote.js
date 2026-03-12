@@ -67,34 +67,53 @@ const CitationFootnote = () => {
   const formatCitation = (citation) => {
     const { author, year, title, journal, booktitle, report, manual, institution, organization, location, address, volume, edition, pages, doi, url, publisher, entryType } = citation;
 
-    const formatTitle = (t, type) => {
-      if (type === "inproceedings") return `"${t}",`;
-      if (type === "manual") return <i>{`${t},`}</i>;
-      return <i>{`${t},`}</i>;
-    };
+    // Build an array of citation parts, then join with ", " and end with "."
+    const parts = [];
+
+    if (author) parts.push(formatAuthors(author));
+
+    if (title) {
+      if (entryType === "inproceedings") {
+        parts.push(`"${title}"`);
+      } else {
+        parts.push(<i key="title">{title}</i>);
+      }
+    }
+
+    if (volume) parts.push(`Vol. ${volume}`);
+    if (edition) parts.push(`${edition} ed.`);
+    if (journal) parts.push(<em key="journal">{journal}</em>);
+    if (booktitle) parts.push(booktitle);
+
+    // Location/address pairs with publisher using a colon separator
+    if ((location || address) && publisher) {
+      parts.push(<React.Fragment key="loc-pub">{`${location || address}: ${publisher}`}</React.Fragment>);
+    } else {
+      if (location || address) parts.push(`${location || address}`);
+      if (publisher) parts.push(publisher);
+    }
+
+    if (organization) parts.push(organization);
+    if (pages) parts.push(`pp. ${pages}`);
+    if (institution) parts.push(institution);
+    if (report) parts.push(report);
+    if (manual) parts.push(manual);
+    if (year) parts.push(year);
 
     return (
       <>
-        {formatAuthors(author)}
-        {author && title && ", "}
-        {formatTitle(title, entryType)}
-        {volume && ` Vol. ${volume}, `}
-        {edition && ` ${edition} ed.,`}
-        {journal && <em> {journal},</em>}
-        {booktitle && ` ${booktitle}, `}
-        {(location || address) && ` ${location || address}:`}
-        {organization && ` ${organization},`}
-        {pages && ` pp. ${pages}, `}
-        {publisher && ` ${publisher}, `}
-        {institution && ` ${institution}, `}
-        {report && ` ${report}, `}
-        {manual && ` ${manual}, `}
-        {year && ` ${year}.`}
+        {parts.map((part, i) => (
+          <React.Fragment key={i}>
+            {i > 0 && ", "}
+            {part}
+          </React.Fragment>
+        ))}
+        {"."}
         {doi && (
           <>
             {" "}
             doi:{" "}
-            <a href={`https://doi.org/${doi}`} target="_blank" rel="noopener noreferrer" className="no-underline text-ifm-link hover:text-ifm-link-hover hover:underline">
+            <a href={`https://doi.org/${doi}`} target="_blank" rel="noopener noreferrer" className="no-underline break-all text-ifm-link hover:text-ifm-link-hover hover:underline">
               {doi}
             </a>
           </>
@@ -103,7 +122,7 @@ const CitationFootnote = () => {
           <>
             {" "}
             Available:{" "}
-            <a href={url} target="_blank" rel="noopener noreferrer" className="no-underline text-ifm-link hover:text-ifm-link-hover hover:underline">
+            <a href={url} target="_blank" rel="noopener noreferrer" className="no-underline break-all text-ifm-link hover:text-ifm-link-hover hover:underline">
               {url}
             </a>
           </>
@@ -116,7 +135,7 @@ const CitationFootnote = () => {
     <div className="mt-20 pt-2 border-t border-color">
       <ol className="list-none pl-0 mt-5">
         {citations.map((citation) => (
-          <li value={citation.number} key={citation.citationKey} id={`footnote-${citation.citationKey}`} className="flex items-start mb-2.5">
+          <li value={citation.number} key={citation.citationKey} id={`footnote-${citation.citationKey}`} className="flex items-start min-w-0 mb-2.5">
             <span className="min-w-[40px] flex-shrink-0">[{citation.number}]</span>
             <span className="block min-w-0 break-all">{formatCitation(citation)}</span>
           </li>

@@ -38,6 +38,15 @@ function findAllDocumentPaths(dir, results = new Set()) {
   return results;
 }
 
+// Determine the appendix letter for a file, or null if it is not an appendix.
+// Files are expected to contain "-appendix-" in their name.
+// The letter is derived from the ordinal position among all appendix files in the folder.
+function getAppendixLetter(file, appendixFiles) {
+  const idx = appendixFiles.indexOf(file);
+  if (idx === -1) return null;
+  return String.fromCharCode(65 + idx); // A, B, C, ...
+}
+
 // Process each matched report
 function processReport(reportPath, reportId) {
   const folder = path.join(docsBasePath, reportPath);
@@ -59,9 +68,30 @@ function processReport(reportPath, reportId) {
 
   const files = fs.readdirSync(folder).filter((f) => f.endsWith('.mdx'));
 
+  // Identify appendix files (sorted order is preserved from readdirSync / numeric prefix)
+  const appendixFiles = files.filter((f) => f.includes('-appendix-'));
+
+  // Track the current appendix letter so counters reset when a new appendix starts
+  let currentAppendixLetter = null;
+
   files.forEach((file) => {
     const filePath = path.join(folder, file);
     const content = fs.readFileSync(filePath, 'utf-8');
+
+    // Check if this file is an appendix and determine its letter
+    const appendixLetter = getAppendixLetter(file, appendixFiles);
+
+    // When we enter a new appendix, reset all counters (except citations)
+    if (appendixLetter && appendixLetter !== currentAppendixLetter) {
+      currentAppendixLetter = appendixLetter;
+      figureCount = 1;
+      tableCount = 1;
+      equationCount = 1;
+      videoCount = 1;
+    }
+
+    // Helper to format a counter value: plain number for body, "A-1" for appendices
+    const fmt = (n) => (appendixLetter ? `${appendixLetter}-${n}` : n);
 
     // Regex for figures — match both self-closing <Figure ... /> and
     // open+close <Figure ...></Figure> (or <GIF>) tag forms
@@ -72,7 +102,7 @@ function processReport(reportPath, reportId) {
       const src = attrs.match(/src="([^"]+)"/)?.[1] || '';
       const caption = attrs.match(/caption="([^"]+)"/)?.[1] || '';
       counters.figures[figKey] = {
-        figNumber: figureCount++,
+        figNumber: fmt(figureCount++),
         parentDocId: reportId,
         parentDocPath: reportPath,
         docId: file,
@@ -87,7 +117,7 @@ function processReport(reportPath, reportId) {
     )) {
       const tableKey = match[1];
       counters.tables[tableKey] = {
-        tableNumber: tableCount++,
+        tableNumber: fmt(tableCount++),
         parentDocId: reportId,
         parentDocPath: reportPath,
         docId: file,
@@ -98,7 +128,7 @@ function processReport(reportPath, reportId) {
     for (const match of content.matchAll(/<Equation\s[\s\S]*?equationKey="([^"]+)"/g)) {
       const equationKey = match[1];
       counters.equations[equationKey] = {
-        equationNumber: equationCount++,
+        equationNumber: fmt(equationCount++),
         parentDocId: reportId,
         parentDocPath: reportPath,
         docId: file,
@@ -106,6 +136,7 @@ function processReport(reportPath, reportId) {
     }
 
     // Regex for citations — match both self-closing and open+close tag forms
+    // Citations continue numbering across appendices (bibliography is shared)
     for (const match of content.matchAll(/<Citation\s+[^>]*?citationKey="([^"]+)"[^>]*?(?:\/>|>)/g)) {
       const citationKey = match[1];
       if (!(citationKey in counters.citations)) {
@@ -123,7 +154,7 @@ function processReport(reportPath, reportId) {
     for (const match of content.matchAll(/<Video\s+[^>]*?videoKey="([^"]+)"[^>]*?(?:\/>|>)/g)) {
       const videoKey = match[1];
       counters.videos[videoKey] = {
-        videoNumber: videoCount++,
+        videoNumber: fmt(videoCount++),
         parentDocId: reportId,
         parentDocPath: reportPath,
         docId: file,

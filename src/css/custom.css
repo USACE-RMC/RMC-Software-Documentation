@@ -4,6 +4,8 @@
 
 @import '../../node_modules/@usace/groundwork/dist/style.css';
 @import './schema.css';
+@import './print.css';
+@import './responsive.css';
 
 @font-face {
   font-family: 'Roboto', sans-serif;
@@ -575,8 +577,8 @@ html[data-theme='dark'] .DocSearch-Button {
   @apply bg-white text-black; /* or bg-transparent if your header is dark */
 }
 
-/* Collapse search bar to icon-only below laptop tier (desktop starts at 1080px) */
-@media (max-width: 1079px) {
+/* Collapse search bar to icon-only below laptop tier (desktop starts at 1200px) */
+@media (max-width: 1199px) {
   .search-wrapper {
     @apply w-auto min-w-0;
   }
@@ -691,123 +693,7 @@ html[data-theme='dark'] .DocSearch-Button {
     inset 0 -1px 2px rgba(0, 0, 0, 0.08);
 }
 
-/* ===== Groundwork Header Responsive Fixes ===== */
-
-/* Prevent 100vw-based elements from causing horizontal scrollbar
-   (100vw includes scrollbar width on non-overlay-scrollbar browsers) */
-html,
-body {
-  overflow-x: clip;
-}
-
-/* Fix: navRight positioning across all breakpoints.
-   Groundwork's span uses flex-row-reverse + justify-end which visually
-   pushes items LEFT. We fix flex-direction globally, then tailor
-   width/margin per breakpoint. */
-
-/* Base: fix visual order so justify-end pushes items RIGHT */
-header.gw-sticky span.gw-flex-row-reverse {
-  flex-direction: row !important;
-}
-
-/* Desktop (1080px+): push the navRight span away from the viewport edge
-   so the search bar is fully visible. Groundwork defaults to gw-mr-2 (8px);
-   we increase to 16px to compensate for DocSearch-Button outer margins. */
-@media (min-width: 1080px) {
-  header.gw-sticky span.gw-flex-row-reverse {
-    margin-right: 60px !important;
-  }
-}
-
-/* Mobile & tablet with hamburger (<= 1079px):
-   Collapse span to content width, push flush against hamburger */
-@media (max-width: 1079px) {
-  header.gw-sticky span.gw-flex-row-reverse {
-    width: auto !important;
-    margin-left: auto !important;
-    margin-right: 0 !important;
-  }
-}
-
-/* Phone portrait: breathing room at top of nav bar */
-@media (max-width: 767px) {
-  header.gw-sticky .gw-min-h-12 {
-    padding-top: 0.25rem !important;
-    padding-bottom: 0.25rem !important;
-  }
-}
-
-/* Fix: On mobile, shorten the subtitle bar text.
-   Groundwork renders: <strong>US Army Corps of Engineers</strong>
-                       <span>Institute for Water Resources, ...</span>
-   On phone, condense to: "US Army Corps of Engineers, IWR, RMC" */
-@media (max-width: 639px) {
-  header.gw-sticky .gw-bg-nav-dark-gray span.gw-text-md {
-    display: none !important;
-  }
-
-  header.gw-sticky .gw-bg-nav-dark-gray strong.gw-text-lg::after {
-    content: ', IWR, RMC';
-    font-weight: normal;
-  }
-}
-
-/* Fix: Hero image black bar on mobile - the container (gw-h-56 = 224px) is
-   taller than the 18vh image. Override the image to fill its container. */
-@media (max-width: 767px) {
-  .gw-relative > .gw-h-56.gw-bg-zinc-950 img.gw-object-cover {
-    height: 100% !important;
-  }
-}
-
-/* Fix: Show hamburger menu at tablet portrait (up to 1079px inclusive).
-   Groundwork hides the hamburger at md (768px) and shows nav links.
-   Override to keep hamburger visible and nav links hidden until 1080px.
-   Covers iPad Pro 13" portrait (1032px CSS width). */
-@media (min-width: 768px) and (max-width: 1079px) {
-  header.gw-sticky .md\:gw-hidden {
-    display: block !important;
-  }
-
-  header.gw-sticky .gw-hidden.md\:gw-flex {
-    display: none !important;
-  }
-}
-
-/* Fix: Reduce header footprint in phone landscape mode */
-@media (max-height: 500px) and (orientation: landscape) {
-  /* Compress the nav bar */
-  header.gw-sticky .gw-min-h-12 {
-    min-height: 2.25rem !important;
-  }
-
-  /* Compress the subtitle bar */
-  header.gw-sticky .gw-min-h-4.gw-py-2 {
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    min-height: 0 !important;
-  }
-
-  /* Reduce logo size */
-  header.gw-sticky img[alt='U.S. Army Corps of Engineers'] {
-    width: 40px !important;
-    height: auto !important;
-  }
-
-  /* Reduce hero text size for constrained landscape viewport */
-  .gw-relative .gw-text-4xl {
-    font-size: 1.25rem !important;
-    line-height: 1.5 !important;
-  }
-
-  .gw-relative .gw-text-xl {
-    font-size: 0.75rem !important;
-  }
-
-  .gw-relative .gw-pb-8 {
-    padding-bottom: 0.5rem !important;
-  }
-}
+/* Groundwork header & hero responsive overrides → responsive.css */
 
 /* Collapse redundant borders between consecutive figures and/or tables */
 /* Remove bottom border from the first element when followed by another */
@@ -867,6 +753,7 @@ figure + .table-container,
   z-index: 10003;
   width: 380px;
   max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 24px);
   padding: 20px;
   border-radius: 12px;
   background: var(--ifm-background-color-theme, #fff);
@@ -874,6 +761,9 @@ figure + .table-container,
   box-shadow:
     0 20px 60px rgba(0, 0, 0, 0.15),
     0 4px 16px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   transition:
     top 0.5s cubic-bezier(0.4, 0, 0.2, 1),
     left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -989,11 +879,9 @@ figure + .table-container,
   }
 }
 
-/* Phone landscape: constrain tooltip height when vertical space is limited */
+/* Phone landscape: tighter padding when vertical space is limited */
 @media (max-height: 500px) and (orientation: landscape) {
   .tour-tooltip {
-    max-height: 45vh;
-    overflow-y: auto;
     padding: 14px;
   }
 }

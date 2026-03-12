@@ -1,6 +1,7 @@
 import Layout from '@theme/Layout';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-const FEEDBACK_EMAIL = 'Adam.c.gohs@usace.army.mil';
+const FEEDBACK_EMAIL = 'RMCSoftwareDocs@usace.army.mil';
 
 const feedbackCategories = [
   {
@@ -23,23 +24,17 @@ const feedbackCategories = [
 PAGE URL:
 (Paste the URL of the page where you found the issue)
 
-
 DESCRIPTION OF THE ISSUE:
 (What did you see? What is wrong?)
-
 
 EXPECTED BEHAVIOR:
 (What did you expect to see instead?)
 
-
 BROWSER AND DEVICE:
 (e.g., Chrome on Windows 11, Safari on iPad)
 
-
 ADDITIONAL DETAILS:
-(Screenshots, steps to reproduce, or anything else that might help)
-
----------------------------------------------------------------------`,
+(Screenshots, steps to reproduce, or anything else that might help)`,
   },
   {
     id: 'content',
@@ -61,19 +56,14 @@ ADDITIONAL DETAILS:
 PAGE OR SECTION:
 (Which page or section does this relate to? Include the URL if possible)
 
-
 WHAT NEEDS TO CHANGE:
 (Describe the current content and what is inaccurate, outdated, or unclear)
-
 
 SUGGESTED REVISION:
 (How should the content read? Provide your suggested text if possible)
 
-
 ADDITIONAL CONTEXT:
-(References, sources, or other information that supports the change)
-
----------------------------------------------------------------------`,
+(References, sources, or other information that supports the change)`,
   },
   {
     id: 'question',
@@ -95,19 +85,14 @@ ADDITIONAL CONTEXT:
 YOUR QUESTION:
 (What would you like to know?)
 
-
 RELEVANT PAGE OR TOPIC:
 (Which page, tool, or topic does this relate to?)
-
 
 WHAT YOU HAVE TRIED:
 (Have you searched the documentation? What did you find or not find?)
 
-
 ADDITIONAL CONTEXT:
-(Any other details that might help us answer your question)
-
----------------------------------------------------------------------`,
+(Any other details that might help us answer your question)`,
   },
   {
     id: 'general',
@@ -129,28 +114,154 @@ ADDITIONAL CONTEXT:
 YOUR FEEDBACK:
 (Share your thoughts, ideas, or comments)
 
-
 WHAT PROMPTED THIS FEEDBACK:
 (Is this about a specific page, feature, or your overall experience?)
 
-
 SUGGESTIONS:
-(Do you have specific suggestions for improvement?)
-
----------------------------------------------------------------------`,
+(Do you have specific suggestions for improvement?)`,
   },
 ];
 
-function buildMailtoHref(category) {
-  return `mailto:${FEEDBACK_EMAIL}?subject=${encodeURIComponent(category.subject)}&body=${encodeURIComponent(category.body)}`;
+/* ---------- Feedback Modal ---------- */
+
+const ANIMATION_MS = 250;
+
+const BACKDROP_BASE = 'fixed inset-0 z-50 overflow-y-auto bg-black/35 px-4 py-8 sm:px-16 sm:py-16 transition-opacity';
+const BACKDROP_VISIBLE = 'opacity-100';
+const BACKDROP_HIDDEN = 'opacity-0';
+
+const DIALOG_BASE = 'bg-[var(--ifm-background-surface-color)] mx-auto max-w-2xl rounded-md shadow-lg transition-all px-5 sm:px-7';
+const DIALOG_VISIBLE = 'translate-y-0 scale-100 opacity-100';
+const DIALOG_HIDDEN = '-translate-y-2 scale-95 opacity-0';
+
+const HEADER = 'flex items-start justify-between border-b border-border-color -mx-5 sm:-mx-7 px-5 sm:px-7';
+const TITLE = 'flex items-center gap-2 py-4 font-usace text-lg font-semibold text-font-color';
+const CLOSE_BUTTON = 'cursor-pointer px-2 py-2 -mr-4 text-[1.5rem] leading-none text-slate-400 hover:text-red-500';
+const BODY = 'pt-5 pb-4 sm:pt-6';
+
+function FeedbackModal({ isOpen, category, onClose }) {
+  const dialogRef = useRef(null);
+  const [visible, setVisible] = useState(false);
+  const closingRef = useRef(false);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
+  useEffect(() => {
+    if (!isOpen) {
+      setVisible(false);
+      closingRef.current = false;
+      return;
+    }
+    const raf = requestAnimationFrame(() => setVisible(true));
+    return () => cancelAnimationFrame(raf);
+  }, [isOpen]);
+
+  const animateClose = useCallback(() => {
+    if (closingRef.current) return;
+    closingRef.current = true;
+    setVisible(false);
+    setTimeout(() => {
+      onCloseRef.current();
+      closingRef.current = false;
+    }, ANIMATION_MS);
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        animateClose();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, animateClose]);
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (!isOpen) return;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  if (!isOpen || !category) return null;
+
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) animateClose();
+  };
+
+  return (
+    <div className={`${BACKDROP_BASE} duration-500 ${visible ? BACKDROP_VISIBLE : BACKDROP_HIDDEN}`} onClick={handleBackdropClick}>
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="feedback-modal-title"
+        className={`${DIALOG_BASE} duration-500 ${visible ? DIALOG_VISIBLE : DIALOG_HIDDEN}`}
+      >
+        {/* Header */}
+        <div className={HEADER}>
+          <div id="feedback-modal-title" className={TITLE}>
+            {category.title}
+          </div>
+          <div className="flex items-center gap-4">
+            <button type="button" onClick={animateClose} className={CLOSE_BUTTON} aria-label="Close modal">
+              &times;
+            </button>
+          </div>
+        </div>
+
+        {/* Body */}
+        <div className={BODY}>
+          <p className="m-0 mb-4 font-usace text-sm leading-normal text-font-color-description">
+            Copy the details below into a new email to submit your feedback.
+          </p>
+
+          <div className="space-y-3">
+            <div>
+              <label className="mb-1 block font-usace text-xs font-semibold uppercase tracking-wide text-font-color-description">To</label>
+              <div className="select-all rounded-md border border-border-color bg-[var(--ifm-background-surface-color)] px-3 py-2 font-usace text-sm text-font-color">
+                {FEEDBACK_EMAIL}
+              </div>
+            </div>
+
+            <div>
+              <label className="mb-1 block font-usace text-xs font-semibold uppercase tracking-wide text-font-color-description">Subject</label>
+              <div className="select-all rounded-md border border-border-color bg-[var(--ifm-background-surface-color)] px-3 py-2 font-usace text-sm text-font-color">
+                {category.subject}
+              </div>
+            </div>
+
+            <div>
+              <label className="mb-1 block font-usace text-xs font-semibold uppercase tracking-wide text-font-color-description">Body</label>
+              <div className="overflow-hidden rounded-md border border-border-color bg-[var(--ifm-background-surface-color)]">
+                <pre
+                  className="select-all overflow-auto whitespace-pre-wrap bg-transparent px-3 py-2 font-usace text-sm leading-relaxed text-font-color"
+                  style={{ maxHeight: '250px' }}
+                >
+                  {category.body}
+                </pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
-function FeedbackCard({ category }) {
+/* ---------- Feedback Card ---------- */
+
+function FeedbackCard({ category, onSelect }) {
   return (
-    <a
-      href={buildMailtoHref(category)}
+    <button
+      type="button"
+      onClick={() => onSelect(category)}
       className="group relative flex cursor-pointer flex-col items-start gap-3 rounded-[10px] border border-border-color bg-[var(--ifm-background-color-theme)] p-6 text-inherit !no-underline transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-ifm-primary hover:text-inherit hover:shadow-[0_4px_16px_rgba(74,124,155,0.15)] dark:hover:shadow-[0_4px_16px_rgba(127,181,208,0.12)]"
-      aria-label={`${category.title} - opens your email client`}
+      aria-label={`${category.title} - view email template`}
     >
       <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[10px] bg-ifm-primary-lightest text-ifm-primary dark:bg-[rgba(127,181,208,0.12)] dark:text-ifm-primary-light">
         {category.icon}
@@ -164,11 +275,15 @@ function FeedbackCard({ category }) {
           <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
         </svg>
       </div>
-    </a>
+    </button>
   );
 }
 
+/* ---------- Page ---------- */
+
 export default function Feedback() {
+  const [modalCategory, setModalCategory] = useState(null);
+
   return (
     <Layout title="Feedback" description="Provide feedback on the RMC Software Documentation site.">
       <main>
@@ -184,17 +299,19 @@ export default function Feedback() {
         <div className="mx-auto max-w-[800px] px-6 pb-16 pt-8">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {feedbackCategories.map((category) => (
-              <FeedbackCard key={category.id} category={category} />
+              <FeedbackCard key={category.id} category={category} onSelect={setModalCategory} />
             ))}
           </div>
           <div className="mt-6 border-t border-border-color pt-4 text-center">
             <p className="m-0 font-usace text-[0.8rem] leading-normal text-font-color-description">
-              Clicking a button above will open your default email application with a pre-filled template. Fill in the details and send the email to
-              submit your feedback.
+              Clicking a category above will display a pre-filled email template. Copy the details into a new email and send it to submit your
+              feedback.
             </p>
           </div>
         </div>
       </main>
+
+      <FeedbackModal isOpen={!!modalCategory} category={modalCategory} onClose={() => setModalCategory(null)} />
     </Layout>
   );
 }
