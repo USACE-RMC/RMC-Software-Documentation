@@ -15,7 +15,7 @@ export default function Changelog() {
         </div>
         <div className="mx-auto max-w-[1600px] px-6 pb-16 pt-8 lg:px-12">
           <TableChangelog
-            dates={['February 2026']}
+            dates={['March 2026']}
             categories={['Website Update']}
             documents={['-']}
             versions={['-']}

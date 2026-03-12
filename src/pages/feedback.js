@@ -297,7 +297,7 @@ export default function Feedback() {
           </div>
         </div>
         <div className="mx-auto max-w-[800px] px-6 pb-16 pt-8">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:grid-rows-[1fr_1fr]">
             {feedbackCategories.map((category) => (
               <FeedbackCard key={category.id} category={category} onSelect={setModalCategory} />
             ))}
