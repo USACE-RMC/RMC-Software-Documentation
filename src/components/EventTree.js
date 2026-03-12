@@ -134,34 +134,8 @@ export default function EventTree({ base, text, imgExt = "png", sheetExt = "xlsm
   const altText = formatAlt(base);
 
   // UI states for button labels
-  const [copyLabel, setCopyLabel] = useState("Copy image");
   const [downloadImgLabel, setDownloadImgLabel] = useState("Download image");
   const [downloadSheetLabel, setDownloadSheetLabel] = useState("Download spreadsheet");
-
-  async function handleCopyImage(e) {
-    e.preventDefault();
-    try {
-      if (!("clipboard" in navigator) || typeof window.ClipboardItem !== "function") {
-        throw new Error("Clipboard API not available");
-      }
-
-      if (imgExt.toLowerCase() === "svg") {
-        const svgBlob = await fetchAsBlob(imgUrl);
-        const pngBlob = await svgBlobToPngBlob(svgBlob, { scale: pngScale });
-        await navigator.clipboard.write([new window.ClipboardItem({ "image/png": pngBlob })]);
-      } else {
-        const srcBlob = await fetchAsBlob(imgUrl);
-        const pngBlob = await imageBlobToPngBlobAny(srcBlob);
-        await navigator.clipboard.write([new window.ClipboardItem({ "image/png": pngBlob })]);
-      }
-
-      setCopyLabel("Copied!");
-      setTimeout(() => setCopyLabel("Copy image"), 2000);
-    } catch {
-      setCopyLabel("Right-click image to copy");
-      setTimeout(() => setCopyLabel("Copy image"), 4000);
-    }
-  }
 
   async function handleDownloadImage(e) {
     e.preventDefault();
@@ -207,10 +181,6 @@ export default function EventTree({ base, text, imgExt = "png", sheetExt = "xlsm
       </figure>
 
       <div className="mt-4 flex flex-wrap gap-3">
-        <Button type="button" onClick={handleCopyImage}>
-          {copyLabel}
-        </Button>
-
         <Button type="button" onClick={handleDownloadImage}>
           {downloadImgLabel}
         </Button>
