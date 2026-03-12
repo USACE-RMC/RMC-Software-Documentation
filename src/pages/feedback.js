@@ -130,7 +130,7 @@ const BACKDROP_BASE = 'fixed inset-0 z-50 overflow-y-auto bg-black/35 px-4 py-8 
 const BACKDROP_VISIBLE = 'opacity-100';
 const BACKDROP_HIDDEN = 'opacity-0';
 
-const DIALOG_BASE = 'bg-[var(--ifm-background-surface-color)] mx-auto max-w-lg rounded-md shadow-lg transition-all px-5 sm:px-7';
+const DIALOG_BASE = 'bg-[var(--ifm-background-surface-color)] mx-auto max-w-2xl rounded-md shadow-lg transition-all px-5 sm:px-7';
 const DIALOG_VISIBLE = 'translate-y-0 scale-100 opacity-100';
 const DIALOG_HIDDEN = '-translate-y-2 scale-95 opacity-0';
 
