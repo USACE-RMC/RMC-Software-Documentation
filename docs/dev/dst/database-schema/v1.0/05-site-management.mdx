@@ -1,0 +1,91 @@
+---
+title: Site Management
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import SchemaTableCompact from '@site/src/components/SchemaTableCompact';
+import SchemaTag from '@site/src/components/SchemaTag';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+<NavContainer
+  link="/dev"
+  linkTitle="Developer Resources"
+  document="dev/dst/database-schema"
+/>
+
+# Site Management
+
+The site management tables support system-wide communication features: alert banners that can target specific pages with severity levels, and scrolling ticker messages displayed on the dashboard.
+
+---
+
+<a id="site-alerts"></a>
+<SchemaTableCompact
+  name="SiteAlerts"
+  description="Page-targeted alert banners with severity levels and optional expiration. Created by admins to communicate important information."
+  status="implemented"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key', group: 'Identity' },
+    { name: 'Message', type: 'VARCHAR(300)', tags: [], description: 'Alert message text', group: 'Content' },
+    { name: 'Severity', type: 'VARCHAR(20)', tags: [], description: 'Alert severity level (see Enum below)', group: 'Content' },
+    { name: 'TargetPages', type: 'TEXT[]', tags: [], description: 'PostgreSQL text array of page identifiers where this alert should display', group: 'Targeting' },
+    { name: 'ExpiresAt', type: 'TIMESTAMP', tags: ['nullable', 'indexed'], description: 'When the alert automatically expires (null = no expiration)', group: 'Targeting' },
+    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'When the alert was created', group: 'Audit' },
+    { name: 'CreatedByUserId', type: 'UUID', tags: [], description: 'Admin who created the alert', group: 'Audit' },
+    { name: 'ModifiedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'When the alert was last modified', group: 'Audit' },
+    { name: 'ModifiedByUserId', type: 'UUID', tags: [], description: 'Admin who last modified the alert', group: 'Audit' },
+  ]}
+  notes={[
+    'Index on ExpiresAt enables efficient filtering of active (non-expired) alerts.',
+    'TargetPages uses PostgreSQL native text array type rather than JSONB for direct array containment queries.',
+  ]}
+/>
+
+<a id="ticker-messages"></a>
+<SchemaTableCompact
+  name="TickerMessages"
+  description="Scrolling informational messages displayed on the dashboard ticker. Admins create and manage these messages."
+  status="implemented"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key', group: 'Identity' },
+    { name: 'Text', type: 'VARCHAR(500)', tags: [], description: 'Message text displayed in the ticker', group: 'Content' },
+    { name: 'Type', type: 'VARCHAR(20)', tags: ['default'], default: "'Info'", description: 'Message type for styling (see Enum below)', group: 'Content' },
+    { name: 'Url', type: 'VARCHAR(500)', tags: ['nullable'], description: 'Optional link URL — clicking the message navigates here', group: 'Content' },
+    { name: 'SortOrder', type: 'INT', tags: ['default', 'indexed'], default: '0', description: 'Display order (lower values appear first)', group: 'Display' },
+    { name: 'IsActive', type: 'BOOLEAN', tags: ['default', 'indexed'], default: 'true', description: 'Whether the message is currently displayed', group: 'Display' },
+    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'When the message was created', group: 'Timestamps' },
+    { name: 'ModifiedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'When the message was last modified', group: 'Timestamps' },
+  ]}
+  notes={[
+    'Index on IsActive enables efficient filtering to show only active messages.',
+    'Index on SortOrder supports ordered retrieval for ticker display.',
+  ]}
+/>
+
+---
+
+## Enum Values
+
+### SiteAlertSeverity
+
+<TableVerticalNoRef
+  alt="SiteAlertSeverity enum values"
+  headers={[[{ value: 'Value' }, { value: 'Database String' }, { value: 'Description' }]]}
+  columns={[
+    ['InfoWarning', 'Urgent'],
+    ['"InfoWarning"', '"Urgent"'],
+    ['Informational warning — displayed with moderate visual emphasis', 'Urgent alert — displayed with high visual emphasis'],
+  ]}
+/>
+
+### TickerMessageType
+
+<TableVerticalNoRef
+  alt="TickerMessageType enum values"
+  headers={[[{ value: 'Value' }, { value: 'Database String' }, { value: 'Description' }]]}
+  columns={[
+    ['General', 'Info', 'Update', 'Tip', 'Warning'],
+    ['"General"', '"Info"', '"Update"', '"Tip"', '"Warning"'],
+    ['General message', 'Informational message', 'System update notification', 'Usage tip or best practice', 'Warning message'],
+  ]}
+/>

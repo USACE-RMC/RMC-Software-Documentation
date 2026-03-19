@@ -12,7 +12,7 @@ import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
 
 The Dam Screening Tool (DST) uses a PostgreSQL database to store screening data. This document serves as the reference for the DST database schema, covering only the portions of the database that have been implemented.
 
-The DST currently has **5 implemented tables** across 2 modules: Screening Management and PFM-01 (Overtopping Erosion). Additional modules will be documented here as they are built. See the [Schema Reference](./schema-reference) for the complete table listing.
+The DST currently has **13 implemented tables** across 4 modules: Screening Management, Authentication & Notifications, Site Management, and PFM-01 (Overtopping Erosion). Additional modules will be documented here as they are built. See the [Schema Reference](./schema-reference) for the complete table listing.
 
 ## Design Principles
 
@@ -23,6 +23,7 @@ The DST database follows several core design principles:
 - **GUID primary keys** — All tables use `UUID` primary keys generated via PostgreSQL's `gen_random_uuid()`, enabling distributed ID generation without coordination.
 - **JSONB for complex nested data** — Complex structures like multi-point curves and nodal probability tables are stored as JSONB columns, enabling PostgreSQL indexing and querying while avoiding excessive normalization.
 - **Clean Architecture alignment** — Database entities map to domain models in the application's Clean Architecture layers, with EF Core configurations in separate `IEntityTypeConfiguration<T>` classes.
+- **Soft delete for screenings** — Screenings use soft delete (`IsDeleted`, `DeletedAt`, `DeletedById`) to enable admin restore and purge workflows.
 
 ## How to Read This Document
 

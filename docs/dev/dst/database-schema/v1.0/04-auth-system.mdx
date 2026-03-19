@@ -1,0 +1,116 @@
+---
+title: "Authentication & Notifications"
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import SchemaRelationshipDiagram from '@site/src/components/SchemaRelationshipDiagram';
+import SchemaTableCompact from '@site/src/components/SchemaTableCompact';
+import SchemaTag from '@site/src/components/SchemaTag';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+<NavContainer
+  link="/dev"
+  linkTitle="Developer Resources"
+  document="dev/dst/database-schema"
+/>
+
+# Authentication & Notifications
+
+The authentication tables manage the account lifecycle — registration requests that require admin approval, and password reset requests. The notifications table stores system-generated messages delivered to individual users.
+
+## Table Relationships
+
+<SchemaRelationshipDiagram moduleId="auth-system" />
+
+---
+
+<a id="account-requests"></a>
+<SchemaTableCompact
+  name="AccountRequests"
+  description="Account registration requests requiring admin approval. Tracks the full request lifecycle from submission through review."
+  status="implemented"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key', group: 'Identity' },
+    { name: 'Email', type: 'VARCHAR(254)', tags: ['indexed'], description: 'Requested email address', group: 'Applicant Info' },
+    { name: 'FirstName', type: 'VARCHAR(100)', tags: [], description: 'Applicant first name', group: 'Applicant Info' },
+    { name: 'LastName', type: 'VARCHAR(100)', tags: [], description: 'Applicant last name', group: 'Applicant Info' },
+    { name: 'OrganizationType', type: 'VARCHAR(20)', tags: ['default'], default: "'Federal'", description: 'Organization category (see OrganizationType enum in Screening Management)', group: 'Applicant Info' },
+    { name: 'Organization', type: 'VARCHAR(200)', tags: ['default'], default: "''", description: 'Organization name', group: 'Applicant Info' },
+    { name: 'PasswordHash', type: 'VARCHAR(200)', tags: [], description: 'Hashed password submitted with the request', group: 'Applicant Info' },
+    { name: 'Status', type: 'VARCHAR(20)', tags: ['default', 'indexed'], default: "'Pending'", description: 'Request status: Pending, Approved, or Denied (see Enum below)', group: 'Review' },
+    { name: 'RequestedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'When the request was submitted', group: 'Review' },
+    { name: 'ReviewedAt', type: 'TIMESTAMP', tags: ['nullable'], description: 'When an admin reviewed the request', group: 'Review' },
+    { name: 'ReviewedByUserId', type: 'UUID', tags: ['nullable'], description: 'Admin user who reviewed the request', group: 'Review' },
+  ]}
+  notes={[
+    'Composite index on (Email, Status) enables efficient duplicate-pending-request checks.',
+    'On approval, the application creates a Users record from the request data and transitions Status to Approved.',
+    'PasswordHash is copied to the Users table on approval.',
+  ]}
+/>
+
+<a id="password-reset-requests"></a>
+<SchemaTableCompact
+  name="PasswordResetRequests"
+  description="Password reset requests requiring admin approval. Users request a reset; admins approve or deny."
+  status="implemented"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key', group: 'Identity' },
+    { name: 'UserId', type: 'UUID', tags: ['indexed'], description: 'User requesting the password reset', group: 'Request' },
+    { name: 'Status', type: 'VARCHAR(20)', tags: ['default', 'indexed'], default: "'Pending'", description: 'Request status: Pending, Approved, or Denied (see Enum below)', group: 'Request' },
+    { name: 'RequestedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'When the reset was requested', group: 'Review' },
+    { name: 'ReviewedAt', type: 'TIMESTAMP', tags: ['nullable'], description: 'When an admin reviewed the request', group: 'Review' },
+    { name: 'ReviewedByUserId', type: 'UUID', tags: ['nullable'], description: 'Admin user who reviewed the request', group: 'Review' },
+  ]}
+  notes={[
+    'Composite index on (UserId, Status) enables efficient lookup of pending requests per user.',
+    'On approval, the application sets MustResetPassword = true on the Users record.',
+  ]}
+/>
+
+<a id="notifications"></a>
+<SchemaTableCompact
+  name="Notifications"
+  description="System-generated notification records delivered to individual users for account and screening lifecycle events."
+  status="implemented"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key', group: 'Identity' },
+    { name: 'UserId', type: 'UUID', tags: ['nullable'], description: 'Target user (null for system-wide notifications)', group: 'Delivery' },
+    { name: 'Type', type: 'VARCHAR(50)', tags: [], description: 'Notification type (see Enum below)', group: 'Content' },
+    { name: 'Message', type: 'VARCHAR(500)', tags: [], description: 'Human-readable notification message', group: 'Content' },
+    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default', 'indexed'], default: 'CURRENT_TIMESTAMP', description: 'When the notification was created', group: 'Status' },
+    { name: 'IsRead', type: 'BOOLEAN', tags: ['default'], default: 'false', description: 'Whether the user has read/dismissed the notification', group: 'Status' },
+  ]}
+  notes={[
+    'Index on CreatedAt enables reverse-chronological listing.',
+    'Notifications are created by the application layer in response to system events (account approval, screening deletion, etc.).',
+  ]}
+/>
+
+---
+
+## Enum Values
+
+### AccountRequestStatus / PasswordResetRequestStatus
+
+<TableVerticalNoRef
+  alt="Request status enum values"
+  headers={[[{ value: 'Value' }, { value: 'Database String' }, { value: 'Description' }]]}
+  columns={[
+    ['Pending', 'Approved', 'Denied'],
+    ['"Pending"', '"Approved"', '"Denied"'],
+    ['Awaiting admin review', 'Approved by admin — account created or password reset', 'Denied by admin'],
+  ]}
+/>
+
+### NotificationType
+
+<TableVerticalNoRef
+  alt="NotificationType enum values"
+  headers={[[{ value: 'Value' }, { value: 'Database String' }, { value: 'Description' }]]}
+  columns={[
+    ['AccountApproved', 'AccountDenied', 'PasswordResetApproved', 'PasswordResetDenied', 'AccountUnlocked', 'RoleChanged', 'AccountDeactivated', 'AccountActivated', 'ScreeningReassigned', 'ScreeningDeleted', 'ScreeningRestored', 'ScreeningPurged'],
+    ['"AccountApproved"', '"AccountDenied"', '"PasswordResetApproved"', '"PasswordResetDenied"', '"AccountUnlocked"', '"RoleChanged"', '"AccountDeactivated"', '"AccountActivated"', '"ScreeningReassigned"', '"ScreeningDeleted"', '"ScreeningRestored"', '"ScreeningPurged"'],
+    ['Account request approved', 'Account request denied', 'Password reset approved', 'Password reset denied', 'Account unlocked by admin', 'User role changed (User/Admin)', 'Account deactivated by admin', 'Account reactivated by admin', 'User reassigned to a screening', 'Screening soft-deleted', 'Screening restored from soft-delete', 'Screening permanently purged'],
+  ]}
+/>

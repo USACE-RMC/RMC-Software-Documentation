@@ -31,7 +31,7 @@ PFM-01 models overtopping erosion of embankment dams. Each PFM-01 location repre
   status="implemented"
   columns={[
     { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key', group: 'Identity' },
-    { name: 'ScreeningId', type: 'UUID', tags: ['indexed', 'nullable'], description: 'For future Screening FK', group: 'Identity' },
+    { name: 'ScreeningGuid', type: 'UUID', tags: ['fk', 'indexed', 'nullable'], fkTarget: 'screenings', description: 'FK to Screenings.Id (SET NULL on delete)', group: 'Identity' },
     { name: 'Index', type: 'INT', tags: ['indexed'], description: 'Ordering within this PFM', group: 'Identity' },
     { name: 'Name', type: 'VARCHAR(200)', tags: [], description: 'Location name (e.g., "Main Embankment")', group: 'Identity' },
     { name: 'CrossSection', type: 'VARCHAR(200)', tags: ['nullable'], description: 'Cross-section identifier (e.g., "Sta 10+00")', group: 'Identity' },
@@ -68,7 +68,8 @@ PFM-01 models overtopping erosion of embankment dams. Each PFM-01 location repre
   ]}
   notes={[
     'Distribution parameters (Kd, TauC, ManningsN) follow a pattern: DistributionType selects the distribution family, then the relevant parameters (Min/Mode/Max or Mean/Std) are populated.',
-    'Indexes: PK on Id, Index on ScreeningId, Index on Index column.',
+    'Indexes: PK on Id, Index on ScreeningGuid, Index on Index column.',
+    'ScreeningGuid FK uses SET NULL on delete — deleting a screening orphans PFM-01 locations rather than cascading.',
   ]}
 />
 

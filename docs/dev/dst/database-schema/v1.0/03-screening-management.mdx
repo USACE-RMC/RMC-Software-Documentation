@@ -3,7 +3,10 @@ title: Screening Management
 ---
 
 import NavContainer from '@site/src/components/NavContainer';
+import SchemaRelationshipDiagram from '@site/src/components/SchemaRelationshipDiagram';
 import SchemaTableCompact from '@site/src/components/SchemaTableCompact';
+import SchemaTag from '@site/src/components/SchemaTag';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
 
 <NavContainer
   link="/dev"
@@ -13,22 +16,280 @@ import SchemaTableCompact from '@site/src/components/SchemaTableCompact';
 
 # Screening Management
 
-The `Screenings` table is the top-level entity in the DST database. Each screening represents a complete dam screening assessment for one dam. All other data — hazard characterization, failure mode analysis, consequences, and risk results — is associated with a single screening.
+The Screening Management module contains the core entities that define a screening assessment: the screening itself, the users who participate, their role assignments, and the dam's project information. These four tables form the foundation that all PFM modules and downstream features reference.
+
+## Table Relationships
+
+<SchemaRelationshipDiagram moduleId="screening-management" />
+
+---
 
 <a id="screenings"></a>
 <SchemaTableCompact
   name="Screenings"
-  description="Top-level entity representing a complete dam screening assessment."
+  description="Top-level entity representing a complete dam screening assessment. All PFM data, project information, and team assignments are associated with a single screening."
   status="implemented"
   columns={[
-    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key' },
-    { name: 'Code', type: 'VARCHAR(10)', tags: ['unique', 'indexed'], description: 'Short alphanumeric code (6 chars) used in URLs. Example: "Xk9mP2" → /screening/Xk9mP2/...' },
-    { name: 'Name', type: 'VARCHAR(200)', tags: [], description: 'Name of the dam being screened' },
-    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'When the screening was created' },
-    { name: 'UpdatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'When the screening was last modified' },
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key (GUID)', group: 'Identity' },
+    { name: 'ScreeningId', type: 'INT', tags: ['unique', 'indexed'], description: 'User-facing auto-incrementing identifier via PostgreSQL identity column', group: 'Identity' },
+    { name: 'Name', type: 'VARCHAR(200)', tags: [], description: 'Name of the dam being screened', group: 'Identity' },
+    { name: 'Description', type: 'VARCHAR(2000)', tags: ['nullable'], description: 'Optional description or notes about the screening', group: 'Identity' },
+    { name: 'ScreeningType', type: 'VARCHAR(50)', tags: ['default'], default: "'Official'", description: 'Screening type: Official or Testing (see Enum below)', group: 'Configuration' },
+    { name: 'Status', type: 'VARCHAR(50)', tags: ['default'], default: "'InProgress'", description: 'Workflow status (see Enum below)', group: 'Configuration' },
+    { name: 'Units', type: 'VARCHAR(50)', tags: ['default'], default: "'US Customary'", description: 'Unit system for the screening', group: 'Configuration' },
+    { name: 'VerticalDatum', type: 'VARCHAR(50)', tags: ['default'], default: "'NAVD88'", description: 'Vertical datum reference for elevations', group: 'Configuration' },
+    { name: 'CreatedByUserId', type: 'UUID', tags: ['fk', 'indexed'], fkTarget: 'users', description: 'FK to Users — immutable audit field for who created this screening', group: 'Ownership' },
+    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'When the screening was created', group: 'Timestamps' },
+    { name: 'ModifiedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'When the screening was last modified', group: 'Timestamps' },
+    { name: 'IsDeleted', type: 'BOOLEAN', tags: ['default', 'indexed'], default: 'false', description: 'Soft-delete flag — filtered index for efficient non-deleted queries', group: 'Soft Delete' },
+    { name: 'DeletedAt', type: 'TIMESTAMP', tags: ['nullable'], description: 'When the screening was soft-deleted', group: 'Soft Delete' },
+    { name: 'DeletedById', type: 'UUID', tags: ['nullable'], description: 'FK to Users — who soft-deleted this screening', group: 'Soft Delete' },
   ]}
   notes={[
-    'The Code column is a 6-character alphanumeric string used for URL routing (e.g., /screening/Xk9mP2/pfm-01).',
-    'Unique index on Code ensures no two screenings share the same URL code.',
+    'ScreeningId is a user-facing integer (e.g., "Screening #7") auto-generated via PostgreSQL identity. Id (UUID) is used for all FK relationships.',
+    'Unique index on ScreeningId ensures no duplicates.',
+    'Filtered index on IsDeleted for efficient queries that exclude soft-deleted screenings.',
+    'CreatedByUserId FK uses RESTRICT delete — cannot delete a user who owns screenings.',
+  ]}
+/>
+
+<a id="users"></a>
+<SchemaTableCompact
+  name="Users"
+  description="User accounts with authentication credentials, role management, and account security."
+  status="implemented"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key', group: 'Identity' },
+    { name: 'Email', type: 'VARCHAR(254)', tags: ['unique', 'indexed'], description: 'User email address — used as login identifier', group: 'Identity' },
+    { name: 'FirstName', type: 'VARCHAR(100)', tags: [], description: 'User first name', group: 'Identity' },
+    { name: 'LastName', type: 'VARCHAR(100)', tags: [], description: 'User last name', group: 'Identity' },
+    { name: 'OrganizationType', type: 'VARCHAR(20)', tags: ['default'], default: "'Federal'", description: 'Organization category (see Enum below)', group: 'Organization' },
+    { name: 'Organization', type: 'VARCHAR(200)', tags: ['default'], default: "''", description: 'Organization name', group: 'Organization' },
+    { name: 'AppRole', type: 'VARCHAR(20)', tags: ['default'], default: "'User'", description: 'Application-level role: User or Admin', group: 'Authorization' },
+    { name: 'PasswordHash', type: 'VARCHAR(200)', tags: ['default'], default: "''", description: 'Hashed password (bcrypt)', group: 'Authentication' },
+    { name: 'MustResetPassword', type: 'BOOLEAN', tags: ['default'], default: 'false', description: 'Forces password reset on next login', group: 'Authentication' },
+    { name: 'FailedLoginAttempts', type: 'INT', tags: ['default'], default: '0', description: 'Count of consecutive failed login attempts', group: 'Security' },
+    { name: 'IsLockedOut', type: 'BOOLEAN', tags: ['default'], default: 'false', description: 'Account lockout flag — set after too many failed attempts', group: 'Security' },
+    { name: 'IsActive', type: 'BOOLEAN', tags: ['default'], default: 'true', description: 'Account active status — deactivated users cannot log in', group: 'Security' },
+    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'When the user account was created', group: 'Timestamps' },
+    { name: 'LastLoginAt', type: 'TIMESTAMP', tags: ['nullable'], description: 'When the user last logged in (null if never)', group: 'Timestamps' },
+  ]}
+  notes={[
+    'Unique index on Email ensures no duplicate accounts.',
+    'PasswordHash stores bcrypt-hashed passwords — never stored in plaintext.',
+    'FailedLoginAttempts resets to 0 on successful login.',
+  ]}
+/>
+
+<a id="screening-assignments"></a>
+<SchemaTableCompact
+  name="ScreeningAssignments"
+  description="Maps users to screenings with role-based access. Enforces single facilitator per screening via filtered unique index."
+  status="implemented"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key', group: 'Identity' },
+    { name: 'ScreeningGuid', type: 'UUID', tags: ['fk', 'indexed'], fkTarget: 'screenings', description: 'FK to Screenings.Id', group: 'References' },
+    { name: 'UserId', type: 'UUID', tags: ['fk', 'indexed'], fkTarget: 'users', description: 'FK to Users.Id', group: 'References' },
+    { name: 'Role', type: 'VARCHAR(20)', tags: [], description: 'Screening role: Facilitator, TeamMember, or Viewer (see Enum below)', group: 'Assignment' },
+    { name: 'AssignedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'When the assignment was created', group: 'Audit' },
+    { name: 'AssignedById', type: 'UUID', tags: ['nullable'], description: 'FK to Users — who made this assignment (null for system-generated)', group: 'Audit' },
+  ]}
+  notes={[
+    'Unique composite index on (ScreeningGuid, UserId) ensures one role per user per screening.',
+    'Filtered unique index IX_ScreeningAssignments_SingleFacilitator on ScreeningGuid WHERE Role = \'Facilitator\' enforces exactly one facilitator per screening.',
+    'ScreeningGuid FK uses CASCADE delete — deleting a screening removes all assignments.',
+    'UserId FK uses RESTRICT delete — cannot delete a user with screening assignments.',
+  ]}
+/>
+
+<a id="project-information"></a>
+<SchemaTableCompact
+  name="ProjectInformation"
+  description="Dam identification, location, geometry, reservoir data, and NID integration. One-to-one relationship with Screenings."
+  status="implemented"
+  columns={[
+    { name: 'Id', type: 'UUID', tags: ['pk', 'default'], default: 'gen_random_uuid()', description: 'Primary key', group: 'Identity' },
+    { name: 'ScreeningId', type: 'UUID', tags: ['fk', 'unique', 'indexed', 'cascade'], fkTarget: 'screenings', description: 'FK to Screenings.Id — unique index enforces 1:1 relationship', group: 'Identity' },
+    { name: 'IsNidDam', type: 'BOOLEAN', tags: [], description: 'Whether this dam is in the National Inventory of Dams', group: 'NID Identity' },
+    { name: 'NidId', type: 'VARCHAR(20)', tags: ['nullable'], description: 'NID identifier (e.g., "AZ10002")', group: 'NID Identity' },
+    { name: 'FederalId', type: 'VARCHAR(20)', tags: ['nullable'], description: 'Federal dam identifier', group: 'NID Identity' },
+    { name: 'IsUsace', type: 'BOOLEAN', tags: ['default'], default: 'false', description: 'Whether the dam is a USACE facility', group: 'USACE Classification' },
+    { name: 'UsaceDistrict', type: 'VARCHAR(100)', tags: ['nullable'], description: 'USACE district name (e.g., "Los Angeles District")', group: 'USACE Classification' },
+    { name: 'DsacClassId', type: 'INT', tags: ['nullable'], description: 'Dam Safety Action Classification (1-5)', group: 'USACE Classification' },
+    { name: 'DamName', type: 'VARCHAR(200)', tags: [], description: 'Name of the dam', group: 'Dam Identity' },
+    { name: 'PrimaryOwnerType', type: 'VARCHAR(50)', tags: ['nullable'], description: 'Primary owner category (e.g., "Federal", "State", "Private")', group: 'Dam Identity' },
+    { name: 'OwnerName', type: 'VARCHAR(200)', tags: ['nullable'], description: 'Name of the dam owner', group: 'Dam Identity' },
+    { name: 'PrimaryPurpose', type: 'VARCHAR(100)', tags: ['nullable'], description: 'Primary purpose of the dam (e.g., "Flood Risk Management")', group: 'Dam Identity' },
+    { name: 'HazardClass', type: 'VARCHAR(50)', tags: ['nullable'], description: 'Hazard potential classification (e.g., "High", "Significant", "Low")', group: 'Dam Identity' },
+    { name: 'FederallyRegulated', type: 'BOOLEAN', tags: ['nullable'], description: 'Whether the dam is federally regulated', group: 'Dam Identity' },
+    { name: 'Country', type: 'VARCHAR(100)', tags: ['default'], default: "'United States'", description: 'Country where the dam is located', group: 'Location' },
+    { name: 'StateOrProvince', type: 'VARCHAR(100)', tags: ['nullable'], description: 'State or province', group: 'Location' },
+    { name: 'County', type: 'VARCHAR(100)', tags: ['nullable'], description: 'County', group: 'Location' },
+    { name: 'City', type: 'VARCHAR(100)', tags: ['nullable'], description: 'Nearest city', group: 'Location' },
+    { name: 'RiverName', type: 'VARCHAR(200)', tags: ['nullable'], description: 'River or waterway name', group: 'Location' },
+    { name: 'Latitude', type: 'FLOAT8', tags: ['nullable'], description: 'Dam latitude in decimal degrees', group: 'Location' },
+    { name: 'Longitude', type: 'FLOAT8', tags: ['nullable'], description: 'Dam longitude in decimal degrees', group: 'Location' },
+    { name: 'PrimaryDamType', type: 'VARCHAR(100)', tags: ['nullable'], description: 'Primary dam construction type (e.g., "Earth", "Gravity")', group: 'Dam Geometry' },
+    { name: 'DamTypes', type: 'JSONB', tags: ['nullable', 'jsonb'], description: 'All dam types as a JSON array (see structure below)', group: 'Dam Geometry' },
+    { name: 'DamHeight', type: 'FLOAT8', tags: ['nullable'], description: 'Dam height in feet', group: 'Dam Geometry' },
+    { name: 'HydraulicHeight', type: 'FLOAT8', tags: ['nullable'], description: 'Hydraulic height in feet', group: 'Dam Geometry' },
+    { name: 'StructuralHeight', type: 'FLOAT8', tags: ['nullable'], description: 'Structural height in feet', group: 'Dam Geometry' },
+    { name: 'NidHeight', type: 'FLOAT8', tags: ['nullable'], description: 'NID-reported height in feet', group: 'Dam Geometry' },
+    { name: 'DamLength', type: 'FLOAT8', tags: ['nullable'], description: 'Dam length in feet', group: 'Dam Geometry' },
+    { name: 'YearCompleted', type: 'INT', tags: ['nullable'], description: 'Year construction was completed', group: 'Dam Geometry' },
+    { name: 'SpillwayType', type: 'VARCHAR(100)', tags: ['nullable'], description: 'Primary spillway type', group: 'Spillway' },
+    { name: 'SpillwayTypes', type: 'JSONB', tags: ['nullable', 'jsonb'], description: 'All spillway types as a JSON array (see structure below)', group: 'Spillway' },
+    { name: 'SpillwayWidth', type: 'FLOAT8', tags: ['nullable'], description: 'Spillway width in feet', group: 'Spillway' },
+    { name: 'MaxDischarge', type: 'FLOAT8', tags: ['nullable'], description: 'Maximum discharge in cubic feet per second', group: 'Spillway' },
+    { name: 'MaxStorage', type: 'FLOAT8', tags: ['nullable'], description: 'Maximum storage in acre-feet', group: 'Reservoir' },
+    { name: 'NormalStorage', type: 'FLOAT8', tags: ['nullable'], description: 'Normal storage in acre-feet', group: 'Reservoir' },
+    { name: 'SurfaceArea', type: 'FLOAT8', tags: ['nullable'], description: 'Surface area in acres', group: 'Reservoir' },
+    { name: 'DrainageArea', type: 'FLOAT8', tags: ['nullable'], description: 'Drainage area in square miles', group: 'Reservoir' },
+    { name: 'EapStatus', type: 'VARCHAR(50)', tags: ['nullable'], description: 'Emergency Action Plan status', group: 'Emergency Action Plan' },
+    { name: 'EapLastRevDate', type: 'TIMESTAMP', tags: ['nullable'], description: 'When the EAP was last revised', group: 'Emergency Action Plan' },
+    { name: 'EapMeetsGuidelines', type: 'BOOLEAN', tags: ['nullable'], description: 'Whether the EAP meets federal guidelines', group: 'Emergency Action Plan' },
+    { name: 'EapLastExerciseDate', type: 'TIMESTAMP', tags: ['nullable'], description: 'When the EAP was last exercised', group: 'Emergency Action Plan' },
+    { name: 'DamComponents', type: 'JSONB', tags: ['nullable', 'jsonb'], description: 'Selected dam components as a JSON array (see structure below)', group: 'Dam Components' },
+    { name: 'NidDataFetchedAt', type: 'TIMESTAMP', tags: ['nullable'], description: 'When NID data was last fetched from the API', group: 'NID Metadata' },
+    { name: 'NidSnapshot', type: 'JSONB', tags: ['nullable', 'jsonb'], description: 'Complete NID API response stored as JSONB (see structure below)', group: 'NID Metadata' },
+    { name: 'ManualOverrides', type: 'JSONB', tags: ['nullable', 'jsonb'], description: 'Tracks manually overridden NID fields (see structure below)', group: 'NID Metadata' },
+    { name: 'DamDataVerifiedByUserId', type: 'UUID', tags: ['nullable'], description: 'User who verified the dam data (null if unverified)', group: 'Dam Data Verification' },
+    { name: 'DamDataVerifiedByName', type: 'VARCHAR(200)', tags: ['nullable'], description: 'Display name of verifier (denormalized for display)', group: 'Dam Data Verification' },
+    { name: 'DamDataVerifiedAt', type: 'TIMESTAMP', tags: ['nullable'], description: 'When the dam data was verified', group: 'Dam Data Verification' },
+    { name: 'CreatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'When the record was created', group: 'Timestamps' },
+    { name: 'UpdatedAt', type: 'TIMESTAMP', tags: ['default'], default: 'CURRENT_TIMESTAMP', description: 'When the record was last modified', group: 'Timestamps' },
+  ]}
+  jsonSchemas={[
+    {
+      name: 'DamTypes',
+      description: 'Array of dam construction types',
+      structure: `["Earth", "Gravity", "Rockfill"]
+
+Type: string[]  — values from NID dam type vocabulary`,
+    },
+    {
+      name: 'SpillwayTypes',
+      description: 'Array of spillway types',
+      structure: `["Controlled", "Uncontrolled"]
+
+Type: string[]  — values from NID spillway type vocabulary`,
+    },
+    {
+      name: 'DamComponents',
+      description: 'Array of selected dam component identifiers',
+      structure: `["earth_embankment", "spillway_uncontrolled", "outlet_works"]
+
+Type: string[]  — component identifiers used by the frontend`,
+    },
+    {
+      name: 'NidSnapshot',
+      description: 'Complete NID API response — preserved for audit and offline reference',
+      structure: `{
+  "id": 549809,
+  "nidId": "AZ10002",
+  "name": "Painted Rock Dam",
+  "state": "Arizona",
+  "county": "Maricopa",
+  "damHeight": 181,
+  "damLength": 4780,
+  "maxStorage": 4831500,
+  "yearCompleted": 1960,
+  "latitude": 33.072,
+  "longitude": -113.017,
+  "ownerNames": "USACE - Los Angeles District",
+  "usaceDistrict": "Los Angeles District",
+  "riverName": "GILA RIVER",
+  ...  // 100+ fields from NID API
+}
+
+Type: Record<string, unknown>  — raw NID API response, schema controlled by NID`,
+    },
+    {
+      name: 'ManualOverrides',
+      description: 'Tracks which NID-sourced fields have been manually edited by the user',
+      structure: `{
+  "damHeight": {
+    "nidValue": 181,
+    "editedAt": "2026-03-15T14:30:00Z"
+  },
+  "maxStorage": {
+    "nidValue": 4831500,
+    "editedAt": "2026-03-15T14:32:00Z"
+  }
+}
+
+Type: Record<string, { nidValue: unknown, editedAt: string }>`,
+    },
+  ]}
+  notes={[
+    'Unique index on ScreeningId enforces 1:1 relationship with Screenings.',
+    'Cascade delete — deleting a screening removes its ProjectInformation.',
+    'NidSnapshot stores the complete NID API response for audit purposes. Individual fields are extracted into typed columns for querying.',
+    'ManualOverrides tracks which NID-sourced fields the user has manually edited, preserving the original NID value for comparison.',
+    'DamDataVerifiedByName is denormalized from Users to avoid an FK for display-only data.',
+  ]}
+/>
+
+---
+
+## Enum Values
+
+### ScreeningType
+
+<TableVerticalNoRef
+  alt="ScreeningType enum values"
+  headers={[[{ value: 'Value' }, { value: 'Database String' }, { value: 'Description' }]]}
+  columns={[
+    ['Official', 'Testing'],
+    ['"Official"', '"Testing"'],
+    ['Production screening for a real dam assessment', 'Test/practice screening — excluded from official reports'],
+  ]}
+/>
+
+### ScreeningStatus
+
+<TableVerticalNoRef
+  alt="ScreeningStatus enum values"
+  headers={[[{ value: 'Value' }, { value: 'Database String' }, { value: 'Description' }]]}
+  columns={[
+    ['InProgress', 'Testing', 'Submitted', 'UnderReview', 'Complete'],
+    ['"InProgress"', '"Testing"', '"Submitted"', '"UnderReview"', '"Complete"'],
+    ['Active screening being worked on', 'Screening in testing phase', 'Screening submitted for review', 'Screening under review', 'Screening completed and finalized'],
+  ]}
+/>
+
+### ScreeningRole
+
+<TableVerticalNoRef
+  alt="ScreeningRole enum values"
+  headers={[[{ value: 'Value' }, { value: 'Database String' }, { value: 'Description' }]]}
+  columns={[
+    ['Facilitator', 'TeamMember', 'Viewer'],
+    ['"Facilitator"', '"TeamMember"', '"Viewer"'],
+    ['Lead role — one per screening, enforced by filtered unique index', 'Contributing team member with edit access', 'Read-only access to the screening'],
+  ]}
+/>
+
+### AppRole
+
+<TableVerticalNoRef
+  alt="AppRole enum values"
+  headers={[[{ value: 'Value' }, { value: 'Database String' }, { value: 'Description' }]]}
+  columns={[
+    ['User', 'Admin'],
+    ['"User"', '"Admin"'],
+    ['Standard user — can create and participate in screenings', 'Administrator — can manage users, approve accounts, and access admin tools'],
+  ]}
+/>
+
+### OrganizationType
+
+<TableVerticalNoRef
+  alt="OrganizationType enum values"
+  headers={[[{ value: 'Value' }, { value: 'Database String' }, { value: 'Description' }]]}
+  columns={[
+    ['Federal', 'State', 'Local', 'Private', 'Academic'],
+    ['"Federal"', '"State"', '"Local"', '"Private"', '"Academic"'],
+    ['Federal government agency', 'State government agency', 'Local government entity', 'Private sector organization', 'Academic institution'],
   ]}
 />
