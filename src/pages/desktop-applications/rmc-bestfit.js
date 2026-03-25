@@ -15,6 +15,14 @@ const bestFitData = [
     active: true,
     draft: false,
   },
+  {
+    icon: 'img/BestFit.png',
+    preserveIconColor: true,
+    doc_name: 'RMC-BestFit Verification Report',
+    active: true,
+    draft: false,
+    downloadUrl: '/RMC-Software-Documentation/source-documents/desktop-applications/rmc-bestfit/verification-report/RMC-BestFit Verification Report.pdf',
+  },
 ];
 
 export const bestFitDocs = bestFitData;
@@ -35,7 +43,7 @@ export default function BestFit() {
     icon: addBaseUrl(doc.icon),
     iconLight: addBaseUrl(doc.iconLight),
     iconDark: addBaseUrl(doc.iconDark),
-    doc_location: addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`),
+    doc_location: doc.downloadUrl ? undefined : addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`),
   }));
 
   return (

@@ -21,13 +21,19 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
   const trAppHref = useBaseUrl(
     `/docs/desktop-applications/rmc-totalrisk/applications-guide/${latestVersions['desktop-applications/rmc-totalrisk/applications-guide'] || 'v1.0'}/preface`,
   );
-  const trVerifHref = useBaseUrl(
-    `/docs/desktop-applications/rmc-totalrisk/verification-report/${latestVersions['desktop-applications/rmc-totalrisk/verification-report'] || 'v1.0'}/preface`,
+  const trVerifPdfHref = useBaseUrl(
+    '/source-documents/desktop-applications/rmc-totalrisk/verification-report/RMC-TotalRisk Verification Report.pdf',
+  );
+  const trTechRefPdfHref = useBaseUrl(
+    '/source-documents/desktop-applications/rmc-totalrisk/technical-reference-manual/RMC-TotalRisk Technical Reference Manual.pdf',
   );
 
   /* RMC-BestFit document links (third level) */
   const bestFitUserGuideHref = useBaseUrl(
     `/docs/desktop-applications/rmc-bestfit/users-guide/${latestVersions['desktop-applications/rmc-bestfit/users-guide'] || 'v1.0'}/preface`,
+  );
+  const bestFitVerifPdfHref = useBaseUrl(
+    '/source-documents/desktop-applications/rmc-bestfit/verification-report/RMC-BestFit Verification Report.pdf',
   );
 
   /* RMC-RFA document links (third level) */
@@ -44,6 +50,9 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
   );
   const lifeSimAppGuideHref = useBaseUrl(
     `/docs/desktop-applications/lifesim/applications-guide/${latestVersions['desktop-applications/lifesim/applications-guide'] || 'v1.0'}/preface`,
+  );
+  const lifeSimTechRefPdfHref = useBaseUrl(
+    '/source-documents/desktop-applications/lifesim/technical-reference-manual/LifeSim Technical Reference Manual.pdf',
   );
 
   /* -------------------------------------------------------------------------------------------------------------------------------------------------------------- */
@@ -167,7 +176,8 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
           href: totalRiskHref,
           children: [
             { id: 'tr-users-guide', text: "RMC-TotalRisk User's Guide", href: trUserGuideHref },
-            // Optionally add trAppHref/trVerifHref if needed in the menu
+            { id: 'tr-verif-pdf', text: 'RMC-TotalRisk Verification Report (PDF)', href: trVerifPdfHref, target: '_blank', rel: 'noopener noreferrer' },
+            { id: 'tr-tech-ref-pdf', text: 'RMC-TotalRisk Technical Reference Manual (PDF)', href: trTechRefPdfHref, target: '_blank', rel: 'noopener noreferrer' },
           ],
         },
         {
@@ -180,6 +190,7 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
               text: "RMC-BestFit User's Guide",
               href: bestFitUserGuideHref,
             },
+            { id: 'bestfit-verif-pdf', text: 'RMC-BestFit Verification Report (PDF)', href: bestFitVerifPdfHref, target: '_blank', rel: 'noopener noreferrer' },
           ],
         },
         {
@@ -199,6 +210,7 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
               text: 'LifeSim Validation Studies',
               href: lifeSimValStudiesHref,
             },
+            { id: 'lifesim-tech-ref-pdf', text: 'LifeSim Technical Reference Manual (PDF)', href: lifeSimTechRefPdfHref, target: '_blank', rel: 'noopener noreferrer' },
             /* {
               id: 'lifesim-applications-guide',
               text: 'LifeSim Applications Guide',

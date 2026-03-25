@@ -1,7 +1,18 @@
 import ThemedImage from '@theme/ThemedImage';
 import '../css/custom.css';
 
-const ContentBubble = ({ icon, iconLight, iconDark, IconComponent, doc_location, doc_name, active, preserveIconColor = false }) => {
+const ContentBubble = ({
+  icon,
+  iconLight,
+  iconDark,
+  IconComponent,
+  doc_location,
+  doc_name,
+  active,
+  preserveIconColor = false,
+  downloadUrl,
+  draft = false,
+}) => {
   const iconFilter = preserveIconColor ? '' : 'brightness-0 invert';
   const baseClasses = `
     flex min-h-[90px] xl:min-h-[130px] items-center overflow-hidden rounded-xl
@@ -27,10 +38,9 @@ const ContentBubble = ({ icon, iconLight, iconDark, IconComponent, doc_location,
   `;
 
   // Build <ThemedImage /> sources, with fallback to legacy `icon`
-  const sources =
-    iconLight || icon ? { light: iconLight ?? icon, dark: iconDark ?? iconLight ?? icon } : null;
+  const sources = iconLight || icon ? { light: iconLight ?? icon, dark: iconDark ?? iconLight ?? icon } : null;
 
-  const Inner = ({ comingSoon = false }) => (
+  const Inner = ({ comingSoon = false, pdfDownload = false, isDraft = false }) => (
     <div className="flex items-center gap-[16px] px-[16px] py-[10px] xl:gap-[20px] xl:px-[20px] xl:py-[14px]">
       {IconComponent ? (
         <div className="frosted-glass-circle flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full xl:h-[60px] xl:w-[60px]">
@@ -42,21 +52,31 @@ const ContentBubble = ({ icon, iconLight, iconDark, IconComponent, doc_location,
         </div>
       ) : null}
       <div>
-        <p className="mb-0 font-usace text-[1rem] leading-[1.2] no-underline text-white xl:text-[1.15rem]">
-          {doc_name}
-        </p>
+        <p className="mb-0 font-usace text-[1rem] leading-[1.2] text-white no-underline xl:text-[1.15rem]">{doc_name}</p>
         {comingSoon && (
-          <span className="mt-2 inline-block rounded-full bg-white/20 px-3 py-0.5 font-usace text-[0.7rem] leading-none text-white/70">
-            Coming Soon
-          </span>
+          <span className="mt-2 inline-block rounded-full bg-white/20 px-3 py-0.5 font-usace text-[0.7rem] text-white/70">Coming Soon</span>
+        )}
+        {pdfDownload && (
+          <span className="mt-2 inline-block rounded-full bg-white/20 px-3 py-0.5 font-usace text-[0.7rem] text-white/70">PDF Download</span>
+        )}
+        {isDraft && (
+          <span className="ml-2 mt-2 inline-block rounded-full bg-amber-400/30 px-3 py-0.5 font-usace text-[0.7rem] text-amber-100">Draft</span>
         )}
       </div>
     </div>
   );
 
+  if (active && downloadUrl) {
+    return (
+      <a href={downloadUrl} download className={`${baseClasses} ${activeClasses}`}>
+        <Inner pdfDownload isDraft={draft} />
+      </a>
+    );
+  }
+
   return active ? (
     <a href={doc_location} className={`${baseClasses} ${activeClasses}`}>
-      <Inner />
+      <Inner isDraft={draft} />
     </a>
   ) : (
     <div className={`${baseClasses} ${inactiveClasses}`}>

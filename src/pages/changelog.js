@@ -15,11 +15,23 @@ export default function Changelog() {
         </div>
         <div className="mx-auto max-w-[1600px] px-6 pb-16 pt-8 lg:px-12">
           <TableChangelog
-            dates={['March 2026']}
-            categories={['Website Update']}
-            documents={['-']}
-            versions={['-']}
-            descriptions={['Initial launch of the RMC Software Documentation website.']}
+            dates={['March 25, 2026', 'March 25, 2026', 'March 25, 2026', 'March 25, 2026', 'March 12, 2026']}
+            categories={['PDF Download', 'PDF Download', 'PDF Download', 'PDF Download', 'Website Update']}
+            documents={[
+              'RMC TotalRisk Verification Report (Draft)',
+              'RMC TotalRisk Technical Reference Manual (Draft)',
+              'RMC-BestFit Verification Report',
+              'LifeSim Technical Reference Manual',
+              '-',
+            ]}
+            versions={['-', '-', '-', '-', '-']}
+            descriptions={[
+              'Added as direct PDF download.',
+              'Added as direct PDF download.',
+              'Added as direct PDF download.',
+              'Added as direct PDF download.',
+              'Initial launch of the RMC Software Documentation website.',
+            ]}
           />
         </div>
       </main>
