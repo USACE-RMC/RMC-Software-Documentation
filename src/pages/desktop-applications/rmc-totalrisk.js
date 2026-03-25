@@ -21,8 +21,7 @@ const totalRiskData = [
     doc_name: 'RMC TotalRisk Verification Report',
     active: true,
     draft: true,
-    downloadUrl:
-      '/RMC-Software-Documentation/source-documents/desktop-applications/rmc-totalrisk/verification-report/RMC-TotalRisk Verification Report.pdf',
+    downloadUrl: '/source-documents/desktop-applications/rmc-totalrisk/verification-report/RMC-TotalRisk-Verification-Report.pdf',
   },
   {
     icon: 'img/TotalRisk.png',
@@ -30,8 +29,7 @@ const totalRiskData = [
     doc_name: 'RMC TotalRisk Technical Reference Manual',
     active: true,
     draft: true,
-    downloadUrl:
-      '/RMC-Software-Documentation/source-documents/desktop-applications/rmc-totalrisk/technical-reference-manual/RMC-TotalRisk Technical Reference Manual.pdf',
+    downloadUrl: '/source-documents/desktop-applications/rmc-totalrisk/technical-reference-manual/RMC-TotalRisk-Technical-Reference-Manual.pdf',
   },
   {
     icon: 'img/TotalRisk.png',
@@ -64,6 +62,7 @@ export default function TotalRisk() {
     doc_location: doc.downloadUrl
       ? undefined
       : addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`),
+    downloadUrl: doc.downloadUrl ? addBaseUrl(doc.downloadUrl) : undefined,
   }));
 
   return (

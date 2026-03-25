@@ -18,14 +18,11 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
   const trUserGuideHref = useBaseUrl(
     `/docs/desktop-applications/rmc-totalrisk/users-guide/${latestVersions['desktop-applications/rmc-totalrisk/users-guide'] || 'v1.0'}/preface`,
   );
-  const trAppHref = useBaseUrl(
-    `/docs/desktop-applications/rmc-totalrisk/applications-guide/${latestVersions['desktop-applications/rmc-totalrisk/applications-guide'] || 'v1.0'}/preface`,
-  );
   const trVerifPdfHref = useBaseUrl(
-    '/source-documents/desktop-applications/rmc-totalrisk/verification-report/RMC-TotalRisk Verification Report.pdf',
+    '/source-documents/desktop-applications/rmc-totalrisk/verification-report/RMC-TotalRisk-Verification-Report.pdf',
   );
   const trTechRefPdfHref = useBaseUrl(
-    '/source-documents/desktop-applications/rmc-totalrisk/technical-reference-manual/RMC-TotalRisk Technical Reference Manual.pdf',
+    '/source-documents/desktop-applications/rmc-totalrisk/technical-reference-manual/RMC-TotalRisk-Technical-Reference-Manual.pdf',
   );
 
   /* RMC-BestFit document links (third level) */
@@ -33,7 +30,7 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
     `/docs/desktop-applications/rmc-bestfit/users-guide/${latestVersions['desktop-applications/rmc-bestfit/users-guide'] || 'v1.0'}/preface`,
   );
   const bestFitVerifPdfHref = useBaseUrl(
-    '/source-documents/desktop-applications/rmc-bestfit/verification-report/RMC-BestFit Verification Report.pdf',
+    '/source-documents/desktop-applications/rmc-bestfit/verification-report/RMC-BestFit-Verification-Report.pdf',
   );
 
   /* RMC-RFA document links (third level) */
@@ -52,7 +49,7 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
     `/docs/desktop-applications/lifesim/applications-guide/${latestVersions['desktop-applications/lifesim/applications-guide'] || 'v1.0'}/preface`,
   );
   const lifeSimTechRefPdfHref = useBaseUrl(
-    '/source-documents/desktop-applications/lifesim/technical-reference-manual/LifeSim Technical Reference Manual.pdf',
+    '/source-documents/desktop-applications/lifesim/technical-reference-manual/LifeSim-Technical-Reference-Manual.pdf',
   );
 
   /* -------------------------------------------------------------------------------------------------------------------------------------------------------------- */

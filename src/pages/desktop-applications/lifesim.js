@@ -29,7 +29,7 @@ const lifeSimData = [
     doc_name: 'LifeSim Technical Reference Manual',
     active: true,
     draft: false,
-    downloadUrl: '/RMC-Software-Documentation/source-documents/desktop-applications/lifesim/technical-reference-manual/LifeSim Technical Reference Manual.pdf',
+    downloadUrl: '/source-documents/desktop-applications/lifesim/technical-reference-manual/LifeSim-Technical-Reference-Manual.pdf',
   },
   {
     icon: 'img/LifeSim.png',
@@ -59,6 +59,7 @@ export default function LifeSim() {
     iconLight: addBaseUrl(doc.iconLight),
     iconDark: addBaseUrl(doc.iconDark),
     doc_location: doc.downloadUrl ? undefined : addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`),
+    downloadUrl: doc.downloadUrl ? addBaseUrl(doc.downloadUrl) : undefined,
   }));
 
   return (
