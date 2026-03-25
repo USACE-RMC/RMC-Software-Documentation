@@ -1,0 +1,184 @@
+---
+title: Virtual Environments
+---
+
+import DocTabs from '@site/src/components/DocTabs';
+import FigureNoRef from '@site/src/components/FigureNoRef';
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" />
+
+# Virtual Environments
+
+A virtual environment is one of the most important concepts in Python development. This section explains what virtual environments are, why they matter, and how to create and use them.
+
+---
+
+## What Is a Virtual Environment?
+
+A virtual environment is a self-contained directory that holds its own copy of the Python interpreter and its own set of installed packages, completely isolated from the system-wide Python installation and from other projects.
+
+Think of it as a sandbox for your project — anything you install inside the virtual environment stays inside the virtual environment.
+
+### Why Use Virtual Environments?
+
+- **Isolation** — Each project gets its own dependencies. Installing a package for Project A does not affect Project B, even if they need different versions of the same package.
+- **Reproducibility** — You can capture the exact set of packages your project needs in a `requirements.txt` file, allowing others (or a future version of yourself) to recreate the exact same environment.
+- **Cleanliness** — Your global Python installation stays clean and unmodified. You avoid the common problem of conflicting packages making your entire Python installation unstable.
+- **Safety** — On USACE computers especially, you should never install packages into the global Python installation. Virtual environments let you install whatever your project needs without modifying system-level files.
+
+:::warning Always Use a Virtual Environment
+**Do not install Python packages globally** (i.e., without an activated virtual environment). Always create and activate a virtual environment before running `pip install`. This is a best practice for all Python development, and it is especially important on USACE computers where modifying the global Python installation may cause issues or require administrator assistance to fix.
+:::
+
+---
+
+## How It Works
+
+When you create a virtual environment, Python copies (or symlinks) its interpreter into a new directory and creates an isolated `site-packages` folder where pip will install packages. When you **activate** the environment, your terminal session is reconfigured so that `python` and `pip` point to the virtual environment's copies rather than the global installation.
+
+The standard directory structure of a virtual environment looks like this:
+
+```
+.venv/
+├── Include/
+├── Lib/
+│   └── site-packages/    ← packages installed by pip go here
+├── Scripts/
+│   ├── activate          ← activation script (Git Bash)
+│   ├── activate.bat      ← activation script (CMD)
+│   ├── Activate.ps1      ← activation script (PowerShell)
+│   ├── deactivate.bat
+│   ├── pip.exe
+│   └── python.exe        ← virtual environment's Python interpreter
+└── pyvenv.cfg
+```
+
+---
+
+## Creating a Virtual Environment
+
+Navigate to your project folder and run:
+
+```
+python -m venv .venv
+```
+
+This creates a virtual environment in a folder named `.venv` inside your project directory. The `.venv` name is a widely used convention — the leading dot keeps it visually separated from your project files, and most tools (VS Code, `.gitignore` templates) recognize it by default.
+
+:::tip
+You only need to create the virtual environment once per project. After creation, you simply activate it each time you start working.
+:::
+
+---
+
+## Activating and Deactivating
+
+Activation modifies your current terminal session so that `python` and `pip` point to the virtual environment. You can activate the environment from the VS Code integrated terminal or from a standalone terminal window (Command Prompt, PowerShell, Git Bash, etc.).
+
+### Activating
+
+The activation command depends on which shell you are using:
+
+<DocTabs
+  items={[
+    {
+      label: 'Command Prompt (CMD)',
+      value: 'cmd',
+      child: (
+        <pre>
+          <code>.venv\Scripts\activate</code>
+        </pre>
+      ),
+    },
+    {
+      label: 'PowerShell',
+      value: 'powershell',
+      child: (
+        <>
+          <p>
+            <code>.venv\Scripts\Activate.ps1</code>
+          </p>
+          <div className="admonition admonition-warning alert alert--warning">
+            <div className="admonition-heading">
+              <h5>Execution Policy</h5>
+            </div>
+            <div className="admonition-content">
+              <p>
+                PowerShell may block the activation script with an error like{' '}
+                <em>"cannot be loaded because running scripts is disabled on this system."</em> To resolve this, run the following command once in
+                PowerShell:
+              </p>
+              <pre>
+                <code>Set-ExecutionPolicy -Scope CurrentUser RemoteSigned</code>
+              </pre>
+              <p>
+                This allows locally created scripts to run while still requiring remote scripts to be signed. The <code>-Scope CurrentUser</code> flag
+                ensures this only affects your user account and does not require administrator privileges.
+              </p>
+            </div>
+          </div>
+        </>
+      ),
+    },
+    {
+      label: 'Git Bash',
+      value: 'bash',
+      child: (
+        <pre>
+          <code>source .venv/Scripts/activate</code>
+        </pre>
+      ),
+    },
+  ]}
+  defaultValue="cmd"
+/>
+
+When the environment is active, your terminal prompt will be prefixed with the environment name:
+
+```
+(.venv) C:\Projects\my-project>
+```
+
+This prefix is your confirmation that the virtual environment is active. Any `python` or `pip` commands you run will now use the virtual environment's interpreter and packages.
+
+### Deactivating
+
+To deactivate the virtual environment and return to the global Python installation, run:
+
+```
+deactivate
+```
+
+This works the same in all shells. The `(.venv)` prefix will disappear from your prompt.
+
+---
+
+## VS Code Integration
+
+VS Code can automatically detect and activate virtual environments, making the workflow seamless.
+
+### Selecting the Virtual Environment Interpreter
+
+After creating a virtual environment:
+
+1. Open the Command Palette with **Ctrl+Shift+P**
+2. Type **Python: Select Interpreter** and press Enter
+3. Select the interpreter located inside your `.venv` folder — it will appear as something like:
+   ```
+   Python 3.12.4 ('.venv': venv)  .\.venv\Scripts\python.exe
+   ```
+
+### Automatic Terminal Activation
+
+Once you select the virtual environment as your interpreter, VS Code will automatically activate it whenever you open a new integrated terminal in that workspace. You will see the `(.venv)` prefix appear in the terminal prompt without needing to run the activation command manually.
+
+---
+
+## Best Practices
+
+- **One virtual environment per project** — Do not share virtual environments across multiple projects. Each project should have its own `.venv` folder.
+- **Add `.venv/` to `.gitignore`** — Virtual environments should never be committed to version control. They are large, platform-specific, and easily recreated.
+- **Never commit the virtual environment** — Other developers recreate it from `requirements.txt`, not from the `.venv` folder itself.
+- **Use `requirements.txt`** to share your environment — See [Installing Python Packages](./05-installing-packages.mdx) for details on capturing and sharing dependencies.
+- **Name it `.venv`** — Stick with the `.venv` convention. Tools and team members will recognize it instantly.

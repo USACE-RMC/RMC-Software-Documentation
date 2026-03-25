@@ -1,0 +1,158 @@
+---
+title: Installing Python Packages
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import FigureNoRef from '@site/src/components/FigureNoRef';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" />
+
+# Installing Python Packages
+
+Python's strength lies in its ecosystem of third-party packages. The `pip` package manager is the standard tool for installing, upgrading, and removing Python packages from the [Python Package Index (PyPI)](https://pypi.org/).
+
+:::warning Virtual Environment Required
+Always ensure your virtual environment is activated before installing packages. If you do not see the `(.venv)` prefix in your terminal prompt, activate your environment first. See [Virtual Environments](./04-virtual-environments.mdx) for instructions.
+:::
+
+---
+
+## Installing Packages with pip
+
+### Basic Installation
+
+To install a package:
+
+```
+pip install <package-name>
+```
+
+For example, to install NumPy:
+
+```
+pip install numpy
+```
+
+pip will download the package from PyPI and install it into your active virtual environment's `site-packages` directory.
+
+### Installing a Specific Version
+
+To install a specific version of a package:
+
+```
+pip install <package-name>==<version>
+```
+
+For example:
+
+```
+pip install pandas==2.1.4
+```
+
+This is useful when a project requires a specific version for compatibility.
+
+### Installing Multiple Packages
+
+You can install multiple packages in a single command:
+
+```
+pip install numpy pandas matplotlib
+```
+
+---
+
+## Common pip Commands
+
+<TableVerticalNoRef
+  headers={[[{ value: 'Command' }, { value: 'Purpose' }]]}
+  columns={[
+    [
+      '<code>pip install &lt;package&gt;</code>',
+      '<code>pip install &lt;package&gt;==&lt;version&gt;</code>',
+      '<code>pip install --upgrade &lt;package&gt;</code>',
+      '<code>pip uninstall &lt;package&gt;</code>',
+      '<code>pip list</code>',
+      '<code>pip show &lt;package&gt;</code>',
+      '<code>pip freeze</code>',
+    ],
+    [
+      'Install a package',
+      'Install a specific version',
+      'Upgrade a package to the latest version',
+      'Remove a package',
+      'List all installed packages and their versions',
+      'Show detailed information about an installed package',
+      'Output installed packages in <code>requirements.txt</code> format',
+    ],
+  ]}
+/>
+
+:::tip
+If `pip` is not recognized as a command, use `python -m pip` instead. This runs pip through the Python interpreter and works regardless of PATH configuration. For example: `python -m pip install numpy`.
+:::
+
+---
+
+## Managing Dependencies with `requirements.txt`
+
+A `requirements.txt` file lists all the packages your project depends on, along with their versions. This file is essential for team collaboration — it allows anyone to recreate your exact environment.
+
+### Creating a `requirements.txt`
+
+After installing all the packages your project needs, capture them:
+
+```
+pip freeze > requirements.txt
+```
+
+This generates a file like:
+
+```
+matplotlib==3.8.2
+numpy==1.26.3
+pandas==2.1.4
+scipy==1.12.0
+```
+
+### Installing from `requirements.txt`
+
+When you clone a project or set up a new environment, install all dependencies at once:
+
+```
+pip install -r requirements.txt
+```
+
+This reads the file and installs every listed package at the specified version.
+
+### Best Practices for `requirements.txt`
+
+- **Commit `requirements.txt` to version control** — This is the primary way other developers know what packages your project needs.
+- **Update it when you add or remove packages** — Run `pip freeze > requirements.txt` after making changes to your environment.
+- **Pin versions** — The `pip freeze` output includes exact version numbers (e.g., `numpy==1.26.3`), which ensures reproducible environments. Do not remove the version specifiers.
+- **Review before committing** — `pip freeze` captures everything in the environment. If you installed packages for experimentation that are not part of the project, remove them before generating the file.
+
+---
+
+## Commonly Used Packages for RMC Work
+
+The following packages are commonly used across RMC Python projects. Install only what your specific project needs.
+
+<TableVerticalNoRef
+  headers={[[{ value: 'Package' }, { value: 'Purpose' }]]}
+  columns={[
+    ['<code>numpy</code>', '<code>pandas</code>', '<code>matplotlib</code>', '<code>plotly</code>', '<code>scipy</code>', '<code>sympy</code>', '<code>requests</code>', '<code>notebook</code>', '<code>pytest</code>', '<code>openpyxl</code>'],
+    [
+      'Numerical computing — arrays, linear algebra, random numbers',
+      'Data manipulation — DataFrames, CSV/Excel I/O, data cleaning',
+      'Static plotting and visualization',
+      'Interactive plotting and visualization',
+      'Scientific computing — optimization, interpolation, statistics',
+      'Symbolic mathematics — algebra, calculus, equation solving',
+      'HTTP requests — calling APIs, downloading data',
+      'Jupyter notebooks — interactive development (see <a href="./06-jupyter-notebooks">Jupyter Notebooks</a>)',
+      'Testing framework — write and run unit tests for your code',
+      'Reading and writing Excel files (used by pandas for <code>.xlsx</code> support)',
+    ],
+  ]}
+/>
