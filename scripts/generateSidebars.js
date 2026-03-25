@@ -547,6 +547,37 @@ function buildDevCategory(label, dir, docPrefix, files, ids, collapsed) {
   };
 }
 
+/* --- Custom Logic: Python Quick Start Guide Sidebar --- */
+
+function generateQuickstartGuideSidebar() {
+  const dir = path.join(DOCS_DIR, 'dev/python-quickstart-guide');
+  if (!fs.existsSync(dir)) return null;
+
+  const introId = '00-introduction';
+  const quickstartIds = [
+    '01-installing-python',
+    '02-installing-git',
+    '03-installing-vs-code',
+    '04-virtual-environments',
+    '05-installing-packages',
+    '06-jupyter-notebooks',
+    '07-troubleshooting',
+  ];
+  const files = getDevFilesInDir(dir);
+
+  const items = [];
+
+  const introItem = buildDevDocItem(dir, 'dev/python-quickstart-guide', files, introId);
+  if (introItem) items.push(introItem);
+
+  quickstartIds.forEach((id) => {
+    const item = buildDevDocItem(dir, 'dev/python-quickstart-guide', files, id);
+    if (item) items.push(item);
+  });
+
+  return items.length ? items : null;
+}
+
 /* --- Sidebar Generation Entrypoint --- */
 
 function generateSidebars() {
@@ -626,6 +657,14 @@ function generateSidebars() {
   if (dstUiStyleGuideSidebar) {
     sidebarContent.dstUiStyleGuide = {
       'DST UI Style Guide': dstUiStyleGuideSidebar,
+    };
+  }
+
+  // Add Python Quick Start Guide sidebar if present
+  const quickstartGuideSidebar = generateQuickstartGuideSidebar();
+  if (quickstartGuideSidebar) {
+    sidebarContent.quickstartGuide = {
+      'Python Quick Start Guide': quickstartGuideSidebar,
     };
   }
 

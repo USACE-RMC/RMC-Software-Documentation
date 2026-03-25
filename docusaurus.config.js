@@ -2,6 +2,17 @@ import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 
+import path from 'path';
+
+// Normalize the drive letter to uppercase on Windows to prevent webpack
+// "modules with names that only differ in casing" warnings.
+function normalizeDriveLetter(p) {
+  if (process.platform === 'win32' && /^[a-z]:/.test(p)) {
+    return p.charAt(0).toUpperCase() + p.slice(1);
+  }
+  return p;
+}
+
 // Tailwind custom plugin
 const tailwindPlugin = async function tailwindPlugin(context, options) {
   return {
@@ -10,6 +21,24 @@ const tailwindPlugin = async function tailwindPlugin(context, options) {
       postcssOptions.plugins.push(require('tailwindcss'));
       postcssOptions.plugins.push(require('autoprefixer'));
       return postcssOptions;
+    },
+  };
+};
+
+// Plugin to normalize Windows drive letter casing in webpack resolution
+const normalizePathsPlugin = async function normalizePathsPlugin() {
+  return {
+    name: 'normalize-windows-paths',
+    configureWebpack(config) {
+      return {
+        resolve: {
+          modules: (config.resolve?.modules || ['node_modules']).map(normalizeDriveLetter),
+        },
+        resolveLoader: {
+          modules: (config.resolveLoader?.modules || ['node_modules']).map(normalizeDriveLetter),
+        },
+        context: normalizeDriveLetter(config.context || process.cwd()),
+      };
     },
   };
 };
@@ -25,9 +54,9 @@ export default {
   projectName: 'RMC-Software-Documentation', // Your project name, make sure this matches your GitHub repo name
 
   clientModules: [
-    require.resolve('./src/clientModules/gtagPolyfill.js'),
-    require.resolve('./src/clientModules/analyticsEvents.js'),
-    require.resolve('./src/clientModules/scrollToAnchor.js'),
+    normalizeDriveLetter(require.resolve('./src/clientModules/gtagPolyfill.js')),
+    normalizeDriveLetter(require.resolve('./src/clientModules/analyticsEvents.js')),
+    normalizeDriveLetter(require.resolve('./src/clientModules/scrollToAnchor.js')),
   ],
 
   presets: [
@@ -35,14 +64,14 @@ export default {
       '@docusaurus/preset-classic',
       {
         docs: {
-          sidebarPath: require.resolve('./sidebars.js'),
+          sidebarPath: normalizeDriveLetter(require.resolve('./sidebars.js')),
           showLastUpdateTime: true,
           remarkPlugins: [remarkMath, remarkGfm],
           rehypePlugins: [rehypeKatex],
           breadcrumbs: true,
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
+          customCss: normalizeDriveLetter(require.resolve('./src/css/custom.css')),
         },
       },
     ],
@@ -71,6 +100,9 @@ export default {
 
     // TailwindCSS as a custom plugin
     tailwindPlugin,
+
+    // Normalize Windows drive letter casing to suppress webpack warnings
+    normalizePathsPlugin,
   ],
 
   themeConfig: {
