@@ -29,7 +29,7 @@ import VersionSelector from "@site/src/components/VersionSelector";
 This example demonstrates the process for estimating consequences for dam breaches in LifeSim. This chapter focuses on Curwensville Dam located in
 Clearfield County, PA. This was originally modeled by the Modeling, Mapping and Consequences (MMC) Production Center of Expertise of the U.S. Army
 Corps of Engineers (USACE) in 2022. This chapter walks through developing and importing the needed data and how to choose appropriate warning and
-evacuation data for a LifeSim study.
+evacuation data for a dam LifeSim study.
 
 *Note:  The model results included in the subsequent sections are for example purposes only and are not representative of actual life loss and 
 economic damage estimates for the Curwensville Dam project.*
@@ -39,8 +39,8 @@ economic damage estimates for the Curwensville Dam project.*
 To take full advantage of LifeSim capabilities, an unsteady Hydrologic Engineering Center’s River Analysis System (HEC-RAS) <Citation citationKey="HECRAS2024"/> 
 dam breach model with a range of breach {/*Do we want to update the terminology to fail and non-fail?*/} and corresponding non-breach events is required. Non-breach events are needed to identify any areas flooded prior 
 to the breach, which allows you to understand incremental life loss and incremental risk of the dam. Alternatively, the inundation footprint from a breach 
-model time step just before the breach occurs can be used to identify areas flooded prior to the breach, but for this example the non-breach inundation 
-footprint issued to identify pre-breach flooding. This example also assumes that both maximum depth grids and inundation boundary polygons for each event 
+model the time step immediately before the breach initiation time can be used to identify areas flooded prior to the breach. For this example the non-breach inundation 
+extents was provided to identify pre-breach flooding. This example also assumes that both maximum depth grids and inundation boundary polygons for each event 
 have been created in the HEC-RAS model directory using RAS Mapper.
 
 The hydraulic events used in the example are shown in the table below.
@@ -87,11 +87,11 @@ The hydraulic events used in the example are shown in the table below.
   widthMode="intrinsic"
 />
 
-LifeSim requires a structure inventory that includes the following characteristics at a minimum:
+To calculate life loss, LifeSim requires a structure inventory that includes the following characteristics at a minimum:
 - A structure occupancy type
 - A construction type
 - The number of stories
-- The population within the structure. 
+- The population within the structure
 
 This example uses the USACE National Structure Inventory (NSI) <Citation citationKey="NSIDatabase"/> as the base dataset for the structure inventory.
 
@@ -127,7 +127,7 @@ is shown on the right-hand side of <FigReference figKey="figure-86"/>.
   caption="Pairwise Buffer and Simplify Polygon tools"
 />
 
-Once the simplify polygon tool has been run, the study area is visually checked to look for areas that need to be cleaned up. Several spots had open
+Once the simplify polygon tool has been run, visually check new polygon for areas that need to be cleaned up. Several spots had open
 areas near the center of the polygon. Those vertices were removed using the Edit ribbon and the Edit Vertices tool. Vertices can be selected and
 deleted by right clicking on the selected group and using the option to delete the selected vertices. This is shown in the left-hand side of
 {"\n"}<FigReference figKey="figure-87" />. There were also several disconnected polygons caused by very small spots of disconnected inundation which
@@ -141,11 +141,10 @@ were removed.
   caption="Deleting Vertices for the final Study Area polygon"
 />
 
-Alternative Methods to Get a Study Area:
+Alternative Methods to Get a Study Area Polygon:
 
 - Create a new shapefile and draw a polygon around the maximum inundation. This can be accomplished in the LifeSim map viewer or in ArcGIS, QGIS, or
 another GIS software.
-
 - Export the Geometry Bounding Polygon from HEC-RAS/RAS-Mapper. Check and edit the polygon for completeness.
 
 ### Emergency Planning Zones
@@ -160,8 +159,8 @@ regarding the software’s default parameters.
 In a standard dam breach scenario where no detailed information about the communities is known, there are three primary areas that may have different
 warning and mobilization characteristics:  
 
-- The area upstream of the dam (or the reservoir)
-- The area that experiences flooding downstream of the dam prior to (or regardless of) a breach
+- The area upstream of the dam (i.e., the reservoir)
+- The area that experiences flooding downstream of the dam prior to (or regardless of) a breach (i.e., non-failure inundation or spillway flow)
 - The area that is only flooded in the event of a breach 
 
 People living near the pool of a reservoir would typically be more aware of the flood risk than areas downstream and would have more time to mobilize 
@@ -257,16 +256,16 @@ Double Warning EPZ. The same steps, starting with the Union, must be repeated wi
 
 LifeSim has the capability to output results aggregated to multiple polygon shapefiles. At a minimum the EPZ polygons can be selected as output
 polygons, but for comprehensive understanding and reporting of the results additional polygons are needed. For this example, a polygon will be created
- that has the downstream area broken out by milage zones relative to the dam. The zones are 0 to 3 miles, 3 to 7 miles, 7 to 15 miles, 15 to 60 miles,
- and over 60 miles. A separate polygon shapefile will be created by selecting and exporting city boundary polygons that are significantly impacted by
+that has the downstream area broken out by mileage zones relative to the dam. The zones are 0 to 3 miles, 3 to 7 miles, 7 to 15 miles, 15 to 60 miles,
+and over 60 miles. A separate polygon shapefile can be created by selecting and exporting city boundary polygons that are significantly impacted by
 the inundation.
 
-To make the milage reach polygon, start by exporting the “EPZ_NoDoubleWarning” layer as a new shapefile by right clicking on it in the Layers Pane and
- navigating to Data > Export Features. Save to a folder and name it “Milage_Reaches.shp”. Next, identify a point along the river three miles
+To make the mileage reach polygon, start by exporting the “EPZ_NoDoubleWarning” layer as a new shapefile by right clicking on it in the Layers Pane and
+ navigating to Data > Export Features. Save to a folder and name it “Mileage_Reaches.shp”. Next, identify a point along the river three miles
 downstream of the dam. This can be done by looking at cross section stations from the RAS geometry, creating points along a river centerline every
 mile, or simply by using the measure a path tool in ArcGIS Pro or Google Earth. 
 
-For this example, the cross sections were exported from RAS Mapper and  included in a Geometry folder in the RAS model data. These are added to the 
+For this example, the cross sections were exported from RAS Mapper and included in a Geometry folder in the RAS model data. These are added to the 
 ArcGIS Pro map and labeled with the “River Stat” field. Since the dam is at river station 185.7, the downstream polygon needs to be split close to 
 182.7 (3 miles), 178.7 (7 miles), 170.7 (15 miles) and 125.7 (60 miles). There are no cross sections with these exact river station values, but they are 
 close enough to visually estimate a location to split the polygon. The  cross sections also provide a guide for splitting the polygons perpendicular to 
@@ -282,9 +281,9 @@ the river inundation. To split the polygon, use the <strong>Split</strong> tool 
 
 Repeat the split at the remaining river stations, then save the edits. Right click on the layer and open the attribute table to assign the correct
 names. A first and important step in naming is to rename the “InPoolEPZ” polygon to just say “InPool”. This will become important later in the study,
-because if both the Milage Reaches and the EPZ shapefiles are used as output polygons, having two areas with the same name could cause double counting
- of results if Excel pivot tables are used to analyze results. Select each row to identify what the name should be. Do not use only numbers and dashes
- because most spreadsheets will attempt to convert “3-7” into a date format. Save the edits when complete.
+because if both the Mileage Reaches and the EPZ shapefiles are used as output polygons, having two areas with the same name could cause double counting
+of results if Excel pivot tables are used to analyze results. Select each row to identify what the name should be. Do not use only numbers and dashes
+because most spreadsheets will attempt to convert “3-7” into a date format. Save the edits when complete.
 
 <Figure
   figKey="figure-95"
@@ -299,7 +298,7 @@ down the page). Download the file.
 
 Once the file is downloaded and unzipped, load it into the ArcGIS Pro map using the Add Data button. Use the <strong>Select by Location</strong> tool
 in the Map ribbon to select the cities that intersect with the maximum inundation polygon (the MHP Breach in this example). You could intersect it
-with the study area, but since that was buffered, it could result in some cities that would have no consequences.
+with the study area, but since that was buffered, it could result in the inclusion of some cities that would have no consequences.
 
 <Figure
   figKey="figure-96"
@@ -314,7 +313,7 @@ do not have significant impacts and sorting through that many rows of results cr
 downstream can be removed, as well as cities that are barely touched by the inundation, by selecting individual polygons and using the Delete button
 in the Edit ribbon. Another method of removing cities is to run a test simulation in LifeSim, view the results table, and identify any cities that do
 not have any life loss. The latter was done for this example and based on those results and user judgement the following nine cities were retained for
- the city boundary results output polygon:
+the city boundary results output polygon:
 
 - Clearfield, PA
 - Curwensville, PA
@@ -335,12 +334,12 @@ The Curwensville Dam structure inventory is developed using the USACE NSI datase
 
 ## LifeSim Model Setup
 
-The subsequent sections will discuss setting up a LifeSim model by importing data and setting EPZ parameters and alternatives. The sections will cover
+The subsequent sections will discuss setting up a LifeSim model by importing data and setting EPZ parameters and alternatives for dams. The sections will cover
  hydraulic data import, EPZs, structure inventories, creating alternatives, and simulating alternatives.
 
 ### Hydraulic Data
 
-For estimating life safety consequences, LifeSim requires depths, velocities, and arrival times from unsteady hydraulic modeling. The most common
+To calculate life loss, LifeSim requires depths, velocities, and arrival times from unsteady hydraulic modeling. The most common
 method of delivering this information into the LifeSim model is through HEC-RAS Hierarchical Data Format (HDF) plan files (Note: Only HEC-RAS versions
  5+ produce the HDF files required by LifeSim). For each hydraulic scenario, the user will need the plan file from HEC-RAS and the terrain files (both
  the HDF and the associated Tagged Image Format (TIF) files) so that LifeSim can calculate depths and arrival times.
@@ -358,9 +357,9 @@ click on <strong>Hydraulic Data </strong>in the study pane, and select <strong>I
 From the Import from HEC-RAS window, map to the project’s HEC-RAS Plan(s) Directory by clicking on the button with the three dots <FigureInline src="figures/desktop-applications/lifesim/applications-guide/v1.0/inline-images/inline-3f9a0143.png" />. The file directory
 selected should contain plan HDF files from HEC-RAS (e.g., PA00003_Curwensvill.p01.hdf). Select the specific HEC-RAS plan you want to import by using
 the dropdown next to HEC-RAS Plan. Once selected, the Name of the hydraulic scenario will automatically populate, but the user is able to alter the
-Name. If the terrain is inside the HEC-RAS directory Terrain folder it usually auto populates the terrain. If not, map to the project’s HEC-RAS
-Terrain File (HDF) by clicking on the button with three dots <FigureInline src="figures/desktop-applications/lifesim/applications-guide/v1.0/inline-images/inline-3f9a0143.png" />. Once you have the hydraulic data mapped and selected in the Import from HEC-RAS window,
-you can either select <strong>Import from RAS</strong> or <strong>Import from Map</strong>.
+Name. If the terrain is inside the HEC-RAS directory Terrain folder, LifeSim will auto populate the terrain file. If not, map to the project’s HEC-RAS
+Terrain File (HDF) by clicking on the button with three dots <FigureInline src="figures/desktop-applications/lifesim/applications-guide/v1.0/inline-images/inline-3f9a0143.png" />. 
+Once you have the hydraulic data mapped and selected in the Import from HEC-RAS window, you can either select <strong>Import from RAS</strong> or <strong>Import from Map</strong>.
 
 <Figure
   figKey="figure-98"
@@ -430,7 +429,7 @@ hydraulic engineer will provide this information. For the Curwensville MH Breach
 
 The user will repeat this process for each of the study’s hydraulic scenarios. For non-breach scenarios, it is recommended to use the same imminent
 hazard time used for the corresponding breach scenario. LifeSim interpolates population between the 2am and 2pm time values. Therefore, using
-different imminent hazard times for breach and non-breach can cause inconsistencies when calculating incremental consequences by subtracting
+different imminent hazard times for breach and non-breach can cause inconsistencies when calculating excess consequences by subtracting
 non-breach results from breach results.
 
 ### Importing a Structure Inventory
@@ -506,7 +505,7 @@ of life loss. These unknown parameters are used for most MMC level LifeSim model
  Consequences for Levees and Floodwalls, Emergency Planning Zones</Link> section and the 
  <Link to="/docs/desktop-applications/lifesim/applications-guide/v1.0/estimating-consequences-for-coastal-infrastructure/#emergency-planning-zones">Estimating 
  Consequences for Coastal Infrastructure, Emergency Planning Zones</Link> section for more information on how to develop Warning and Protective Action 
- parameters for your specific impact areas.
+ parameters for your specific EPZs.
 
 To import an EPZ, right click on Emergency Planning Zones and select Import EPZs From Shapefile.
 
@@ -517,10 +516,10 @@ To import an EPZ, right click on Emergency Planning Zones and select Import EPZs
   caption="Import EPZs from Shapefile"
 />
 
-In the Import Emergency Planning Zones window, use the three dots <FigureInline src="figures/desktop-applications/lifesim/applications-guide/v1.0/inline-images/inline-3f9a0143.png" /> on the upper right to browse to the “EPZ_MHP_DoubleWarning.shp” shapefile that was
-created in the prior GIS section. Once selected, fill in the name field with the same name as the shapefile, and in the Emergency Planning Zone Name
-Field dropdown menu select the field “Name” which was added to the shapefile in the GIS section. Before proceeding, confirm that there are now three
-emergency planning zones named BreachEPZ, InPoolEPZ, and NonBreachEPZ.
+In the Import Emergency Planning Zones window, use the three dots <FigureInline src="figures/desktop-applications/lifesim/applications-guide/v1.0/inline-images/inline-3f9a0143.png" /> 
+on the upper right to browse to the “EPZ_MHP_DoubleWarning.shp” shapefile that was created in the prior GIS section. Once selected, fill in the name field with the same name 
+as the shapefile, and in the Emergency Planning Zone Name Field dropdown menu select the field “Name” which was added to the shapefile in the GIS section. Before proceeding, 
+confirm that there are now three EPZs named BreachEPZ, InPoolEPZ, and NonBreachEPZ.
 
 <Figure
   figKey="figure-110"
@@ -593,8 +592,8 @@ InPoolEPZ, then click <strong>OK</strong> to close the EPZ editor window. Repeat
 ### Creating Alternatives in LifeSim
 
 Below the EPZ section of the LifeSim study tree are Road Networks, Destinations, Agricultural Data, and ECAM Data. These sections will be skipped for
-this example of a base level study, as they are not utilized on most USACE projects that follow the MMC Standard Operating Procedure (SOP). Therefore,
- the next step will be to create alternatives.
+this example of a base level study. For information on simulating evacuation, reference the <Link to="/docs/desktop-applications/lifesim/applications-guide/v1.0/estimating-consequences-for-levees-and-floodwalls/#simulating-evacuation">Estimating 
+ Consequences for Levees and Floodwalls, Simulating Evacuation</Link> Therefore, the next step in this example is to create alternatives.
 
 For this study, each breach event will have two alternatives representing different warning ranges. These ranges are referred to as minimal warning
 and ample warning and they allow the results to be applied to different potential breach scenarios that may have different opportunity ranges for
@@ -779,7 +778,7 @@ NoDoubleWarning EPZ as the Summary Polygon. Select the TAS_NonBreach alternative
 
 Next create the “MH_Sims”, “IH_Sims”, and “TAS_SS_NH_Sims” simulations. For the “MH_Sims”, select 2am and 2pm, and use 1000 iterations (more
 iterations can be used depending on need and simulation times, 1,000 is a recommended minimum). For the Summary Polygons, select the MHP double
-warning EPZ, the Milage Reaches polygon that was created in ArcGIS previously, and the City Boundaries polygon. For Summary Set Name it is important
+warning EPZ, the Mileage Reaches polygon that was created in ArcGIS previously, and the City Boundaries polygon. For Summary Set Name it is important
 to use the same names for each simulation (EPZs, Reaches, and Cities) to facilitate analysis of results in a spreadsheet.
 
 <Figure
@@ -1058,7 +1057,7 @@ District. Open the structure attribute table and select the structure and it wil
 Right click on the inventory layer to edit. First, delete the residential structure points currently on the school or move them to any nearby
 residential structures that are missing points. Move the EDU points to the school (they can stay together because there is a high school and middle
 school in the same complex). Next perform an internet photo search to find pictures of the school to confirm the number of stories (this area did not
-have street view available). Photos show the school to be 2-stories, so change the number of stories.
+have Google Street View available). Photos show the school to be 2-stories, so change the number of stories.
 
 <Figure
   figKey="figure-146"
