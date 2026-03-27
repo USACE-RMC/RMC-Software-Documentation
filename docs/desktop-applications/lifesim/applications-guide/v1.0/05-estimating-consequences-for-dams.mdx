@@ -26,7 +26,7 @@ import VersionSelector from "@site/src/components/VersionSelector";
 
 ## Purpose
 
-This example demonstrates the process for estimating consequences for dam breaches in LifeSim. This chapter focuses on Curwensville Dam located in
+This example demonstrates the process for estimating consequences for dam failures in LifeSim. This chapter focuses on Curwensville Dam located in
 Clearfield County, PA. This was originally modeled by the Modeling, Mapping and Consequences (MMC) Production Center of Expertise of the U.S. Army
 Corps of Engineers (USACE) in 2022. This chapter walks through developing and importing the needed data and how to choose appropriate warning and
 evacuation data for a dam LifeSim study.
@@ -37,10 +37,10 @@ economic damage estimates for the Curwensville Dam project.*
 ## Data Requirements
 
 To take full advantage of LifeSim capabilities, an unsteady Hydrologic Engineering Center’s River Analysis System (HEC-RAS) <Citation citationKey="HECRAS2024"/> 
-dam breach model with a range of breach {/*Do we want to update the terminology to fail and non-fail?*/} and corresponding non-breach events is required. Non-breach events are needed to identify any areas flooded prior 
-to the breach, which allows you to understand incremental life loss and incremental risk of the dam. Alternatively, the inundation footprint from a breach 
-model the time step immediately before the breach initiation time can be used to identify areas flooded prior to the breach. For this example, the non-breach inundation 
-extents were provided to identify pre-breach flooding. This example also assumes that both maximum depth grids and inundation boundary polygons for each event 
+dam fail model with a range of fail {/*Do we want to update the terminology to fail and non-fail?*/} and corresponding non-fail events is required. Non-fail events are needed to identify any areas flooded prior 
+to the fail, which allows you to understand incremental life loss and incremental risk of the dam. Alternatively, the inundation footprint from a failure 
+model the time step immediately before the breach initiation time can be used to identify areas flooded prior to the failure. For this example, the non-fail inundation 
+extents were provided to identify pre-fail flooding. This example also assumes that both maximum depth grids and inundation boundary polygons for each event 
 have been created in the HEC-RAS model directory using RAS Mapper.
 
 The hydraulic events used in the example are shown in the table below.
@@ -99,18 +99,18 @@ This example uses the USACE National Structure Inventory (NSI) <Citation citatio
 
 ### Study Area Polygon
 
-The first step in modeling a dam breach in LifeSim is to identify a study area polygon that can be used as a basis for emergency planning zones (EPZ),
+The first step in modeling a dam failure in LifeSim is to identify a study area polygon that can be used as a basis for emergency planning zones (EPZ),
  the structure inventory boundary, and output polygons. There are several ways to do this, but the most common methods include buffering the maximum
 inundation, manually drawing a polygon boundary in GIS software (e.g., ArcGIS Pro or QGIS) <Citation citationKey="ESRI2015"/>, or exporting a Geometry Bounding Polygon from RAS Mapper
 within HEC-RAS. The RAS Mapper geometry polygon method does not always produce an acceptable study area when there are complex geometries. When using
 this method, the output must be checked for areas where inundation is not covered and for gaps within the polygon requiring vertex edits. This example
  uses a method of buffering and then simplifying the maximum inundation polygon in ArcGIS Pro.
 
-Create a map in ArcGIS Pro and use the <strong>Add Data</strong> button to add the inundation polygon of the maximum breach event. In the
+Create a map in ArcGIS Pro and use the <strong>Add Data</strong> button to add the inundation polygon of the maximum failure event. In the
 Geoprocessing tools pane, navigate to Analysis Tools > Pairwise Overlay > Pairwise Buffer. Select the maximum inundation polygon as the Input Features
  and designate an output shapefile name (it is not recommended to save into the default geodatabase location). The buffer will be set at 1,500 feet.
 This allows for (1) a reasonable number of structure points outside the inundation for use in calibration of the inventory and (2) the case that a
-larger breach event might be added in the future. The Dissolve Type is set to “Dissolve all output features into a single feature”. The tool setup 
+larger failure event might be added in the future. The Dissolve Type is set to “Dissolve all output features into a single feature”. The tool setup 
 is shown on the left-hand side of <FigReference figKey="figure-86"/>.
 
 Once the dissolve is complete, the Simplify Polygon tool is used to reduce the complexity and file size of the buffered polygon for a final study
@@ -150,30 +150,30 @@ another GIS software.
 ### Emergency Planning Zones
 
 EPZs are polygons that allow LifeSim to have different warning and mobilization parameters for different geographic areas and/or for areas that
-experience different flooding characteristics (e.g., breach flows and non-breach flows). Depending on the study’s purpose and level of detail there
+experience different flooding characteristics (e.g., failure flows and non-failure flows). Depending on the study’s purpose and level of detail there
 could be different parameters for different communities or counties. For this example, we will focus our geographic areas on the flood characteristics
  only and assume that parameters influenced by emergency response capability and demographic characteristics can be captured by using the default
 “unknown” curves in LifeSim. Reference the LifeSim 2.0 Technical Reference Manual <Citation citationKey="LifeSimTech2021"/> for additional information 
 regarding the software’s default parameters.
 
-In a standard dam breach scenario where no detailed information about the communities is known, there are three primary areas that may have different
+In a standard dam failure scenario where no detailed information about the communities is known, there are three primary areas that may have different
 warning and mobilization characteristics:  
 
 - The area upstream of the dam (i.e., the reservoir)
-- The area that experiences flooding downstream of the dam prior to (or regardless of) a breach (i.e., non-failure inundation or spillway flow)
-- The area that is only flooded in the event of a breach 
+- The area that experiences flooding downstream of the dam prior to (or regardless of) a failure (i.e., non-failure inundation or spillway flow)
+- The area that is only flooded in the event of a failure 
 
 People living near the pool of a reservoir would typically be more aware of the flood risk than areas downstream and would have more time to mobilize 
-as the reservoir rises, so their perception of risk is higher. Downstream areas subject to flooding prior to a breach (i.e., spillway flow or non-breach 
+as the reservoir rises, so their perception of risk is higher. Downstream areas subject to flooding prior to a failure (i.e., spillway flow or non-failure 
 flows from dam releases) may not necessarily have a higher risk perception, but they would receive flood warnings relative to when spillway flow begins. 
-The non-breach flows rate of rise would also be more gradual than a breach, meaning they would have more warning time and a higher likelihood of mobilization 
-than areas only flooded in the event of a breach.
+The non-failure flows rate of rise would also be more gradual than failure flows, meaning they would have more warning time and a higher likelihood of mobilization 
+than areas only flooded in the event of a failure.
 
 To simulate this effect in LifeSim, each unique event with different levels of spillway flow needs a unique EPZ polygon because the areas flooded
-prior to a breach are different—this is why you need corresponding non-breach events for each of your breach events. If an event has no flooding prior
- to the breach, the EPZ only needs two areas: (1) the area upstream in the reservoir and (2) the area downstream. However, this requires the hydraulic
- modeling and structure inventory to be adequately calibrated so that no structures are flooded in the corresponding non-breach event (e.g., For the
-Top of Active Storage breach scenario to only have two zones, there should be zero inundated damages during the Top of Active Storage non-breach
+prior to a failure are different—this is why you need corresponding non-fail events for each of your fail events. If an event has no flooding prior
+ to the failure, the EPZ only needs two areas: (1) the area upstream in the reservoir and (2) the area downstream. However, this requires the hydraulic
+ modeling and structure inventory to be adequately calibrated so that no structures are flooded in the corresponding non-failure event (e.g., For the
+Top of Active Storage failure scenario to only have two zones, there should be zero inundated damages during the Top of Active Storage non-failure
 scenario. Otherwise, the EPZ would need to include the three zones identified above.).
 
 The first step in creating the two zone EPZ is to make a copy of the Study Area and call it “EPZ_NoDoubleWarning”. This is done by right clicking on
@@ -208,13 +208,13 @@ Next, type in the names of each EPZ.
   caption="Naming the Downstream and In-Pool areas"
 />
 
-This results in an EPZ that can be used for any events without flooding prior to a breach (in this example, these events are Top of Active Storage
+This results in an EPZ that can be used for any events without flooding prior to a failure (in this example, these events are Top of Active Storage
 Pool, Security Scenario Pool, and Normal High Pool).
 
-To make the EPZ shapefiles for the events with flooding prior to breach, the non-breach polygons must be joined with the “EPZ_NoDoubleWarning” file
+To make the EPZ shapefiles for the events with flooding prior to failure, the non-failure polygons must be joined with the “EPZ_NoDoubleWarning” file
 using the Union tool (not the Merge tool, as that will create overlapping polygons in the process). First, make sure the selections are cleared out.
 Navigate to the Union tool in the Geoprocessing toolbox in Analysis Tools > Overlay > Union. Select the “EPZ_NoDoubleWarning” file and the Inundation
-Boundary shapefile of the Maximum High Pool Non-Breach scenario as inputs, and name the output feature “<em>EPZ_MHP_DoubleWarning.shp</em>” (again, do not save
+Boundary shapefile of the Maximum High Pool Non-failure scenario as inputs, and name the output feature “<em>EPZ_MHP_DoubleWarning.shp</em>” (again, do not save
  in the geodatabase).
 
 <Figure
@@ -226,7 +226,7 @@ Boundary shapefile of the Maximum High Pool Non-Breach scenario as inputs, and n
 
 Once the EPZ has been created, it needs to be modified by merging some areas together and ensuring the EPZ names are correct. Open the attribute table
  and zoom the map close to the dam where all three areas come together. Select <strong>Polygons</strong> to identify which one should be the
-Non-Breach EPZ and change the name (“NonBreachEPZ” in the figure below).
+Non-Failure EPZ and change the name (“NonBreachEPZ” in the figure below).
 
 <Figure
   figKey="figure-92"
@@ -235,7 +235,7 @@ Non-Breach EPZ and change the name (“NonBreachEPZ” in the figure below).
   caption="Naming Conventions for the EPZ_MHP_DoubleWarning shapefile"
 />
 
-The rest of the Downstream area can be changed to the Breach EPZ (“BreachEPZ” in the figure below). Next, the two “InPoolEPZs” can be merged together
+The rest of the Downstream area can be changed to the Failure EPZ (“BreachEPZ” in the figure below). Next, the two “InPoolEPZs” can be merged together
 to make a single in-pool polygon (“InPoolEPZ” in the figure below). Hold control to select both and find the Merge tool in the Edit ribbon.
 
 <Figure
@@ -246,10 +246,10 @@ to make a single in-pool polygon (“InPoolEPZ” in the figure below). Hold con
 />
 
 This will leave a single unnamed feature. Right clicking on that feature and selecting <strong>Zoom To</strong> will identify this feature as two
-small, disconnected inundation areas. If needed they could be merged as part of the appropriate breach or non-breach area, but in this example, they
-appear to be unrelated to the breach modeling so they can be completely deleted by selecting that row and hitting the<strong> Delete</strong> button
+small, disconnected inundation areas. If needed they could be merged as part of the appropriate fail or non-fail area, but in this example, they
+appear to be unrelated to the failure modeling so they can be completely deleted by selecting that row and hitting the<strong> Delete</strong> button
 near the top middle of the Edit ribbon (or by right clicking the row and selecting delete). Once the edits are saved, this should complete the MHP
-Double Warning EPZ. The same steps, starting with the Union, must be repeated with the Intermediate High Pool (IHP) non-breach area using
+Double Warning EPZ. The same steps, starting with the Union, must be repeated with the Intermediate High Pool (IHP) non-failure inundation boundary using
 “EPZ_IHP_DoubleWarning” as the Union output file name.
 
 ### Simulation Output Polygons
@@ -297,7 +297,7 @@ Census.gov website <Citation citationKey="TIGER2025"/>, are available. Navigate 
 down the page). Download the file.
 
 Once the file is downloaded and unzipped, load it into the ArcGIS Pro map using the Add Data button. Use the <strong>Select by Location</strong> tool
-in the Map ribbon to select the cities that intersect with the maximum inundation polygon (the MHP Breach in this example). You could intersect it
+in the Map ribbon to select the cities that intersect with the maximum inundation polygon (the MHP failure in this example). You could intersect it
 with the study area, but since that was buffered, it could result in the inclusion of some cities that would have no consequences.
 
 <Figure
@@ -415,9 +415,9 @@ Hydrograph Tool</strong> and click in the center channel of the inundation just 
 
 Once a representative hydrograph for the hydraulic scenario is loaded, click <strong>OK</strong> and you will return to the Import from HEC-RAS
 window. The window will now display hydraulic timing information as well as the same representative hydrograph. The Hazard Occurrence date and time
-should match the time that breach or overtopping (if applicable) begins within the study area. This information can be found in HEC-RAS or the
-hydraulic engineer will provide this information. For the Curwensville MH Breach, the breach initiation time is 2/3/2099 at 23:00. The red line is the
- hazard occurrence time, and the first 31 feet of depth represents spillway flow. The hydrograph then increases steeply after the breach. Press
+should match the time that failure or overtopping (if applicable) begins within the study area. This information can be found in HEC-RAS or the
+hydraulic engineer will provide this information. For the Curwensville MH Failure, the breach initiation time is 2/3/2099 at 23:00. The red line is the
+ Hazard Occurrence time, and the first 31 feet of depth represents spillway flow. The hydrograph then increases steeply after the failure. Press
 <strong>OK</strong> and the hydraulic scenario will be processed and imported into LifeSim.
 
 <Figure
@@ -427,10 +427,10 @@ hydraulic engineer will provide this information. For the Curwensville MH Breach
   caption="Import from HEC-RAS window following selection of a representative hydrograph from RAS Map Data Selector"
 />
 
-The user will repeat this process for each of the study’s hydraulic scenarios. For non-breach scenarios, it is recommended to use the same imminent
-hazard time used for the corresponding breach scenario. LifeSim interpolates population between the 2am and 2pm time values. Therefore, using
-different imminent hazard times for breach and non-breach can cause inconsistencies when calculating excess consequences by subtracting
-non-breach results from breach results.
+The user will repeat this process for each of the study’s hydraulic scenarios. For non-failure scenarios, it is recommended to use the same imminent
+hazard time used for the corresponding failure scenario. LifeSim interpolates population between the 2am and 2pm time values. Therefore, using
+different imminent hazard times for failure and non-failure scenarios can cause inconsistencies when calculating excess consequences by subtracting
+non-failure results from failure results.
 
 ### Importing a Structure Inventory
 
@@ -537,7 +537,7 @@ primary option for simulating evacuation is the one in the Alternative window.
 
 However, if the Alternative specifies that traffic will be simulated, then the checkbox in the EPZ editor becomes applicable and allows the user to
 select specific EPZs in which traffic will be simulated. Traffic can either be simulated in all EPZs or only in certain selected EPZs. For example, in
- a dam breach with a very long inundation area traffic might only be a concern in areas close to the dam or in a few large cities. EPZ polygons could
+ a dam failure with a very long inundation area traffic might only be a concern in areas close to the dam or in a few large cities. EPZ polygons could
 be created specifically for those areas so that the model runs efficiently while still simulating traffic in high-risk areas. Since this is meant to
 be a more base-level analysis, the Alternatives will specify that traffic will not be simulated, so the check box in the EPZ editor is not applicable
 and can be left checked.
@@ -595,10 +595,10 @@ Below the EPZ section of the LifeSim study tree are Road Networks, Destinations,
 this example of a base level study. For information on simulating evacuation, reference the <Link to="/docs/desktop-applications/lifesim/applications-guide/v1.0/estimating-consequences-for-levees-and-floodwalls/#simulating-evacuation">Estimating 
  Consequences for Levees and Floodwalls, Simulating Evacuation</Link> Therefore, the next step in this example is to create alternatives.
 
-For this study, each breach event will have two alternatives representing different warning ranges. These ranges are referred to as minimal warning
-and ample warning and they allow the results to be applied to different potential breach scenarios that may have different opportunity ranges for
-observation, development, and warning in relation to the breach initiation. The non-breach events will only have one alternative because only the
-areas impacted by breach flows will have different warning conditions. The table below shows the different warning times used in these alternatives.
+For this study, each failure event will have two alternatives representing different warning ranges. These ranges are referred to as minimal warning
+and ample warning and they allow the results to be applied to different potential failure scenarios that may have different opportunity ranges for
+observation, development, and warning in relation to the breach initiation. The non-failure events will only have one alternative because only the
+areas impacted by failure flows will have different warning conditions. The table below shows the different warning times used in these alternatives.
 
 :::danger
 This table contains cells that span multiple rows or columns. Manually update the React component to properly format the table.
@@ -621,7 +621,7 @@ This table contains cells that span multiple rows or columns. Manually update th
     [
       { value: "Minimal", rowSpan: 1, colSpan: 1 },
       { value: "Ample", rowSpan: 1, colSpan: 1 },
-      { value: "Flooding prior to breach", rowSpan: 1, colSpan: 1 }
+      { value: "Flooding prior to failure", rowSpan: 1, colSpan: 1 }
     ],
     [
       { value: "Uniform", rowSpan: 2, colSpan: 1 },
@@ -668,7 +668,7 @@ Calculate Life Loss box checked <FigureInline src="figures/desktop-applications/
 
 The lower section of the Alternative Editor allows the user to set different parameters for each EPZ area. For the BreachEPZ, the Imminent Hazard ID
 Time is set to a Uniform Distribution of -2 to 0 (i.e., between 2 hours prior to the hazard and the time of hazard occurrence) which represents the
-MMC SOP minimal warning case. This value is the time that a breach or other hazard would be identified by someone on site. The Hazard Communication
+MMC SOP minimal warning case. This value is the time that a failure or other hazard would be identified by someone on site. The Hazard Communication
 Delay represents the time it takes for that person to alert local emergency managers or other officials of the hazard and this value is set to a
 uniform distribution between 0.1 and 0.5 hours.
 
@@ -700,15 +700,15 @@ Hazard Communication delay is insignificant, so it is left at the default value 
 />
 
 Finally, switch to the NonBreach EPZ and set the same warning (-72 hours) that was used for the in-pool EPZ. A similar assumption of upper-end
-mobilization based on flood characteristics applies here; the non-breach flooding is a result of spillway flow from the dam which will typically be
+mobilization based on flood characteristics applies here; the non-failure flooding is a result of spillway flow from the dam which will typically be
 forecasted in advance based on rainfall and inflows and it will occur somewhat gradually as the pool rises above the spillway crest or spillway gates
 are incrementally opened. Once this final warning is set, click <strong>OK</strong> to close the Alternative Editor window.
 
 To create the additional alternatives, an easy method is to right click on the alternative just created and click <strong>Copy</strong>. This brings
 up a window where the name of the new alternative can be changed. Change the name to “IHP_Breach_MinWarn” to create the next alternative. Right click
 on the new alternative and select <strong>Edit</strong>. Change the hydraulic event to IH Breach and change the EPZ to the “EPZ_IHP_DoubleWarning”
-file. Set the same hazard ID time and hazard communication delay for breach, non-breach, and in-pool areas to the same as they were on the MHP
-alternative (-2 to 0 hours for breach and -72 hours for non-breach and in-pool).
+file. Set the same Imminent Hazard ID time and Hazard Communication Delay for failure, non-failure, and in-pool areas to the same as they were on the MHP
+alternative (-2 to 0 hours for failure and -72 hours for non-failure and in-pool).
 
 <Figure
   figKey="figure-118"
@@ -718,20 +718,20 @@ alternative (-2 to 0 hours for breach and -72 hours for non-breach and in-pool).
 />
 
 Next, copy existing alternatives (e.g., “IHP_Breach_MinWarn”) to create alternatives for “TAS_Breach_MinWarn”, “SS_Breach_MinWarn”, and
-“NH_Breach_MinWarn”. In each alternative, change the hydraulic event to the appropriate breach event (i.e., TAS, SS, or NH) and for each of these
-three alternatives change the EPZ to the “EPZ_NoDoubleWarning” selection. There will be no non-breach zone for these runs because there is no
-out-of-bank flooding prior to the breach.
+“NH_Breach_MinWarn”. In each alternative, change the hydraulic event to the appropriate failure event (i.e., TAS, SS, or NH) and for each of these
+three alternatives change the EPZ to the “EPZ_NoDoubleWarning” selection. There will be no non-fail zone for these runs because there is no
+out-of-bank flooding prior to the failure.
 
 Once the minimal warning scenarios are complete, make copies of each one and replace the “MinWarn” in the name with “AmpleWarn”.
 
 <Figure
   figKey="figure-119"
   src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/figure119.png"
-  alt="List of Curwensville Dam breach Alternatives"
-  caption="List of Curwensville Dam breach Alternatives"
+  alt="List of Curwensville Dam Failure Alternatives"
+  caption="List of Curwensville Dam Failure Alternatives"
 />
 
-The only edit required for each alternative is the Hazard ID time for the breach zone, which is changed to -6 to -2 hours (minimal warning was -2 to 0
+The only edit required for each alternative is the Hazard ID time for the failure zone, which is changed to -6 to -2 hours (minimal warning was -2 to 0
  hours).
 
 <Figure
@@ -741,7 +741,7 @@ The only edit required for each alternative is the Hazard ID time for the breach
   caption="MHP_Breach_AmpleWarn Alternative"
 />
 
-Finally, set up the non-breach alternatives. For this study we will have non-breach alternatives for only the (1) MH Pool, (2) IH Pool, and (3) TAS
+Finally, set up the non-failure alternatives. For this study we will have non-failure alternatives for only the (1) MH Pool, (2) IH Pool, and (3) TAS
 Pool. The TAS event should not have any damages as it should be within control levels, but it needs to be simulated to confirm that and identify any
 inaccuracies in the hydraulics or structure inventory that need to be corrected.
 
@@ -757,14 +757,14 @@ Once all the example alternatives are created it should match the figure below.
 ### Creating Simulations
 
 Simulations are created for testing (e.g., “Test_Sim”) and for each grouping of alternatives (e.g., “MH_Sims”, “IH_Sims”, and “TAS_SS_NH_Sims”; TAS,
-SS, and NH alternatives can be run together since they will all use the two zone EPZ). The “TestSim” is created to run the TAS non-breach alternative
+SS, and NH alternatives can be run together since they will all use the two zone EPZ). The “TestSim” is created to run the TAS non-failure alternative
 and any other alternatives that might be run for testing (e.g., MHP Minimal Warning as the most structures will be inundated in this scenario). This
-simulation is helpful for calibrating the structure inventory. As discussed earlier, the TAS non-breach test simulation will help you identify any
+simulation is helpful for calibrating the structure inventory. As discussed earlier, the TAS non-failure test simulation will help you identify any
 structures that are in the river or reservoir. The MHP scenario will help you identify if high life loss structures are accurately placed and/or if
 the structure attributes need updating (e.g., a high-rise apartment building only has one floor in the attribute table, which does not allow the PAR
 to vertically evacuate in the simulation and may be inflating life loss estimates).
 
-The MH and IH alternatives get their own simulations so that the EPZ polygons can be used as a reporting polygon; remember the non-breach EPZ polygons
+The MH and IH alternatives get their own simulations so that the EPZ polygons can be used as a reporting polygon; remember the non-fail EPZ polygons
  for those events are unique to the MH and IH scenarios. Since the “TestSim” is not for final reporting, the Summary Polygons are less relevant and
 the number of iterations can be lower. Name the simulation “TestSim”, select the 2am and 2pm boxes, set the number of iterations to 100 and use the
 NoDoubleWarning EPZ as the Summary Polygon. Select the TAS_NonBreach alternative (and any other alternative needed to help with calibration) to run.
@@ -799,11 +799,11 @@ Once all the example simulations are created, it should match the figure below.
 
 ## Running the TestSim
 
-The first Simulation to be run is the TestSim, as this will assist in calibration of the inventory. In theory, the TAS non-breach scenario should be
+The first Simulation to be run is the TestSim, as this will assist in calibration of the inventory. In theory, the TAS non-fail scenario should be
 within channel and have no flood damages. If structures are flooded in this scenario, it means those structures would likely be flooded prior to the
-breach in the breach scenario and would not receive any warning within the model.
+failure in the modeled fail scenario and would not receive any warning within the model.
 
-Right click on the <strong>TestSim </strong>and select <strong>Run Simulation</strong> to simulate the TAS non-breach alternative that was selected.
+Right click on the <strong>TestSim </strong>and select <strong>Run Simulation</strong> to simulate the TAS non-fail alternative that was selected.
 This simulation may take about 20 minutes or more depending on the computer. Once the simulation is finished, right click on <strong>TestSim
 </strong>and select <strong>View Results Tables</strong>.
 
@@ -815,7 +815,7 @@ This simulation may take about 20 minutes or more depending on the computer. Onc
 />
 
 The primary output table for the simulation has a row for each Summary area, including totals for the entire summary areas. There are also rows for
-each time of day. In this example 15 structures were inundated in the TAS non-breach event and these need to be checked and modified before running
+each time of day. In this example 15 structures were inundated in the TAS non-fail event and these need to be checked and modified before running
 the final simulation sets.
 
 <Figure
@@ -879,7 +879,7 @@ the changes are made hit<strong> Apply</strong> and then <strong>Close</strong> 
   caption="Structure Summary Properties – Editing the map properties"
 />
 
-These map properties create an effect that highlights any structures that were inundated by more than 0.001 feet in the TAS Non-breach simulation.
+These map properties create an effect that highlights any structures that were inundated by more than 0.001 feet in the TAS Non-fail simulation.
 Four of the structures are on or just upstream of the dam itself. Zooming in it is apparent that these are not structure points that should be
 included in the LifeSim model.
 
@@ -919,7 +919,7 @@ First the three points on the dam are selected by drawing a box around them.
 
 Hit the <strong>Delete</strong> key on your keyboard to delete the structure points. Directly west of these structure, across the lake, a highlighted
 structure point in an empty field can also be selected and deleted. The user can zoom out and scroll downstream to locate the other highlighted points
- that were damaged in the TAS non-breach, either deleting points if there are no apparent structures nearby without points or moving them to
+ that were damaged in the TAS non-fail, either deleting points if there are no apparent structures nearby without points or moving them to
 structures if possible. It can be helpful to uncheck the structure inventory layer display to help locate the yellow points. Structures can be moved
 by left clicking and holding down the button to drag the points to a new location as demonstrated in the figure below.
 
@@ -941,7 +941,7 @@ in an error about the number of records not matching, stop editing and remove th
   caption="Saving your Structure Inventory Edits and How to Stop Editing"
 />
 
-Editing the structure points impacted in the TAS Non-breach event represents a minimum level of structure inventory calibration that must be
+Editing the structure points impacted in the TAS Non-fail event represents a minimum level of structure inventory calibration that must be
 accomplished to avoid overestimating consequences due to structures not receiving a warning or structures being flooded deeper than they should be.
 There are some cases where a structure point is placed correctly but is still flooded due to either terrain inaccuracies or lack of low flow hydraulic
  model calibration. In these cases, the user must determine the most efficient and effective resolution which could include steps such as moving
@@ -950,9 +950,9 @@ inundation, or performing additional hydraulic model calibration. Some structure
 compensate. Common examples of when this may be required are structures on a hillside where the uphill side is at ground level and the downhill side
 is raised on blocks or piers and floating structures attached to riverside docks (there are several examples of the latter along the Columbia River).
 
-Once the TAS non-breach calibration is complete, edit the test simulation to select both the MH Breach Minimal Warning and the TAS Non-Breach
+Once the TAS non-fail calibration is complete, edit the test simulation to select both the MH Breach Minimal Warning and the TAS Non-Breach
 alternatives, then run the simulation with those two alternatives and the inventory edits just completed. This second test will accomplish two important
- tasks: (1) it will verify that the TAS Non-breach event does not flood any structures and (2) it will provide the results needed to verify the
+ tasks: (1) it will verify that the TAS Non-fail event does not flood any structures and (2) it will provide the results needed to verify the
 attributes and locations of high consequence structures.
 
 Once the simulation is complete, close the simulation then right click on <strong>TestSim </strong>and select <strong>View Results Tables</strong>. It
@@ -1070,7 +1070,7 @@ Save the edits and stop the editing session.
 
 While further edits will not be detailed in this guide, additional calibration can be performed by scrolling along the inundated areas and looking for
  visual inventory issues such as misplacement in open fields or points too close to or inside the river itself. Attributes of selected structures can
-be edited by opening the attribute table of the structure inventory. Note that typically in dam breaches life loss is higher in areas closer to the
+be edited by opening the attribute table of the structure inventory. Note that typically in dam failures, life loss is higher in areas closer to the
 dam due to the arrival time, and high consequence structures in both daytime and nighttime results should be checked and validated. The level of
 effort spent in calibrating the inventory depends on the scope and purpose of the study as well as the accuracy of the data used to create the
 structure inventory.
@@ -1078,7 +1078,7 @@ structure inventory.
 Once all structure edits have been completed, the three non-test simulations can be computed. Once complete, results can be viewed by right clicking
 on the simulations and selecting <strong>View Results Plots</strong>, <strong>Tables</strong>, or <strong>Maps</strong>. The results tables can be
 copied into Microsoft Excel and analyzed using pivot tables and formulas. Results can be displayed and compared by downstream reaches and city
-boundaries; additionally, the IHP and MHP results can be viewed by non-breach and breach EPZs. Reference the 
+boundaries; additionally, the IHP and MHP results can be viewed by non-fail and fail EPZs. Reference the 
 <Link to="/docs/desktop-applications/lifesim/applications-guide/v1.0/estimating-consequences-for-levees-and-floodwalls/#understanding-and-interpreting-results">Estimating 
 Consequences for Levees and Floodwalls, Understanding and Interpreting Results</Link> section for more information on analyzing results and 
 calibrating data inputs.
