@@ -187,14 +187,14 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
           children: [
             { id: 'lifesim-users-guide', text: "LifeSim User's Guide", href: lifeSimUserGuideHref },
             {
-              id: 'lifesim-validation-studies',
-              text: 'LifeSim Validation Studies',
-              href: lifeSimValStudiesHref,
-            },
-            {
               id: 'lifesim-applications-guide',
               text: 'LifeSim Applications Guide',
               href: lifeSimAppGuideHref,
+            },
+            {
+              id: 'lifesim-validation-studies',
+              text: 'LifeSim Validation Studies',
+              href: lifeSimValStudiesHref,
             },
           ],
         },
