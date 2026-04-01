@@ -129,16 +129,26 @@ is shown on the right-hand side of <FigReference figKey="figure-86"/>.
 
 Once the simplify polygon tool has been run, visually check the new polygon for areas that need to be cleaned up. Several spots had open
 areas near the center of the polygon. Those vertices were removed using the Edit ribbon and the Edit Vertices tool. Vertices can be selected and
-deleted by right clicking on the selected group and using the option to delete the selected vertices. This is shown in the left-hand side of
-{"\n"}<FigReference figKey="figure-87" />. There were also several disconnected polygons caused by very small spots of disconnected inundation which
-were deleted from the final study area. The edits were saved. The right-hand side of <FigReference figKey="figure-87" /> shows some of the vertices that 
-were removed.
+deleted by right clicking on the selected layer and using the option to delete the selected vertices. This is shown in <FigReference figKey="gif-gis-vertices" /> using
+ArcGIS Pro version 3.4.2. 
 
 <Figure
-  figKey="figure-87"
-  src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/figure87.png"
+  figKey="gif-gis-vertices"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/gis-clean-up-vertices.gif"
   alt="Deleting Vertices for the final Study Area polygon"
   caption="Deleting Vertices for the final Study Area polygon"
+/>
+
+There are occasionally several disconnected polygons caused by very small spots of disconnected inundation. It is best to remove these from the final study area, as
+demonstrated in <FigReference figKey="gif-delete-blobs" /> (ArcGIS Pro version 3.4.2). Make sure to 
+click **Save Edits** <FigureInline src="figures/desktop-applications/lifesim/applications-guide/v1.0/inline-images/inline-gis-save-edits.png" /> (not just **Save Project**), which 
+saves edits to the shapefile.
+  
+<Figure
+  figKey="gif-delete-blobs"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/gif-delete-blobs.gif"
+  alt="Deleting Disconnected Polygons for the final Study Area polygon"
+  caption="Deleting Disconnected Polygons for the final Study Area polygon"
 />
 
 Alternative Methods to Get a Study Area Polygon:
@@ -174,16 +184,17 @@ prior to a failure are different—this is why you need corresponding non-fail e
  to the failure, the EPZ only needs two areas: (1) the area upstream in the reservoir and (2) the area downstream. However, this requires the hydraulic
  modeling and structure inventory to be adequately calibrated so that no structures are flooded in the corresponding non-failure event (e.g., For the
 Top of Active Storage failure scenario to only have two zones, there should be zero inundated damages during the Top of Active Storage non-failure
-scenario. Otherwise, the EPZ would need to include the three zones identified above.).
+scenario. Otherwise, the EPZ would need to include the three zones {/* needs revision. Only 2 zones described */}identified above).
 
 The first step in creating the two zone EPZ is to make a copy of the Study Area and call it “EPZ_NoDoubleWarning”. This is done by right clicking on
 the layer name, selecting <strong>Data</strong> menu near the bottom, and clicking on <strong>Export Features</strong>. Save the file in a folder, not
  in the default geodatabase. The resulting polygon can be split at the dam to create an “In Pool” polygon feature and a “Downstream” polygon feature.
-On the Edit ribbon, click on the <strong>Split</strong> tool, select the polygon, and make a split across the polygon at the dam. Save the edits.
+On the Edit ribbon, click on the <strong>Split</strong> tool, select the polygon, and make a split across the polygon 
+at the dam (<FigReference figKey="gif-split-inpool" />). Save the edits.
 
 <Figure
-  figKey="figure-88"
-  src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/figure88.png"
+  figKey="gif-split-inpool"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/split-inpool.gif"
   alt="Splitting the In-Pool Area and Downstream areas for the EPZ_NoDoubleWarning shapefile"
   caption="Splitting the In-Pool Area and Downstream areas for the EPZ_NoDoubleWarning shapefile"
 />
@@ -258,12 +269,21 @@ LifeSim has the capability to output results aggregated to multiple polygon shap
 polygons, but for comprehensive understanding and reporting of the results additional polygons are needed. For this example, a polygon will be created
 that has the downstream area broken out by mileage zones relative to the dam. The zones are 0 to 3 miles, 3 to 7 miles, 7 to 15 miles, 15 to 60 miles,
 and over 60 miles. A separate polygon shapefile can be created by selecting and exporting city boundary polygons that are significantly impacted by
-the inundation.
+the inundation. Various boundary polygons are available from the U.S. Census 
+Bureau's <a href="https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html" target="_blank" rel="noopener noreferrer">Cartographic Boundary Files 
+webpage</a>.
 
 To make the mileage reach polygon, start by exporting the “EPZ_NoDoubleWarning” layer as a new shapefile by right clicking on it in the Layers Pane and
  navigating to Data > Export Features. Save to a folder and name it “*Mileage_Reaches.shp*”. Next, identify a point along the river three miles
 downstream of the dam. This can be done by looking at cross section stations from the RAS geometry, creating points along a river centerline every
-mile, or simply by using the measure a path tool in ArcGIS Pro or Google Earth. 
+mile, or simply by using the measure a path tool in Google Earth or ArcGIS Pro (<FigReference figKey="manual-measure" />). 
+
+<Figure
+  figKey="manual-measure"
+  src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/manual-measure.gif"
+  alt="ArcGIS Pro Measure Tool: Manually measuring for mileage reach polygon"
+  caption="ArcGIS Pro Measure Tool: Manually measuring for mileage reach polygon"
+/>
 
 For this example, the cross sections were exported from RAS Mapper and included in a Geometry folder in the RAS model data. These are added to the 
 ArcGIS Pro map and labeled with the “River Stat” field. Since the dam is at river station 185.7, the downstream polygon needs to be split close to 
@@ -341,7 +361,7 @@ The subsequent sections will discuss setting up a LifeSim model by importing dat
 
 To calculate life loss, LifeSim requires depths, velocities, and arrival times from unsteady hydraulic modeling. The most common
 method of delivering this information into the LifeSim model is through HEC-RAS Hierarchical Data Format (HDF) plan files (Note: Only HEC-RAS versions
- 5+ produce the HDF files required by LifeSim). For each hydraulic scenario, the user will need the plan file from HEC-RAS and the terrain files (both
+ 5.0 and later produce the HDF files required by LifeSim). For each hydraulic scenario, the user will need the plan file from HEC-RAS and the terrain files (both
  the HDF and the associated Tagged Image Format (TIF) files) so that LifeSim can calculate depths and arrival times.
 
 Prior to importing data, create a new study by specifying a name and location to save to study data. To import the hydraulic data from HEC-RAS, right
@@ -355,7 +375,7 @@ click on <strong>Hydraulic Data </strong>in the study pane, and select <strong>I
 />
 
 From the Import from HEC-RAS window, map to the project’s HEC-RAS Plan(s) Directory by clicking on the button with the three dots <FigureInline src="figures/desktop-applications/lifesim/applications-guide/v1.0/inline-images/inline-3f9a0143.png" />. The file directory
-selected should contain plan HDF files from HEC-RAS (e.g., PA00003_Curwensvill.p01.hdf). Select the specific HEC-RAS plan you want to import by using
+selected should contain plan HDF files from HEC-RAS (e.g., *PA00003_Curwensvill.p01.hdf*). Select the specific HEC-RAS plan you want to import by using
 the dropdown next to HEC-RAS Plan. Once selected, the Name of the hydraulic scenario will automatically populate, but the user is able to alter the
 Name. If the terrain is inside the HEC-RAS directory Terrain folder, LifeSim will auto populate the terrain file. If not, map to the project’s HEC-RAS
 Terrain File (HDF) by clicking on the button with three dots <FigureInline src="figures/desktop-applications/lifesim/applications-guide/v1.0/inline-images/inline-3f9a0143.png" />. 
@@ -394,7 +414,7 @@ To view a hydrograph along with its hydraulic timing and depths, use the <strong
 
 The RAS Map Data Selector map window will automatically display the 2D areas used in the RAS modeling, the cross sections, the hydraulic animation,
 and a base map. The user can change the base map and add data to the map window (e.g., breach locations shapefile, leveed area shapefile, structure
-inventory, etc.) by clicking on the <strong>Add Data</strong> button (see below).
+inventory, etc.) by clicking on the <strong>Add Data</strong> <FigureInline src="figures/desktop-applications/lifesim/applications-guide/v1.0/inline-images/inline-add-data-arrow.png" /> button.
 
 <Figure
   figKey="figure-101"
@@ -575,8 +595,8 @@ the lower bound reaches 100% diffusion after 360 minutes. Note that there is a d
 
 Protective Action Initiation (PAI) is the rate at which PAR takes action after receiving an evacuation order (warning). Unlike the warning diffusion
 curves, the PAI “Preparedness Unknown” curve includes a perception element as well. The perception element describes the PAR as being aware of flood
-risk (Perception = High) or generally unaware that they are at risk of being flooded (Perception = Low). The “Preparedness Unknown, Perception
-Unknown” curve was used in this analysis for all areas.
+risk (Perception = High) or generally unaware that they are at risk of being flooded (Perception = Low). The “Perception: Unknown / Preparedness: Unknown” curve 
+was used in this analysis for all areas.
 
 <Figure
   figKey="figure-113"
@@ -599,10 +619,6 @@ For this study, each failure event will have two alternatives representing diffe
 and ample warning and they allow the results to be applied to different potential failure scenarios that may have different opportunity ranges for
 observation, development, and warning in relation to the breach initiation. The non-failure events will only have one alternative because only the
 areas impacted by failure flows will have different warning conditions. The table below shows the different warning times used in these alternatives.
-
-:::danger
-This table contains cells that span multiple rows or columns. Manually update the React component to properly format the table.
-:::
 
 <TableVertical
   tableKey="table-3"
@@ -668,7 +684,7 @@ Calculate Life Loss box checked <FigureInline src="figures/desktop-applications/
 
 The lower section of the Alternative Editor allows the user to set different parameters for each EPZ area. For the BreachEPZ, the Imminent Hazard ID
 Time is set to a Uniform Distribution of -2 to 0 (i.e., between 2 hours prior to the hazard and the time of hazard occurrence) which represents the
-MMC SOP minimal warning case. This value is the time that a failure or other hazard would be identified by someone on site. The Hazard Communication
+MMC SOP minimal warning case. This value is the time that a failure or other hazard would be identified by someone on site, such as the dam operator. The Hazard Communication
 Delay represents the time it takes for that person to alert local emergency managers or other officials of the hazard and this value is set to a
 uniform distribution between 0.1 and 0.5 hours.
 
@@ -689,7 +705,7 @@ single most likely warning time of -72 hours will be used with no uncertainty. T
  will have that much warning, but that the characteristics of the flood caused by a rising reservoir pool are such that we assume the mobilization
 rate will be near the upper end of the PAI curve. The early warning time provides a model outcome reflecting that assumption. Also note that it is on
 a 24-hour increment, which prevents any potential issues in calculating incremental results caused by population interpolation between daytime and
-nighttime. If the warning was on a 12-hour increment, that interpolation could cause a negative incremental PAR result. With a warning that early the
+nighttime. If the warning was on a 12-hour increment, that interpolation could cause a negative incremental PAR result. With a warning that early, the
 Hazard Communication delay is insignificant, so it is left at the default value of 0.
 
 <Figure
@@ -745,7 +761,7 @@ Finally, set up the non-failure alternatives. For this study we will have non-fa
 Pool. The TAS event should not have any damages as it should be within control levels, but it needs to be simulated to confirm that and identify any
 inaccuracies in the hydraulics or structure inventory that need to be corrected.
 
-Once all the example alternatives are created it should match the figure below.
+Once all the example alternatives are created, it should match the figure below.
 
 <Figure
   figKey="figure-121"
@@ -766,7 +782,7 @@ to vertically evacuate in the simulation and may be inflating life loss estimate
 
 The MH and IH alternatives get their own simulations so that the EPZ polygons can be used as a reporting polygon; remember the non-fail EPZ polygons
  for those events are unique to the MH and IH scenarios. Since the “TestSim” is not for final reporting, the Summary Polygons are less relevant and
-the number of iterations can be lower. Name the simulation “TestSim”, select the 2am and 2pm boxes, set the number of iterations to 100 and use the
+the number of iterations can be lower. Name the simulation “TestSim," select the 2am and 2pm boxes, set the number of iterations to 100, and use the
 NoDoubleWarning EPZ as the Summary Polygon. Select the TAS_NonBreach alternative (and any other alternative needed to help with calibration) to run.
 
 <Figure
@@ -786,6 +802,7 @@ to use the same names for each simulation (EPZs, Reaches, and Cities) to facilit
   src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/figure123.png"
   alt="Creating the MH_Sims and IH_Sims simulations"
   caption="Creating the MH_Sims and IH_Sims simulations"
+  background="transparent"
 />
 
 Once all the example simulations are created, it should match the figure below.
@@ -797,7 +814,7 @@ Once all the example simulations are created, it should match the figure below.
   caption="Curwensville Dam Simulation list"
 />
 
-## Running the TestSim
+## Running a Test Simulation
 
 The first Simulation to be run is the TestSim, as this will assist in calibration of the inventory. In theory, the TAS non-fail scenario should be
 within channel and have no flood damages. If structures are flooded in this scenario, it means those structures would likely be flooded prior to the
@@ -815,7 +832,7 @@ This simulation may take about 20 minutes or more depending on the computer. Onc
 />
 
 The primary output table for the simulation has a row for each Summary area, including totals for the entire summary areas. There are also rows for
-each time of day. In this example 15 structures were inundated in the TAS non-fail event and these need to be checked and modified before running
+each time of day. In this example, 15 structures were inundated in the TAS non-fail event and these need to be checked and modified before running
 the final simulation sets.
 
 <Figure
@@ -857,7 +874,7 @@ Switch back to the study tree, right click on <strong>TestSim</strong> under Sim
   caption="Viewing TestSim’s Results Maps"
 />
 
-Check <FigureInline src="figures/desktop-applications/lifesim/applications-guide/v1.0/inline-images/inline-checkbox.png" /> the box next to 14:00 Structure Summary and the rest of the window should populate as follows.
+Check <FigureInline src="figures/desktop-applications/lifesim/applications-guide/v1.0/inline-images/inline-checkbox.png" /> the box next to 14:00 Structure Summary, and the rest of the window should populate as follows.
 
 <Figure
   figKey="figure-130"
