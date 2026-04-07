@@ -1,0 +1,283 @@
+---
+title: Input Parameters
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import TableVertical from '@site/src/components/TableVertical';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+import TableReference from '@site/src/components/TableReference';
+
+<NavContainer
+  link="/dev"
+  linkTitle="Developer Resources"
+  document="dev/system-response-models/bep-screening"
+/>
+
+# Input Parameters
+
+All input parameters are defined in the `BEPScreeningConfig` class. The parameters are organized into five groups: hydraulic inputs, dam geometry, BEP-specific selections, statistical distributions, and scalar probabilities.
+
+## Hydraulic Inputs
+
+The model requires paired headwater and tailwater elevation series that define the hydraulic loading across the range of pool levels to be evaluated.
+
+<TableVertical
+  tableKey="bep-screening-table-hydraulics"
+  alt="Hydraulic input parameters"
+  caption="Hydraulic input parameters."
+  headers={[[{ value: 'Parameter' }, { value: 'Code Variable' }, { value: 'Type' }, { value: 'Units' }, { value: 'Description' }]]}
+  columns={[
+    ['Headwater Knots', 'Tailwater Knots'],
+    ['HWKnots', 'TWKnots'],
+    ['double[]', 'double[]'],
+    ['ft', 'ft'],
+    [
+      'Array of headwater elevations defining the HW/TW relationship. Must contain at least 2 values and match the length of TWKnots. The model expands these knots to 50 interpolated steps.',
+      'Array of tailwater elevations corresponding to each headwater knot. Must match the length of HWKnots.'
+    ]
+  ]}
+/>
+
+The headwater and tailwater knots are expanded internally to 50 evenly spaced headwater steps using linear interpolation (`HydraulicUtils.ExpandHWSeries`). This expansion produces the headwater array used for all subsequent calculations.
+
+## Dam Geometry
+
+These parameters describe the physical geometry of the embankment and downstream conditions.
+
+<TableVertical
+  tableKey="bep-screening-table-geometry"
+  alt="Dam geometry parameters"
+  caption="Dam geometry parameters."
+  headers={[[{ value: 'Parameter' }, { value: 'Code Variable' }, { value: 'Type' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Description' }]]}
+  columns={[
+    ['Crest Elevation', 'Landside Toe Elevation', 'Embankment Base Width', 'Berm Length'],
+    ['CrestElevation', 'LandsideToeElevation', 'EmbankmentBaseWidth', 'BermLength'],
+    ['double', 'double', 'double', 'double'],
+    ['ft', 'ft', 'ft', 'ft'],
+    ['—', '—', '> 0', '>= 0'],
+    [
+      'Elevation of the dam or levee crest. Passed to BT Case 4 as the levee crest elevation.',
+      'Elevation of the landside (downstream) toe. Passed to BT Case 4 as the landside toe elevation.',
+      'Width of the embankment base, computed from dam geometry by the DST. This value represents the horizontal distance across the base of the water-retaining structure.',
+      'Length of the downstream berm. The berm is part of the water-retaining structure and provides additional weight against uplift. It is added to the embankment base width to compute L2, the total structure width used in seepage path calculations.'
+    ]
+  ]}
+/>
+
+The total structure width used in sub-model calculations is computed as:
+
+$L_2 = \text{EmbankmentBaseWidth} + \text{BermLength}$
+
+The berm is included in L2 (structure width) rather than L3 (blanket length) because it is part of the water-retaining structure and contributes additional overburden weight against uplift pressures.
+
+## BEP-Specific Selections
+
+These parameters control the condition routing logic and qualitative assessments that determine how the event tree nodes are populated.
+
+<TableVertical
+  tableKey="bep-screening-table-selections"
+  alt="BEP-specific selection parameters"
+  caption="BEP-specific selection parameters."
+  headers={[[{ value: 'Parameter' }, { value: 'Code Variable' }, { value: 'Type' }, { value: 'Default' }, { value: 'Description' }]]}
+  columns={[
+    [
+      'Flaw Likelihood',
+      'USCS Classification',
+      'Confining Layer Present',
+      'Daylighting Exit',
+      'Boils Observed',
+      'Trigger Elevation',
+      'Daylighting Exit Distance',
+      'Boil Distance'
+    ],
+    [
+      'FlawLikelihood',
+      'UscsClassification',
+      'ConfiningLayerPresent',
+      'DaylightingExit',
+      'BoilsObserved',
+      'TriggerElevationFt',
+      'DaylightingExitDistanceFt',
+      'BoilDistanceFt'
+    ],
+    [
+      'FlawLikelihood enum',
+      'string',
+      'bool',
+      'bool',
+      'bool',
+      'double',
+      'double',
+      'double'
+    ],
+    [
+      'Neutral',
+      '(required)',
+      'false',
+      'false',
+      'false',
+      '—',
+      '—',
+      '—'
+    ],
+    [
+      'Qualitative assessment of the likelihood that a continuous path of fine to medium, uniform sand exists in the foundation. Maps to a probability via the flaw probability lookup (see below).',
+      'USCS soil classification code for the material overlying the foundation sand. Used to determine the probability of roof support for pipe progression. Case-insensitive.',
+      'Whether an impervious confining layer (blanket) exists on the downstream side of the embankment. This flag is one of three that determine the site condition.',
+      'Whether seepage exits at a point beyond the downstream toe where the confining blanket terminates. Only relevant when a confining layer is present. This flag is one of three that determine the site condition.',
+      'Whether sand boils have been observed downstream of the embankment during past flood events. This flag is one of three that determine the site condition.',
+      'Pool elevation (ft) at which boils have historically been observed or are expected to initiate. When the headwater equals or exceeds this elevation, P(initiation) is forced to 1.0. Required when BoilsObserved is true.',
+      'Distance (ft) from the downstream toe to the daylighting exit point. Used to compute the seepage path length for the daylighting exit path. Required when DaylightingExit is true.',
+      'Distance (ft) from the downstream toe to the observed boil location. Used as the x-distance for BT Case 4 heave gradient calculations. Required when BoilsObserved is true.'
+    ]
+  ]}
+/>
+
+### Flaw Likelihood Mapping
+
+The `FlawLikelihood` enumeration maps qualitative assessments to probabilities used as the first node of the event tree.
+
+<TableVertical
+  tableKey="bep-screening-table-flaw"
+  alt="Flaw likelihood to probability mapping"
+  caption="Flaw likelihood to probability mapping."
+  headers={[[{ value: 'Flaw Likelihood' }, { value: 'Enum Value' }, { value: 'P(Flaw)' }]]}
+  columns={[
+    ['Very Likely', 'Likely', 'Neutral', 'Unlikely', 'Very Unlikely'],
+    ['VeryLikely', 'Likely', 'Neutral', 'Unlikely', 'VeryUnlikely'],
+    ['0.99', '0.90', '0.50', '0.10', '0.01']
+  ]}
+/>
+
+### USCS Roof Support Mapping
+
+When no confining layer is present, the probability of roof support is determined by the USCS classification of the material overlying the foundation sand. When a confining layer is present, roof support probability is set to 1.0 because the confining layer itself provides structural support for pipe progression.
+
+<TableVertical
+  tableKey="bep-screening-table-roof"
+  alt="USCS classification to roof support probability mapping"
+  caption="USCS classification to roof support probability mapping."
+  headers={[[{ value: 'USCS Code' }, { value: 'Soil Description' }, { value: 'P(Roof Support)' }]]}
+  columns={[
+    ['GP', 'GW', 'GP-GM', 'SP', 'SW', 'SP-SM', 'SM', 'GM', 'SC', 'GC', 'ML', 'CL-ML', 'CL', 'MH', 'CH'],
+    ['Poorly Graded Gravel', 'Well Graded Gravel', 'Poorly Graded Gravel with Silt', 'Poorly Graded Sand', 'Well Graded Sand', 'Poorly Graded Sand with Silt', 'Silty Sand', 'Silty Gravel', 'Clayey Sand', 'Clayey Gravel', 'Low Plasticity Silt', 'Silt and Clay', 'Lean Clay', 'High Plasticity Silt', 'Fat Clay'],
+    ['0.01', '0.01', '0.01', '0.01', '0.01', '0.10', '0.85', '0.85', '1.0', '1.0', '1.0', '1.0', '1.0', '1.0', '1.0']
+  ]}
+/>
+
+### Relative Density Mapping
+
+The `RelativeDensityCategory` enumeration maps qualitative density descriptions to triangular distribution parameters used for the relative density of the foundation sand in the Schmertmann progression model.
+
+<TableVertical
+  tableKey="bep-screening-table-density"
+  alt="Relative density category to distribution mapping"
+  caption="Relative density category to triangular distribution mapping."
+  headers={[[{ value: 'Category' }, { value: 'Enum Value' }, { value: 'Min (%)' }, { value: 'Mode (%)' }, { value: 'Max (%)' }]]}
+  columns={[
+    ['Very Loose', 'Loose', 'Medium Dense', 'Dense', 'Very Dense', 'Default', 'Unknown'],
+    ['VeryLoose', 'Loose', 'MediumDense', 'Dense', 'VeryDense', 'Default', 'Unknown'],
+    ['0', '15', '35', '65', '85', '15', '15'],
+    ['7.5', '25', '50', '75', '92.5', '40', '40'],
+    ['15', '35', '65', '85', '100', '65', '65']
+  ]}
+/>
+
+## Statistical Distributions
+
+The model uses statistical distributions to represent uncertainty in material properties. Two distributions are required inputs; the remaining six have screening defaults that the user may optionally override.
+
+### Required Distributions
+
+<TableVertical
+  tableKey="bep-screening-table-required-dist"
+  alt="Required distribution parameters"
+  caption="Required distribution parameters."
+  headers={[[{ value: 'Parameter' }, { value: 'Code Variable' }, { value: 'Units' }, { value: 'Used By' }, { value: 'Description' }]]}
+  columns={[
+    ['Foundation Thickness', 'Blanket Thickness'],
+    ['DDistribution', 'BlanketThicknessDistribution'],
+    ['ft', 'ft'],
+    ['BT Case 4, Schmertmann', 'BT Case 4'],
+    [
+      'Distribution for the thickness of the pervious foundation (aquifer) layer. Shared between BT Case 4 (substratum thickness) and Schmertmann (aquifer thickness for correction factors).',
+      'Distribution for the thickness of the downstream blanket (topstratum). Used by BT Case 4 to compute vertical exit gradients through the confining layer.'
+    ]
+  ]}
+/>
+
+### Overridable Distributions
+
+The following distributions have screening defaults. When the user does not provide an override (null), the model uses the default value shown.
+
+<TableVertical
+  tableKey="bep-screening-table-override-dist"
+  alt="Overridable distribution parameters with defaults"
+  caption="Overridable distribution parameters and their screening defaults."
+  headers={[[{ value: 'Parameter' }, { value: 'Code Variable' }, { value: 'Units' }, { value: 'Default Distribution' }, { value: 'Used By' }, { value: 'Description' }]]}
+  columns={[
+    [
+      'Sand Saturated Unit Weight',
+      'Confining Layer Saturated Unit Weight',
+      'Coefficient of Uniformity (Cu)',
+      'Effective Grain Size (D10f)',
+      'Anisotropy Ratio (Rkf)',
+      'Sand Fines Content'
+    ],
+    [
+      'SandGammaSatDistribution',
+      'ConfiningGammaSatDistribution',
+      'CuDistribution',
+      'D10fDistribution',
+      'RkfDistribution',
+      'SandFinesDistribution'
+    ],
+    ['pcf', 'pcf', '—', 'mm', '—', '%'],
+    [
+      'Normal(μ=122.0, σ=3.0)',
+      'Normal(μ=118.0, σ=3.0)',
+      'Triangular(1.1, 2.0, 4.0)',
+      'Normal(μ=0.25, σ=0.085), clamped min=0.1',
+      'Deterministic(1.0)',
+      'Deterministic(0.0)'
+    ],
+    [
+      'BT Case 4 (heave conditions)',
+      'BT Case 4 (blowout conditions)',
+      'Schmertmann',
+      'Schmertmann',
+      'Schmertmann',
+      'Schmertmann'
+    ],
+    [
+      'Saturated unit weight of the foundation sand layer. Used by BT Case 4 as the downstream gamma_sat in heave scenarios (conditions 4 and 6) where the exit gradient is computed in the sand.',
+      'Saturated unit weight of the confining layer material. Used by BT Case 4 as the downstream gamma_sat in blowout scenarios (conditions 3 and 5) where blanket rupture is evaluated.',
+      'Coefficient of uniformity of the foundation sand. Used by Schmertmann to compute the base critical gradient from laboratory piping test data (i_pmt).',
+      'Effective grain size at 10% passing of the foundation sand. Used by Schmertmann to compute the particle size correction factor (C_S). Values below 0.1 mm are clamped.',
+      'Ratio of horizontal to vertical hydraulic conductivity. Fixed at 1.0 in the screening model (anisotropy disabled). The Schmertmann anisotropy correction (C_K) is bypassed.',
+      'Fines content of the foundation sand as a percentage. Fixed at 0.0% in the screening model. The Schmertmann fines content correction (C_FC) defaults to 1.0 for fines at or below 5%.'
+    ]
+  ]}
+/>
+
+## Scalar Probabilities
+
+Two scalar probabilities represent the final two nodes of the event tree. Both default to 1.0 (certain), which is conservative for screening purposes.
+
+<TableVertical
+  tableKey="bep-screening-table-scalars"
+  alt="Scalar probability parameters"
+  caption="Scalar probability parameters."
+  headers={[[{ value: 'Parameter' }, { value: 'Code Variable' }, { value: 'Type' }, { value: 'Default' }, { value: 'Valid Range' }, { value: 'Description' }]]}
+  columns={[
+    ['P(Unsuccessful Intervention)', 'P(Breach)'],
+    ['UnsuccessfulInterventionProbability', 'BreachProbability'],
+    ['double', 'double'],
+    ['1.0', '1.0'],
+    ['0 to 1', '0 to 1'],
+    [
+      'Probability that detection and emergency intervention efforts fail to stop the piping process before breach. A value of 1.0 assumes no successful intervention.',
+      'Probability that an uncontrolled release of impounded water occurs given that piping has progressed fully and intervention has failed. A value of 1.0 assumes certain breach.'
+    ]
+  ]}
+/>

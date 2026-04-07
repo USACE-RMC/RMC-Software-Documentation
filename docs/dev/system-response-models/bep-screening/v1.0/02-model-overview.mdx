@@ -1,0 +1,94 @@
+---
+title: Model Overview
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import Equation from '@site/src/components/Equation';
+import EquationNoRef from '@site/src/components/EquationNoRef';
+import TableVertical from '@site/src/components/TableVertical';
+import TableReference from '@site/src/components/TableReference';
+
+<NavContainer
+  link="/dev"
+  linkTitle="Developer Resources"
+  document="dev/system-response-models/bep-screening"
+/>
+
+# Model Overview
+
+## Purpose
+
+The BEP screening model computes a system response probability (SRP) for the backward erosion piping failure mode as a function of headwater elevation. The SRP represents the conditional probability of dam or levee breach due to backward erosion piping, given a specific pool level. The model produces a fragility curve &mdash; an array of SRP values across a range of headwater elevations &mdash; that characterizes the structure's vulnerability to this failure mode.
+
+## Intended Use
+
+The model is designed specifically for the Dam Screening Tool (DST), where it serves as a screening-level assessment of backward erosion piping risk. It makes simplifying and sometimes conservative assumptions with the goal of:
+
+- **Preventing false negatives** &mdash; The model is calibrated to avoid underestimating risk at the screening level, ensuring that structures with potential BEP concerns are flagged for further analysis.
+- **Reducing input burden** &mdash; The model requires fewer inputs than the full BEP toolbox models by using default distributions and fixed parameters where site-specific data is typically unavailable at the screening stage.
+
+The model is not intended for detailed or semi-quantitative risk assessments. For higher-level analyses, the full BEP Initiation (BT Case 1&ndash;8) and BEP Progression (Schmertmann and Sellmeijer) toolbox models provide the complete methodologies with full parameterization.
+
+## How the Model Works
+
+The screening model orchestrates three computational stages:
+
+1. **Condition routing** &mdash; Three Boolean site observations (confining layer present, daylighting exit, boils observed) determine one of six conditions. Each condition defines which sub-model calculations apply and how event tree nodes are populated.
+
+2. **Sub-model execution** &mdash; The model delegates to two existing toolbox models:
+   - **BT Case 4** (BEP Initiation) computes the probability of unfiltered seepage exit (blanket blowout) or piping initiation (heave) at each headwater level via Monte Carlo simulation.
+   - **Schmertmann** (BEP Progression) computes the probability of pipe advancement at each headwater level by comparing applied hydraulic gradients against the critical horizontal gradient.
+
+3. **Event tree assembly** &mdash; At each headwater level, the model multiplies seven node probabilities to produce the SRP. The governing SRP is the maximum across the toe and daylighting exit paths (when applicable).
+
+## Exit Paths
+
+The model evaluates up to two seepage exit paths depending on the site condition:
+
+- **Toe path** &mdash; Seepage exits at the downstream toe of the embankment. This path is always evaluated.
+- **Daylighting exit path** &mdash; Seepage exits at a point beyond the toe where the confining blanket terminates. This path is only evaluated when a daylighting exit is present (conditions 5 and 6).
+
+When both paths are evaluated, the governing SRP at each headwater level is the maximum of the two path SRPs. This ensures that the more critical exit condition controls the screening result.
+
+## Relationship to Toolbox Models
+
+<TableVertical
+  tableKey="bep-screening-table-1"
+  alt="Comparison of screening model and toolbox models"
+  caption="Comparison of the BEP screening model and the full toolbox models."
+  headers={[[{ value: 'Aspect' }, { value: 'Screening Model' }, { value: 'Toolbox Models' }]]}
+  columns={[
+    [
+      'Purpose',
+      'Initiation method',
+      'Progression method',
+      'Exit angle (alpha)',
+      'Anisotropy (Rkf)',
+      'Underlayer correction',
+      'Distribution overrides',
+      'Monte Carlo settings'
+    ],
+    [
+      'DST screening-level assessment',
+      'BT Case 4 only',
+      'Schmertmann only',
+      'Fixed at 0 degrees (horizontal)',
+      'Disabled (Rkf = 1.0)',
+      'Disabled',
+      'Defaults provided; user may override select distributions',
+      'Fixed: 1,000 iterations, seed 42, 50 HW steps'
+    ],
+    [
+      'Detailed risk analysis',
+      'BT Case 1 through 8 (user selects)',
+      'Schmertmann or Sellmeijer (user selects)',
+      'User-specified (-90 to +40 degrees)',
+      'User-specified distribution',
+      'User-specified (Kp, Ku, R)',
+      'All distributions user-specified',
+      'User-configurable iterations, seed, HW steps'
+    ]
+  ]}
+/>
+
+The screening model constructs BT Case 4 and Schmertmann configurations internally from the screening inputs, applying fixed simplifications documented in Chapter 6. The toolbox models execute identically whether invoked by the screening model or directly &mdash; the screening model controls only the configuration passed to them.

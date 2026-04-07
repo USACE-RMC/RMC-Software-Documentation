@@ -1,0 +1,145 @@
+---
+title: Output and Interpretation
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import TableVertical from '@site/src/components/TableVertical';
+import TableReference from '@site/src/components/TableReference';
+
+<NavContainer
+  link="/dev"
+  linkTitle="Developer Resources"
+  document="dev/system-response-models/bep-screening"
+/>
+
+# Output and Interpretation
+
+The BEP screening model produces a `BEPScreeningResult` object containing scalar metadata, per-headwater-level node probabilities, and the computed system response probability arrays.
+
+## Result Structure
+
+### Scalar Outputs
+
+The following scalar values are constant across all headwater levels and describe the event tree configuration used for the analysis.
+
+<TableVertical
+  tableKey="bep-screening-table-scalar-outputs"
+  alt="Scalar output fields"
+  caption="Scalar output fields in BEPScreeningResult."
+  headers={[[{ value: 'Field' }, { value: 'Code Variable' }, { value: 'Type' }, { value: 'Description' }]]}
+  columns={[
+    ['Condition', 'Flaw Probability', 'Roof Support Probability', 'P(Unsuccessful Intervention)', 'P(Breach)', 'Computation Time'],
+    ['Condition', 'FlawProbability', 'RoofSupportProbability', 'UnsuccessfulInterventionProbability', 'BreachProbability', 'ComputationTimeMs'],
+    ['int', 'double', 'double', 'double', 'double', 'long'],
+    [
+      'The site condition (1 through 6) determined by the three Boolean flags. Indicates which sub-model calculations were performed and how the event tree was populated.',
+      'The probability of a continuous flaw, determined by the FlawLikelihood enum. This is the Node 1 probability.',
+      'The probability of roof support for pipe progression. Either 1.0 (confining layer present) or from the USCS lookup table. This is the Node 4 probability.',
+      'The probability that detection and intervention fail. This is the Node 6 probability.',
+      'The probability of breach given piping and failed intervention. This is the Node 7 probability.',
+      'Wall-clock time in milliseconds for the complete analysis, including all sub-model executions.'
+    ]
+  ]}
+/>
+
+### Per-Headwater Arrays
+
+All array outputs have one value per headwater level in the expanded HW series (typically 50 values interpolated from the input knots).
+
+<TableVertical
+  tableKey="bep-screening-table-array-outputs"
+  alt="Per-headwater array output fields"
+  caption="Per-headwater array output fields in BEPScreeningResult."
+  headers={[[{ value: 'Field' }, { value: 'Code Variable' }, { value: 'Type' }, { value: 'Description' }]]}
+  columns={[
+    [
+      'Headwater Elevations',
+      'Tailwater Elevations',
+      'P(Unfiltered Exit) &mdash; Toe',
+      'P(Initiation) &mdash; Toe',
+      'P(Progression) &mdash; Toe',
+      'SRP &mdash; Toe',
+      'P(Unfiltered Exit) &mdash; Daylight',
+      'P(Initiation) &mdash; Daylight',
+      'P(Progression) &mdash; Daylight',
+      'SRP &mdash; Daylight',
+      'SRP &mdash; Governing'
+    ],
+    [
+      'HWs',
+      'TWs',
+      'UnfilteredExitProbabilityToe',
+      'InitiationProbabilityToe',
+      'ProgressionProbabilityToe',
+      'SrpToe',
+      'UnfilteredExitProbabilityDaylight',
+      'InitiationProbabilityDaylight',
+      'ProgressionProbabilityDaylight',
+      'SrpDaylight',
+      'SrpGoverning'
+    ],
+    [
+      'double[]',
+      'double[]',
+      'double[]',
+      'double[]',
+      'double[]',
+      'double[]',
+      'double[]?',
+      'double[]?',
+      'double[]?',
+      'double[]?',
+      'double[]'
+    ],
+    [
+      'Expanded headwater elevation series (ft). Interpolated from input knots to 50 steps.',
+      'Expanded tailwater elevation series (ft). Corresponding tailwater at each headwater level.',
+      'Node 2 probability at each HW level for the toe exit path. From BTCase4 ToePInit (blowout) or 1.0.',
+      'Node 3 probability at each HW level for the toe exit path. From BTCase4 XPInit (heave with trigger) or 1.0.',
+      'Node 5 probability at each HW level for the toe exit path. Mean P(advancement) from Schmertmann with seepage path = L2.',
+      'Product of all seven node probabilities for the toe exit path, subject to the SRP floor.',
+      'Node 2 probability for the daylight exit path. Null when no daylighting exit. Always 1.0 when present.',
+      'Node 3 probability for the daylight exit path. Null when no daylighting exit. Always 1.0 when present.',
+      'Node 5 probability for the daylight exit path. Null when no daylighting exit. Mean P(advancement) from Schmertmann with seepage path = L2 + DaylightingExitDistanceFt.',
+      'Product of all seven node probabilities for the daylight exit path. Null when no daylighting exit.',
+      'Maximum of SrpToe and SrpDaylight at each HW level. When no daylighting exit, equals SrpToe.'
+    ]
+  ]}
+/>
+
+The daylighting exit arrays (`UnfilteredExitProbabilityDaylight`, `InitiationProbabilityDaylight`, `ProgressionProbabilityDaylight`, `SrpDaylight`) are null when no daylighting exit path is evaluated (conditions 1 through 4). They are populated only for conditions 5 and 6.
+
+## Interpreting Results
+
+### SRP as a Fragility Curve
+
+The `SrpGoverning` array represents a fragility curve &mdash; the conditional probability of breach due to backward erosion piping as a function of headwater elevation. The SRP is expected to be monotonically non-decreasing with headwater elevation because higher pool levels produce higher driving heads and greater seepage pressures.
+
+### Which Path Governs
+
+When both paths are evaluated, the governing SRP at each headwater level is the maximum of the toe and daylight SRPs. In practice:
+
+- The **toe path** often governs when a confining layer is present because the `ExitIsHole = true` setting reduces the Schmertmann critical gradient by a factor of 2 (via $C_{3d} = 0.5$), resulting in a higher probability of progression.
+- The **daylight path** may govern at lower headwater levels if the daylighting exit path has significantly higher P(unfiltered exit) or P(initiation) than the toe path. However, in conditions 5 and 6, the daylight path sets both to 1.0 while the toe path uses BTCase4-computed values, so the daylight path's progression probability (which is lower due to the longer seepage path) typically prevents it from governing.
+
+### Sensitivity to Key Inputs
+
+The following inputs have the greatest influence on the screening SRP:
+
+- **Flaw likelihood** &mdash; Directly scales the entire SRP. Moving from Neutral (0.50) to VeryLikely (0.99) approximately doubles the SRP.
+- **Foundation thickness (DDistribution)** &mdash; Affects both BTCase4 (seepage path denominator) and Schmertmann (depth correction C_D). Thicker foundations increase the seepage path length and generally reduce gradients.
+- **Blanket thickness (BlanketThicknessDistribution)** &mdash; Directly controls the vertical exit gradient in BTCase4. Thinner blankets produce higher gradients and higher P(initiation) or P(unfiltered exit).
+- **Relative density category** &mdash; Controls the density correction C_gamma in Schmertmann. Denser soils have higher piping resistance.
+- **USCS classification** &mdash; Controls roof support probability. Clean sands and gravels (GP, SP) have P(roof) = 0.01, effectively preventing progression. Clays (CL, CH) have P(roof) = 1.0.
+
+### Screening vs. Detailed Analysis
+
+The screening SRP should be interpreted as a conservative estimate intended to identify structures that warrant further analysis. A high screening SRP does not necessarily indicate a high risk of failure &mdash; it indicates that the structure should be evaluated with the full BEP toolbox models, where:
+
+- The actual blanket geometry can be specified (eliminating the infinite blanket assumption).
+- The appropriate BT Case (1 through 8) can be selected for the site configuration.
+- Anisotropy, exit angle, and underlayer corrections can be applied to the Schmertmann model.
+- The Sellmeijer progression method is available as an alternative.
+- Monte Carlo settings can be adjusted for precision requirements.
+
+A low screening SRP provides reasonable confidence that backward erosion piping is not a critical concern for the structure at the screening level.

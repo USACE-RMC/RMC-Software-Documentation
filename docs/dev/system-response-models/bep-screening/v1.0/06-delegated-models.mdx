@@ -1,0 +1,262 @@
+---
+title: Delegated Models
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import Equation from '@site/src/components/Equation';
+import EquationNoRef from '@site/src/components/EquationNoRef';
+import EquationReference from '@site/src/components/EquationReference';
+import TableVertical from '@site/src/components/TableVertical';
+import TableReference from '@site/src/components/TableReference';
+
+<NavContainer
+  link="/dev"
+  linkTitle="Developer Resources"
+  document="dev/system-response-models/bep-screening"
+/>
+
+# Delegated Models
+
+The BEP screening model delegates two computations to existing toolbox models: BT Case 4 for initiation analysis and Schmertmann for progression analysis. The screening model constructs the configuration for each sub-model internally, applying fixed screening-level parameters. The sub-models themselves execute identically to their standalone toolbox counterparts &mdash; only the configuration differs.
+
+## BT Case 4 &mdash; Initiation
+
+The BT Case 4 model computes seepage quantities and vertical exit gradients for an embankment with no upstream blanket and an impervious downstream blanket. The screening model uses BT Case 4 to evaluate two phenomena depending on the site condition:
+
+- **Blowout** (conditions 3 and 5): The probability that uplift pressure beneath the downstream blanket exceeds the blanket's weight, causing rupture at the toe. The model output `ToePInit` (fraction of Monte Carlo realizations where factor of safety against vertical gradient is less than 1.0) is used as P(unfiltered exit).
+
+- **Heave** (conditions 4 and 6): The probability that the vertical exit gradient at the boil location exceeds the critical gradient of the foundation sand. The model output `XPInit` (probability of initiation at distance x) is used as P(initiation).
+
+### BT Case 4 Configuration
+
+The `RunBTCase4` method in `BEPScreeningModel.cs` constructs a `BTCase4Config` with the following parameter mapping:
+
+<TableVertical
+  tableKey="bep-screening-table-btcase4-config"
+  alt="BT Case 4 configuration mapping"
+  caption="BT Case 4 configuration constructed by the screening model."
+  headers={[[{ value: 'BTCase4Config Property' }, { value: 'Screening Source' }, { value: 'Notes' }]]}
+  columns={[
+    [
+      'HWKnots',
+      'TWKnots',
+      'HWSteps',
+      'LeveeCrestElevation',
+      'LandsideToeElevation',
+      'L2BaseWidth',
+      'BlanketLength',
+      'UseFullHead',
+      'DDistribution',
+      'KhfDistribution',
+      'DnTopstratumThicknessDist',
+      'DownstreamGammaSatDistribution',
+      'XDistance',
+      'Iterations',
+      'RngSeed'
+    ],
+    [
+      'config.HWKnots',
+      'config.TWKnots',
+      'MonteCarloDefaults.HwSteps (50)',
+      'config.CrestElevation',
+      'config.LandsideToeElevation',
+      'EmbankmentBaseWidth + BermLength',
+      'Condition-dependent (see Chapter 5)',
+      'Condition-dependent (see Chapter 5)',
+      'config.DDistribution',
+      'BEPScreeningConstants.DefaultKhf',
+      'config.BlanketThicknessDistribution',
+      'Condition-dependent gamma_sat',
+      'Condition-dependent (0 or BoilDistanceFt)',
+      'MonteCarloDefaults.Iterations (1,000)',
+      'MonteCarloDefaults.RngSeed (42)'
+    ],
+    [
+      'Passed through from screening config.',
+      'Passed through from screening config.',
+      'Fixed screening default.',
+      'Passed through from screening config.',
+      'Passed through from screening config.',
+      'Total structure width including berm.',
+      '0 for infinite blanket, or DaylightingExitDistanceFt.',
+      'true for infinite blanket, false when blanket length is finite.',
+      'Foundation thickness, shared with Schmertmann.',
+      'Deterministic(1.0). Dummy value &mdash; Khf only affects seepage quantity (Qs), which screening does not use.',
+      'Blanket thickness from screening config.',
+      'Confining layer gamma_sat for blowout; sand gamma_sat for heave.',
+      '0 for blowout (toe analysis); BoilDistanceFt for heave (boil analysis).',
+      'Fixed screening default.',
+      'Fixed screening default for reproducibility.'
+    ]
+  ]}
+/>
+
+### BT Case 4 Governing Equations
+
+The BT Case 4 model computes the following quantities for each Monte Carlo realization and headwater level. The model samples foundation thickness ($d$), blanket thickness ($z_{\text{bl}}$), and saturated unit weight ($\gamma_{\text{sat}}$) from their respective distributions.
+
+**Total seepage length:**
+
+<Equation
+  equationKey="bep-screening-eq-ltotal"
+  equation="L_{\text{total}} = 0.43d + L_2 + L_3"
+/>
+
+where $0.43d$ is the effective upstream entrance length for an open seepage entrance, $L_2$ is the structure width, and $L_3$ is the downstream blanket length.
+
+**Excess head at the toe:**
+
+<Equation
+  equationKey="bep-screening-eq-ho"
+  equation="h_o = \begin{cases} H & \text{UseFullHead = true (infinite blanket)} \\ H \times \dfrac{L_3}{L_{\text{total}}} & \text{UseFullHead = false} \end{cases}"
+/>
+
+where $H = \max(\text{HW} - \text{TW}, 0)$ is the net driving head. When `UseFullHead` is true, the full net head is applied at the toe, modeling an infinite downstream blanket with no head reduction along the seepage path.
+
+**Critical vertical gradient:**
+
+<Equation
+  equationKey="bep-screening-eq-icv"
+  equation="i_{cv} = \frac{\gamma_{\text{sat}} - \gamma_w}{\gamma_w}"
+/>
+
+where $\gamma_w = 62.4$ pcf is the unit weight of water.
+
+**Vertical exit gradient and factor of safety at the toe:**
+
+<EquationNoRef equation="i_{v,o} = \frac{h_o}{z_{\text{bl}}}, \quad \text{FS}_{vg,o} = \frac{i_{cv}}{i_{v,o}}" />
+
+**Probability of initiation at the toe:**
+
+<EquationNoRef equation="P_{\text{init,toe}} = \frac{\text{count}(\text{FS}_{vg,o} < 1.0)}{N_{\text{iterations}}}" />
+
+**Head and gradient at distance x** (for heave conditions):
+
+<EquationNoRef equation="h_x = \begin{cases} h_o & \text{UseFullHead = true} \\ h_o \times \dfrac{L_3 - x}{L_3} & \text{if } x < L_3 \\ 0 & \text{if } x \geq L_3 \end{cases}" />
+
+<EquationNoRef equation="i_{v,x} = \frac{h_x}{z_{\text{bl}}}, \quad \text{FS}_{vg,x} = \frac{i_{cv}}{i_{v,x}}, \quad P_{\text{init,x}} = \frac{\text{count}(\text{FS}_{vg,x} < 1.0)}{N_{\text{iterations}}}" />
+
+## Schmertmann &mdash; Progression
+
+The Schmertmann model computes the probability of backward erosion piping advancement at each headwater level by comparing the applied hydraulic gradient against the critical horizontal gradient through Monte Carlo simulation.
+
+### Schmertmann Configuration
+
+The `RunSchmertmann` method in `BEPScreeningModel.cs` constructs a `SchmertmannConfig` with the following parameter mapping:
+
+<TableVertical
+  tableKey="bep-screening-table-schm-config"
+  alt="Schmertmann configuration mapping"
+  caption="Schmertmann configuration constructed by the screening model."
+  headers={[[{ value: 'SchmertmannConfig Property' }, { value: 'Screening Source' }, { value: 'Notes' }]]}
+  columns={[
+    [
+      'HwKnots / TwKnots',
+      'HwSteps',
+      'DDistribution',
+      'CuDistribution',
+      'D10fDistribution',
+      'SandFinesDistribution',
+      'RkfDistribution',
+      'DrfDistribution',
+      'AlphaVal',
+      'LVal',
+      'IPmtEntries',
+      'UseAnisotropy',
+      'HasUnderlayer',
+      'ExitIsHole',
+      'FinesX / FinesY',
+      'Iterations / RngSeed'
+    ],
+    [
+      'config.HWKnots / config.TWKnots',
+      'MonteCarloDefaults.HwSteps (50)',
+      'config.DDistribution',
+      'Override or DefaultCu: Triangular(1.1, 2.0, 4.0)',
+      'Override or DefaultD10f: Normal(0.25, 0.085), min=0.1',
+      'Override or DefaultSandFines: Deterministic(0.0)',
+      'Override or DefaultRkf: Deterministic(1.0)',
+      'Built from RelativeDensityCategory mapping',
+      '0.0 (horizontal)',
+      'Condition-dependent seepage path length',
+      'Built from SchmertmannData static tables',
+      'false',
+      'false',
+      'Condition-dependent',
+      'BEPScreeningConstants.ScreeningFinesX/Y',
+      'MonteCarloDefaults (1,000 / 42)'
+    ],
+    [
+      'Passed through from screening config.',
+      'Fixed screening default.',
+      'Foundation thickness, shared with BT Case 4.',
+      'Screening default or user override.',
+      'Screening default or user override.',
+      'Screening default or user override.',
+      'Fixed at 1.0 &mdash; anisotropy disabled in screening.',
+      'Triangular distribution built from the selected RelativeDensityCategory.',
+      'Screening simplification: pipe path assumed horizontal.',
+      'L2 for toe path; L2 + DaylightingExitDistanceFt for daylight path.',
+      'Base critical gradient quantiles from SchmertmannData static arrays.',
+      'Screening simplification: anisotropy correction (C_K) bypassed.',
+      'Screening simplification: underlayer correction (C_Z) bypassed.',
+      'true when confining layer is present (toe path); false for daylight path.',
+      'Step function: CFC = 1.0 for fines &le; 5%, CFC = 1.4 for fines > 5%.',
+      'Fixed screening defaults for reproducibility.'
+    ]
+  ]}
+/>
+
+### Exit Geometry (ExitIsHole)
+
+The `ExitIsHole` parameter controls the three-dimensional exit correction factor ($C_{3d}$) in the Schmertmann model:
+
+- **ExitIsHole = true** ($C_{3d} = 0.5$): Applied to the toe path when a confining layer is present. A hole exit represents a concentrated seepage point where flow converges through a breach in the confining layer. Van Beek et al. (2015) found that three-dimensional flow configurations toward a single point resulted in critical gradients approximately half those predicted by the two-dimensional model.
+
+- **ExitIsHole = false** ($C_{3d} = 1.0$): Applied to the daylighting exit path and to the toe path when no confining layer is present. A plane exit represents seepage along an exposed surface where flow is approximately two-dimensional.
+
+The $C_{3d}$ factor is incorporated into the overall field correction factor:
+
+<Equation
+  equationKey="bep-screening-eq-cof"
+  equation="C_{OF} = C_{FC} \times C_{3d}"
+/>
+
+where $C_{FC}$ is the fines content correction factor. The critical horizontal gradient is then:
+
+<Equation
+  equationKey="bep-screening-eq-ich"
+  equation="i_{ch} = i_{p\alpha} \times C_{OF}"
+/>
+
+Because the toe path (with confining layer) uses $C_{3d} = 0.5$, the critical gradient is halved relative to the daylight path. This means the toe path will generally produce a higher probability of progression, making it the more critical path when a confining layer is present.
+
+### Schmertmann Critical Gradient
+
+The Schmertmann model computes the critical horizontal gradient as the product of the base gradient from laboratory piping tests and a series of correction factors:
+
+<Equation
+  equationKey="bep-screening-eq-ich-full"
+  equation="i_{ch} = \frac{i_{\text{pmt}} \times C_D \times C_L \times C_S \times C_K \times C_\gamma \times C_Z}{C_R} \times C_\alpha \times C_{OF}"
+/>
+
+In the screening model, several correction factors are fixed:
+
+- $C_K = 1.0$ (anisotropy disabled, $R_{kf} = 1.0$)
+- $C_Z = 1.0$ (no underlayer)
+- $C_\alpha = 1.0$ (horizontal pipe path, $\alpha = 0$)
+- $C_R = 1.0$ (reference baseline)
+
+The remaining correction factors ($C_D$, $C_L$, $C_S$, $C_\gamma$, $C_{OF}$) are computed from the sampled parameter values in each Monte Carlo iteration. The probability of progression at each headwater level is the fraction of iterations where the applied gradient exceeds the critical gradient:
+
+<EquationNoRef equation="i_{\text{adv}} = \frac{\Delta H}{L}, \quad P_{\text{adv}} = P(i_{\text{adv}} > i_{ch})" />
+
+where $\Delta H = \text{HW} - \text{TW}$ and $L$ is the seepage path length.
+
+### IPmt Quantile Entries
+
+The base critical gradient ($i_{\text{pmt}}$) is derived from laboratory piping model test data. The Schmertmann model uses a quantile regression approach where the gradient at each quantile is computed as a linear function of the coefficient of uniformity:
+
+<EquationNoRef equation="i_{\text{pmt}}(q) = \text{slope}(q) \times C_u + \text{intercept}(q)" />
+
+The screening model constructs the `IPmtEntries` list from the static arrays in `SchmertmannData` (`GradientQuantiles`, `GradientQuantileSlopes`, `GradientQuantileIntercepts`). These entries define the cumulative distribution of the base gradient as a function of soil gradation.
