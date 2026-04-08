@@ -9,6 +9,7 @@ import NavContainer from '@site/src/components/NavContainer';
 import ProcessList from '@site/src/components/ProcessList';
 import TableReference from '@site/src/components/TableReference';
 import TableVertical from '@site/src/components/TableVertical';
+import Admonition from '@theme/Admonition';
 
 <NavContainer link="/dev" linkTitle="Developer Resources" document="dev/system-response-models/overtopping-screening" />
 
@@ -24,19 +25,30 @@ The peak unit discharge at each overtopping depth is computed using the broad-cr
 
 <Equation equationKey="overtopping-screening-eq-peak-discharge" equation="q_p = C_d \cdot H^{3/2}" />
 
-where $q_p$ is the peak unit discharge (ft²/s or m²/s), $C_d$ is the broad-crested weir coefficient (`WeirCoefficient`, default 3.0 for US Customary
-units), and $H$ is the overtopping depth (ft or m). This equation is implemented in `OvertoppingModel.ComputeDischargeHydrograph()`.
+where:
+
+> $q_p$ = peak unit discharge (ft²/s or m²/s)  
+> $C_d$ = broad-crested weir coefficient (`WeirCoefficient`, default 3.0 for US Customary units)  
+> $H$ = overtopping depth (ft or m)
+
+This equation is implemented in `OvertoppingModel.ComputeDischargeHydrograph()`.
 
 ## Duration Scaling
 
-The model requires the user to specify a base overtopping duration (`BaseDuration`) for a reference overtopping depth of 0.5 ft (US Customary) or
-0.15 m (SI). The overtopping duration at other depths is then scaled using a power-law relationship:
+The model requires the user to specify a base overtopping duration (`BaseDuration`) for a reference overtopping depth of 0.5 ft (US Customary) or 0.15
+m (SI). The overtopping duration at other depths is then scaled using a power-law relationship:
 
 <Equation equationKey="overtopping-screening-eq-duration" equation="t_H = t_0 \cdot \left(\frac{H}{H_{\text{ref}}}\right)^{1/1.8}" />
 
-where $t_H$ is the computed overtopping duration (hours) at depth $H$, $t_0$ is the base duration (`BaseDuration`) at the reference depth, $H$ is the
-overtopping depth, $H_{\text{ref}}$ is the reference depth (0.5 ft or 0.15 m), and the exponent $1/1.8 \approx 0.556$ controls how rapidly duration
-grows with increasing depth. This calculation is implemented in `OvertoppingModel.ComputeDischargeHydrograph()`.
+where:
+
+> $t_H$ = computed overtopping duration (hours) at depth $H$  
+> $t_0$ = base duration (`BaseDuration`) at the reference depth  
+> $H$ = overtopping depth  
+> $H_\{\text\{ref\}\}$ = reference depth (0.5 ft or 0.15 m)  
+> $1/1.8 \approx 0.556$ = exponent controlling how rapidly duration grows with increasing depth
+
+This calculation is implemented in `OvertoppingModel.ComputeDischargeHydrograph()`.
 
 The duration scaling relationship captures the physical observation that larger floods tend to produce longer overtopping events. The exponent of
 $1/1.8$ produces a sub-linear growth: doubling the overtopping depth increases the duration by a factor of approximately 1.47 rather than 2.0.
@@ -53,12 +65,12 @@ $1/1.8$ produces a sub-linear growth: doubling the overtopping depth increases t
   ]}
 />
 
-:::caution
-The selection of the reference depth (0.5 ft) is a fixed model parameter, and the power-law exponent ($1/1.8$) was selected as a reasonable
-approximation for typical reservoirs. Different reservoirs have drastically different volume-stage-duration relationships. The user should evaluate
-whether the scaled durations are reasonable for their specific reservoir and adjust the base duration accordingly. This is a major model assumption
-documented in Chapter 7.
-:::
+<Admonition type="caution">
+  The selection of the reference depth (0.5 ft) is a fixed model parameter, and the power-law exponent ($1/1.8$) was selected as a reasonable
+  approximation for typical reservoirs. Different reservoirs have drastically different volume-stage-duration relationships. The user should evaluate
+  whether the scaled durations are reasonable for their specific reservoir and adjust the base duration accordingly. This is a major model assumption
+  documented in Chapter 7.
+</Admonition>
 
 ## Gamma Hydrograph Shape
 
@@ -66,9 +78,12 @@ The time-varying discharge at each time step is computed using a gamma-shaped fu
 
 <Equation equationKey="overtopping-screening-eq-hydrograph" equation="q(t) = \frac{q_p}{C_a} \cdot \left(\frac{t}{k}\right)^{a-1} \cdot e^{-t/k}" />
 
-where $q(t)$ is the unit discharge at time $t$, $q_p$ is the peak discharge
-from <EquationReference equationKey="overtopping-screening-eq-peak-discharge" />, $a$ is the hydrograph shape parameter
-(`HydrographShapeParameter`, default 3.5), and $C_a$ and $k$ are derived constants defined below.
+where:
+
+> $q(t)$ = unit discharge at time $t$  
+> $q_p$ = peak discharge from <EquationReference equationKey="overtopping-screening-eq-peak-discharge" />  
+> $a$ = hydrograph shape parameter (`HydrographShapeParameter`, default 3.5)  
+> $C_a$ and $k$ are derived constants defined below
 
 The normalizing constant $C_a$ ensures the hydrograph peak equals $q_p$:
 
@@ -78,10 +93,14 @@ The time-scale parameter $k$ controls the position and spread of the hydrograph:
 
 <Equation equationKey="overtopping-screening-eq-k-shape" equation="k = \frac{C_a}{2 \cdot \Gamma(a)} \cdot t_H" />
 
-where $\Gamma(a)$ is the gamma function evaluated at $a$, and $t_H$ is the scaled duration
-from <EquationReference equationKey="overtopping-screening-eq-duration" />. The factor of 2 in the denominator positions the peak of the hydrograph
-in the first half of the duration, producing a rising limb that is steeper than the recession limb. This asymmetry reflects the physical behavior of
-flood hydrographs in dam reservoirs, where the reservoir rises faster than it falls.
+where:
+
+> $\Gamma(a)$ = gamma function evaluated at $a$  
+> $t_H$ = scaled duration from <EquationReference equationKey="overtopping-screening-eq-duration" />
+
+The factor of 2 in the denominator positions the peak of the hydrograph in the first half of the duration, producing a rising limb that is steeper
+than the recession limb. This asymmetry reflects the physical behavior of flood hydrographs in dam reservoirs, where the reservoir rises faster than
+it falls.
 
 ## Hydrograph Properties
 
@@ -93,13 +112,7 @@ The gamma-shaped hydrograph has several important properties:
   caption="Properties of the gamma-shaped hydrograph."
   headers={[[{ value: 'Property' }, { value: 'Description' }]]}
   columns={[
-    [
-      'Asymmetric shape',
-      'Asymptotic recession',
-      'Zero initial discharge',
-      'Single peak',
-      'Depth-dependent shape',
-    ],
+    ['Asymmetric shape', 'Asymptotic recession', 'Zero initial discharge', 'Single peak', 'Depth-dependent shape'],
     [
       'The hydrograph rises to a peak and then recedes gradually. The rising limb is steeper than the falling limb, consistent with typical flood hydrographs in reservoirs.',
       'The recession limb approaches zero discharge asymptotically but never reaches it. This is acceptable because at very low discharge levels, overtopping flow has negligible erosive potential and the embankment outcome (breach or survival) has already been determined.',
@@ -112,11 +125,16 @@ The gamma-shaped hydrograph has several important properties:
 
 ## Discretization
 
-The continuous hydrograph is discretized into time steps of duration `TimeStep` (default 0.05 hours = 3 minutes). The number of time steps is
-computed as:
+The continuous hydrograph is discretized into time steps of duration `TimeStep` (default 0.05 hours = 3 minutes). The number of time steps is computed
+as:
 
 <EquationNoRef equation="N = \lceil t_H / \Delta t \rceil + 1" />
 
-where $t_H$ is the scaled duration and $\Delta t$ is the time step. The discharge is evaluated at each discrete time $t_i = i \cdot \Delta t$ for
-$i = 0, 1, \ldots, N-1$. The resulting discharge array is stored in memory and reused across all Monte Carlo realizations for a given hazard level.
-This pre-computation is implemented in `OvertoppingModel.RunAsync()` before the Monte Carlo loop.
+where:
+
+> $t_H$ = scaled duration  
+> $\Delta t$ = time step
+
+The discharge is evaluated at each discrete time $t_i = i \cdot \Delta t$ for $i = 0, 1, \ldots, N-1$. The resulting discharge array is stored in
+memory and reused across all Monte Carlo realizations for a given hazard level. This pre-computation is implemented in `OvertoppingModel.RunAsync()`
+before the Monte Carlo loop.

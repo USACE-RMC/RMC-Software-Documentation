@@ -26,6 +26,7 @@ export default function Dev() {
 
   const dstVersion = latestVersions['dev/dst/database-schema'] || 'v1.0';
   const bepScreeningVersion = latestVersions['dev/system-response-models/bep-screening'] || 'v1.0';
+  const overtoppingScreeningVersion = latestVersions['dev/system-response-models/overtopping-screening'] || 'v1.0';
 
   const devData = [
     {
@@ -90,6 +91,13 @@ export default function Dev() {
           title: 'BEP Screening Model',
           description: 'Technical reference for the Backward Erosion Piping screening-level system response model',
           href: addBaseUrl(`docs/dev/system-response-models/bep-screening/${bepScreeningVersion}/preface`),
+          active: true,
+        },
+        {
+          IconComponent: AtomIcon,
+          title: 'Overtopping Screening Model',
+          description: 'Technical reference for the overtopping erosion screening-level system response model',
+          href: addBaseUrl(`docs/dev/system-response-models/overtopping-screening/${overtoppingScreeningVersion}/preface`),
           active: true,
         },
       ],
