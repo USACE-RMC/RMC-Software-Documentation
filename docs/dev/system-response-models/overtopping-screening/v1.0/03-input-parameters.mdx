@@ -1,0 +1,280 @@
+---
+title: Input Parameters
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" document="dev/system-response-models/overtopping-screening" />
+
+# Input Parameters
+
+All input parameters are defined in the `OvertoppingConfig` class. The parameters are organized into seven groups: unit system, embankment geometry,
+material classification, hydrograph settings, hydraulic parameters, correlation coefficients, and Monte Carlo settings.
+
+## Unit System
+
+The model supports both US Customary and SI unit systems. The unit system selection affects default material parameters, physical constants, and
+dimensional quantities throughout the analysis.
+
+<TableVertical
+  tableKey="overtopping-screening-table-unit-system"
+  alt="Unit system parameter"
+  caption="Unit system parameter."
+  colWidths={[16, 14, 14, 10, 'minmax(20ch, 1fr)']}
+  headers={[[{ value: 'Parameter' }, { value: 'Code Variable' }, { value: 'Type' }, { value: 'Default' }, { value: 'Description' }]]}
+  columns={[
+    ['Unit System'],
+    ['UnitSystem'],
+    ['UnitSystem enum'],
+    ['USCustomary'],
+    ['Selects the unit system for all dimensional inputs and outputs. USCustomary uses feet, psf, and lb/ft³. SI uses meters, Pascals, and N/m³.'],
+  ]}
+/>
+
+## Embankment Geometry
+
+These parameters describe the physical geometry of the embankment cross-section. The model assumes a homogeneous embankment with a uniform downstream
+slope.
+
+<TableVertical
+  tableKey="overtopping-screening-table-geometry"
+  alt="Embankment geometry parameters"
+  caption="Embankment geometry parameters."
+  colWidths={[16, 16, 8, 10, 12, 'minmax(18ch, 1fr)']}
+  headers={[
+    [{ value: 'Parameter' }, { value: 'Code Variable' }, { value: 'Type' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Description' }],
+  ]}
+  columns={[
+    ['Embankment Height', 'Downstream Slope', 'Crest Width'],
+    ['EmbankmentHeight', 'DownstreamSlope', 'CrestWidth'],
+    ['double', 'double', 'double'],
+    ['ft or m', 'H:V', 'ft or m'],
+    ['> 0 (warn > 1000 ft / 300 m)', '> 0 (warn < 1.0)', '>= 0'],
+    [
+      'Height of the embankment from toe to crest. Used to define the vertical extent of the downstream face for erosion calculations.',
+      'Downstream slope ratio expressed as horizontal distance per unit vertical rise (H:V). A value of 3.0 represents a 3H:1V slope. The model computes the slope angle as S = 1/DownstreamSlope for hydraulic and erosion calculations.',
+      'Width of the dam crest. Used together with the downstream slope to compute the critical erosion depth — the perpendicular distance the downstream face must erode to intersect the upstream crest edge.',
+    ],
+  ]}
+/>
+
+## Material Classification
+
+Material properties are not specified directly. Instead, the user selects an erodibility classification and a grass cover quality. The model retrieves
+default PERT distribution parameters for each classification from the `ErodibilityParameters` and `GrassCoverParameters` lookup classes.
+
+<TableVertical
+  tableKey="overtopping-screening-table-material"
+  alt="Material classification parameters"
+  caption="Material classification parameters."
+  colWidths={[16, 20, 18, 14, 'minmax(18ch, 1fr)']}
+  headers={[[{ value: 'Parameter' }, { value: 'Code Variable' }, { value: 'Type' }, { value: 'Default' }, { value: 'Description' }]]}
+  columns={[
+    ['Embankment Erodibility', 'Grass Cover Quality'],
+    ['EmbankmentErodibility', 'GrassCoverQuality'],
+    ['EmbankmentErodibility enum', 'GrassCoverQuality enum'],
+    ['Erodible', 'GoodCover'],
+    [
+      'Classification of the embankment material erodibility based on USCS soil type. Determines the PERT distribution parameters for the erodibility coefficient (Kd) and critical shear stress (τc), and the Uniform distribution bounds for Manning\'s roughness (n). See the erodibility parameters table below.',
+      'Classification of the downstream grass cover quality based on CIRIA categories. Determines the critical velocity and erosional limit parameters used in the grass cover removal phase. See the grass cover parameters table below.',
+    ],
+  ]}
+/>
+
+### Erodibility Classifications
+
+The erodibility classification maps to PERT distribution parameters for the erodibility coefficient ($K_d$) and critical shear stress ($\tau_c$), and
+Uniform distribution bounds for Manning's roughness ($n$). Values shown are for US Customary
+units.<Citation citationKey="Briaud2019" /><Citation citationKey="Hanson2011" /><Citation citationKey="Wibowo2018" />
+
+<TableVertical
+  tableKey="overtopping-screening-table-erodibility"
+  alt="Erodibility classification parameters in US Customary units"
+  caption="Erodibility classification to distribution parameter mapping (US Customary units)."
+  colWidths={[14, 18, 11, 11, 11, 11, 11, 11, 7, 7]}
+  headers={[
+    [
+      { value: 'Classification' },
+      { value: 'USCS Soil Types' },
+      { value: 'Kd Min' },
+      { value: 'Kd Mode' },
+      { value: 'Kd Max' },
+      { value: 'τc Min' },
+      { value: 'τc Mode' },
+      { value: 'τc Max' },
+      { value: 'n Min' },
+      { value: 'n Max' },
+    ],
+  ]}
+  columns={[
+    ['Very Erodible', 'Erodible', 'Moderately Resistant', 'Resistant', 'Very Resistant'],
+    ['SP, SW, SM FC < 30%', 'SM FC >= 30%, SC FC < 30%, ML, SC-ML', 'SC FC >= 30%, CL-ML', 'MH, CL, CL/CH', 'CH'],
+    ['0.5', '0.08', '0.02', '0.006', '0.001'],
+    ['2.0', '0.3', '0.1', '0.04', '0.008'],
+    ['8.0', '1.5', '0.7', '0.2', '0.09'],
+    ['0.02', '0.02', '0.05', '0.05', '0.2'],
+    ['0.05', '0.05', '0.08', '0.3', '0.75'],
+    ['0.1', '0.1', '0.2', '1.0', '2.0'],
+    ['0.025', '0.030', '0.035', '0.035', '0.040'],
+    ['0.040', '0.045', '0.045', '0.050', '0.050'],
+  ]}
+/>
+
+$K_d$ is the erodibility coefficient in (ft/hr)/psf, $\tau_c$ is the critical shear stress in psf, and $n$ is Manning's roughness coefficient
+(dimensionless). For SI units, $K_d$ is converted to (m/hr)/Pa and $\tau_c$ is converted to Pa using the conversion factors in `PhysicalConstants`.
+
+### Grass Cover Classifications
+
+The grass cover quality maps to two hydraulic parameters used in the grass cover removal
+phase.<Citation citationKey="Hughes2015" /><Citation citationKey="Thornton2014" />
+
+<TableVertical
+  tableKey="overtopping-screening-table-grass"
+  alt="Grass cover quality parameters"
+  caption="Grass cover quality to hydraulic parameter mapping."
+  headers={[
+    [
+      { value: 'Quality' },
+      { value: 'Critical Velocity (m/s)' },
+      { value: 'Erosional Limit (lb·s/ft³)' },
+      { value: 'Description' },
+    ],
+  ]}
+  columns={[
+    ['No Grass Cover', 'Poor Cover', 'Average Cover', 'Good Cover', 'More Robust Cover'],
+    ['0.0', '0.76', '1.3', '1.8', '2.8'],
+    ['0.0', '103,000', '229,000', '492,000', '492,000'],
+    [
+      'No grass cover — protection removal occurs at the first time step, exposing soil immediately.',
+      'Poor cover with bare spots and shallow roots.',
+      'Average cover with moderate root depth.',
+      'Good cover with dense growth and deep roots.',
+      'Reinforced grass or turf reinforcement mats. Same erosional limit as Good Cover but higher critical velocity threshold.',
+    ],
+  ]}
+/>
+
+The critical velocity ($u_c$) is the flow velocity threshold above which grass damage initiates. The erosional limit ($G_f$) is the cumulative work
+parameter that must be exceeded for complete grass cover removal. Both parameters are always specified in the units shown regardless of the selected
+unit system — the model performs internal unit conversions as needed.
+
+## Hydrograph Settings
+
+These parameters control the gamma-shaped hydrograph that represents the time history of overtopping flow at each hazard level.
+
+<TableVertical
+  tableKey="overtopping-screening-table-hydrograph"
+  alt="Hydrograph setting parameters"
+  caption="Hydrograph setting parameters."
+  colWidths={[18, 22, 8, 8, 12, 'minmax(18ch, 1fr)']}
+  headers={[
+    [{ value: 'Parameter' }, { value: 'Code Variable' }, { value: 'Type' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Description' }],
+  ]}
+  columns={[
+    ['Base Duration', 'Time Step', 'Hydrograph Shape Parameter'],
+    ['BaseDuration', 'TimeStep', 'HydrographShapeParameter'],
+    ['double', 'double', 'double'],
+    ['hours', 'hours', '—'],
+    ['> 0 (warn > 168)', '> 0 (warn > 0.1)', '> 1'],
+    [
+      'Duration of the overtopping event at the reference depth of 0.5 ft (US Customary) or 0.15 m (SI). The model scales this duration for other overtopping depths using a power-law relationship. This is the primary user input for controlling hydrograph timing.',
+      'Computational time step for the hydrograph integration. Smaller values increase accuracy but also increase computation time. Default is 0.05 hours (3 minutes).',
+      'Shape parameter (a) for the gamma distribution that defines the hydrograph shape. Values greater than 1 produce a hydrograph that rises to a peak and then gradually recedes. Default is 3.5.',
+    ],
+  ]}
+/>
+
+## Hydraulic Parameters
+
+These parameters control the hydraulic and erosion computations.
+
+<TableVertical
+  tableKey="overtopping-screening-table-hydraulic"
+  alt="Hydraulic parameters"
+  caption="Hydraulic parameters."
+  colWidths={[18, 18, 8, 8, 12, 'minmax(18ch, 1fr)']}
+  headers={[
+    [{ value: 'Parameter' }, { value: 'Code Variable' }, { value: 'Type' }, { value: 'Units' }, { value: 'Default' }, { value: 'Description' }],
+  ]}
+  columns={[
+    ['Weir Coefficient', 'Friction Factor', 'Erosion Exponent', 'Shear Stress Method'],
+    ['WeirCoefficient', 'FrictionFactor', 'ErosionExponent', 'ShearStressMethod'],
+    ['double', 'double', 'double', 'ShearStressMethod enum'],
+    ['—', '—', '—', '—'],
+    ['3.0', '0.015', '1.0', 'Include'],
+    [
+      'Broad-crested weir discharge coefficient (Cd). Used to compute peak overtopping discharge from depth: q_p = Cd × H^(3/2). Default is 3.0 for US Customary units.',
+      'Darcy-Weisbach friction factor (f). Used in the grass cover removal phase to compute the critical discharge and cumulative excess volume from flow velocity.',
+      'Exponent (α) in the excess shear stress erosion equation: ε = Kd × max(τ − τc, 0)^α. Fixed at 1.0, which produces a linear relationship between excess shear stress and erosion rate.',
+      'Controls whether critical shear stress is included in the erosion calculation. Include uses ε = Kd × max(τ − τc, 0)^α. Exclude sets τc = 0, using ε = Kd × τ^α.',
+    ],
+  ]}
+/>
+
+## Correlation Coefficients
+
+The model uses a Gaussian copula to generate correlated samples of the three material properties. Two correlations are specified directly; the third
+is implied.
+
+<TableVertical
+  tableKey="overtopping-screening-table-correlation"
+  alt="Correlation coefficient parameters"
+  caption="Correlation coefficient parameters."
+  colWidths={[18, 18, 8, 10, 12, 'minmax(18ch, 1fr)']}
+  headers={[
+    [{ value: 'Parameter' }, { value: 'Code Variable' }, { value: 'Type' }, { value: 'Default' }, { value: 'Valid Range' }, { value: 'Description' }],
+  ]}
+  columns={[
+    ['Correlation Kd–τc', 'Correlation τc–n'],
+    ['CorrelationKdTauC', 'CorrelationTauCN'],
+    ['double', 'double'],
+    ['-0.6', '-0.2'],
+    ['-1 to 1', '-1 to 1'],
+    [
+      'Correlation between the erodibility coefficient (Kd) and critical shear stress (τc). A negative value indicates that more erodible soils (higher Kd) tend to have lower critical shear stress (lower τc), which is consistent with field observations.',
+      'Correlation between critical shear stress (τc) and Manning\'s roughness (n). A negative value indicates that soils with higher critical shear stress tend to have smoother surfaces.',
+    ],
+  ]}
+/>
+
+The implied correlation between $K_d$ and $n$ is computed as the product of the two specified correlations:
+$\rho(K_d, n) = \rho(K_d, \tau_c) \times \rho(\tau_c, n)$. This relationship arises because the correlations between $K_d$ and $\tau_c$ and between
+$\tau_c$ and $n$ are established through data analysis, which implies a transitive correlation between $K_d$ and $n$. With the default values, the
+implied correlation is $(-0.6) \times (-0.2) = 0.12$.
+
+## Monte Carlo Settings
+
+These parameters control the Monte Carlo simulation and the range of overtopping depths evaluated.
+
+<TableVertical
+  tableKey="overtopping-screening-table-montecarlo"
+  alt="Monte Carlo setting parameters"
+  caption="Monte Carlo setting parameters."
+  colWidths={[18, 20, 8, 10, 12, 'minmax(18ch, 1fr)']}
+  headers={[
+    [{ value: 'Parameter' }, { value: 'Code Variable' }, { value: 'Type' }, { value: 'Default' }, { value: 'Valid Range' }, { value: 'Description' }],
+  ]}
+  columns={[
+    ['Iterations', 'RNG Seed', 'Confidence Level', 'Min Hazard Level', 'Max Hazard Level', 'Number of Hazard Levels'],
+    ['Iterations', 'RngSeed', 'ConfidenceLevel', 'MinHazardLevel', 'MaxHazardLevel', 'NumberOfHazardLevels'],
+    ['int', 'int?', 'ConfidenceLevel enum', 'double', 'double', 'int'],
+    ['1000', '42', 'Moderate', '0.0', '5.0', '50'],
+    ['>= 30 (warn < 100)', '>= 0 or null', '—', '< MaxHazardLevel', '> MinHazardLevel', '>= 2'],
+    [
+      'Number of Monte Carlo realizations. Each realization draws a unique set of correlated material properties and simulates erosion at every hazard level.',
+      'Seed for the pseudo-random number generator. A fixed seed ensures reproducible results. Set to null for non-deterministic sampling.',
+      'Confidence level for uncertainty quantification. Maps to an equivalent sample size: High = 100, Moderate = 20, Low = 6.',
+      'Minimum overtopping depth in ft (US Customary) or m (SI). Defines the lower bound of the system response curve.',
+      'Maximum overtopping depth in ft (US Customary) or m (SI). Defines the upper bound of the system response curve. Default of 5.0 ft covers most screening scenarios.',
+      'Number of evenly spaced overtopping depths between the minimum and maximum hazard levels. Defines the resolution of the system response curve.',
+    ],
+  ]}
+/>
+
+## References
+
+<CitationFootnote />

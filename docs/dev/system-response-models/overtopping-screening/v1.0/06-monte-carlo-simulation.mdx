@@ -1,0 +1,183 @@
+---
+title: Monte Carlo Simulation
+---
+
+import Equation from '@site/src/components/Equation';
+import EquationNoRef from '@site/src/components/EquationNoRef';
+import EquationReference from '@site/src/components/EquationReference';
+import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" document="dev/system-response-models/overtopping-screening" />
+
+# Monte Carlo Simulation
+
+The model uses Monte Carlo simulation to propagate material property uncertainty through the erosion model and compute the probability of breach at
+each overtopping depth. This chapter describes the correlated sampling method, the simulation execution framework, and the assembly of system response
+curves from simulation results.
+
+## Correlated Material Property Sampling
+
+The three material properties — erodibility coefficient ($K_d$), critical shear stress ($\tau_c$), and Manning's roughness ($n$) — are not sampled
+independently. Physical relationships between these properties require correlated sampling to produce realistic combinations of material parameters.
+
+### Gaussian Copula
+
+The model uses a Gaussian copula to generate correlated samples while preserving each variable's marginal distribution. The copula operates in
+standard normal space and maps the correlated normal samples back to the original distribution space through inverse CDF transformation.
+
+<ProcessList items={[
+  {
+    label: 'Build the correlation matrix',
+    children: [
+      'Construct a 3×3 symmetric positive-definite matrix from the two user-specified correlations (ρ(Kd, τc) and ρ(τc, n)) and the implied correlation ρ(Kd, n) = ρ(Kd, τc) × ρ(τc, n). If the resulting matrix is not positive semi-definite, the model applies matrix regularization to enforce this requirement.',
+    ],
+  },
+  {
+    label: 'Generate correlated normal samples',
+    children: [
+      'A multivariate normal distribution with mean vector [0, 0, 0] and the correlation matrix is constructed. Latin Hypercube sampling generates R × 3 correlated standard normal variates, where R is the number of Monte Carlo iterations.',
+    ],
+  },
+  {
+    label: 'Transform to uniform space',
+    children: [
+      'Each standard normal variate z is transformed to a uniform variate u = Φ(z), where Φ is the standard normal CDF. This produces correlated uniform samples on [0, 1].',
+    ],
+  },
+  {
+    label: 'Transform to marginal distributions',
+    children: [
+      'Each uniform variate is passed through the inverse CDF of the corresponding marginal distribution: PERT for Kd, PERT for τc, and Uniform for n. The resulting samples preserve both the marginal distribution shapes and the specified correlation structure.',
+    ],
+  },
+]} />
+
+### Correlation Matrix Structure
+
+The 3×3 correlation matrix has the following structure:
+
+<Equation equationKey="overtopping-screening-eq-correlation-matrix" equation="\mathbf{R} = \begin{bmatrix} 1 & \rho_{K_d,\tau_c} & \rho_{K_d,\tau_c} \cdot \rho_{\tau_c,n} \\ \rho_{K_d,\tau_c} & 1 & \rho_{\tau_c,n} \\ \rho_{K_d,\tau_c} \cdot \rho_{\tau_c,n} & \rho_{\tau_c,n} & 1 \end{bmatrix}" />
+
+With the default correlations ($\rho_{K_d,\tau_c} = -0.6$, $\rho_{\tau_c,n} = -0.2$), the matrix evaluates to:
+
+<EquationNoRef equation="\mathbf{R} = \begin{bmatrix} 1.0 & -0.6 & 0.12 \\ -0.6 & 1.0 & -0.2 \\ 0.12 & -0.2 & 1.0 \end{bmatrix}" />
+
+The matrix is enforced to be symmetric positive-definite using `MatrixRegularization.MakeSymmetricPositiveDefinite()` from the RMC.Numerics library.
+This is implemented in `OvertoppingModel.BuildCorrelationMatrix()`.
+
+### Latin Hypercube Sampling
+
+The model uses Latin Hypercube sampling (LHS) rather than simple random sampling to generate the multivariate normal variates. LHS provides better
+coverage of the sample space with fewer iterations by stratifying each marginal distribution into equal-probability intervals and sampling once from
+each interval. This reduces the number of iterations needed for stable probability estimates compared to simple random sampling.
+
+## Simulation Execution
+
+The Monte Carlo simulation evaluates every combination of realization (material property set) and hazard level (overtopping depth). The simulation is
+structured as an outer loop over realizations and an inner loop over hazard levels.
+
+### Parallelization
+
+The outer loop over realizations is parallelized using `Parallel.For`, which distributes realizations across available processor cores. Each
+realization is independent — the material properties are drawn once per realization and reused across all hazard levels — so no synchronization is
+required between threads.
+
+### Pre-computation
+
+Before the Monte Carlo loop, the model pre-computes:
+
+<TableVertical
+  tableKey="overtopping-screening-table-precompute"
+  alt="Pre-computed quantities"
+  caption="Quantities pre-computed before the Monte Carlo loop."
+  headers={[[{ value: 'Quantity' }, { value: 'Computed From' }, { value: 'Purpose' }]]}
+  columns={[
+    [
+      'Hazard levels array',
+      'Discharge hydrographs',
+      'Critical discharge (q_c)',
+      'Erosional limit volume (VET_c)',
+      'Critical erosion depth (D_c)',
+    ],
+    [
+      'MinHazardLevel, MaxHazardLevel, NumberOfHazardLevels',
+      'Hazard levels, hydrograph parameters',
+      'Grass cover parameters, slope, friction factor',
+      'Grass cover parameters, slope, friction factor',
+      'Crest width, downstream slope',
+    ],
+    [
+      'Evenly spaced overtopping depths defining the system response curve.',
+      'One discharge array per hazard level, reused across all realizations.',
+      'Threshold for grass damage initiation, constant across realizations.',
+      'Cumulative work threshold for grass failure, constant across realizations.',
+      'Breach threshold, constant across all realizations and hazard levels.',
+    ],
+  ]}
+/>
+
+### Per-Realization Execution
+
+For each realization $r$ in $\{0, 1, \ldots, R-1\}$:
+
+<ProcessList items={[
+  'Retrieve the correlated material property sample: Kd(r), τc(r), n(r) from the pre-generated LHS samples by transforming through the standard normal CDF and then through each marginal inverse CDF.',
+  {
+    label: 'For each hazard level h:',
+    children: [
+      'Call SimulateErosion with the pre-computed hydrograph for this hazard level and the sampled material properties.',
+      'Record whether grass was removed and whether breach occurred in the results matrices.',
+    ],
+  },
+]} />
+
+## Response Curve Assembly
+
+After all realizations complete, the model aggregates the boolean results (grass removed, breach occurred) across realizations at each hazard level.
+
+### Breach Probability
+
+The breach probability at each hazard level is computed as the proportion of realizations that resulted in breach:
+
+<Equation equationKey="overtopping-screening-eq-breach-prob" equation="P(\text{breach} \mid H) = \frac{\text{number of breach events at depth } H}{R}" />
+
+where $R$ is the total number of Monte Carlo iterations. This produces the primary system response curve stored in `ResponseFunction`.
+
+### Additional Response Curves
+
+The model computes three additional response curves for diagnostic purposes:
+
+<TableVertical
+  tableKey="overtopping-screening-table-response-curves"
+  alt="Response curves computed by the model"
+  caption="Response curves computed by the model."
+  headers={[[{ value: 'Response Curve' }, { value: 'Code Variable' }, { value: 'Computation' }]]}
+  columns={[
+    [
+      'Overall breach probability',
+      'Raw Monte Carlo breach probability',
+      'Grass removal probability',
+      'Conditional breach probability',
+    ],
+    [
+      'ResponseFunction',
+      'RawMonteCarloResponseFunction',
+      'GrassRemovalResponseFunction',
+      'ConditionalBreachResponseFunction',
+    ],
+    [
+      'Breach count / R. Primary output — the system response curve.',
+      'Same as ResponseFunction (direct proportion without smoothing).',
+      'Grass removal count / R. Probability that the grass cover is removed at each depth.',
+      'Breach count where grass was removed / grass removal count. Probability of breach given that the grass cover was removed.',
+    ],
+  ]}
+/>
+
+The grass removal and conditional breach response curves allow engineers to decompose the overall breach probability into its two constituent phases:
+the probability that overtopping flow is sufficient to remove the grass cover, and the probability that the exposed soil erodes to breach given grass
+removal. This decomposition can help identify whether the grass cover or the soil erodibility is the dominant factor controlling the system response
+at a given overtopping depth.

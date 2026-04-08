@@ -1,0 +1,126 @@
+---
+title: Assumptions and Limitations
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" document="dev/system-response-models/overtopping-screening" />
+
+# Assumptions and Limitations
+
+The overtopping erosion screening model applies several simplifying assumptions to enable rapid, low-input screening analysis. These assumptions are
+deliberate design decisions for screening-level use — they reduce input requirements and computational complexity while capturing the dominant physics
+of overtopping erosion. Each assumption is documented with its rationale, effect on results, and the conditions under which it may not hold.
+
+## Model Assumptions
+
+<TableVertical
+  tableKey="overtopping-screening-table-assumptions"
+  alt="Model assumptions and their implications"
+  caption="Model assumptions, rationale, and implications."
+  colWidths={[5, 16, 'minmax(16ch, 1fr)', 'minmax(16ch, 1fr)', 'minmax(16ch, 1fr)']}
+  colAlign={['center']}
+  headers={[[{ value: '#' }, { value: 'Assumption' }, { value: 'Rationale' }, { value: 'Effect on Results' }, { value: 'When It May Not Hold' }]]}
+  columns={[
+    ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+    [
+      'Homogeneous embankment with uniform downstream slope',
+      'Uniform erosion across the downstream face (surface erosion model)',
+      'Duration scaling from a single reference depth',
+      'Gamma-shaped hydrograph with fixed shape parameter',
+      'PERT distributions from erodibility classification only',
+      'Linear excess shear stress erosion (α = 1.0)',
+      'Grass cover modeled but not riprap or other armoring',
+      'No non-erodible cutoff elements',
+      'Asymptotic hydrograph recession',
+      'Implied correlation between Kd and Manning\'s n',
+    ],
+    [
+      'The model represents the embankment as a single material with a constant downstream slope. This avoids requiring the user to specify zone boundaries, material interfaces, or slope geometry changes.',
+      'Erosion is assumed to remove material uniformly across the entire downstream face, translating the slope surface into the embankment until the critical erosion depth is reached. This is a simplification of the actual headcut erosion process and avoids modeling the complex mechanics of headcut formation, migration, and deepening.',
+      'The user specifies a single overtopping duration at a reference depth of 0.5 ft, and the model scales this to other depths using the power-law relationship t_H = t_0 × (H / 0.5)^(1/1.8). This avoids requiring the user to specify durations at multiple overtopping depths or to develop a full reservoir routing analysis.',
+      'All hydrographs use the same gamma distribution shape (parameter a = 3.5 by default). The shape is asymmetric with a steeper rising limb and gradual recession, representing a typical flood hydrograph in a dam reservoir.',
+      'Material properties are drawn from default PERT distributions based solely on the erodibility classification. The user does not specify site-specific distribution parameters.',
+      'The erosion exponent is fixed at 1.0, producing a linear relationship between excess shear stress and erosion rate. This is the standard assumption in the WinDAM model framework.',
+      'The model accounts for grass cover removal under overtopping flow using CIRIA parameters but does not model riprap stability, riprap removal, or other armoring systems.',
+      'The model cannot account for non-erodible elements within the embankment such as cutoff walls, sheet pile walls, concrete caps, or other structural features that would arrest or redirect erosion.',
+      'The gamma hydrograph approaches zero discharge asymptotically but never returns to the starting elevation. The tail of the hydrograph is not physically meaningful for breach determination.',
+      'The correlation between Kd and n is derived as the product of the two specified correlations rather than being established independently from test data.',
+    ],
+    [
+      'May not accurately represent embankments with distinct zones (e.g., clay core with sand shells) or with benches, berms, or variable slopes. The model uses a single set of material properties for the entire downstream face.',
+      'Overestimates erosion depth for conditions where erosion concentrates at a headcut rather than across the full slope. However, it may underestimate erosion where flow concentration creates localized deep scour channels.',
+      'The power-law exponent (1/1.8) provides a reasonable approximation for typical reservoirs, but different reservoirs have drastically different volume-stage-duration relationships. The scaled durations may be significantly too short or too long for specific sites.',
+      'Real hydrographs may be more peaked or more sustained than the gamma shape. The fixed shape parameter does not capture site-specific hydrograph characteristics such as multiple peaks or extended plateaus.',
+      'For screening purposes, the default distributions capture the range of material behavior within each erodibility category. Site-specific testing data would narrow these distributions significantly.',
+      'Laboratory and field data suggest that α can range from approximately 0.5 to 2.0 depending on soil type and erosion mechanism. The fixed value of 1.0 is a simplification.',
+      'Does not capture the protective effect of riprap, which can delay or prevent embankment erosion for significant overtopping depths. Screening results for riprap-protected embankments will overestimate breach probability.',
+      'Embankments with cutoff walls or other non-erodible elements may have significantly higher resistance to breach than the model predicts.',
+      'This assumption is acceptable because at very low discharge levels, the overtopping flow has negligible erosive potential and the embankment outcome (breach or survival) has already been determined during the higher-discharge portion of the hydrograph.',
+      'The implied correlation is an approximation. The actual correlation between Kd and n may differ from the product of the other two correlations, though this effect is minor given the relatively weak implied correlation (0.12 with default values).',
+    ],
+    [
+      'Zoned embankments (e.g., clay core with granular shells), embankments with downstream berms or benches, and embankments with varying slopes along the downstream face.',
+      'Sites where headcut erosion is the dominant failure mechanism. Headcut erosion tends to be more concentrated and can migrate upstream more rapidly than uniform surface erosion.',
+      'Reservoirs with very large or very small storage-to-inflow ratios, where the volume-stage-duration relationship departs significantly from the power-law assumption. Engineers should verify that the scaled durations are reasonable for their specific reservoir.',
+      'Hydrographs driven by dam failures upstream (sudden onset), controlled releases (sustained plateau), or multiple storm peaks (multi-modal).',
+      'Sites where laboratory testing (e.g., jet erosion tests, hole erosion tests) has provided site-specific erodibility parameters that differ significantly from the category defaults.',
+      'Highly cohesive soils or soils with significant organic content where the erosion-stress relationship is nonlinear.',
+      'Embankments with riprap protection, articulated concrete blocks, or other armoring on the downstream face.',
+      'Embankments with sheet pile walls, concrete cutoff walls, or other structural elements that intersect the erosion path.',
+      'Not applicable — this limitation does not affect practical results.',
+      'Sites where independent measurements of Kd and n correlation are available and differ materially from the implied value.',
+    ],
+  ]}
+/>
+
+## Key Limitation: Duration Scaling
+
+The duration scaling relationship (assumption 3 in <TableReference tableKey="overtopping-screening-table-assumptions" />) is one of the most impactful
+screening assumptions. The model requires only a single overtopping duration at the reference depth and extrapolates all other durations using a
+fixed power-law exponent. This approach assumes that the relationship between overtopping depth and duration follows a consistent pattern across all
+reservoirs, which is not the case in practice.
+
+Reservoirs with large storage volumes relative to inflow tend to have longer-duration overtopping events that increase slowly with depth. Reservoirs
+with small storage volumes tend to have shorter, more sharply peaked events. The power-law exponent of $1/1.8$ was selected as a reasonable
+middle-ground approximation, but engineers should evaluate whether the resulting durations are plausible for their specific reservoir. If the scaled
+durations appear unreasonable, the base duration should be adjusted until the scaling produces realistic values across the range of overtopping
+depths.
+
+## Key Limitation: Uniform Erosion
+
+The uniform erosion assumption (assumption 2 in <TableReference tableKey="overtopping-screening-table-assumptions" />) is a fundamental simplification
+of the actual erosion process. In reality, overtopping erosion of embankment dams often proceeds through headcut formation and migration — a
+concentrated erosion process where a steep scarp forms at the downstream toe and migrates upstream through the embankment. The headcut erosion
+mechanism is modeled by detailed software such as WinDAM C<Citation citationKey="WinDAM" /> but is not captured by this screening model.
+
+The uniform erosion assumption means that the model distributes the erosive energy across the entire downstream face rather than concentrating it at a
+headcut. This can produce different breach timing compared to headcut models. However, for screening purposes, the model has been validated against
+Quantitative Risk Assessment (QRA) response functions from multiple USACE dam safety studies to ensure that screening results are reasonable
+relative to detailed assessments.
+
+## Scope Exclusions
+
+The following capabilities are explicitly outside the scope of the screening model:
+
+- **Rockfill embankments** — The erodibility classifications and erosion equations are calibrated for earth embankments. Rockfill materials have
+  fundamentally different erosion behavior.
+- **Riprap removal** — Modeling the stability and progressive removal of riprap armoring is planned as a future enhancement but is not currently
+  supported.
+- **Headcut erosion** — The model uses a surface erosion approach and does not model the discrete headcut erosion mechanism.
+- **Zoned embankments** — The model treats the embankment as a single homogeneous material. Internal zoning, filters, and drains are not represented.
+- **Non-erodible elements** — Cutoff walls, sheet pile, concrete caps, and other structural features that would arrest erosion cannot be modeled.
+
+## Monte Carlo Reproducibility
+
+The screening model uses a configurable random number generator seed (`RngSeed`, default 42) to ensure that identical inputs produce identical outputs.
+This design choice supports regression testing and reproducible screening results. Setting the seed to null enables non-deterministic sampling, which
+produces slightly different results on each run due to different random number sequences.
+
+## References
+
+<CitationFootnote />

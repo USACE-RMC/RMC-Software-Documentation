@@ -1,0 +1,121 @@
+---
+title: Model Overview
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" document="dev/system-response-models/overtopping-screening" />
+
+# Model Overview
+
+## Purpose
+
+The overtopping erosion screening model computes a system response curve for the overtopping erosion failure mode as a function of overtopping depth.
+The system response probability (SRP) at each depth represents the conditional probability of embankment breach due to erosion, given that the
+reservoir overtops the dam crest by that amount. The model produces a curve — an array of SRP values across a range of overtopping depths — that
+characterizes the embankment's vulnerability to breach from overtopping flow.
+
+## Intended Use
+
+The model is designed specifically for the Dam Screening Tool (DST), where it serves as a screening-level assessment of overtopping erosion risk. It
+makes simplifying assumptions with the goal of:
+
+- **Providing rapid estimates** — The model runs a physics-based Monte Carlo simulation in seconds, enabling batch processing of many structures
+  without manual hydrograph development or detailed site characterization.
+- **Reducing input burden** — The model requires only embankment geometry, material classification, grass cover quality, and overtopping duration.
+  Material properties are drawn from default distributions based on the selected erodibility classification.
+
+The model is not intended for detailed or semi-quantitative risk assessments. For higher-level analyses, engineers should use more detailed
+overtopping erosion analysis software such as WinDAM C<Citation citationKey="WinDAM" />, DLBreach, or EMBREA, which allow for site-specific
+hydrograph inputs, zoned embankment geometry, and calibrated erosion parameters.
+
+## How the Model Works
+
+The screening model executes a Monte Carlo simulation that evaluates whether embankment breach occurs for each combination of material properties and
+overtopping depth. The algorithm proceeds through four computational stages:
+
+<ProcessList items={[
+  {
+    label: 'Hydrograph generation',
+    children: [
+      'For each overtopping depth, the model generates a gamma-shaped discharge hydrograph. The peak discharge is computed from the broad-crested weir equation, and the duration is scaled from a user-specified base duration using a power-law relationship.',
+    ],
+  },
+  {
+    label: 'Material property sampling',
+    children: [
+      'The model draws correlated samples of the erodibility coefficient (Kd), critical shear stress (τc), and Manning\'s roughness (n) using a Gaussian copula with Latin Hypercube sampling. Material distributions are determined by the embankment erodibility classification.',
+    ],
+  },
+  {
+    label: 'Erosion simulation',
+    children: [
+      'For each realization, the model steps through the hydrograph in two phases. First, it accumulates excess discharge volume until the grass cover is removed. Second, it computes the erosion rate at each time step using the excess shear stress equation and accumulates erosion depth until breach occurs or the hydrograph ends.',
+    ],
+  },
+  {
+    label: 'Response curve assembly',
+    children: [
+      'The model counts the number of breach events across all realizations at each overtopping depth and computes the breach probability as the proportion of realizations that resulted in breach.',
+    ],
+  },
+]} />
+
+## Physics Basis
+
+The model combines several established engineering methods:
+
+- **Broad-crested weir equation** for computing overtopping discharge from depth<Citation citationKey="Fell2015" />
+- **Gamma-shaped hydrograph** for representing the time history of overtopping flow
+- **CIRIA grass cover erosion resistance** for modeling protective vegetation removal under sustained overtopping<Citation citationKey="Hughes2015" /><Citation citationKey="Thornton2014" />
+- **Excess shear stress erosion equation** for computing headcut-driven embankment erosion, based on the approach used in WinDAM<Citation citationKey="WinDAM" /><Citation citationKey="Hanson2011" />
+- **Briaud (2008) erosion categories** for default material property distributions<Citation citationKey="Briaud2019" /><Citation citationKey="Wibowo2018" />
+
+## Comparison with Detailed Models
+
+<TableVertical
+  tableKey="overtopping-screening-table-comparison"
+  alt="Comparison of screening model and detailed models"
+  caption="Comparison of the overtopping screening model and detailed overtopping erosion analysis tools."
+  headers={[[{ value: 'Aspect' }, { value: 'Screening Model' }, { value: 'Detailed Models (WinDAM C, DLBreach, EMBREA)' }]]}
+  columns={[
+    [
+      'Purpose',
+      'Hydrograph input',
+      'Embankment geometry',
+      'Material properties',
+      'Erosion mechanism',
+      'Grass cover',
+      'Armoring (riprap)',
+      'Non-erodible elements',
+    ],
+    [
+      'DST screening-level assessment',
+      'Generated internally from gamma function and base duration',
+      'Homogeneous cross-section: height, downstream slope, crest width',
+      'Default PERT distributions from erodibility classification',
+      'Uniform downstream face erosion (surface erosion)',
+      'CIRIA-based time-varying removal model',
+      'Not supported',
+      'Not supported',
+    ],
+    [
+      'Detailed risk analysis',
+      'User-specified or imported from hydrologic model',
+      'Zoned embankments, benches, variable slopes, internal features',
+      'User-specified from site investigation and laboratory testing',
+      'Headcut erosion, surface erosion, or combined mechanisms',
+      'User-configurable with site-specific parameters',
+      'Riprap stability and removal modeling',
+      'Cutoff walls, sheet pile, concrete caps',
+    ],
+  ]}
+/>
+
+## References
+
+<CitationFootnote />

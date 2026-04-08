@@ -1,0 +1,168 @@
+---
+title: Output and Interpretation
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" document="dev/system-response-models/overtopping-screening" />
+
+# Output and Interpretation
+
+The overtopping erosion screening model produces an `OvertoppingResult` object containing four system response curves, grass removal diagnostic
+counts, and computation time metadata.
+
+## Result Structure
+
+### System Response Curves
+
+The model produces four response curves, each stored as an `UncertainOrderedPairedData` object with overtopping depth as the independent variable and
+probability as the dependent variable.
+
+<TableVertical
+  tableKey="overtopping-screening-table-output-curves"
+  alt="System response curve output fields"
+  caption="System response curve output fields in OvertoppingResult."
+  colWidths={[20, 30, 'minmax(20ch, 1fr)']}
+  headers={[[{ value: 'Field' }, { value: 'Code Variable' }, { value: 'Description' }]]}
+  columns={[
+    [
+      'System Response Curve',
+      'Raw Monte Carlo Response Curve',
+      'Grass Removal Response Curve',
+      'Conditional Breach Response Curve',
+    ],
+    [
+      'ResponseFunction',
+      'RawMonteCarloResponseFunction',
+      'GrassRemovalResponseFunction',
+      'ConditionalBreachResponseFunction',
+    ],
+    [
+      'The primary output — breach probability as a function of overtopping depth. At each hazard level, the value is the number of breach events divided by the total number of Monte Carlo iterations.',
+      'The unsmoothed breach probability at each hazard level. In the current implementation, this is identical to the primary response curve.',
+      'The probability that the grass cover is removed at each overtopping depth. Computed as the number of realizations where grass was removed divided by the total iterations.',
+      'The probability of breach given that the grass cover was removed. Computed as the number of breach events where grass was also removed divided by the total number of grass removal events at each depth. Set to 0.0 at depths where no grass removal occurs.',
+    ],
+  ]}
+/>
+
+### Diagnostic Outputs
+
+<TableVertical
+  tableKey="overtopping-screening-table-output-diagnostics"
+  alt="Diagnostic output fields"
+  caption="Diagnostic output fields in OvertoppingResult."
+  colWidths={[22, 30, 10, 'minmax(20ch, 1fr)']}
+  headers={[[{ value: 'Field' }, { value: 'Code Variable' }, { value: 'Type' }, { value: 'Description' }]]}
+  columns={[
+    ['Grass Removal Counts', 'Computation Time'],
+    ['GrassRemovalCountsByHazardLevel', 'ComputationTimeMs'],
+    ['int[]', 'long'],
+    [
+      'Array of integer counts indicating how many Monte Carlo realizations resulted in grass cover removal at each hazard level. One value per hazard level.',
+      'Wall-clock time in milliseconds for the complete analysis, including hydrograph generation, material sampling, and all erosion simulations.',
+    ],
+  ]}
+/>
+
+## Interpreting the System Response Curve
+
+### Reading the Curve
+
+The system response curve (`ResponseFunction`) maps each overtopping depth to a breach probability between 0 and 1. The curve is expected to be
+monotonically non-decreasing: larger overtopping depths produce larger discharge, longer durations, and higher shear stresses, all of which increase
+the probability of breach.
+
+Key characteristics of a typical system response curve:
+
+- **Low depths (< 0.5 ft):** Breach probability is typically near zero. The overtopping discharge is small, durations are short, and the grass cover
+  (if present) is likely sufficient to prevent soil exposure.
+- **Moderate depths (0.5 – 2.0 ft):** Breach probability begins to increase. The rate of increase depends strongly on the erodibility classification
+  and grass cover quality.
+- **Large depths (> 2.0 ft):** Breach probability approaches 1.0 for erodible materials. Resistant and very resistant materials may maintain
+  probabilities below 1.0 even at large overtopping depths.
+
+### Decomposing the Result
+
+The grass removal and conditional breach response curves allow the overall system response to be decomposed into two independent factors:
+
+<TableVertical
+  tableKey="overtopping-screening-table-decomposition"
+  alt="System response decomposition"
+  caption="Decomposition of the system response curve into grass removal and conditional breach components."
+  headers={[[{ value: 'Component' }, { value: 'Interpretation' }, { value: 'Controlling Factors' }]]}
+  columns={[
+    ['Grass Removal Probability', 'Conditional Breach Probability', 'Overall Breach Probability'],
+    [
+      'Probability that the overtopping flow is sufficient to remove the grass cover. Captures the protective effect of vegetation.',
+      'Probability that the exposed embankment erodes to breach, given that the grass cover has already been removed. Captures the intrinsic erodibility of the embankment material.',
+      'Product of grass removal and conditional breach probabilities (approximately). Represents the combined effect of both phases.',
+    ],
+    [
+      'Grass cover quality, overtopping depth and duration, slope angle, friction factor.',
+      'Erodibility classification (Kd, τc), Manning\'s n, overtopping duration, embankment geometry (crest width, slope).',
+      'All of the above.',
+    ],
+  ]}
+/>
+
+This decomposition helps identify whether the grass cover or the soil erodibility dominates the system response at a given depth. If the grass removal
+probability is high but the conditional breach probability is low, the embankment material is resistant enough to survive even after grass failure. If
+the conditional breach probability is high but grass removal probability is low, the grass cover is the primary defense against breach.
+
+## Sensitivity to Key Inputs
+
+The following inputs have the greatest influence on the system response curve:
+
+<TableVertical
+  tableKey="overtopping-screening-table-sensitivity"
+  alt="Input sensitivity ranking"
+  caption="Key inputs ranked by their influence on the system response curve."
+  headers={[[{ value: 'Input' }, { value: 'Influence' }, { value: 'Effect' }]]}
+  columns={[
+    [
+      'Erodibility Classification',
+      'Base Duration',
+      'Grass Cover Quality',
+      'Downstream Slope',
+      'Crest Width',
+      'Correlation Kd–τc',
+    ],
+    [
+      'Very High',
+      'High',
+      'High',
+      'Moderate',
+      'Moderate',
+      'Moderate',
+    ],
+    [
+      'Directly controls the Kd and τc distributions. Moving from Very Resistant to Very Erodible can shift the system response curve by several orders of magnitude at moderate depths.',
+      'Controls the duration of the overtopping event at all depths. Longer base durations increase the time available for grass removal and erosion, shifting the curve left (toward lower depths).',
+      'Controls the grass removal threshold. Higher-quality grass cover delays soil exposure, shifting the curve right (toward higher depths). The No Grass Cover option eliminates the grass removal phase entirely.',
+      'Steeper slopes (lower H:V ratio) increase flow velocity and shear stress for a given discharge, increasing erosion rates. Also affects the critical erosion depth through the slope geometry.',
+      'Wider crests increase the critical erosion depth, requiring more cumulative erosion to reach breach. This shifts the curve right.',
+      'Controls the joint sampling of Kd and τc. Stronger negative correlation increases the frequency of high-Kd/low-τc combinations, which produce the highest erosion rates.',
+    ],
+  ]}
+/>
+
+## Screening vs. Detailed Analysis
+
+The screening system response curve should be interpreted as an estimate intended to identify structures that warrant further analysis. The model has
+been validated against Quantitative Risk Assessment (QRA) response functions from multiple USACE dam safety studies (Benbrook, Cherry Creek,
+Delaware, Grapevine, J. Percy Priest, Keystone, Kinzua, Lookout Point, Mojave, Painted Rock, Stillhouse Hollow, W. Kerr Scott, and Wister Dams).
+
+A high screening breach probability does not necessarily indicate a high risk of failure — it indicates that the structure should be evaluated with
+detailed overtopping erosion analysis software where:
+
+- Site-specific hydrographs from hydrologic routing can be used instead of the gamma-shaped approximation.
+- Zoned embankment geometry can be represented with distinct material zones and internal features.
+- Calibrated erosion parameters from laboratory testing (jet erosion tests, hole erosion tests) can replace the default category distributions.
+- Headcut erosion mechanics can be modeled explicitly.
+- Riprap and other armoring systems can be accounted for.
+
+A low screening breach probability provides reasonable confidence that overtopping erosion is not a critical concern for the structure at the screening
+level.
