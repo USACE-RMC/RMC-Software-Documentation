@@ -2,28 +2,28 @@
 title: Event Tree
 ---
 
-import NavContainer from '@site/src/components/NavContainer';
 import Equation from '@site/src/components/Equation';
 import EquationNoRef from '@site/src/components/EquationNoRef';
 import EquationReference from '@site/src/components/EquationReference';
-import TableVertical from '@site/src/components/TableVertical';
-import TableReference from '@site/src/components/TableReference';
 import Figure from '@site/src/components/Figure';
 import FigureReference from '@site/src/components/FigureReference';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
 
-<NavContainer
-  link="/dev"
-  linkTitle="Developer Resources"
-  document="dev/system-response-models/bep-screening"
-/>
+<NavContainer link="/dev" linkTitle="Developer Resources" document="dev/system-response-models/bep-screening" />
 
 # Event Tree
 
-The BEP screening model computes the system response probability (SRP) at each headwater level by multiplying probabilities from a seven-node event tree. This event tree follows the structure defined in the Typical Event Tree Database for the backward erosion piping failure mode.
+The BEP screening model computes the system response probability (SRP) at each headwater level by multiplying probabilities from a seven-node event
+tree. This event tree follows the structure defined in the
+[Typical Event Tree Database](/docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.5/backward-erosion-piping) for
+the backward erosion piping failure mode.
 
 ## Event Tree Structure
 
-The backward erosion piping event tree consists of seven sequential nodes, each representing a necessary condition for breach to occur. The failure path requires all seven conditions to be satisfied simultaneously.
+The backward erosion piping event tree consists of seven sequential nodes, each representing a necessary condition for breach to occur. The failure
+path requires all seven conditions to be satisfied simultaneously.
 
 <Figure
   figKey="bep-screening-fig-event-tree"
@@ -35,12 +35,15 @@ The backward erosion piping event tree consists of seven sequential nodes, each 
 
 ## Node Definitions
 
-Each node in the event tree answers a specific engineering question. <TableReference tableKey="bep-screening-table-nodes" /> summarizes the seven nodes, the engineering question each addresses, and how the screening model populates the probability for each node.
+Each node in the event tree answers a specific engineering question. <TableReference tableKey="table-11" /> summarizes the seven nodes, the
+engineering question each addresses, and how the screening model populates the probability for each node.
 
 <TableVertical
-  tableKey="bep-screening-table-nodes"
+  tableKey="table-11"
   alt="Event tree node definitions"
   caption="Event tree node definitions and probability sources."
+  colWidths={[8, 18, 'minmax(18ch, 1fr)', 'minmax(18ch, 1fr)']}
+  colAlign={['center']}
   headers={[[{ value: 'Node' }, { value: 'Name' }, { value: 'Engineering Question' }, { value: 'Screening Model Source' }]]}
   columns={[
     ['1', '2', '3', '4', '5', '6', '7'],
@@ -51,7 +54,7 @@ Each node in the event tree answers a specific engineering question. <TableRefer
       'Progression: Mechanical Condition',
       'Progression: Hydraulic Condition',
       'Unsuccessful Intervention',
-      'Breach'
+      'Breach',
     ],
     [
       'A continuous path of fine to medium, uniform sand exists?',
@@ -60,7 +63,7 @@ Each node in the event tree answers a specific engineering question. <TableRefer
       'A continuous stable roof forms over the developing pipe?',
       'Sufficient flow exists to advance the pipe toward the impounded water?',
       'Detection and intervention are unsuccessful?',
-      'Uncontrolled release of impounded water occurs?'
+      'Uncontrolled release of impounded water occurs?',
     ],
     [
       'Flaw likelihood lookup (FlawLikelihood enum → probability)',
@@ -69,38 +72,54 @@ Each node in the event tree answers a specific engineering question. <TableRefer
       'USCS roof support lookup, or 1.0 when confining layer is present',
       'Schmertmann progression model (mean P(advancement) at each HW)',
       'User-specified scalar (default 1.0)',
-      'User-specified scalar (default 1.0)'
-    ]
+      'User-specified scalar (default 1.0)',
+    ],
   ]}
 />
 
 ### Node 1: Flaw &mdash; Continuous Path
 
-This node represents the probability that a continuous path of erodible foundation sand exists beneath the embankment. The probability is determined by the user's qualitative assessment of flaw likelihood, which maps to a fixed probability via the flaw likelihood lookup table. This probability is constant across all headwater levels.
+This node represents the probability that a continuous path of erodible foundation sand exists beneath the embankment. The probability is determined
+by the user's qualitative assessment of flaw likelihood, which maps to a fixed probability via the flaw likelihood lookup table. This probability is
+constant across all headwater levels.
 
 ### Node 2: Flaw &mdash; Unfiltered Exit
 
-This node represents the probability that seepage exits unfiltered at the ground surface. For conditions without a confining layer (conditions 1 and 2), the probability is set to 1.0 because there is no blanket to prevent seepage from reaching the surface. For conditions with a confining layer (conditions 3 and 5), the BT Case 4 model computes the probability of blanket blowout at the downstream toe, which varies with headwater elevation. For heave conditions (conditions 4 and 6), the probability is set to 1.0 because observed boils confirm that an unfiltered exit already exists.
+This node represents the probability that seepage exits unfiltered at the ground surface. For conditions without a confining layer (conditions 1 and
+2), the probability is set to 1.0 because there is no blanket to prevent seepage from reaching the surface. For conditions with a confining layer
+(conditions 3 and 5), the BT Case 4 model computes the probability of blanket blowout at the downstream toe, which varies with headwater elevation.
+For heave conditions (conditions 4 and 6), the probability is set to 1.0 because observed boils confirm that an unfiltered exit already exists.
 
 ### Node 3: Initiation
 
-This node represents the probability that the exit gradient is sufficient to initiate backward erosion piping. For non-confining and blowout conditions (conditions 1, 2, 3, and 5), the probability is set to 1.0 because initiation is assumed once an unfiltered exit exists. For heave conditions (conditions 4 and 6), the BT Case 4 model computes the probability that the vertical exit gradient at the boil location exceeds the critical gradient. Additionally, when the headwater equals or exceeds the trigger elevation, P(initiation) is forced to 1.0 to reflect the observed boil activation.
+This node represents the probability that the exit gradient is sufficient to initiate backward erosion piping. For non-confining and blowout
+conditions (conditions 1, 2, 3, and 5), the probability is set to 1.0 because initiation is assumed once an unfiltered exit exists. For heave
+conditions (conditions 4 and 6), the BT Case 4 model computes the probability that the vertical exit gradient at the boil location exceeds the
+critical gradient. Additionally, when the headwater equals or exceeds the trigger elevation, P(initiation) is forced to 1.0 to reflect the observed
+boil activation.
 
 ### Node 4: Progression &mdash; Mechanical Condition
 
-This node represents the probability that the soil overlying the developing pipe can form a stable roof, allowing the pipe to remain open and progress. When a confining layer is present, the probability is 1.0 because the confining layer provides structural support. When no confining layer is present, the probability is determined by the USCS classification of the overlying material via the roof support lookup table. This probability is constant across all headwater levels.
+This node represents the probability that the soil overlying the developing pipe can form a stable roof, allowing the pipe to remain open and
+progress. When a confining layer is present, the probability is 1.0 because the confining layer provides structural support. When no confining layer
+is present, the probability is determined by the USCS classification of the overlying material via the roof support lookup table. This probability is
+constant across all headwater levels.
 
 ### Node 5: Progression &mdash; Hydraulic Condition
 
-This node represents the probability that sufficient hydraulic gradient exists to advance the pipe from the exit point toward the impounded water. The Schmertmann progression model computes this probability at each headwater level by comparing the applied gradient against the critical horizontal gradient through Monte Carlo simulation. The mean probability of advancement across all Monte Carlo iterations is used as the node probability.
+This node represents the probability that sufficient hydraulic gradient exists to advance the pipe from the exit point toward the impounded water. The
+Schmertmann progression model computes this probability at each headwater level by comparing the applied gradient against the critical horizontal
+gradient through Monte Carlo simulation. The mean probability of advancement across all Monte Carlo iterations is used as the node probability.
 
 ### Node 6: Unsuccessful Intervention
 
-This node represents the probability that detection and emergency intervention efforts fail to stop the piping process. The screening model accepts this as a user-specified scalar, defaulting to 1.0 (no successful intervention assumed).
+This node represents the probability that detection and emergency intervention efforts fail to stop the piping process. The screening model accepts
+this as a user-specified scalar, defaulting to 1.0 (no successful intervention assumed).
 
 ### Node 7: Breach
 
-This node represents the probability that an uncontrolled release of impounded water occurs given that piping has progressed fully and intervention has failed. The screening model accepts this as a user-specified scalar, defaulting to 1.0 (certain breach assumed).
+This node represents the probability that an uncontrolled release of impounded water occurs given that piping has progressed fully and intervention
+has failed. The screening model accepts this as a user-specified scalar, defaulting to 1.0 (certain breach assumed).
 
 ## SRP Computation
 
@@ -111,18 +130,20 @@ The system response probability at each headwater level is computed as the produ
   equation="\text{SRP}(h) = P_{\text{flaw}} \times P_{\text{exit}}(h) \times P_{\text{init}}(h) \times P_{\text{roof}} \times P_{\text{prog}}(h) \times P_{\text{interv}} \times P_{\text{breach}}"
 />
 
-where $h$ denotes the headwater elevation. Node probabilities that vary with headwater are indicated by $(h)$; the remaining nodes are constant across all headwater levels.
+where:
 
-The SRP is subject to a minimum floor value of $10^{-16}$ for numerical stability. This floor represents an effective zero consistent with RMC-TotalRisk conventions for non-linear calculations. The floor is applied after the product is computed:
+> _h_ = headwater elevation. Node probabilities that vary with headwater are indicated by _(h)_; the remaining nodes are constant across all headwater
+> levels.
 
-<Equation
-  equationKey="bep-screening-eq-floor"
-  equation="\text{SRP}(h) = \max\left(\prod_{i=1}^{7} P_i(h),\; 10^{-16}\right)"
-/>
+The SRP is subject to a minimum floor value of $10^{-16}$ for numerical stability. This floor represents an effective zero for non-linear
+calculations. The floor is applied after the product is computed:
+
+<Equation equationKey="bep-screening-eq-floor" equation="\text{SRP}(h) = \max\left(\prod_{i=1}^{7} P_i(h),\; 10^{-16}\right)" />
 
 ## Governing SRP
 
-When both the toe and daylighting exit paths are evaluated (conditions 5 and 6), the governing SRP at each headwater level is the maximum of the two path SRPs:
+When both the toe and daylighting exit paths are evaluated (conditions 5 and 6), the governing SRP at each headwater level is the maximum of the two
+path SRPs:
 
 <Equation
   equationKey="bep-screening-eq-governing"

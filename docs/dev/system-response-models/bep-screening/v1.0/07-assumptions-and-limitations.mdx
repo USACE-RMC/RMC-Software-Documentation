@@ -2,26 +2,27 @@
 title: Assumptions and Limitations
 ---
 
+import Equation from '@site/src/components/Equation';
 import NavContainer from '@site/src/components/NavContainer';
-import TableVertical from '@site/src/components/TableVertical';
 import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
 
-<NavContainer
-  link="/dev"
-  linkTitle="Developer Resources"
-  document="dev/system-response-models/bep-screening"
-/>
+<NavContainer link="/dev" linkTitle="Developer Resources" document="dev/system-response-models/bep-screening" />
 
 # Assumptions and Limitations
 
-The BEP screening model applies several simplifying assumptions relative to the full toolbox models. These assumptions are deliberate design decisions for screening-level analysis &mdash; they reduce input requirements and generally produce conservative results to prevent false negatives. Each assumption is documented with its rationale, effect on results, and the conditions under which it may not hold.
+The BEP screening model applies several simplifying assumptions relative to the full toolbox models. These assumptions are deliberate design decisions
+for screening-level analysis &mdash; they reduce input requirements and generally produce conservative results to prevent false negatives. Each
+assumption is documented with its rationale, effect on results, and the conditions under which it may not hold.
 
 ## Screening Simplifications
 
 <TableVertical
-  tableKey="bep-screening-table-assumptions"
+  tableKey="table-18"
   alt="Model assumptions and their implications"
   caption="Screening model assumptions, rationale, and implications."
+  colWidths={[5, 16, 'minmax(16ch, 1fr)', 'minmax(16ch, 1fr)', 'minmax(16ch, 1fr)']}
+  colAlign={['center']}
   headers={[[{ value: '#' }, { value: 'Assumption' }, { value: 'Rationale' }, { value: 'Effect on Results' }, { value: 'When It May Not Hold' }]]}
   columns={[
     ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
@@ -35,7 +36,7 @@ The BEP screening model applies several simplifying assumptions relative to the 
       'Fixed Monte Carlo settings (1,000 iterations, seed 42)',
       'Default intervention and breach probabilities of 1.0',
       'Conditions 1 and 2 set P(exit) and P(initiation) to 1.0',
-      'Fines content defaults to 0.0%'
+      'Fines content defaults to 0.0%',
     ],
     [
       'For conditions without a daylighting exit (3 and 4), the BT Case 4 model is configured with UseFullHead = true and L3 = 0, applying the full net driving head at the downstream toe with no head reduction along the seepage path. This avoids requiring the user to specify a blanket length at the screening stage.',
@@ -47,7 +48,7 @@ The BEP screening model applies several simplifying assumptions relative to the 
       'Monte Carlo iterations are fixed at 1,000 with a seed of 42 and 50 headwater interpolation steps. The user cannot modify these settings in the screening model.',
       'P(unsuccessful intervention) and P(breach) both default to 1.0, which assumes no successful intervention and certain breach.',
       'When no confining layer is present, the model assumes that seepage exits unfiltered at the surface (P(exit) = 1.0) and that the exit gradient is sufficient to initiate piping (P(initiation) = 1.0). The only computed probabilities are progression, flaw, and roof support.',
-      'The sand fines content distribution defaults to Deterministic(0.0%), which produces a fines correction factor (C_FC) of 1.0. The fines step function applies C_FC = 1.4 only when fines exceed 5%.'
+      'The sand fines content distribution defaults to Deterministic(0.0%), which produces a fines correction factor (C_FC) of 1.0. The fines step function applies C_FC = 1.4 only when fines exceed 5%.',
     ],
     [
       'Can significantly overestimate uplift pressures at the toe, producing high probabilities of initiation (blowout). This is the most impactful screening assumption and can dominate the SRP at moderate headwater levels.',
@@ -59,7 +60,7 @@ The BEP screening model applies several simplifying assumptions relative to the 
       '1,000 iterations provides stable mean estimates for the screening purpose. Higher iteration counts would reduce sampling variability but are unnecessary for screening-level precision.',
       'This is conservative &mdash; it assumes the worst case for detection, response, and structural performance. The user may reduce these values if site-specific information supports a lower probability.',
       'This is conservative for sites where the foundation sand is overlain by a low-permeability layer that provides some confinement even without a formal blanket. However, at the screening level, the absence of a mapped confining layer is treated as unconfined conditions.',
-      'Setting fines to 0.0% is slightly non-conservative in the unusual case where significant fines content would increase the critical gradient via C_FC = 1.4. However, the user may override this distribution if fines data is available.'
+      'Setting fines to 0.0% is slightly non-conservative in the unusual case where significant fines content would increase the critical gradient via C_FC = 1.4. However, the user may override this distribution if fines data is available.',
     ],
     [
       'Sites where the actual downstream blanket is short relative to the structure width. In these cases, the finite blanket provides significant head reduction that the infinite blanket assumption ignores. This can lead to substantial overestimation of P(initiation).',
@@ -71,21 +72,32 @@ The BEP screening model applies several simplifying assumptions relative to the 
       'Applications requiring precise uncertainty quantification rather than screening-level estimates.',
       'Sites with well-documented monitoring, early warning systems, or pre-positioned emergency response capabilities.',
       'Sites where partial confinement or secondary geological features provide some resistance to seepage exit, even without a mapped confining layer.',
-      'Sites where the foundation sand has significant fines content (> 5%) that would increase the piping resistance.'
-    ]
+      'Sites where the foundation sand has significant fines content (> 5%) that would increase the piping resistance.',
+    ],
   ]}
 />
 
 ## Key Limitation: Infinite Blanket Assumption
 
-The infinite blanket assumption (assumption 1 in <TableReference tableKey="bep-screening-table-assumptions" />) is the most impactful screening simplification. When `UseFullHead = true`, the full net driving head ($H = \text{HW} - \text{TW}$) is applied directly at the downstream toe without any reduction for head loss along the seepage path. In reality, a finite blanket of length $L_3$ would reduce the excess head at the toe to:
+The infinite blanket assumption (assumption 1 in <TableReference tableKey="table-18" />) is the most impactful screening simplification. When
+`UseFullHead = true`, the full net driving head (_H_ = HW &minus; TW) is applied directly at the downstream toe without any reduction for head loss
+along the seepage path. In reality, a finite blanket of length $L_3$ would reduce the excess head at the toe to:
 
-$h_o = H \times \dfrac{L_3}{L_{\text{total}}}$
+<Equation equationKey="bep-screening-eq-ho-finite" equation="h_o = H \times \dfrac{L_3}{L_{\text{total}}}" />
 
-For a typical embankment with $L_3$ significantly smaller than $L_{\text{total}}$, this ratio can be well below 1.0, meaning the actual excess head at the toe is a fraction of the net driving head. The infinite blanket assumption eliminates this reduction entirely, resulting in uplift pressures that can be substantially higher than reality.
+For a typical embankment with $L_3$ significantly smaller than L<sub>total</sub>, this ratio can be well below 1.0, meaning the actual excess head at
+the toe is a fraction of the net driving head. The infinite blanket assumption eliminates this reduction entirely, resulting in uplift pressures that
+can be substantially higher than reality.
 
-This assumption is applied in conditions 3 and 4 (confining layer present, no daylighting exit) and can produce high probabilities of initiation (blowout or heave) even at moderate headwater levels. Engineers should be aware that screening results under these conditions may be significantly conservative and that a follow-up analysis with the full BEP toolbox models &mdash; where the actual blanket geometry can be specified &mdash; may produce materially different results.
+This assumption is applied in conditions 3 and 4 (confining layer present, no daylighting exit) and can produce high probabilities of initiation
+(blowout or heave) even at moderate headwater levels. Engineers should be aware that screening results under these conditions may be significantly
+conservative and that a follow-up analysis with the full BEP toolbox models
+([BEP Initiation](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation/v1.0/preface),
+[BEP Progression](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/preface)) &mdash; where the actual
+blanket geometry can be specified &mdash; may produce materially different results.
 
 ## Monte Carlo Reproducibility
 
-The screening model uses a fixed random number generator seed (`RngSeed = 42`) to ensure that identical inputs always produce identical outputs. This design choice supports regression testing and reproducible screening results. The seed is shared between the BT Case 4 and Schmertmann sub-models, meaning both sub-models draw from the same deterministic random sequence for a given run.
+The screening model uses a fixed random number generator seed (`RngSeed = 42`) to ensure that identical inputs always produce identical outputs. This
+design choice supports regression testing and reproducible screening results. The seed is shared between the BT Case 4 and Schmertmann sub-models,
+meaning both sub-models draw from the same deterministic random sequence for a given run.

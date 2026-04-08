@@ -2,32 +2,39 @@
 title: Condition Routing
 ---
 
-import NavContainer from '@site/src/components/NavContainer';
 import Equation from '@site/src/components/Equation';
 import EquationNoRef from '@site/src/components/EquationNoRef';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
 import TableVertical from '@site/src/components/TableVertical';
 import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
-import TableReference from '@site/src/components/TableReference';
 
-<NavContainer
-  link="/dev"
-  linkTitle="Developer Resources"
-  document="dev/system-response-models/bep-screening"
-/>
+<NavContainer link="/dev" linkTitle="Developer Resources" document="dev/system-response-models/bep-screening" />
 
 # Condition Routing
 
-The screening model determines one of six site conditions based on three Boolean observations. Each condition defines which sub-model calculations are performed and how the event tree nodes are populated for the toe and daylighting exit paths.
+The screening model determines one of six site conditions based on three Boolean observations. Each condition defines which sub-model calculations are
+performed and how the event tree nodes are populated for the toe and daylighting exit paths.
 
 ## Condition Determination
 
 Three Boolean flags fully determine the site condition. The `DetermineCondition` method in `BEPScreeningModel.cs` evaluates these flags in sequence.
 
 <TableVertical
-  tableKey="bep-screening-table-conditions"
+  tableKey="table-12"
   alt="Condition routing table"
   caption="Condition determination from three Boolean flags."
-  headers={[[{ value: 'Condition' }, { value: 'Confining Layer' }, { value: 'Daylighting Exit' }, { value: 'Boils Observed' }, { value: 'Physical Scenario' }]]}
+  colWidths={[11, 12, 12, 10, 'minmax(20ch, 1fr)']}
+  colAlign={['center', 'center', 'center', 'center']}
+  headers={[
+    [
+      { value: 'Condition' },
+      { value: 'Confining Layer' },
+      { value: 'Daylighting Exit' },
+      { value: 'Boils Observed' },
+      { value: 'Physical Scenario' },
+    ],
+  ]}
   columns={[
     ['1', '2', '3', '4', '5', '6'],
     ['No', 'No', 'Yes', 'Yes', 'Yes', 'Yes'],
@@ -39,34 +46,37 @@ Three Boolean flags fully determine the site condition. The `DetermineCondition`
       'Confining layer present, no daylighting exit, no boils. An impervious blanket covers the downstream side. The model evaluates blanket blowout at the toe using BT Case 4 with the infinite blanket assumption.',
       'Confining layer present, no daylighting exit, boils observed. The blanket has already been breached at the boil location. The model evaluates heave (exit gradient) at the boil location using BT Case 4.',
       'Confining layer present, daylighting exit, no boils. The blanket terminates at a known distance downstream. The model evaluates both toe (blowout) and daylight (unconfined exit) paths.',
-      'Confining layer present, daylighting exit, boils observed. The blanket terminates downstream and boils are active. The model evaluates both toe (heave at boil) and daylight (unconfined exit) paths.'
-    ]
+      'Confining layer present, daylighting exit, boils observed. The blanket terminates downstream and boils are active. The model evaluates both toe (heave at boil) and daylight (unconfined exit) paths.',
+    ],
   ]}
 />
 
-Conditions 1 and 2 produce identical SRP values because both set P(unfiltered exit) and P(initiation) to 1.0. The distinction between them exists for condition tracking and reporting purposes, but the event tree mathematics are equivalent.
+Conditions 1 and 2 produce identical SRP values because both set P(unfiltered exit) and P(initiation) to 1.0. The distinction between them exists for
+condition tracking and reporting purposes, but the event tree mathematics are equivalent.
 
 ## Toe Path Node Assignment
 
 The toe path is always evaluated. The assignment of P(unfiltered exit) and P(initiation) for the toe path depends on the condition.
 
 <TableVertical
-  tableKey="bep-screening-table-toe-nodes"
+  tableKey="table-13"
   alt="Toe path node assignment by condition"
   caption="Toe path node assignment by condition."
+  colWidths={[11, 18, 18, 'minmax(20ch, 1fr)']}
+  colAlign={['center', 'center', 'center']}
   headers={[[{ value: 'Condition' }, { value: 'P(Unfiltered Exit) Source' }, { value: 'P(Initiation) Source' }, { value: 'Rationale' }]]}
   columns={[
     ['1', '2', '3', '4', '5', '6'],
-    ['1.0', '1.0', 'BTCase4 ToePInit', '1.0', 'BTCase4 ToePInit', '1.0'],
-    ['1.0', '1.0', '1.0', 'BTCase4 XPInit + trigger', '1.0', 'BTCase4 XPInit + trigger'],
+    ['1.0', '1.0', 'BTCase4 Toe<sub>P<sub>Init</sub></sub>', '1.0', 'BTCase4 Toe<sub>P<sub>Init</sub></sub>', '1.0'],
+    ['1.0', '1.0', '1.0', 'BTCase4 X<sub>P<sub>Init</sub></sub> + trigger', '1.0', 'BTCase4 X<sub>P<sub>Init</sub></sub> + trigger'],
     [
       'No confining layer; seepage exits freely.',
       'No confining layer; seepage exits freely.',
       'Blowout: BTCase4 computes probability of blanket rupture at toe. Initiation is assumed once blanket is breached.',
       'Heave: boils confirm unfiltered exit already exists. BTCase4 computes exit gradient at boil location; trigger elevation forces P(initiation) to 1.0 above the observed activation pool level.',
       'Sub-condition 5a: blowout at toe, same as condition 3.',
-      'Sub-condition 6a: heave at boil location, same as condition 4.'
-    ]
+      'Sub-condition 6a: heave at boil location, same as condition 4.',
+    ],
   ]}
 />
 
@@ -74,18 +84,26 @@ The toe path is always evaluated. The assignment of P(unfiltered exit) and P(ini
 
 For heave conditions (4 and 6), the `ApplyHeaveWithTrigger` method applies a headwater-dependent override to the initiation probability:
 
-<EquationNoRef equation="P_{\text{init}}(h) = \begin{cases} 1.0 & \text{if } h \geq h_{\text{trigger}} \\ P_{\text{BTCase4}}(h) & \text{if } h < h_{\text{trigger}} \end{cases}" />
+<Equation
+  equationKey="bep-screening-eq-trigger"
+  equation="P_{\text{init}}(h) = \begin{cases} 1.0 & \text{if } h \geq h_{\text{trigger}} \\ P_{\text{BTCase4}}(h) & \text{if } h < h_{\text{trigger}} \end{cases}"
+/>
 
-where $h_{\text{trigger}}$ is the trigger elevation (`TriggerElevationFt`). This reflects the engineering judgment that boils have been historically observed at or above this pool elevation, making initiation certain at those levels.
+where:
+
+> _h<sub>trigger</sub>_ = trigger elevation (`TriggerElevationFt`). This reflects the engineering judgment that boils have been historically observed
+> at or above this pool elevation, making initiation certain at those levels.
 
 ## Daylighting Exit Path Node Assignment
 
 The daylighting exit path is only evaluated for conditions 5 and 6, where the confining blanket terminates at a known distance downstream.
 
 <TableVertical
-  tableKey="bep-screening-table-daylight-nodes"
+  tableKey="table-14"
   alt="Daylighting exit path node assignment"
   caption="Daylighting exit path node assignment by condition."
+  colWidths={[11, 14, 14, 'minmax(20ch, 1fr)']}
+  colAlign={['center', 'center', 'center']}
   headers={[[{ value: 'Condition' }, { value: 'P(Unfiltered Exit)' }, { value: 'P(Initiation)' }, { value: 'Rationale' }]]}
   columns={[
     ['5', '6'],
@@ -93,12 +111,13 @@ The daylighting exit path is only evaluated for conditions 5 and 6, where the co
     ['1.0', '1.0'],
     [
       'Sub-condition 5b: at the daylighting exit, there is no confining blanket. Seepage exits unfiltered and initiation is assumed.',
-      'Sub-condition 6b: at the daylighting exit, there is no confining blanket. Seepage exits unfiltered and initiation is assumed.'
-    ]
+      'Sub-condition 6b: at the daylighting exit, there is no confining blanket. Seepage exits unfiltered and initiation is assumed.',
+    ],
   ]}
 />
 
-For the daylighting exit path, both P(unfiltered exit) and P(initiation) are set to 1.0 because the blanket has terminated &mdash; there is no confining layer at the daylighting exit point to prevent seepage from reaching the surface or to resist piping initiation.
+For the daylighting exit path, both P(unfiltered exit) and P(initiation) are set to 1.0 because the blanket has terminated &mdash; there is no
+confining layer at the daylighting exit point to prevent seepage from reaching the surface or to resist piping initiation.
 
 ## Geometry Computations
 
@@ -108,38 +127,35 @@ The condition determines how geometric parameters are computed for the sub-model
 
 The model computes seepage path lengths for the Schmertmann progression model based on the exit path:
 
-<EquationNoRef equation="L_{\text{toe}} = L_2 = \text{EmbankmentBaseWidth} + \text{BermLength}" />
+<Equation equationKey="bep-screening-eq-ltoe" equation="L_{\text{toe}} = L_2 = \text{EmbankmentBaseWidth} + \text{BermLength}" />
 
-<EquationNoRef equation="L_{\text{daylight}} = L_2 + \text{DaylightingExitDistanceFt}" />
+<Equation equationKey="bep-screening-eq-ldaylight" equation="L_{\text{daylight}} = L_2 + \text{DaylightingExitDistanceFt}" />
 
-A longer seepage path results in a lower applied gradient ($i_{\text{adv}} = \Delta H / L$), which generally produces a lower probability of progression. The daylight path has a longer seepage path than the toe path, so the daylight progression probability is typically less than or equal to the toe progression probability.
+A longer seepage path results in a lower applied gradient ($i_{adv} = \Delta H / L$), which generally produces a lower probability of progression. The
+daylight path has a longer seepage path than the toe path, so the daylight progression probability is typically less than or equal to the toe
+progression probability.
 
 ### BT Case 4 Geometry
 
 The BT Case 4 model is configured differently depending on the condition:
 
 <TableVertical
-  tableKey="bep-screening-table-btcase4-geometry"
+  tableKey="table-15"
   alt="BT Case 4 geometry configuration by condition"
   caption="BT Case 4 geometry configuration by condition."
-  headers={[[{ value: 'Parameter' }, { value: 'Conditions 1/2 (dummy)' }, { value: 'Conditions 3/5 (blowout)' }, { value: 'Conditions 4/6 (heave)' }]]}
+  headers={[
+    [{ value: 'Parameter' }, { value: 'Conditions 1/2 (dummy)' }, { value: 'Conditions 3/5 (blowout)' }, { value: 'Conditions 4/6 (heave)' }],
+  ]}
   columns={[
     ['L2', 'L3 (blanket length)', 'UseFullHead', 'XDistance', 'Gamma Sat Source', 'Output Used'],
-    [
-      'EmbankmentBaseWidth + BermLength',
-      '0',
-      'true',
-      '0',
-      'Confining layer gamma_sat',
-      'HW/TW arrays only'
-    ],
+    ['EmbankmentBaseWidth + BermLength', '0', 'true', '0', 'Confining layer gamma_sat', 'HW/TW arrays only'],
     [
       'EmbankmentBaseWidth + BermLength',
       '0 (no daylight) or DaylightingExitDistanceFt',
       'true (no daylight) or false (daylight)',
       '0',
       'Confining layer gamma_sat',
-      'ToePInit → P(unfiltered exit)'
+      'ToePInit → P(unfiltered exit)',
     ],
     [
       'EmbankmentBaseWidth + BermLength',
@@ -147,11 +163,14 @@ The BT Case 4 model is configured differently depending on the condition:
       'true (no daylight) or false (daylight)',
       'BoilDistanceFt',
       'Foundation sand gamma_sat',
-      'XPInit → P(initiation)'
-    ]
+      'XPInit → P(initiation)',
+    ],
   ]}
 />
 
-For conditions 1 and 2 (no confining layer), a "dummy" BT Case 4 run is executed solely to obtain the expanded headwater and tailwater arrays. The initiation and gradient results from this run are not used.
+For conditions 1 and 2 (no confining layer), a "dummy" BT Case 4 run is executed solely to obtain the expanded headwater and tailwater arrays. The
+initiation and gradient results from this run are not used.
 
-For blowout conditions (3 and 5), the confining layer's saturated unit weight is used because the critical gradient represents the blanket rupture threshold. For heave conditions (4 and 6), the foundation sand's saturated unit weight is used because the critical gradient represents the sand's resistance to heave at the boil location.
+For blowout conditions (3 and 5), the confining layer's saturated unit weight is used because the critical gradient represents the blanket rupture
+threshold. For heave conditions (4 and 6), the foundation sand's saturated unit weight is used because the critical gradient represents the sand's
+resistance to heave at the boil location.

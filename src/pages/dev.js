@@ -10,6 +10,7 @@ import GitHubIcon from '../components/icons/GitHubIcon';
 import PythonIcon from '../components/icons/PythonIcon';
 import SparkleIcon from '../components/icons/SparkleIcon';
 import StyleGuideIcon from '../components/icons/StyleGuideIcon';
+import AtomIcon from '../components/icons/AtomIcon';
 import WebAppIcon from '../components/icons/WebAppIcon';
 import '../css/custom.css';
 
@@ -24,6 +25,7 @@ export default function Dev() {
   }, []);
 
   const dstVersion = latestVersions['dev/dst/database-schema'] || 'v1.0';
+  const bepScreeningVersion = latestVersions['dev/system-response-models/bep-screening'] || 'v1.0';
 
   const devData = [
     {
@@ -75,6 +77,19 @@ export default function Dev() {
           title: 'Web Application Architecture',
           description: 'Architecture overview for RMC web applications',
           href: addBaseUrl('docs/dev/architecture/web-app-architecture'),
+          active: true,
+        },
+      ],
+    },
+    {
+      IconComponent: AtomIcon,
+      doc_name: 'System Response Models',
+      contentCardData: [
+        {
+          IconComponent: AtomIcon,
+          title: 'BEP Screening Model',
+          description: 'Technical reference for the Backward Erosion Piping screening-level system response model',
+          href: addBaseUrl(`docs/dev/system-response-models/bep-screening/${bepScreeningVersion}/preface`),
           active: true,
         },
       ],
