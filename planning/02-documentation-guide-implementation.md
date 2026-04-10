@@ -82,7 +82,7 @@ This chapter and the six that follow describe the review and approval process fo
 
 Every change falls into one of four lanes based on its scope:
 
-**Lane 1: New document.** Peer review → Lead Civil review → Technical edit → Director approval. The document is deployed to the live site (watermarked) after Lead Civil approval so the technical edit and Director review happen at the document's final URL.
+**Lane 1: New document.** Peer review → Lead Civil review → Technical edit → Director approval. The peer review, Lead Civil review, and technical edit all happen against the preview URL or the source files. Only after the technical edit completes does the site admin deploy the document to the live site (watermarked) for Director review at the document's final URL.
 
 **Lane 2: Major revision.** Peer review → Lead Civil review. Entire review happens on the preview site. Site admin deploys the final version after Lead Civil approval.
 
@@ -92,7 +92,7 @@ Every change falls into one of four lanes based on its scope:
 
 ## The draft watermark
 
-Documents flagged as drafts display a large diagonal "DRAFT" watermark. For Lane 1, the watermark appears on the live site during the technical edit and Director review phases, signaling to any reader that the content is not yet authoritative. The watermark is removed when the site admin flips the draft flag after Director approval.
+Documents flagged as drafts display a large diagonal "DRAFT" watermark. For Lane 1, the watermark appears on the live site during the Director review phase only — the document is not deployed to the live site until the technical edit is complete. The watermark signals to any reader who happens to find the live URL that the content is not yet authoritative. The watermark is removed when the site admin flips the draft flag after Director approval.
 
 For Lanes 2 and 3, the document under revision only exists on the preview site during review. The currently-published version on the live site is never watermarked.
 
@@ -141,7 +141,7 @@ If a document revision was accidentally pushed to a branch that doesn't start wi
 
 **Required reviews.** Peer review → RMC Lead Civil review → Technical edit (AI-assisted) → Director approval.
 
-**What happens.** The document is first visible only on the unadvertised PR preview URL, where peer review and Lead Civil review happen. After Lead Civil approval, the site admin deploys the PR branch to the live production site with the DRAFT watermark. The technical edit and Director review both happen on the live URL. After Director approval, the site admin flips the draft flag, merges the PR, and deploys the final version — removing the watermark.
+**What happens.** The document is first visible only on the unadvertised PR preview URL, where peer review, Lead Civil review, and the technical edit all happen (the technical edit reads the source MDX directly via `/technical-edit` and posts inline comments — it does not need a deployed version). Only after the author marks the technical edit complete does the site admin deploy the PR branch to the live production site with the DRAFT watermark. The Director then reviews on the live URL. After Director approval, the site admin flips the draft flag, merges the PR, and deploys the final version — removing the watermark.
 
 **Example branches:** `docs/new/totalrisk-applications-guide`, `docs/new/lifesim-validation-oroville`
 
@@ -229,7 +229,7 @@ For suggested changes (pre-filled code blocks), you can click "Commit suggestion
 
 ## The technical edit (Lane 1)
 
-After Lead Civil approval and the checkpoint deploy, the technical edit stage begins. A team member runs the `/technical-edit` Claude Code skill, which posts inline review comments on the PR. These comments cover grammar, tense, clarity, terminology, and Section 508 compliance.
+After Lead Civil approval, the technical edit stage begins. A team member runs the `/technical-edit` Claude Code skill, which reads the source MDX files directly and posts inline review comments on the PR. These comments cover grammar, tense, clarity, terminology, and Section 508 compliance. **The document is not yet deployed to the live site at this stage** — the technical edit works on source files, so the live deploy is deferred until the technical edit is complete.
 
 Address each comment the same way you address human reviewer comments — push fixes, reply, and the site admin or you can resolve threads as they're addressed.
 
@@ -241,7 +241,7 @@ Checking this box is what advances the document to Director review. Don't check 
 
 ## Where reviewers read your document
 
-For Lane 1: peer review and Lead Civil review happen on the **preview URL**. After Lead Civil approval, the site admin deploys the document to the **live production site** (watermarked). The technical edit and Director review happen at the live URL. If you push revisions during these phases, the site admin re-deploys so the live URL stays current.
+For Lane 1: peer review and Lead Civil review happen on the **preview URL**. The technical edit reads the source MDX directly via `/technical-edit` and posts inline comments on the PR — no deploy is involved. Only after you mark the technical edit complete does the site admin deploy the document to the **live production site** (watermarked) for **Director review**. If you push revisions during Director review, the site admin re-deploys so the live URL stays current.
 
 For Lanes 2, 3, and 4: all review happens on the preview URL only.
 
@@ -331,7 +331,7 @@ The technical edit is an AI-assisted editorial review that checks the document f
 
 ## When it happens
 
-The technical edit occurs after the RMC Lead Civil approves a Lane 1 PR and after the site admin has deployed the document to the live site (watermarked). At this point, the document has already been reviewed for technical accuracy by the peer reviewer and for technical quality by the Lead Civil. The technical edit focuses exclusively on editorial quality and accessibility compliance.
+The technical edit occurs after the RMC Lead Civil approves a Lane 1 PR. At this point, the document has already been reviewed for technical accuracy by the peer reviewer and for technical quality by the Lead Civil. The technical edit focuses exclusively on editorial quality and accessibility compliance, and reads the source MDX files directly — **no live deploy is needed at this stage**. The document is only deployed to the live site after the technical edit is complete, and that deploy is for the Director review phase.
 
 ## How it works
 
@@ -366,7 +366,7 @@ The review prompt is a versioned file in the repository at `.github/ai-review/te
 
 ## Fallback to a human editor
 
-A site admin can route any document to a human technical editor instead of (or in addition to) the AI review. The human editor follows the same workflow as peer reviewers and Lead Civils: they're assigned to the PR, review the document (on the live URL for Lane 1), post comments, and submit their review. The author addresses comments the same way. The only difference is that advancement to Director review requires the human editor to click Approve rather than the author checking the checkbox.
+A site admin can route any document to a human technical editor instead of (or in addition to) the AI review. The human editor follows the same workflow as peer reviewers and Lead Civils: they're assigned to the PR, review the document on the **preview URL** (the technical edit happens before any live deploy), post comments, and submit their review. The author addresses comments the same way. The only difference is that advancement to Director review requires the human editor to click Approve rather than the author checking the checkbox.
 
 ## Who can run the skill
 
@@ -467,7 +467,7 @@ For Lane 1, you assign up to three people across the lifecycle: the peer reviewe
 
 ## Running a checkpoint deploy (Lane 1)
 
-After Lead Civil approval, deploy the PR branch to the live site (watermarked):
+After the author marks the technical edit complete (the PR advances to `stage:director-review`), deploy the PR branch to the live site (watermarked) for the Director's review:
 
 1. Repo → **Actions** tab → click **Deploy to GitHub Pages** in the sidebar
 2. Click **Run workflow** dropdown (upper right)
@@ -475,15 +475,17 @@ After Lead Civil approval, deploy the PR branch to the live site (watermarked):
 4. Click **Run workflow**
 5. When the build completes, click **Review deployments** → check `production` → **Approve and deploy**
 6. Verify the document on the live URL with the watermark
-7. Post a comment on the PR with the live URL so the technical editor and Director know where to read
+7. Post a comment on the PR with the live URL so the Director knows where to read
 
-Re-deploy whenever the author pushes revisions during the technical edit or Director review. Post a comment noting the update.
+This is the **first** time the document appears on the live site. The peer review, Lead Civil review, and technical edit all happened earlier on the preview URL or against source files; the live deploy is deferred until the document has passed editorial review.
+
+Re-deploy whenever the author pushes revisions during Director review. Post a comment noting the update.
 
 ## Running the technical edit
 
-After the checkpoint deploy, run `/technical-edit` from Claude Code while on the PR branch. If you don't have Claude Code access, coordinate with a team member who does.
+After Lead Civil approval (the PR advances to `stage:ai-editor-review`), run `/technical-edit` from Claude Code while on the PR branch. If you don't have Claude Code access, coordinate with a team member who does. **No deploy is required at this stage** — the technical edit reads the source MDX directly.
 
-The AI posts inline review comments. The author addresses them and checks the PR description checkbox to advance.
+The AI posts inline review comments. The author addresses them and checks the PR description checkbox to advance the PR to Director review, at which point you'll run the checkpoint deploy.
 
 ## Preparing the final merge
 
@@ -504,7 +506,7 @@ Lane 4: no version history update needed.
 
 Every deploy pauses at the production environment gate. You receive an email. Navigate to Actions → the workflow run → Review deployments → check `production` → Approve and deploy.
 
-A Lane 1 document may involve multiple deploys: one checkpoint after Lead Civil approval, re-deploys during technical edit/Director review, and one final deploy after merge.
+A Lane 1 document may involve multiple deploys: one checkpoint after the technical edit completes (for Director review), optional re-deploys during Director review if the author pushes fixes, and one final deploy after merge.
 
 ## Handling Lane 4 PRs
 
