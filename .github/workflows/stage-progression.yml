@@ -1,0 +1,144 @@
+name: Stage Progression
+
+on:
+  pull_request:
+    types: [opened, reopened, labeled, edited]
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+jobs:
+  progress:
+    name: Manage review stage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run stage progression logic
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            if (!pr) return;
+
+            const prNumber = pr.number;
+            const branch = pr.head.ref;
+            const labels = pr.labels.map(l => l.name);
+
+            const LANE_LABELS = ['lane:new-doc', 'lane:major-revision', 'lane:minor-revision', 'lane:editorial-fix'];
+            const STAGE_LABELS = ['stage:needs-lane', 'stage:peer-review', 'stage:lead-civil-review', 'stage:ai-editor-review', 'stage:director-review', 'stage:ready-to-merge'];
+
+            function detectLane(b) {
+              if (b.startsWith('docs/new/')) return 'lane:new-doc';
+              if (b.startsWith('docs/major/')) return 'lane:major-revision';
+              if (b.startsWith('docs/minor/')) return 'lane:minor-revision';
+              if (b.startsWith('docs/fix/')) return 'lane:editorial-fix';
+              return null;
+            }
+
+            async function addLabels(ls) { if (ls.length) await github.rest.issues.addLabels({ owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber, labels: ls }); }
+            async function removeLabel(l) { try { await github.rest.issues.removeLabel({ owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber, name: l }); } catch(e) {} }
+            async function postComment(body) { await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber, body }); }
+
+            const existingLane = labels.find(l => LANE_LABELS.includes(l));
+            const existingStage = labels.find(l => STAGE_LABELS.includes(l));
+
+            // ── PR opened/reopened ──
+            if (context.eventName === 'pull_request' && ['opened', 'reopened'].includes(context.payload.action)) {
+              // Only auto-process branches under docs/. Non-doc PRs (infrastructure,
+              // tooling, etc.) are silently ignored on open. An admin can still opt
+              // any PR into the review process by manually applying a lane:* label,
+              // which is handled by the labeled-event branch below.
+              if (!branch.startsWith('docs/')) return;
+              const lane = existingLane || detectLane(branch);
+              if (!lane) {
+                await addLabels(['stage:needs-lane']);
+                await postComment(`⚠️ **Could not determine review lane**\n\nBranch \`${branch}\` starts with \`docs/\` but does not match an expected sub-prefix (\`docs/new/\`, \`docs/major/\`, \`docs/minor/\`, \`docs/fix/\`).\n\n@usace-rmc/docs-admin please apply the correct \`lane:*\` label.`);
+                return;
+              }
+              const toAdd = [lane];
+              let comment;
+              if (lane === 'lane:editorial-fix') {
+                toAdd.push('stage:ready-to-merge');
+                comment = `📋 **Lane: Editorial Fix**\n\nNo formal review required.\n\n@usace-rmc/docs-admin please review, merge, and approve the deploy.`;
+              } else {
+                toAdd.push('stage:peer-review');
+                const laneName = lane.replace('lane:', '').replace(/-/g, ' ');
+                const scope = lane === 'lane:new-doc' ? 'Peer → Lead Civil → Technical Edit → Director' : lane === 'lane:major-revision' ? 'Peer → Lead Civil' : 'Peer review only';
+                comment = `📋 **Lane: ${laneName}**\n\nReview scope: ${scope}.\n\nCurrently in **peer review**. If no peer reviewer has been assigned, @usace-rmc/docs-admin please assign one via the Reviewers sidebar.`;
+              }
+              await addLabels(toAdd);
+              await postComment(comment);
+              return;
+            }
+
+            // ── Label manually applied ──
+            if (context.eventName === 'pull_request' && context.payload.action === 'labeled') {
+              const added = context.payload.label.name;
+              if (LANE_LABELS.includes(added) && (!existingStage || existingStage === 'stage:needs-lane')) {
+                await removeLabel('stage:needs-lane');
+                if (added === 'lane:editorial-fix') {
+                  await addLabels(['stage:ready-to-merge']);
+                  await postComment(`📋 Lane set to **editorial fix**.\n\n@usace-rmc/docs-admin please review and merge.`);
+                } else {
+                  await addLabels(['stage:peer-review']);
+                  await postComment(`📋 Lane set to **${added.replace('lane:', '').replace(/-/g, ' ')}**. Moving to peer review.\n\n@usace-rmc/docs-admin please assign the peer reviewer.`);
+                }
+              }
+              return;
+            }
+
+            // ── PR description edited (check for technical edit checkbox) ──
+            if (context.eventName === 'pull_request' && context.payload.action === 'edited') {
+              if (existingStage === 'stage:ai-editor-review' && existingLane === 'lane:new-doc') {
+                const body = pr.body || '';
+                const checkboxChecked = body.includes('[x] Technical edit comments addressed');
+                if (checkboxChecked) {
+                  await removeLabel('stage:ai-editor-review');
+                  await addLabels(['stage:director-review']);
+                  await postComment(`✅ **Technical edit marked complete** by the author.\n\nAdvancing to **Director review**.\n\n@usace-rmc/docs-admin please:\n1. If revisions were pushed during the technical edit, trigger a fresh checkpoint deploy of this branch\n2. Assign a member of @usace-rmc/docs-director via the Reviewers sidebar\n\nThe Director will review at the live URL.`);
+                }
+              }
+              return;
+            }
+
+            // ── Review approved ──
+            if (context.eventName === 'pull_request_review' && context.payload.review.state === 'approved') {
+              if (!existingLane || !existingStage) return;
+              const reviewer = context.payload.review.user.login;
+              let nextStage = null, comment = null;
+
+              if (existingLane === 'lane:new-doc') {
+                if (existingStage === 'stage:peer-review') {
+                  nextStage = 'stage:lead-civil-review';
+                  comment = `✅ **Peer review approved** by @${reviewer}.\n\nAdvancing to **RMC Lead Civil review**.\n\n@usace-rmc/docs-admin please assign the appropriate Lead Civil via the Reviewers sidebar. The Lead Civil reviews on the preview URL.`;
+                } else if (existingStage === 'stage:lead-civil-review') {
+                  nextStage = 'stage:ai-editor-review';
+                  comment = `✅ **Lead Civil review approved** by @${reviewer}.\n\nThe document is ready to be **deployed to the live site** (watermarked) for the technical edit and Director review phases.\n\n@usace-rmc/docs-admin next steps:\n1. Trigger a checkpoint deploy of branch \`${branch}\` via Actions → Deploy to GitHub Pages → Run workflow\n2. Approve the deploy at the production environment gate\n3. Post the live URL in a comment on this PR\n4. Run the \`/technical-edit\` Claude Code skill against this PR (or assign a human technical editor)\n\nAfter the author addresses the technical edit comments and checks the completion checkbox, the document will advance to Director review.`;
+                } else if (existingStage === 'stage:director-review') {
+                  nextStage = 'stage:ready-to-merge';
+                  comment = `✅ **Director review approved** by @${reviewer}.\n\nThis PR is **ready for final merge and publication**.\n\n@usace-rmc/docs-admin next steps:\n1. Check out this branch (locally or via github.dev)\n2. Flip the document's \`draft\` flag to \`false\`\n3. Update \`00-version-history.mdx\` with reviewer and approver names\n4. Commit and push\n5. Merge this PR to \`main\`\n6. Approve the final production deploy in the Actions tab`;
+                }
+              } else if (existingLane === 'lane:major-revision') {
+                if (existingStage === 'stage:peer-review') {
+                  nextStage = 'stage:lead-civil-review';
+                  comment = `✅ **Peer review approved** by @${reviewer}.\n\nAdvancing to **RMC Lead Civil review**.\n\n@usace-rmc/docs-admin please assign the appropriate Lead Civil via the Reviewers sidebar.`;
+                } else if (existingStage === 'stage:lead-civil-review') {
+                  nextStage = 'stage:ready-to-merge';
+                  comment = `✅ **Lead Civil review approved** by @${reviewer}.\n\nThis PR is **ready for final merge**.\n\n@usace-rmc/docs-admin next steps:\n1. Check out this branch\n2. Flip the document's \`draft\` flag to \`false\`\n3. Update \`00-version-history.mdx\`\n4. Commit and push\n5. Merge to \`main\`\n6. Approve the production deploy`;
+                }
+              } else if (existingLane === 'lane:minor-revision') {
+                if (existingStage === 'stage:peer-review') {
+                  nextStage = 'stage:ready-to-merge';
+                  comment = `✅ **Peer review approved** by @${reviewer}.\n\nThis PR is **ready for final merge**.\n\n@usace-rmc/docs-admin next steps:\n1. Check out this branch\n2. Flip the document's \`draft\` flag to \`false\`\n3. Update \`00-version-history.mdx\`\n4. Commit and push\n5. Merge to \`main\`\n6. Approve the production deploy`;
+                }
+              }
+
+              if (nextStage) {
+                await removeLabel(existingStage);
+                await addLabels([nextStage]);
+                await postComment(comment);
+              }
+            }
