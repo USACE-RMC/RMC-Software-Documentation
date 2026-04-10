@@ -47,8 +47,8 @@ export default {
   title: 'RMC Software Documentation',
   tagline: 'Documentation for RMC Software Packages',
   onBrokenAnchors: 'warn',
-  url: 'https://USACE-RMC.github.io', // Replace with your site's URL
-  baseUrl: '/RMC-Software-Documentation/',
+  url: process.env.DOCUSAURUS_URL || 'https://USACE-RMC.github.io',
+  baseUrl: process.env.DOCUSAURUS_BASE_URL || '/RMC-Software-Documentation/',
   favicon: 'img/USACE.png',
   organizationName: 'USACE-RMC', // Your GitHub organization or username
   projectName: 'RMC-Software-Documentation', // Your project name, make sure this matches your GitHub repo name

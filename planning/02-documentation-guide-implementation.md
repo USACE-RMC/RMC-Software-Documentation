@@ -129,7 +129,11 @@ Every change follows one of four review lanes, determined by the branch name pre
 | `docs/minor/` | Minor revision |
 | `docs/fix/` | Editorial fix |
 
-If the branch name doesn't match, the workflow applies `stage:needs-lane` and tags the site admin to assign manually.
+**The branch prefix is what tells the workflow that a PR is part of the review process.** Pull requests from branches that don't start with `docs/` are ignored by the review workflow entirely — no labels, no bot comments, no required reviews. This is intentional: infrastructure changes, tooling updates, dependency bumps, and other non-document work should not be routed through the document review process.
+
+If a branch starts with `docs/` but doesn't match one of the four sub-prefixes above (for example, a typo like `docs/newfoo/` or an old-style name like `docs/update`), the workflow applies `stage:needs-lane` and tags a site admin to assign the correct lane manually.
+
+If a document revision was accidentally pushed to a branch that doesn't start with `docs/`, a site admin can pull it into the review process by manually applying a `lane:*` label to the PR. The workflow treats a manually-applied lane label as the start signal and proceeds normally from there.
 
 ## Lane 1: New document
 
@@ -453,7 +457,7 @@ Responsibilities and procedures for site administrators.
 
 ## Daily routine
 
-Check for PRs needing your attention. The stage progression workflow tags `@usace-rmc/docs-maintainers` at every transition. Filter: `is:open label:"stage:ready-to-merge"` or `is:open review-requested:@me`.
+Check for PRs needing your attention. The stage progression workflow tags `@usace-rmc/docs-admin` at every transition. Filter: `is:open label:"stage:ready-to-merge"` or `is:open review-requested:@me`.
 
 ## Assigning reviewers
 
@@ -514,7 +518,11 @@ Lane 4 PRs skip formal review. You are the reviewer, approver, and merger:
 
 **Wrong lane:** Remove the current `lane:*` label, apply the correct one. The workflow re-initializes.
 
-**Branch name doesn't match:** The workflow applies `stage:needs-lane` and tags you. Apply the correct `lane:*` label.
+**Branch starts with `docs/` but doesn't match a sub-prefix:** The workflow applies `stage:needs-lane` and tags you. Apply the correct `lane:*` label.
+
+**Document revision pushed to a non-`docs/` branch:** The workflow ignored the PR at open time because the branch prefix didn't match. Apply the correct `lane:*` label manually — the workflow will detect the label event and start the review process. Optionally ask the author to rename the branch for next time.
+
+**Non-document PR getting bot noise:** Should not happen under the current configuration — only branches starting with `docs/` are auto-processed. If you see this, check the workflow trigger and the script's branch-prefix guard.
 
 **Unresponsive reviewer:** Ping them on the PR, or reassign.
 

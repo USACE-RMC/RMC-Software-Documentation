@@ -29,6 +29,8 @@ This document describes every structural change to the `usace-rmc/rmc-software-d
 - The deploy workflow supports deploying from arbitrary branches (not just `main`) for Lane 1 checkpoint deploys.
 - `main` does not always equal what's on the live site during Lane 1 reviews.
 - The AI technical edit stage advances when the author checks a task list checkbox in the PR description, not when a reviewer clicks approve.
+- The stage progression workflow only auto-processes PRs whose branch name starts with `docs/`. PRs from any other branch (infrastructure, tooling, dependency bumps, etc.) are silently ignored — no labels, no comments, no review-process noise. A site admin can still pull any PR into the review process by manually applying a `lane:*` label, which is the escape hatch for mis-named branches or one-off cases.
+- The PR preview workflow (`pr-preview.yml`) uses a broader path-based trigger and will build a preview for any PR that touches doc-relevant files, regardless of branch prefix. This is intentional: previews are useful for verifying non-doc changes (e.g., a config tweak) even when no formal review is required.
 
 ## Scope
 
@@ -111,19 +113,19 @@ Replace the `url` and `baseUrl` lines:
 ### 3.1 `.github/CODEOWNERS`
 
 ```
-/.github/                        @usace-rmc/docs-maintainers
-/docusaurus.config.js            @usace-rmc/docs-maintainers
-/tailwind.config.js              @usace-rmc/docs-maintainers
-/package.json                    @usace-rmc/docs-maintainers
-/package-lock.json               @usace-rmc/docs-maintainers
-/scripts/                        @usace-rmc/docs-maintainers
-/src/theme/                      @usace-rmc/docs-maintainers
-/src/pages/                      @usace-rmc/docs-maintainers
-/src/components/                 @usace-rmc/docs-maintainers
-/src/contexts/                   @usace-rmc/docs-maintainers
-/src/clientModules/              @usace-rmc/docs-maintainers
-/src/css/                        @usace-rmc/docs-maintainers
-/src/draftDocs.js                @usace-rmc/docs-maintainers
+/.github/                        @usace-rmc/docs-admin
+/docusaurus.config.js            @usace-rmc/docs-admin
+/tailwind.config.js              @usace-rmc/docs-admin
+/package.json                    @usace-rmc/docs-admin
+/package-lock.json               @usace-rmc/docs-admin
+/scripts/                        @usace-rmc/docs-admin
+/src/theme/                      @usace-rmc/docs-admin
+/src/pages/                      @usace-rmc/docs-admin
+/src/components/                 @usace-rmc/docs-admin
+/src/contexts/                   @usace-rmc/docs-admin
+/src/clientModules/              @usace-rmc/docs-admin
+/src/css/                        @usace-rmc/docs-admin
+/src/draftDocs.js                @usace-rmc/docs-admin
 ```
 
 ### 3.2 `.github/pull_request_template.md`
@@ -248,12 +250,12 @@ jobs:
       - name: Build site with PR-specific baseUrl
         env:
           DOCUSAURUS_URL: https://usace-rmc.github.io
-          DOCUSAURUS_BASE_URL: /rmc-software-doc-previews/pr-${{ github.event.pull_request.number }}/
+          DOCUSAURUS_BASE_URL: /RMC-Software-Documentation-Previews/pr-${{ github.event.pull_request.number }}/
         run: npm run build
       - uses: peaceiris/actions-gh-pages@v4
         with:
           deploy_key: ${{ secrets.PREVIEW_DEPLOY_KEY }}
-          external_repository: usace-rmc/rmc-software-doc-previews
+          external_repository: usace-rmc/RMC-Software-Documentation-Previews
           publish_branch: gh-pages
           publish_dir: ./build
           destination_dir: pr-${{ github.event.pull_request.number }}
@@ -266,7 +268,7 @@ jobs:
         with:
           script: |
             const prNumber = context.issue.number;
-            const url = `https://usace-rmc.github.io/rmc-software-doc-previews/pr-${prNumber}/`;
+            const url = `https://usace-rmc.github.io/RMC-Software-Documentation-Previews/pr-${prNumber}/`;
             const marker = '<!-- pr-preview-bot-comment -->';
             const body = `${marker}\n\n📄 **Preview deployed**\n\n${url}\n\n_This preview updates automatically when new commits are pushed. Deleted when the PR closes._`;
             const comments = await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber });
@@ -297,7 +299,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: usace-rmc/rmc-software-doc-previews
+          repository: usace-rmc/RMC-Software-Documentation-Previews
           ref: gh-pages
           ssh-key: ${{ secrets.PREVIEW_DEPLOY_KEY }}
       - name: Remove PR preview directory
@@ -366,22 +368,27 @@ jobs:
 
             // ── PR opened/reopened ──
             if (context.eventName === 'pull_request' && ['opened', 'reopened'].includes(context.payload.action)) {
+              // Only auto-process branches under docs/. Non-doc PRs (infrastructure,
+              // tooling, etc.) are silently ignored on open. An admin can still opt
+              // any PR into the review process by manually applying a lane:* label,
+              // which is handled by the labeled-event branch below.
+              if (!branch.startsWith('docs/')) return;
               const lane = existingLane || detectLane(branch);
               if (!lane) {
                 await addLabels(['stage:needs-lane']);
-                await postComment(`⚠️ **Could not determine review lane**\n\nBranch \`${branch}\` does not match expected prefixes (\`docs/new/\`, \`docs/major/\`, \`docs/minor/\`, \`docs/fix/\`).\n\n@usace-rmc/docs-maintainers please apply the correct \`lane:*\` label.`);
+                await postComment(`⚠️ **Could not determine review lane**\n\nBranch \`${branch}\` starts with \`docs/\` but does not match an expected sub-prefix (\`docs/new/\`, \`docs/major/\`, \`docs/minor/\`, \`docs/fix/\`).\n\n@usace-rmc/docs-admin please apply the correct \`lane:*\` label.`);
                 return;
               }
               const toAdd = [lane];
               let comment;
               if (lane === 'lane:editorial-fix') {
                 toAdd.push('stage:ready-to-merge');
-                comment = `📋 **Lane: Editorial Fix**\n\nNo formal review required.\n\n@usace-rmc/docs-maintainers please review, merge, and approve the deploy.`;
+                comment = `📋 **Lane: Editorial Fix**\n\nNo formal review required.\n\n@usace-rmc/docs-admin please review, merge, and approve the deploy.`;
               } else {
                 toAdd.push('stage:peer-review');
                 const laneName = lane.replace('lane:', '').replace(/-/g, ' ');
                 const scope = lane === 'lane:new-doc' ? 'Peer → Lead Civil → Technical Edit → Director' : lane === 'lane:major-revision' ? 'Peer → Lead Civil' : 'Peer review only';
-                comment = `📋 **Lane: ${laneName}**\n\nReview scope: ${scope}.\n\nCurrently in **peer review**. If no peer reviewer has been assigned, @usace-rmc/docs-maintainers please assign one via the Reviewers sidebar.`;
+                comment = `📋 **Lane: ${laneName}**\n\nReview scope: ${scope}.\n\nCurrently in **peer review**. If no peer reviewer has been assigned, @usace-rmc/docs-admin please assign one via the Reviewers sidebar.`;
               }
               await addLabels(toAdd);
               await postComment(comment);
@@ -395,10 +402,10 @@ jobs:
                 await removeLabel('stage:needs-lane');
                 if (added === 'lane:editorial-fix') {
                   await addLabels(['stage:ready-to-merge']);
-                  await postComment(`📋 Lane set to **editorial fix**.\n\n@usace-rmc/docs-maintainers please review and merge.`);
+                  await postComment(`📋 Lane set to **editorial fix**.\n\n@usace-rmc/docs-admin please review and merge.`);
                 } else {
                   await addLabels(['stage:peer-review']);
-                  await postComment(`📋 Lane set to **${added.replace('lane:', '').replace(/-/g, ' ')}**. Moving to peer review.\n\n@usace-rmc/docs-maintainers please assign the peer reviewer.`);
+                  await postComment(`📋 Lane set to **${added.replace('lane:', '').replace(/-/g, ' ')}**. Moving to peer review.\n\n@usace-rmc/docs-admin please assign the peer reviewer.`);
                 }
               }
               return;
@@ -412,7 +419,7 @@ jobs:
                 if (checkboxChecked) {
                   await removeLabel('stage:ai-editor-review');
                   await addLabels(['stage:director-review']);
-                  await postComment(`✅ **Technical edit marked complete** by the author.\n\nAdvancing to **Director review**.\n\n@usace-rmc/docs-maintainers please:\n1. If revisions were pushed during the technical edit, trigger a fresh checkpoint deploy of this branch\n2. Assign a member of @usace-rmc/docs-director via the Reviewers sidebar\n\nThe Director will review at the live URL.`);
+                  await postComment(`✅ **Technical edit marked complete** by the author.\n\nAdvancing to **Director review**.\n\n@usace-rmc/docs-admin please:\n1. If revisions were pushed during the technical edit, trigger a fresh checkpoint deploy of this branch\n2. Assign a member of @usace-rmc/docs-director via the Reviewers sidebar\n\nThe Director will review at the live URL.`);
                 }
               }
               return;
@@ -427,26 +434,26 @@ jobs:
               if (existingLane === 'lane:new-doc') {
                 if (existingStage === 'stage:peer-review') {
                   nextStage = 'stage:lead-civil-review';
-                  comment = `✅ **Peer review approved** by @${reviewer}.\n\nAdvancing to **RMC Lead Civil review**.\n\n@usace-rmc/docs-maintainers please assign the appropriate Lead Civil via the Reviewers sidebar. The Lead Civil reviews on the preview URL.`;
+                  comment = `✅ **Peer review approved** by @${reviewer}.\n\nAdvancing to **RMC Lead Civil review**.\n\n@usace-rmc/docs-admin please assign the appropriate Lead Civil via the Reviewers sidebar. The Lead Civil reviews on the preview URL.`;
                 } else if (existingStage === 'stage:lead-civil-review') {
                   nextStage = 'stage:ai-editor-review';
-                  comment = `✅ **Lead Civil review approved** by @${reviewer}.\n\nThe document is ready to be **deployed to the live site** (watermarked) for the technical edit and Director review phases.\n\n@usace-rmc/docs-maintainers next steps:\n1. Trigger a checkpoint deploy of branch \`${branch}\` via Actions → Deploy to GitHub Pages → Run workflow\n2. Approve the deploy at the production environment gate\n3. Post the live URL in a comment on this PR\n4. Run the \`/technical-edit\` Claude Code skill against this PR (or assign a human technical editor)\n\nAfter the author addresses the technical edit comments and checks the completion checkbox, the document will advance to Director review.`;
+                  comment = `✅ **Lead Civil review approved** by @${reviewer}.\n\nThe document is ready to be **deployed to the live site** (watermarked) for the technical edit and Director review phases.\n\n@usace-rmc/docs-admin next steps:\n1. Trigger a checkpoint deploy of branch \`${branch}\` via Actions → Deploy to GitHub Pages → Run workflow\n2. Approve the deploy at the production environment gate\n3. Post the live URL in a comment on this PR\n4. Run the \`/technical-edit\` Claude Code skill against this PR (or assign a human technical editor)\n\nAfter the author addresses the technical edit comments and checks the completion checkbox, the document will advance to Director review.`;
                 } else if (existingStage === 'stage:director-review') {
                   nextStage = 'stage:ready-to-merge';
-                  comment = `✅ **Director review approved** by @${reviewer}.\n\nThis PR is **ready for final merge and publication**.\n\n@usace-rmc/docs-maintainers next steps:\n1. Check out this branch (locally or via github.dev)\n2. Flip the document's \`draft\` flag to \`false\`\n3. Update \`00-version-history.mdx\` with reviewer and approver names\n4. Commit and push\n5. Merge this PR to \`main\`\n6. Approve the final production deploy in the Actions tab`;
+                  comment = `✅ **Director review approved** by @${reviewer}.\n\nThis PR is **ready for final merge and publication**.\n\n@usace-rmc/docs-admin next steps:\n1. Check out this branch (locally or via github.dev)\n2. Flip the document's \`draft\` flag to \`false\`\n3. Update \`00-version-history.mdx\` with reviewer and approver names\n4. Commit and push\n5. Merge this PR to \`main\`\n6. Approve the final production deploy in the Actions tab`;
                 }
               } else if (existingLane === 'lane:major-revision') {
                 if (existingStage === 'stage:peer-review') {
                   nextStage = 'stage:lead-civil-review';
-                  comment = `✅ **Peer review approved** by @${reviewer}.\n\nAdvancing to **RMC Lead Civil review**.\n\n@usace-rmc/docs-maintainers please assign the appropriate Lead Civil via the Reviewers sidebar.`;
+                  comment = `✅ **Peer review approved** by @${reviewer}.\n\nAdvancing to **RMC Lead Civil review**.\n\n@usace-rmc/docs-admin please assign the appropriate Lead Civil via the Reviewers sidebar.`;
                 } else if (existingStage === 'stage:lead-civil-review') {
                   nextStage = 'stage:ready-to-merge';
-                  comment = `✅ **Lead Civil review approved** by @${reviewer}.\n\nThis PR is **ready for final merge**.\n\n@usace-rmc/docs-maintainers next steps:\n1. Check out this branch\n2. Flip the document's \`draft\` flag to \`false\`\n3. Update \`00-version-history.mdx\`\n4. Commit and push\n5. Merge to \`main\`\n6. Approve the production deploy`;
+                  comment = `✅ **Lead Civil review approved** by @${reviewer}.\n\nThis PR is **ready for final merge**.\n\n@usace-rmc/docs-admin next steps:\n1. Check out this branch\n2. Flip the document's \`draft\` flag to \`false\`\n3. Update \`00-version-history.mdx\`\n4. Commit and push\n5. Merge to \`main\`\n6. Approve the production deploy`;
                 }
               } else if (existingLane === 'lane:minor-revision') {
                 if (existingStage === 'stage:peer-review') {
                   nextStage = 'stage:ready-to-merge';
-                  comment = `✅ **Peer review approved** by @${reviewer}.\n\nThis PR is **ready for final merge**.\n\n@usace-rmc/docs-maintainers next steps:\n1. Check out this branch\n2. Flip the document's \`draft\` flag to \`false\`\n3. Update \`00-version-history.mdx\`\n4. Commit and push\n5. Merge to \`main\`\n6. Approve the production deploy`;
+                  comment = `✅ **Peer review approved** by @${reviewer}.\n\nThis PR is **ready for final merge**.\n\n@usace-rmc/docs-admin next steps:\n1. Check out this branch\n2. Flip the document's \`draft\` flag to \`false\`\n3. Update \`00-version-history.mdx\`\n4. Commit and push\n5. Merge to \`main\`\n6. Approve the production deploy`;
                 }
               }
 
