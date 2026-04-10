@@ -9,8 +9,8 @@ This document describes every structural change to the `usace-rmc/rmc-software-d
 1. Author opens PR with branch prefix `docs/new/`. Preview workflow publishes to unadvertised preview URL.
 2. Peer reviewer reviews on **preview URL**, approves.
 3. RMC Lead Civil reviews on **preview URL**, approves.
-4. Site admin triggers checkpoint deploy of PR branch to **production URL** (watermarked).
-5. AI technical edit: someone with Claude Code runs `/technical-edit`, which posts inline review comments on the PR. Author addresses comments, checks a checkbox in the PR description to confirm completion.
+4. AI technical edit: someone with Claude Code runs `/technical-edit`, which reads the source MDX and posts inline review comments on the PR. Author addresses comments, checks a checkbox in the PR description to confirm completion. **No live deploy at this stage** — the technical edit works on source files.
+5. Site admin triggers checkpoint deploy of PR branch to **production URL** (watermarked). This is the first time the document appears on the live site.
 6. Director reviews on **live URL**, approves with one click.
 7. Site admin flips draft flag to `false`, merges PR to `main`, approves final deploy (watermark removed).
 
@@ -419,7 +419,7 @@ jobs:
                 if (checkboxChecked) {
                   await removeLabel('stage:ai-editor-review');
                   await addLabels(['stage:director-review']);
-                  await postComment(`✅ **Technical edit marked complete** by the author.\n\nAdvancing to **Director review**.\n\n@usace-rmc/docs-admin please:\n1. If revisions were pushed during the technical edit, trigger a fresh checkpoint deploy of this branch\n2. Assign a member of @usace-rmc/docs-director via the Reviewers sidebar\n\nThe Director will review at the live URL.`);
+                  await postComment(`✅ **Technical edit marked complete** by the author.\n\nAdvancing to **Director review**.\n\n@usace-rmc/docs-admin next steps:\n1. Trigger a checkpoint deploy of branch \`${branch}\` via Actions → Deploy to GitHub Pages → Run workflow (this is the first deploy of this PR to the live site, with the DRAFT watermark)\n2. Approve the deploy at the production environment gate\n3. Post the live URL in a comment on this PR\n4. Assign a member of @usace-rmc/docs-director via the Reviewers sidebar\n\nThe Director will review at the live URL. If the Director requests changes and the author pushes fixes, re-trigger the checkpoint deploy to refresh the live URL.`);
                 }
               }
               return;
@@ -437,7 +437,7 @@ jobs:
                   comment = `✅ **Peer review approved** by @${reviewer}.\n\nAdvancing to **RMC Lead Civil review**.\n\n@usace-rmc/docs-admin please assign the appropriate Lead Civil via the Reviewers sidebar. The Lead Civil reviews on the preview URL.`;
                 } else if (existingStage === 'stage:lead-civil-review') {
                   nextStage = 'stage:ai-editor-review';
-                  comment = `✅ **Lead Civil review approved** by @${reviewer}.\n\nThe document is ready to be **deployed to the live site** (watermarked) for the technical edit and Director review phases.\n\n@usace-rmc/docs-admin next steps:\n1. Trigger a checkpoint deploy of branch \`${branch}\` via Actions → Deploy to GitHub Pages → Run workflow\n2. Approve the deploy at the production environment gate\n3. Post the live URL in a comment on this PR\n4. Run the \`/technical-edit\` Claude Code skill against this PR (or assign a human technical editor)\n\nAfter the author addresses the technical edit comments and checks the completion checkbox, the document will advance to Director review.`;
+                  comment = `✅ **Lead Civil review approved** by @${reviewer}.\n\nAdvancing to **technical edit**.\n\n@usace-rmc/docs-admin please run the \`/technical-edit\` Claude Code skill against this PR (or assign a human technical editor). The technical edit reviews the document source MDX directly and posts inline comments on the PR — **no live deploy is needed at this stage**.\n\nAfter the author addresses the technical edit comments and checks the completion checkbox in the PR description, the document will advance to Director review and the site admin will deploy it to the live site (watermarked) at that point.`;
                 } else if (existingStage === 'stage:director-review') {
                   nextStage = 'stage:ready-to-merge';
                   comment = `✅ **Director review approved** by @${reviewer}.\n\nThis PR is **ready for final merge and publication**.\n\n@usace-rmc/docs-admin next steps:\n1. Check out this branch (locally or via github.dev)\n2. Flip the document's \`draft\` flag to \`false\`\n3. Update \`00-version-history.mdx\` with reviewer and approver names\n4. Commit and push\n5. Merge this PR to \`main\`\n6. Approve the final production deploy in the Actions tab`;
