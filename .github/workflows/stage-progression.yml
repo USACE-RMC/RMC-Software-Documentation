@@ -33,7 +33,7 @@ jobs:
             const action = context.payload.action;
 
             // ── Constants ────────────────────────────────────────────
-            const LANE_LABELS = ['lane:new-doc', 'lane:major-revision', 'lane:minor-revision', 'lane:editorial-fix'];
+            const LANE_LABELS = ['lane:new-doc', 'lane:major-revision', 'lane:minor-revision', 'lane:editorial-fix', 'lane:dev'];
             const STAGE_LABELS = ['stage:needs-lane', 'stage:peer-review', 'stage:lead-civil-review', 'stage:ai-editor-review', 'stage:director-review', 'stage:ready-to-merge'];
 
             const STAGE_DISPLAY = {
@@ -78,6 +78,7 @@ jobs:
               if (b.startsWith('docs/major/')) return 'lane:major-revision';
               if (b.startsWith('docs/minor/')) return 'lane:minor-revision';
               if (b.startsWith('docs/fix/')) return 'lane:editorial-fix';
+              if (b.startsWith('docs/dev/')) return 'lane:dev';
               return null;
             }
 
@@ -102,12 +103,22 @@ jobs:
               });
             }
 
-            async function prTouchesDocs() {
+            // Fetches the PR's file list once and returns both whether it
+            // touches any docs/ files and whether every docs/ file is under
+            // docs/dev/. The dev-lane detection is content-based so that
+            // dev docs automatically use the lightweight lane regardless of
+            // branch naming — users don't have to remember a docs/dev/
+            // branch prefix to get the dev-lane treatment.
+            async function getDocsFileState() {
               const files = await github.paginate(github.rest.pulls.listFiles, {
                 owner: context.repo.owner, repo: context.repo.repo,
                 pull_number: prNumber, per_page: 100,
               });
-              return files.some(f => f.filename.startsWith('docs/'));
+              const docsFiles = files.filter(f => f.filename.startsWith('docs/'));
+              return {
+                touchesDocs: docsFiles.length > 0,
+                allUnderDev: docsFiles.length > 0 && docsFiles.every(f => f.filename.startsWith('docs/dev/')),
+              };
             }
 
             // ── Commit status helper ─────────────────────────────────
@@ -208,10 +219,12 @@ jobs:
               await ensureState();
               const toAdd = [lane];
               let comment;
-              if (lane === 'lane:editorial-fix') {
+              if (lane === 'lane:editorial-fix' || lane === 'lane:dev') {
                 toAdd.push('stage:ready-to-merge');
-                await setReviewStatus('success', 'Editorial fix — admin may merge');
-                comment = `📋 **Lane: Editorial Fix**\n\nNo formal review required.\n\n@usace-rmc/docs-admin please review, merge, and approve the deploy.`;
+                const statusDesc = lane === 'lane:editorial-fix' ? 'Editorial fix — admin may merge' : 'Dev doc — admin may merge';
+                const laneTitle = lane === 'lane:editorial-fix' ? 'Editorial Fix' : 'Dev Doc';
+                await setReviewStatus('success', statusDesc);
+                comment = `📋 **Lane: ${laneTitle}**\n\nNo formal review required.\n\n@usace-rmc/docs-admin please review, merge, and approve the deploy.`;
               } else {
                 toAdd.push('stage:peer-review');
                 await setReviewStatus('pending', STAGE_STATUS_DESC['stage:peer-review']);
@@ -231,14 +244,18 @@ jobs:
 
             // ── pull_request opened/reopened ─────────────────────────
             if (eventName === 'pull_request' && ['opened', 'reopened'].includes(action)) {
-              if (!(await prTouchesDocs())) return;
-              const lane = existingLane || detectLane(branch);
+              const { touchesDocs, allUnderDev } = await getDocsFileState();
+              if (!touchesDocs) return;
+              // Content-based dev detection runs before branch-name detection:
+              // if every changed docs file lives under docs/dev/, it's a dev
+              // doc PR regardless of what the branch is called.
+              const lane = existingLane || (allUnderDev ? 'lane:dev' : detectLane(branch));
               if (!lane) {
                 await addLabels(['stage:needs-lane']);
                 await setReviewStatus('pending', STAGE_STATUS_DESC['stage:needs-lane']);
                 const reason = branch.startsWith('docs/')
-                  ? `Branch \`${branch}\` starts with \`docs/\` but does not match an expected sub-prefix (\`docs/new/\`, \`docs/major/\`, \`docs/minor/\`, \`docs/fix/\`).`
-                  : `Branch \`${branch}\` does not follow the \`docs/{new,major,minor,fix}/\` naming convention, but this PR modifies files under \`docs/\` and therefore requires a review lane.`;
+                  ? `Branch \`${branch}\` starts with \`docs/\` but does not match an expected sub-prefix (\`docs/new/\`, \`docs/major/\`, \`docs/minor/\`, \`docs/fix/\`, \`docs/dev/\`).`
+                  : `Branch \`${branch}\` does not follow the \`docs/{new,major,minor,fix,dev}/\` naming convention, but this PR modifies files under \`docs/\` and therefore requires a review lane.`;
                 await postComment(`⚠️ **Could not determine review lane**\n\n${reason}\n\n@usace-rmc/docs-admin please apply the correct \`lane:*\` label.`);
                 return;
               }
@@ -257,14 +274,15 @@ jobs:
                   await setReviewStatus('pending', STAGE_STATUS_DESC['stage:needs-lane']);
                   return;
                 }
-                if (!(await prTouchesDocs())) return;
-                const lane = detectLane(branch);
+                const { touchesDocs, allUnderDev } = await getDocsFileState();
+                if (!touchesDocs) return;
+                const lane = allUnderDev ? 'lane:dev' : detectLane(branch);
                 if (!lane) {
                   await addLabels(['stage:needs-lane']);
                   await setReviewStatus('pending', STAGE_STATUS_DESC['stage:needs-lane']);
                   const reason = branch.startsWith('docs/')
                     ? `Branch \`${branch}\` starts with \`docs/\` but does not match an expected sub-prefix.`
-                    : `Branch \`${branch}\` does not follow \`docs/{new,major,minor,fix}/\` naming. This PR now modifies files under \`docs/\` and requires a review lane.`;
+                    : `Branch \`${branch}\` does not follow \`docs/{new,major,minor,fix,dev}/\` naming. This PR now modifies files under \`docs/\` and requires a review lane.`;
                   await postComment(`⚠️ **Could not determine review lane**\n\n${reason}\n\n@usace-rmc/docs-admin please apply the correct \`lane:*\` label.`);
                   return;
                 }
@@ -355,10 +373,12 @@ jobs:
               if (LANE_LABELS.includes(added) && (!existingStage || existingStage === 'stage:needs-lane')) {
                 await removeLabel('stage:needs-lane');
                 await ensureState();
-                if (added === 'lane:editorial-fix') {
+                if (added === 'lane:editorial-fix' || added === 'lane:dev') {
                   await addLabels(['stage:ready-to-merge']);
-                  await setReviewStatus('success', 'Editorial fix — admin may merge');
-                  await postComment(`📋 Lane set to **editorial fix**.\n\n@usace-rmc/docs-admin please review and merge.`);
+                  const statusDesc = added === 'lane:editorial-fix' ? 'Editorial fix — admin may merge' : 'Dev doc — admin may merge';
+                  const laneLabel = added === 'lane:editorial-fix' ? 'editorial fix' : 'dev doc';
+                  await setReviewStatus('success', statusDesc);
+                  await postComment(`📋 Lane set to **${laneLabel}**.\n\n@usace-rmc/docs-admin please review and merge.`);
                 } else {
                   await addLabels(['stage:peer-review']);
                   await setReviewStatus('pending', STAGE_STATUS_DESC['stage:peer-review']);
