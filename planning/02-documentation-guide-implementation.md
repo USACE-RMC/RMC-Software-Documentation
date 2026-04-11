@@ -297,11 +297,13 @@ Click the **Files changed** tab on the PR. Hover over a line to see the blue "+"
 
 Click **Finish your review** (upper right of Files changed). Choose:
 
-- **Approve** — ready to advance
-- **Request changes** — author needs to fix issues first
-- **Comment** — notes only, no approval or rejection
+- **Comment** — you've left notes for the author to address. Use this for every review round where you have feedback. The stage does not advance.
+- **Approve** — you're satisfied with the document, typically on a backcheck round after the author has addressed your prior comments. **This is what advances the stage.**
+- **Request changes** — _not used in this workflow._ Use **Comment** for routine revision cycles.
 
 Click **Submit review.**
+
+The typical cycle: you leave notes via **Comment**, the author addresses them and pushes revisions, the stage progression bot pings you to backcheck, and you return to submit **Approve** if satisfied (or another **Comment** review if more feedback is needed).
 
 ## After you approve
 
@@ -423,9 +425,9 @@ Done. The site administrator handles everything from here.
 
 ## If something needs fixing
 
-Select **Request changes** instead of Approve and describe the issue. The author will fix it, and you'll be asked to re-review.
+Select **Comment** (not Approve or Request changes) and describe the issue. The author will fix it, and the site admin will ask you to re-review.
 
-For minor suggestions you don't want to block on, select Approve and include a note — the site admin will coordinate the follow-up.
+For minor suggestions you don't want to block on, select **Approve** and include a note — the site admin will coordinate the follow-up.
 ```
 
 ---
