@@ -2,6 +2,7 @@ import React from "react";
 import { useLocation } from "@docusaurus/router";
 import "../css/custom.css";
 import NavLink from "./NavLink";
+import PrintButton from "./PrintButton";
 import useLatestVersions from "../theme/Layout/useLatestVersions";
 import VersionNotice from "./VersionNotice";
 
@@ -35,6 +36,7 @@ const NavContainer = ({ link, linkTitle, document }) => {
         <div className="flex-1">
           <NavLink link={link} linkTitle={linkTitle} />
         </div>
+        <PrintButton />
       </div>
       {showVersionNotice && (
         <div className="sticky top-[90px] z-[10] bg-background-theme">

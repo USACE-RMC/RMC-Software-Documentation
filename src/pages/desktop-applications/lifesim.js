@@ -9,17 +9,35 @@ import '../../css/custom.css';
 const lifeSimData = [
   {
     icon: 'img/LifeSim.png',
+    preserveIconColor: true,
     doc_location: 'desktop-applications/lifesim/users-guide',
     doc_name: 'LifeSim Users Guide',
     active: true,
-    draft: true,
+    draft: false,
   },
   {
     icon: 'img/LifeSim.png',
+    preserveIconColor: true,
     doc_location: 'desktop-applications/lifesim/validation-studies',
     doc_name: 'LifeSim Validation Studies',
     active: true,
-    draft: true,
+    draft: false,
+  },
+  {
+    icon: 'img/LifeSim.png',
+    preserveIconColor: true,
+    doc_name: 'LifeSim Technical Reference Manual',
+    active: true,
+    draft: false,
+    downloadUrl: '/source-documents/desktop-applications/lifesim/technical-reference-manual/LifeSim-Technical-Reference-Manual.pdf',
+  },
+  {
+    icon: 'img/LifeSim.png',
+    preserveIconColor: true,
+    doc_location: 'desktop-applications/lifesim/applications-guide',
+    doc_name: 'LifeSim Applications Guide',
+    active: false,
+    draft: false,
   },
 ];
 
@@ -40,7 +58,8 @@ export default function LifeSim() {
     icon: addBaseUrl(doc.icon),
     iconLight: addBaseUrl(doc.iconLight),
     iconDark: addBaseUrl(doc.iconDark),
-    doc_location: addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`),
+    doc_location: doc.downloadUrl ? undefined : addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`),
+    downloadUrl: doc.downloadUrl ? addBaseUrl(doc.downloadUrl) : undefined,
   }));
 
   return (
@@ -55,8 +74,8 @@ export default function LifeSim() {
             }}
           />
           <div className="text-container">
-            <p className="text-title">LifeSim</p>
-            <p className="text-description">LifeSim</p>
+            <h1 className="text-title">LifeSim</h1>
+            <p className="text-description">Agent-based life loss and damage estimation for flood events</p>
           </div>
         </div>
         <ContentBox contentData={lifeSimData} />

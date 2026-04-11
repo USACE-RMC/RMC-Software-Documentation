@@ -39,8 +39,6 @@ const TableHorizontal = ({
     })();
   }, [reportId, tableKey]);
 
-  if (!tableInfo) return <span>Loading...</span>;
-
   const renderHTML = (content) => ({ __html: content });
 
   // Total columns = 1 (left header column) + number of data columns
@@ -75,6 +73,9 @@ const TableHorizontal = ({
     }
   }
 
+  // Compute per-table min-width from column count
+  styleVars['--table-min-width'] = `${Math.max(columnCount * 120, 300)}px`;
+
   // width mode: full (default) or intrinsic shrink-wrap
   if (widthMode === 'intrinsic') {
     styleVars['--table-width'] = 'max-content';
@@ -84,7 +85,7 @@ const TableHorizontal = ({
   return (
     <div id={tableId} className="table-container" data-anchor="true">
       <div className="table-cap">
-        Table {tableInfo.tableNumber}: {caption}
+        {tableInfo ? `Table ${tableInfo.tableNumber}` : 'Table'}: {caption}
       </div>
 
       <div className="table-scroller">

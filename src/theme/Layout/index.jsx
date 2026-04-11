@@ -6,6 +6,7 @@ import '@usace/groundwork/dist/style.css';
 import { useEffect } from 'react';
 import '../../css/custom.css';
 
+import SiteTour from '../../components/SiteTour';
 import buildNavLinks from './buildNavLinks';
 import externalLinks from './externalLinks';
 import ThemeToggle from './ThemeToggle';
@@ -24,13 +25,15 @@ export default function LayoutWrapper({ children, ...rest }) {
   const links = buildNavLinks(useBaseUrl, latestVersions);
 
   const homeHref = useBaseUrl('/');
+  const devHref = useBaseUrl('/dev');
+
+  // Append dev resources link to footer external links
+  const footerExternalLinks = [...externalLinks, { id: 'dev', text: 'Dev', href: devHref }];
 
   // Ensure Groundwork logo returns to base URL
   useEffect(() => {
     if (typeof document === 'undefined') return;
-    const logoAnchor = document
-      .querySelector('header a[href="/"] img[alt="U.S. Army Corps of Engineers"]')
-      ?.closest('a');
+    const logoAnchor = document.querySelector('header a[href="/"] img[alt="U.S. Army Corps of Engineers"]')?.closest('a');
     if (logoAnchor && logoAnchor.getAttribute('href') !== homeHref) {
       logoAnchor.setAttribute('href', homeHref);
     }
@@ -41,10 +44,10 @@ export default function LayoutWrapper({ children, ...rest }) {
       <SiteWrapper
         usaBanner={false}
         fluidNav={true}
-        subtitle="Institute for Water Resources, Risk Management Center Website"
+        subtitle="Institute for Water Resources, Risk Management Center"
         links={links}
         navRight={
-          <div className="ml-[20px] flex items-center gap-2">
+          <div className="flex items-center gap-2">
             <ThemeToggle />
             <SearchBar />
           </div>
@@ -52,11 +55,12 @@ export default function LayoutWrapper({ children, ...rest }) {
         missionText="Deliver vital engineering solutions, in collaboration with our partners, to secure our Nation, energize our economy, and reduce disaster risk."
         aboutText="The official website of the Institute for Water Resources, Risk Management Center"
         usaceLinks={USACELinks}
-        externalLinks={externalLinks}
-        usaceLogo={false}
-        usace250Logo={true}
+        externalLinks={footerExternalLinks}
+        usaceLogo={true}
+        usace250Logo={false}
       >
         {children}
+        <SiteTour latestVersions={latestVersions} />
       </SiteWrapper>
     </Layout>
   );

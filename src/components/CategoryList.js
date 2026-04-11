@@ -18,13 +18,12 @@
 export default function CategoryList({
   items = [],
   variant = 'accentTiles',
-  columns = { base: 1, md: 2, xl: 3 },
+  columns = { base: 1, md: 2, xl: 3, '2xl': 4 },
   className = '',
 
   // Shared tokens (aligned to your CSS variables)
   titleClass = 'text-font-color font-usace font-medium',
   descClass = 'mt-1 text-sm text-font-color',
-  badgeClass = 'text-xs rounded-full bg-slate-100 text-slate-700 px-2 py-0.5',
 }) {
   if (!items.length) return null;
 
@@ -40,9 +39,7 @@ export default function CategoryList({
 
   if (variant === 'menu') {
     return (
-      <section
-        className={`not-prose bg-background-color divide-y divide-border-color rounded-xl border border-border-color ${className}`}
-      >
+      <section className={`not-prose bg-background-color divide-y divide-border-color rounded-xl border border-border-color ${className}`}>
         {items.map((it, i) => (
           <NavRowMenu key={i} item={it} titleClass={titleClass} descClass={descClass} />
         ))}
@@ -63,57 +60,51 @@ export default function CategoryList({
   return (
     <section className={`not-prose ${gridCls} ${className}`}>
       {items.map((it, i) => (
-        <AccentTile
-          key={i}
-          item={it}
-          titleClass={titleClass}
-          descClass={descClass}
-          badgeClass={badgeClass}
-        />
+        <AccentTile key={i} item={it} />
       ))}
     </section>
   );
 }
 
-/* ---------- Variant: Accent Tiles (distinct from CollectionList) ---------- */
-function AccentTile({ item, titleClass, descClass, badgeClass }) {
+/* ---------- Variant: Accent Tiles (gradient card style, matches home page) ---------- */
+function AccentTile({ item }) {
   const { title, description, href, onClick, icon, badge } = item || {};
   const isLink = !!href;
   const isButton = !href && typeof onClick === 'function';
+  const isInteractive = isLink || isButton;
 
   const Wrapper = isLink ? 'a' : isButton ? 'button' : 'div';
   const wrapperProps = {
     className:
-      // left accent + soft gradient + lift on hover
-      'group relative overflow-hidden rounded-2xl border border-border-color bg-gradient-to-br ' +
-      'from-background-color to-white/60 dark:to-background-color-theme/80 ' +
-      'shadow-sm transition hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400',
+      'group relative flex flex-col items-center justify-center overflow-hidden rounded-2xl px-5 py-5 text-center no-underline ' +
+      'transition-all duration-300 hover:no-underline focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 ' +
+      (isInteractive ? 'hover:scale-[1.03] active-gradient-card' : 'coming-soon-gradient-card opacity-80'),
     ...(isLink ? { href } : {}),
     ...(isButton ? { type: 'button', onClick } : {}),
   };
 
   return (
     <Wrapper {...wrapperProps}>
-      {/* Left accent bar */}
-      <span aria-hidden="true" className="absolute left-0 top-0 h-full w-1.5 bg-ifm-primary" />
-      <div className="flex items-start gap-3 p-4">
-        {/* Icon bubble (optional) */}
-        {icon && (
-          <div className="bg-ifm-primary/10 grid h-10 w-10 shrink-0 place-items-center rounded-xl text-ifm-primary">
-            {icon}
-          </div>
-        )}
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <h3 className={titleClass}>{title}</h3>
-            {badge && <span className={badgeClass}>{badge}</span>}
-          </div>
-          {description && <p className={descClass}>{description}</p>}
-        </div>
-        {(isLink || isButton) && (
-          <ArrowRight className="ml-2 h-4 w-4 shrink-0 text-slate-400 transition-transform group-hover:translate-x-0.5 group-hover:text-slate-600" />
-        )}
-      </div>
+      {/* Icon in frosted circle (optional) */}
+      {icon && (
+        <div className="frosted-glass-circle mb-3 flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded-full text-white">{icon}</div>
+      )}
+
+      {/* Title */}
+      <p className="mb-0 font-usace text-[1rem] font-bold leading-[1.2] text-white">{title}</p>
+
+      {/* Description */}
+      {description && <p className="mb-0 mt-1 font-usace text-[0.8rem] leading-[1.3] text-white/80">{description}</p>}
+
+      {/* Badge */}
+      {badge && <span className="mt-2 rounded-full bg-white/20 px-3 py-0.5 text-[0.7rem] leading-none text-white/70">{badge}</span>}
+
+      {/* Explore CTA */}
+      {isInteractive && (
+        <p className="mb-0 mt-2.5 font-usace text-[0.8rem] text-white/70 transition-all duration-300 group-hover:text-white/90">
+          Explore <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">&rarr;</span>
+        </p>
+      )}
     </Wrapper>
   );
 }
@@ -149,10 +140,7 @@ function NavRowMenu({ item, titleClass, descClass }) {
   };
   return (
     <Wrapper {...props}>
-      <span
-        aria-hidden="true"
-        className="bg-ifm-primary/80 mt-1 inline-block h-2.5 w-2.5 rounded-full group-hover:bg-ifm-primary"
-      />
+      <span aria-hidden="true" className="bg-ifm-primary/80 mt-1 inline-block h-2.5 w-2.5 rounded-full group-hover:bg-ifm-primary" />
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between">
           <h3 className={`${titleClass} truncate`}>{title}</h3>

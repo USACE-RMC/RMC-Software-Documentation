@@ -9,10 +9,19 @@ import '../../css/custom.css';
 const bestFitData = [
   {
     icon: 'img/BestFit.png',
+    preserveIconColor: true,
     doc_location: 'desktop-applications/rmc-bestfit/users-guide',
     doc_name: 'RMC BestFit Users Guide',
     active: true,
-    draft: true,
+    draft: false,
+  },
+  {
+    icon: 'img/BestFit.png',
+    preserveIconColor: true,
+    doc_name: 'RMC-BestFit Verification Report',
+    active: true,
+    draft: false,
+    downloadUrl: '/source-documents/desktop-applications/rmc-bestfit/verification-report/RMC-BestFit-Verification-Report.pdf',
   },
 ];
 
@@ -34,16 +43,12 @@ export default function BestFit() {
     icon: addBaseUrl(doc.icon),
     iconLight: addBaseUrl(doc.iconLight),
     iconDark: addBaseUrl(doc.iconDark),
-    doc_location: addBaseUrl(
-      `docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`,
-    ),
+    doc_location: doc.downloadUrl ? undefined : addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`),
+    downloadUrl: doc.downloadUrl ? addBaseUrl(doc.downloadUrl) : undefined,
   }));
 
   return (
-    <Layout
-      title="RMC Software Documentation"
-      description="Documentation for RMC Software Packages"
-    >
+    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
       <main>
         <div className="title-container">
           <ThemedImage
@@ -54,8 +59,8 @@ export default function BestFit() {
             }}
           />
           <div className="text-container">
-            <p className="text-title">RMC BestFit</p>
-            <p className="text-description">RMC BestFit</p>
+            <h1 className="text-title">RMC BestFit</h1>
+            <p className="text-description">Bayesian flood frequency estimation and hazard analysis</p>
           </div>
         </div>
         <ContentBox contentData={bestFitData} />

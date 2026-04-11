@@ -39,8 +39,6 @@ const TableVertical = ({
     })();
   }, [reportId, tableKey]);
 
-  if (!tableInfo) return <span>Loading...</span>;
-
   const renderHTML = (content) => ({ __html: content });
 
   const colCount = columns?.length ?? 0;
@@ -74,6 +72,9 @@ const TableVertical = ({
       styleVars[`--hv${i + 1}`] = headerVAlign[i]; // header vertical
     }
   }
+  // Compute per-table min-width from column count
+  styleVars['--table-min-width'] = `${Math.max(colCount * 120, 300)}px`;
+
   if (widthMode === 'intrinsic') {
     styleVars['--table-width'] = 'max-content';
     styleVars['--table-display'] = 'inline-table';
@@ -89,7 +90,7 @@ const TableVertical = ({
   return (
     <div id={tableId} className="table-container" data-anchor="true">
       <div className="table-cap">
-        Table {tableInfo.tableNumber}: {caption}
+        {tableInfo ? `Table ${tableInfo.tableNumber}` : 'Table'}: {caption}
       </div>
 
       {/* If you use a scroller wrapper elsewhere, you can place the footnotes inside it too */}

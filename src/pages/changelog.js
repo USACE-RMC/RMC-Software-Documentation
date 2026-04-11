@@ -1,0 +1,40 @@
+import Layout from '@theme/Layout';
+import TableChangelog from '../components/TableChangelog';
+
+export default function Changelog() {
+  return (
+    <Layout title="Change Log" description="Recent changes and updates to the RMC Software Documentation site.">
+      <main>
+        <div className="border-b border-border-color bg-ifm-primary-lightest px-6 py-4 text-center dark:bg-surface-card lg:py-10">
+          <div className="mx-auto max-w-[600px]">
+            <h1 className="m-0 mb-3 font-usace text-h1 font-bold text-font-color">Change Log</h1>
+            <p className="m-0 font-usace text-base leading-relaxed text-font-color-description">
+              Recent changes and updates to the RMC Software Documentation site.
+            </p>
+          </div>
+        </div>
+        <div className="mx-auto max-w-[1600px] px-6 pb-16 pt-8 lg:px-12">
+          <TableChangelog
+            dates={['March 25, 2026', 'March 25, 2026', 'March 25, 2026', 'March 25, 2026', 'March 12, 2026']}
+            categories={['PDF Download', 'PDF Download', 'PDF Download', 'PDF Download', 'Website Update']}
+            documents={[
+              'RMC TotalRisk Verification Report (Draft)',
+              'RMC TotalRisk Technical Reference Manual (Draft)',
+              'RMC-BestFit Verification Report',
+              'LifeSim Technical Reference Manual',
+              '-',
+            ]}
+            versions={['-', '-', '-', '-', '-']}
+            descriptions={[
+              'Added as direct PDF download.',
+              'Added as direct PDF download.',
+              'Added as direct PDF download.',
+              'Added as direct PDF download.',
+              'Initial launch of the RMC Software Documentation website.',
+            ]}
+          />
+        </div>
+      </main>
+    </Layout>
+  );
+}

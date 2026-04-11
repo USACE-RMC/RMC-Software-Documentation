@@ -2,6 +2,17 @@ import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 
+import path from 'path';
+
+// Normalize the drive letter to uppercase on Windows to prevent webpack
+// "modules with names that only differ in casing" warnings.
+function normalizeDriveLetter(p) {
+  if (process.platform === 'win32' && /^[a-z]:/.test(p)) {
+    return p.charAt(0).toUpperCase() + p.slice(1);
+  }
+  return p;
+}
+
 // Tailwind custom plugin
 const tailwindPlugin = async function tailwindPlugin(context, options) {
   return {
@@ -14,29 +25,53 @@ const tailwindPlugin = async function tailwindPlugin(context, options) {
   };
 };
 
+// Plugin to normalize Windows drive letter casing in webpack resolution
+const normalizePathsPlugin = async function normalizePathsPlugin() {
+  return {
+    name: 'normalize-windows-paths',
+    configureWebpack(config) {
+      return {
+        resolve: {
+          modules: (config.resolve?.modules || ['node_modules']).map(normalizeDriveLetter),
+        },
+        resolveLoader: {
+          modules: (config.resolveLoader?.modules || ['node_modules']).map(normalizeDriveLetter),
+        },
+        context: normalizeDriveLetter(config.context || process.cwd()),
+      };
+    },
+  };
+};
+
 export default {
   title: 'RMC Software Documentation',
   tagline: 'Documentation for RMC Software Packages',
   onBrokenAnchors: 'warn',
-  url: 'https://USACE-RMC.github.io', // Replace with your site's URL
-  baseUrl: '/RMC-Software-Documentation/',
+  url: process.env.DOCUSAURUS_URL || 'https://USACE-RMC.github.io',
+  baseUrl: process.env.DOCUSAURUS_BASE_URL || '/RMC-Software-Documentation/',
   favicon: 'img/USACE.png',
   organizationName: 'USACE-RMC', // Your GitHub organization or username
   projectName: 'RMC-Software-Documentation', // Your project name, make sure this matches your GitHub repo name
+
+  clientModules: [
+    normalizeDriveLetter(require.resolve('./src/clientModules/gtagPolyfill.js')),
+    normalizeDriveLetter(require.resolve('./src/clientModules/analyticsEvents.js')),
+    normalizeDriveLetter(require.resolve('./src/clientModules/scrollToAnchor.js')),
+  ],
 
   presets: [
     [
       '@docusaurus/preset-classic',
       {
         docs: {
-          sidebarPath: require.resolve('./sidebars.js'),
+          sidebarPath: normalizeDriveLetter(require.resolve('./sidebars.js')),
           showLastUpdateTime: true,
           remarkPlugins: [remarkMath, remarkGfm],
           rehypePlugins: [rehypeKatex],
           breadcrumbs: true,
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
+          customCss: normalizeDriveLetter(require.resolve('./src/css/custom.css')),
         },
       },
     ],
@@ -65,6 +100,9 @@ export default {
 
     // TailwindCSS as a custom plugin
     tailwindPlugin,
+
+    // Normalize Windows drive letter casing to suppress webpack warnings
+    normalizePathsPlugin,
   ],
 
   themeConfig: {
@@ -79,14 +117,7 @@ export default {
         alt: 'RMC Logo',
         src: 'img/USACE.png',
       },
-      items: [
-        {
-          label: 'RMC Website',
-          to: 'https://www.rmc.usace.army.mil/',
-          position: 'right',
-          className: 'rmc-home-link',
-        },
-      ],
+      items: [],
     },
     footer: {
       style: 'light',

@@ -18,6 +18,9 @@ const TableBestFitDistributions = ({ headerConfig, headers, columns, fullWidth =
       styleVars[`--a${i + 1}`] = colAlign[i];
     }
   }
+  // Compute per-table min-width from column count
+  styleVars["--table-min-width"] = `${Math.max(colCount * 120, 300)}px`;
+
   if (widthMode === "intrinsic") {
     styleVars["--table-width"] = "fit-content"; // shrink-wrap but cap at container
     styleVars["--table-display"] = "block"; // avoid inline-table width leaks
@@ -31,6 +34,7 @@ const TableBestFitDistributions = ({ headerConfig, headers, columns, fullWidth =
 
   return (
     <div className="table-container">
+      <div className="table-scroller">
       <table className={`table-base bestfit-table table-zebra`} style={styleVars}>
         <colgroup>
           {Array.from({ length: colCount }).map((_, i) => (
@@ -110,6 +114,7 @@ const TableBestFitDistributions = ({ headerConfig, headers, columns, fullWidth =
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 };

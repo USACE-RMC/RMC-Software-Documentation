@@ -1,0 +1,157 @@
+---
+title: Troubleshooting
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" />
+
+# Troubleshooting
+
+This section covers common issues you may encounter during setup and development, along with their solutions.
+
+---
+
+## Python Not Recognized
+
+**Problem:** Running `python --version` returns `'python' is not recognized as an internal or external command` or similar error.
+
+**Solutions:**
+
+- **Verify Python is installed** — Check that the Python folder exists at the expected location (e.g., `C:\Users\<username>\AppData\Local\Programs\Python\Python312\`)
+- **Check your PATH** — Open **Edit environment variables for your account** and verify that the path to your Python folder (the one containing `python.exe`) appears in the **Path** variable
+- **Include the Scripts folder** — Your PATH should have two entries: the Python root folder and the `Scripts` subfolder (e.g., `...\Python312\` and `...\Python312\Scripts\`)
+- **Restart your terminal** — Changes to environment variables do not take effect in terminals that were already open. Close and reopen your terminal after modifying PATH.
+- **Try `py` instead** — If the Python Launcher for Windows was installed, `py --version` may work even when `python` does not
+
+---
+
+## `pip` Not Recognized
+
+**Problem:** Running `pip install <package>` returns `'pip' is not recognized`.
+
+**Solutions:**
+
+- **Use `python -m pip` instead** — This runs pip through the Python interpreter and bypasses PATH issues:
+  ```
+  python -m pip install <package>
+  ```
+- **Check the Scripts folder on PATH** — `pip.exe` lives in the `Scripts` subfolder of your Python installation. Ensure this folder is on your PATH (see [Installing Python](./01-installing-python.mdx)).
+- **Ensure your virtual environment is activated** — When a virtual environment is active, its `Scripts` folder is automatically added to your session PATH. Activate the environment and try again.
+
+---
+
+## PowerShell Blocks Virtual Environment Activation
+
+**Problem:** Running `.venv\Scripts\Activate.ps1` in PowerShell returns an error: *"cannot be loaded because running scripts is disabled on this system."*
+
+**Solution:**
+
+This is caused by PowerShell's default execution policy. Run the following command once to allow local scripts to execute:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+```
+
+The `-Scope CurrentUser` flag applies the change only to your account and does not require administrator privileges. After running this, try activating the virtual environment again.
+
+**Alternatively**, use Command Prompt (`cmd`) or Git Bash, which do not have this restriction.
+
+---
+
+## VS Code Does Not Detect Python Interpreter
+
+**Problem:** The Python interpreter selection in VS Code is empty or does not show your installed Python version.
+
+**Solutions:**
+
+- **Ensure the Python extension is installed** — Open Extensions (**Ctrl+Shift+X**) and verify that the **Python** extension by Microsoft is installed and enabled
+- **Reload VS Code** — Open the Command Palette (**Ctrl+Shift+P**) and run **Developer: Reload Window**
+- **Manually enter the path** — In the interpreter selection, click **Enter interpreter path...** and navigate to your Python executable:
+  - Global installation: `C:\Users\<username>\AppData\Local\Programs\Python\Python312\python.exe`
+  - Virtual environment: `.venv\Scripts\python.exe` in your project folder
+- **Open the correct folder** — VS Code detects virtual environments in the currently opened workspace. Make sure you have opened the project folder that contains the `.venv` directory.
+
+---
+
+## Jupyter Kernel Not Showing in VS Code
+
+**Problem:** When creating or opening a Jupyter notebook, your virtual environment does not appear in the kernel picker.
+
+**Solutions:**
+
+- **Register the kernel** — Ensure you ran `ipykernel install` from within your activated virtual environment:
+  ```
+  python -m ipykernel install --user --name=my-project --display-name "Python (my-project)"
+  ```
+- **Verify `ipykernel` is installed** — With your virtual environment active, run `pip list` and confirm `ipykernel` appears in the output
+- **Reload VS Code** — Open the Command Palette (**Ctrl+Shift+P**) and run **Developer: Reload Window**
+- **Check the Jupyter extension** — Ensure the **Jupyter** extension by Microsoft is installed and enabled
+
+---
+
+## VS Code Installation Issues (USACE)
+
+**Problem:** VS Code doesn't install automatically from the USACE App Portal.
+
+**Solutions:**
+
+- Wait 48 hours after requesting from the App Portal
+- Check the **Software Center** application for installation status
+- Contact the Enterprise Service Desk at (866) 562-2348
+- Several users have required CIO-G6 assistance for VS Code installation — ask the Service Desk to escalate if needed
+
+---
+
+## Virtual Environment Appears Broken
+
+**Problem:** Your virtual environment stops working — packages are missing, Python version is wrong, or activation fails with errors.
+
+**Solutions:**
+
+- **Delete and recreate** — Virtual environments are disposable. If yours is broken, delete the `.venv` folder and create a fresh one:
+  ```
+  rmdir /s /q .venv
+  python -m venv .venv
+  ```
+  Then reactivate and reinstall your dependencies:
+  ```
+  .venv\Scripts\activate
+  pip install -r requirements.txt
+  ```
+- **This is why `requirements.txt` matters** — If you maintained a `requirements.txt` file, recreating the environment takes seconds. If you did not, you will need to manually reinstall packages.
+
+---
+
+## Common Error Messages
+
+<TableVerticalNoRef
+  headers={[[{ value: 'Error' }, { value: 'Likely Cause' }, { value: 'Solution' }]]}
+  columns={[
+    [
+      "<code>'python' is not recognized</code>",
+      "<code>'pip' is not recognized</code>",
+      '<code>No module named &lt;package&gt;</code>',
+      '<code>ModuleNotFoundError</code> in Jupyter',
+      '<code>running scripts is disabled</code>',
+      '<code>Permission denied</code>',
+    ],
+    [
+      'Python not on PATH',
+      'Scripts folder not on PATH',
+      'Package not installed in the active environment',
+      'Notebook using wrong kernel',
+      'PowerShell execution policy',
+      'Trying to install globally without admin rights',
+    ],
+    [
+      'Add Python to your user PATH environment variable',
+      'Use <code>python -m pip</code> or add the Scripts folder to PATH',
+      'Activate your venv and run <code>pip install &lt;package&gt;</code>',
+      'Select the correct kernel (your venv) in the kernel picker',
+      'Run <code>Set-ExecutionPolicy -Scope CurrentUser RemoteSigned</code>',
+      'Activate a virtual environment first, then install',
+    ],
+  ]}
+/>

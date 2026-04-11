@@ -1,0 +1,188 @@
+/* ===== Print Stylesheet ===== */
+/* Browser print (Ctrl+P / Cmd+P) — hides site chrome, expands content to full width,
+   and applies paper-friendly typography. Zero runtime cost on screen. */
+
+/* ── Print button (screen styles) ── */
+.print-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: none;
+  border-radius: var(--ifm-global-radius);
+  background: transparent;
+  color: var(--font-color-description);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.print-button:hover {
+  color: var(--ifm-color-primary);
+  background-color: var(--ifm-color-emphasis-100);
+}
+
+@media print {
+  /* ── Hide all site chrome ── */
+  header.gw-sticky,                     /* Groundwork header (logo, nav, subtitle bar) */
+  footer,                               /* Groundwork footer */
+  .gw-bg-footer-black,                  /* Footer background (fallback) */
+  .gw-bg-footer-gray,                   /* Footer secondary bar */
+  .theme-doc-sidebar-container,         /* Left sidebar (chapter nav) */
+  .theme-doc-toc-desktop,              /* Right sidebar (table of contents) */
+  .col--3:has(> .theme-doc-toc-desktop), /* Right sidebar column wrapper */
+  .theme-doc-toc-mobile,               /* Mobile TOC dropdown */
+  .breadcrumbs,                         /* Breadcrumb trail */
+  .pagination-nav,                      /* Previous / Next page links */
+  .theme-back-to-top-button,           /* Back to top FAB */
+  .floating-nav-inline,                 /* Inline nav panel (mobile) */
+  .floating-nav__fab,                   /* Floating nav button */
+  .floating-nav__backdrop,              /* Floating nav overlay */
+  .floating-nav__drawer,                /* Floating nav drawer */
+  .chapter-nav,                         /* Chapter nav (mobile/tablet) */
+  .tour-tooltip,                        /* Site tour overlay */
+  .navbar,                              /* Docusaurus navbar (already hidden on screen) */
+  .print-button,                        /* The print button itself */
+  .version-notice {                     /* Version notice banner */
+    display: none !important;
+  }
+
+  /* ── Expand content to full page width ── */
+  .main-wrapper,
+  .container,
+  .row,
+  .col,
+  [class*='docMainContainer'] {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Remove the column sizing that reserves space for hidden sidebars */
+  .col[class*='col--'] {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Reset the main content top margin (no sticky header in print) */
+  .main-content-container {
+    margin-top: 0 !important;
+  }
+
+  /* ── Force light-mode colors ── */
+  * {
+    color: #000 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Preserve figure/table borders */
+  figure,
+  .table-container,
+  table,
+  th,
+  td {
+    border-color: #999 !important;
+  }
+
+  /* Keep figure and table border structure visible */
+  figure {
+    border-top: 1px solid #ccc !important;
+    border-bottom: 1px solid #ccc !important;
+  }
+
+  /* ── Typography for paper ── */
+  body {
+    font-size: 11pt !important;
+    line-height: 1.5 !important;
+  }
+
+  .markdown h1 { font-size: 20pt !important; }
+  .markdown h2 { font-size: 16pt !important; }
+  .markdown h3 { font-size: 13pt !important; }
+  .markdown h4 { font-size: 12pt !important; }
+  .markdown h5 { font-size: 11pt !important; }
+
+  /* ── Links — show URL for external links ── */
+  .theme-doc-markdown a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    color: #555 !important;
+    word-break: break-all;
+  }
+
+  /* Don't expand internal doc links or citation links */
+  .theme-doc-markdown a[href^="/"]::after,
+  .theme-doc-markdown a[href^="#"]::after,
+  .theme-doc-markdown a.citation-link::after {
+    content: none;
+  }
+
+  /* ── Page break control ── */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  figure,
+  .table-container,
+  table,
+  .equation-wrapper,
+  pre,
+  blockquote {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Keep headings with their following content */
+  h1 + *, h2 + *, h3 + *, h4 + *, h5 + * {
+    page-break-before: avoid;
+    break-before: avoid;
+  }
+
+  /* ── Images ── */
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* ── Prevent overflow ── */
+  html, body {
+    overflow: visible !important;
+  }
+
+  /* ── Remove sticky positioning (irrelevant in print) ── */
+  .theme-doc-sidebar-container,
+  .table-of-contents,
+  .version-notice {
+    position: static !important;
+  }
+
+  /* ── NavContainer: hide the back-link row but keep any title ── */
+  .navlink-back {
+    display: none !important;
+  }
+
+  /* ── Title container: keep but simplify ── */
+  .title-container {
+    padding: 0 !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .title-container-nav-link {
+    display: none !important;
+  }
+
+  /* ── Code blocks ── */
+  pre, code {
+    border: 1px solid #ddd !important;
+    font-size: 9pt !important;
+  }
+}

@@ -30,7 +30,8 @@ const TableVersionHistory = ({ versions = [], dates = [], descriptions = [], mod
 
   return (
     <div className="table-container">
-      <table className="table-base table-zebra" aria-label="Version History" style={{ tableLayout: "fixed", minWidth: "100%" }}>
+      <div className="table-scroller">
+      <table className="table-base table-zebra" aria-label="Version History" style={{ tableLayout: "fixed", "--table-min-width": "720px" }}>
         {/* Column sizing */}
         <colgroup>
           {COL_WIDTHS.map((w, i) => (
@@ -84,6 +85,7 @@ const TableVersionHistory = ({ versions = [], dates = [], descriptions = [], mod
                   className="table-body-cell border"
                   style={{
                     textAlign: "left",
+                    verticalAlign: "top",
                     whiteSpace: "normal",
                     overflowWrap: "anywhere",
                     wordBreak: "break-word",
@@ -124,6 +126,7 @@ const TableVersionHistory = ({ versions = [], dates = [], descriptions = [], mod
           })}
         </tbody>
       </table>
+      </div>
     </div>
   );
 };

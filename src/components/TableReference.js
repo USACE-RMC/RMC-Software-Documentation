@@ -49,12 +49,12 @@ const TableReference = ({ tableKey }) => {
     return isSamePage ? `#${targetId}` : `${targetDocPath}#${targetId}`;
   }, [tableInfo, isSamePage, targetDocPath, targetId]);
 
-  if (!tableInfo) return <span>Loading...</span>;
+  if (!tableInfo) return <span className="font-usace text-normal whitespace-nowrap">Table</span>;
 
   return (
     <a
       href={href}
-      className="font-usace text-normal"
+      className="font-usace text-normal whitespace-nowrap"
       title={`Jump to Table ${tableInfo.tableNumber}`}
     >
       Table {tableInfo.tableNumber}

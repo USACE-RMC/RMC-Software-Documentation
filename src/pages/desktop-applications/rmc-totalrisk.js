@@ -9,23 +9,34 @@ import '../../css/custom.css';
 const totalRiskData = [
   {
     icon: 'img/TotalRisk.png',
+    preserveIconColor: true,
     doc_location: 'desktop-applications/rmc-totalrisk/users-guide',
     doc_name: 'RMC TotalRisk Users Guide',
     active: true,
-    draft: true,
+    draft: false,
   },
   {
     icon: 'img/TotalRisk.png',
+    preserveIconColor: true,
+    doc_name: 'RMC TotalRisk Verification Report',
+    active: true,
+    draft: true,
+    downloadUrl: '/source-documents/desktop-applications/rmc-totalrisk/verification-report/RMC-TotalRisk-Verification-Report.pdf',
+  },
+  {
+    icon: 'img/TotalRisk.png',
+    preserveIconColor: true,
+    doc_name: 'RMC TotalRisk Technical Reference Manual',
+    active: true,
+    draft: true,
+    downloadUrl: '/source-documents/desktop-applications/rmc-totalrisk/technical-reference-manual/RMC-TotalRisk-Technical-Reference-Manual.pdf',
+  },
+  {
+    icon: 'img/TotalRisk.png',
+    preserveIconColor: true,
     doc_location: 'desktop-applications/rmc-totalrisk/applications-guide',
     doc_name: 'RMC TotalRisk Applications Guide',
     active: true,
-    draft: true,
-  },
-  {
-    icon: 'img/TotalRisk.png',
-    doc_location: 'desktop-applications/rmc-totalrisk/vertification-report',
-    doc_name: 'RMC TotalRisk Verification Report',
-    active: false,
     draft: true,
   },
 ];
@@ -48,16 +59,14 @@ export default function TotalRisk() {
     icon: addBaseUrl(doc.icon),
     iconLight: addBaseUrl(doc.iconLight),
     iconDark: addBaseUrl(doc.iconDark),
-    doc_location: addBaseUrl(
-      `docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`,
-    ),
+    doc_location: doc.downloadUrl
+      ? undefined
+      : addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`),
+    downloadUrl: doc.downloadUrl ? addBaseUrl(doc.downloadUrl) : undefined,
   }));
 
   return (
-    <Layout
-      title="RMC Software Documentation"
-      description="Documentation for RMC Software Packages"
-    >
+    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
       <main>
         <div className="title-container">
           <ThemedImage
@@ -68,8 +77,8 @@ export default function TotalRisk() {
             }}
           />
           <div className="text-container">
-            <p className="text-title">RMC TotalRisk</p>
-            <p className="text-description">RMC TotalRisk</p>
+            <h1 className="text-title">RMC TotalRisk</h1>
+            <p className="text-description">Quantitative risk analysis for dam and levee safety</p>
           </div>
         </div>
         <ContentBox contentData={totalRiskData} />

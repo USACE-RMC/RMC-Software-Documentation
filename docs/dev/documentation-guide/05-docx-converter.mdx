@@ -1,0 +1,1177 @@
+---
+title: DOCX to MDX Converter
+sidebar_label: DOCX Converter
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import DocTabs from '@site/src/components/DocTabs';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" />
+
+# DOCX to MDX Converter
+
+## Overview
+
+The DOCX Converter is a Python script that automatically converts Microsoft Word documents (using the standard RMC Word Document Template) into MDX format ready for the RMC Software Documentation site. This tool saves significant time when you have existing documentation in Word format that needs to be added to the website.
+
+:::tip When to Use This Tool
+
+Use the DOCX converter when:
+
+- You have an existing RMC document in Word format
+- The document follows the standard RMC Word Document Template
+- You want to quickly create MDX files without manual conversion
+
+:::
+
+:::warning Important Requirement
+
+**This script only works with documents that follow the standard RMC Word Document Template.**
+
+If your Word document doesn't use the RMC template, the converter won't work correctly. The script relies on specific styles and formatting conventions from the template to identify figures, tables, equations, and document structure.
+
+:::
+
+---
+
+## What the Converter Does
+
+The DOCX Converter automatically handles:
+
+✅ **Document Structure**
+
+- Extracts headings and creates separate MDX files for each chapter
+- Maintains proper heading hierarchy
+- Preserves formatting (bold, italic, lists)
+
+✅ **Figures**
+
+- Extracts all images from the Word document
+- Saves them as PNG files in the correct folder
+- Converts figure captions to MDX format
+- Creates `<Figure>` components with automatic numbering
+
+✅ **Tables**
+
+- Extracts all tables
+- Converts to `<TableVertical>` or `<TableHorizontal>` components
+- Preserves table formatting and structure
+- Maintains table captions
+
+:::danger Tables with Merged Cells
+
+If a table contains merged cells, the conversion may not be seamless. The script adds a danger admonition to alert contributors that they should manually verify the proper table structure and make corrections as needed.
+
+:::
+
+⚠️ **Equations**
+
+- Detects mathematical equations in the Word document
+- **Cannot automatically convert equations to LaTeX format**
+- Inserts admonitions where equations are detected:
+  - For standalone equations: admonition placed at the equation's location
+  - For inline equations: admonition placed above the paragraph containing them
+- Contributors must manually add equations using the `<Equation>` component
+
+⚠️ **Citations**
+
+- Identifies in-text citations
+- Creates `<Citation>` components
+- Links to bibliography file
+
+:::warning Citation Text May Be Removed
+
+The script sometimes removes author names and years that directly precede citations. For example:
+
+- Source text: "Foster and Fell (2024)"
+- May convert to: `<Citation citationKey="FosterFell2024" />`
+- Should be: `Foster and Fell (2024) <Citation citationKey="FosterFell2024" />`
+
+Contributors should verify that citation text is properly preserved during conversion.
+
+:::
+
+✅ **Document Metadata**
+
+- Extracts title, authors, date, abstract
+- Creates front matter for MDX files
+
+**Result:** The converter significantly reduces conversion time by automatically handling document structure, figures, tables, and basic formatting. While the output requires review and some manual refinement, it saves hours of work compared to manual conversion.
+
+---
+
+## Prerequisites
+
+Before using the DOCX converter, ensure you have:
+
+### 1. Python Installation
+
+**Version Required:** Python 3.10 or higher
+
+**Check if you have Python:**
+
+```bash
+python --version
+```
+
+If the command is not recognized, Python is not installed or is not on your PATH. For complete installation instructions — including USACE App Portal steps for government computers, adding Python to PATH, and verifying your installation — see the [Installing Python](/docs/dev/python-quickstart-guide/installing-python) section of the Python Quick Start Guide.
+
+### 2. Word Document Using RMC Template
+
+Your Word document must:
+
+- Follow the modern RMC Word Document Template (e.g., Blue, Red, Green, or Yellow themes)
+- Use correct style names (RMC_Figure, RMC_Table, etc.)
+- Have properly formatted citations and references
+
+### 3. Bibliography File Created
+
+Before running the converter:
+
+- Create a `bib.json` file with all document references
+- Place it in the appropriate location in `static/bibliographies/`
+- Format according to [Project Structure](./03-project-structure.mdx#staticbibliographies---citation-files)
+
+**Why this is required:**
+The converter needs the bibliography file to properly link in-text citations. If citations exist in the Word document but not in `bib.json`, the conversion will have errors.
+
+---
+
+## Setup Instructions
+
+### Step 1: Navigate to Converter Folder
+
+Open Terminal in VS Code (`` Ctrl + Shift + ` ``) and navigate to the converter:
+
+```bash
+cd docx_converter
+```
+
+### Step 2: Create Virtual Environment (Recommended)
+
+A virtual environment keeps the converter's Python packages separate from your system Python. For a detailed explanation of what virtual environments are, why they matter, and how to use them, see the [Virtual Environments](/docs/dev/python-quickstart-guide/virtual-environments) section of the Python Quick Start Guide.
+
+:::warning Important
+Create the virtual environment ONLY in the `docx_converter/` folder, NOT in the root of the project.
+:::
+
+**Create the virtual environment:**
+
+```bash
+python -m venv venv
+```
+
+**Activate the virtual environment:**
+
+```bash
+# Windows (Command Prompt)
+venv\Scripts\activate
+
+# Windows (PowerShell)
+venv\Scripts\Activate.ps1
+
+# Mac/Linux
+source venv/bin/activate
+```
+
+**When activated successfully:**
+You'll see `(venv)` appear at the beginning of your terminal prompt:
+
+```bash
+(venv) C:\GitHub\RMC-Software-Documentation\docx_converter>
+```
+
+### Step 3: Install Dependencies
+
+With the virtual environment activated, install required packages:
+
+```bash
+pip install -r requirements.txt
+```
+
+This installs:
+
+- `python-docx` - For reading Word documents
+- Other dependencies needed for conversion
+
+**Installation time:** ~30 seconds to 1 minute
+
+---
+
+## Conversion Workflow
+
+### Overview of the Process
+
+```
+1. Prepare Word Document & Bibliography
+    ↓
+2. Configure Converter Settings (main.py)
+    ↓
+3. Run in Development Mode (test)
+    ↓
+4. Review Generated Files
+    ↓
+5. Assess Output & Note Issues
+    ↓
+6. Run in Production Mode (final)
+    ↓
+7. Make Manual Refinements
+    ↓
+8. Test and Commit
+```
+
+---
+
+## Detailed Conversion Steps
+
+### Step 1: Prepare Your Files
+
+#### A. Place Word Document
+
+Place your `.docx` file in the `static/source-documents/` folder following the same folder structure used for docs, figures, and bibliographies.
+
+**Example structure:**
+
+```
+static/source-documents/desktop-applications/your-software/users-guide/v1.0/your-document.docx
+```
+
+This organizational structure keeps all related files (source documents, MDX files, figures, and bibliographies) aligned across the project.
+
+#### B. Create Bibliography File
+
+Before conversion, create `bib.json` with all references:
+
+**Location example:**
+
+```
+static/bibliographies/desktop-applications/your-software/users-guide/v1.0/bib.json
+```
+
+See [Project Structure](./03-project-structure.mdx#staticbibliographies---citation-files) for bibliography format and examples.
+
+---
+
+### Step 2: Configure the Converter
+
+Open `docx_converter/main.py` in VS Code and configure these settings:
+
+#### A. Set Environment Mode
+
+```python
+# Line ~20
+environment = "development"  # Start with development to test
+```
+
+**Environment modes:**
+
+- **`development`** - Test mode
+  - Safe to experiment
+  - Outputs to temporary location
+  - Won't overwrite existing docs
+  - **Always start here!**
+
+- **`production`** - Final mode
+  - Outputs directly to docs folder
+  - Will overwrite existing files
+  - **Only use after testing in development**
+
+#### B. Configure Paths
+
+Find and set these variables in `main.py`:
+
+**Figure Path (FIGSRC):**
+
+```python
+# Path used in <Figure> component src attributes
+# Figure filenames will be appended (e.g., "figure-1.png")
+FIGSRC = "figures/desktop-applications/your-software/users-guide/v1.0"
+```
+
+This path appears in the generated MDX files and must match where figures are stored in `static/`. Always use forward slashes `/`.
+
+**Navigation Component Settings:**
+
+```python
+# NAVLINK: URL destination for the back arrow navigation
+NAVLINK = "/desktop-applications/your-software"
+
+# NAVTITLE: Display text shown in the navigation link
+NAVTITLE = "User's Guide"
+
+# NAVDOC: Document identifier for version selector
+# Must match the key in versionList.json
+NAVDOC = "desktop-applications/your-software/users-guide"
+```
+
+These configure the `NavContainer` component at the top of each page, providing navigation back to parent pages and version selection.
+
+**Development Environment Paths:**
+
+```python
+# DOCX_PATH: Location of source Word document
+DOCX_PATH = r"C:\path\to\your-document.docx"
+
+# BIB_PATH: Location of bibliography file
+BIB_PATH = r"C:\GitHub\RMC-Software-Documentation\static\bibliographies\desktop-applications\your-software\users-guide\v1.0\bib.json"
+
+# FIGURES_DIR: Temporary output directory for extracted figures (testing)
+FIGURES_DIR = r"C:\temp\conversion-test\figures"
+
+# MDX_DIR: Temporary output directory for generated MDX files (testing)
+MDX_DIR = r"C:\temp\conversion-test\mdx"
+```
+
+**Production Environment Paths:**
+
+```python
+# DOCX_PATH: Location of source Word document (typically same as development)
+DOCX_PATH = r"C:\path\to\your-document.docx"
+
+# BIB_PATH: Location of bibliography file (typically same as development)
+BIB_PATH = r"C:\GitHub\RMC-Software-Documentation\static\bibliographies\desktop-applications\your-software\users-guide\v1.0\bib.json"
+
+# FIGURES_DIR: Final output directory for figures
+FIGURES_DIR = r"C:\GitHub\RMC-Software-Documentation\static\figures\desktop-applications\your-software\users-guide\v1.0"
+
+# MDX_DIR: Final output directory for MDX files
+MDX_DIR = r"C:\GitHub\RMC-Software-Documentation\docs\desktop-applications\your-software\users-guide\v1.0"
+```
+
+**Path Configuration Tips:**
+
+- **DOCX_PATH** and **BIB_PATH** are typically the same for both environments
+- **FIGURES_DIR** and **MDX_DIR** differ: development uses temporary locations, production uses final project locations
+- Use absolute paths (full paths starting from drive letter on Windows)
+- Forward slashes `/` work on all platforms and are recommended
+- Backslashes `\` work on Windows but should be in raw strings (prefix with `r`)
+
+:::warning Critical: Verify Your Paths
+
+**Incorrect paths in production mode can overwrite existing documentation!**
+
+Always:
+
+1. Start with `ENVIRONMENT = "development"`
+2. Test thoroughly
+3. Then switch to `ENVIRONMENT = "production"`
+4. Double-check production paths before running
+
+:::
+
+---
+
+### Step 3: Run Development Mode (Test)
+
+#### A. Ensure Settings Are Correct
+
+✓ `ENVIRONMENT = "development"`  
+✓ All paths point to correct locations  
+✓ Bibliography file exists and is complete  
+✓ Virtual environment is activated (you see `(venv)` in terminal)
+
+#### B. Run the Converter
+
+From the `docx_converter/` folder:
+
+```bash
+python main.py
+```
+
+or
+
+```bash
+python3 main.py
+```
+
+or
+
+```bash
+py main.py
+```
+
+#### C. Respond to Prompts
+
+The script will ask:
+
+**Prompt 1:**
+
+```
+Confirm the required user inputs are correct? [Y\N]:
+```
+
+- Type `Y` if paths are correct
+- Type `N` to exit and fix paths
+
+**Prompt 2:**
+
+```
+Do you want to clear and regenerate all figure images? [Y\N]:
+```
+
+- Type `Y` to extract all images from Word (first run)
+- Type `N` if images already exist and you don't want to overwrite
+
+#### D. Monitor Progress
+
+You'll see output like:
+
+```
+Processing DOCX file...
+Extracting figures... (15 found)
+Extracting tables... (8 found)
+Processing equations... (12 found)
+Parsing citations... (23 found)
+Writing MDX files...
+  - 00-document-info.mdx
+  - 00-version-history.mdx
+  - 01-preface.mdx
+  - 02-introduction.mdx
+  ...
+Conversion complete!
+```
+
+**Conversion time:** 10 seconds to 2 minutes depending on document size
+
+---
+
+### Step 4: Review Generated Files
+
+#### A. Check MDX Files
+
+Navigate to your output directory (specified in `MDX_DIR`).
+
+**Review each file for:**
+
+**Basic Structure:**
+
+✓ Headings are correct  
+✓ Text formatting preserved (bold, italic, lists)  
+✓ Figure components look right
+
+**Tables (pay special attention):**
+
+✓ Table components render properly  
+✓ **Check for danger admonitions** marking tables with merged cells  
+✓ Verify table structure is correct, especially for complex tables
+
+**Equations (require manual work):**
+
+✓ **Look for equation admonitions** placed by the converter
+
+- Standalone equations: admonition at equation location
+- Inline equations: admonition above paragraph
+
+✓ Plan to manually add LaTeX equations using `<Equation>` component  
+✓ Note which sections have equations needing conversion
+
+**Citations (verify carefully):**
+
+✓ Citation components are present  
+✓ **Author names and years are preserved** (not removed)
+
+- Should be: "Foster and Fell (2024) `<Citation citationKey="FosterFell2024" />`"
+- Not: "`<Citation citationKey="FosterFell2024" />`" (missing text)
+
+✓ Citation keys match entries in bib.json  
+✓ Citations link correctly to bibliography
+
+#### B. Check Extracted Images
+
+Navigate to your figures directory (specified in `FIGURES_DIR`).
+
+**Verify:**
+
+✓ All images extracted  
+✓ Images are clear (not blurry or pixelated)  
+✓ Filenames are reasonable  
+✓ File sizes are appropriate (< 500KB each ideally)
+
+#### C. Test Locally
+
+With the dev server running (`npm start` from project root):
+
+1. Navigate to your converted document in the browser
+2. Check all pages render correctly
+3. Verify figure numbering works
+4. Test cross-references
+5. Check citations link to bibliography
+
+**Common issues to look for:**
+
+- Missing images (check image paths)
+- Broken references (check unique keys)
+- Formatting problems (may need manual fixes)
+- **Tables with merged cells flagged by danger admonitions**
+- **Equation admonitions requiring manual LaTeX conversion**
+- **Missing citation text** (author names/years removed by converter)
+
+---
+
+### Step 5: Assess Development Output
+
+After reviewing the development output, assess whether the conversion worked well enough to proceed to production.
+
+#### Determine If You're Ready for Production
+
+**The conversion is ready for production mode if:**
+
+✓ Document structure is generally correct (headings, paragraphs)  
+✓ Figures extracted successfully  
+✓ Tables converted (even if flagged with admonitions)  
+✓ Citations are present (even if missing some text)  
+✓ No critical errors or missing content
+
+**You may need to adjust the Word document and re-run development mode if:**
+
+✗ Major structural problems (chapters missing, wrong order)  
+✗ Most figures didn't extract  
+✗ Converter crashed or produced errors  
+✗ Bibliography file missing or incorrect
+
+#### Note What Needs Manual Fixing Later
+
+**Don't make manual edits to the development output files!** Instead, make a note of issues to fix after the production run:
+
+**Equations (will always need work):**
+
+- Count how many equation admonitions were created
+- Note which sections have the most equations
+- Plan time for LaTeX conversion after production run
+
+**Tables with merged cells:**
+
+- Identify which tables have danger admonitions
+- Reference page numbers in original Word document
+- Plan to fix these tables after production run
+
+**Citations:**
+
+- Scan a few citations to see if author names/years are missing
+- If it's a pattern, expect to fix all citations after production run
+- Verify bib.json has all needed entries
+
+**Other issues:**
+
+- Note any major formatting problems
+- Identify any missing or incorrect content
+- Document any unexpected converter behavior
+
+:::tip Purpose of Development Mode
+
+Development mode is for **testing and assessment only**. Once you confirm the conversion generally works, proceed to production mode. All manual refinements happen after the production run, not during development testing.
+
+:::
+
+---
+
+### Step 6: Run Production Mode (Final)
+
+Once you're satisfied with the development output:
+
+#### A. Update Settings
+
+In `main.py`:
+
+```python
+# Change from development to production
+environment = "production"
+```
+
+#### B. Verify Production Paths
+
+**Critical: Double-check these paths!**
+
+```python
+# Ensure these point to final locations (use absolute paths with raw strings)
+FIGURES_DIR = r"C:\GitHub\RMC-Software-Documentation\static\figures\desktop-applications\your-software\users-guide\v1.0"
+MDX_DIR = r"C:\GitHub\RMC-Software-Documentation\docs\desktop-applications\your-software\users-guide\v1.0"
+```
+
+**Verify the folders exist:**
+
+- Create `docs/` folder structure if needed
+- Create `static/figures/` folder structure if needed
+
+#### C. Backup Existing Files (If Applicable)
+
+If converting a new version and old files exist:
+
+```bash
+# Create backup of existing documentation
+cp -r docs/path/to/old-version docs/path/to/old-version-backup
+```
+
+#### D. Run Production Conversion
+
+```bash
+python main.py
+```
+
+Respond to prompts:
+
+- Confirm variables are correct: `Y`
+- Regenerate figures: `Y` (for final run)
+
+#### E. Final Review
+
+After production conversion:
+
+1. **Verify files are in correct location**
+   - Check `docs/` folder
+   - Check `static/figures/` folder
+
+2. **Test with dev server**
+
+   ```bash
+   # From project root
+   npm start
+   ```
+
+3. **Check all functionality**
+   - Navigation works
+   - All pages load
+   - Images display
+   - Cross-references work
+   - Citations link correctly
+
+---
+
+### Step 7: Make Manual Refinements
+
+Now that production files are in place, make the manual adjustments you identified in Step 5.
+
+#### Required Manual Fixes
+
+**Equations (always required):**
+
+✓ **Locate all equation admonitions** placed by the converter  
+✓ Open original Word document for equation reference  
+✓ Convert Word equations to LaTeX format  
+✓ Replace admonitions with `<Equation>` components  
+✓ Test equation rendering in browser  
+✓ See [React Components](./07-react-components.mdx) for equation examples
+
+**Tables with merged cells:**
+
+✓ **Find danger admonitions** marking problematic tables  
+✓ Open original Word document for table reference  
+✓ Manually verify and fix table structure in MDX  
+✓ Adjust `<TableVertical>` or `<TableHorizontal>` components  
+✓ Remove danger admonitions after fixing  
+✓ Test table rendering in browser
+
+**Citations (verify all):**
+
+✓ **Check every citation** for missing author names/years  
+✓ Add back any text removed by converter  
+✓ Format should be: "Author (Year) `<Citation citationKey="..." />`"  
+✓ Verify citation keys match bib.json entries  
+✓ Test that citations link correctly to bibliography
+
+#### Optional Refinements
+
+**Formatting adjustments:**
+
+✓ Adjust line breaks and spacing  
+✓ Add missing bold/italic formatting  
+✓ Fine-tune list formatting
+
+**Component refinements:**
+
+✓ Set figure widths appropriately  
+✓ Adjust table column widths  
+✓ Fine-tune caption text  
+✓ Update component props as needed
+
+**Content corrections:**
+
+✓ Correct special characters  
+✓ Adjust formatting for code blocks  
+✓ Update outdated information
+
+---
+
+### Step 8: Test and Commit
+
+#### A. Test with Development Server
+
+After completing all manual refinements, test your converted documentation thoroughly:
+
+```bash
+npm start
+```
+
+This starts the development server at `http://localhost:3000`. Verify:
+
+✓ All pages load correctly  
+✓ Navigation works properly  
+✓ Images display correctly  
+✓ Equations render properly  
+✓ Tables are formatted correctly  
+✓ Citations link to bibliography  
+✓ Cross-references work  
+✓ No console errors appear
+
+Press `Ctrl+C` to stop the development server when testing is complete.
+
+:::info Production Build Not Required
+
+**Contributors do NOT need to run `npm run build`** before committing. The development server (`npm start`) is sufficient for testing. Site administrators will handle building and deploying the site to production.
+
+If you encounter any issues while testing locally, contact the repository administrator rather than attempting to troubleshoot build processes.
+
+:::
+
+#### B. Commit and Push Changes
+
+<DocTabs
+  items={[
+    {
+      label: 'Using GitHub Desktop',
+      value: 'github-desktop',
+      child: (
+        <>
+          <p>
+            <strong>Commit Changes:</strong>
+          </p>
+          <ol>
+            <li>
+              Open <strong>GitHub Desktop</strong>
+            </li>
+            <li>Review the changed files in the left sidebar</li>
+            <li>
+              Ensure all relevant files are checked:
+              <ul>
+                <li>
+                  New MDX files in <code>docs/</code>
+                </li>
+                <li>
+                  Extracted figures in <code>static/figures/</code>
+                </li>
+                <li>
+                  Source Word document in <code>static/source-documents/</code>
+                </li>
+                <li>
+                  Bibliography file in <code>static/bibliographies/</code>
+                </li>
+              </ul>
+            </li>
+            <li>Write a commit message (e.g., "Add converted documentation for [Software Name] v1.0")</li>
+            <li>
+              Click <strong>Commit to main</strong>
+            </li>
+          </ol>
+          <p>
+            <strong>Push to Repository:</strong>
+          </p>
+          <ol>
+            <li>
+              Click <strong>Push origin</strong> at the top of the window
+            </li>
+          </ol>
+          <p>Once pushed, site administrators will review, build, and deploy your changes to the live site.</p>
+        </>
+      ),
+    },
+    {
+      label: 'Using Git (Command Line)',
+      value: 'git',
+      child: (
+        <>
+          <p>
+            <strong>Commit Changes:</strong>
+          </p>
+          <pre>
+            <code className="language-bash">{`git add docs/your-new-files/
+git add static/figures/your-new-images/
+git add static/source-documents/your-document.docx
+git add static/bibliographies/your-path/bib.json
+git commit -m "Add converted documentation for [Software Name] v1.0"`}</code>
+          </pre>
+          <p>
+            <strong>Push to Repository:</strong>
+          </p>
+          <pre>
+            <code className="language-bash">git push origin main</code>
+          </pre>
+          <p>Once pushed, site administrators will review, build, and deploy your changes to the live site.</p>
+        </>
+      ),
+    },
+  ]}
+  defaultValue="github-desktop"
+/>
+
+---
+
+## Understanding the Converter's Output
+
+### What You'll Get
+
+After conversion, you'll have:
+
+```
+docs/your-software/users-guide/v1.0/
+├── 00-document-info.mdx          # Metadata and document info
+├── 00-version-history.mdx         # Version history table
+├── 01-preface.mdx                 # Preface chapter
+├── 02-introduction.mdx            # Introduction chapter
+├── 03-methodology.mdx             # Methodology chapter
+└── ...                            # Additional chapters
+
+static/figures/your-software/users-guide/v1.0/
+├── figure-1.png                   # Extracted figure images
+├── figure-2.png
+├── figure-3.png
+└── ...
+```
+
+### MDX File Structure
+
+Each generated MDX file will include:
+
+**Front matter:**
+
+```mdx
+---
+title: Chapter Title
+---
+```
+
+**Component imports:**
+
+```jsx
+import Figure from '@site/src/components/Figure';
+import TableVertical from '@site/src/components/TableVertical';
+import Equation from '@site/src/components/Equation';
+import Citation from '@site/src/components/Citation';
+```
+
+**Content with components:**
+
+```mdx
+# Chapter Title
+
+Regular paragraph text with **bold** and _italic_ formatting.
+
+<Figure figKey="figure-1" src="/figures/your-software/users-guide/v1.0/figure-1.png" alt="Description" caption="Figure caption text" />
+
+More content with <Citation citationKey="Smith2020" /> references.
+```
+
+---
+
+## Troubleshooting
+
+### Common Issues and Solutions
+
+#### Issue: "Python not recognized"
+
+**Problem:** Terminal doesn't recognize `python` command.
+
+**Solutions:**
+
+- Try `py` instead of `python` (see [python vs. python3 vs. py](/docs/dev/python-quickstart-guide/installing-python#python-vs-python3-vs-py))
+- Ensure Python is on your PATH (see [Adding Python to PATH](/docs/dev/python-quickstart-guide/installing-python#adding-python-to-path))
+- Restart terminal after modifying PATH — changes do not take effect in terminals that were already open
+
+---
+
+#### Issue: "No module named 'docx'"
+
+**Problem:** Dependencies not installed.
+
+**Solutions:**
+
+- Ensure virtual environment is activated (see `(venv)` in terminal)
+- Run `pip install -r requirements.txt`
+- Try `pip3` instead of `pip`
+
+---
+
+#### Issue: "File not found" error
+
+**Problem:** Incorrect file paths in `main.py`.
+
+**Solutions:**
+
+- Check paths are relative to `docx_converter/` folder
+- Use forward slashes `/` not backslashes `\`
+- Verify files actually exist at specified locations
+- Use `../` to go up to project root
+
+---
+
+#### Issue: Figures not extracting
+
+**Problem:** Images missing from converted output.
+
+**Solutions:**
+
+- Verify Word document has embedded images (not linked)
+- Ensure images are in correct format (PNG, JPG)
+- Check figure style is `RMC_Figure` in Word
+- Answer `Y` to "Regenerate figures?" prompt
+
+---
+
+#### Issue: Tables look wrong
+
+**Problem:** Complex tables don't convert correctly.
+
+**Solutions:**
+
+- Simple tables convert automatically
+- Complex tables with merged cells may need manual adjustment
+- Edit generated `<TableVertical>` components manually
+- See [React Components](./07-react-components.mdx) for table examples
+
+---
+
+#### Issue: Equations display as text
+
+**Problem:** Equations not converted to LaTeX.
+
+**Solutions:**
+
+- Check equations use proper Word equation editor (not plain text)
+- Manually convert to LaTeX syntax if needed
+- Use `<Equation>` component format from [React Components](./07-react-components.mdx)
+
+---
+
+#### Issue: Citations broken
+
+**Problem:** Citations don't link to bibliography.
+
+**Solutions:**
+
+- Verify `bib.json` exists and is complete
+- Check citation keys in Word match keys in `bib.json`
+- Ensure `BIB_PATH` in `main.py` is correct
+- Bibliography must be created **before** conversion
+
+---
+
+#### Issue: Conversion produces errors
+
+**Problem:** Script crashes or reports errors.
+
+**Solutions:**
+
+- Check Word document follows RMC template
+- Verify all required styles are present
+- Look at error message for specific line number
+- Try simpler document first to test setup
+
+---
+
+## Best Practices
+
+### Before Conversion
+
+✅ **Clean up Word document:**
+
+- Remove track changes
+- Accept all formatting
+- Verify all images are embedded
+- Check citation format is consistent
+- Ensure tables are properly formatted
+
+✅ **Prepare bibliography:**
+
+- Create complete `bib.json` file
+- Include all citations from document
+- Follow IEEE format
+- Test bibliography file format
+
+✅ **Plan folder structure:**
+
+- Determine final location in `docs/`
+- Create folder structure if needed
+- Plan version number (v1.0, v1.1, etc.)
+
+### During Conversion
+
+✅ **Always test in development first:**
+
+- Never run production mode on first try
+- Review development output thoroughly
+- Test in browser with `npm start`
+- Make adjustments before production run
+
+✅ **Monitor conversion output:**
+
+- Watch for error messages
+- Note any warnings
+- Check conversion statistics
+- Verify expected number of figures/tables/equations
+
+### After Conversion
+
+✅ **Review and refine:**
+
+- Read through all generated MDX files
+- Check image quality and positioning
+- Verify cross-references work
+- Test all citations
+- Fix any formatting issues
+
+✅ **Test thoroughly:**
+
+- Run dev server (`npm start`)
+- Navigate through all pages
+- Click all cross-references
+- Check mobile view
+- Test in different browsers
+
+✅ **Document changes:**
+
+- Note any manual adjustments made
+- Update version history
+- Document issues for future conversions
+
+---
+
+## Converter File Structure Reference
+
+For those interested in understanding the converter's internals:
+
+```
+docx_converter/
+├── main.py                    # Main script - configure and run
+├── requirements.txt           # Python dependencies
+├── README.md                  # Technical documentation
+├── utils/                     # Helper modules
+│   ├── __init__.py
+│   ├── constants.py          # Style mappings and constants
+│   ├── helpers.py            # Utility functions
+│   ├── figures.py            # Figure extraction logic
+│   ├── tables.py             # Table conversion logic
+│   ├── citations.py          # Citation processing
+│   ├── equations.py          # Equation handling
+│   ├── docx_processor.py    # Main parsing engine
+│   └── mdx_writer.py        # MDX file generation
+└── venv/                     # Virtual environment (created by you)
+```
+
+**What you need to modify:**
+
+- `main.py` - Configuration variables only
+
+**What you don't need to touch:**
+
+- Everything in `utils/` - Core converter logic
+- `requirements.txt` - Dependency list
+- `README.md` - Technical documentation
+
+---
+
+## Limitations
+
+The converter has some limitations to be aware of:
+
+### What Converts Well
+
+✅ Standard paragraphs and headings  
+✅ Simple to moderate tables  
+✅ Embedded images  
+✅ Standard equations  
+✅ In-text citations  
+✅ Lists (bulleted and numbered)  
+✅ Basic formatting (bold, italic)
+
+### What May Need Manual Work
+
+⚠️ Very complex tables with multiple merged cells  
+⚠️ Custom Word styles not in RMC template  
+⚠️ Special characters or symbols  
+⚠️ Advanced equation formatting  
+⚠️ Footnotes (may need conversion to endnotes)  
+⚠️ Text boxes and floating objects  
+⚠️ Embedded objects (Excel charts, etc.)
+
+### What Doesn't Convert
+
+❌ Comments and tracked changes  
+❌ Word forms and fields  
+❌ Macros and VBA code  
+❌ Custom fonts (uses site default)  
+❌ Exact page layout (web is responsive)  
+❌ Headers and footers  
+❌ Page numbers and section breaks
+
+---
+
+## Tips for Success
+
+### For First-Time Users
+
+1. **Start small:** Try converting a single chapter first
+2. **Use development mode:** Never skip testing
+3. **Read error messages:** They usually tell you what's wrong
+4. **Ask for help:** Contact site administrators if stuck
+5. **Document your process:** Note what works and what doesn't
+
+### For Repeat Users
+
+1. **Create conversion checklist:** Document your specific workflow
+2. **Save configurations:** Keep tested path settings
+3. **Automate cleanup:** Develop scripts for common manual fixes
+4. **Share learnings:** Help other contributors avoid issues
+
+---
+
+## Summary
+
+### Conversion Workflow Recap
+
+```
+1. ✅ Install Python and dependencies
+2. ✅ Prepare Word document and bibliography
+3. ✅ Configure main.py (development mode)
+4. ✅ Run development conversion
+5. ✅ Review and assess output
+6. ✅ Note issues for manual fixing
+7. ✅ Switch to production mode
+8. ✅ Run production conversion
+9. ✅ Make manual refinements
+10. ✅ Test and commit
+```
+
+### Key Takeaways
+
+- The converter saves hours of manual conversion work
+- Always test in development mode first
+- Some manual refinement is usually needed
+- Bibliography file must exist before conversion
+- Word document must follow RMC template
+
+### When to Use vs. Manual Creation
+
+**Use the converter when:**
+
+- You have a complete Word document
+- Document follows RMC template or would not require substantial effort to convert to RMC template
+- You want to save time on initial conversion
+
+**Create MDX manually when:**
+
+- Starting a new document from scratch
+- Word document doesn't follow template and would require substantial effort to convert to RMC template
+- Document is very short (< 10 pages)
+- You need complete control over formatting
+
+---
+
+## Next Steps
+
+After converting your document:
+
+1. **Refine the output:** [Creating and Editing Pages](./06-creating-editing-pages.mdx)
+2. **Use components:** [React Components](./07-react-components.mdx)
+3. **Understand structure:** [Project Structure](./03-project-structure.mdx)
+4. **Get help:** [Troubleshooting & FAQ](./08-troubleshooting-faq.mdx)
+
+**Happy converting!** The DOCX converter is a powerful tool that can significantly speed up your documentation workflow.

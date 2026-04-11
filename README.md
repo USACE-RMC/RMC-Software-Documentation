@@ -22,6 +22,51 @@ The guide includes:
 - Table formatting and counter file integration
 - Versioning strategy and linking guidelines
 
+## Claude Code Skills
+
+This repository includes Claude Code skills (slash commands) in `.claude/skills/` for common development workflows. Skills are invoked with `/{name}` in a Claude Code session.
+
+### Git & Repository
+
+| Skill | Description |
+|-------|-------------|
+| `/commit` | Stage changes and create a git commit following project conventions |
+| `/push` | Push current branch to remote with safety checks |
+| `/commit-push` | Commit and push in a single operation |
+| `/pr` | Create a GitHub pull request with auto-generated title and description |
+| `/review-pr` | Review a pull request for code quality, MDX patterns, and documentation standards |
+
+### Page Verification & Quality
+
+| Skill | Description |
+|-------|-------------|
+| `/smoke-test` | Quick health check — page loads, no console errors, no broken images |
+| `/review-responsive` | Screenshot and analyze a page at 7 device viewports (desktop through phone) |
+| `/review-page` | Full page audit combining Lighthouse scores with responsive design review |
+| `/check-accessibility` | Section 508 / WCAG AA compliance audit using Lighthouse + Playwright |
+| `/check-performance` | Lighthouse performance audit with Core Web Vitals and resource analysis |
+| `/lint-fix` | Run ESLint, auto-fix issues, and provide guidance for remaining problems |
+
+### Documentation & QC
+
+| Skill | Description |
+|-------|-------------|
+| `/qc-review` | Run a QC review at Level 1, 2, or 3 on an MDX document (wraps `qc/qc-prompt.md`) |
+| `/build` | Run the Docusaurus production build and analyze errors/warnings |
+| `/check-links` | Scan MDX files for broken references, missing images, and orphaned keys |
+| `/check-components` | Validate custom component usage (props, imports, key uniqueness) in MDX files |
+
+### MCP Servers
+
+The following MCP servers enhance skill capabilities:
+
+- **Playwright** — Browser automation for screenshots, responsive testing, and smoke tests
+- **Lighthouse** — Performance, accessibility, SEO, and best practices auditing
+- **ESLint** — JavaScript linting via MCP
+- **Context7** — Library documentation lookup
+- **Sequential Thinking** — Multi-step reasoning for complex analysis
+- **GitHub** — GitHub API integration for PR and issue workflows
+
 For questions or support, contact the RMC documentation team:
 
 Adam Gohs

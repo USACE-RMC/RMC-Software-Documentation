@@ -8,11 +8,13 @@ const TableAcronyms = ({ headers, columns }) => {
 
   return (
     <div className="table-container">
+      <div className="table-scroller">
       <table
         className="table-base table-zebra"
         style={{
           ["--table-width"]: "fit-content",
           ["--table-display"]: "block",
+          ["--table-min-width"]: "300px",
           maxWidth: "100%",
         }}
       >
@@ -43,6 +45,7 @@ const TableAcronyms = ({ headers, columns }) => {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 };

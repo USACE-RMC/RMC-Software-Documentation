@@ -1,0 +1,86 @@
+name: PR Preview Build
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'docs/**'
+      - 'src/**'
+      - 'static/**'
+      - 'docusaurus.config.js'
+      - 'tailwind.config.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'scripts/**'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: pr-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    name: Build and deploy preview
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - name: Build site with PR-specific baseUrl
+        env:
+          DOCUSAURUS_URL: https://usace-rmc.github.io
+          DOCUSAURUS_BASE_URL: /RMC-Software-Documentation-Previews/pr-${{ github.event.pull_request.number }}/
+        run: npm run build
+      - uses: peaceiris/actions-gh-pages@v4
+        with:
+          deploy_key: ${{ secrets.PREVIEW_DEPLOY_KEY }}
+          external_repository: usace-rmc/RMC-Software-Documentation-Previews
+          publish_branch: gh-pages
+          publish_dir: ./build
+          destination_dir: pr-${{ github.event.pull_request.number }}
+          keep_files: true
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: 'Deploy preview for PR #${{ github.event.pull_request.number }}'
+      - name: Post or update preview URL comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.issue.number;
+            const url = `https://usace-rmc.github.io/RMC-Software-Documentation-Previews/pr-${prNumber}/`;
+            const sha = context.payload.pull_request.head.sha.substring(0, 7);
+            const marker = '<!-- pr-preview-bot-comment -->';
+            const body = `${marker}\n\n📄 **Preview deployed** for commit \`${sha}\`\n\n${url}\n\n_This preview updates automatically when new commits are pushed. Deleted when the PR closes._`;
+            const comments = await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber });
+            const existing = comments.data.find(c => c.user.type === 'Bot' && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner: context.repo.owner, repo: context.repo.repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber, body });
+            }
+      - name: Mark preview as stale on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.issue.number;
+            const sha = context.payload.pull_request.head.sha.substring(0, 7);
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const marker = '<!-- pr-preview-bot-comment -->';
+            const comments = await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber });
+            const existing = comments.data.find(c => c.user.type === 'Bot' && c.body.includes(marker));
+            if (existing) {
+              // Strip any prior stale warning before appending a fresh one
+              const cleanBody = existing.body.split('\n\n⚠️')[0];
+              const newBody = `${cleanBody}\n\n⚠️ **Preview build failed on commit \`${sha}\`** — the preview URL above is **stale** and reflects an earlier successful build. Do not rely on it as an accurate representation of this PR's current state. [View workflow logs](${runUrl}).`;
+              await github.rest.issues.updateComment({ owner: context.repo.owner, repo: context.repo.repo, comment_id: existing.id, body: newBody });
+            } else {
+              const body = `${marker}\n\n❌ **Preview build failed** on commit \`${sha}\`\n\nThe site failed to build for this PR, so there is no preview to view. [View workflow logs](${runUrl}).`;
+              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber, body });
+            }

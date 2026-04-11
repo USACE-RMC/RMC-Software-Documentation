@@ -9,10 +9,11 @@ import '../../css/custom.css';
 const RFAData = [
   {
     icon: 'img/RFA.png',
+    preserveIconColor: true,
     doc_location: 'desktop-applications/rmc-rfa/users-guide',
     doc_name: 'RMC RFA Users Guide',
     active: true,
-    draft: true,
+    draft: false,
   },
 ];
 
@@ -34,16 +35,11 @@ export default function RFA() {
     icon: addBaseUrl(doc.icon),
     iconLight: addBaseUrl(doc.iconLight),
     iconDark: addBaseUrl(doc.iconDark),
-    doc_location: addBaseUrl(
-      `docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`,
-    ),
+    doc_location: addBaseUrl(`docs/${doc.doc_location}/${latestVersions[doc.doc_location.replace(/^docs\//, '')]}/preface`),
   }));
 
   return (
-    <Layout
-      title="RMC Software Documentation"
-      description="Documentation for RMC Software Packages"
-    >
+    <Layout title="RMC Software Documentation" description="Documentation for RMC Software Packages">
       <main>
         <div className="title-container">
           <ThemedImage
@@ -54,8 +50,8 @@ export default function RFA() {
             }}
           />
           <div className="text-container">
-            <p className="text-title">RMC Reservoir Frequency Analysis</p>
-            <p className="text-description">RMC Reservoir Frequency Analysis</p>
+            <h1 className="text-title">RMC Reservoir Frequency Analysis</h1>
+            <p className="text-description">Reservoir stage-frequency analysis for hydrologic hazard assessments</p>
           </div>
         </div>
         <ContentBox contentData={RFAData} />

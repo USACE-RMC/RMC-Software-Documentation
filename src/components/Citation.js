@@ -130,7 +130,7 @@ const Citation = ({ citationKey }) => {
     <span className="font-usace text-[inherit]">
       <a
         href={`#footnote-${citationKey}`}
-        className="text-ifm-link no-underline hover:text-ifm-link-hover"
+        className="citation-link text-ifm-link no-underline hover:text-ifm-link-hover"
       >
         [{citationNumber}]
       </a>

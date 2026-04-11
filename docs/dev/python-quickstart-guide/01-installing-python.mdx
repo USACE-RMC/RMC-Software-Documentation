@@ -1,0 +1,261 @@
+---
+title: Installing Python
+---
+
+import DocTabs from '@site/src/components/DocTabs';
+import FigureNoRef from '@site/src/components/FigureNoRef';
+import NavContainer from '@site/src/components/NavContainer';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" />
+
+# Installing Python
+
+Python is the primary scripting and development language used across many RMC projects for data analysis, automation, scientific computing, and tool development. This section covers how to install Python on your machine and ensure it is properly configured.
+
+---
+
+## Choosing a Python Version
+
+Python releases follow a `major.minor.micro` versioning scheme (e.g., Python 3.13.2). When selecting a version:
+
+- **Use Python 3.10 or later** for RMC development work. Older versions are missing important language features and library support.
+- **Avoid the very latest release.** Some scientific packages take time to release compatible builds for brand-new Python versions. Choosing a version that has been out for at least several months gives the package ecosystem time to catch up.
+- **Match your team's version** if you are joining an existing project. Check the project's documentation or `requirements.txt` for version guidance.
+
+### Python Release History
+
+Each Python version follows a roughly 5-year support lifecycle: approximately 2 years of active bug-fix support (with binary installers), followed by approximately 3 years of security-only patches (source-only releases), then end-of-life.
+
+<TableVerticalNoRef
+  headers={[[{ value: 'Version' }, { value: 'Initial Release' }, { value: 'Status' }, { value: 'End-of-Life' }]]}
+  columns={[
+    ['Python 3.9', 'Python 3.10', 'Python 3.11', 'Python 3.12', 'Python 3.13', 'Python 3.14'],
+    ['October 2020', 'October 2021', 'October 2022', 'October 2023', 'October 2024', 'October 2025'],
+    ['End-of-life', 'Security fixes only', 'Security fixes only', 'Security fixes only', 'Active (bug fix)', 'Active (bug fix)'],
+    ['October 2025', 'October 2026', 'October 2027', 'October 2028', 'October 2029', 'October 2030'],
+  ]}
+/>
+
+For the most current release information, see the official [Python Release Schedule](https://devguide.python.org/versions/).
+
+:::warning Python 2 vs. Python 3
+Python 2 reached end-of-life in January 2020 and should never be used for new development. All instructions in this guide are for Python 3.
+:::
+
+---
+
+## Installing Python
+
+<DocTabs
+  items={[
+    {
+      label: 'USACE Computers',
+      value: 'usace',
+      child: (
+        <>
+          <p>
+            Python is available for request through the <a href="https://usace.dps.mil/sites/CIOG6-SS/SitePages/App-Portal.aspx">USACE App Portal</a>.
+          </p>
+          <p>
+            <strong>To install Python:</strong>
+          </p>
+          <ol>
+            <li>
+              Open the <a href="https://usace.dps.mil/sites/CIOG6-SS/SitePages/App-Portal.aspx">USACE App Portal</a>
+            </li>
+            <li>
+              Search for <strong>Python</strong> and request the available version
+            </li>
+            <li>
+              Installation should occur automatically. If installation doesn't begin within 48 hours, contact the Enterprise Service Desk at (866)
+              562-2348.
+            </li>
+          </ol>
+          <div className="admonition admonition-info alert alert--info">
+            <div className="admonition-heading">
+              <h5>App Portal Version</h5>
+            </div>
+            <div className="admonition-content">
+              <p>
+                The Python versions available through the App Portal may vary and do not always include every release. Before installing, verify with
+                your team lead that the available version is appropriate for the work you will be performing.
+              </p>
+            </div>
+          </div>
+        </>
+      ),
+    },
+    {
+      label: 'Non-USACE Computers',
+      value: 'non-usace',
+      child: (
+        <>
+          <h4>Option 1: Standard Installer (Recommended)</h4>
+          <ol>
+            <li>
+              Visit the official <a href="https://www.python.org/downloads/">Python Downloads</a> page
+            </li>
+            <li>
+              Download the installer for your desired version (see <strong>Choosing a Python Version</strong> above)
+            </li>
+            <li>Run the installer</li>
+            <li>
+              <strong>Important:</strong> On the first screen of the installer, check the box that says <strong>"Add python.exe to PATH"</strong>{' '}
+              before clicking Install. This saves you from manually configuring PATH later.
+            </li>
+            <li>
+              Select <strong>"Install Now"</strong> for a user-level installation (no admin rights required) or{' '}
+              <strong>"Customize installation"</strong> if you need to change the install location
+            </li>
+          </ol>
+          {/* Figure: Python installer first screen with "Add python.exe to PATH" checkbox highlighted */}
+          <FigureNoRef
+            src="/figures/python-quickstart-guide/python-installer-path-checkbox.png"
+            alt="Python installer showing the Add python.exe to PATH checkbox at the bottom of the first screen"
+            width="80%"
+          />
+          <p>
+            The default user-level install location is: <code>C:\Users\&lt;username&gt;\AppData\Local\Programs\Python\Python3XX\</code>
+          </p>
+          <h4>Option 2: Portable (Embeddable) Package</h4>
+          <p>If you cannot run installers on your machine, Python offers an embeddable zip package that requires no installation:</p>
+          <ol>
+            <li>
+              Visit the <a href="https://www.python.org/downloads/">Python Downloads</a> page and select your desired version
+            </li>
+            <li>
+              Scroll down to <strong>Files</strong> and download the <strong>Windows embeddable package (64-bit)</strong> zip file
+            </li>
+            <li>
+              Extract the zip to a permanent location, such as:
+              <pre>
+                <code>C:\Users\&lt;username&gt;\AppData\Local\Programs\Python\Python3XX\</code>
+              </pre>
+            </li>
+            <li>You will need to manually add this location to your PATH (see below)</li>
+          </ol>
+          <div className="admonition admonition-warning alert alert--warning">
+            <div className="admonition-heading">
+              <h5>Embeddable Package Limitations</h5>
+            </div>
+            <div className="admonition-content">
+              <p>
+                The embeddable package does not include <code>pip</code> by default. After extracting, you will need to install pip manually by
+                downloading <a href="https://bootstrap.pypa.io/get-pip.py">get-pip.py</a> and running <code>python get-pip.py</code>. You may also
+                need to edit the <code>python3XX._pth</code> file in the extracted folder and uncomment the <code>import site</code> line for pip to
+                work correctly.
+              </p>
+            </div>
+          </div>
+        </>
+      ),
+    },
+  ]}
+  defaultValue="usace"
+/>
+
+---
+
+## Adding Python to PATH
+
+If Python is not automatically added to your PATH during installation (or if `python --version` fails after installation), you will need to add it manually.
+
+PATH is an environment variable that tells your operating system where to find executable programs. Without Python on your PATH, you would need to type the full file path to `python.exe` every time you run a command.
+
+**To add Python to your user PATH:**
+
+1. Open the Windows Start Menu and type **environment variables** into the Search Bar
+2. Click on **Edit environment variables for your account**
+
+:::danger
+**DO NOT** click **Edit the system environment variables**. System environment variables apply to all users on the machine and require administrator privileges to modify. On USACE computers, you will not have access to this option. Even on machines where you do have administrator rights, modifying user variables is preferred — it keeps your changes scoped to your account and avoids unintended side effects for other users.
+:::
+
+<FigureNoRef
+  src="/figures/python-quickstart-guide/edit-env-variables.png"
+  alt="Windows Search showing Edit environment variables for your account under Settings"
+  width="55%"
+/>
+
+3. In the **Environment Variables** window, select **Path** under **User variables** and click **Edit...**
+
+<FigureNoRef
+  src="/figures/python-quickstart-guide/edit-user-path.png"
+  alt="Environment Variables window with Path selected under User variables and the Edit button highlighted. The System variables section is grayed out with a warning not to edit system variables."
+  width="50%"
+/>
+
+4. Click **New** and add the path to your Python installation folder (the folder containing `python.exe`). For example:
+   ```
+   C:\Users\<username>\AppData\Local\Programs\Python\Python312\
+   ```
+5. Click **New** again and add the `Scripts` subfolder (this is where `pip` and other tools are installed):
+   ```
+   C:\Users\<username>\AppData\Local\Programs\Python\Python312\Scripts\
+   ```
+6. Click **OK** to close all environment variable windows
+
+<FigureNoRef
+  src="/figures/python-quickstart-guide/add-to-user-path.png"
+  alt="Edit environment variable window showing Python paths added to the user PATH list, with the New and OK buttons highlighted"
+  width="50%"
+/>
+
+:::tip
+**Restart any open terminal windows** after modifying PATH. Changes to environment variables do not take effect in terminals that were already open.
+:::
+
+---
+
+## `python` vs. `python3` vs. `py`
+
+On Windows, you may encounter three different commands for running Python. Understanding the differences avoids confusion:
+
+<TableVerticalNoRef
+  headers={[[{ value: 'Command' }, { value: 'Description' }]]}
+  columns={[
+    ['<code>python</code>', '<code>python3</code>', '<code>py</code>'],
+    [
+      'The most common command. Works if <code>python.exe</code> is on your PATH. On most Windows installations, this is the command you will use.',
+      'Common on macOS and Linux, where <code>python</code> may still point to Python 2. On Windows, this command may or may not work depending on your installation method.',
+      'The <b>Python Launcher for Windows</b>. Automatically finds installed Python versions and runs the latest one. Installed by the standard python.org installer but may not be available through the App Portal or portable installations.',
+    ],
+  ]}
+/>
+
+**Recommendation:** Use `python` for consistency throughout this guide and across RMC projects. If `python` doesn't work but `py` does, you can use `py` as a substitute in all commands.
+
+---
+
+## Verifying Your Installation
+
+Open a **new** terminal window (Command Prompt, PowerShell, or the VS Code integrated terminal) and run:
+
+```
+python --version
+```
+
+You should see output like:
+
+```
+Python 3.12.4
+```
+
+Then verify that pip (Python's package manager) is available:
+
+```
+pip --version
+```
+
+You should see output like:
+
+```
+pip 24.0 from C:\Users\<username>\AppData\Local\Programs\Python\Python312\Lib\site-packages\pip (python 3.12)
+```
+
+If either command fails, see [Troubleshooting](./07-troubleshooting.mdx) for solutions.
+
+:::tip Alternative pip command
+If `pip` is not recognized but `python` is, you can always use `python -m pip` as an alternative. This runs pip through the Python interpreter directly and bypasses PATH issues with the `Scripts` folder.
+:::

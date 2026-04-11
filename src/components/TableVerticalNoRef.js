@@ -2,8 +2,8 @@ import "../css/custom.css";
 import "../css/tables.css";
 
 const TableVerticalNoRef = ({
-  alt, 
-  headers = [], 
+  alt,
+  headers = [],
   columns = [],
   colWidths, // e.g., [14, "20ch", "minmax(16ch, 1fr)"]
   colAlign, // e.g., ["left","center","right"]
@@ -12,7 +12,7 @@ const TableVerticalNoRef = ({
   headerVAlign, // e.g., ["middle","bottom","middle"] (optional)
   widthMode = "full", // "full" | "intrinsic"
   footnotes, // Array<string | React.ReactNode>
- }) => {
+}) => {
   const renderHTML = (content) => ({ __html: content });
 
   const colCount = columns.length ?? 0;
@@ -46,12 +46,16 @@ const TableVerticalNoRef = ({
       styleVars[`--hv${i + 1}`] = headerVAlign[i]; // header vertical
     }
   }
+
+  // Compute per-table min-width from column count
+  styleVars["--table-min-width"] = `${Math.max(colCount * 120, 300)}px`;
+
   if (widthMode === "intrinsic") {
     styleVars["--table-width"] = "max-content";
     styleVars["--table-display"] = "inline-table";
   }
 
- // Header alignment helpers for colSpan
+  // Header alignment helpers for colSpan
   const headerTextAlignAt = (zeroBasedCol) =>
     `var(--ha${zeroBasedCol + 1}, var(--a${zeroBasedCol + 1}, left))`;
   const headerVertAlignAt = (zeroBasedCol) => `var(--hv${zeroBasedCol + 1}, middle)`; // default header vertical
@@ -59,8 +63,7 @@ const TableVerticalNoRef = ({
   const skipBodyCells = new Set();
 
   return (
-    <div>
-      {/* If you use a scroller wrapper elsewhere, you can place the footnotes inside it too */}
+    <div className="table-container">
       <div className="table-scroller">
         <table aria-label={alt} className="table-base table-zebra" style={styleVars}>
           <colgroup>

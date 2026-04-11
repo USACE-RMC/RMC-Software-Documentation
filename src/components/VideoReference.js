@@ -39,7 +39,7 @@ const VideoReference = ({ videoKey }) => {
 
   if (!videoInfo) return <span>Loading...</span>;
 
-  return <span className="font-usace text-normal">Video {videoInfo.videoNumber}</span>;
+  return <span className="font-usace text-normal whitespace-nowrap">Video {videoInfo.videoNumber}</span>;
 };
 
 export default VideoReference;

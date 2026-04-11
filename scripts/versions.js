@@ -167,6 +167,9 @@ function generateVersions() {
     });
   }
 
+  // Exclude dev pages from Algolia search indexing
+  exclusionPatterns.push(`${baseUrl}dev/**`);
+
   const algoliaCrawlerData = {
     startUrls,
     discoveryPatterns,
