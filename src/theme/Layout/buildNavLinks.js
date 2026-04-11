@@ -18,6 +18,9 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
   const trUserGuideHref = useBaseUrl(
     `/docs/desktop-applications/rmc-totalrisk/users-guide/${latestVersions['desktop-applications/rmc-totalrisk/users-guide'] || 'v1.0'}/preface`,
   );
+  const trAppHref = useBaseUrl(
+    `/docs/desktop-applications/rmc-totalrisk/applications-guide/${latestVersions['desktop-applications/rmc-totalrisk/applications-guide'] || 'v1.0'}/preface`,
+  );
   const trVerifPdfHref = useBaseUrl(
     '/source-documents/desktop-applications/rmc-totalrisk/verification-report/RMC-TotalRisk-Verification-Report.pdf',
   );
