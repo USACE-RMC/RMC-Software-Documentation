@@ -78,9 +78,9 @@ This chapter and the six that follow describe the review and approval process fo
 
 **Site administrator.** Manages reviewer assignments, checkpoint deploys, merge preparation, and final deploys. The only role with access to protected parts of the repository.
 
-## The four review lanes
+## The five review lanes
 
-Every change falls into one of four lanes based on its scope:
+Every change falls into one of five lanes based on its scope:
 
 **Lane 1: New document.** Peer review → Lead Civil review → Technical edit → Director approval. The peer review, Lead Civil review, and technical edit all happen against the preview URL or the source files. Only after the technical edit completes does the site admin deploy the document to the live site (watermarked) for Director review at the document's final URL.
 
@@ -89,6 +89,18 @@ Every change falls into one of four lanes based on its scope:
 **Lane 3: Minor revision.** Peer review only on the preview site.
 
 **Lane 4: Editorial fix.** Site admin reviews and deploys directly. No formal review.
+
+**Lane 5: Dev docs.** Any change to documents under `docs/dev/` (developer documentation, guides for contributors, internal references). Treated like Lane 4 — site admin reviews and merges directly, no formal review required.
+
+## The merge gate
+
+Every documentation PR has a GitHub commit status called `review-workflow` that functions as the merge gate. Branch protection on `main` requires this status to be `success` before the PR can merge, so nobody — not even a site admin — can merge a PR whose review is incomplete. The stage progression workflow sets this status automatically:
+
+- **Pending** during any active review stage (`stage:peer-review`, `stage:lead-civil-review`, `stage:ai-editor-review`, `stage:director-review`, or `stage:needs-lane`)
+- **Success** when the PR reaches `stage:ready-to-merge`, or immediately on lane assignment for `lane:editorial-fix` and `lane:dev`
+- **Success** for non-docs PRs (infrastructure, tooling, dependency updates) as soon as CI Build passes, posted by `ci-build.yml`
+
+The status is re-evaluated on every push to a PR. The goal is that the merge button reflects the workflow's judgment, not the admin's discretion.
 
 ## The draft watermark
 
@@ -120,7 +132,10 @@ import NavContainer from '@site/src/components/NavContainer';
 
 # Review Lanes
 
-Every change follows one of four review lanes, determined by the branch name prefix.
+Every change follows one of five review lanes. The workflow assigns a lane automatically using two signals, in order:
+
+1. **Content-based detection.** If every documentation file changed in the PR is under `docs/dev/`, the PR is assigned `lane:dev` regardless of branch name.
+2. **Branch-name detection.** Otherwise, the branch prefix determines the lane:
 
 | Branch prefix | Lane |
 |---|---|
@@ -128,12 +143,13 @@ Every change follows one of four review lanes, determined by the branch name pre
 | `docs/major/` | Major revision |
 | `docs/minor/` | Minor revision |
 | `docs/fix/` | Editorial fix |
+| `docs/dev/` | Dev docs |
 
-**The branch prefix is what tells the workflow that a PR is part of the review process.** Pull requests from branches that don't start with `docs/` are ignored by the review workflow entirely — no labels, no bot comments, no required reviews. This is intentional: infrastructure changes, tooling updates, dependency bumps, and other non-document work should not be routed through the document review process.
+**Any PR that touches files under `docs/` is processed by the review workflow**, even if its branch name doesn't start with `docs/`. This means a collaborator can accidentally push a documentation change on a branch named `feature/typo-fix` and the workflow will still intercept it at PR open time and ask a site admin to assign a lane. Non-documentation PRs (branches that don't touch anything under `docs/`) are silently ignored by the lane workflow, receive an "admin may merge" comment from `ci-build.yml` once their build passes, and go straight to the merge button.
 
-If a branch starts with `docs/` but doesn't match one of the four sub-prefixes above (for example, a typo like `docs/newfoo/` or an old-style name like `docs/update`), the workflow applies `stage:needs-lane` and tags a site admin to assign the correct lane manually.
+If a branch starts with `docs/` but doesn't match one of the five sub-prefixes above (for example, a typo like `docs/newfoo/` or an old-style name like `docs/update`), the workflow applies `stage:needs-lane` and tags a site admin to assign the correct lane manually. The same happens for a PR that touches documentation from a non-`docs/` branch when content-based dev detection doesn't apply.
 
-If a document revision was accidentally pushed to a branch that doesn't start with `docs/`, a site admin can pull it into the review process by manually applying a `lane:*` label to the PR. The workflow treats a manually-applied lane label as the start signal and proceeds normally from there.
+A site admin can always override the automatically-detected lane by swapping the `lane:*` label on the PR. The workflow treats a manually-applied lane label the same as an auto-detected one and proceeds normally from there.
 
 ## Lane 1: New document
 
@@ -175,6 +191,18 @@ If a document revision was accidentally pushed to a branch that doesn't start wi
 
 **Example branches:** `docs/fix/bep-progression-typos`
 
+## Lane 5: Dev docs
+
+**When to use.** Any new or revised document under `docs/dev/` — developer documentation, contributor guides, internal references, planning documents, and similar materials.
+
+**Required reviews.** None. Site admin reviews and merges directly, same as Lane 4.
+
+**Automatic assignment.** The workflow uses content-based detection: if every documentation file changed in the PR is under `docs/dev/`, the PR is assigned `lane:dev` regardless of what the branch is called. This means dev docs can be authored on any branch prefix (including non-`docs/` branches) and still end up in the correct lane.
+
+**No version change, no watermark.**
+
+**Example branches:** `docs/dev/ai-development-guide`, `feature/update-contributor-guide` (content detected under `docs/dev/`)
+
 ## Choosing the right lane
 
 When in doubt, choose the more conservative lane. A site admin can reassign lanes by swapping `lane:*` labels.
@@ -195,7 +223,7 @@ import NavContainer from '@site/src/components/NavContainer';
 
 # Author Workflow
 
-What the author does from start to publication, across all four lanes.
+What the author does from start to publication, across all five lanes.
 
 ## Starting work
 
@@ -204,6 +232,7 @@ What the author does from start to publication, across all four lanes.
 - **New document (Lane 1):** Run `/new-doc`. Creates branch, scaffolds files, sets draft flag.
 - **Revision (Lanes 2/3):** Run `/new-revision`. Copies the latest version to a new version folder, sets draft flag, creates branch.
 - **Editorial fix (Lane 4):** Create a `docs/fix/` branch manually and edit files directly.
+- **Dev doc (Lane 5):** Create a branch (`docs/dev/` prefix recommended but not required), edit files under `docs/dev/`. The workflow auto-detects the dev lane based on file paths.
 
 ### Without Claude Code
 
@@ -217,7 +246,7 @@ All steps can be done manually in any IDE, via `git` on the command line, or ent
 
 Open a PR via Claude Code (`/pr`) or the GitHub web interface. The PR template prefills a description structure — fill in the sections. Assign your peer reviewer in the Reviewers sidebar if you know who it should be.
 
-Within minutes, two bot comments appear: a preview URL and a stage progression comment identifying your lane.
+Within minutes, two bot comments appear: a preview URL and a stage progression comment identifying your lane. A third hidden bot comment tracks which individuals the site admin has assigned to each review stage — it renders as an "Assigned reviewers for this PR" block at the top of the PR comment thread.
 
 ## Responding to review comments
 
@@ -243,7 +272,15 @@ Checking this box is what advances the document to Director review. Don't check 
 
 For Lane 1: peer review and Lead Civil review happen on the **preview URL**. The technical edit reads the source MDX directly via `/technical-edit` and posts inline comments on the PR — no deploy is involved. Only after you mark the technical edit complete does the site admin deploy the document to the **live production site** (watermarked) for **Director review**. If you push revisions during Director review, the site admin re-deploys so the live URL stays current.
 
-For Lanes 2, 3, and 4: all review happens on the preview URL only.
+For Lanes 2 and 3: all review happens on the preview URL only.
+
+For Lanes 4 and 5: the site admin reviews on the preview URL (if generated) or directly in the Files changed tab, then merges.
+
+## When reviewers ask for changes
+
+Reviewers typically submit their feedback as a **Comment** review (not "Request changes"), leaving inline notes on specific lines. Address each comment, push a new commit, and reply to the thread explaining what you did. You don't need to do anything else — the stage progression bot automatically pings the assigned reviewer(s) on your PR to come back and backcheck.
+
+**The stage does not reset when you push new commits.** A revision during peer review is for the peer reviewer to backcheck; it does not send the document back to start. Same for Lead Civil review and Director review. This is intentional — you're building on the review that already happened, not starting over.
 
 ## When the review is complete
 
@@ -307,11 +344,15 @@ The typical cycle: you leave notes via **Comment**, the author addresses them an
 
 ## After you approve
 
-The stage progression workflow advances the PR automatically. You don't need to do anything further unless someone tags you with a follow-up question.
+The stage progression workflow advances the PR automatically **if you were the reviewer the site admin assigned for the current stage**. The workflow uses per-individual gating: it compares the approver's username to the list of reviewers the admin assigned via the Reviewers sidebar, and only advances the stage when one of those assigned reviewers approves. If you approve a PR you weren't explicitly assigned to, the bot posts a note acknowledging your approval but doesn't advance the stage.
 
-## Stale approvals
+If the site admin assigned multiple people at the same stage, the first approval from any of them advances the stage — you don't all need to approve.
 
-If the author pushes new commits after you approve, GitHub automatically dismisses your approval. You'll be asked to re-review. Check the changes and re-approve if they look good.
+You don't need to do anything further unless someone tags you with a follow-up question.
+
+## New commits after you approve
+
+If the author pushes new commits after you approve, GitHub dismisses your approval in the UI so the green checkmark disappears. The stage progression bot, however, does **not** reset the stage label — the document stays at its current review stage (e.g., `stage:peer-review`) and the bot pings you to backcheck the revisions. Take another look at the changes and submit another review: **Approve** if you're satisfied, or another **Comment** review with additional feedback.
 ```
 
 ---
@@ -343,6 +384,8 @@ The technical edit occurs after the RMC Lead Civil approves a Lane 1 PR. At this
 4. The author addresses each comment: pushes fixes, replies to threads, and resolves conversations as they're addressed.
 5. When all comments are addressed, the author checks the checkbox in the PR description: `Technical edit comments addressed — ready for Director review`.
 6. The stage progression workflow detects the checkbox and advances the PR to Director review.
+
+If the technical edit was done by a human or the author isn't available to check the box, a site admin can apply the `admin:advance-to-director` label to the PR as a manual override. The workflow removes the label and advances the stage the same as a checkbox event.
 
 ## What it reviews
 
@@ -454,7 +497,7 @@ Responsibilities and procedures for site administrators.
 3. Running or coordinating the technical edit
 4. Preparing final merge commits (flipping draft flag, updating version history)
 5. Merging PRs and approving production deploys
-6. Handling Lane 4 editorial fix PRs as sole reviewer
+6. Handling Lane 4 editorial fix and Lane 5 dev doc PRs as sole reviewer
 7. Resolving edge cases
 
 ## Daily routine
@@ -466,6 +509,10 @@ Check for PRs needing your attention. The stage progression workflow tags `@usac
 Reviewers are assigned ad-hoc per PR via the Reviewers sidebar (gear icon → type username → select). There are no standing review teams for peer reviewers or Lead Civils. The workflow's transition comment tells you which role to assign next.
 
 For Lane 1, you assign up to three people across the lifecycle: the peer reviewer (if the author didn't), the Lead Civil after peer approval, and the Director after the technical edit.
+
+**Per-individual gating.** When you assign someone via the Reviewers sidebar, the stage progression workflow records that person in a hidden state comment on the PR, keyed by the current review stage. Only approvals from those assigned reviewers advance the stage — drive-by approvals from other team members are logged but ignored by the workflow. You can assign multiple people at the same stage; the first approval from any of them advances the PR.
+
+If you assigned the wrong person or need to replace someone, remove them from the Reviewers sidebar and add the correct person. The state comment updates automatically.
 
 ## Running a checkpoint deploy (Lane 1)
 
@@ -489,6 +536,8 @@ After Lead Civil approval (the PR advances to `stage:ai-editor-review`), run `/t
 
 The AI posts inline review comments. The author addresses them and checks the PR description checkbox to advance the PR to Director review, at which point you'll run the checkpoint deploy.
 
+**Manual override.** If a human technical editor did the review instead, or the author isn't available to check the checkbox, apply the `admin:advance-to-director` label to the PR. The workflow removes the label and advances the stage the same as a checkbox event, then posts the Director-review next-steps comment with instructions for the checkpoint deploy.
+
 ## Preparing the final merge
 
 When a PR reaches `stage:ready-to-merge`:
@@ -502,7 +551,21 @@ When a PR reaches `stage:ready-to-merge`:
 
 For Lane 1: `reviewedBy` includes the peer reviewer and Lead Civil; `approvedBy` is the Director.
 For Lanes 2/3: `reviewedBy` is the peer reviewer (and Lead Civil for Lane 2); `approvedBy` is `-`.
-Lane 4: no version history update needed.
+Lanes 4 and 5: no version history update needed.
+
+## The `review-workflow` commit status
+
+Every documentation PR has a `review-workflow` commit status that branch protection on `main` requires to be `success` before the PR can merge. This is the hard merge gate — nobody, including you, can click the merge button until the bot flips this status to success. The bot manages it automatically:
+
+| Situation | Status |
+|---|---|
+| `stage:peer-review` / `stage:lead-civil-review` / `stage:ai-editor-review` / `stage:director-review` | pending |
+| `stage:needs-lane` (workflow couldn't detect the lane) | pending |
+| `stage:ready-to-merge` (all reviews complete) | success |
+| `lane:editorial-fix` or `lane:dev` assigned | success (immediately) |
+| Non-docs PR, CI Build passed | success (set by `ci-build.yml`) |
+
+If a PR is stuck because `review-workflow` is pending, check the stage label to figure out what review is outstanding. If a PR is stuck because `review-workflow` is missing entirely (never got set), the lane-detection step probably failed — apply a `lane:*` label manually to re-trigger the workflow.
 
 ## Approving deploys
 
@@ -510,13 +573,15 @@ Every deploy pauses at the production environment gate. You receive an email. Na
 
 A Lane 1 document may involve multiple deploys: one checkpoint after the technical edit completes (for Director review), optional re-deploys during Director review if the author pushes fixes, and one final deploy after merge.
 
-## Handling Lane 4 PRs
+## Handling Lane 4 and Lane 5 PRs
 
-Lane 4 PRs skip formal review. You are the reviewer, approver, and merger:
+Lane 4 (editorial fix) and Lane 5 (dev doc) PRs skip formal review. You are the reviewer, approver, and merger:
 
 1. Click the preview URL to see the change
 2. Review the Files changed tab
 3. Approve, merge, approve the deploy
+
+The `review-workflow` commit status is flipped to success immediately on lane assignment, so the merge button is enabled as soon as CI finishes.
 
 ## Edge cases
 
@@ -524,17 +589,23 @@ Lane 4 PRs skip formal review. You are the reviewer, approver, and merger:
 
 **Branch starts with `docs/` but doesn't match a sub-prefix:** The workflow applies `stage:needs-lane` and tags you. Apply the correct `lane:*` label.
 
-**Document revision pushed to a non-`docs/` branch:** The workflow ignored the PR at open time because the branch prefix didn't match. Apply the correct `lane:*` label manually — the workflow will detect the label event and start the review process. Optionally ask the author to rename the branch for next time.
+**Documentation change pushed to a non-`docs/` branch:** The workflow intercepts this at PR open time regardless of branch name, because it detects changes to files under `docs/`. If the content is entirely under `docs/dev/`, it auto-assigns `lane:dev`. Otherwise it applies `stage:needs-lane` and tags you to assign the correct lane manually. Optionally ask the author to rename the branch next time for clarity.
 
-**Non-document PR getting bot noise:** Should not happen under the current configuration — only branches starting with `docs/` are auto-processed. If you see this, check the workflow trigger and the script's branch-prefix guard.
+**Non-documentation PR with no lane comments:** Expected behavior. PRs that don't touch `docs/` are silently skipped by the lane workflow and receive an "admin may merge" comment from `ci-build.yml` when CI passes. This is normal for infrastructure, tooling, and dependency PRs.
 
-**Unresponsive reviewer:** Ping them on the PR, or reassign.
+**Unresponsive reviewer:** Ping them on the PR, or remove them from the Reviewers sidebar and assign someone else. The state comment updates automatically.
+
+**Drive-by approval from an unassigned reviewer:** The workflow posts a note logging the approval but does not advance the stage. If the unassigned approver should actually be advancing the PR, add them as a reviewer via the Reviewers sidebar and ask them to re-approve — the new approval will then match the assigned list and advance the stage.
+
+**Author pushes new commits during an active review:** Normal and expected. The workflow does not reset the stage. The bot re-sets the `review-workflow` commit status on the new head SHA and pings the assigned reviewer(s) to backcheck.
 
 **Stale checkpoint deploy:** If the live URL shows outdated content, re-run the checkpoint deploy and post a comment.
 
 **Build fails on checkpoint deploy:** Coordinate with the author to fix the branch.
 
-**Build fails after merge to main:** Push a hotfix to `main` or revert the merge. Re-run the deploy.
+**Build fails after merge to main:** Push a hotfix to `main` or revert the merge. Re-run the deploy. Note that `deploy.yml` filters by paths — a merge that doesn't touch any site-affecting files (`docs/`, `src/`, `static/`, `scripts/`, `docusaurus.config.js`, `tailwind.config.js`, `package.json`, `package-lock.json`) does not trigger a redeploy, so a broken workflow or documentation change to the planning folder won't break the live site.
+
+**Need to force a production redeploy:** Go to Actions → Deploy to GitHub Pages → Run workflow, specify the ref (usually `main`), and approve at the production gate. This is the escape hatch when the path filter would otherwise skip a merge that actually needs to ship.
 
 ## Onboarding new site admins
 
@@ -543,6 +614,46 @@ Lane 4 PRs skip formal review. You are the reviewer, approver, and merger:
 3. Shadow an existing admin through one full PR lifecycle
 4. Practice on a Lane 4 editorial fix PR
 ```
+
+---
+
+## Infrastructure notes (for reference — not part of any chapter)
+
+The following are in place in the repository and support the workflow described above. Recording them here so future planning documents and Claude Code sessions have a reference.
+
+### Repository labels
+
+Created on `USACE-RMC/RMC-Software-Documentation`:
+
+- `lane:new-doc`, `lane:major-revision`, `lane:minor-revision`, `lane:editorial-fix`, `lane:dev`
+- `stage:needs-lane`, `stage:peer-review`, `stage:lead-civil-review`, `stage:ai-editor-review`, `stage:director-review`, `stage:ready-to-merge`
+- `admin:advance-to-director`
+
+### Branch protection on `main`
+
+Required status checks: `CI Build`, `review-workflow`. Stale approvals dismissed on new pushes. Conversation resolution required. Force pushes and branch deletion disallowed.
+
+### Workflow files
+
+- `.github/workflows/ci-build.yml` — runs `npm run build` on every PR; flips `review-workflow` commit status to success for non-docs PRs
+- `.github/workflows/pr-preview.yml` — builds and deploys preview to the `usace-rmc/RMC-Software-Documentation-Previews` repo; filters by paths (only affects PRs that touch site-affecting files); sets `DOCUSAURUS_IS_PREVIEW=true` so Google Analytics is disabled for preview builds; has a per-PR concurrency block that cancels superseded builds
+- `.github/workflows/pr-preview-cleanup.yml` — deletes the PR's preview directory when the PR closes
+- `.github/workflows/deploy.yml` — production deploy on merge to `main`; filters by the same paths allowlist as `pr-preview.yml` so merges that don't affect site output skip the redeploy; uses `actions/deploy-pages@v4` artifact flow (no `gh-pages` branch); gated by a `production` GitHub environment that requires admin approval
+- `.github/workflows/stage-progression.yml` — the core review-workflow logic: lane detection, state-comment management, stage transitions, commit status management, admin override handling; has a per-PR concurrency block
+
+### Lane detection logic
+
+1. **Content-based first:** if every docs file in the PR is under `docs/dev/`, assign `lane:dev`
+2. **Branch-name fallback:** match branch prefix against `docs/new/`, `docs/major/`, `docs/minor/`, `docs/fix/`, `docs/dev/`
+3. **Manual:** if neither matches and the PR touches `docs/`, apply `stage:needs-lane` and ping admin
+
+### State comment format
+
+Hidden bot comment on each PR with marker `<!-- review-state -->`. Contains a JSON data line (`<!-- state-data:{...} -->`) that maps each active review stage to an array of assigned reviewer usernames. Updated on `review_requested` and `review_request_removed` webhook events. Read on `pull_request_review` approval events to check whether the approver is in the assigned list for the current stage.
+
+### Google Analytics exclusion for previews
+
+`pr-preview.yml` sets `DOCUSAURUS_IS_PREVIEW=true` in the build environment. `docusaurus.config.js` checks this and excludes the `@docusaurus/plugin-google-gtag` plugin when set, so preview page views don't pollute the production GA property. Production builds (`deploy.yml`, local `npm run build`) don't set this variable, so they behave normally.
 
 ---
 
