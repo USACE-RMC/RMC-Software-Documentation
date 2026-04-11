@@ -89,14 +89,20 @@ export default {
   ],
 
   plugins: [
-    // Google Analytics plugin
-    [
-      '@docusaurus/plugin-google-gtag',
-      {
-        trackingID: 'G-LB2BWWGDTB',
-        anonymizeIP: true,
-      },
-    ],
+    // Google Analytics plugin — production builds only.
+    // Preview builds set DOCUSAURUS_IS_PREVIEW=true so they don't pollute
+    // the production GA property with pr-preview page views.
+    ...(process.env.DOCUSAURUS_IS_PREVIEW === 'true'
+      ? []
+      : [
+          [
+            '@docusaurus/plugin-google-gtag',
+            {
+              trackingID: 'G-LB2BWWGDTB',
+              anonymizeIP: true,
+            },
+          ],
+        ]),
 
     // TailwindCSS as a custom plugin
     tailwindPlugin,
