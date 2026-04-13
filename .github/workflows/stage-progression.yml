@@ -230,8 +230,8 @@ jobs:
                 await setReviewStatus('pending', STAGE_STATUS_DESC['stage:peer-review']);
                 const laneName = lane.replace('lane:', '').replace(/-/g, ' ');
                 const scope = lane === 'lane:new-doc' ? 'Peer → Lead Civil → Technical Edit → Director'
-                            : lane === 'lane:major-revision' ? 'Peer → Lead Civil'
-                            : 'Peer review only';
+                            : lane === 'lane:major-revision' ? 'Peer → Lead Civil → Technical Edit'
+                            : 'Peer → Technical Edit';
                 comment = `📋 **Lane: ${laneName}**\n\nReview scope: ${scope}.\n\nCurrently in **peer review**. @usace-rmc/docs-admin please assign the peer reviewer(s) via the Reviewers sidebar.`;
               }
               await addLabels(toAdd);
@@ -351,21 +351,31 @@ jobs:
             if (eventName === 'pull_request' && action === 'labeled') {
               const added = context.payload.label.name;
 
-              // Admin override: advance a lane:new-doc PR from technical
-              // edit to Director review without requiring the author to
-              // check the PR description checkbox. Used when the technical
-              // edit was done by a human, or when the author isn't around.
+              // Admin override: advance a PR past the technical edit stage
+              // without requiring the author to check the PR description
+              // checkbox. Used when the technical edit was done by a human,
+              // or when the author isn't around.
+              // - Lane 1 (new-doc): advances to Director review
+              // - Lanes 2 & 3 (major/minor revision): advances to ready-to-merge
               if (added === 'admin:advance-to-director') {
-                if (existingLane !== 'lane:new-doc' || existingStage !== 'stage:ai-editor-review') {
+                const lanesWithTechEdit = ['lane:new-doc', 'lane:major-revision', 'lane:minor-revision'];
+                if (!lanesWithTechEdit.includes(existingLane) || existingStage !== 'stage:ai-editor-review') {
                   await removeLabel('admin:advance-to-director');
-                  await postComment(`⚠️ **admin:advance-to-director** can only be applied to a \`lane:new-doc\` PR currently at \`stage:ai-editor-review\`. Label removed, no action taken.`);
+                  await postComment(`⚠️ **admin:advance-to-director** can only be applied to a PR currently at \`stage:ai-editor-review\` in a lane that includes technical edit. Label removed, no action taken.`);
                   return;
                 }
                 await removeLabel('admin:advance-to-director');
                 await removeLabel('stage:ai-editor-review');
-                await addLabels(['stage:director-review']);
-                await setReviewStatus('pending', STAGE_STATUS_DESC['stage:director-review']);
-                await postComment(`✅ **Technical edit marked complete by site admin override.**\n\nAdvancing to **Director review**.\n\n@usace-rmc/docs-admin next steps:\n1. Trigger a checkpoint deploy of branch \`${branch}\` via Actions → Deploy to GitHub Pages → Run workflow (this is the first deploy of this PR to the live site, with the DRAFT watermark)\n2. Approve the deploy at the production environment gate\n3. Post the live URL in a comment on this PR\n4. Assign a member of @usace-rmc/docs-director via the Reviewers sidebar\n\nThe Director will review at the live URL. If the Director requests changes and the author pushes fixes, re-trigger the checkpoint deploy to refresh the live URL.`);
+
+                if (existingLane === 'lane:new-doc') {
+                  await addLabels(['stage:director-review']);
+                  await setReviewStatus('pending', STAGE_STATUS_DESC['stage:director-review']);
+                  await postComment(`✅ **Technical edit marked complete by site admin override.**\n\nAdvancing to **Director review**.\n\n@usace-rmc/docs-admin next steps:\n1. Trigger a checkpoint deploy of branch \`${branch}\` via Actions → Deploy to GitHub Pages → Run workflow (this is the first deploy of this PR to the live site, with the DRAFT watermark)\n2. Approve the deploy at the production environment gate\n3. Post the live URL in a comment on this PR\n4. Assign a member of @usace-rmc/docs-director via the Reviewers sidebar\n\nThe Director will review at the live URL. If the Director requests changes and the author pushes fixes, re-trigger the checkpoint deploy to refresh the live URL.`);
+                } else {
+                  await addLabels(['stage:ready-to-merge']);
+                  await setReviewStatus('success', STAGE_STATUS_DESC['stage:ready-to-merge']);
+                  await postComment(`✅ **Technical edit marked complete by site admin override.**\n\nThis PR is **ready for final merge and publication**.\n\n@usace-rmc/docs-admin next steps:\n1. Check out this branch\n2. Flip the document's \`draft\` flag to \`false\`\n3. Update \`00-version-history.mdx\`\n4. Commit and push\n5. Merge to \`main\`\n6. Approve the production deploy`);
+                }
                 return;
               }
 
@@ -390,13 +400,22 @@ jobs:
 
             // ── pull_request edited (author checks technical-edit box) ──
             if (eventName === 'pull_request' && action === 'edited') {
-              if (existingStage === 'stage:ai-editor-review' && existingLane === 'lane:new-doc') {
+              if (existingStage === 'stage:ai-editor-review') {
                 const checkboxChecked = prBody.includes('[x] Technical edit comments addressed');
                 if (checkboxChecked) {
                   await removeLabel('stage:ai-editor-review');
-                  await addLabels(['stage:director-review']);
-                  await setReviewStatus('pending', STAGE_STATUS_DESC['stage:director-review']);
-                  await postComment(`✅ **Technical edit marked complete** by the author.\n\nAdvancing to **Director review**.\n\n@usace-rmc/docs-admin next steps:\n1. Trigger a checkpoint deploy of branch \`${branch}\` via Actions → Deploy to GitHub Pages → Run workflow (this is the first deploy of this PR to the live site, with the DRAFT watermark)\n2. Approve the deploy at the production environment gate\n3. Post the live URL in a comment on this PR\n4. Assign a member of @usace-rmc/docs-director via the Reviewers sidebar\n\nThe Director will review at the live URL. If the Director requests changes and the author pushes fixes, re-trigger the checkpoint deploy to refresh the live URL.`);
+
+                  if (existingLane === 'lane:new-doc') {
+                    // Lane 1: advance to Director review with checkpoint deploy
+                    await addLabels(['stage:director-review']);
+                    await setReviewStatus('pending', STAGE_STATUS_DESC['stage:director-review']);
+                    await postComment(`✅ **Technical edit marked complete** by the author.\n\nAdvancing to **Director review**.\n\n@usace-rmc/docs-admin next steps:\n1. Trigger a checkpoint deploy of branch \`${branch}\` via Actions → Deploy to GitHub Pages → Run workflow (this is the first deploy of this PR to the live site, with the DRAFT watermark)\n2. Approve the deploy at the production environment gate\n3. Post the live URL in a comment on this PR\n4. Assign a member of @usace-rmc/docs-director via the Reviewers sidebar\n\nThe Director will review at the live URL. If the Director requests changes and the author pushes fixes, re-trigger the checkpoint deploy to refresh the live URL.`);
+                  } else {
+                    // Lanes 2 & 3: no Director review — ready to merge
+                    await addLabels(['stage:ready-to-merge']);
+                    await setReviewStatus('success', STAGE_STATUS_DESC['stage:ready-to-merge']);
+                    await postComment(`✅ **Technical edit marked complete** by the author.\n\nThis PR is **ready for final merge and publication**.\n\n@usace-rmc/docs-admin next steps:\n1. Check out this branch\n2. Flip the document's \`draft\` flag to \`false\`\n3. Update \`00-version-history.mdx\`\n4. Commit and push\n5. Merge to \`main\`\n6. Approve the production deploy`);
+                  }
                 }
               }
               return;
@@ -438,13 +457,13 @@ jobs:
                   nextStage = 'stage:lead-civil-review';
                   comment = `✅ **Peer review approved** by @${reviewer}.\n\nAdvancing to **RMC Lead Civil review**.\n\n@usace-rmc/docs-admin please assign the Lead Civil reviewer(s) via the Reviewers sidebar.`;
                 } else if (existingStage === 'stage:lead-civil-review') {
-                  nextStage = 'stage:ready-to-merge';
-                  comment = `✅ **Lead Civil review approved** by @${reviewer}.\n\nThis PR is **ready for final merge**.\n\n@usace-rmc/docs-admin next steps:\n1. Check out this branch\n2. Flip the document's \`draft\` flag to \`false\`\n3. Update \`00-version-history.mdx\`\n4. Commit and push\n5. Merge to \`main\`\n6. Approve the production deploy`;
+                  nextStage = 'stage:ai-editor-review';
+                  comment = `✅ **Lead Civil review approved** by @${reviewer}.\n\nAdvancing to **technical edit**.\n\n@usace-rmc/docs-admin please run the \`/technical-edit\` Claude Code skill against this PR (or assign a human technical editor). The technical edit reviews the document source MDX directly and posts inline comments on the PR.\n\nAfter the author addresses the technical edit comments and checks the completion checkbox in the PR description, the site admin will flip the draft flag, merge, and deploy.`;
                 }
               } else if (existingLane === 'lane:minor-revision') {
                 if (existingStage === 'stage:peer-review') {
-                  nextStage = 'stage:ready-to-merge';
-                  comment = `✅ **Peer review approved** by @${reviewer}.\n\nThis PR is **ready for final merge**.\n\n@usace-rmc/docs-admin next steps:\n1. Check out this branch\n2. Flip the document's \`draft\` flag to \`false\`\n3. Update \`00-version-history.mdx\`\n4. Commit and push\n5. Merge to \`main\`\n6. Approve the production deploy`;
+                  nextStage = 'stage:ai-editor-review';
+                  comment = `✅ **Peer review approved** by @${reviewer}.\n\nAdvancing to **technical edit**.\n\n@usace-rmc/docs-admin please run the \`/technical-edit\` Claude Code skill against this PR (or assign a human technical editor). The technical edit reviews the document source MDX directly and posts inline comments on the PR.\n\nAfter the author addresses the technical edit comments and checks the completion checkbox in the PR description, the site admin will flip the draft flag, merge, and deploy.`;
                 }
               }
 
