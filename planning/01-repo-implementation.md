@@ -19,9 +19,15 @@ This document describes every structural change to the `usace-rmc/rmc-software-d
 1. Author opens PR with `docs/major/`. Preview workflow publishes to preview URL.
 2. Peer reviewer reviews on preview URL, approves.
 3. RMC Lead Civil reviews on preview URL, approves.
-4. Site admin flips draft flag, merges to `main`, approves final deploy.
+4. AI technical edit: someone runs `/technical-edit`, author addresses comments and checks the completion checkbox.
+5. Site admin flips draft flag, merges to `main`, approves final deploy.
 
-**Lane 3 — Minor revision:** Peer review only on preview URL, then site admin merges and deploys.
+**Lane 3 — Minor revision:**
+
+1. Author opens PR with `docs/minor/`. Preview workflow publishes to preview URL.
+2. Peer reviewer reviews on preview URL, approves.
+3. AI technical edit: someone runs `/technical-edit`, author addresses comments and checks the completion checkbox.
+4. Site admin flips draft flag, merges to `main`, approves final deploy.
 
 **Lane 4 — Editorial fix:** Site admin reviews on preview URL, merges and deploys. No formal review.
 

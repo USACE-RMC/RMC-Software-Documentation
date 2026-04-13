@@ -17,7 +17,7 @@
 - [ ] I have updated `00-version-history.mdx` if this change warrants a version entry
 - [ ] I have assigned a specific peer reviewer via the Reviewers sidebar (if known)
 
-## Technical edit (Lane 1 only)
+## Technical edit (Lanes 1, 2, and 3)
 
 - [ ] Technical edit comments addressed — ready for Director review
 
