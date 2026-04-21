@@ -99,6 +99,7 @@ This repository includes Claude Code skills (slash commands) in `.claude/skills/
 **Page verification**: `/smoke-test`, `/review-responsive`, `/review-page`
 **Quality**: `/check-accessibility`, `/check-performance`, `/lint-fix`
 **Documentation**: `/qc-review`, `/build`, `/check-links`, `/check-components`
+**Scaffolding**: `/new-doc`
 
 See `.claude/skills/{name}/SKILL.md` for full documentation of each skill.
 

@@ -1,0 +1,257 @@
+---
+title: Jupyter Notebooks in VS Code
+---
+
+import DocTabs from '@site/src/components/DocTabs';
+import FigureNoRef from '@site/src/components/FigureNoRef';
+import NavContainer from '@site/src/components/NavContainer';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" />
+
+# Jupyter Notebooks in VS Code
+
+Jupyter notebooks are interactive documents that combine executable code, rich text (Markdown), and visualizations in a single file. They are widely used for data exploration, prototyping, scientific computing, and documenting analysis workflows.
+
+VS Code provides full Jupyter notebook support through its Jupyter extension, allowing you to create, edit, and run notebooks without leaving your editor.
+
+---
+
+## Installing Jupyter
+
+Ensure your virtual environment is activated (you should see the `(.venv)` prefix in your terminal), then install the required packages:
+
+```
+pip install jupyter notebook ipykernel
+```
+
+<TableVerticalNoRef
+  headers={[[{ value: 'Package' }, { value: 'Purpose' }]]}
+  columns={[
+    ['<code>jupyter</code>', '<code>notebook</code>', '<code>ipykernel</code>'],
+    [
+      'Core Jupyter framework',
+      'The Jupyter notebook interface',
+      'IPython kernel — allows Jupyter to execute Python code and enables VS Code to use your virtual environment as a notebook kernel',
+    ],
+  ]}
+/>
+
+### Registering Your Virtual Environment as a Kernel
+
+To make your virtual environment available as a kernel option in VS Code notebooks:
+
+```
+python -m ipykernel install --user --name=my-project --display-name "Python (my-project)"
+```
+
+Replace `my-project` with a descriptive name for your project. The `--display-name` flag sets what appears in the kernel picker. The `--user` flag installs the kernel for your user account only.
+
+---
+
+## VS Code Jupyter Extension
+
+If you installed the **Jupyter** extension as recommended in [Installing and Navigating VS Code](./03-installing-vs-code.mdx), you are ready to go. If not, install it now:
+
+1. Open the Extensions view (**Ctrl+Shift+X**)
+2. Search for **Jupyter** (by Microsoft)
+3. Click **Install**
+
+Installing the **Jupyter** extension automatically installs two companion extensions:
+
+<TableVerticalNoRef
+  headers={[[{ value: 'Extension' }, { value: 'Purpose' }]]}
+  columns={[
+    ['<b>Jupyter</b>', '<b>Jupyter Keymap</b>', '<b>Jupyter Notebook Renderers</b>'],
+    [
+      'Core notebook support — editor, cell execution, kernel management, variable explorer, and inline plots',
+      'Jupyter-standard keyboard shortcuts for notebooks (e.g., <code>A</code>/<code>B</code> to insert cells, <code>DD</code> to delete)',
+      'Renders rich output types — interactive plots (Plotly, Vega), HTML widgets, LaTeX, and other MIME types',
+    ],
+  ]}
+/>
+
+You do not need to install the companion extensions individually — they are bundled with the main **Jupyter** extension.
+
+---
+
+## Creating a Notebook
+
+There are two ways to create a new Jupyter notebook in VS Code:
+
+**Option 1: Command Palette**
+
+1. Open the Command Palette (**Ctrl+Shift+P**)
+2. Type **Jupyter: Create New Blank Notebook** and press Enter
+
+**Option 2: Create a File**
+
+1. In the Explorer sidebar, right-click in your project folder
+2. Select **New File**
+3. Name the file with a `.ipynb` extension (e.g., `analysis.ipynb`)
+
+---
+
+## Selecting a Kernel
+
+The kernel determines which Python environment executes your notebook's code. After creating a notebook:
+
+1. Click the kernel name in the upper right corner of the notebook (it may say **"Select Kernel"** or show a previously used kernel)
+2. Select **Python Environments** or **Jupyter Kernel**
+3. Choose your virtual environment's kernel (the one you registered with `ipykernel`)
+
+:::warning
+If your virtual environment does not appear in the kernel list, ensure you ran the `ipykernel install` command from the [Installing Jupyter](#installing-jupyter) section. You may also need to reload VS Code (**Ctrl+Shift+P** → **Developer: Reload Window**).
+:::
+
+---
+
+## Working with Cells
+
+Jupyter notebooks are organized into **cells**. There are two primary cell types:
+
+### Code Cells
+
+Code cells contain executable Python code. To work with code cells:
+
+<TableVerticalNoRef
+  headers={[[{ value: 'Action' }, { value: 'Shortcut' }]]}
+  columns={[
+    [
+      '<b>Run the current cell and move to the next</b>',
+      '<b>Run the current cell and stay on it</b>',
+      '<b>Add a new code cell below</b>',
+      '<b>Add a new code cell above</b>',
+      '<b>Delete a cell</b>',
+    ],
+    [
+      '<code>Shift+Enter</code>',
+      '<code>Ctrl+Enter</code>',
+      '<code>B</code> (when the cell is selected but not in edit mode)',
+      '<code>A</code> (when the cell is selected but not in edit mode)',
+      '<code>DD</code> (press D twice when the cell is selected but not in edit mode)',
+    ],
+  ]}
+/>
+
+When you run a code cell, the output (printed text, data tables, plots, error messages) appears directly below the cell.
+
+### Markdown Cells
+
+Markdown cells contain formatted text for documentation, explanations, and notes. To create a Markdown cell:
+
+1. Click the cell type dropdown on the left side of a cell (or at the top of a new cell)
+2. Change it from **Code** to **Markdown**
+3. Write your text using Markdown syntax
+4. Run the cell (`Shift+Enter`) to render the Markdown
+
+Markdown cells support:
+
+- Headings (`#`, `##`, `###`)
+- **Bold** and _italic_ text
+- Bulleted and numbered lists
+- Code blocks
+- Links and images
+- LaTeX equations (`$E = mc^2$`)
+
+---
+
+## Organizing Your Notebooks
+
+Well-organized notebooks are easier to read, maintain, and share. Follow these practices:
+
+### Structure with Markdown Headings
+
+Use Markdown cells to create a clear structure:
+
+```markdown
+# Project Title
+
+## 1. Data Loading
+
+Brief description of what this section does.
+
+## 2. Data Cleaning
+
+Explanation of cleaning steps.
+
+## 3. Analysis
+
+Description of the analysis approach.
+
+## 4. Results
+
+Summary of findings.
+```
+
+### Keep Cells Focused
+
+- Each code cell should do **one thing** — load data, clean a column, create a plot, etc.
+- If a cell is getting long, split it into multiple cells with Markdown cells explaining each step.
+
+### Run Cells in Order
+
+Cells share state — variables created in one cell are available in subsequent cells. Run cells from top to bottom to ensure your notebook works correctly. If you jump around or rerun cells out of order, you may encounter unexpected behavior.
+
+---
+
+## Clearing Outputs Before Committing
+
+Notebook files (`.ipynb`) store cell outputs (plots, printed text, data tables) in the file itself. This makes notebooks large and creates noisy diffs in version control.
+
+Before committing a notebook to Git, clear the outputs:
+
+1. Open the Command Palette (**Ctrl+Shift+P**)
+2. Type **Jupyter: Clear All Outputs** and press Enter
+3. Save the file (**Ctrl+S**)
+
+This removes all cell outputs while preserving your code and Markdown cells. Anyone who opens the notebook can re-run the cells to regenerate the outputs.
+
+:::tip
+Make clearing outputs a habit before every commit. This keeps your repository clean and avoids merge conflicts caused by differing outputs.
+:::
+
+---
+
+## Useful Keyboard Shortcuts
+
+VS Code notebooks have two modes:
+
+- **Command mode** — the cell is selected (blue border) but you are not editing its content. Navigate and manage cells.
+- **Edit mode** — you are typing inside a cell (green border). Press `Escape` to return to command mode.
+
+### Command Mode Shortcuts
+
+<TableVerticalNoRef
+  headers={[[{ value: 'Shortcut' }, { value: 'Action' }]]}
+  columns={[
+    [
+      '<code>A</code>',
+      '<code>B</code>',
+      '<code>DD</code>',
+      '<code>M</code>',
+      '<code>Y</code>',
+      '<code>↑</code> / <code>↓</code>',
+      '<code>Enter</code>',
+    ],
+    [
+      'Insert cell above',
+      'Insert cell below',
+      'Delete selected cell',
+      'Change cell to Markdown',
+      'Change cell to Code',
+      'Navigate between cells',
+      'Enter edit mode',
+    ],
+  ]}
+/>
+
+### Edit Mode Shortcuts
+
+<TableVerticalNoRef
+  headers={[[{ value: 'Shortcut' }, { value: 'Action' }]]}
+  columns={[
+    ['<code>Shift+Enter</code>', '<code>Ctrl+Enter</code>', '<code>Escape</code>', '<code>Ctrl+/</code>', '<code>Tab</code>'],
+    ['Run cell, move to next', 'Run cell, stay on it', 'Exit to command mode', 'Toggle line comment', 'Indent / autocomplete'],
+  ]}
+/>

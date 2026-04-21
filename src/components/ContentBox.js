@@ -16,6 +16,8 @@ const ContentBox = ({ contentData }) => {
             doc_name={data.doc_name}
             active={data.active}
             preserveIconColor={data.preserveIconColor}
+            downloadUrl={data.downloadUrl}
+            draft={data.draft}
           />
         ))}
       </div>

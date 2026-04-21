@@ -9,8 +9,29 @@ import '../../css/custom.css';
 const overtoppingSuite = [
   {
     IconComponent: ToolboxIcon,
+    doc_location: `toolbox-technical-manuals/overtopping-suite/riprap-stability`,
+    doc_name: 'Riprap Stability Toolbox Technical Manual',
+    active: false,
+    draft: true,
+  },
+  {
+    IconComponent: ToolboxIcon,
+    doc_location: `toolbox-technical-manuals/overtopping-suite/wave-overtopping`,
+    doc_name: 'Wave Overtopping Toolbox Technical Manual',
+    active: false,
+    draft: true,
+  },
+  {
+    IconComponent: ToolboxIcon,
+    doc_location: `toolbox-technical-manuals/overtopping-suite/scour-behind-floodwalls`,
+    doc_name: 'Scour Behind Floodwalls Toolbox Technical Manual',
+    active: false,
+    draft: true,
+  },
+  {
+    IconComponent: ToolboxIcon,
     doc_location: `toolbox-technical-manuals/overtopping-suite/overtopping-erosion-toolbox-notes`,
-    doc_name: 'Overtopping Toolbox User Notes',
+    doc_name: 'Overtopping Erosion Toolbox User Notes',
     active: true,
     draft: false,
   },

@@ -37,7 +37,7 @@ const VersionNotice = ({ documentLabel, currentVersion, latestVersion, latestPat
       <Admonition type="danger" title="Warning">
         <p className="m-0">
           This is an old version ({versionText}) of {title}. Refer to the{' '}
-          <Link to={latestPath} onClick={handleLatestClick} className="text-ifm-link no-underline hover:text-ifm-link-hover hover:underline">
+          <Link to={latestPath} onClick={handleLatestClick} className="text-ifm-link underline hover:text-ifm-link-hover">
             latest version ({latestVersion})
           </Link>{' '}
           for the latest documentation.

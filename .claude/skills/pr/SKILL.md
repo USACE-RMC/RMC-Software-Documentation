@@ -68,7 +68,34 @@ Read `.claude/skills/git-conventions.md` for PR conventions.
 - Derived from the **overall purpose** of all commits on the branch, not just the latest commit
 - Example: "Redesign homepage with product tile grid layout"
 
-### Body
+### Body — choose the format based on the branch prefix
+
+**If the current branch starts with `docs/`** → use the **Template Style** (Step 5a). The repo's PR template at `.github/pull_request_template.md` contains a checklist for document authors, including the Lane 1 "Technical edit comments addressed" checkbox that the stage-progression workflow watches for. Passing `--body` to `gh pr create` overrides the template entirely, so the skill must reproduce the template structure with the auto-generated content filled in.
+
+**Otherwise (infrastructure, tooling, dependency, or any non-doc branch)** → use the **Summary Style** (Step 5b). These PRs are silently ignored by the review workflow and don't need the doc-author checklist.
+
+In both styles, the summary content should be based on **ALL** commits on the branch, not just the most recent one. Read through all the commit messages and the diff to understand the full scope. If `$ARGUMENTS` was provided, use it to focus the title and description.
+
+**Do NOT include in either style:**
+- A "Test plan" section
+- Any AI attribution, "Generated with Claude", or "Co-Authored-By" lines
+
+### Step 5a: Template Style (for `docs/` branches)
+
+1. Read [.github/pull_request_template.md](.github/pull_request_template.md). Use it as the structural skeleton.
+2. Compute the auto-generated summary: 1–3 bullets describing the changes.
+3. Compute the list of affected MDX documents: from `git diff --name-only main...HEAD`, keep entries matching `docs/**/*.mdx`. If the base is not `main`, use that instead.
+4. Build the PR body by transforming the template:
+   - Under `## Description`, replace the `<!-- Briefly describe what this PR does and why. -->` comment with the summary bullets.
+   - Under `## Affected documents`, replace the bare `- ` line with the list of affected MDX files. Format each as a markdown link relative to the repo root: `- [filename.mdx](docs/full/path/filename.mdx)`. If there are no changed MDX files, write `- _No MDX files changed in this PR._`
+   - Leave the `## Related issue(s)` section's comment placeholder unchanged so the author can fill it in.
+   - Leave **all checklist items unchecked**, including the Lane 1 Technical edit checkbox. The author checks them as they complete each item; the workflow specifically depends on the Technical edit checkbox being present and unchecked at PR open time.
+   - Leave the `## Notes for reviewers` comment placeholder unchanged.
+
+The result should be a complete copy of the template with the Description and Affected documents sections populated.
+
+### Step 5b: Summary Style (for non-`docs/` branches)
+
 Use this format — **Summary section only, no Test plan**:
 
 ```markdown
@@ -76,20 +103,11 @@ Use this format — **Summary section only, no Test plan**:
 - {1-3 bullet points describing the changes and their purpose}
 ```
 
-**Do NOT include:**
-- A "Test plan" section
-- Any AI attribution, "Generated with Claude", or "Co-Authored-By" lines
-
-If `$ARGUMENTS` was provided, use it to focus the title and description.
-
-The summary should be based on ALL commits on the branch, not just the most recent one. Read through all the commit messages and the diff to understand the full scope.
-
 ## Step 6: Create the PR
 
 ```bash
 gh pr create --title "{title}" --body "$(cat <<'EOF'
-## Summary
-{bullets}
+{body from Step 5a or Step 5b}
 EOF
 )"
 ```

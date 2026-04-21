@@ -102,7 +102,7 @@ export default function Home() {
           title: 'Spillway Erosion Suite',
           description: 'Spillway erosion failure mode assessment',
           href: addBaseUrl('toolboxes/spillway-erosion-suite'),
-          active: false,
+          active: true,
         },
         {
           IconComponent: StructuralIcon,

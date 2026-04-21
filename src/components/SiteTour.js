@@ -37,7 +37,7 @@ function getTier() {
  *  URL doesn't match the step's required page.
  * ────────────────────────────────────────────────────────────────────
  */
-const STEP_FIELDS = ['title', 'content', 'selector', 'selectorFallback', 'placement', 'padding', 'icon', 'page'];
+const STEP_FIELDS = ['title', 'content', 'contentAfter', 'selector', 'selectorFallback', 'placement', 'padding', 'icon', 'page'];
 
 const buildSteps = (baseUrl, tier) => {
   const allSteps = [
@@ -46,18 +46,23 @@ const buildSteps = (baseUrl, tier) => {
     // 0 — Welcome
     {
       title: 'Welcome to RMC Software Documentation',
-      content: 'This quick tour will show you how to navigate the site, find documents, and use the interactive features built into every page. You can revisit this tour anytime from the home page.',
+      content:
+        'This quick tour will show you how to navigate the site, find documents, and use the interactive features built into every page. You can revisit this tour anytime from the home page.',
       icon: 'compass',
       page: 'home',
     },
 
     // 1 — Navigation
+    // Hamburger menu is visible at < 1200px (responsive.css forces display:inline-flex
+    // up to 1199px). When the hamburger is hidden (>= 1200px), findTarget falls through
+    // to the selectorFallback (full nav bar).
     {
       title: 'Main Navigation',
       content:
-        'The top navigation bar organizes all documentation into three categories: Desktop Applications, Toolbox Technical Manuals, and Web Applications. Each category expands on hover to reveal the available tools and their documents. Helpful resources can also be accessed from the navigation bar.',
-      selector: 'header.gw-sticky .gw-bg-nav-black',
-      padding: { bottom: 4 },
+        'The navigation organizes all documentation into three categories: Desktop Applications, Toolbox Technical Manuals, and Web Applications. Each category expands to reveal available tools and their documents. Helpful resources can also be accessed from the navigation.',
+      selector: 'header.gw-sticky .md\\:gw-hidden',
+      selectorFallback: 'header.gw-sticky .gw-bg-nav-black',
+      padding: { top: 4, right: 4, bottom: 4, left: 4 },
       placement: 'bottom',
       icon: 'menu',
       page: 'home',
@@ -65,35 +70,31 @@ const buildSteps = (baseUrl, tier) => {
         title: 'Menu Navigation',
         content:
           'Tap the menu icon to open the navigation drawer. It organizes all documentation into three categories: Desktop Applications, Toolbox Technical Manuals, and Web Applications. Each category expands to reveal available tools and documents.',
-        selector: 'header.gw-sticky .md\\:gw-hidden',
-        padding: { top: 4, right: 4, bottom: 4, left: 4 },
       },
       phone: {
         title: 'Menu Navigation',
-        content: 'Tap the menu icon to open the navigation drawer. It lists all documentation organized by category: Desktop Applications, Toolbox Technical Manuals, and Web Applications.',
-        selector: 'header.gw-sticky .md\\:gw-hidden',
-        padding: { top: 4, right: 4, bottom: 4, left: 4 },
+        content:
+          'Tap the menu icon to open the navigation drawer. It lists all documentation organized by category: Desktop Applications, Toolbox Technical Manuals, and Web Applications.',
       },
     },
 
     // 2 — Search
     {
       title: 'Search',
-      content: 'The search bar finds content across all documents, versions, and document types. Enter a keyword, figure number, or topic to see instant results.',
-      selector: 'header.gw-sticky span.gw-flex-row-reverse .search-wrapper',
-      padding: { right: 60, left: 2, bottom: -8 },
+      content:
+        'The search bar finds content across all documents, versions, and document types. Enter a keyword, figure number, or topic to see instant results.',
+      selector: 'header.gw-sticky .DocSearch-Button',
+      padding: { top: 6, right: 6, bottom: 6, left: 6 },
       placement: 'bottom',
       icon: 'search',
       page: 'home',
       tablet: {
         content: 'Tap the search icon to search across all documents and versions. Enter a keyword or topic to see instant results.',
-        selector: 'header.gw-sticky .search-wrapper',
-        padding: { top: 4, right: 4, bottom: 4, left: 4 },
+        padding: { top: 4, right: 4, bottom: 0, left: 4 },
       },
       phone: {
         content: 'Tap the search icon to search across all documents. Enter a keyword or topic to see results.',
-        selector: 'header.gw-sticky .search-wrapper',
-        padding: { top: 4, right: 4, bottom: 4, left: 4 },
+        padding: { top: 4, right: 4, bottom: 0, left: 4 },
       },
     },
 
@@ -105,6 +106,8 @@ const buildSteps = (baseUrl, tier) => {
       placement: 'bottom',
       icon: 'theme',
       page: 'home',
+      tablet: { padding: { top: 4, right: 4, bottom: 0, left: 4 } },
+      phone: { padding: { top: 4, right: 4, bottom: 0, left: 4 } },
     },
 
     // 4 — Homepage Categories
@@ -117,7 +120,8 @@ const buildSteps = (baseUrl, tier) => {
       icon: 'grid',
       page: 'home',
       phone: {
-        content: 'The homepage lists all available software organized into categories. Tap any active card to go to its documentation hub. Grayed-out cards indicate tools with documentation coming soon.',
+        content:
+          'The homepage lists all available software organized into categories. Tap any active card to go to its documentation hub. Grayed-out cards indicate tools with documentation coming soon.',
       },
     },
 
@@ -126,7 +130,8 @@ const buildSteps = (baseUrl, tier) => {
     // 5 — Sidebar (desktop only)
     {
       title: 'Sidebar Navigation',
-      content: 'The left sidebar shows all chapters and sections of the current document. Selecting any item jumps directly to that section. The sidebar reflects the document\u2019s full table of contents.',
+      content:
+        'The left sidebar shows all chapters and sections of the current document. Selecting any item jumps directly to that section. The sidebar reflects the document\u2019s full table of contents.',
       selector: '.theme-doc-sidebar-container',
       selectorFallback: 'aside',
       placement: 'right',
@@ -136,49 +141,42 @@ const buildSteps = (baseUrl, tier) => {
       phone: false,
     },
 
-    // 6 — Chapter Navigation (phone/tablet only)
+    // 6 — Page Navigation (phone/tablet only — unified InlineNav)
     {
-      title: 'Chapter Navigation',
-      content: 'The "In this document" dropdown lists every chapter and section of the current document. Tap it to jump to any page\u2014just like the sidebar on a wider screen.',
-      selector: '.chapter-nav',
+      title: 'Page Navigation',
+      content:
+        'The "Page navigation" panel at the top of each page combines two tabs: "On this page" shows headings for the current page, and "In this document" lists every chapter\u2014just like the sidebar on a wider screen. Tap the toggle to expand it.',
+      selector: '.floating-nav-inline',
       placement: 'bottom',
       icon: 'navigate',
       page: 'doc',
       desktop: false,
+      phone: {
+        content:
+          'The "Page navigation" panel combines two tabs: "On this page" shows headings for the current page, and "In this document" lists every chapter. Tap the toggle to expand it.',
+      },
     },
 
-    // 7 — Table of Contents
+    // 7 — Table of Contents (desktop only — phone/tablet covered by step 6 InlineNav)
     {
       title: 'Table of Contents',
-      content: 'The right-side table of contents shows the headings on the current page. Selecting any heading scrolls directly to that section, and the active heading highlights as you read.',
+      content:
+        'The right-side table of contents shows the headings on the current page. Selecting any heading scrolls directly to that section, and the active heading highlights as you read.',
       selector: '.table-of-contents',
       selectorFallback: '.col--3',
       padding: { left: -2, right: 26 },
       placement: 'left',
       icon: 'toc',
       page: 'doc',
-      tablet: {
-        title: 'On-Page Table of Contents',
-        content: 'On this screen size, the table of contents appears as a collapsible section at the top of the page content. Tap to expand it and see all headings for the current page.',
-        selector: '.theme-doc-toc-mobile',
-        selectorFallback: null,
-        padding: null,
-        placement: 'bottom',
-      },
-      phone: {
-        title: 'On-Page Table of Contents',
-        content: 'On mobile, the table of contents appears as a collapsible section above the page content. Tap to expand it and jump to any heading.',
-        selector: '.theme-doc-toc-mobile',
-        selectorFallback: null,
-        padding: null,
-        placement: 'bottom',
-      },
+      tablet: false,
+      phone: false,
     },
 
     // 8 — Breadcrumbs
     {
       title: 'Breadcrumb Trail',
-      content: 'Breadcrumbs at the top of each page show your current location in the documentation hierarchy. Each segment is a link back up to that level.',
+      content:
+        'Breadcrumbs at the top of each page show your current location in the documentation hierarchy. Each segment is a link back up to that level.',
       selector: '.breadcrumbs, nav[aria-label="Breadcrumbs"]',
       placement: 'bottom',
       icon: 'breadcrumb',
@@ -188,16 +186,19 @@ const buildSteps = (baseUrl, tier) => {
     // 9 — Document Information
     {
       title: 'Document Information',
-      content: 'The Document Information page provides metadata for each document including the report date, type, title, authors, and acknowledgments. Look for it as the first entry in the sidebar.',
+      content:
+        'The Document Information page provides metadata for each document including the report date, type, title, authors, and acknowledgments. Look for it as the first entry in the sidebar.',
       selector: '.table-container',
       placement: 'top',
       icon: 'info',
       page: 'doc-info',
       tablet: {
-        content: 'The Document Information page provides metadata for each document including the report date, type, title, authors, and acknowledgments. Look for it as the first entry in the navigation menu.',
+        content:
+          'The Document Information page provides metadata for each document including the report date, type, title, authors, and acknowledgments. Look for it as the first entry in the navigation menu.',
       },
       phone: {
-        content: 'The Document Information page provides metadata for each document including the report date, type, title, authors, and acknowledgments. Look for it as the first entry in the navigation menu.',
+        content:
+          'The Document Information page provides metadata for each document including the report date, type, title, authors, and acknowledgments. Look for it as the first entry in the navigation menu.',
       },
     },
 
@@ -215,7 +216,8 @@ const buildSteps = (baseUrl, tier) => {
     // 11 — Document Reading Area
     {
       title: 'Document Reading Area',
-      content: 'The central reading area displays the document content. This is where you will find the text, figures, tables, and equations for each section of the document.',
+      content:
+        'The central reading area displays the document content. This is where you will find the text, figures, tables, and equations for each section of the document.',
       selector: 'article',
       placement: 'left',
       icon: 'document',
@@ -227,7 +229,51 @@ const buildSteps = (baseUrl, tier) => {
       },
     },
 
-    // 12 — Figures, Tables & Equations
+    // 12 — Print Page
+    {
+      title: 'Print Page',
+      content:
+        'The print button in the top-right corner of each page opens your browser\u2019s print dialog. The page is automatically reformatted for paper\u2014navigation, sidebars, and other site elements are hidden so the printed output is clean and readable.',
+      selector: '.print-button',
+      padding: { top: 6, right: 6, bottom: 6, left: 6 },
+      placement: 'bottom',
+      icon: 'print',
+      page: 'doc',
+      tablet: { placement: 'left' },
+      phone: {
+        content:
+          'The print button opens your browser\u2019s print dialog. The page is reformatted for paper with navigation and site elements hidden for a clean printout.',
+      },
+    },
+
+    // 13 — Floating Navigation Button (phone/tablet only)
+    {
+      title: 'Floating Navigation Button',
+      content:
+        'After scrolling down, a floating button appears at the bottom-right of the screen. Tap it to open a navigation drawer with the same "On this page" and "In this document" tabs\u2014without scrolling back to the top.',
+      contentAfter: (
+        <span className="mt-3 flex justify-center">
+          <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--ifm-color-primary)] text-white shadow-lg">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </span>
+        </span>
+      ),
+      selector: '.floating-nav__fab',
+      placement: 'top',
+      icon: 'navigate',
+      page: 'doc',
+      desktop: false,
+      phone: {
+        content:
+          'After scrolling down, a floating button appears at the bottom-right corner. Tap it to open navigation without scrolling back to the top.',
+      },
+    },
+
+    // 13 — Figures, Tables & Equations (renumbered from 12 after FAB insertion)
     {
       title: 'Figures, Tables & Equations',
       content:
@@ -237,28 +283,37 @@ const buildSteps = (baseUrl, tier) => {
       icon: 'image',
       page: 'doc',
       phone: {
-        content: 'Documents include numbered figures, tables, and equations. Tap any in-text reference to jump to the full element. Figure references also show a preview when tapped. Tables and equations follow the same tappable reference pattern throughout every document.',
+        content:
+          'Documents include numbered figures, tables, and equations. Tap any in-text reference to jump to the full element. Figure references also show a preview when tapped. Tables and equations follow the same tappable reference pattern throughout every document.',
       },
     },
 
-    // 13 — References & Citations
+    // 14 — References & Citations
     {
       title: 'References & Citations',
-      content: 'Academic citations appear as numbered superscripts (e.g., [1]) next to the in-text reference. Selecting a citation link jumps to the full reference in the footnotes at the end of the current page.',
-      selector: '.citation-link',
-      padding: { top: 6, right: 10, bottom: 8, left: 8 },
-      placement: 'bottom',
+      content:
+        'Academic citations appear as numbered superscripts (e.g., [1]) next to the in-text reference. Selecting a citation link jumps to the full reference in the footnotes at the end of the current page.',
+      selector: 'span:has(> .citation-link)',
+      selectorFallback: '.citation-link',
+      padding: { top: 6, right: 8, bottom: 8, left: 8 },
+      placement: 'top',
       icon: 'citation',
       page: 'doc',
+      tablet: {
+        padding: { top: 8, right: 10, bottom: 10, left: 10 },
+      },
       phone: {
-        content: 'Academic citations appear as numbered superscripts (e.g., [1]) next to the in-text reference. Tapping a citation link jumps to the full reference in the footnotes at the end of the current page.',
+        content:
+          'Academic citations appear as numbered superscripts (e.g., [1]) next to the in-text reference. Tapping a citation link jumps to the full reference in the footnotes at the end of the current page.',
+        padding: { top: 10, right: 12, bottom: 12, left: 12 },
       },
     },
 
-    // 14 — References Page
+    // 15 — References Page
     {
       title: 'References Page',
-      content: 'Each document ends with a References page listing all cited sources. The bibliography is auto-generated from the citations used throughout the document.',
+      content:
+        'Each document ends with a References page listing all cited sources. The bibliography is auto-generated from the citations used throughout the document.',
       selector: '.theme-doc-markdown',
       placement: 'left',
       icon: 'book',
@@ -432,6 +487,13 @@ const icons = {
       <line x1="20" y1="12" x2="9" y2="12" />
     </svg>
   ),
+  print: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+      <polyline points="6 9 6 2 18 2 18 9" />
+      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+      <rect x="6" y="14" width="12" height="8" />
+    </svg>
+  ),
   check: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
       <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
@@ -444,9 +506,16 @@ const icons = {
 
 function getTooltipStyle(rect, placement, tooltipW, tooltipH, tier) {
   // On phone, pin tooltip to the bottom of the viewport with an explicit top value
-  // (avoids relying on CSS bottom-pinning which breaks on some mobile browsers)
+  // (avoids relying on CSS bottom-pinning which breaks on some mobile browsers).
+  // If the target element is near the bottom, place the tooltip above the target
+  // so it doesn't overlap (e.g. the FloatingNav FAB).
   if (tier === 'phone') {
-    return { top: window.innerHeight - tooltipH - 12, left: 12 };
+    const bottomPin = window.innerHeight - tooltipH - 12;
+    if (rect && rect.top > window.innerHeight * 0.5) {
+      const aboveTarget = rect.top - tooltipH - 16;
+      return { top: Math.max(12, aboveTarget), left: 12 };
+    }
+    return { top: Math.max(12, bottomPin), left: 12 };
   }
 
   const GAP = 16;
@@ -505,7 +574,7 @@ function clipToViewport(rect) {
   const left = Math.max(0, rect.left);
   const bottom = Math.min(vh, rect.top + rect.height);
   const right = Math.min(vw, rect.left + rect.width);
-  return { top, left, bottom, right, width: right - left, height: bottom - top };
+  return { top, left, bottom, right, width: Math.max(0, right - left), height: Math.max(0, bottom - top) };
 }
 
 /* ── Spotlight overlay (four rects around the target) ─────────────── */
@@ -523,8 +592,8 @@ function SpotlightOverlay({ rect, padding }) {
   const r = {
     top: Math.max(0, rect.top - pt),
     left: Math.max(0, rect.left - pl),
-    width: rect.width + pl + pr,
-    height: rect.height + pt + pb,
+    width: Math.max(0, rect.width + pl + pr),
+    height: Math.max(0, rect.height + pt + pb),
   };
 
   return (
@@ -604,14 +673,17 @@ export default function SiteTour({ latestVersions = {} }) {
   const [isFadingOut, setIsFadingOut] = useState(false);
 
   // Wrap endTour so exiting always returns to the homepage
-  const handleEndTour = useCallback((markComplete) => {
-    endTour(markComplete);
-    const currentPath = normalizePath(location.pathname);
-    const homePath = normalizePath(baseUrl);
-    if (currentPath !== homePath) {
-      history.push(baseUrl);
-    }
-  }, [endTour, location.pathname, baseUrl, history]);
+  const handleEndTour = useCallback(
+    (markComplete) => {
+      endTour(markComplete);
+      const currentPath = normalizePath(location.pathname);
+      const homePath = normalizePath(baseUrl);
+      if (currentPath !== homePath) {
+        history.push(baseUrl);
+      }
+    },
+    [endTour, location.pathname, baseUrl, history],
+  );
 
   // Re-detect tier once each time the tour activates (handles resize between sessions)
   const prevActive = useRef(false);
@@ -691,47 +763,62 @@ export default function SiteTour({ latestVersions = {} }) {
     const step = steps[currentStep];
     if (!step) return;
 
+    // Helper: position the tooltip centered (no spotlight).
+    // Double-rAF ensures the new step content is painted before measuring.
+    const centerTooltip = () => {
+      setTargetRect(null);
+      setSpotlightPadding(null);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (!tooltipRef.current) return;
+          const tRect = tooltipRef.current.getBoundingClientRect();
+          const vh = window.innerHeight;
+          const top = Math.max(12, Math.min((vh - tRect.height) / 2, vh - tRect.height - 12));
+          const left = tier === 'phone' ? 12 : (window.innerWidth - tRect.width) / 2;
+          setTooltipPos({ top, left });
+        });
+      });
+    };
+
     const findTarget = (attempt = 0) => {
       if (!step.selector) {
-        setTargetRect(null);
-        setSpotlightPadding(null);
-        // On phone, pin to bottom with explicit top; otherwise center
-        if (tier === 'phone') {
-          requestAnimationFrame(() => {
-            if (!tooltipRef.current) return;
-            const tRect = tooltipRef.current.getBoundingClientRect();
-            setTooltipPos({ top: window.innerHeight - tRect.height - 12, left: 12 });
-          });
-        } else {
-          requestAnimationFrame(() => {
-            if (!tooltipRef.current) return;
-            const tRect = tooltipRef.current.getBoundingClientRect();
-            setTooltipPos({
-              top: (window.innerHeight - tRect.height) / 2,
-              left: (window.innerWidth - tRect.width) / 2,
-            });
-          });
-        }
+        centerTooltip();
         return;
       }
 
       let el = document.querySelector(step.selector);
+      // If primary element exists but is hidden/zero-size, try fallback instead
+      if (el) {
+        const pRect = el.getBoundingClientRect();
+        if (pRect.width === 0 || pRect.height === 0) el = null;
+      }
       if (!el && step.selectorFallback) {
         el = document.querySelector(step.selectorFallback);
       }
 
-      // Retry a few times after navigation in case DOM hasn't rendered
-      if (!el && attempt < 3) {
+      // Treat zero-size elements (e.g. scale(0) / visibility:hidden) as not yet ready
+      const elRect = el?.getBoundingClientRect();
+      const elReady = el && elRect && elRect.width > 0 && elRect.height > 0;
+
+      // Retry a few times after navigation in case DOM hasn't rendered yet
+      if (!elReady && attempt < 3) {
         setTimeout(() => findTarget(attempt + 1), 200);
         return;
       }
 
-      if (!el) {
-        setTargetRect(null);
+      if (!elReady) {
+        centerTooltip();
         return;
       }
 
       const rect = clipToViewport(el.getBoundingClientRect());
+
+      // If the element is entirely off-screen (clipped to zero area), center instead
+      if (rect.width === 0 || rect.height === 0) {
+        centerTooltip();
+        return;
+      }
+
       setTargetRect(rect);
       setSpotlightPadding(step.padding);
 
@@ -809,12 +896,12 @@ export default function SiteTour({ latestVersions = {} }) {
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div key={currentStep} className="relative animate-[tour-content-fade_0.45s_ease-out]">
+        <div key={currentStep} className="relative flex min-h-0 flex-1 flex-col animate-[tour-content-fade_0.45s_ease-out]">
           {/* Close button */}
           <button
             type="button"
             onClick={() => handleEndTour(false)}
-            className="absolute right-0 top-0 flex h-6 w-6 shrink-0 items-center justify-center rounded text-[var(--font-color-description)] transition-colors hover:bg-[var(--surface-card)] hover:text-[var(--font-color)]"
+            className="absolute right-0 top-0 z-10 flex h-6 w-6 shrink-0 items-center justify-center rounded text-[var(--font-color-description)] transition-colors hover:bg-[var(--surface-card)] hover:text-[var(--font-color)]"
             aria-label="Close tour"
             title="Close tour"
           >
@@ -824,8 +911,8 @@ export default function SiteTour({ latestVersions = {} }) {
             </svg>
           </button>
 
-          {/* Header */}
-          <div className="flex items-center gap-3">
+          {/* Header — always visible */}
+          <div className="flex shrink-0 items-center gap-3">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--ifm-color-primary-lightest)] text-[var(--ifm-color-primary)] dark:bg-[var(--ifm-color-primary-darkest)] dark:text-[var(--ifm-color-primary-light)]">
               {icons[step.icon] || icons.compass}
             </span>
@@ -834,11 +921,16 @@ export default function SiteTour({ latestVersions = {} }) {
             </div>
           </div>
 
-          {/* Body */}
-          <p className="mb-4 mt-3 font-usace text-sm leading-relaxed text-gray-600 dark:text-gray-300">{step.content}</p>
+          {/* Body — scrolls when viewport is short */}
+          <div className="mt-3 min-h-0 flex-1 overflow-y-auto">
+            <div className="font-usace text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+              {step.content}
+              {step.contentAfter && <div className="mt-2">{step.contentAfter}</div>}
+            </div>
+          </div>
 
-          {/* Footer */}
-          <div className="flex items-center justify-between">
+          {/* Footer — always visible */}
+          <div className="mt-4 flex shrink-0 items-center justify-between">
             <ProgressIndicator current={currentStep} total={steps.length} tier={tier} />
 
             <div className="flex items-center gap-2">

@@ -4,6 +4,7 @@ title: Design Patterns
 
 import NavContainer from '@site/src/components/NavContainer';
 import SchemaTag from '@site/src/components/SchemaTag';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
 
 <NavContainer
   link="/dev"
@@ -50,11 +51,15 @@ Several tables use PostgreSQL JSONB columns to store complex nested data structu
 
 The SRP (System Response Probability) pattern is the most distinctive structural pattern in the DST schema. Every PFM module that computes an SRP curve uses three child tables:
 
-| Table Suffix | Purpose | Data Source |
-|-------------|---------|-------------|
-| `_DstSrp` | System-Response library calculation results + nodal probability tables | Computed by DST |
-| `_UserSrp` | Manually-entered SRP curve from external tools | User input |
-| `_ActiveSrp` | Active SRP curve used in risk calculations | Synced from DstSrp or UserSrp |
+<TableVerticalNoRef
+  alt="Three-table SRP pattern"
+  headers={[[{ value: 'Table Suffix' }, { value: 'Purpose' }, { value: 'Data Source' }]]}
+  columns={[
+    ['_DstSrp', '_UserSrp', '_ActiveSrp'],
+    ['System-Response library calculation results + nodal probability tables', 'Manually-entered SRP curve from external tools', 'Active SRP curve used in risk calculations'],
+    ['Computed by DST', 'User input', 'Synced from DstSrp or UserSrp'],
+  ]}
+/>
 
 **How it works:**
 
@@ -81,18 +86,28 @@ The SRP (System Response Probability) pattern is the most distinctive structural
 
 All entity tables follow a consistent timestamp pattern:
 
-| Column | Purpose | Default | Nullable |
-|--------|---------|---------|----------|
-| `CreatedAt` | When the record was first created | `CURRENT_TIMESTAMP` | NO |
-| `UpdatedAt` | When the record was last modified | `CURRENT_TIMESTAMP` | NO |
+<TableVerticalNoRef
+  alt="Timestamp columns"
+  headers={[[{ value: 'Column' }, { value: 'Purpose' }, { value: 'Default' }, { value: 'Nullable' }]]}
+  columns={[
+    ['CreatedAt', 'UpdatedAt'],
+    ['When the record was first created', 'When the record was last modified'],
+    ['CURRENT_TIMESTAMP', 'CURRENT_TIMESTAMP'],
+    ['NO', 'NO'],
+  ]}
+/>
 
 Additional timestamps may exist for specific purposes:
 
-| Pattern | Example | Purpose |
-|---------|---------|---------|
-| `Last*At` | `LastCalculatedAt` | When a specific operation was last performed |
-| `LastModifiedAt` | `LastModifiedAt` | Domain-specific modification tracking |
-| `LastSyncedAt` | `LastSyncedAt` | When data was last synced from another source |
+<TableVerticalNoRef
+  alt="Additional timestamp patterns"
+  headers={[[{ value: 'Pattern' }, { value: 'Example' }, { value: 'Purpose' }]]}
+  columns={[
+    ['Last*At', 'LastModifiedAt', 'LastSyncedAt'],
+    ['LastCalculatedAt', 'LastModifiedAt', 'LastSyncedAt'],
+    ['When a specific operation was last performed', 'Domain-specific modification tracking', 'When data was last synced from another source'],
+  ]}
+/>
 
 All timestamps are stored as PostgreSQL `TIMESTAMP` (without time zone) in UTC.
 
@@ -163,8 +178,12 @@ Database migrations are managed with EF Core and follow these conventions:
 - **Forward-only:** Migrations are designed to be applied in sequence without rollback in production
 - **Migration history:**
 
-| Timestamp | Migration Name | Tables Affected |
-|-----------|----------------|-----------------|
-| 20260204213854 | InitialCreate | Screenings, Pfm01, Pfm01_DstSrp, Pfm01_UserSrp, Pfm01_ActiveSrp |
-| 20260205192548 | AddScreeningEntity | Screenings (restructured) |
-| 20260206160000 | AddMaxHazardLevelToPfm01 | Pfm01 (added MaxHazardLevel column) |
+<TableVerticalNoRef
+  alt="Migration history"
+  headers={[[{ value: 'Timestamp' }, { value: 'Migration Name' }, { value: 'Tables Affected' }]]}
+  columns={[
+    ['20260204213854', '20260205192548', '20260206160000'],
+    ['InitialCreate', 'AddScreeningEntity', 'AddMaxHazardLevelToPfm01'],
+    ['Screenings, Pfm01, Pfm01_DstSrp, Pfm01_UserSrp, Pfm01_ActiveSrp', 'Screenings (restructured)', 'Pfm01 (added MaxHazardLevel column)'],
+  ]}
+/>

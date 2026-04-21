@@ -1,0 +1,31 @@
+name: PR Preview Cleanup
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: read
+
+jobs:
+  cleanup:
+    name: Delete preview directory
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: usace-rmc/RMC-Software-Documentation-Previews
+          ref: gh-pages
+          ssh-key: ${{ secrets.PREVIEW_DEPLOY_KEY }}
+      - name: Remove PR preview directory
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -d "pr-${PR_NUMBER}" ]; then
+            rm -rf "pr-${PR_NUMBER}"
+            git add -A
+            git commit -m "Clean up preview for PR #${PR_NUMBER}"
+            git push
+          fi

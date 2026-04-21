@@ -23,22 +23,8 @@ const riskCalculationsSuite = [
   },
   {
     IconComponent: ToolboxIcon,
-    doc_location: `toolbox-technical-manuals/risk-calculations-suite/qra-calcs`,
-    doc_name: 'QRAcalcs Toolbox Technical Manual',
-    active: false,
-    draft: true,
-  },
-  {
-    IconComponent: ToolboxIcon,
     doc_location: `toolbox-technical-manuals/risk-calculations-suite/event-combination`,
     doc_name: 'Event Combination Toolbox Technical Manual',
-    active: false,
-    draft: true,
-  },
-  {
-    IconComponent: ToolboxIcon,
-    doc_location: `toolbox-technical-manuals/risk-calculations-suite/joint-loading-probability-dams`,
-    doc_name: 'Joint-Loading Probability (Dams) Toolbox Technical Manual',
     active: false,
     draft: true,
   },

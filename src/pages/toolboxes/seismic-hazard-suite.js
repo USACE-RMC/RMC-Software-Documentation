@@ -21,20 +21,6 @@ const seismicHazardSuite = [
     active: true,
     draft: false,
   },
-  {
-    IconComponent: ToolboxIcon,
-    doc_location: `toolbox-technical-manuals/seismic-hazard-suite/liquefaction`,
-    doc_name: 'Liquefaction Toolbox Technical Manual',
-    active: false,
-    draft: true,
-  },
-  {
-    IconComponent: ToolboxIcon,
-    doc_location: `toolbox-technical-manuals/seismic-hazard-suite/empirical-crest-deformation`,
-    doc_name: 'Empirical Crest Deformation Toolbox Technical Manual',
-    active: false,
-    draft: true,
-  },
 ];
 
 export const seismicHazardSuiteDocs = seismicHazardSuite;
