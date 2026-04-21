@@ -202,12 +202,12 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
           href: lifeSimHref,
           children: [
             { id: 'lifesim-users-guide', text: "LifeSim User's Guide", href: lifeSimUserGuideHref },
+            { id: 'lifesim-tech-ref-pdf', text: 'LifeSim Technical Reference Manual (PDF)', href: lifeSimTechRefPdfHref, target: '_blank', rel: 'noopener noreferrer' },
             {
               id: 'lifesim-applications-guide',
               text: 'LifeSim Applications Guide',
               href: lifeSimAppGuideHref,
             },
-            { id: 'lifesim-tech-ref-pdf', text: 'LifeSim Technical Reference Manual (PDF)', href: lifeSimTechRefPdfHref, target: '_blank', rel: 'noopener noreferrer' },
             {
               id: 'lifesim-validation-studies',
               text: 'LifeSim Validation Studies',

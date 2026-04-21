@@ -18,18 +18,18 @@ const lifeSimData = [
   {
     icon: 'img/LifeSim.png',
     preserveIconColor: true,
-    doc_location: 'desktop-applications/lifesim/applications-guide',
-    doc_name: 'LifeSim Applications Guide',
-    active: true,
-    draft: false,
-  },
-  {
-    icon: 'img/LifeSim.png',
-    preserveIconColor: true,
     doc_name: 'LifeSim Technical Reference Manual',
     active: true,
     draft: false,
     downloadUrl: '/source-documents/desktop-applications/lifesim/technical-reference-manual/LifeSim-Technical-Reference-Manual.pdf',
+  },
+  {
+    icon: 'img/LifeSim.png',
+    preserveIconColor: true,
+    doc_location: 'desktop-applications/lifesim/applications-guide',
+    doc_name: 'LifeSim Applications Guide',
+    active: true,
+    draft: false,
   },
   {
     icon: 'img/LifeSim.png',
