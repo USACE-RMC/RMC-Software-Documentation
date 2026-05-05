@@ -3,43 +3,16 @@ import Layout from '@theme/Layout';
 import ThemedImage from '@theme/ThemedImage';
 import { useEffect, useState } from 'react';
 import ContentBox from '../../components/ContentBox';
+import { filterByCategoryAndSoftware } from '../../docConfig';
 import '../../css/custom.css';
 
-// Create the list of documents dynamically
-const totalRiskData = [
-  {
-    icon: 'img/TotalRisk.png',
-    preserveIconColor: true,
-    doc_location: 'desktop-applications/rmc-totalrisk/users-guide',
-    doc_name: 'RMC TotalRisk Users Guide',
-    active: true,
-    draft: false,
-  },
-  {
-    icon: 'img/TotalRisk.png',
-    preserveIconColor: true,
-    doc_name: 'RMC TotalRisk Verification Report',
-    active: true,
-    draft: true,
-    downloadUrl: '/source-documents/desktop-applications/rmc-totalrisk/verification-report/RMC-TotalRisk-Verification-Report.pdf',
-  },
-  {
-    icon: 'img/TotalRisk.png',
-    preserveIconColor: true,
-    doc_name: 'RMC TotalRisk Technical Reference Manual',
-    active: true,
-    draft: true,
-    downloadUrl: '/source-documents/desktop-applications/rmc-totalrisk/technical-reference-manual/RMC-TotalRisk-Technical-Reference-Manual.pdf',
-  },
-  {
-    icon: 'img/TotalRisk.png',
-    preserveIconColor: true,
-    doc_location: 'desktop-applications/rmc-totalrisk/applications-guide',
-    doc_name: 'RMC TotalRisk Applications Guide',
-    active: false,
-    draft: true,
-  },
-];
+const ICON = 'img/TotalRisk.png';
+
+const totalRiskData = filterByCategoryAndSoftware('desktop-applications', 'rmc-totalrisk').map((doc) => ({
+  ...doc,
+  icon: ICON,
+  preserveIconColor: true,
+}));
 
 export const totalRiskDocs = totalRiskData;
 
@@ -47,7 +20,6 @@ export default function TotalRisk() {
   const [latestVersions, setLatestVersions] = useState({});
 
   useEffect(() => {
-    // Fetch the latestVersions JSON file
     fetch('/RMC-Software-Documentation/versions/latestVersions.json')
       .then((response) => response.json())
       .then((data) => setLatestVersions(data))

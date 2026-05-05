@@ -3,18 +3,13 @@ import Layout from '@theme/Layout';
 import { useEffect, useState } from 'react';
 import ContentBox from '../../components/ContentBox';
 import RRFTIcon from '../../components/icons/RRFTIcon';
+import { filterByCategoryAndSoftware } from '../../docConfig';
 import '../../css/custom.css';
 
-// Create the list of documents dynamically
-const rrftData = [
-  {
-    IconComponent: RRFTIcon,
-    doc_location: 'web-applications/rrft/users-guide',
-    doc_name: 'RRFT Users Guide',
-    active: false,
-    draft: true,
-  },
-];
+const rrftData = filterByCategoryAndSoftware('web-applications', 'rrft').map((doc) => ({
+  ...doc,
+  IconComponent: RRFTIcon,
+}));
 
 export const rrftDocs = rrftData;
 
@@ -22,7 +17,6 @@ export default function RRFT() {
   const [latestVersions, setLatestVersions] = useState({});
 
   useEffect(() => {
-    // Fetch the latestVersions JSON file
     fetch('/RMC-Software-Documentation/versions/latestVersions.json')
       .then((response) => response.json())
       .then((data) => setLatestVersions(data))

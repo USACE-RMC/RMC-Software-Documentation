@@ -3,43 +3,16 @@ import Layout from '@theme/Layout';
 import ThemedImage from '@theme/ThemedImage';
 import { useEffect, useState } from 'react';
 import ContentBox from '../../components/ContentBox';
+import { filterByCategoryAndSoftware } from '../../docConfig';
 import '../../css/custom.css';
 
-// Create the list of documents dynamically
-const lifeSimData = [
-  {
-    icon: 'img/LifeSim.png',
-    preserveIconColor: true,
-    doc_location: 'desktop-applications/lifesim/users-guide',
-    doc_name: 'LifeSim Users Guide',
-    active: true,
-    draft: false,
-  },
-  {
-    icon: 'img/LifeSim.png',
-    preserveIconColor: true,
-    doc_location: 'desktop-applications/lifesim/validation-studies',
-    doc_name: 'LifeSim Validation Studies',
-    active: true,
-    draft: false,
-  },
-  {
-    icon: 'img/LifeSim.png',
-    preserveIconColor: true,
-    doc_name: 'LifeSim Technical Reference Manual',
-    active: true,
-    draft: false,
-    downloadUrl: '/source-documents/desktop-applications/lifesim/technical-reference-manual/LifeSim-Technical-Reference-Manual.pdf',
-  },
-  {
-    icon: 'img/LifeSim.png',
-    preserveIconColor: true,
-    doc_location: 'desktop-applications/lifesim/applications-guide',
-    doc_name: 'LifeSim Applications Guide',
-    active: false,
-    draft: false,
-  },
-];
+const ICON = 'img/LifeSim.png';
+
+const lifeSimData = filterByCategoryAndSoftware('desktop-applications', 'lifesim').map((doc) => ({
+  ...doc,
+  icon: ICON,
+  preserveIconColor: true,
+}));
 
 export const lifeSimDocs = lifeSimData;
 
