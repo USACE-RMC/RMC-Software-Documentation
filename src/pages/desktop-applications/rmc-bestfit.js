@@ -3,27 +3,16 @@ import Layout from '@theme/Layout';
 import ThemedImage from '@theme/ThemedImage';
 import { useEffect, useState } from 'react';
 import ContentBox from '../../components/ContentBox';
+import { filterByCategoryAndSoftware } from '../../docConfig';
 import '../../css/custom.css';
 
-// Create the list of documents dynamically
-const bestFitData = [
-  {
-    icon: 'img/BestFit.png',
-    preserveIconColor: true,
-    doc_location: 'desktop-applications/rmc-bestfit/users-guide',
-    doc_name: 'RMC BestFit Users Guide',
-    active: true,
-    draft: false,
-  },
-  {
-    icon: 'img/BestFit.png',
-    preserveIconColor: true,
-    doc_name: 'RMC-BestFit Verification Report',
-    active: true,
-    draft: false,
-    downloadUrl: '/source-documents/desktop-applications/rmc-bestfit/verification-report/RMC-BestFit-Verification-Report.pdf',
-  },
-];
+const ICON = 'img/BestFit.png';
+
+const bestFitData = filterByCategoryAndSoftware('desktop-applications', 'rmc-bestfit').map((doc) => ({
+  ...doc,
+  icon: ICON,
+  preserveIconColor: true,
+}));
 
 export const bestFitDocs = bestFitData;
 
@@ -31,7 +20,6 @@ export default function BestFit() {
   const [latestVersions, setLatestVersions] = useState({});
 
   useEffect(() => {
-    // Fetch the latestVersions JSON file
     fetch('/RMC-Software-Documentation/versions/latestVersions.json')
       .then((response) => response.json())
       .then((data) => setLatestVersions(data))

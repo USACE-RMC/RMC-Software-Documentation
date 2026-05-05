@@ -14,6 +14,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { shouldExcludeFromBuild } = require('../src/docConfig');
 
 const DOCS_DIR = path.join(__dirname, '..', 'docs');
 const SIDEBAR_PATH = path.join(__dirname, '..', 'sidebars.js');
@@ -593,6 +594,10 @@ function generateSidebars() {
 
     const docPath = versionMatch[1];
     const version = versionMatch[2];
+
+    // In prod, skip docs flagged inactive in src/docConfig.js so the sidebar
+    // doesn't reference doc IDs that the docs plugin will exclude.
+    if (shouldExcludeFromBuild(docPath)) return;
     const docParts = docPath.split('/');
     const docGroup = docParts[1]; // e.g., "rmc-totalrisk"
     const folderName = docParts[docParts.length - 1]; // e.g., "applications-guide"

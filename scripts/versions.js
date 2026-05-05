@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { shouldExcludeFromBuild } = require('../src/docConfig');
 
 // Define the base path for your docs folder
 const docsFolderPath = path.join(__dirname, '..', 'docs');
@@ -106,16 +107,20 @@ function generateVersions() {
     }
   });
 
-  // Convert keys to forward slashes
+  // Convert keys to forward slashes; in prod mode, drop inactive docs entirely
+  // so they don't appear in latestVersions, versionList, or the Algolia
+  // crawler config.
   const updatedLatestVersions = {};
   const updatedAllVersions = {};
 
   for (const key in latestVersions) {
     const newKey = key.replace(/\\/g, '/');
+    if (shouldExcludeFromBuild(newKey)) continue;
     updatedLatestVersions[newKey] = latestVersions[key];
   }
   for (const key in allVersions) {
     const newKey = key.replace(/\\/g, '/');
+    if (shouldExcludeFromBuild(newKey)) continue;
     updatedAllVersions[newKey] = allVersions[key];
   }
 

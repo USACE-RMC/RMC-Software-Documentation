@@ -3,18 +3,13 @@ import Layout from '@theme/Layout';
 import { useEffect, useState } from 'react';
 import ContentBox from '../../components/ContentBox';
 import LSTIcon from '../../components/icons/LSTIcon';
+import { filterByCategoryAndSoftware } from '../../docConfig';
 import '../../css/custom.css';
 
-// Create the list of documents dynamically
-const lstData = [
-  {
-    IconComponent: LSTIcon,
-    doc_location: 'web-applications/lst/users-guide',
-    doc_name: 'Levee Screening Tool Users Guide',
-    active: false,
-    draft: true,
-  },
-];
+const lstData = filterByCategoryAndSoftware('web-applications', 'lst').map((doc) => ({
+  ...doc,
+  IconComponent: LSTIcon,
+}));
 
 export const lstDocs = lstData;
 
@@ -22,7 +17,6 @@ export default function LST() {
   const [latestVersions, setLatestVersions] = useState({});
 
   useEffect(() => {
-    // Fetch the latestVersions JSON file
     fetch('/RMC-Software-Documentation/versions/latestVersions.json')
       .then((response) => response.json())
       .then((data) => setLatestVersions(data))

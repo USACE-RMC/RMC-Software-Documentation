@@ -2,6 +2,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { shouldExcludeFromBuild } = require("../src/docConfig");
 
 const DOCS_PATH = path.join(__dirname, "../docs");
 const OUTPUT_FILE = path.join(__dirname, "../src/reportIdMap.js");
@@ -26,11 +27,16 @@ function walkDocs(currentPath, relPath = []) {
         const subHub = relPath[relPath.length - 2]; // One level above documentName
 
         const docPath = newRelPath.join("/");
+        const docBasePath = relPath.join("/"); // Path without the version suffix
 
         if (!subHub || !documentName) {
           console.warn(`⚠️ Skipping: Incomplete path at ${docPath}`);
           return;
         }
+
+        // In prod, skip docs flagged inactive in src/docConfig.js so report
+        // IDs aren't generated for content that won't exist in the build.
+        if (shouldExcludeFromBuild(docBasePath)) return;
 
         const reportId = `${subHub}-${documentName}-${version}`;
         reportIdMap[docPath] = reportId;
