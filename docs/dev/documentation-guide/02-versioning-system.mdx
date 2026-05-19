@@ -271,7 +271,12 @@ All necessary scripts run automatically during `npm start` or `npm run build`. Y
    - Test cross-references
    - Verify bibliography displays correctly (if applicable)
 
-### Step 7: Commit Changes
+### Step 7: Commit Changes and Open a Pull Request
+
+The `main` branch is protected — changes cannot be pushed directly. All revisions are committed to a feature branch and merged via a pull request. The branch prefix routes the PR to the appropriate review lane (see [Review Lanes](./10-review-lanes.mdx)):
+
+- **Major revision** (e.g., `v1.0` → `v2.0`): use prefix `docs/major/`
+- **Minor revision** (e.g., `v1.0` → `v1.1`): use prefix `docs/minor/`
 
 <DocTabs
   items={[
@@ -280,19 +285,27 @@ All necessary scripts run automatically during `npm start` or `npm run build`. Y
       value: 'github-desktop',
       child: (
         <>
+          <p><strong>✅ Create a Branch</strong></p>
+          <ol>
+            <li>In <strong>GitHub Desktop</strong>, click the <strong>Current Branch</strong> dropdown</li>
+            <li>Click <strong>New Branch</strong></li>
+            <li>Name the branch using the appropriate prefix (e.g., <code>docs/minor/lifesim-users-guide-v1.1</code>)</li>
+            <li>Confirm the branch is created from <code>main</code></li>
+            <li>Click <strong>Create Branch</strong></li>
+          </ol>
           <p><strong>✅ Stage and Commit Changes</strong></p>
           <ol>
-            <li>Open <strong>GitHub Desktop</strong></li>
-            <li>You should see all changed files listed in the left sidebar under "Changes"</li>
+            <li>Changed files appear in the left sidebar under "Changes"</li>
             <li>Review the changes in the diff viewer on the right</li>
             <li>Enter a commit message in the <strong>Summary</strong> field (e.g., "Add v1.1 documentation with updated usage guide")</li>
             <li>Optionally add a more detailed <strong>Description</strong></li>
-            <li>Click <strong>Commit to main</strong> (or your current branch)</li>
+            <li>Click <strong>Commit to <code>docs/minor/...</code></strong></li>
           </ol>
-          <p><strong>✅ Push Changes to Remote</strong></p>
+          <p><strong>✅ Push Changes and Open the PR</strong></p>
           <ol>
-            <li>After committing, click <strong>Push origin</strong> in the top toolbar</li>
-            <li>Your changes will be uploaded to the GitHub repository</li>
+            <li>Click <strong>Publish branch</strong> (first push) or <strong>Push origin</strong> (subsequent pushes)</li>
+            <li>Click <strong>Create Pull Request</strong> — this opens the GitHub website to the PR creation page</li>
+            <li>Fill in the PR description, assign a peer reviewer if known, and click <strong>Create pull request</strong></li>
           </ol>
         </>
       ),
@@ -302,24 +315,27 @@ All necessary scripts run automatically during `npm start` or `npm run build`. Y
       value: 'git',
       child: (
         <>
-          <p><strong>✅ Stage, Commit, and Push Changes</strong></p>
-          <pre><code className="language-bash">{`# Stage all changes
+          <p><strong>✅ Create a Branch, Commit, and Push</strong></p>
+          <pre><code className="language-bash">{`# Create and switch to a new branch off main
+git checkout main
+git pull origin main
+git checkout -b docs/minor/lifesim-users-guide-v1.1
+
+# Stage and commit
 git add .
-
-# Commit with descriptive message
-
 git commit -m "Add v1.1 documentation with updated usage guide"
 
-# Push to remote
-
-git push origin main`}</code></pre>
-
-</>
-),
-},
-]}
-defaultValue="github-desktop"
+# Push the branch to GitHub
+git push -u origin docs/minor/lifesim-users-guide-v1.1`}</code></pre>
+          <p>Then open the PR on GitHub.com — the push output contains a link to "Create a pull request for this branch." Click it, fill in the description, and submit.</p>
+        </>
+      ),
+    },
+  ]}
+  defaultValue="github-desktop"
 />
+
+After the PR is opened, a preview build is published to an unadvertised URL and the review workflow auto-assigns a lane label. See [Author Workflow](./11-author-workflow.mdx) for what happens next.
 
 ---
 
@@ -453,4 +469,4 @@ npm start
 - Old versions remain accessible to users
 - Match software versions when documenting software releases
 
-For more details on the build process and automation scripts, see [Appendix B: Build Process Overview](./10-appendix-b-build-process-overview.mdx).
+For more details on the build process and automation scripts, see [Appendix B: Build Process Overview](./17-appendix-b-build-process-overview.mdx).
