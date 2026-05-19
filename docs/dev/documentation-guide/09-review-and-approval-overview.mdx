@@ -1,0 +1,67 @@
+---
+title: Review and Approval Process Overview
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" />
+
+# Review and Approval Process Overview
+
+This chapter and the six that follow describe the review and approval process for all documentation published on the RMC Software Documentation website. Read this chapter first for the high-level picture, then jump to the role-specific chapter that applies to you.
+
+## Who participates
+
+**Author.** Writes or revises the document. The only role that needs local development tooling — everyone else works in a web browser.
+
+**Peer reviewer.** Subject-matter expert assigned ad-hoc to review technical accuracy. Works entirely in the GitHub web interface, reading the document on an unadvertised preview URL.
+
+**RMC Lead Civil.** Provides technical oversight and quality assurance. Assigned ad-hoc per document. Works in the GitHub web interface, also reviewing on the preview URL.
+
+**Technical edit (AI-assisted).** An AI-powered editorial review that checks grammar, clarity, tense, terminology, and Section 508 accessibility compliance. A team member with the right tooling triggers the review, and the AI posts inline comments directly on the pull request. A human technical editor can be substituted at the site admin's discretion.
+
+**Director.** The RMC Director provides final approval for new documents only. Reviews the document on the live site (with a DRAFT watermark) and clicks Approve — no file editing required.
+
+**Site administrator.** Manages reviewer assignments, checkpoint deploys, merge preparation, and final deploys. The only role with access to protected parts of the repository.
+
+## The five review lanes
+
+Every change falls into one of five lanes based on its scope:
+
+**Lane 1: New document.** Peer review → Lead Civil review → Technical edit → Director approval. The peer review, Lead Civil review, and technical edit all happen against the preview URL or the source files. Only after the technical edit completes does the site admin deploy the document to the live site (watermarked) for Director review at the document's final URL.
+
+**Lane 2: Major revision.** Peer review → Lead Civil review. Entire review happens on the preview site. Site admin deploys the final version after Lead Civil approval.
+
+**Lane 3: Minor revision.** Peer review only on the preview site.
+
+**Lane 4: Editorial fix.** Site admin reviews and deploys directly. No formal review.
+
+**Lane 5: Dev docs.** Any change to documents under `docs/dev/` — developer documentation, contributor guides, internal references. Treated like Lane 4 — site admin reviews and merges directly, no formal review required.
+
+See [Review Lanes](./10-review-lanes.mdx) for branch-prefix conventions and detailed examples of each lane.
+
+## The merge gate
+
+Every documentation PR has a GitHub commit status called `review-workflow` that functions as the merge gate. Branch protection on `main` requires this status to be `success` before the PR can merge, so nobody — not even a site admin — can merge a PR whose review is incomplete. The stage progression workflow sets this status automatically:
+
+- **Pending** during any active review stage (`stage:peer-review`, `stage:lead-civil-review`, `stage:ai-editor-review`, `stage:director-review`, or `stage:needs-lane`)
+- **Success** when the PR reaches `stage:ready-to-merge`, or immediately on lane assignment for `lane:editorial-fix` and `lane:dev`
+- **Success** for non-docs PRs (infrastructure, tooling, dependency updates) as soon as `CI Build` passes
+
+The status is re-evaluated on every push to a PR. The goal is that the merge button reflects the workflow's judgment, not the admin's discretion.
+
+## The draft watermark
+
+Documents flagged as drafts display a large diagonal "DRAFT" watermark. For Lane 1, the watermark appears on the live site during the Director review phase only — the document is not deployed to the live site until the technical edit is complete. The watermark signals to any reader who happens to find the live URL that the content is not yet authoritative. The watermark is removed when the site admin flips the draft flag after Director approval.
+
+For Lanes 2 and 3, the document under revision exists only on the preview site during review. The currently-published version on the live site is never watermarked.
+
+The watermark is **version-aware**: it renders only on the latest version of a flagged document. Older versions of the same document — accessible via direct URL — stay unwatermarked.
+
+## Where to go next
+
+- Authoring a document: read [Review Lanes](./10-review-lanes.mdx), then [Author Workflow](./11-author-workflow.mdx)
+- Asked to review: read [Reviewer Workflow](./12-reviewer-workflow.mdx)
+- Running a technical edit: read [Technical Edit](./13-technical-edit.mdx)
+- Director reviewing a new document: read [Director Workflow](./14-director-workflow.mdx)
+- Site administrator: read [Site Admin Workflow](./15-site-admin-workflow.mdx)

@@ -370,8 +370,15 @@ function generateDocumentationGuideSidebar() {
     '06-creating-editing-pages',
     '07-react-components',
     '08-troubleshooting-faq',
+    '09-review-and-approval-overview',
+    '10-review-lanes',
+    '11-author-workflow',
+    '12-reviewer-workflow',
+    '13-technical-edit',
+    '14-director-workflow',
+    '15-site-admin-workflow',
   ];
-  const appendixIds = ['09-appendix-a-source-code-structure', '10-appendix-b-build-process-overview', '11-appendix-c-search-configuration'];
+  const appendixIds = ['16-appendix-a-source-code-structure', '17-appendix-b-build-process-overview', '18-appendix-c-search-configuration'];
 
   const files = fs
     .readdirSync(guideDir)

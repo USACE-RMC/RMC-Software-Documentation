@@ -1,0 +1,84 @@
+---
+title: Review Lanes
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" />
+
+# Review Lanes
+
+Every change follows one of five review lanes. The workflow assigns a lane automatically using two signals, in order:
+
+1. **Content-based detection.** If every documentation file changed in the PR is under `docs/dev/`, the PR is assigned `lane:dev` regardless of branch name.
+2. **Branch-name detection.** Otherwise, the branch prefix determines the lane:
+
+| Branch prefix | Lane |
+|---|---|
+| `docs/new/` | New document |
+| `docs/major/` | Major revision |
+| `docs/minor/` | Minor revision |
+| `docs/fix/` | Editorial fix |
+| `docs/dev/` | Dev docs |
+
+**Any PR that touches files under `docs/` is processed by the review workflow**, even if its branch name doesn't start with `docs/`. This means a collaborator can accidentally push a documentation change on a branch named `feature/typo-fix` and the workflow will still intercept it at PR open time and ask a site admin to assign a lane. Non-documentation PRs (branches that don't touch anything under `docs/`) are silently ignored by the lane workflow and go straight to the merge button once their build passes.
+
+If a branch starts with `docs/` but doesn't match one of the five sub-prefixes above (for example, a typo like `docs/newfoo/` or an old-style name like `docs/update`), the workflow applies `stage:needs-lane` and tags a site admin to assign the correct lane manually. The same happens for a PR that touches documentation from a non-`docs/` branch when content-based dev detection doesn't apply.
+
+A site admin can always override the automatically-detected lane by swapping the `lane:*` label on the PR. The workflow treats a manually-applied lane label the same as an auto-detected one and proceeds normally from there.
+
+## Lane 1: New document
+
+**When to use.** Any completely new document being added to the site.
+
+**Required reviews.** Peer review → RMC Lead Civil review → Technical edit (AI-assisted) → Director approval.
+
+**What happens.** The document is first visible only on the unadvertised PR preview URL, where peer review, Lead Civil review, and the technical edit all happen. The technical edit reads the source MDX directly and posts inline comments — it does not need a deployed version. Only after the author marks the technical edit complete does the site admin deploy the PR branch to the live production site with the DRAFT watermark. The Director then reviews on the live URL. After Director approval, the site admin flips the draft flag, merges the PR, and deploys the final version — removing the watermark.
+
+**Example branches:** `docs/new/totalrisk-applications-guide`, `docs/new/lifesim-validation-oroville`
+
+## Lane 2: Major revision
+
+**When to use.** Substantial changes to an existing document warranting a new major version (e.g., v1.0 → v2.0).
+
+**Required reviews.** Peer review → RMC Lead Civil review → Technical edit (AI-assisted).
+
+**What happens.** The entire review happens on the preview URL. The old version stays live and unwatermarked. After the technical edit comments are addressed, the site admin flips the draft flag, merges, and deploys. The new version becomes the default; the old version remains accessible via direct URL.
+
+**Example branches:** `docs/major/bep-progression-v2.0`
+
+## Lane 3: Minor revision
+
+**When to use.** Smaller updates warranting a minor version bump (e.g., v1.0 → v1.1).
+
+**Required reviews.** Peer review → Technical edit (AI-assisted).
+
+**What happens.** Same as Lane 2 but without Lead Civil review.
+
+**Example branches:** `docs/minor/bep-progression-v1.1`
+
+## Lane 4: Editorial fix
+
+**When to use.** Typos, broken links, grammatical corrections that don't change technical meaning.
+
+**Required reviews.** None. Site admin reviews and merges directly.
+
+**No version change, no watermark.**
+
+**Example branches:** `docs/fix/bep-progression-typos`
+
+## Lane 5: Dev docs
+
+**When to use.** Any new or revised document under `docs/dev/` — developer documentation, contributor guides, internal references, planning documents, and similar materials.
+
+**Required reviews.** None. Site admin reviews and merges directly, same as Lane 4.
+
+**Automatic assignment.** The workflow uses content-based detection: if every documentation file changed in the PR is under `docs/dev/`, the PR is assigned `lane:dev` regardless of what the branch is called. This means dev docs can be authored on any branch prefix (including non-`docs/` branches) and still end up in the correct lane.
+
+**No version change, no watermark.**
+
+**Example branches:** `docs/dev/ai-development-guide`, `feature/update-contributor-guide` (content detected under `docs/dev/`)
+
+## Choosing the right lane
+
+When in doubt, choose the more conservative lane. A site admin can reassign lanes by swapping `lane:*` labels.
