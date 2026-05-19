@@ -3,59 +3,87 @@ title: Reviewer Workflow
 ---
 
 import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
 
 <NavContainer link="/dev" linkTitle="Developer Resources" />
 
 # Reviewer Workflow
 
-What peer reviewers and RMC Lead Civils do when assigned to review a documentation pull request. Written for someone with little GitHub experience. Everything can be done from a web browser.
+What peer reviewers and RMC Lead Civils do when assigned to review a documentation pull request. Everything in this workflow happens through the GitHub web interface — no local tooling is required.
 
 ## Prerequisites
 
-You need a GitHub account and membership in the `usace-rmc` organization. A site administrator will send you an invitation — click the link in the email to accept.
+A reviewer needs a GitHub account and membership in the `usace-rmc` organization. A site administrator sends the invitation by email; the reviewer clicks the link to accept.
 
 ## Receiving a review request
 
-GitHub emails you with subject "You were requested to review [title]." Click the link to open the PR.
+GitHub emails the reviewer with the subject "You were requested to review [title]." The link in the email opens the PR.
 
 ## Where to read the document
 
-**Both peer reviewers and Lead Civils review on the preview URL.** In the PR's comment thread, look for a bot comment that says "Preview deployed" with a URL. Click it. This opens the rendered document on an unadvertised preview site with a DRAFT watermark.
+Both peer reviewers and Lead Civils review on the preview URL. The PR's comment thread contains a bot comment titled "Preview deployed" with a URL. The link opens the rendered document on an unadvertised preview site with a DRAFT watermark.
 
-Read the document as you would any web page. This is where your review happens — you are reading, not editing.
+The reviewer reads the document as they would any web page. The review happens in the rendered preview — reviewers do not edit files.
 
-**Peer reviewers:** Focus on technical accuracy. Are claims correct? Equations right? Procedures complete?
-
-**Lead Civils:** Focus on technical quality and oversight. Does the document meet RMC standards? Is the scope appropriate? Are conclusions defensible?
+<TableVerticalNoRef
+  alt="Focus area for each reviewer role"
+  headers={[[{ value: 'Role' }, { value: 'Focus' }]]}
+  columns={[
+    [
+      'Peer reviewer',
+      'RMC Lead Civil',
+    ],
+    [
+      'Technical accuracy — claims, equations, procedures, completeness',
+      'Technical quality and oversight — alignment with RMC standards, scope appropriateness, defensibility of conclusions',
+    ],
+  ]}
+/>
 
 ## Leaving feedback
 
-Click the **Files changed** tab on the PR. Hover over a line to see the blue "+" icon. Click it to open a comment box.
+On the PR's **Files changed** tab, hovering over a line displays a blue "+" icon that opens a comment box on click.
 
-**Plain comment:** Type your feedback and click "Start a review" (first comment) or "Add review comment" (subsequent).
+- **Plain comment.** Type the feedback and click **Start a review** (first comment) or **Add review comment** (subsequent comments).
+- **Suggested change.** The "±" icon in the comment toolbar inserts a pre-filled code block. Editing the block to the proposed wording lets the author accept the suggestion with one click.
 
-**Suggested change:** Click the "±" icon in the comment toolbar. Edit the pre-filled code block to your proposed wording. The author can accept your suggestion with one click.
+## Submitting the review
 
-## Submitting your review
+The **Finish your review** button (upper right of the Files changed tab) opens the submit dialog. The reviewer chooses one of three options.
 
-Click **Finish your review** (upper right of Files changed). Choose:
+<TableVerticalNoRef
+  alt="Submit-review options and what they do in the workflow"
+  headers={[[{ value: 'Option' }, { value: 'When to use' }, { value: 'Effect on stage' }]]}
+  columns={[
+    [
+      'Comment',
+      'Approve',
+      'Request changes',
+    ],
+    [
+      'Notes have been left for the author to address. Used for every review round that produces feedback.',
+      'The document is satisfactory, typically on a backcheck round after prior comments were addressed.',
+      'Not used in this workflow.',
+    ],
+    [
+      'Stage does not advance.',
+      'Advances the stage (if the approver matches the assigned reviewer list).',
+      '—',
+    ],
+  ]}
+/>
 
-- **Comment** — you've left notes for the author to address. Use this for every review round where you have feedback. The stage does not advance.
-- **Approve** — you're satisfied with the document, typically on a backcheck round after the author has addressed your prior comments. **This is what advances the stage.**
-- **Request changes** — _not used in this workflow._ Use **Comment** for routine revision cycles.
+The typical cycle is: leave notes via **Comment** → the author addresses them and pushes revisions → the stage progression bot pings the reviewer to backcheck → the reviewer returns and submits **Approve** if satisfied (or another **Comment** review with additional feedback).
 
-Click **Submit review.**
+## After approval
 
-The typical cycle: you leave notes via **Comment**, the author addresses them and pushes revisions, the stage progression bot pings you to backcheck, and you return to submit **Approve** if satisfied (or another **Comment** review if more feedback is needed).
+The stage progression workflow advances the PR automatically only if the approver was the reviewer the site administrator assigned for the current stage. The workflow uses per-individual gating: it compares the approver's username to the list of reviewers the administrator assigned via the Reviewers sidebar, and only advances the stage when one of those assigned reviewers approves. An approval from a reviewer who was not assigned to the PR is acknowledged by the bot but does not advance the stage.
 
-## After you approve
+If the site administrator assigned multiple people at the same stage, the first approval from any of them advances the stage — all assigned reviewers do not need to approve.
 
-The stage progression workflow advances the PR automatically **if you were the reviewer the site admin assigned for the current stage**. The workflow uses per-individual gating: it compares the approver's username to the list of reviewers the admin assigned via the Reviewers sidebar, and only advances the stage when one of those assigned reviewers approves. If you approve a PR you weren't explicitly assigned to, the bot posts a note acknowledging your approval but doesn't advance the stage.
+The reviewer does not need to take further action unless tagged in a follow-up question.
 
-If the site admin assigned multiple people at the same stage, the first approval from any of them advances the stage — you don't all need to approve.
+## New commits after approval
 
-You don't need to do anything further unless someone tags you with a follow-up question.
-
-## New commits after you approve
-
-If the author pushes new commits after you approve, GitHub dismisses your approval in the UI so the green checkmark disappears. The stage progression bot, however, does **not** reset the stage label — the document stays at its current review stage (e.g., `stage:peer-review`) and the bot pings you to backcheck the revisions. Take another look at the changes and submit another review: **Approve** if you're satisfied, or another **Comment** review with additional feedback.
+When the author pushes new commits after a reviewer approves, GitHub dismisses the approval in the UI so the green checkmark disappears. The stage progression bot, however, does not reset the stage label — the document stays at its current review stage (e.g., `stage:peer-review`) and the bot pings the reviewer to backcheck the revisions. The reviewer reviews the changes and submits another review: **Approve** if satisfied, or another **Comment** review with additional feedback.
