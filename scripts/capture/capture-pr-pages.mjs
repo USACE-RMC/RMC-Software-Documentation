@@ -108,7 +108,10 @@ await capture('pr-commits', `${PR_BASE}/commits`, async (page) => {
   };
 });
 
-await capture('pr-files-changed', `${PR_BASE}/files`, async (page) => {
+// Use the filtered URL (content commit only) so the captured diff shows
+// the four files the reviewer should actually focus on, not the 200+
+// scaffolding files. The "All commits" toolbar now reads "Commit 7ae2022".
+await capture('pr-files-changed', `${PR_BASE}/files/85e53a4f..7ae20224`, async (page) => {
   // Files changed is heavy — wait extra for the diff to render
   await page.waitForTimeout(2000);
 
