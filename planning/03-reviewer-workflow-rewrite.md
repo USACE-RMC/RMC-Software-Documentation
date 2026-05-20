@@ -74,8 +74,9 @@ Each section ends with a "Checkpoint" callout summarizing what the reviewer shou
    - Note on what the author should do to make this easy: write descriptive commit messages so a reviewer can tell which commit holds the content. (Cross-link to Author Workflow.)
 
 4. **Reading the document on the preview site**
-   - What "DRAFT" means (annotated screenshot showing the watermark)
-   - That the preview URL is *where you review from*, not the Files changed tab
+   - Annotated screenshot of the preview site rendering the document
+   - That the preview URL is *where you review from*, not the Files changed tab — most non-developer reviewers find diffs hard to read, so the rendered preview is the source of truth
+   - The preview site does not show the DRAFT watermark that appears on the production site for a draft revision. The watermark suppression on previews is intentional: reviewers already know from GitHub that the doc is in review, and adding a watermark to every preview screenshot would be noise. No watermark figure is needed in this chapter.
    - Reading on mobile vs. desktop
 
 5. **Leaving your first comment** — *the rock-solid section*
