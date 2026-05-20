@@ -238,12 +238,15 @@ PR live at https://github.com/USACE-RMC/RMC-Software-Documentation/pull/121.
 
 ### B. Run the interactive login once
 
+Playwright is scoped to `scripts/capture/` rather than the root `package.json` so contributors who don't run captures don't install it.
+
 ```
-npm exec --yes playwright install chromium   # one-time Chromium install
-node scripts/capture/login.mjs                # opens a real Chromium window
+npm install --prefix scripts/capture                          # installs the playwright package
+npx --prefix scripts/capture playwright install chromium      # downloads the Chromium browser binary
+node scripts/capture/login.mjs                                # opens a Chromium window for interactive sign-in
 ```
 
-Sign in to GitHub, complete 2FA, wait until the dashboard renders, then press Enter in the terminal. The script saves `.playwright-auth/github.json`. Future capture scripts load this file and run logged-in without re-authenticating, for as long as the GitHub session is valid (typically weeks).
+Sign in to GitHub as the screenshot account, complete 2FA, wait until the dashboard renders, then press Enter in the terminal. The script saves `.playwright-auth/github.json`. Future capture scripts load this file and run logged-in without re-authenticating, for as long as the GitHub session is valid (typically weeks).
 
 If the session ever expires (capture scripts will fail with a redirect-to-login error), just re-run the login script.
 

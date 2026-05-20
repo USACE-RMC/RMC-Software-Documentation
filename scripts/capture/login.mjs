@@ -18,8 +18,8 @@
 //   session.
 //
 // One-time install (only the first time you run this on a machine):
-//   npm exec --yes playwright install chromium
-//   npx playwright --version    # confirms Playwright is reachable via npx
+//   npm install --prefix scripts/capture
+//   npx --prefix scripts/capture playwright install chromium
 //
 // Run:
 //   node scripts/capture/login.mjs
