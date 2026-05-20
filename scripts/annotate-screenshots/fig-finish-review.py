@@ -25,6 +25,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 SRC = REPO_ROOT / "planning" / "assets" / "captures" / "finish-review.png"
 COORDS = REPO_ROOT / "planning" / "assets" / "captures" / "finish-review.coords.json"
 OUT = REPO_ROOT / "static" / "figures" / "dev" / "reviewer-workflow" / "fig-08-finish-review.png"
+PPTX = REPO_ROOT / "planning" / "assets" / "figure-pptx" / "fig-08-finish-review.pptx"
 
 # Crop around the dialog. The dialog spans roughly (635, 300) → (1255, 815).
 # Add some surrounding context so it's clear the dialog overlays the PR page.
@@ -48,4 +49,4 @@ callouts = [
     (dialog_submit[0], dialog_submit[1], dialog_submit[2], dialog_submit[3], "tr", 6),
 ]
 
-annotate_and_crop(SRC, callouts, CROP, OUT)
+annotate_and_crop(SRC, callouts, CROP, OUT, pptx_out=PPTX)

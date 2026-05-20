@@ -30,6 +30,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 SRC = REPO_ROOT / "planning" / "assets" / "captures" / "pr-files-changed.png"
 COORDS = REPO_ROOT / "planning" / "assets" / "captures" / "pr-files-changed.coords.json"
 OUT = REPO_ROOT / "static" / "figures" / "dev" / "reviewer-workflow" / "fig-04-pr-files-changed.png"
+PPTX = REPO_ROOT / "planning" / "assets" / "figure-pptx" / "fig-04-pr-files-changed.pptx"
 
 # Crop to a useful window around the top of the Files changed page.
 CROP = (20, 200, 1340, 900)
@@ -55,4 +56,4 @@ callouts = [
     (submitButton["x"], submitButton["y"], submitButton["w"], submitButton["h"], "tr", 5),
 ]
 
-annotate_and_crop(SRC, callouts, CROP, OUT)
+annotate_and_crop(SRC, callouts, CROP, OUT, pptx_out=PPTX)

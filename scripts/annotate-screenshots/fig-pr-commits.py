@@ -24,6 +24,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 SRC = REPO_ROOT / "planning" / "assets" / "captures" / "pr-commits.png"
 COORDS = REPO_ROOT / "planning" / "assets" / "captures" / "pr-commits.coords.json"
 OUT = REPO_ROOT / "static" / "figures" / "dev" / "reviewer-workflow" / "fig-03-pr-commits.png"
+PPTX = REPO_ROOT / "planning" / "assets" / "figure-pptx" / "fig-03-pr-commits.pptx"
 
 CROP = (60, 100, 1340, 500)
 
@@ -45,4 +46,4 @@ callouts = [
     (sha[0], sha[1], sha[2], sha[3], "tr", 4),
 ]
 
-annotate_and_crop(SRC, callouts, CROP, OUT)
+annotate_and_crop(SRC, callouts, CROP, OUT, pptx_out=PPTX)
