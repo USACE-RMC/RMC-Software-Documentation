@@ -73,7 +73,7 @@ const docs = [
     doc_location: 'desktop-applications/rmc-totalrisk/users-guide',
     doc_name: 'RMC TotalRisk Users Guide',
     active: true,
-    draft: false,
+    draft: true,
   },
   {
     category: 'desktop-applications',
