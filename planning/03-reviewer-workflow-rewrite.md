@@ -165,12 +165,12 @@ static/figures/dev/reviewer-workflow/
 
 PR #121 (`docs/minor/totalrisk-users-guide-v1.1`) is the permanent sandbox. It bumps `desktop-applications/rmc-totalrisk/users-guide` from v1.0 to v1.1 and has two commits: scaffolding (`85e53a4fa`, 219 files) and a content-edit commit (`7ae20224d`, 4 files). All logged-in screenshots will be captured against this PR. **Never merge it.**
 
-### Annotation style — **approved**
+### Annotation style — **approved, refined during batch 1**
 
 - USACE blue (`#4a7c9b`) 4 px outline boxes for "look here" elements (matches site branding)
-- Numbered circles in the same blue with white numerals when a screenshot has multiple sequential elements
-- Sans-serif labels (Segoe UI Bold) in soft-yellow callout boxes positioned beside the element, not overlapping it
-- Captions handled by the `<Figure>` component's `caption` prop — annotations themselves are wordless except for short element names
+- Numbered circles in the same blue with a white border ring, placed at a corner of each highlight box so they half-overlap the edge
+- **No on-image label boxes.** The text legend mapping numbers to descriptions lives in the figure caption (`<Figure caption="(1) Foo. (2) Bar. ..." />`). This keeps annotation legible regardless of how dense the underlying page is.
+- Shared annotation primitives live in `scripts/annotate-screenshots/annotate_lib.py`; one short script per figure imports and uses them.
 
 ### Tooling
 
