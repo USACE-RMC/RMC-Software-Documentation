@@ -39,24 +39,27 @@ import { resolve } from 'node:path';
 
 const AUTH_DIR = resolve(process.cwd(), '.playwright-auth');
 const AUTH_FILE = resolve(AUTH_DIR, 'github.json');
-const USER_DATA_DIR = resolve(AUTH_DIR, 'chrome-profile');
+const USER_DATA_DIR = resolve(AUTH_DIR, 'browser-profile');
 const PORT = 9222;
 
 mkdirSync(AUTH_DIR, { recursive: true });
 mkdirSync(USER_DATA_DIR, { recursive: true });
 
-const CHROME_CANDIDATES = [
-  process.env.CHROME_PATH,
+// Edge first by default — it's Chromium-based (same CDP-attach trick works)
+// and pre-installed on every Windows machine, so the user doesn't need a
+// separate browser install. Chrome is still respected if BROWSER_PATH is set.
+const BROWSER_CANDIDATES = [
+  process.env.BROWSER_PATH,
+  'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+  'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
   'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
   'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
   process.env.LOCALAPPDATA && `${process.env.LOCALAPPDATA}\\Google\\Chrome\\Application\\chrome.exe`,
-  'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
-  'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
 ].filter(Boolean);
 
-const browserPath = CHROME_CANDIDATES.find(existsSync);
+const browserPath = BROWSER_CANDIDATES.find(existsSync);
 if (!browserPath) {
-  console.error('Could not find Chrome or Edge. Set CHROME_PATH env var to your browser executable.');
+  console.error('Could not find Edge or Chrome. Set BROWSER_PATH env var to your browser executable.');
   process.exit(1);
 }
 
