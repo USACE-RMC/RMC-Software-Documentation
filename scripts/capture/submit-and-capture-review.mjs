@@ -40,25 +40,29 @@ console.log('   opening submit-review dialog...');
 await page.locator('button:has-text("Submit review"), button:has-text("Add your review"), button:has-text("Finish your review")').first().click({ timeout: 4000 });
 await page.waitForTimeout(1200);
 
-// 2. Fill the comment textarea
+// Locate the open dialog — GitHub's "Finish your review" overlay. Every
+// click after this is scoped inside the dialog so we don't accidentally
+// hit the page's hidden feedback form (id=feedback) or the dialog-open
+// button at the top right.
+const dialog = page.locator('div[role="dialog"], [aria-modal="true"], dialog')
+  .filter({ hasText: /Finish your review|Submit your review/i })
+  .first();
+await dialog.waitFor({ state: 'visible', timeout: 5000 });
+
+// 2. Fill the comment textarea (only the one inside the dialog)
 console.log('   typing review body...');
-const textarea = page.locator('textarea[placeholder*="comment" i], textarea[name*="body" i], textarea').first();
+const textarea = dialog.locator('textarea').first();
 await textarea.fill(REVIEW_BODY, { timeout: 4000 });
 await page.waitForTimeout(400);
 
 // 3. Confirm "Comment" radio is selected (it's the default, but be explicit)
-const commentRadio = page.locator('input[type="radio"][value="comment" i], input[type="radio"]').first();
+const commentRadio = dialog.locator('input[type="radio"]').first();
 const checked = await commentRadio.isChecked().catch(() => true);
 if (!checked) await commentRadio.click({ timeout: 2000 }).catch(() => {});
 
 // 4. Click the dialog's Submit button
 console.log('   submitting review...');
-// The dialog has its own Submit button — find by its position inside the
-// overlay rather than the top-right open-dialog button.
-await page.locator('div[role="dialog"] button:has-text("Submit review"), .Overlay button:has-text("Submit review")').first().click({ timeout: 5000 }).catch(async () => {
-  // Fallback — click any Submit review button visible after dialog open
-  await page.locator('button:has-text("Submit review")').last().click({ timeout: 4000 });
-});
+await dialog.locator('button:has-text("Submit review")').first().click({ timeout: 5000 });
 
 // Wait for the dialog to close and the page to refresh state
 await page.waitForTimeout(4000);
