@@ -2,6 +2,120 @@
 
 Expand `docs/dev/documentation-guide/12-reviewer-workflow.mdx` from a reference into a guided, screenshot-driven tutorial aimed at reviewers with **zero prior GitHub experience**, while preserving a concise reference section for repeat users.
 
+## 🚦 Resume from here (for a future agent)
+
+This section is the single source of truth for picking up this task on another machine or with another agent. Read it first.
+
+### Branches and where work lives
+
+- `docs/dev/reviewer-workflow-rewrite` — **active working branch** for all planning, capture scripts, annotation scripts, and figures. Push exists on `origin`.
+- `docs/minor/totalrisk-users-guide-v1.1` — the sandbox PR's branch (PR #121). Don't merge.
+
+To resume on a fresh machine:
+
+```powershell
+git clone https://github.com/USACE-RMC/RMC-Software-Documentation.git
+cd RMC-Software-Documentation
+git checkout docs/dev/reviewer-workflow-rewrite
+npm install                                  # for the docs site build
+npm install --prefix scripts/capture         # for the Playwright capture pipeline
+npx --prefix scripts/capture playwright install chromium
+```
+
+Then re-authenticate the screenshot account (the saved `.playwright-auth/` does NOT travel between machines — it's gitignored):
+
+```powershell
+node scripts/capture/login.mjs
+# Sign in as rmc-test-reviewer in the launched Edge/Chrome window
+node scripts/capture/verify-auth.mjs
+# Should print: Logged in as: rmctestreviewer
+```
+
+### What's done (committed to the rewrite branch)
+
+| File | Purpose |
+|---|---|
+| `planning/03-reviewer-workflow-rewrite.md` | This document — the master plan |
+| `planning/section-1-draft.mdx` | Section 1 prose draft with four Mermaid diagrams (repo, branch, commit, PR) + glossary |
+| `planning/assets/captures/*.png` + `*.coords.json` | Raw captures with element coordinate sidecars |
+| `planning/assets/figure-pptx/*.pptx` | Editable PowerPoint version of every figure for free-form annotation tweaks |
+| `scripts/capture/*.mjs` | Playwright capture and probe scripts (Node, scoped Playwright install) |
+| `scripts/annotate-screenshots/*.py` | Pillow/python-pptx annotation scripts (Windows Python 3.12 + Pillow 11 + python-pptx 1.0) |
+| `static/figures/dev/reviewer-workflow/*.png` and `*.gif` | Final annotated outputs |
+
+### Figure status (Part 1 of the chapter)
+
+| Section | Status | Figure / GIF | Asset |
+|---|---|---|---|
+| 1. Orientation | ✅ Mermaid draft | (Mermaid, inline in MDX) | `planning/section-1-draft.mdx` |
+| 2. Review request email | ⏳ pending | needs real email forward OR mocked storyboard | — |
+| 3. PR page tour | ✅ done | fig-02 overview, fig-03 commits, fig-04 files changed, fig-05 bot comments | + commit-filter storyboard GIF |
+| 4. Preview site | ✅ done | fig-06 preview page | — |
+| 5. Leaving comments | 🟡 storyboard only | composer-storyboard.gif as template; user re-records in ScreenToGif | real composer captures blocked on GitHub's React hover behavior |
+| 6. Submit dialog | ✅ done | fig-08 finish-review | — |
+| 7. Backcheck | 🟡 storyboard only | changes-since-last-review-storyboard.gif as template | — |
+| 8. "You're done" | ✅ done | fig-09 review submitted | — |
+
+### Sandbox PR #121
+
+- URL: https://github.com/USACE-RMC/RMC-Software-Documentation/pull/121
+- Author: `AdamGohs`; Assigned reviewer: `rmctestreviewer` (the dummy account, email alias on Adam's Gmail)
+- **Currently has a real submitted review** from `rmctestreviewer`, body clearly marked `[Documentation training sandbox]`. The review is Comment-style — did not advance the stage label. Do NOT delete this review unless you also re-capture fig-09.
+- Two-commit structure preserved intentionally: scaffolding (`85e53a4`) + content (`7ae20224`). The chapter teaches reviewers to filter to the content commit.
+- Leave the PR open indefinitely. Do not merge.
+
+### Decisions already made (don't re-litigate)
+
+- Annotation style: USACE blue (`#4a7c9b`) highlight boxes + numbered circles half-overlapping the corners; numbered legend lives in the figure caption, not on the image.
+- Every figure script emits BOTH a PNG (final output) and a `.pptx` (editable workspace).
+- GIFs are hybrid: Pillow-stitched storyboards for stepped sequences, user-recorded ScreenToGif for live action. Storyboards exist as templates the user re-records over.
+- The preview deploy does NOT show the DRAFT watermark — this is intentional, not a bug. The watermark is for production-site readers, not reviewers.
+- The screenshot account is `rmctestreviewer` (Gmail "+" alias `acgohs+testreviewer@gmail.com`). No dedicated mailbox.
+- Login uses Playwright's `connectOverCDP` against a Chrome/Edge subprocess launched without automation flags. The bundled Playwright Chromium gets blocked by GitHub as "this browser or app may not be secure."
+
+### What remains
+
+**Captures and figures:**
+- Section 2 email figure — either user forwards a real review-request email to capture, or build a mocked storyboard
+- Section 5 real composer GIF — user records with ScreenToGif following [gif-composer-storyboard.gif](../static/figures/dev/reviewer-workflow/gif-composer-storyboard.gif) as a guide
+
+**Prose:**
+- Promote `planning/section-1-draft.mdx` into the actual chapter at `docs/dev/documentation-guide/12-reviewer-workflow.mdx`
+- Write Sections 2–8 prose against the figures already in `static/figures/dev/reviewer-workflow/`
+- Slim the existing chapter content into a Part 2 reference section
+- Write the new companion chapter "First-time GitHub setup" (insert before chapter 11; renumber subsequent chapters; update `scripts/generateSidebars.js`)
+
+**Cross-cutting:**
+- Cross-link from Author Workflow and Site Admin Workflow chapters
+
+### Open questions waiting on user input
+
+- Section 5 composer GIF: user records in ScreenToGif when ready
+- Section 2 email: user forwards a real review-request email OR agent builds a mock storyboard
+- User has been iterating on figure `.pptx` files — when they hand back final coords, update the corresponding annotation scripts so future regenerations stay in sync
+
+### Scripts at a glance
+
+**`scripts/capture/`** (Node, requires `npm install --prefix scripts/capture`):
+- `login.mjs` — one-time interactive GitHub login; saves `.playwright-auth/github.json`
+- `verify-auth.mjs` — sanity check that the saved session is valid
+- `capture-pr-pages.mjs` — drives Playwright through PR #121's Conversation, Commits, and Files-changed tabs; writes PNG + coords JSON for each
+- `capture-preview-page.mjs` — captures the PR #121 preview site for Section 4
+- `capture-review-interactions.mjs` — captures the Submit-review dialog state (Section 6); the composer/suggestion parts are blocked on GitHub's React hover behavior
+- `submit-and-capture-review.mjs` — submits a Comment-style sandbox review on PR #121 and captures the post-submit state (Sections 7/8). Auto mode classifier blocks this; the user must approve or run it directly.
+- `refine-overview-coords.mjs`, `probe-*.mjs` — one-off probes that merge additional element coords into the captures' sidecar JSON
+
+**`scripts/annotate-screenshots/`** (Python 3.12 + Pillow + python-pptx):
+- `annotate_lib.py` — shared `annotate_and_crop()` + `make_pptx_overlay()` helpers
+- `fig-pr-overview.py`, `fig-pr-commits.py`, `fig-pr-files-changed.py`, `fig-bot-comments.py`, `fig-preview-page.py`, `fig-finish-review.py`, `fig-review-submitted.py` — per-figure renderers
+- `gif-composer-storyboard.py`, `gif-commit-filter-storyboard.py`, `gif-changes-since-last-review-storyboard.py` — storyboard GIF builders
+
+All Python scripts read their source captures from `planning/assets/captures/` and write PNG/PPTX outputs to `static/figures/dev/reviewer-workflow/` and `planning/assets/figure-pptx/` respectively. Re-run any script after editing it; outputs are deterministic given the same source.
+
+---
+
+
+
 ## Goals
 
 - A first-time reviewer can perform a full review by following the chapter linearly, without external help.
