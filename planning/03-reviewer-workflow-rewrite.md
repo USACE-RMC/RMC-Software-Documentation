@@ -161,11 +161,9 @@ static/figures/dev/reviewer-workflow/
   gif-03-changes-since-last-review.gif
 ```
 
-### Example PR
+### Example PR — **live at PR #121**
 
-We'll designate a single throwaway PR ("Sample Document for Reviewer Training") for screenshots. Either:
-- (Preferred) A real PR opened on a sandbox branch that we leave open indefinitely
-- Or a recently merged PR we re-render via the preview URL
+PR #121 (`docs/minor/totalrisk-users-guide-v1.1`) is the permanent sandbox. It bumps `desktop-applications/rmc-totalrisk/users-guide` from v1.0 to v1.1 and has two commits: scaffolding (`85e53a4fa`, 219 files) and a content-edit commit (`7ae20224d`, 4 files). All logged-in screenshots will be captured against this PR. **Never merge it.**
 
 ### Annotation style — **approved**
 
@@ -226,13 +224,17 @@ The sample figure in this task was a logged-out view, which is fine for the page
 
 Two tasks for the user. Both are one-time setup.
 
-### A. Open the sandbox PR
+### A. ~~Open the sandbox PR~~ ✅ done — PR #121
 
-Create a branch off `main` named `docs/new/sample-document-for-reviewer-training` and add a small placeholder document under, for example, `docs/dev/sample-reviewer-doc/`. Open the PR with a title like "Sample Document for Reviewer Training (do not merge — used for documentation screenshots)" and a body that explains its purpose so future maintainers don't close it.
+PR live at https://github.com/USACE-RMC/RMC-Software-Documentation/pull/121.
 
-Leave the PR in `stage:peer-review` indefinitely — do not merge. Assign a reviewer (yourself is fine, since we're using your account) so the Reviewers sidebar populates for screenshots.
+- **Branch**: `docs/minor/totalrisk-users-guide-v1.1`
+- **Lane**: 3 (Peer review)
+- **Document**: `desktop-applications/rmc-totalrisk/users-guide` bumped from v1.0 to v1.1
+- **Commit 1 (`85e53a4fa`) — scaffolding**: copies v1.0 to v1.1 across docs, figures, and bibliography; adds placeholder version-history row; flips `draft: true` in `docConfig.js`. 219 files, +3271/−1. **This is the boilerplate commit reviewers should skip.**
+- **Commit 2 (`7ae20224d`) — content**: realistic minor-revision edits to four chapters (preface, installation, GUI, acronyms). 4 files, +16/−8. **This is the commit reviewers should focus on.**
 
-Add a few realistic-looking commits to the branch so the **Commits** tab has something to demonstrate the commit-navigation flow with (e.g., commit 1 scaffolds, commit 2 adds content). The actual content can be lorem-ipsum-style filler.
+**User action required:** assign yourself as reviewer on the PR via the Reviewers sidebar so the assigned-reviewers state is captured for screenshots. The site administrator should also leave the PR in `stage:peer-review` indefinitely.
 
 ### B. Run the interactive login once
 
