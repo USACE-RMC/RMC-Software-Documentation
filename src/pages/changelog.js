@@ -15,17 +15,19 @@ export default function Changelog() {
         </div>
         <div className="mx-auto max-w-[1600px] px-6 pb-16 pt-8 lg:px-12">
           <TableChangelog
-            dates={['March 25, 2026', 'March 25, 2026', 'March 25, 2026', 'March 25, 2026', 'March 12, 2026']}
-            categories={['PDF Download', 'PDF Download', 'PDF Download', 'PDF Download', 'Website Update']}
+            dates={['May 19, 2026', 'March 25, 2026', 'March 25, 2026', 'March 25, 2026', 'March 25, 2026', 'March 12, 2026']}
+            categories={['New Document Version', 'PDF Download', 'PDF Download', 'PDF Download', 'PDF Download', 'Website Update']}
             documents={[
+              'RMC Breach Toolbox Technical Manual',
               'RMC TotalRisk Verification Report (Draft)',
               'RMC TotalRisk Technical Reference Manual (Draft)',
               'RMC-BestFit Verification Report',
               'LifeSim Technical Reference Manual',
               '-',
             ]}
-            versions={['-', '-', '-', '-', '-']}
+            versions={['1.1', '-', '-', '-', '-', '-']}
             descriptions={[
+              'Corrected an equation in the Unraveling chapter.',
               'Added as direct PDF download.',
               'Added as direct PDF download.',
               'Added as direct PDF download.',

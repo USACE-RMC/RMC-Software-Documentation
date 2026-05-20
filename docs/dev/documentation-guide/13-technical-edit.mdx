@@ -1,0 +1,164 @@
+---
+title: Technical Edit
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" />
+
+# Technical Edit
+
+The technical edit is an AI-assisted editorial review that checks the document for grammar, clarity, tense consistency, terminology, and Section 508 accessibility compliance. It is a required stage on Lanes 1, 2, and 3. A human technical editor can be substituted at the site administrator's discretion.
+
+## When it happens
+
+The technical edit occurs after the prior technical review stage approves the PR.
+
+<TableVerticalNoRef
+  alt="When the technical edit runs in each lane"
+  headers={[[{ value: 'Lane' }, { value: 'Trigger point' }]]}
+  columns={[
+    [
+      'Lane 1 (new document)',
+      'Lane 2 (major revision)',
+      'Lane 3 (minor revision)',
+    ],
+    [
+      'After Lead Civil approval',
+      'After Lead Civil approval',
+      'After peer approval',
+    ],
+  ]}
+/>
+
+At this point, the document has already been reviewed for technical accuracy and (for Lanes 1 and 2) technical quality. The technical edit focuses exclusively on editorial quality and accessibility compliance, and reads the source MDX files directly — no live deploy is needed at this stage. The document is only deployed to the live site after the technical edit is complete, and that deploy is for the Director review phase (Lane 1 only).
+
+## How it works
+
+<ProcessList
+  items={[
+    { title: 'A team member with access to the AI tooling checks out the PR branch and runs the technical edit.' },
+    { title: 'The tooling reads all changed MDX files and applies a standardized review prompt committed to the repository at .github/ai-review/technical-editor-prompt.md. The prompt is reproduced verbatim at the bottom of this chapter.' },
+    { title: 'The AI posts inline review comments directly on the PR — on specific lines, with severity levels and suggested fixes — exactly like a human reviewer would.' },
+    { title: 'The author addresses each comment by pushing fixes, replying to threads, and resolving conversations as they are addressed.' },
+    { title: 'When all comments are addressed, the author checks the checkbox in the PR description: Technical edit comments addressed — ready for Director review.' },
+    { title: 'The stage progression workflow detects the checkbox and advances the PR to the next stage.' },
+  ]}
+  numberStyle="plain"
+/>
+
+If the technical edit was performed by a human, or the author is unavailable to check the box, a site administrator can apply the `admin:advance-to-director` label to the PR as a manual override. The workflow removes the label and advances the stage the same as a checkbox event.
+
+## Severity levels
+
+The AI assigns one of three severity levels to each comment.
+
+<TableVerticalNoRef
+  alt="Severity levels assigned by the technical edit"
+  headers={[[{ value: 'Severity' }, { value: 'Meaning' }, { value: 'Author response' }]]}
+  columns={[
+    [
+      '🔴 Must fix',
+      '🟡 Should fix',
+      '🔵 Suggestion',
+    ],
+    [
+      'Errors or accessibility violations (broken Section 508 compliance, factual grammar errors)',
+      'Clarity, consistency, or readability issues',
+      'Stylistic improvements the author may accept or decline',
+    ],
+    [
+      'Required',
+      'Required',
+      'Author discretion — replying "leaving as-is" is a valid response',
+    ],
+  ]}
+/>
+
+## What it does not review
+
+Technical accuracy is the peer reviewer's responsibility. Domain conclusions, MDX component syntax, and frontmatter fields are out of scope for the technical edit.
+
+## Versioning the prompt
+
+The prompt is a versioned file in the repository at [`.github/ai-review/technical-editor-prompt.md`](https://github.com/USACE-RMC/RMC-Software-Documentation/blob/main/.github/ai-review/technical-editor-prompt.md). It can be updated over time as the team learns what the AI catches well and what it misses. Each technical-edit run noted on the PR can reference the prompt version used, so comments can be traced back to the exact instructions that generated them.
+
+## Fallback to a human editor
+
+A site administrator can route any document to a human technical editor instead of (or in addition to) the AI review. The human editor follows the same workflow as peer reviewers and Lead Civils: they are assigned to the PR via the Reviewers sidebar, review the document on the preview URL (the technical edit happens before any live deploy), post comments, and submit their review. The author addresses comments the same way. The only difference is that advancement to the next stage requires the human editor to click Approve rather than the author checking the checkbox.
+
+## Who can run the AI review
+
+Any team member with access to the AI tooling can run the technical edit. The output — the PR review comments — is visible to everyone on GitHub regardless of the team member's tooling. Only the trigger requires the tooling. If nobody with the tooling is available, the site administrator coordinates a human editor fallback.
+
+---
+
+## The full review prompt
+
+The prompt below is sent to the AI verbatim. Authors and reviewers who want to understand exactly what the AI checks (and what it has been instructed not to flag) should read this carefully.
+
+````markdown
+# RMC Technical Editor Review Prompt
+
+You are a technical editor reviewing documentation for the U.S. Army Corps of Engineers Risk Management Center (USACE RMC). The documentation is written in MDX (Markdown with JSX) and covers dam safety, levee safety, and related risk analysis topics.
+
+## Audience
+
+Practicing dam and levee safety engineers within USACE. These are technical professionals who understand the domain — do not flag correct use of technical terminology as jargon.
+
+## Review criteria
+
+### Grammar and mechanics
+- Spelling, punctuation, and sentence structure
+- Subject-verb agreement
+- Correct use of hyphens, em dashes, and en dashes
+- Consistent serial comma usage
+
+### Tense and voice
+- Prefer third-person active voice for procedures and descriptions
+- Flag passive voice when active would be clearer
+- Flag inconsistent tense within a section
+
+### Clarity and concision
+- Flag wordy passages that could be shortened without losing meaning
+- Flag ambiguous pronouns or unclear referents
+- Flag sentences over 40 words that could be split
+- Flag buried leads — key information at the end of a long sentence
+
+### Terminology consistency
+- Flag inconsistent use of terms within the document (e.g., alternating between "embankment" and "dam" when referring to the same structure)
+- Do NOT flag correct domain terminology as errors
+
+### Section 508 accessibility compliance
+- Every image must have alt text (check for `alt=` attribute)
+- Heading hierarchy must not skip levels (e.g., h2 followed by h4 without h3)
+- Link text must be descriptive (flag "click here" or "link" as link text)
+- Tables must have header rows
+- Lists must use proper markdown list syntax, not manual numbering with plain text
+- Color must not be the sole means of conveying information
+
+### Style consistency
+- Figure and table captions must follow a consistent format
+- Citations must use the site's citation key format
+- Units should be consistent within each document (metric or imperial, not mixed)
+- Acronyms must be defined on first use within each chapter
+
+## Output format
+
+For each finding, produce:
+- The file path and line number(s)
+- A severity level: 🔴 Must fix (errors, accessibility violations), 🟡 Should fix (clarity, consistency issues), 🔵 Suggestion (stylistic improvements)
+- A clear description of the issue
+- A suggested fix where possible (use GitHub suggestion block format)
+
+## What NOT to flag
+- Correct use of technical terminology, even if uncommon
+- MDX component syntax (imports, JSX elements)
+- Frontmatter fields
+- Matters of technical judgment or domain accuracy (that is the peer reviewer's job)
+- Alternative phrasings that are equally acceptable
+````
+
+Changes to the prompt — for example, adding a new style rule the AI has been missing — are proposed via a PR against [`.github/ai-review/technical-editor-prompt.md`](https://github.com/USACE-RMC/RMC-Software-Documentation/blob/main/.github/ai-review/technical-editor-prompt.md) with a site administrator tagged.

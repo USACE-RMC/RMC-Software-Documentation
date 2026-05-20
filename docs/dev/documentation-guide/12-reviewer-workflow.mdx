@@ -1,0 +1,89 @@
+---
+title: Reviewer Workflow
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" />
+
+# Reviewer Workflow
+
+What peer reviewers and RMC Lead Civils do when assigned to review a documentation pull request. Everything in this workflow happens through the GitHub web interface — no local tooling is required.
+
+## Prerequisites
+
+A reviewer needs a GitHub account and membership in the `usace-rmc` organization. A site administrator sends the invitation by email; the reviewer clicks the link to accept.
+
+## Receiving a review request
+
+GitHub emails the reviewer with the subject "You were requested to review [title]." The link in the email opens the PR.
+
+## Where to read the document
+
+Both peer reviewers and Lead Civils review on the preview URL. The PR's comment thread contains a bot comment titled "Preview deployed" with a URL. The link opens the rendered document on an unadvertised preview site with a DRAFT watermark.
+
+The reviewer reads the document as they would any web page. The review happens in the rendered preview — reviewers do not edit files.
+
+<TableVerticalNoRef
+  alt="Focus area for each reviewer role"
+  headers={[[{ value: 'Role' }, { value: 'Focus' }]]}
+  columns={[
+    [
+      'Peer reviewer',
+      'RMC Lead Civil',
+    ],
+    [
+      'Technical accuracy — claims, equations, procedures, completeness',
+      'Technical quality and oversight — alignment with RMC standards, scope appropriateness, defensibility of conclusions',
+    ],
+  ]}
+/>
+
+## Leaving feedback
+
+On the PR's **Files changed** tab, hovering over a line displays a blue "+" icon that opens a comment box on click.
+
+- **Plain comment.** Type the feedback and click **Start a review** (first comment) or **Add review comment** (subsequent comments).
+- **Suggested change.** The "±" icon in the comment toolbar inserts a pre-filled code block. Editing the block to the proposed wording lets the author accept the suggestion with one click.
+
+## Submitting the review
+
+The **Finish your review** button (upper right of the Files changed tab) opens the submit dialog. The reviewer chooses one of three options.
+
+<TableVerticalNoRef
+  alt="Submit-review options and what they do in the workflow"
+  headers={[[{ value: 'Option' }, { value: 'When to use' }, { value: 'Effect on stage' }]]}
+  columns={[
+    [
+      'Comment',
+      'Approve',
+      'Request changes',
+    ],
+    [
+      'Notes have been left for the author to address. Used for every review round that produces feedback.',
+      'The document is satisfactory, typically on a backcheck round after prior comments were addressed.',
+      'Not used in this workflow.',
+    ],
+    [
+      'Stage does not advance.',
+      'Advances the stage (if the approver matches the assigned reviewer list).',
+      '—',
+    ],
+  ]}
+/>
+
+The typical cycle is: leave notes via **Comment** → the author addresses them and pushes revisions → the stage progression bot pings the reviewer to backcheck → the reviewer returns and submits **Approve** if satisfied (or another **Comment** review with additional feedback).
+
+## After approval
+
+The stage progression workflow advances the PR automatically only if the approver was the reviewer the site administrator assigned for the current stage. The workflow uses per-individual gating: it compares the approver's username to the list of reviewers the administrator assigned via the Reviewers sidebar, and only advances the stage when one of those assigned reviewers approves. An approval from a reviewer who was not assigned to the PR is acknowledged by the bot but does not advance the stage.
+
+If the site administrator assigned multiple people at the same stage, the first approval from any of them advances the stage — all assigned reviewers do not need to approve.
+
+The reviewer does not need to take further action unless tagged in a follow-up question.
+
+## New commits after approval
+
+When the author pushes new commits after a reviewer approves, GitHub dismisses the approval in the UI so the green checkmark disappears. The stage progression bot, however, does not reset the stage label — the document stays at its current review stage (e.g., `stage:peer-review`) and the bot pings the reviewer to backcheck the revisions. The reviewer reviews the changes and submits another review: **Approve** if satisfied, or another **Comment** review with additional feedback.

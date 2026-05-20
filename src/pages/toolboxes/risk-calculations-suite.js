@@ -3,51 +3,26 @@ import Layout from '@theme/Layout';
 import { useEffect, useState } from 'react';
 import ContentBox from '../../components/ContentBox';
 import ToolboxIcon from '../../components/icons/ToolboxIcon';
+import { filterByCategoryAndSoftware } from '../../docConfig';
 import '../../css/custom.css';
 
-// Create the list of documents dynamically
-const riskCalculationsSuite = [
-  {
-    IconComponent: ToolboxIcon,
-    doc_location: `toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database`,
-    doc_name: 'Typical Event Tree Database',
-    active: true,
-    draft: false,
-  },
-  {
-    IconComponent: ToolboxIcon,
-    doc_location: `toolbox-technical-manuals/risk-calculations-suite/sqra-calcs`,
-    doc_name: 'SQRAcalcs Toolbox Technical Manual',
-    active: false,
-    draft: true,
-  },
-  {
-    IconComponent: ToolboxIcon,
-    doc_location: `toolbox-technical-manuals/risk-calculations-suite/event-combination`,
-    doc_name: 'Event Combination Toolbox Technical Manual',
-    active: false,
-    draft: true,
-  },
-  {
-    IconComponent: ToolboxIcon,
-    doc_location: `toolbox-technical-manuals/risk-calculations-suite/risk-management-plans`,
-    doc_name: 'Risk Management Plans Toolbox Technical Manual',
-    active: false,
-    draft: true,
-  },
-];
+const riskCalculationsSuite = filterByCategoryAndSoftware('toolboxes', 'risk-calculations-suite').map((doc) => ({
+  ...doc,
+  IconComponent: ToolboxIcon,
+}));
 
 export const riskCalculationsSuiteDocs = riskCalculationsSuite;
 
 export default function RiskCalculationsSuite() {
+  const latestVersionsUrl = addBaseUrl('versions/latestVersions.json');
   const [latestVersions, setLatestVersions] = useState({});
 
   useEffect(() => {
-    fetch('/RMC-Software-Documentation/versions/latestVersions.json')
+    fetch(latestVersionsUrl)
       .then((response) => response.json())
       .then((data) => setLatestVersions(data))
       .catch((error) => console.error('Error loading latest versions:', error));
-  }, []);
+  }, [latestVersionsUrl]);
 
   const riskCalculationsSuite = riskCalculationsSuiteDocs.map((doc) => ({
     ...doc,

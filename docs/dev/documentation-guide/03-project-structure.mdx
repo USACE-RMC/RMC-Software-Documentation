@@ -37,6 +37,8 @@ RMC-SOFTWARE-DOCUMENTATION/
 │   ├── theme/                      ⛔ DON'T TOUCH - Docusaurus theme overrides
 │   ├── pages/                      ⛔ DON'T TOUCH - Landing pages
 │   ├── data/                       ⛔ DON'T TOUCH - Auto-generated
+│   ├── docConfig.js                ✅ YOU EDIT THIS - Document active/draft flags
+│   ├── draftDocs.js                ⛔ DON'T TOUCH - Thin shim around docConfig.js
 │   ├── imageDimensions.js          ⛔ DON'T TOUCH - Auto-generated
 │   └── reportIdMap.js              ⛔ DON'T TOUCH - Auto-generated
 ├── scripts/                        ⛔ DON'T TOUCH - Build automation
@@ -422,6 +424,49 @@ For complete documentation on citation components including all props and usage 
 Bibliography files must be created **before** building the documentation. If referenced citation keys don't exist in `bib.json`, the build will fail or citations won't render correctly.
 
 :::
+
+---
+
+### `src/docConfig.js` - Document Active/Draft Registry
+
+**Purpose:** Central source of truth for which documents are published on the site and which display the DRAFT watermark.
+
+This is the **only file in `src/` that contributors edit directly**. Every other file under `src/` is auto-generated or restricted to administrators.
+
+**Structure:**
+
+Each document tile on a category landing page corresponds to one entry in the `docs` array. Each entry has two orthogonal flags:
+
+```javascript
+{
+  category: 'desktop-applications',
+  software: 'lifesim',
+  doc_location: 'desktop-applications/lifesim/users-guide',
+  doc_name: 'LifeSim Users Guide',
+  active: true,    // Built, served, sidebar-registered, and search-indexed
+  draft: false,    // No DRAFT watermark
+},
+```
+
+**The `active` flag** controls whether the document is included in the production build:
+
+- `active: true` — the document is built, served at its URL, added to the sidebar, and indexed by the search crawler.
+- `active: false` — the document is excluded from the production build. The landing page renders a "Coming Soon" tile instead. In dev (`npm start`), the document still builds so contributors can work on it without exposing it publicly.
+
+**The `draft` flag** controls the watermark only:
+
+- `draft: true` — a large diagonal "DRAFT" watermark renders on the **latest version** of the document. Older versions are not watermarked.
+- `draft: false` — no watermark.
+
+The two flags are independent. A document can be `active: true, draft: true` (published but flagged as draft) or `active: false, draft: true` (unpublished and flagged for watermarking when later activated).
+
+**When to edit:**
+
+- **Registering a new document:** add a new entry with `active: false, draft: true` while the document is being authored. Flip `active: true` when the site administrator publishes it.
+- **Publishing a draft as final:** flip `draft: false` on the entry. This happens as part of the merge that completes a review (see [Site Admin Workflow](./15-site-admin-workflow.mdx)).
+- **Renaming or removing a document:** edit or delete the entry.
+
+**Download-only entries** (entries with a `downloadUrl` and no `doc_location`) link directly to a PDF and are unaffected by the active/draft build-inclusion logic. Use these for technical reference manuals served as PDFs rather than as MDX-built pages.
 
 ---
 
@@ -855,6 +900,7 @@ Common auto-generated files:
 - Images in `static/figures/`
 - Citation files in `static/bibliographies/`
 - Source documents in `static/source-documents/`
+- `src/docConfig.js` to register new documents or flip active/draft flags
 
 ### 📖 Read and Reference
 

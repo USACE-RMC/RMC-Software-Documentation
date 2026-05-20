@@ -14,6 +14,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { shouldExcludeFromBuild } = require('../src/docConfig');
 
 const DOCS_DIR = path.join(__dirname, '..', 'docs');
 const SIDEBAR_PATH = path.join(__dirname, '..', 'sidebars.js');
@@ -369,8 +370,15 @@ function generateDocumentationGuideSidebar() {
     '06-creating-editing-pages',
     '07-react-components',
     '08-troubleshooting-faq',
+    '09-review-and-approval-overview',
+    '10-review-lanes',
+    '11-author-workflow',
+    '12-reviewer-workflow',
+    '13-technical-edit',
+    '14-director-workflow',
+    '15-site-admin-workflow',
   ];
-  const appendixIds = ['09-appendix-a-source-code-structure', '10-appendix-b-build-process-overview', '11-appendix-c-search-configuration'];
+  const appendixIds = ['16-appendix-a-source-code-structure', '17-appendix-b-build-process-overview', '18-appendix-c-search-configuration'];
 
   const files = fs
     .readdirSync(guideDir)
@@ -593,6 +601,10 @@ function generateSidebars() {
 
     const docPath = versionMatch[1];
     const version = versionMatch[2];
+
+    // In prod, skip docs flagged inactive in src/docConfig.js so the sidebar
+    // doesn't reference doc IDs that the docs plugin will exclude.
+    if (shouldExcludeFromBuild(docPath)) return;
     const docParts = docPath.split('/');
     const docGroup = docParts[1]; // e.g., "rmc-totalrisk"
     const folderName = docParts[docParts.length - 1]; // e.g., "applications-guide"

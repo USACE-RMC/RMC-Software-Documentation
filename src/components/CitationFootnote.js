@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useUsedCitations } from "./Citation";
 import { useLocation } from "@docusaurus/router";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 import { useReportId } from "../contexts/ReportIdContext";
 import "../css/custom.css";
 
@@ -9,10 +10,13 @@ const CitationFootnote = () => {
   const location = useLocation();
   const pathname = location.pathname; // docId
   const reportId = useReportId ? useReportId() : null;
+  const docsBase = useBaseUrl("docs/");
+  const bibsBase = useBaseUrl("bibliographies/");
+  const countersBase = useBaseUrl("counters/");
 
-  const reportPath = pathname.replace(/^\/RMC-Software-Documentation\/docs\//, "/RMC-Software-Documentation/bibliographies/").replace(/\/[^/]*$/, "");
+  const reportPath = pathname.replace(docsBase, bibsBase).replace(/\/[^/]*$/, "");
   const bibFilePath = `${reportPath}/bib.json`;
-  const countersFilePath = reportId ? `/RMC-Software-Documentation/counters/${reportId}.json` : null;
+  const countersFilePath = reportId ? `${countersBase}${reportId}.json` : null;
 
   // Subscribe to per-page used keys (for filtering to only those used here)
   const usedKeys = useUsedCitations(pathname);

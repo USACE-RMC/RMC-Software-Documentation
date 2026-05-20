@@ -3,31 +3,26 @@ import Layout from '@theme/Layout';
 import { useEffect, useState } from 'react';
 import ContentBox from '../../components/ContentBox';
 import DSTIcon from '../../components/icons/DSTIcon';
+import { filterByCategoryAndSoftware } from '../../docConfig';
 import '../../css/custom.css';
 
-// Create the list of documents dynamically
-const dstData = [
-  {
-    IconComponent: DSTIcon,
-    doc_location: 'web-applications/dst/users-guide',
-    doc_name: 'Dam Screening Tool Users Guide',
-    active: false,
-    draft: true,
-  },
-];
+const dstData = filterByCategoryAndSoftware('web-applications', 'dst').map((doc) => ({
+  ...doc,
+  IconComponent: DSTIcon,
+}));
 
 export const dstDocs = dstData;
 
 export default function DST() {
+  const latestVersionsUrl = addBaseUrl('versions/latestVersions.json');
   const [latestVersions, setLatestVersions] = useState({});
 
   useEffect(() => {
-    // Fetch the latestVersions JSON file
-    fetch('/RMC-Software-Documentation/versions/latestVersions.json')
+    fetch(latestVersionsUrl)
       .then((response) => response.json())
       .then((data) => setLatestVersions(data))
       .catch((error) => console.error('Error loading latest versions:', error));
-  }, []);
+  }, [latestVersionsUrl]);
 
   const dstData = dstDocs.map((doc) => ({
     ...doc,
