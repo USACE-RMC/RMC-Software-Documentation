@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "@docusaurus/router";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 import { useReportId } from "../contexts/ReportIdContext";
 
 const Bibliography = () => {
   const [citations, setCitations] = useState([]);
   const location = useLocation();
   const reportId = useReportId ? useReportId() : null;
+  const docsBase = useBaseUrl("docs/");
+  const bibsBase = useBaseUrl("bibliographies/");
+  const countersBase = useBaseUrl("counters/");
 
   // Extract the current path from the URL
   const pathname = location.pathname;
-  const reportPath = pathname.replace(/^\/RMC-Software-Documentation\/docs\//, "/RMC-Software-Documentation/bibliographies/").replace(/\/[^/]*$/, "");
+  const reportPath = pathname.replace(docsBase, bibsBase).replace(/\/[^/]*$/, "");
   const bibFilePath = `${reportPath}/bib.json`;
-  const countersFilePath = reportId ? `/RMC-Software-Documentation/counters/${reportId}.json` : null;
+  const countersFilePath = reportId ? `${countersBase}${reportId}.json` : null;
 
   useEffect(() => {
     let isMounted = true;

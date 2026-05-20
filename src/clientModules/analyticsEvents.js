@@ -10,7 +10,9 @@
  *   search_query  — when a user searches via Algolia DocSearch
  */
 
-const BASE_PATH = '/RMC-Software-Documentation/';
+import siteConfig from '@generated/docusaurus.config';
+
+const BASE_PATH = siteConfig.baseUrl;
 
 // ── Latest versions cache ───────────────────────────────────────────
 

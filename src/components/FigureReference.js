@@ -1,9 +1,7 @@
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useReportId } from '../contexts/ReportIdContext';
 import '../css/custom.css';
-
-const STATIC_BASE = '/RMC-Software-Documentation'; // for /static assets like /counters
-const DOCS_ROUTE_BASE = '/RMC-Software-Documentation/docs'; // for doc pages
 
 // strip ".mdx" and any leading "digits-" prefix (e.g., "05-schmertmann" -> "schmertmann")
 const toDocSlug = (docId = '') => docId.replace(/\.mdx$/i, '').replace(/^\d{1,3}-/, '');
@@ -17,10 +15,13 @@ const FigReference = ({ figKey, suffix }) => {
   const reportId = useReportId();
   const showTimer = useRef(null);
   const hideTimer = useRef(null);
+  const countersBase = useBaseUrl('counters/');
+  const staticBase = useBaseUrl('/');
+  const docsRouteBase = useBaseUrl('docs');
 
   useEffect(() => {
     if (!reportId) return;
-    const jsonPath = `${STATIC_BASE}/counters/${reportId}.json`;
+    const jsonPath = `${countersBase}${reportId}.json`;
     (async () => {
       try {
         const res = await fetch(jsonPath);
@@ -33,7 +34,7 @@ const FigReference = ({ figKey, suffix }) => {
         console.error('Error loading counters:', e);
       }
     })();
-  }, [reportId, figKey]);
+  }, [reportId, figKey, countersBase]);
 
   const targetId = figKey;
 
@@ -41,8 +42,8 @@ const FigReference = ({ figKey, suffix }) => {
 
   const targetDocPath = useMemo(() => {
     if (!figInfo?.parentDocPath || !docSlug) return '';
-    return `${DOCS_ROUTE_BASE}/${figInfo.parentDocPath}/${docSlug}`;
-  }, [figInfo?.parentDocPath, docSlug]);
+    return `${docsRouteBase}/${figInfo.parentDocPath}/${docSlug}`;
+  }, [figInfo?.parentDocPath, docSlug, docsRouteBase]);
 
   const isSamePage = useMemo(() => {
     const normalize = (p) => (p?.endsWith('/') ? p.slice(0, -1) : p || '');
@@ -75,7 +76,7 @@ const FigReference = ({ figKey, suffix }) => {
 
   if (!figInfo) return <span className="font-usace text-normal whitespace-nowrap">Figure</span>;
 
-  const imgSrc = figInfo.src ? `${STATIC_BASE}/${figInfo.src}` : '';
+  const imgSrc = figInfo.src ? `${staticBase}${figInfo.src.replace(/^\//, '')}` : '';
 
   return (
     <span className="relative inline whitespace-nowrap" onMouseEnter={handleEnter} onMouseLeave={handleLeave}>

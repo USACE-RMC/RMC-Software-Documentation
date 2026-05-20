@@ -17,14 +17,15 @@ const RFAData = filterByCategoryAndSoftware('desktop-applications', 'rmc-rfa').m
 export const RFADocs = RFAData;
 
 export default function RFA() {
+  const latestVersionsUrl = addBaseUrl('versions/latestVersions.json');
   const [latestVersions, setLatestVersions] = useState({});
 
   useEffect(() => {
-    fetch('/RMC-Software-Documentation/versions/latestVersions.json')
+    fetch(latestVersionsUrl)
       .then((response) => response.json())
       .then((data) => setLatestVersions(data))
       .catch((error) => console.error('Error loading latest versions:', error));
-  }, []);
+  }, [latestVersionsUrl]);
 
   const RFAData = RFADocs.map((doc) => ({
     ...doc,

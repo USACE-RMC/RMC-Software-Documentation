@@ -14,14 +14,15 @@ const riskCalculationsSuite = filterByCategoryAndSoftware('toolboxes', 'risk-cal
 export const riskCalculationsSuiteDocs = riskCalculationsSuite;
 
 export default function RiskCalculationsSuite() {
+  const latestVersionsUrl = addBaseUrl('versions/latestVersions.json');
   const [latestVersions, setLatestVersions] = useState({});
 
   useEffect(() => {
-    fetch('/RMC-Software-Documentation/versions/latestVersions.json')
+    fetch(latestVersionsUrl)
       .then((response) => response.json())
       .then((data) => setLatestVersions(data))
       .catch((error) => console.error('Error loading latest versions:', error));
-  }, []);
+  }, [latestVersionsUrl]);
 
   const riskCalculationsSuite = riskCalculationsSuiteDocs.map((doc) => ({
     ...doc,

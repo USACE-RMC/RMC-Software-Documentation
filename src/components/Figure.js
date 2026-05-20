@@ -1,3 +1,4 @@
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import { useEffect, useState } from 'react';
 import { useReportId } from '../contexts/ReportIdContext'; // Import the context hook to retrieve the reportId
 import imageDimensions from '../imageDimensions';
@@ -6,6 +7,8 @@ import '../css/custom.css';
 const Figure = ({ figKey, src, alt, caption, width = '80%', background = 'filled', id }) => {
   const [figInfo, setFigInfo] = useState(null);
   const reportId = useReportId(); // Get the reportId from the context
+  const imgUrl = useBaseUrl(src);
+  const countersBase = useBaseUrl('counters/');
 
   // If id is not passed, fall back to figKey
   const figureId = id || figKey;
@@ -17,7 +20,7 @@ const Figure = ({ figKey, src, alt, caption, width = '80%', background = 'filled
   useEffect(() => {
     if (!reportId) return; // If reportId is not available, don't fetch
 
-    const jsonPath = `/RMC-Software-Documentation/counters/${reportId}.json`; // Use reportId to determine the path
+    const jsonPath = `${countersBase}${reportId}.json`;
 
     const loadCounters = async () => {
       try {
@@ -43,13 +46,13 @@ const Figure = ({ figKey, src, alt, caption, width = '80%', background = 'filled
     };
 
     loadCounters();
-  }, [reportId, figKey]);
+  }, [reportId, figKey, countersBase]);
 
   const imgBgClass = background === 'transparent' ? '' : 'bg-surface-page dark:bg-white';
 
   return (
     <figure id={figureId} className="my-[1em] ml-0 mr-auto w-full justify-items-start border-y border-border-color py-5">
-      <img src={`/RMC-Software-Documentation/${src}`} alt={alt} className={`block h-auto ${imgBgClass}`} style={{ maxWidth: width }} width={dims?.width} height={dims?.height} />
+      <img src={imgUrl} alt={alt} className={`block h-auto ${imgBgClass}`} style={{ maxWidth: width }} width={dims?.width} height={dims?.height} />
       <figcaption className="mt-[1em] max-w-full text-left font-usace text-caption italic text-gray-500 dark:text-gray-400">
         {figInfo ? `Figure ${figInfo.figNumber}` : 'Figure'}: {caption}
       </figcaption>

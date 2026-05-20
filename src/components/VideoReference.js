@@ -1,3 +1,4 @@
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import { useEffect, useState } from 'react';
 import { useReportId } from '../contexts/ReportIdContext';
 import '../css/custom.css';
@@ -5,11 +6,12 @@ import '../css/custom.css';
 const VideoReference = ({ videoKey }) => {
   const [videoInfo, setVideoInfo] = useState(null);
   const reportId = useReportId(); // Get the reportId from the context
+  const countersBase = useBaseUrl('counters/');
 
   useEffect(() => {
     if (!reportId) return; // If reportId is not available, don't fetch
 
-    const jsonPath = `/RMC-Software-Documentation/counters/${reportId}.json`; // Use reportId to determine the path
+    const jsonPath = `${countersBase}${reportId}.json`;
 
     const loadCounters = async () => {
       try {
@@ -35,7 +37,7 @@ const VideoReference = ({ videoKey }) => {
     };
 
     loadCounters();
-  }, [videoKey]); // Re-fetch if figKey changes
+  }, [videoKey, countersBase]); // Re-fetch if figKey changes
 
   if (!videoInfo) return <span>Loading...</span>;
 

@@ -1,11 +1,14 @@
+import useBaseUrl from "@docusaurus/useBaseUrl";
 import { useEffect, useState } from "react";
 
-export default function useLatestVersions(jsonPath = "/RMC-Software-Documentation/versions/latestVersions.json") {
+export default function useLatestVersions(jsonPath) {
+  const defaultJsonPath = useBaseUrl("versions/latestVersions.json");
+  const url = jsonPath || defaultJsonPath;
   const [latestVersions, setLatestVersions] = useState({});
 
   useEffect(() => {
     let mounted = true;
-    fetch(jsonPath)
+    fetch(url)
       .then((r) => r.json())
       .then((data) => {
         if (mounted) setLatestVersions(data || {});
@@ -14,7 +17,7 @@ export default function useLatestVersions(jsonPath = "/RMC-Software-Documentatio
     return () => {
       mounted = false;
     };
-  }, [jsonPath]);
+  }, [url]);
 
   return latestVersions;
 }

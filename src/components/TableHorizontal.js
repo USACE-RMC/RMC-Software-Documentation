@@ -1,3 +1,4 @@
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import { useEffect, useState } from 'react';
 import { useReportId } from '../contexts/ReportIdContext';
 import '../css/custom.css';
@@ -21,10 +22,11 @@ const TableHorizontal = ({
   const [tableInfo, setTableInfo] = useState(null);
   const reportId = useReportId();
   const tableId = id || tableKey;
+  const countersBase = useBaseUrl('counters/');
 
   useEffect(() => {
     if (!reportId) return;
-    const jsonPath = `/RMC-Software-Documentation/counters/${reportId}.json`;
+    const jsonPath = `${countersBase}${reportId}.json`;
     (async () => {
       try {
         const response = await fetch(jsonPath);
@@ -37,7 +39,7 @@ const TableHorizontal = ({
         console.error('Error loading counters:', error);
       }
     })();
-  }, [reportId, tableKey]);
+  }, [reportId, tableKey, countersBase]);
 
   const renderHTML = (content) => ({ __html: content });
 
