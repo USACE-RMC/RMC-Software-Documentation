@@ -14,14 +14,15 @@ const internalErosionSuite = filterByCategoryAndSoftware('toolboxes', 'internal-
 export const internalErosionSuiteDocs = internalErosionSuite;
 
 export default function InternalErosionSuite() {
+  const latestVersionsUrl = addBaseUrl('versions/latestVersions.json');
   const [latestVersions, setLatestVersions] = useState({});
 
   useEffect(() => {
-    fetch('/RMC-Software-Documentation/versions/latestVersions.json')
+    fetch(latestVersionsUrl)
       .then((response) => response.json())
       .then((data) => setLatestVersions(data))
       .catch((error) => console.error('Error loading latest versions:', error));
-  }, []);
+  }, [latestVersionsUrl]);
 
   const internalErosionSuite = internalErosionSuiteDocs.map((doc) => ({
     ...doc,

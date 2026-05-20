@@ -1,3 +1,4 @@
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import { useEffect, useState } from 'react';
 import { useReportId } from '../contexts/ReportIdContext';
 import '../css/custom.css';
@@ -23,13 +24,17 @@ const Video = ({
 }) => {
   const [videoInfo, setVideoInfo] = useState(null);
   const reportId = useReportId();
+  const countersBase = useBaseUrl('counters/');
+  const assetsBase = useBaseUrl('/');
 
   const figureId = id || videoKey;
+
+  const resolveAsset = (p) => (p ? `${assetsBase}${String(p).replace(/^\//, '')}` : undefined);
 
   useEffect(() => {
     if (!reportId) return;
 
-    const jsonPath = `/RMC-Software-Documentation/counters/${reportId}.json`;
+    const jsonPath = `${countersBase}${reportId}.json`;
 
     const loadCounters = async () => {
       try {
@@ -53,7 +58,7 @@ const Video = ({
     };
 
     loadCounters();
-  }, [reportId, videoKey]);
+  }, [reportId, videoKey, countersBase]);
 
   if (!videoInfo) return <span>Loading...</span>;
 
@@ -70,7 +75,7 @@ const Video = ({
       <video
         className="block h-auto"
         style={{ maxWidth: width }}
-        poster={poster ? `/RMC-Software-Documentation/${poster}` : undefined}
+        poster={resolveAsset(poster)}
         autoPlay={resolvedAutoPlay}
         loop={resolvedLoop}
         controls={resolvedControls}
@@ -80,12 +85,12 @@ const Video = ({
       >
         {sources.length > 0
           ? sources.map((s, i) => (
-              <source key={i} src={`/RMC-Software-Documentation/${s.src}`} type={s.type} />
+              <source key={i} src={resolveAsset(s.src)} type={s.type} />
             ))
-          : src && <source src={`/RMC-Software-Documentation/${src}`} />}
+          : src && <source src={resolveAsset(src)} />}
         {trackSrc && (
           <track
-            src={`/RMC-Software-Documentation/${trackSrc}`}
+            src={resolveAsset(trackSrc)}
             kind="captions"
             srcLang={trackLang}
             label={trackLabel}

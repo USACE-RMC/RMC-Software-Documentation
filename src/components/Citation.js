@@ -1,4 +1,5 @@
 import { useLocation } from '@docusaurus/router';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import { useReportId } from '../contexts/ReportIdContext';
 import '../css/custom.css';
@@ -70,14 +71,13 @@ const Citation = ({ citationKey }) => {
   const location = useLocation();
   const pathname = location.pathname; // treat as docId
   const reportId = useReportId ? useReportId() : null;
+  const docsBase = useBaseUrl('docs/');
+  const bibsBase = useBaseUrl('bibliographies/');
+  const countersBase = useBaseUrl('counters/');
 
-  const reportPath = pathname
-    .replace(/^\/RMC-Software-Documentation\/docs\//, '/RMC-Software-Documentation/bibliographies/')
-    .replace(/\/[^/]*$/, '');
+  const reportPath = pathname.replace(docsBase, bibsBase).replace(/\/[^/]*$/, '');
   const bibFilePath = `${reportPath}/bib.json`;
-  const countersFilePath = reportId
-    ? `/RMC-Software-Documentation/counters/${reportId}.json`
-    : null;
+  const countersFilePath = reportId ? `${countersBase}${reportId}.json` : null;
 
   // Number comes from counters (original logic)
   useEffect(() => {

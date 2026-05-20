@@ -1,3 +1,4 @@
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import 'katex/dist/katex.min.css';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { BlockMath, InlineMath } from 'react-katex';
@@ -10,10 +11,11 @@ const Equation = ({ equationKey, equation, inline = false, id }) => {
   const reportId = useReportId();
   const equationId = id || equationKey;
   const mathRef = useRef(null);
+  const countersBase = useBaseUrl('counters/');
 
   useEffect(() => {
     if (!reportId) return;
-    const jsonPath = `/RMC-Software-Documentation/counters/${reportId}.json`;
+    const jsonPath = `${countersBase}${reportId}.json`;
     (async () => {
       try {
         const res = await fetch(jsonPath);
@@ -26,7 +28,7 @@ const Equation = ({ equationKey, equation, inline = false, id }) => {
         console.error('Error loading counters:', e);
       }
     })();
-  }, [reportId, equationKey]);
+  }, [reportId, equationKey, countersBase]);
 
   const scaleEquation = useCallback(() => {
     const wrapper = mathRef.current;

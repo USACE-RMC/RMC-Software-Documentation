@@ -14,14 +14,15 @@ const rrftData = filterByCategoryAndSoftware('web-applications', 'rrft').map((do
 export const rrftDocs = rrftData;
 
 export default function RRFT() {
+  const latestVersionsUrl = addBaseUrl('versions/latestVersions.json');
   const [latestVersions, setLatestVersions] = useState({});
 
   useEffect(() => {
-    fetch('/RMC-Software-Documentation/versions/latestVersions.json')
+    fetch(latestVersionsUrl)
       .then((response) => response.json())
       .then((data) => setLatestVersions(data))
       .catch((error) => console.error('Error loading latest versions:', error));
-  }, []);
+  }, [latestVersionsUrl]);
 
   const rrftData = rrftDocs.map((doc) => ({
     ...doc,

@@ -1,19 +1,19 @@
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import { useEffect, useMemo, useState } from 'react';
 import { useReportId } from '../contexts/ReportIdContext';
 import '../css/custom.css';
-
-const STATIC_BASE = '/RMC-Software-Documentation';
-const DOCS_ROUTE_BASE = '/RMC-Software-Documentation/docs';
 
 const toDocSlug = (docId = '') => docId.replace(/\.mdx$/i, '').replace(/^\d{1,3}-/, '');
 
 const EquationReference = ({ equationKey }) => {
   const [equationInfo, setEquationInfo] = useState(null);
   const reportId = useReportId();
+  const countersBase = useBaseUrl('counters/');
+  const docsRouteBase = useBaseUrl('docs');
 
   useEffect(() => {
     if (!reportId) return;
-    const jsonPath = `${STATIC_BASE}/counters/${reportId}.json`;
+    const jsonPath = `${countersBase}${reportId}.json`;
     (async () => {
       try {
         const res = await fetch(jsonPath);
@@ -26,7 +26,7 @@ const EquationReference = ({ equationKey }) => {
         console.error('Error loading counters:', e);
       }
     })();
-  }, [reportId, equationKey]);
+  }, [reportId, equationKey, countersBase]);
 
   const targetId = equationKey;
 
@@ -34,8 +34,8 @@ const EquationReference = ({ equationKey }) => {
 
   const targetDocPath = useMemo(() => {
     if (!equationInfo?.parentDocPath || !docSlug) return '';
-    return `${DOCS_ROUTE_BASE}/${equationInfo.parentDocPath}/${docSlug}`;
-  }, [equationInfo?.parentDocPath, docSlug]);
+    return `${docsRouteBase}/${equationInfo.parentDocPath}/${docSlug}`;
+  }, [equationInfo?.parentDocPath, docSlug, docsRouteBase]);
 
   const isSamePage = useMemo(() => {
     const normalize = (p) => (p?.endsWith('/') ? p.slice(0, -1) : p || '');

@@ -14,14 +14,15 @@ const seismicHazardSuite = filterByCategoryAndSoftware('toolboxes', 'seismic-haz
 export const seismicHazardSuiteDocs = seismicHazardSuite;
 
 export default function SeismicHazardSuite() {
+  const latestVersionsUrl = addBaseUrl('versions/latestVersions.json');
   const [latestVersions, setLatestVersions] = useState({});
 
   useEffect(() => {
-    fetch('/RMC-Software-Documentation/versions/latestVersions.json')
+    fetch(latestVersionsUrl)
       .then((response) => response.json())
       .then((data) => setLatestVersions(data))
       .catch((error) => console.error('Error loading latest versions:', error));
-  }, []);
+  }, [latestVersionsUrl]);
 
   const seismicHazardSuite = seismicHazardSuiteDocs.map((doc) => ({
     ...doc,
