@@ -111,13 +111,44 @@ await capture('pr-commits', `${PR_BASE}/commits`, async (page) => {
 await capture('pr-files-changed', `${PR_BASE}/files`, async (page) => {
   // Files changed is heavy — wait extra for the diff to render
   await page.waitForTimeout(2000);
+
+  // Dismiss any "what's new" announcement popovers GitHub injects on first
+  // visit (e.g. the "Customizable line height" toast). Try Playwright's
+  // locator first — it waits for the element and is reliable, unlike a
+  // raw evaluate() with synchronous querySelectorAll. Multiple tries
+  // because the popover sometimes appears after a delay.
+  for (let i = 0; i < 3; i++) {
+    const dismissed = await page
+      .locator('a:has-text("Dismiss"), button:has-text("Dismiss"), a:has-text("Got it"), button:has-text("Got it")')
+      .first()
+      .click({ timeout: 1500 })
+      .then(() => true)
+      .catch(() => false);
+    if (dismissed) {
+      console.log('   dismissed an announcement popover');
+      break;
+    }
+    await page.waitForTimeout(800);
+  }
+
   return {
     tabs: await rect(page, () => document.querySelector('[role="tablist"], nav[aria-label="Pull request tabs"]')),
     filesChangedTab: await rect(page, () => Array.from(document.querySelectorAll('a, [role="tab"]')).find((e) => /Files changed/.test(e.innerText || ''))),
     diffSettingsButton: await rect(page, () => document.querySelector('summary[aria-label*="Diff settings"], summary[aria-label*="Diff view"], [aria-label*="Diff settings"]')),
     finishYourReviewButton: await rect(page, () => Array.from(document.querySelectorAll('button, a')).find((e) => /Add your review|Finish your review|Submit review/i.test((e.innerText || '').trim()))),
     firstFileHeader: await rect(page, () => document.querySelector('.file-header, [data-testid="file-header"]')),
-    commitRangeDropdown: await rect(page, () => document.querySelector('summary[aria-label*="Choose base and head"], details summary[aria-label*="Comparing"], [aria-label*="commit range"]')),
+    // "All commits ▼" dropdown above the diff — narrows the view to a
+    // single commit. Implemented as a Primer button.
+    commitRangeDropdown: await rect(page, () => {
+      const btns = Array.from(document.querySelectorAll('button'));
+      return btns.find((b) => /^All commits/.test((b.innerText || '').trim()) && b.getBoundingClientRect().height < 50);
+    }),
+    fileTree: await rect(page, () => document.querySelector('[aria-label*="File tree" i]')),
+    firstFileHeader: await rect(page, () => {
+      const links = Array.from(document.querySelectorAll('a, span'));
+      const fileLink = links.find((a) => /00-document-info\.mdx$/.test((a.innerText || '').trim()) && a.getBoundingClientRect().height < 40);
+      return fileLink ? fileLink.closest('header, .file-header, [class*="Header"], .Box-header, div') : null;
+    }),
   };
 });
 

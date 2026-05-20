@@ -38,16 +38,14 @@ elements = json.loads(COORDS.read_text())["elements"]
 filesChangedTab = elements["filesChangedTab"]
 submitButton = elements["finishYourReviewButton"]
 
-# Hand-picked from the capture image (the bulk capture script's selectors
-# missed these). Re-derive if GitHub reshuffles the layout.
-all_commits_dropdown = (175, 290, 130, 35)
-file_tree = (35, 325, 280, 540)
-first_file_header = (340, 325, 990, 55)
-
-# White-out mask over the "Customizable line height" announcement popup.
-masks = [
-    (1085, 350, 280, 200),
-]
+# Hand-picked from the rendered screenshot rather than from getBoundingClient-
+# Rect. GitHub's Files toolbar uses sticky positioning, and the DOM coords
+# for "All commits" returned by the probe point at where the button would
+# sit in its stuck (scrolled) state, which doesn't match the un-stuck
+# screenshot. Re-derive if GitHub reshuffles the layout.
+all_commits_dropdown = (60, 308, 110, 22)
+file_tree = (33, 384, 295, 280)
+first_file_header = (340, 325, 1000, 55)
 
 callouts = [
     (filesChangedTab["x"], filesChangedTab["y"], filesChangedTab["w"], filesChangedTab["h"], "tl", 1),
@@ -57,4 +55,4 @@ callouts = [
     (submitButton["x"], submitButton["y"], submitButton["w"], submitButton["h"], "tr", 5),
 ]
 
-annotate_and_crop(SRC, callouts, CROP, OUT, masks=masks)
+annotate_and_crop(SRC, callouts, CROP, OUT)
