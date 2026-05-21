@@ -1,0 +1,457 @@
+---
+title: "Appendix E - Importing Structures from the NSI Database"
+---
+
+import Link from "@docusaurus/Link";
+import addBaseUrl from "@docusaurus/useBaseUrl";
+import Citation from "@site/src/components/Citation";
+import CitationFootnote from "@site/src/components/CitationFootnote";
+import Equation from '@site/src/components/Equation';
+import EquationNoRef from '@site/src/components/EquationNoRef';
+import EquationReference from '@site/src/components/EquationReference';
+import Figure from "@site/src/components/Figure";
+import FigureInline from "@site/src/components/FigureInline";
+import FigReference from "@site/src/components/FigureReference";
+import NavContainer from "@site/src/components/NavContainer";
+import ProcessList from "@site/src/components/ProcessList";
+import TableReference from "@site/src/components/TableReference";
+import TableVertical from "@site/src/components/TableVertical";
+import VersionSelector from "@site/src/components/VersionSelector";
+
+<NavContainer 
+  link="/desktop-applications/lifesim"
+  linkTitle="LifeSim"
+  document="desktop-applications/lifesim/technical-reference-manual"
+></NavContainer>
+
+# Appendix E - Importing Structures from the NSI Database
+
+## Importing Structures from NSI
+
+The National Structure Inventory (NSI) 2.0 database contains information on structure location, building type, population, structure values,
+foundation height, and other information for residential, commercial, industrial, agricultural, public, and private structures across the country. NSI
+ was originally developed by USACE in coordination with the Federal Emergency Management Agency (FEMA).
+
+The NSI is currently only available to USACE users. The NSI database was originally developed using the 2010 U.S. Census information, Hazus database,
+the Longitudinal Employer-Household Dynamics (LEHD) database () and other sources. Later efforts to improve the database used parcel data through
+CoreLogic and business location data through ESRI/Infogroup, supplemented with Hazus data.
+
+Data sources used for the NSI database are shown in Table D - 1; description of fields used in the NSI database are shown in Table D - 2; and the data
+ sources for various data types are included in Table D - 3. Appropriate use of the NSI database would be in situations where more accurate data is
+too costly or not available in the required timeframe. Data from the NSI can be imported into LifeSim to not only locate structures, but also populate
+ structures included in a structure inventory. The NSI dataset is separate from the LifeSim program, but can be imported as a sole source or to
+supplement a user-defined inventory.
+
+NSI 2.0 uses parcel databases, business data, LEHD, 2010 U.S. Census Bureau data and school information to populate structures. It estimates the
+population “pool” for each block, breaking the population up into blocks: working (commercial, industrial, public), education (students, teachers) and
+ residential. Each pool is sub-divided into over and under 65 years of age, then day and night. Once the census information is divided into blocks the
+ pools are assigned to structures. There are a total of 10 pools.
+
+Population pools are distributed to structures within the block based on housing unit weighting. The residential pool is assigned to residential
+structures, working pool to commercial, industrial, and public structures, and the education pool to schools. The daytime structures population is from
+ day pools (workers, non-working residential, students, and teachers). The nighttime population is from night pools (mostly residential, and
+night-shift workers). Definitions of occupancy types are shown in Table D - 4.
+
+:::danger
+This table contains cells that span multiple rows or columns. Manually update the React component to properly format the table.
+:::
+
+<TableVertical
+  tableKey="table-24"
+  headers={
+[
+    [
+      { value: "Source", rowSpan: 1, colSpan: 1 },
+      { value: "Database", rowSpan: 1, colSpan: 1 },
+      { value: "Dataset", rowSpan: 1, colSpan: 1 },
+      { value: "Description", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  columns={
+[
+    [
+      { value: "Hazus", rowSpan: 6, colSpan: 1 },
+      null,
+      { value: "Hazus", rowSpan: 4, colSpan: 1 },
+      null,
+      { value: "Hazus", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "CoreLogic", rowSpan: 1, colSpan: 1 },
+      { value: "U. S. Census Bureau", rowSpan: 1, colSpan: 1 },
+      { value: "NCES", rowSpan: 1, colSpan: 1 },
+      { value: "U. S. Geological Survey", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "Bndrygbs.mdb", rowSpan: 4, colSpan: 1 },
+      null,
+      { value: "Bndrygbs.mdb", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "MSH.mdb", rowSpan: 1, colSpan: 1 },
+      { value: "NSI 2015", rowSpan: 1, colSpan: 1 },
+      { value: "County Parcel Files", rowSpan: 1, colSpan: 1 },
+      { value: "Longitudinal Employer-Household Dynamic Database", rowSpan: 1, colSpan: 1 },
+      { value: "Schools Database", rowSpan: 1, colSpan: 1 },
+      { value: "", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "hzBldgCountOccupB", rowSpan: 1, colSpan: 1 },
+      { value: "hzExposureOccupB", rowSpan: 1, colSpan: 1 },
+      { value: "hzCensusBlock", rowSpan: 1, colSpan: 1 },
+      { value: "hzDemographicsB", rowSpan: 1, colSpan: 1 },
+      { value: "flGenBldgScheme", rowSpan: 1, colSpan: 1 },
+      { value: "Base layer", rowSpan: 1, colSpan: 1 },
+      { value: "", rowSpan: 1, colSpan: 2 },
+      { value: "Population Data", rowSpan: 1, colSpan: 1 },
+      { value: "School Data", rowSpan: 1, colSpan: 1 },
+      { value: "National Elevation Dataset", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "Provides a structure count grouped by occupancy type.", rowSpan: 1, colSpan: 1 },
+      { value: "Contains structure values (in dollars) grouped by occupancy type.", rowSpan: 1, colSpan: 1 },
+      { value: "Provides the census block geometry, residential stories distribution, and structure building schemes, block type, and median year built.", rowSpan: 1, colSpan: 1 },
+      { value: "Lists the population over the age of 65 (as a percentage) by census tract.", rowSpan: 1, colSpan: 1 },
+      { value: "Provides the construction type distributions, foundation types, and National Flood Insurance Program (NFIP) entry year for structures.", rowSpan: 1, colSpan: 1 },
+      { value: "Used in any Census Block that lacks", rowSpan: 1, colSpan: 1 },
+      null,
+      { value: "Contains day and night population estimates by census block.", rowSpan: 1, colSpan: 1 },
+      { value: "Contains the locations of schools, number of teachers and students per school by census block.", rowSpan: 1, colSpan: 1 },
+      { value: "Provides raster ground elevation (in feet) data.", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  alt="D - 1. Source data used to develop the NSI database."
+  caption="D - 1. Source data used to develop the NSI database."
+/>
+
+Source: National Structure Inventory (USACE 2019)
+
+:::danger
+This table contains cells that span multiple rows or columns. Manually update the React component to properly format the table.
+:::
+
+<TableVertical
+  tableKey="table-25"
+  headers={
+[
+    [
+      { value: "Field Name NSI 2.0", rowSpan: 1, colSpan: 1 },
+      { value: "Description", rowSpan: 1, colSpan: 1 },
+      { value: "Notes", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  columns={
+[
+    [
+      { value: "FD_ID", rowSpan: 1, colSpan: 1 },
+      { value: "CBFips", rowSpan: 1, colSpan: 1 },
+      { value: "OccType", rowSpan: 1, colSpan: 1 },
+      { value: "YrBuilt", rowSpan: 1, colSpan: 1 },
+      { value: "Num_Story", rowSpan: 1, colSpan: 1 },
+      { value: "RESUnits", rowSpan: 1, colSpan: 1 },
+      { value: "Stacked", rowSpan: 1, colSpan: 1 },
+      { value: "Source", rowSpan: 1, colSpan: 1 },
+      { value: "X", rowSpan: 1, colSpan: 1 },
+      { value: "Y", rowSpan: 1, colSpan: 1 },
+      { value: "EmpNum", rowSpan: 1, colSpan: 1 },
+      { value: "Teachers", rowSpan: 1, colSpan: 1 },
+      { value: "Students", rowSpan: 1, colSpan: 1 },
+      { value: "SqFt", rowSpan: 1, colSpan: 1 },
+      { value: "Pop2amU65", rowSpan: 1, colSpan: 1 },
+      { value: "Pop2amO65", rowSpan: 1, colSpan: 1 },
+      { value: "Pop2pmU65", rowSpan: 1, colSpan: 1 },
+      { value: "Pop2pmO65", rowSpan: 1, colSpan: 1 },
+      { value: "St_DamCat", rowSpan: 1, colSpan: 1 },
+      { value: "Basement", rowSpan: 1, colSpan: 1 },
+      { value: "BldgType", rowSpan: 1, colSpan: 1 },
+      { value: "Found_Ht", rowSpan: 1, colSpan: 1 },
+      { value: "Found_Type", rowSpan: 1, colSpan: 1 },
+      { value: "Val_Struct", rowSpan: 1, colSpan: 1 },
+      { value: "Val_Cont", rowSpan: 1, colSpan: 1 },
+      { value: "Val_Vehic", rowSpan: 1, colSpan: 1 },
+      { value: "Med_Yr_Blt", rowSpan: 1, colSpan: 1 },
+      { value: "FipsEntry", rowSpan: 1, colSpan: 1 },
+      { value: "FIRMZone", rowSpan: 1, colSpan: 1 },
+      { value: "O65Disable", rowSpan: 1, colSpan: 1 },
+      { value: "U65Disable", rowSpan: 1, colSpan: 1 },
+      { value: "Ground_Elv", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "A number that should be unique for all structures.", rowSpan: 1, colSpan: 1 },
+      { value: "Census Block that contains the structure.", rowSpan: 1, colSpan: 1 },
+      { value: "Damage Function or Occupancy Type of the structure.  This field relates the structures depth-damage relationships, number of stories, number of households, and other generic characteristics to the structure location.", rowSpan: 1, colSpan: 1 },
+      { value: "When available, records the parcel data assessment of the actual year built of the structure", rowSpan: 1, colSpan: 1 },
+      { value: "Estimated number of stories the structure has.", rowSpan: 1, colSpan: 1 },
+      { value: "Parcel informed number of residential units estimate.", rowSpan: 1, colSpan: 1 },
+      { value: "Indicates whether multiple structures were stacked on top of each other during the generation process.", rowSpan: 1, colSpan: 1 },
+      { value: "Indicates the main source for the original x/y and OccType data (P = Parcel, E = ESRI, N = NCES, H = HAZUS).", rowSpan: 1, colSpan: 1 },
+      { value: "X coordinate of each structure; it is in the Geographic Coordinate System (GCS) WGS84.", rowSpan: 1, colSpan: 1 },
+      { value: "Y coordinate for each structure in GCS WGS84.", rowSpan: 1, colSpan: 1 },
+      { value: "Source estimate of number of employees at a commercial structure", rowSpan: 1, colSpan: 1 },
+      { value: "Source estimate of number of teachers at an educational structure", rowSpan: 1, colSpan: 1 },
+      { value: "Source estimate of number of students at an educational structure.", rowSpan: 1, colSpan: 1 },
+      { value: "Estimated total square footage for the structure.", rowSpan: 1, colSpan: 1 },
+      { value: "Population at night for the structure of people under the age of 65.", rowSpan: 1, colSpan: 1 },
+      { value: "Population at night for the structure of people over the age of 65.", rowSpan: 1, colSpan: 1 },
+      { value: "Population during the day for the structure of people under the age of 65.", rowSpan: 1, colSpan: 1 },
+      { value: "Population during the day for the structure of people over the age of 65.", rowSpan: 1, colSpan: 1 },
+      { value: "Damage category of the structure. Damage categories are a larger aggregation than occupancy type (Res = Residential, Com =  Commercial, Ind = Industrial, and Pub = Public).", rowSpan: 1, colSpan: 1 },
+      { value: "Defines if the structure has a basement or not (1 or 0).", rowSpan: 1, colSpan: 1 },
+      { value: "Construction type of the structure.  This is informative for structural stability criteria.  From the HAZUS database this comes out of the MSH.mdb (W = Wood, H = Manufactured, S= Steel, C = Concrete, M = Masonry).", rowSpan: 1, colSpan: 1 },
+      { value: "Describes the foundation height of the structure in feet from the ground elevation.", rowSpan: 1, colSpan: 1 },
+      { value: "Describes the type of foundation on the structure.", rowSpan: 1, colSpan: 1 },
+      { value: "Value in dollars of the structure. The analyst should document what value is represented (e.g., depreciated replacement cost, replacement cost, market value).", rowSpan: 1, colSpan: 1 },
+      { value: "Value in dollars of the contents of the structure.", rowSpan: 1, colSpan: 1 },
+      { value: "Value in dollars of the vehicles at the structure.", rowSpan: 1, colSpan: 1 },
+      { value: "Describing a best estimate for the year the building was built.", rowSpan: 1, colSpan: 1 },
+      { value: "Value stating estimated year that the house entered the National Flood Insurance Program.", rowSpan: 1, colSpan: 1 },
+      { value: "When available, states the FEMA Flood Insurance Rate Map flood zone for the structure.", rowSpan: 1, colSpan: 1 },
+      { value: "The estimated disability rate for the structure among those over the age of 65.", rowSpan: 1, colSpan: 1 },
+      { value: "The estimated disability rate for the structure among those under the age of 65.", rowSpan: 1, colSpan: 1 },
+      { value: "Ground elevation (in feet) at the structure.", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "Replace the shapefile ID field with a new one determined server side", rowSpan: 1, colSpan: 1 },
+      { value: "We like the descriptiveness of the source better than general ID term", rowSpan: 1, colSpan: 1 },
+      { value: "OccType is the most commonly used term in the Dam Safety CoP", rowSpan: 1, colSpan: 1 },
+      { value: "New field -- records actual year built when available", rowSpan: 1, colSpan: 1 },
+      { value: "We will change ours to match; note when we actually download the NSI 1, the field name reads as num_stories suggesting it was called Num_Stories but was truncated. Conforming to Num_Story should fix.", rowSpan: 1, colSpan: 1 },
+      { value: "New field -- provides extra information on estimated number of residential units", rowSpan: 1, colSpan: 1 },
+      { value: "New field -- provides extra information for diagnostic purposes", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "Same", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "New field -- provides extra information for diagnostic purposes", rowSpan: 3, colSpan: 1 },
+      null,
+      { value: "New field -- provides extra information for diagnostic purposes", rowSpan: 1, colSpan: 1 },
+      { value: "New field -- provides extra info and ability do more calcs", rowSpan: 1, colSpan: 1 },
+      { value: "We like providing the extra info that U/O refer to the age 65", rowSpan: 4, colSpan: 1 },
+      null,
+      { value: "We like providing the extra info that U/O refer to the age 65", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "We will change ours to match", rowSpan: 1, colSpan: 1 },
+      { value: "Same", rowSpan: 1, colSpan: 1 },
+      { value: "Changed name to prevent field name truncation", rowSpan: 1, colSpan: 1 },
+      { value: "We like having the foundation categories next to each other in case any alphabetical drop downs are used", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "Same", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "Vehic is more descriptive of all vehicle types", rowSpan: 1, colSpan: 1 },
+      { value: "We will change ours to match", rowSpan: 1, colSpan: 1 },
+      { value: "New field -- replaces POST_FIRM because it offers more information", rowSpan: 1, colSpan: 1 },
+      { value: "New field -- provides extra information", rowSpan: 3, colSpan: 1 },
+      null,
+      { value: "New field -- provides extra information", rowSpan: 1, colSpan: 1 },
+      { value: "Determined serve side; NSI1 downloaded from server reads as ground_el changing it to not be auto truncated.  NOTE: the server currently appears to provide this estimate in meters, not feet.", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  alt="D - 2. Description of fields included in the NSI database."
+  caption="D - 2. Description of fields included in the NSI database."
+/>
+
+Source: National Structure Inventory (USACE 2019)
+
+<TableVertical
+  tableKey="table-26"
+  headers={
+[
+    [
+      { value: "Data type", rowSpan: 1, colSpan: 1 },
+      { value: "Data source", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  columns={
+[
+    [
+      { value: "Structure value", rowSpan: 1, colSpan: 1 },
+      { value: "Content value", rowSpan: 1, colSpan: 1 },
+      { value: "Construction type", rowSpan: 1, colSpan: 1 },
+      { value: "Vehicles", rowSpan: 1, colSpan: 1 },
+      { value: "Ground elevation", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "Hazus dataset with dollars per square foot from 2014 RS Means construction cost estimates, except for RES1 which was from 2006. All costs indexed to 2018 price levels. Using Engineering News-Record (ENR) construction cost index. Structure value = $/sq ft x structure sq ft. Structure values depreciated to obtain depreciated replacement value. Depreciated 1% per year for first 20 years, after which structure values retained 80% of replacement value.", rowSpan: 1, colSpan: 1 },
+      { value: "Content value = structure value x structure-to-content-value-ratio. RES1 structures assumed content values equal to structure values, consistent with USACE Economic Guidance Memorandum (EGM) 04-01 (USACE 2003) depth-damage functions. If not using EGM functions, user should use 50% relationship for content value unless better data is available to suggest otherwise.", rowSpan: 1, colSpan: 1 },
+      { value: "Hazus hzCensusBlock table contains building scheme information. This attribute is related to the flGenBldgScheme tables from the MSH.mdb database. Used to define structures as wood, masonry, concrete block, manufactured, and steel using random assignment based on probabilities in the Hazus table. Structures that were estimated to be more than 5 stories were assumed to be of steel construction.", rowSpan: 1, colSpan: 1 },
+      { value: "Vehicle values for each structure are based on the number of housing units for residential structures or the number of employees for commercial structures.", rowSpan: 1, colSpan: 1 },
+      { value: "Ground elevations (feet North American Vertical Datum of 1988 (NAVD 88)) were determined using the USGS National Elevation Dataset (NED), based on the structure location (https://nationalmap.gov/elevation.html).", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  alt="D - 3. Data sources for various data types in the NSI database."
+  caption="D - 3. Data sources for various data types in the NSI database."
+/>
+
+:::danger
+This table contains cells that span multiple rows or columns. Manually update the React component to properly format the table.
+:::
+
+<TableVertical
+  tableKey="table-27"
+  headers={
+[
+    [
+      { value: "Occupancy Type", rowSpan: 1, colSpan: 1 },
+      { value: "HAZUS Definition", rowSpan: 1, colSpan: 1 },
+      { value: "Common Examples", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  columns={
+[
+    [
+      { value: "RESIDENTIAL", rowSpan: 1, colSpan: 3 },
+      { value: "RES1-1SNB", rowSpan: 1, colSpan: 1 },
+      { value: "RES1-1SWB", rowSpan: 1, colSpan: 1 },
+      { value: "RES1-2SNB", rowSpan: 1, colSpan: 1 },
+      { value: "RES1-2SWB", rowSpan: 1, colSpan: 1 },
+      { value: "RES1-3SNB", rowSpan: 1, colSpan: 1 },
+      { value: "RES1-3SWB", rowSpan: 1, colSpan: 1 },
+      { value: "RES1-SLNB", rowSpan: 1, colSpan: 1 },
+      { value: "RES1-SLWB", rowSpan: 1, colSpan: 1 },
+      { value: "RES2", rowSpan: 1, colSpan: 1 },
+      { value: "RES3A", rowSpan: 1, colSpan: 1 },
+      { value: "RES3B", rowSpan: 1, colSpan: 1 },
+      { value: "RES3C", rowSpan: 1, colSpan: 1 },
+      { value: "RES3D", rowSpan: 1, colSpan: 1 },
+      { value: "RES3E", rowSpan: 1, colSpan: 1 },
+      { value: "RES3F", rowSpan: 1, colSpan: 1 },
+      { value: "RES4", rowSpan: 1, colSpan: 1 },
+      { value: "RES5", rowSpan: 1, colSpan: 1 },
+      { value: "RES6", rowSpan: 1, colSpan: 1 },
+      { value: "", rowSpan: 1, colSpan: 3 },
+      { value: "COMMERCIAL", rowSpan: 1, colSpan: 3 },
+      { value: "AGR1", rowSpan: 1, colSpan: 1 },
+      { value: "COM1", rowSpan: 1, colSpan: 1 },
+      { value: "COM2", rowSpan: 1, colSpan: 1 },
+      { value: "COM3", rowSpan: 1, colSpan: 1 },
+      { value: "COM4", rowSpan: 1, colSpan: 1 },
+      { value: "COM5", rowSpan: 1, colSpan: 1 },
+      { value: "COM6", rowSpan: 1, colSpan: 1 },
+      { value: "COM7", rowSpan: 1, colSpan: 1 },
+      { value: "COM8", rowSpan: 1, colSpan: 1 },
+      { value: "COM9", rowSpan: 1, colSpan: 1 },
+      { value: "COM10", rowSpan: 1, colSpan: 1 },
+      { value: "INDUSTRIAL", rowSpan: 1, colSpan: 3 },
+      { value: "IND1", rowSpan: 1, colSpan: 1 },
+      { value: "IND2", rowSpan: 1, colSpan: 1 },
+      { value: "IND3", rowSpan: 1, colSpan: 1 },
+      { value: "IND4", rowSpan: 1, colSpan: 1 },
+      { value: "IND5", rowSpan: 1, colSpan: 1 },
+      { value: "IND6", rowSpan: 1, colSpan: 1 },
+      { value: "PUBLIC", rowSpan: 1, colSpan: 3 },
+      { value: "EDU1", rowSpan: 1, colSpan: 1 },
+      { value: "EDU2", rowSpan: 1, colSpan: 1 },
+      { value: "GOV1", rowSpan: 1, colSpan: 1 },
+      { value: "GOV2", rowSpan: 1, colSpan: 1 },
+      { value: "REL1", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      null,
+      { value: "Single family 1-story no basement", rowSpan: 1, colSpan: 1 },
+      { value: "Single family 1-story with basement", rowSpan: 1, colSpan: 1 },
+      { value: "Single family 2-story no basement", rowSpan: 1, colSpan: 1 },
+      { value: "Single family 2-story with basement", rowSpan: 1, colSpan: 1 },
+      { value: "Single family 3-story no basement", rowSpan: 1, colSpan: 1 },
+      { value: "Single family 3-story with basement", rowSpan: 1, colSpan: 1 },
+      { value: "Single family split-level no basement", rowSpan: 1, colSpan: 1 },
+      { value: "Single family split-level with basement", rowSpan: 1, colSpan: 1 },
+      { value: "Manufactured housing", rowSpan: 1, colSpan: 1 },
+      { value: "Multi-family Dwelling - 2 units", rowSpan: 1, colSpan: 1 },
+      { value: "Multi-family Dwelling - 3 to 4 units", rowSpan: 1, colSpan: 1 },
+      { value: "Multi-family Dwelling - 5 to 9 units", rowSpan: 1, colSpan: 1 },
+      { value: "Multi-family Dwelling - 10 to 19 units", rowSpan: 1, colSpan: 1 },
+      { value: "Multi-family Dwelling - 20 to 49 units", rowSpan: 1, colSpan: 1 },
+      { value: "Multi-family Dwelling - more than 50 units", rowSpan: 1, colSpan: 1 },
+      { value: "Temporary lodging", rowSpan: 1, colSpan: 1 },
+      { value: "Institutional dormitories", rowSpan: 1, colSpan: 1 },
+      { value: "Nursing homes", rowSpan: 1, colSpan: 1 },
+      null,
+      null,
+      { value: "Agriculture", rowSpan: 1, colSpan: 1 },
+      { value: "Retail trade", rowSpan: 1, colSpan: 1 },
+      { value: "Wholesale trade", rowSpan: 1, colSpan: 1 },
+      { value: "Personal and repair services", rowSpan: 1, colSpan: 1 },
+      { value: "Professional and technical services", rowSpan: 1, colSpan: 1 },
+      { value: "Banks", rowSpan: 1, colSpan: 1 },
+      { value: "Hospitals", rowSpan: 1, colSpan: 1 },
+      { value: "Medical office and clinic", rowSpan: 1, colSpan: 1 },
+      { value: "Entertainment and recreation", rowSpan: 1, colSpan: 1 },
+      { value: "Theaters", rowSpan: 1, colSpan: 1 },
+      { value: "Parking", rowSpan: 1, colSpan: 1 },
+      null,
+      { value: "Heavy industrial", rowSpan: 1, colSpan: 1 },
+      { value: "Light industrial", rowSpan: 1, colSpan: 1 },
+      { value: "Food/drugs/chemicals", rowSpan: 1, colSpan: 1 },
+      { value: "Metal/minerals processing", rowSpan: 1, colSpan: 1 },
+      { value: "High technology", rowSpan: 1, colSpan: 1 },
+      { value: "Construction facilities and offices", rowSpan: 1, colSpan: 1 },
+      null,
+      { value: "School and Libraries", rowSpan: 1, colSpan: 1 },
+      { value: "Colleges and universities", rowSpan: 1, colSpan: 1 },
+      { value: "Government – general services", rowSpan: 1, colSpan: 1 },
+      { value: "Government – emergency response", rowSpan: 1, colSpan: 1 },
+      { value: "Churches and non-profit organizations", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "RESIDENTIAL", rowSpan: 1, colSpan: 1 },
+      { value: "Family home", rowSpan: 8, colSpan: 1 },
+      null,
+      { value: "Family home", rowSpan: 6, colSpan: 1 },
+      null,
+      { value: "Family home", rowSpan: 4, colSpan: 1 },
+      null,
+      { value: "Family home", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "Mobile home, trailer", rowSpan: 1, colSpan: 1 },
+      { value: "Duplex, home with on-site rental", rowSpan: 1, colSpan: 1 },
+      { value: "Apartments, Condominiums", rowSpan: 5, colSpan: 1 },
+      null,
+      { value: "Apartments, Condominiums", rowSpan: 3, colSpan: 1 },
+      null,
+      { value: "Apartments, Condominiums", rowSpan: 1, colSpan: 1 },
+      { value: "Hotel, motel, hostel", rowSpan: 1, colSpan: 1 },
+      { value: "Prison, school or college dorm", rowSpan: 1, colSpan: 1 },
+      { value: "Elder care facilities with staff, (not senior living)", rowSpan: 1, colSpan: 1 },
+      { value: "", rowSpan: 1, colSpan: 1 },
+      { value: "COMMERCIAL", rowSpan: 1, colSpan: 1 },
+      { value: "Ag product and livestock storage, offices, raw material sorting and packaging", rowSpan: 1, colSpan: 1 },
+      { value: "Department store, strip mall, stores, shops, malls", rowSpan: 1, colSpan: 1 },
+      { value: "Warehouse store, distribution centers", rowSpan: 1, colSpan: 1 },
+      { value: "Gas and service stations, hair salon,", rowSpan: 1, colSpan: 1 },
+      { value: "Office buildings, shared workspaces", rowSpan: 1, colSpan: 1 },
+      { value: "Financial services", rowSpan: 1, colSpan: 1 },
+      { value: "Emergency rooms, triage, surgery, (inpatient)", rowSpan: 1, colSpan: 1 },
+      { value: "Dentist, general practitioner, (outpatient)", rowSpan: 1, colSpan: 1 },
+      { value: "Restaurant,", rowSpan: 1, colSpan: 1 },
+      { value: "Movie theatre, performance stages", rowSpan: 1, colSpan: 1 },
+      { value: "Parking lots, parking garages (not dedicated to another building)", rowSpan: 1, colSpan: 1 },
+      { value: "INDUSTRIAL", rowSpan: 1, colSpan: 1 },
+      { value: "Factory", rowSpan: 1, colSpan: 1 },
+      { value: "Warehouse", rowSpan: 1, colSpan: 1 },
+      { value: "Oil refinery, food processing plants", rowSpan: 1, colSpan: 1 },
+      { value: "Mining, manufacture", rowSpan: 1, colSpan: 1 },
+      { value: "Research and development labs, server farms", rowSpan: 1, colSpan: 1 },
+      { value: "Buildings under construction, construction material yards (e.g., lumber, gravel, steel), contractor offices.", rowSpan: 1, colSpan: 1 },
+      { value: "PUBLIC", rowSpan: 1, colSpan: 1 },
+      { value: "Grade school, high school, pre-school, administrative offices", rowSpan: 1, colSpan: 1 },
+      { value: "Classrooms, dining, administration (non-living quarters)", rowSpan: 1, colSpan: 1 },
+      { value: "city, state, federal government offices, utility maintenance buildings", rowSpan: 1, colSpan: 1 },
+      { value: "Police, fire, emergency operations centers, critical function offices", rowSpan: 1, colSpan: 1 },
+      { value: "Mosque, Elks Lodge, union hall, Grange (public meeting venue, sporadic use)", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  alt="D - 4. Definitions of Hazus occupancy types."
+  caption="D - 4. Definitions of Hazus occupancy types."
+/>
+
+Some noted exclusions from this list include transient facilities like campgrounds, homeless encampments, outdoor markets, stadiums, and arenas.
+Another example would be large tourist destinations, such as cruise ships in Alaska during the summer, where the population significantly increases
+during this time, but is not accounted for in the census data. If these or other unique facilities are in the floodplain and expected to be populated,
+ the user can create a unique occupancy type.
+
+<CitationFootnote />

@@ -1,0 +1,126 @@
+---
+title: "Agricultural Inventory"
+---
+
+import Link from "@docusaurus/Link";
+import addBaseUrl from "@docusaurus/useBaseUrl";
+import Citation from "@site/src/components/Citation";
+import CitationFootnote from "@site/src/components/CitationFootnote";
+import Equation from '@site/src/components/Equation';
+import EquationNoRef from '@site/src/components/EquationNoRef';
+import EquationReference from '@site/src/components/EquationReference';
+import Figure from "@site/src/components/Figure";
+import FigureInline from "@site/src/components/FigureInline";
+import FigReference from "@site/src/components/FigureReference";
+import NavContainer from "@site/src/components/NavContainer";
+import ProcessList from "@site/src/components/ProcessList";
+import TableReference from "@site/src/components/TableReference";
+import TableVertical from "@site/src/components/TableVertical";
+import VersionSelector from "@site/src/components/VersionSelector";
+
+<NavContainer 
+  link="/desktop-applications/lifesim"
+  linkTitle="LifeSim"
+  document="desktop-applications/lifesim/technical-reference-manual"
+></NavContainer>
+
+# Agricultural Inventory
+
+## Chapter Overview
+
+When flooding occurs in agricultural areas, damage to existing crops and interruptions to the planting, growing, and harvesting of crops results in
+economic impacts. LifeSim can be used to compute the economic impacts of flooding these types of areas. The computational procedure and input sources
+for calculating agricultural damages have been defined in the HEC-FIA 3.0 Technical Reference Manual (USACE 2018). Computations of agricultural flood
+damage require a number of different inputs. Specifically, five inputs are required:
+
+Hydraulic data: if summary grids are used then a duration grid and agricultural arrival grid are required.
+
+National Agricultural Statistics Service Data
+
+Crop Budgets
+
+Crop Values
+
+Duration-Damage Relationships.
+
+The hydraulic data required to compute agricultural flood damages was discussed previously. The remaining four required inputs are described in the
+sections below.
+
+## National Agricultural Statistics Service Data
+
+The National Agricultural Statistics Service (NASS) Cropland Data Layer is a product that represents the type of crop and the geographic location of
+crops throughout the entire United States. NASS provides the Cropland Data Layer in GeoTiff format, where each cell represents a crop type. LifeSim
+can import this data directly from the NASS API to streamline the collection of the type and distribution of crops in the study area. The import data from
+ NASS window is shown in <FigReference figKey="figure-7" />-1.
+
+Alternatively, the user can go to the following website to download, research, and pre-process NASS Cropland Data:
+
+
+
+<Figure
+  figKey="figure-44"
+  src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0\figures\figure44.png"
+  alt="-1. LifeSim import of agricultural data from NASS."
+  caption="-1. LifeSim import of agricultural data from NASS."
+/>
+
+LifeSim also allows the user to import an existing crop data GeoTiff file into LifeSim. The distribution of each agricultural category in the study
+area is used in combination with the planting, harvesting, and crop loss relationship inputs (described below) in the calculation of agricultural
+flood damages.
+
+## Crop Budget Data
+
+Costs required to produce crops are necessary for the economic loss computations for agricultural areas. The Crop Loss Editor in LifeSim is used to
+define the cost of planting each crop type. Monthly crop planting costs in LifeSim can be either fixed or variable. The crop planting cost input data
+required for the economic loss computations is available from local Cooperative Extension System Offices, which can be found on the US Department of
+Agriculture’s website .
+
+The final components of the crop planting data required are the dates of the first possible and last possible plantings. This data is used to create a
+ function that represents the total value of the inputs in the field at any point in the year, which is converted to a percentage of the maximum total
+ value of the inputs in the field to calculate the percentage damageable at any point in the year.
+
+The maximum total value input into the field is not necessarily equivalent to the value achieved at market for the crops pulled from the field for two
+ reasons. First, the harvest cost and shipping costs need to be added to all of the inputs to get the full cost to produce the crops. Second, the
+value of the crop may be less than the cost to produce it. LifeSim uses a proration of the total value input less the harvest costs as a proxy for an
+exposed value.
+
+## Crop Value Data
+
+Crop characteristics are necessary for LifeSim to compute the appropriate reduction in crop value due to the costs associated with harvesting. The
+required input characteristics are harvest date, harvest cost, yield, unit price, and percentage of total crop value lost due to late planting. The
+values for each of these parameters are defined in the Crop Loss Editor.
+
+### Crop Loss Relationships
+
+Crop loss relationships are required for LifeSim to calculate the agricultural flood damages. Crop loss relationships in LifeSim define the percentage
+ of crop loss based on the number of days (i.e., duration) crops are inundated each month.
+
+## Computational Procedure
+
+This section details the computational procedures used by LifeSim to calculate agriculture flood damages at a single crop cell. The procedures assume
+inundation durations throughout the project area are known and have already been input to the model. Additionally, the procedures assume that crops
+are planted at the first available date after flooding and that crops will be planted immediately before an event (meaning that weather forecasting is
+ not considered). The computational procedures are detailed below.
+
+- Determine what type of crop the cell represents.
+
+- Determine the arrival of flooding for the crop cell.
+
+- Determine the duration of flooding for the crop cell.
+
+- Based on the arrival time and duration, determine if planting dates are impacted or if the crop is damaged before harvest.
+
+- If damaged during the growing season, determine if the duration is longer than the longest duration damage curve; if so, the farmer lost all value
+placed in the field so far. The loss is equivalent to the marketable value minus harvest costs, prorated by total value input to the field.
+
+- If flooding limited the ability to plant and the farmer was unable to plant the preferred crop, use the secondary crop, and the loss will be the
+total marketable value for the secondary crop less harvest costs minus the total marketable value for the primary crop less harvest costs.
+
+- If the flooding made the farmer plant later than the first day of the season for the primary crop but the farmer was able to plant the primary crop,
+ the damages are based on a reduction in full yield due to late planting. This is equivalent to total marketable value less harvest cost times
+1-percent loss due to late planting.
+
+- Calculate the loss for each crop cell in the inundated area using the process described above and output the crop type, location, duration, and
+total damage for each crop cell damaged.
+
+<CitationFootnote />

@@ -1,0 +1,1258 @@
+---
+title: "Structure Inventory and Associated Properties"
+---
+
+import Link from "@docusaurus/Link";
+import addBaseUrl from "@docusaurus/useBaseUrl";
+import Citation from "@site/src/components/Citation";
+import CitationFootnote from "@site/src/components/CitationFootnote";
+import Equation from '@site/src/components/Equation';
+import EquationNoRef from '@site/src/components/EquationNoRef';
+import EquationReference from '@site/src/components/EquationReference';
+import Figure from "@site/src/components/Figure";
+import FigureInline from "@site/src/components/FigureInline";
+import FigReference from "@site/src/components/FigureReference";
+import NavContainer from "@site/src/components/NavContainer";
+import ProcessList from "@site/src/components/ProcessList";
+import TableReference from "@site/src/components/TableReference";
+import TableVertical from "@site/src/components/TableVertical";
+import VersionSelector from "@site/src/components/VersionSelector";
+
+<NavContainer 
+  link="/desktop-applications/lifesim"
+  linkTitle="LifeSim"
+  document="desktop-applications/lifesim/technical-reference-manual"
+></NavContainer>
+
+# Structure Inventory and Associated Properties
+
+## Chapter Overview
+
+A structure inventory represents geospatial locations that contain damageable elements, typically a structure such as a home. Structure inventories
+are required by LifeSim to estimate direct economic damage for a flood event and initial population distribution. LifeSim can accept structure
+inventories in the form of point shapefiles generated outside LifeSim or downloaded from a National Structure Inventory (NSI) database (currently
+USACE only). See Appendix D for a discussion of NSI 2.0. This chapter describes how structure inventories and their attributes are used in LifeSim.
+
+The structure inventory must have the attributes defined in <TableReference tableKey="table-4" />-1 regardless of source. When importing from a
+shapefile, the user can specify required attributes (<TableReference tableKey="table-4" />-1) by associating them with the shapefile attributes. If a
+ required attribute is missing from the source shapefile, a user-defined default value can be globally assigned to all structures. The NSI has all of
+the required attributes which are included during import.
+
+<TableVertical
+  tableKey="table-2"
+  headers={
+[
+    [
+      { value: "Required attribute", rowSpan: 1, colSpan: 1 },
+      { value: "Definition", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  columns={
+[
+    [
+      { value: "Occupancy type", rowSpan: 1, colSpan: 1 },
+      { value: "Number of stories", rowSpan: 1, colSpan: 1 },
+      { value: "Construction type", rowSpan: 1, colSpan: 1 },
+      { value: "Foundation height", rowSpan: 1, colSpan: 1 },
+      { value: "Ground floor height", rowSpan: 1, colSpan: 1 },
+      { value: "Above ground floor height", rowSpan: 1, colSpan: 1 },
+      { value: "Attic height", rowSpan: 1, colSpan: 1 },
+      { value: "Population under 65 (night)", rowSpan: 1, colSpan: 1 },
+      { value: "Population over 65 (night)", rowSpan: 1, colSpan: 1 },
+      { value: "Population under 65 (day)", rowSpan: 1, colSpan: 1 },
+      { value: "Population over 65 (day)", rowSpan: 1, colSpan: 1 },
+      { value: "Structure value", rowSpan: 1, colSpan: 1 },
+      { value: "Content value", rowSpan: 1, colSpan: 1 },
+      { value: "Other value", rowSpan: 1, colSpan: 1 },
+      { value: "Vehicle value", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "Describes a class of structures (e.g., single family, no basement, raised foundation, one story).", rowSpan: 1, colSpan: 1 },
+      { value: "Number of stories of a structure.", rowSpan: 1, colSpan: 1 },
+      { value: "Describes what the structure is made of, predominant building material.", rowSpan: 1, colSpan: 1 },
+      { value: "The difference between the ground elevation and the ground floor elevation.", rowSpan: 1, colSpan: 1 },
+      { value: "Difference between the floor elevation and ceiling elevation of the ground floor.", rowSpan: 1, colSpan: 1 },
+      { value: "Difference between the floor elevation and ceiling elevation for each story above the ground floor.", rowSpan: 1, colSpan: 1 },
+      { value: "Difference between the ceiling elevation of the highest story and the roof elevation, may be zero in some structures.", rowSpan: 1, colSpan: 1 },
+      { value: "Estimate of people within a structure under the age of 65 during the night, (assumed to be 2AM).", rowSpan: 1, colSpan: 1 },
+      { value: "Estimate of people within a structure over the age of 65 during the night, (assumed to be 2AM).", rowSpan: 1, colSpan: 1 },
+      { value: "Estimate of people within a structure under the age of 65 during the day (assumed to be 2PM).", rowSpan: 1, colSpan: 1 },
+      { value: "Estimate of people within a structure over the age of 65 during the day (assumed to be 2PM).", rowSpan: 1, colSpan: 1 },
+      { value: "Value of a structure, typically in thousands of dollars.", rowSpan: 1, colSpan: 1 },
+      { value: "Value of what is inside the structure.", rowSpan: 1, colSpan: 1 },
+      { value: "User defined category.", rowSpan: 1, colSpan: 1 },
+      { value: "Value of vehicle(s) associated with structure.", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  alt="-1. Definitions of attributes required for structure shapefile."
+  caption="-1. Definitions of attributes required for structure shapefile."
+/>
+
+## Occupancy Type
+
+Structure occupancy types define common information for similar structures. Data used by the occupancy type include:
+
+- Depth-percent damage functions (structure, content, and other)
+
+- Structure value uncertainties
+
+- Foundation height uncertainties
+
+- Evacuation parameters
+
+- Structural submergence criteria
+
+The location of these parameters is in the Occupancy type window in LifeSim are shown in <FigReference figKey="figure-4" />-1.
+
+Each structure is required to have an occupancy type. Default occupancy types used in LifeSim follow the naming convention developed for HAZUS (
+{"\n"}<Citation citationKey="FEMA2019" />) are listed in Appendix D.
+
+Damage categories represent a grouping of occupancy types. LifeSim default damage categories are residential, commercial, industrial, and public. The
+user may specify their own occupancy types with unique depth-damage functions and uncertainty parameters. Structure inventories imported from the NSI
+will automatically have the LifeSim default occupancy types defined as attributes.
+
+<Figure
+  figKey="figure-7"
+  src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0\figures\figure7.png"
+  alt="-1. Occupancy type window in LifeSim."
+  caption="-1. Occupancy type window in LifeSim."
+/>
+
+### Depth-damage Functions
+
+For each occupancy type in the structure inventory, depth-damage functions are specified as shown in <FigReference figKey="figure-4" />-2. A
+depth-damage function
+
+<Figure
+  figKey="figure-8"
+  src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0\figures\figure8.png"
+  alt="-2. Depth-damage functions for economic damage computations."
+  caption="-2. Depth-damage functions for economic damage computations."
+/>
+
+is included for each default occupancy type for structure, content, and vehicle damage (<Citation citationKey="USACE2003" />;
+{"\n"}<Citation citationKey="FEMA2019" />). All curves can be edited by the user or user-defined curves added. Structure damage is also computed using
+ structure stability criteria. Refer to Section 11.3.1 for additional information on structure damage computations.
+
+### Evacuation Parameters Defined by Structure Occupancy Type
+
+In LifeSim, some evacuation parameters are specified by occupancy type. <TableReference tableKey="table-4" />-2 describes the various evacuation
+parameters, potential ranges for each, and the impact they have on the model outcome.
+
+:::danger
+This table contains cells that span multiple rows or columns. Manually update the React component to properly format the table.
+:::
+
+<TableVertical
+  tableKey="table-3"
+  headers={
+[
+    [
+      { value: "Parameter", rowSpan: 1, colSpan: 1 },
+      { value: "Default", rowSpan: 1, colSpan: 1 },
+      { value: "Range (Best Practice)", rowSpan: 1, colSpan: 1 },
+      { value: "Source Data / Considerations", rowSpan: 1, colSpan: 1 },
+      { value: "Sensitivity to Results", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  columns={
+[
+    [
+      { value: "Population in structure warned at the same time", rowSpan: 1, colSpan: 1 },
+      { value: "Population in structure takes protective action at the same time", rowSpan: 1, colSpan: 1 },
+      { value: "Probability of access to roof or attic", rowSpan: 1, colSpan: 1 },
+      { value: "Fraction to roof vs attic", rowSpan: 1, colSpan: 1 },
+      { value: "Fraction of population that evacuate in vehicles vs on foot", rowSpan: 1, colSpan: 1 },
+      { value: "Evacuating group size", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "All occupancy types except multi-family residential (RES3)", rowSpan: 1, colSpan: 1 },
+      { value: "Only on for AGR1, RES1, RES5, and RES6", rowSpan: 1, colSpan: 1 },
+      { value: "0.95", rowSpan: 1, colSpan: 1 },
+      { value: "0.9", rowSpan: 1, colSpan: 1 },
+      { value: "100%", rowSpan: 1, colSpan: 1 },
+      { value: "3 for all occupancy types except RES5. 48 for RES5", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "On or off", rowSpan: 1, colSpan: 1 },
+      { value: "On or off, only available to population warned at the same time.", rowSpan: 1, colSpan: 1 },
+      { value: "0-1.0", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "0-100", rowSpan: 1, colSpan: 1 },
+      { value: "1-48", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "Determines if population within a structure is warned independently or together.", rowSpan: 1, colSpan: 1 },
+      { value: "Determine if population within a structure can mobilize independently.", rowSpan: 1, colSpan: 1 },
+      { value: "Parameter set based on structure access not population mobility.", rowSpan: 1, colSpan: 1 },
+      { value: "Parameter set based on structure access not population mobility. Variable with percentage of structures with attics.", rowSpan: 1, colSpan: 1 },
+      { value: "Use of road network for pedestrians. Location dependent. Availability of public transport.", rowSpan: 1, colSpan: 1 },
+      { value: "Based on capacity of vehicle used for evacuation.", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "Low-High", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "Sensitive to depth of flooding and arrival time.", rowSpan: 1, colSpan: 1 },
+      { value: "Low", rowSpan: 1, colSpan: 1 },
+      { value: "High", rowSpan: 1, colSpan: 1 },
+      { value: "High if structures have high number of occupants and road network is congested.", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  alt="-2. Evacuation parameters and impact on model outcome."
+  caption="-2. Evacuation parameters and impact on model outcome."
+/>
+
+#### Population in Structure Warned at the Same Time
+
+By default in LifeSim, all occupants within a single structure of any occupancy type (except multi-family residential) receives a warning at the same
+time. This assumes that for all structures sharing the occupancy type, no matter how large or disconnected the structure, a system can warn the entire
+ building at once. In a large department store or warehouse this would take the form of an intercom as most large office buildings have emergency
+warning systems. Apartment buildings do not have such systems, therefore the default assumes each apartment acts as an independent residence. This
+does not account for apartments having close proximity to each other where residents are more likely to receive a first alert from their neighbor
+either as a verbal tip or visual cue.
+
+#### Population in Structure Takes Protective Action at the Same Time
+
+By default only four occupancy types (agricultural, single family residential, institutional dormitories, and nursing homes) take protective action at
+ the same time. This parameter is only available when the occupants in the structure are warned at the same time, therefore the first alert and
+protective action timeline should be the same for all evacuation groups within the structure. With the population in a structure taking protective
+action at the same time, all groups within a structure will evacuate nearly simultaneously. This assumes that single family residences will choose to
+evacuate using a single or multiple vehicles at the same time. Institutional dormitories such as prisons and school housing, as well as nursing homes,
+ contain residents that often lack the means to mobilize independently, and whose safety is a liability to the party operating the residence. The
+default for these occupancy types are set to evacuate at the same time using busses or a similar system of mass transit.
+
+#### Probability of Access to Roof or Attic
+
+This parameter refers to an occupant’s chances of reaching either the roof or attic when evacuating vertically providing them with increased
+above-ground height that increases their chances of survival depending on the hydraulics present at their structure. The current default for all
+occupancy types for probability of access to the roof or attic is 0.95, meaning that 95% of occupants will reach the roof or attic when evacuating
+vertically. A minority of occupants (5%) with full mobility will either lack the knowledge to access the roof or attic, be in a building that does not
+ have access, or choose not to try. Those occupants with limited mobility are excluded from accessing the roof or attic.
+
+#### Fraction to Roof vs Attic
+
+This parameter defines subsets of those with access to the roof or attic, and refers to the highest level attained by an occupant who is able to
+access the roof or attic. A percentage will be able to access the roof while others will be stuck in the attic. Users should consider many structure
+types do not have an attic so the fraction for that occupancy type should highly favor going to the roof. Also, LifeSim does not explicitly track
+people who go to the attic first and then end up on the roof. The default for all occupancy types for fraction to roof vs. attic is 0.9, meaning that
+90% of occupants who are able and have access will go to the roof. The default assumes that most people would ultimately continue to the roof if
+confronted with water in the attic, although some may be trapped. The default fraction assumes that a minority of occupants (10%) who have evacuated
+to the attic will lack the knowledge, will, or ability to reach the roof, if needed.
+
+#### Fraction of Population that Evacuate in Vehicles vs on Foot
+
+The default for the fraction of people evacuating on foot or by vehicle is set to begin the evacuation model using 100% vehicle evacuation. Roadway
+data are relatively readily available, but data on sidewalks, paths, and other infrastructure is minimal. Therefore, those evacuating on foot do so
+along the same roadway segments utilized by vehicular traffic. This may not accurately capture the population evacuating on foot as they are forced to
+ use roadway networks and would otherwise likely cut through areas like parks and other surfaces not accessible to vehicles. Currently LifeSim does
+not have the capability to add a pedestrian network for people evacuating on foot.
+
+#### Evacuating Group Size
+
+The evacuating group size, or number of people per evacuating vehicle, must be defined. This variable is defined by occupancy type with a default of
+three people per vehicle for all occupancy types except RES5 (institutional dormitories). The default is based on a family evacuating together in a
+standard automobile. If the warning is issued during daytime hours, most people would initially leave commercial and industrial structures (places of
+employment) alone in their vehicles resulting in a much smaller average group size. However, after leaving the workplace people would likely convene
+with their family at home and evacuate as a group, resulting in an evacuation group size closer to three. These additional stops, known as “trip
+chaining,” are not included in LifeSim simulations. People travel directly from their structure of origin towards their chosen destination.
+
+For RES5 structures, the evacuating group size default is 48 people per vehicle. This is based on historical evacuations of these types of structures,
+ which typically use busses to move large numbers of people.
+
+### Submergence Criteria
+
+Submergence is defined as a water level at a structure that can affect probability of survival. Submergence criteria are used to define the threshold
+between high hazard and low hazard conditions when people are trapped in a flooded structure. They are defined by occupancy type and are used in
+coordination with the roof and attic accessibility described above. The threshold of submergence is an uncertain parameter sampled uniquely for each
+structure. A description of each submergence criteria, their applications, and default values are shown in <TableReference tableKey="table-4" />-3.
+
+:::danger
+This table contains cells that span multiple rows or columns. Manually update the React component to properly format the table.
+:::
+
+<TableVertical
+  tableKey="table-4"
+  headers={
+[
+    [
+      { value: "Submergence criteria", rowSpan: 1, colSpan: 1 },
+      { value: "Description", rowSpan: 1, colSpan: 1 },
+      { value: "Applied to…", rowSpan: 1, colSpan: 1 },
+      { value: "Default Values", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  columns={
+[
+    [
+      { value: "A. High hazard depth from floor", rowSpan: 1, colSpan: 1 },
+      { value: "B. High hazard depth from ceiling", rowSpan: 1, colSpan: 1 },
+      { value: "C. High hazard depth on roof", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "If depth from floor is above the threshold then people will be placed in the high hazard zone.", rowSpan: 1, colSpan: 1 },
+      { value: "If depth from top of ceiling is above the threshold then people will be placed in the high hazard zone.", rowSpan: 1, colSpan: 1 },
+      { value: "If depth over the roof is greater than the threshold then people caught on roof will be placed in the high hazard zone.", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "Limited mobility occupants", rowSpan: 1, colSpan: 1 },
+      { value: "Able-bodied occupants", rowSpan: 2, colSpan: 1 },
+      null
+    ],
+    [
+      { value: "4 – 6 feet, Triangular distribution with 5 ft best estimate.", rowSpan: 1, colSpan: 1 },
+      { value: "0.5 – 1.5 feet, Triangular distribution with 1 ft best estimate.", rowSpan: 1, colSpan: 1 },
+      { value: "3 – 5 feet, Triangular distribution with 4 ft best estimate.", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  alt="-3. Submergence criteria."
+  caption="-3. Submergence criteria."
+/>
+
+The structure submergence criteria come in three types defined as A, B and C in <FigReference figKey="figure-4" />-3. Submergence criteria A is
+measured from the floor of the highest story in a building and used by people with limited mobility. The assumption in the default values is that
+people with limited mobility can get to the highest floor in any building (possibly with assistance from others), but that they do not climb or swim.
+Submergence criteria B is measured down from the ceiling of the highest story, representing an air pocket in a deeply flooded structure. Criteria B is
+ used for people without limited mobility that do not have access to the roof. This criteria is also used for people who go to the attic instead of
+the roof. The assumption in the default values is that people will climb on top of something to stay above the water.
+
+Submergence criteria C is measured from the top of the roof. It is used by people without limited mobility who access the roof. The assumption in the
+default values is if the water is higher than the roof, it must be slow moving or the structure would have already collapsed (and no vertical
+evacuation calculated). However, there may be some velocity and exposure to external elements like debris/rain/wind, so the values are lower than
+criteria A.
+
+The following is an example calculation using <FigReference figKey="figure-4" />-3 for reference for water that is 18 ft deep at the structure. The
+in-structure depth is 15 feet (15=18 – 3). For a 2-story building with no attic access and assuming the thresholds sampled the best estimate, Criteria
+ A is 14 feet (14 = 9+5), Criteria B-top floor is 17 feet (17 = 9 + 9 - 1), Criteria B-attic is 23 feet (23 = 9 + 9 + 6 - 1),  and Criteria C is 28
+feet (28 = 9 + 9 + 6 + 4). A person with limited mobility would be in the high hazard zone, but those who are able bodied in the structure would be
+low hazard.
+
+<Figure
+  figKey="figure-9"
+  src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0\figures\figure9.png"
+  alt="-3. Submergence schematic explaining how submergence criteria in a structure is used to determine hazard level in LifeSim."
+  caption="-3. Submergence schematic explaining how submergence criteria in a structure is used to determine hazard level in LifeSim."
+/>
+
+## Building Stability Criteria
+
+Building stability criteria refer to the hydraulic conditions used to determine whether or not a structure collapses when exposed to flooding.
+Generally, stability criteria thresholds are defined as a function of depth and velocity relative to the first floor of the structure. During a
+simulation, if both the depth and velocity reach a point above the functional threshold, then the structure is assumed to collapse.
+
+Building collapse is considered a high hazard situation for human safety and can have a significant impact on estimated life loss. LifeSim 2.0
+stability criteria must be assigned to each structure within the structure inventory prior to running a simulation. The building stability criteria
+used in LifeSim builds on what was initially developed as the Loss-of-Shelter function by Aboeleta and Bowles (2008). Users can create their own
+stability criteria thresholds or select from a set of stability thresholds included in the software. The LifeSim default building stability criteria
+are based on five common construction types (Appendix E). The five construction types are as follows:
+
+- <strong>Engineered</strong> - Steel and reinforced concrete construction where the walls are non-load bearing and instead the columns and beams
+carry the load. Walls may be masonry, wood, glass, etc. and are susceptible to collapse separate from the superstructure.
+
+- <strong>Wood-Anchored </strong>- Typical wood frame structure with load bearing walls that is bolted or anchored to the foundation and therefore
+less susceptible to floating off the foundation. Heavy construction structures made of heavy materials such as large timbers, homes with a brick
+façade, and homes with 2 or more stories are also more likely to resist floating and therefore may also be considered “anchored.”
+
+- <strong>Manufactured</strong> - Prefabricated houses that are constructed off-site and then assembled at the building site in sections e.g., mobile
+homes.
+
+- <strong>Masonry</strong> - Unreinforced stone or block structures.
+
+- <strong>Wood-Buoyant </strong>- Typical wood frame structure with load bearing walls that is not anchored or bolted to the foundation and is
+therefore highly susceptible to floating off the foundation.
+
+Most available research regarding structural flooding focuses on monetary damage models using depth-damage (in dollars) functions as opposed to
+stability. Appendix E summarizes a literature review of the best available information to date regarding stability and proposes recommended stability
+criteria for each construction type. Due to the variability in the functions presented, uncertainty is applied to the recommendations where
+applicable. Uncertainty is included to inform risk characterization by accounting for natural variability in hydraulic conditions and imperfect
+knowledge regarding construction types, quality of building components, weight, and other variables that can impact the overall stability of a given
+structure.
+
+### Assigning Structural Stability in LifeSim
+
+When importing structures from a shapefile, the user must assign structure stability functions. Stability criteria are assigned to structures using
+rules that relate stability functions to the structures attribute values. LifeSim has default rules that assign stability criteria for structures with
+ specific construction and/or occupancy types. <FigReference figKey="figure-4" />-4 shows the default stability criteria assignment list when importing
+ a shapefile.
+
+<Figure
+  figKey="figure-10"
+  src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0\figures\figure10.png"
+  alt="-4. Stability criteria assignment with default stability criteria."
+  caption="-4. Stability criteria assignment with default stability criteria."
+/>
+
+The user may also edit the default rule list by clicking on the “Create Rule” button as shown in <FigReference figKey="figure-4" />-5. Here, the user
+ has flexibility to set a rule based on any of the structure attributes within the inventory and select whether that rule should go into effect if
+“Any” or “All” of the criteria are satisfied. The rules are a “rule stack” so the order in which the criteria are defined is important. Meaning, if
+two rules could be applied to the same structure, the higher rule will dominate. The user should also take care to make sure all structures are
+covered by at least one rule or stability criteria will not be assigned.
+
+The structure stability criteria can be re-assigned after import using the Stability Criteria Assignment Tool.
+
+<Figure
+  figKey="figure-11"
+  src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0\figures\figure11.png"
+  alt="-5. Stability criteria assignment with ability to create a user-defined rule."
+  caption="-5. Stability criteria assignment with ability to create a user-defined rule."
+/>
+
+## Number of Stories
+
+Number of stories must be defined for all structures within the LifeSim model. It must be defined as any non-negative integer. Some structures can
+have zero stories such as a tent/campground, construction site, or field. Otherwise, number of stories should include all habitable stories within a
+structure. The height of the structure should not impact defining number of stories. For example, a 30-foot warehouse with a single floor should be
+assigned one story, while a residence of the same height with three floors should be assigned three stories. This parameter does not include
+basements, attics, or accessible roofs, which are accounted for via different inputs in the software.
+
+The following elements of LifeSim are generally dependent on the number of stories:
+
+- Vertical evacuation potential
+
+- Stability criteria
+
+- Structure and content damages
+
+People within structures have increased vertical evacuation potential with additional stories. In LifeSim it is assumed that all occupants, regardless
+ of age or mobility, can access higher stories within a structure. In general, a larger number of stories increases the chances of survival for
+occupants caught within a structure.
+
+The number of stories can also affect the stability threshold for structures within the inventory. For USACE stability functions based on CH2M Hill
+(1974), there is a positive relationship between number of stories and stability threshold, assuming that taller structures are built with stronger
+foundations, which are less likely to collapse due to flooding.
+
+The number of stories can impact the total damage to a structure and contents. For example, a two-story structure will incur less damage with 4’ of
+flooding than a one-story structure. The USACE and FEMA have established depth-damage functions for structures with different numbers of stories.
+Default depth-damage functions are specified in LifeSim for residential and non-residential structures. The default residential functions for
+structure and contents for residential structures are based on EGM 04-04 (<Citation citationKey="USACE2003" />). Non-residential functions are based
+on the functions defined in HEC-FIA (USACE 2015a).
+
+## Construction Type
+
+The construction type refers to the predominant building material, which can often differ from the structure’s appearance. For example, a single
+family home might have walls coated with stucco or a brick overlay, but because it is framed and supported with wood, it should be assigned a “wood” construction
+ type. The same principle applies to structures with steel frames.
+
+The construction type parameter is used primarily to define stability thresholds for each structure. It is not used in the LifeSim computations.
+Structures imported into LifeSim from NSI are automatically assigned a construction type. The construction type inputs listed in
+{"\n"}<TableReference tableKey="table-4" />-4 are standard within the NSI.
+
+<TableVertical
+  tableKey="table-5"
+  headers={
+[
+    [
+      { value: "Construction Type", rowSpan: 1, colSpan: 1 },
+      { value: "Examples", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  columns={
+[
+    [
+      { value: "“Wood”", rowSpan: 1, colSpan: 1 },
+      { value: "“Masonry”", rowSpan: 1, colSpan: 1 },
+      { value: "“Manufactured”", rowSpan: 1, colSpan: 1 },
+      { value: "“Concrete”", rowSpan: 1, colSpan: 1 },
+      { value: "“Steel”", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "Most permanent single family homes, some small businesses.", rowSpan: 1, colSpan: 1 },
+      { value: "Unreinforced brick and stone structures.", rowSpan: 1, colSpan: 1 },
+      { value: "Immobile trailers, modular homes.", rowSpan: 1, colSpan: 1 },
+      { value: "Concrete and cinderblock structures.", rowSpan: 1, colSpan: 1 },
+      { value: "Steel reinforced structures, high-rises, newer office buildings, newer warehouses,", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  alt="-4. LifeSim construction type inputs."
+  caption="-4. LifeSim construction type inputs."
+/>
+
+Other construction types may be input by the user and assigned to structures, but they will not automatically be assigned a stability function because
+ the default rules only encompass structures with NSI default construction types. User-defined rules must be set to ensure these structures are
+assigned a stability function.
+
+## Heights (foundation, ground floor, above ground, and attic)
+
+Foundation, ground floor, above ground floor, and attic heights are used within LifeSim to define the vertical evacuation potential for each
+structure. A diagram of the key structure height attributes is shown in <FigReference figKey="figure-4" />-6.
+
+LifeSim uses the structure heights and a vertical evacuation model (explained in Section 10.5) to simulate how occupants caught within a structure
+move up and away from flood waters. The height within the structure that occupants can reach and depth of flooding at the structure are necessary to
+establish the submergence criteria, which is discussed in more detail in Section 4.2.3.
+
+Structure height components must be defined for all structures within an inventory. The NSI only contains the foundation height parameter. The
+remaining three height parameters (ground floor, above ground, and attic height), must be imported from another source, manually assigned, or use
+default values available within LifeSim.
+
+<TableReference tableKey="table-4" />-5 shows default height values assigned by LifeSim.
+
+<Figure
+  figKey="figure-12"
+  src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0\figures\figure12.png"
+  alt="-6. Schematic of structure heights."
+  caption="-6. Schematic of structure heights."
+/>
+
+:::danger
+This table contains cells that span multiple rows or columns. Manually update the React component to properly format the table.
+:::
+
+<TableVertical
+  tableKey="table-6"
+  headers={
+[
+    [
+      { value: "Parameter", rowSpan: 1, colSpan: 1 },
+      { value: "Height", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  columns={
+[
+    [
+      { value: "Ground floor height", rowSpan: 1, colSpan: 1 },
+      { value: "Above ground floor height", rowSpan: 1, colSpan: 1 },
+      { value: "Attic height", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "9 ft", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "6 ft", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  alt="-5. Default height values assigned by LifeSim."
+  caption="-5. Default height values assigned by LifeSim."
+/>
+
+## Population Parameters
+
+LifeSim requires four population parameters defined for each structure. These include the under-65 population and over-65 population for both 2 pm
+(daytime) and 2 am (nighttime). It can be difficult to estimate the population for each structure in a structure inventory if it does not already
+exist. LifeSim has the capability to populate existing structures using data from the U.S. Census Bureau.
+
+### Population Parameters Defined by Alternative
+
+In LifeSim, some population parameters are specified by the alternative model component. <TableReference tableKey="table-4" />-6 describes the various
+ population parameters, potential ranges for each and the impact they have on the model outcome.
+
+:::danger
+This table contains cells that span multiple rows or columns. Manually update the React component to properly format the table.
+:::
+
+<TableVertical
+  tableKey="table-7"
+  headers={
+[
+    [
+      { value: "Parameter", rowSpan: 1, colSpan: 1 },
+      { value: "Default", rowSpan: 1, colSpan: 1 },
+      { value: "Range (Best Practice)", rowSpan: 1, colSpan: 1 },
+      { value: "Source Data / Considerations", rowSpan: 1, colSpan: 1 },
+      { value: "Sensitivity to Results", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  columns={
+[
+    [
+      { value: "Fraction limited mobility Under 65", rowSpan: 1, colSpan: 1 },
+      { value: "Fraction limited mobility Over 65", rowSpan: 1, colSpan: 1 },
+      { value: "Fraction That Can Swim", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "0.051", rowSpan: 1, colSpan: 1 },
+      { value: "0.226", rowSpan: 1, colSpan: 1 },
+      { value: "0.45", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "0-1", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "0.40-0.85", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "Regional health statistics, Determines ability to evacuate vertically", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "Regional statistics. Applies to those evacuating on foot. Determines hazard zone when caught in flood waters.", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "High", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "Depends on percent of evacuees on foot. Could be significant.", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  alt="-6. Population parameters defined for an alternative in LifeSim."
+  caption="-6. Population parameters defined for an alternative in LifeSim."
+/>
+
+#### Fraction Limited Mobility (Under/Over 65)
+
+Age is often used as a proxy for people with limited mobility and ability to self-rescue. The population in LifeSim is split into over and under 65
+years old because it is a common dividing line in federal data sets. The fatality rate applied is the same for all ages, but the chance that an
+elderly person reaches a low hazard zone (like a roof or attic in a flooded house) is less due to their higher probability of having limited mobility.
+ The phenomenon has been demonstrated in several flood events where elderly people (especially those living alone) are overrepresented in the fatality
+ data (Jonkman, 2008 [Katrina]; Jonkman et al., 2018 [Harvey]). An exception is when elderly people are living in multi-generational homes such as in
+Japan (Risher et al., 2017).
+
+In LifeSim 2.0, a fraction of population with limited mobility is treated separately for population over 65 and under 65. Limited mobility is used to
+determine vertical evacuation potential, i.e., the ability to access areas such as a roof. If a person has been determined to have limited mobility,
+LifeSim assumes that that person will not be able to evacuate above the highest story of a building to access the roof or attic. LifeSim assumes able
+bodied people without roof or attic access will climb onto furniture or take other measures inside the structure to stay above the water, but people
+with low mobility will not take these actions and will be subject to lower submergence thresholds.
+
+The fraction of population with limited mobility is a user-specified parameter entered separately for population over and under age 65. This parameter
+ is specified by alternative and applied to the structure inventory as a whole. The default values in LifeSim are based on the 2017 national average
+of people with “ambulatory difficulty” from U.S. Census data: 22.6% (over 65), and 5.1% (under 65). This information comes from the American Community
+ Survey (ACS), US. Census Bureau, 2017, .
+
+The U.S. Census Bureau tracks six types of disabilities in the “non-institutionalized population:”
+
+- Vision difficulty
+
+- Hearing difficulty
+
+- Cognitive difficulty
+
+- Ambulatory difficulty
+
+- Self-care difficulty
+
+- Independent living difficulty
+
+The U.S. Census Bureau also defines a generic disability status that varies by age (see  for definitions). The ambulatory difficulty survey question
+asked respondents if they had “serious difficulty walking or climbing stairs.”
+
+Using the non-institutionalized population as the basis for the percentage creates some limitations to the data. It can be applied to a community
+at-large but is not valid for institutional structures, especially those dedicated to caring for people with disabilities (e.g., hospitals, nursing
+homes). Non-institutionalized General Quarters (GQ) facilities are included in the data. The institutionalized GQ population includes (but is not
+limited to) people living in adult correctional facilities, juvenile facilities, nursing facilities/skilled nursing facilities, in-patient hospice
+facilities, residential schools for people with disabilities, and hospitals with patients who have no usual home elsewhere. The non-institutionalized
+GQ population includes people living in college/university student housing, military barracks, emergency and transitional shelters, and group homes
+(Brault, 2008, ). If institutional facilities are a significant percentage of the PAR, the overall percentage with limited mobility may need to be
+raised.
+
+The ACS data is available by state, county, city, or census tract and easy to parse. The fraction of limited mobility may vary significantly by
+region. Care should be taken to use a rate that represents the impacted area.
+
+Data also show the rate increases dramatically for populations over 75. If the impact area has an over 65 population that tends to be much older than
+average (e.g., senior living communities), the rate could be raised.
+
+Children are not considered separately from adults. Children are lumped together with adults under 65 because it is assumed if there is a child
+present, there is an adult nearby to help them overcome any mobility limitations. Conversely, adults over 65 usually won’t have a younger adult with
+them.
+
+#### Fraction That Can Swim
+
+Swimming ability is assigned randomly to the total population within the inventory based on a user defined percentage of people with swimming ability.
+ This is defined at the alternative level.
+
+In LifeSim, swimming ability is always considered when human stability is a factor in the computations. It is used to sort people into high and low
+hazard zones when they are exposed to deep but slow-moving water. These conditions do not cause structure failure and can be easily survived for a
+time by people who can swim. This includes scenarios in which a car loses stability but a person does not know if they will be in a low hazard
+situation instead of high hazard.
+
+It is assumed the swimming population can reach a lower risk situation if exposed to these conditions, but people in these conditions who cannot swim
+are placed in the high hazard zone. It is important to point out that if a person is assumed to have limited mobility they will not be able to swim.
+The stability of swimming people is shown in <FigReference figKey="figure-4" />-7. Swimming ability is applied for people evacuating on foot.
+
+The best practice range of swimming ability is 40% to 85% and may vary widely by region.  In a 1994 survey by Gilchrist et al. (2000), respondents
+self-reported that 63% could swim at least one pool length. A 2014 survey by the American Red Cross stated that 80% of people claimed they can swim,
+but only 56% of the swimmer group reported they can perform the five basic water competencies, indicating people have an overconfidence in their
+abilities. Based on those results, only 45% of all people can perform basic water competencies. Both surveys also noted significant demographic trends
+ in swimming ability for age, race, and gender.
+
+The Red Cross “water competencies” are focused on the ability to self-rescue. These critical water safety skills are the ability to, in this order:
+step or jump into the water over your head; return to the surface and float or tread water for one minute; turn around in a full circle and find an
+exit; swim 25 yards to the exit; and exit from the water. If in a pool, you should be able to exit without using the ladder.
+
+<Figure
+  figKey="figure-13"
+  src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0\figures\figure13.png"
+  alt="-7. Graphic example of a sampled stability curve function with zone of swim testing in LifeSim."
+  caption="-7. Graphic example of a sampled stability curve function with zone of swim testing in LifeSim."
+/>
+
+### Longitudinal Employer-Household Dynamics (LEHD) population assignment method
+
+The LEHD program is part of the Center for Economic Studies at the U.S. Census Bureau. The LEHD program produces high quality, cost effective, public
+use local labor market data and demographic data. LEHD data are based on different administrative sources, primarily Unemployment Insurance (UI)
+earnings data and the Quarterly Census of Employment and Wages (QCEW), censuses and surveys. LifeSim uses data on where workers live and work to
+inform where people are at different times during the day.
+
+Below is a summary of the steps and processes LifeSim uses to import population from LEHD into the structure inventory. The current implementation is
+only for U.S. Census 2010 data. Future implementations will include other years.
+
+Determine which counties overlap the structure inventory.
+
+Download census block data from each county that overlaps the structure inventory.
+
+Use point in polygon testing to associate which structures are within each census block.
+
+Get population data for each census block from the census data.
+
+Download the LEHD Origin-Destination Employment Statistics (LOADS) data for each state that the structure inventory is in.
+
+Get total jobs to and from census blocks that have been determined from step 3. This includes working population in census blocks coming from other
+states.
+
+Get fraction of population 65 years and over by census block.
+
+For each census block in the collection of overlapping census blocks it determines the total population split out by non-residential and residential.
+
+Residential population in a census block is determined using the following formulas:
+
+:::danger Equation 1 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-1"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 2 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-2"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 3 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-3"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 4 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-4"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+	where:
+
+:::danger Equation 5 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-5"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 6 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-6"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 7 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-7"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 8 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-8"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 9 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-9"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 10 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-10"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 11 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-11"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+Non-residential population in a census block is determined using the following formulas:
+
+:::danger Equation 12 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-12"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 13 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-13"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 14 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-14"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 15 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-15"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+	where:
+
+:::danger Equation 16 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-16"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 17 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-17"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 18 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-18"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 19 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-19"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 20 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-20"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 21 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-21"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+Distribute the population to structures based on their occupancy types and households.
+
+At each census block, the total daytime and nighttime household for residential and non-residential is calculated based on the structures in the
+census block and their occupancy types. Each structure is then assigned a household weight value as the structure household value divided by the total
+ household value for the structure damage category for both day and night.
+
+A table of default household values for occupancy types is provided in <TableReference tableKey="table-4" />-7.
+
+:::danger
+This table contains cells that span multiple rows or columns. Manually update the React component to properly format the table.
+:::
+
+<TableVertical
+  tableKey="table-8"
+  headers={
+[
+    [
+      { value: "Occupancy Type", rowSpan: 1, colSpan: 1 },
+      { value: "Daytime Households", rowSpan: 1, colSpan: 1 },
+      { value: "Nighttime Households", rowSpan: 1, colSpan: 1 },
+      { value: "Damage Category", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  columns={
+[
+    [
+      { value: "RES1-1SNB", rowSpan: 1, colSpan: 1 },
+      { value: "RES1-1SWB", rowSpan: 1, colSpan: 1 },
+      { value: "RES1-2SNB", rowSpan: 1, colSpan: 1 },
+      { value: "RES1-2SWB", rowSpan: 1, colSpan: 1 },
+      { value: "RES1-3SNB", rowSpan: 1, colSpan: 1 },
+      { value: "RES1-3SWB", rowSpan: 1, colSpan: 1 },
+      { value: "RES1-SLNB", rowSpan: 1, colSpan: 1 },
+      { value: "RES1-SLWB", rowSpan: 1, colSpan: 1 },
+      { value: "RES1", rowSpan: 1, colSpan: 1 },
+      { value: "RES2", rowSpan: 1, colSpan: 1 },
+      { value: "RES3AI", rowSpan: 1, colSpan: 1 },
+      { value: "RES3BI", rowSpan: 1, colSpan: 1 },
+      { value: "RES3CI", rowSpan: 1, colSpan: 1 },
+      { value: "RES3DI", rowSpan: 1, colSpan: 1 },
+      { value: "RES3EI", rowSpan: 1, colSpan: 1 },
+      { value: "RES3FI", rowSpan: 1, colSpan: 1 },
+      { value: "RES3A", rowSpan: 1, colSpan: 1 },
+      { value: "RES3B", rowSpan: 1, colSpan: 1 },
+      { value: "RES3C", rowSpan: 1, colSpan: 1 },
+      { value: "RES3D", rowSpan: 1, colSpan: 1 },
+      { value: "RES3E", rowSpan: 1, colSpan: 1 },
+      { value: "RES3F", rowSpan: 1, colSpan: 1 },
+      { value: "RES4", rowSpan: 1, colSpan: 1 },
+      { value: "RES5", rowSpan: 1, colSpan: 1 },
+      { value: "RES6", rowSpan: 1, colSpan: 1 },
+      { value: "COM1", rowSpan: 1, colSpan: 1 },
+      { value: "COM2", rowSpan: 1, colSpan: 1 },
+      { value: "COM3", rowSpan: 1, colSpan: 1 },
+      { value: "COM4", rowSpan: 1, colSpan: 1 },
+      { value: "COM5", rowSpan: 1, colSpan: 1 },
+      { value: "COM6", rowSpan: 1, colSpan: 1 },
+      { value: "COM7", rowSpan: 1, colSpan: 1 },
+      { value: "COM8", rowSpan: 1, colSpan: 1 },
+      { value: "COM9", rowSpan: 1, colSpan: 1 },
+      { value: "COM10", rowSpan: 1, colSpan: 1 },
+      { value: "IND1", rowSpan: 1, colSpan: 1 },
+      { value: "IND2", rowSpan: 1, colSpan: 1 },
+      { value: "IND3", rowSpan: 1, colSpan: 1 },
+      { value: "IND4", rowSpan: 1, colSpan: 1 },
+      { value: "IND5", rowSpan: 1, colSpan: 1 },
+      { value: "IND6", rowSpan: 1, colSpan: 1 },
+      { value: "AGR1", rowSpan: 1, colSpan: 1 },
+      { value: "REL1", rowSpan: 1, colSpan: 1 },
+      { value: "GOV1", rowSpan: 1, colSpan: 1 },
+      { value: "GOV2", rowSpan: 1, colSpan: 1 },
+      { value: "EDU1", rowSpan: 1, colSpan: 1 },
+      { value: "EDU2", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "1", rowSpan: 10, colSpan: 2 },
+      null,
+      { value: "1", rowSpan: 8, colSpan: 2 },
+      null,
+      { value: "1", rowSpan: 6, colSpan: 2 },
+      null,
+      { value: "1", rowSpan: 4, colSpan: 2 },
+      null,
+      { value: "1", rowSpan: 2, colSpan: 2 },
+      null,
+      { value: "2", rowSpan: 1, colSpan: 2 },
+      { value: "3.5", rowSpan: 1, colSpan: 2 },
+      { value: "7", rowSpan: 1, colSpan: 2 },
+      { value: "14.5", rowSpan: 1, colSpan: 2 },
+      { value: "34.5", rowSpan: 1, colSpan: 2 },
+      { value: "50", rowSpan: 1, colSpan: 2 },
+      { value: "2", rowSpan: 1, colSpan: 2 },
+      { value: "3.5", rowSpan: 1, colSpan: 2 },
+      { value: "7", rowSpan: 1, colSpan: 2 },
+      { value: "14.5", rowSpan: 1, colSpan: 2 },
+      { value: "34.5", rowSpan: 1, colSpan: 2 },
+      { value: "50", rowSpan: 4, colSpan: 2 },
+      null,
+      { value: "50", rowSpan: 2, colSpan: 2 },
+      null,
+      { value: "2", rowSpan: 10, colSpan: 1 },
+      null,
+      { value: "2", rowSpan: 8, colSpan: 1 },
+      null,
+      { value: "2", rowSpan: 6, colSpan: 1 },
+      null,
+      { value: "2", rowSpan: 4, colSpan: 1 },
+      null,
+      { value: "2", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "5", rowSpan: 6, colSpan: 1 },
+      null,
+      { value: "5", rowSpan: 4, colSpan: 1 },
+      null,
+      { value: "5", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "2", rowSpan: 4, colSpan: 1 },
+      null,
+      { value: "2", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "5", rowSpan: 2, colSpan: 1 },
+      null
+    ],
+    [
+      null,
+      { value: "1", rowSpan: 9, colSpan: 1 },
+      null,
+      { value: "1", rowSpan: 7, colSpan: 1 },
+      null,
+      { value: "1", rowSpan: 5, colSpan: 1 },
+      null,
+      { value: "1", rowSpan: 3, colSpan: 1 },
+      null,
+      { value: "1", rowSpan: 1, colSpan: 1 },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      { value: "50", rowSpan: 3, colSpan: 1 },
+      null,
+      { value: "50", rowSpan: 1, colSpan: 1 },
+      { value: "0.1", rowSpan: 10, colSpan: 1 },
+      null,
+      { value: "0.1", rowSpan: 8, colSpan: 1 },
+      null,
+      { value: "0.1", rowSpan: 6, colSpan: 1 },
+      null,
+      { value: "0.1", rowSpan: 4, colSpan: 1 },
+      null,
+      { value: "0.1", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "1", rowSpan: 6, colSpan: 1 },
+      null,
+      { value: "1", rowSpan: 4, colSpan: 1 },
+      null,
+      { value: "1", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "0.1", rowSpan: 6, colSpan: 1 },
+      null,
+      { value: "0.1", rowSpan: 4, colSpan: 1 },
+      null,
+      { value: "0.1", rowSpan: 2, colSpan: 1 },
+      null
+    ],
+    [
+      { value: "Residential", rowSpan: 25, colSpan: 1 },
+      null,
+      { value: "Residential", rowSpan: 23, colSpan: 1 },
+      null,
+      { value: "Residential", rowSpan: 21, colSpan: 1 },
+      null,
+      { value: "Residential", rowSpan: 19, colSpan: 1 },
+      null,
+      { value: "Residential", rowSpan: 17, colSpan: 1 },
+      null,
+      { value: "Residential", rowSpan: 15, colSpan: 1 },
+      null,
+      { value: "Residential", rowSpan: 13, colSpan: 1 },
+      null,
+      { value: "Residential", rowSpan: 11, colSpan: 1 },
+      null,
+      { value: "Residential", rowSpan: 9, colSpan: 1 },
+      null,
+      { value: "Residential", rowSpan: 7, colSpan: 1 },
+      null,
+      { value: "Residential", rowSpan: 5, colSpan: 1 },
+      null,
+      { value: "Residential", rowSpan: 3, colSpan: 1 },
+      null,
+      { value: "Residential", rowSpan: 1, colSpan: 1 },
+      { value: "Commercial", rowSpan: 10, colSpan: 1 },
+      null,
+      { value: "Commercial", rowSpan: 8, colSpan: 1 },
+      null,
+      { value: "Commercial", rowSpan: 6, colSpan: 1 },
+      null,
+      { value: "Commercial", rowSpan: 4, colSpan: 1 },
+      null,
+      { value: "Commercial", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "Industrial", rowSpan: 6, colSpan: 1 },
+      null,
+      { value: "Industrial", rowSpan: 4, colSpan: 1 },
+      null,
+      { value: "Industrial", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "Agriculture", rowSpan: 1, colSpan: 1 },
+      { value: "Religious", rowSpan: 1, colSpan: 1 },
+      { value: "Public", rowSpan: 2, colSpan: 1 },
+      null,
+      { value: "Education", rowSpan: 2, colSpan: 1 },
+      null
+    ]
+  ]
+  }
+  alt="-7. Distribution of population in structures."
+  caption="-7. Distribution of population in structures."
+/>
+
+:::danger Inline Equation Detected
+Insert `<EquationNoRef />` component(s) to render math in the following paragraph.
+:::
+Population is then determined per structure for day, night, over 65, and under 65 years of age by taking the population values calculated in Step 8
+and distributing them to the structures based on the weights calculated in Step 9a. Residential population values (e.g., ) are distributed to
+residential occupancy types and non-residential population is distributed to non-residential occupancy types.
+
+Once the population has been distributed to the structure inventory, the results are saved to the structure inventory attributes.
+
+### Human Stability Criteria
+
+People can be caught in open flood waters if they are evacuating by foot or they abandon a trapped vehicle for a nearby structure, high ground, or a
+destination. In these cases, pedestrian safety is compromised affecting their ability to remain standing or to traverse flood water and is considered
+as a function of the depths and velocities of the flood water at that location and human stability criteria <Citation citationKey="Russo2013" />. A
+person’s ability to remain standing is defined in LifeSim as thresholds of depth, velocity, and DV or DV<sup>2</sup>. If instantaneous depth and
+velocity at a person’s location exceeds the velocity or DV thresholds, then the person is assumed in a high hazard situation. If only the depth
+criteria is exceeded then a person’s hazard classification is dependent on the person’s ability to swim. The human stability criteria flow logic is
+summarized in <FigReference figKey="figure-4" />-8.
+
+There has been significant scientific research in a person’s ability to remain stable in flood waters. Most of the known research has been summarized
+in Shand et al., 2014 (<FigReference figKey="figure-4" />-9).
+
+Shand’s summary of existing research shows uncertainty about the depths and velocities required to cause a person to lose stability. Naturally variable
+ factors such as footing, clothing, shoe type, and a person’s health can all play into an individual’s ability to remain standing in flooding water.
+The default functions in LifeSim for human stability pulled heavily from the research documented in Shand et al., 2014. In LifeSim it is assumed that
+anyone with limited mobility, especially the young, will be with an able-bodied person who can help. The default function in LifeSim for human
+stability are shown in <FigReference figKey="figure-4" />-10.
+
+<Figure
+  figKey="figure-14"
+  src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0\figures\figure14.png"
+  alt="-8. Human stability criteria flow logic to determine hazard level."
+  caption="-8. Human stability criteria flow logic to determine hazard level."
+/>
+
+<Figure
+  figKey="figure-15"
+  src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0\figures\figure15.png"
+  alt="-9. Proposed hazard regimes compared to available experimental data (Shand et al., 2014)."
+  caption="-9. Proposed hazard regimes compared to available experimental data (Shand et al., 2014)."
+/>
+
+<Figure
+  figKey="figure-16"
+  src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0\figures\figure16.png"
+  alt="-10. Default stability criteria for humans."
+  caption="-10. Default stability criteria for humans."
+/>
+
+## Property Value
+
+Property values are attributes required by LifeSim for damage computations. The user can define any or all of the property values. Definitions of the
+different property values used in LifeSim are listed in <TableReference tableKey="table-4" />-8.
+
+<TableVertical
+  tableKey="table-9"
+  headers={
+[
+    [
+      { value: "Property values", rowSpan: 1, colSpan: 1 },
+      { value: "Definition", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  columns={
+[
+    [
+      { value: "Structure value", rowSpan: 1, colSpan: 1 },
+      { value: "Contents value", rowSpan: 1, colSpan: 1 },
+      { value: "Vehicle value", rowSpan: 1, colSpan: 1 },
+      { value: "Other value", rowSpan: 1, colSpan: 1 }
+    ],
+    [
+      { value: "The structure value is the value of the structure and does not include the contents value. Typically defined as the depreciated replacement value.", rowSpan: 1, colSpan: 1 },
+      { value: "Contents value is the value of the contents associated with the structure and does not include the structure value. This value is often based on a content-to-structure-value ratio (EM 1110-2-1619, USACE 1996).", rowSpan: 1, colSpan: 1 },
+      { value: "Vehicle value includes the value of any vehicles associated with the structure.", rowSpan: 1, colSpan: 1 },
+      { value: "Other value is the value of “other” property such as a garage associated with the structure, but does not include the structure value.", rowSpan: 1, colSpan: 1 }
+    ]
+  ]
+  }
+  alt="-8. Definitions of property values."
+  caption="-8. Definitions of property values."
+/>
+
+## General Modeling Guidelines
+
+- The user should consider the following when developing a structure inventory for an LifeSim study:
+
+- The user should always verify and check structure inventory data, especially structure placement, occupancy type, and foundation height as these
+attributes are used for damage and fatality estimates. Structure inventory files can be edited directly in LifeSim without going to an outside
+program. The user can validate data using areal imagery from web services such as Google Maps.
+
+- The spatial extent of the inventory should include anything that could possibly be impacted, typically the maximum inundated area.
+
+- One best practice for estimating foundation heights and structure types would be to use Google Street View or conduct a drive-by survey.
+
+- Depth-damage functions are defined in LifeSim by the structure occupancy type. For residential structures confirm that the occupancy type matches
+the number of stories. For example, a SFR (with no basement) with number of stories set to 1 should also have the occupancy type set as RES1-1SNB,
+(SFR one story, no basement) in order for the correct depth-damage function to be assigned.
+
+- The 2010 census data may be outdated in some places depending on development and migration trends. Consider adjustments to the growth of population from
+ the 2010 data until the next census data is released (likely 2023 or later). Most counties or large municipalities will have a population growth rate
+ since the last census and may also have estimates for future growth.
+
+- While the NSI is a great resource for the USACE, it is by no means perfect and should be reviewed thoroughly prior to use. Some of the most common
+NSI data issues include:
+
+  - Alignment and placement of structures.
+
+  - Population distribution in structures.
+
+  - Occupancy type definition.
+
+  - Foundation heights. 
+
+- Spot-checking your population data is a manual process. How population is distributed in structures should be reviewed. The user should ensure
+population estimates match the structure type (e.g., a mobile home with 100 people is not realistic). A quick check could include sorting inventory
+attributes by population and verifying the number of people associated with each occupancy type is appropriate.
+
+- When importing population from either the LEHD or NSI data source, the structures along the maximum inundation extent may only partially cover a
+census block (see <FigReference figKey="figure-4" />-11). In this case, only a portion of structures within the census block are included but they
+are populated with the total population in the census block. This may lead to over-populated structures around the perimeter.
+
+<Figure
+  figKey="figure-17"
+  src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0\figures\figure17.png"
+  alt="-11. Census block population inventory."
+  caption="-11. Census block population inventory."
+/>
+
+- In LifeSim the PAR is calculated as the number of people within structures subject to inundation at the time of warning issuance. This does not
+always include the entire population within the model, as people outside of the inundated area when the warning is issued would not be considered PAR.
+ However, those people outside the inundated area could still take protective action and be included in the traffic simulation. Depending on user
+preference, the structure inventory (and thus the population within the model) can be defined as only the structures subject to inundation, in which
+case the total population of the model and the PAR would be equal.
+
+- Currently “trip chaining” is not considered in LifeSim. Trip chaining is when a person makes multiple stops during the evacuation. For example, a
+mother may receive the first alert at work and drive to pick up her children at school before exiting the flooded area. LifeSim will only simulate the
+ mother’s evacuation from work to the destination she can reach fastest and not consider any stops in-between. The implications of ignoring trip
+chaining are the incorrect spatial distribution of population at the start of evacuation, misrepresentation of traffic congestion, and incorrect
+destination selection. There is currently no method to approximate trip chaining in an evacuation scenario.
+
+-
+
+<CitationFootnote />

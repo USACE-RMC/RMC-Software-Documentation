@@ -1,0 +1,456 @@
+---
+title: "Consequences"
+---
+
+import Link from "@docusaurus/Link";
+import addBaseUrl from "@docusaurus/useBaseUrl";
+import Citation from "@site/src/components/Citation";
+import CitationFootnote from "@site/src/components/CitationFootnote";
+import Equation from '@site/src/components/Equation';
+import EquationNoRef from '@site/src/components/EquationNoRef';
+import EquationReference from '@site/src/components/EquationReference';
+import Figure from "@site/src/components/Figure";
+import FigureInline from "@site/src/components/FigureInline";
+import FigReference from "@site/src/components/FigureReference";
+import NavContainer from "@site/src/components/NavContainer";
+import ProcessList from "@site/src/components/ProcessList";
+import TableReference from "@site/src/components/TableReference";
+import TableVertical from "@site/src/components/TableVertical";
+import VersionSelector from "@site/src/components/VersionSelector";
+
+<NavContainer 
+  link="/desktop-applications/lifesim"
+  linkTitle="LifeSim"
+  document="desktop-applications/lifesim/technical-reference-manual"
+></NavContainer>
+
+# Consequences
+
+## Chapter Overview
+
+This chapter covers how consequences are calculated in LifeSim. Consequences may be life loss, direct economic damages (e.g., property, agriculture),
+or indirect economic damages. Chapter 4 described how LifeSim calculations re-distribute the initial population by evacuation group through emergency
+response to avoid the oncoming hazard. They may have evacuated vertically in their structure, or evacuated the structure by vehicle or on foot. The
+result of those calculations places each evacuating group in a final location; safe, no hazard, low hazard, and high hazard. In this chapter, the
+impact of the hydraulic conditions are considered for each person and evacuating group to determine direct life loss. In addition, the hydraulic
+conditions at each structure and agricultural field are used to determine direct and indirect economic damages.
+
+## Life Loss
+
+Based on the assigned hazard zone categories, life-loss estimates are made using life-loss probability distributions developed by McClelland and
+Bowles (2000), updated by Aboelata, Bowles, and McClelland (2003) (Aboelata and Bowles 2008), and revised by USACE (Chapter 9).
+{"\n"}<FigReference figKey="figure-11" />-1 shows the distribution of fatality rates for population groups in the high hazard zone.
+
+As described in Section 4.7, the population is categorized as being in either a low or high hazard zone. LifeSim can calculate life loss for each
+person that ends up in either a low hazard or high hazard zone. The overall calculation is the same for both zones, only the hazard zone function (
+{"\n"}<FigReference figKey="figure-11" />-1) is different. For each group that has been assigned to a zone, a fatality rate is acquired by randomly
+sampling the relative frequency of exceedance. In other words, a group in the high hazard zone can be in a scenario representative of any other group
+represented in the dataset. By sampling the frequency of exceedance, naturally variable occurrences such as being able to hang on to passing debris or
+ finding an air pocket in a submerged structure are expressed.
+
+<FigReference figKey="figure-11" />-2 provides an example for one evacuating group. Assume the evacuating group consists of 3 people in a structure
+and the structure loses stability. In this example, the evacuating group is considered in the high hazard zone and randomly assigned a relative
+frequency of exceedance between zero and one (assume 0.58). That value on the x-axis translates to a fatality rate on the y-axis of 0.75. The fatality
+ rate represents, on average, 75% of the evacuating group will lose their life.
+
+<Figure
+  figKey="figure-61"
+  src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0\figures\figure61.png"
+  alt="-1. High hazard fatality rate function used in LifeSim."
+  caption="-1. High hazard fatality rate function used in LifeSim."
+/>
+
+<Figure
+  figKey="figure-62"
+  src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0\figures\figure62.png"
+  alt="-2. Example sampling of high hazard fatality rate function for one evacuating group."
+  caption="-2. Example sampling of high hazard fatality rate function for one evacuating group."
+/>
+
+After the fatality rate is determined life loss is calculated for each person in the group. To determine individual fatality, each person in the group
+ samples a random value between 0 and 1. If the random number is above 0.75 then the person survives, if it is below 0.75 then the person does not. In
+ the example case the structure fails, so all three people are placed in the high hazard zone. However, evacuating groups in flooded structures that
+do not collapse may be split between low and high hazard zones based on age and/or mobility.
+
+To reiterate the process, sample one fatality rate per group from either the high or low hazard function, then sample fatality per person in the
+group. By sampling the hazard zone fatality rate function randomly for each evacuating group, the fatality rates sampled for all the evacuating groups
+ in the population define the shape of the function. For example, about 47% of evacuating groups will have 100% fatalities in their group, and around
+13% of evacuating groups will have no fatalities in the group. The remaining 40% of the groups have some chance of fatalities and survival defined by
+the function.
+
+The reason for applying fatality rates at the level of the evacuating group is because conditions are going to be fairly consistent for a group. This
+reason is why the data to support the functions was collected at a group level. Research suggests that members of an evacuating group impact each
+other’s chances of survival in complex ways that are not modeled. By capturing these hidden dynamics in the data set, and applying them at the
+evacuating group level, LifeSim more accurately replicates the factors leading to life loss. For example in a family with young children, the adults
+will assist the children to reach safety and be hindered themselves by providing assistance. In a group of capable adults, the overall risk may be
+reduced by cooperation versus each person considered on their own.
+
+## Property Damage
+
+### Structure, Content, Vehicle, and Other Damage
+
+Direct damages to a building, its contents, and its vehicles are calculated for a single structure as follows:
+
+:::danger Equation 38 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-38"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+where D is the total direct damage for a structure, <em>s</em> is structure, <em>c</em> is contents, <em>v </em>is vehicles, and <em>o</em> is other;
+<em>d</em> is damage (in percent) as a function of depth and depth-damage function, and <em>v</em> is property value.
+
+To determine the percent direct damage to buildings, contents, and vehicles, both the depth at the structure and occupancy type of the structure need
+to be known. The depth is considered the maximum depth at the structure minus the foundation height.  The occupancy type is specified as part of the
+structure inventory and is associated with three individual depth-percent damage relationships, one each for the building, contents, and vehicles.
+There is also the option to define a fourth depth-percent damage function for an additional “other” category.  Therefore, the depth at the structure
+can be used to determine the percentage that the three components of the structure are damaged. This percent damage can then be multiplied by the
+building, contents, and vehicles values (specified in the structure inventory) to determine the total direct damage that occurs at and within a
+structure.
+
+A schematic of the direct damage computation procedure for a building is shown in <FigReference figKey="figure-11" />-3. At a depth of 7 feet, the
+building is 42% damaged, based on the depth-damage relationship. Multiplying the building value ($100,000) by the damage (42%) results in a direct
+building damage of $42,000. The direct damage to the contents and vehicles will also need to be added to the building damage of $42,000 to determine
+the total damage at and within the structure.
+
+<Figure
+  figKey="figure-63"
+  src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0\figures\figure63.png"
+  alt="-3. Direct building damage calculation procedure."
+  caption="-3. Direct building damage calculation procedure."
+/>
+
+Damages to vehicles are not impacted by the number of vehicles that leave during an evacuation. That consideration must be made outside of LifeSim
+before updating the structure inventory. The reason for not reducing the number of cars is that there are currently no good approximations for the
+number of cars at each structure. Since the population shifts according to work and school considerations, the location of the car may not match the
+population.
+
+The second consideration that can impact the direct damage computations occurs when a structures stability criteria is exceeded. Prior to any direct
+damage computations, LifeSim will check whether or not the structure lost stability. If the stability is lost the structure, contents, and vehicles
+will all automatically be assigned a total loss of 100%.
+
+Since collapse criteria require depth-on-structure (depth from ground – foundation height), a structure can’t collapse if flood level is below the
+foundation height.
+
+### Agricultural Damage
+
+The computational procedure and input sources for calculating agricultural damages have been defined in the HEC-FIA 3.0 Technical Reference Manual
+(USACE 2018). Damage to crops is dependent upon the value added by the farmer to the field at the time of flooding, and how much of that value is
+susceptible to flooding. The damage driving parameter is duration.
+
+Similar to structure depth-damage relationships, it is possible for agricultural damages to increase with longer durations.  However, since damage is
+also a function of how hardy the plant is, the damage for a given duration may change with time. For simplicity, the damage calculation is split into
+two pieces, the seasonally based value, and the seasonally based damage. A general expression of the damage calculation is as follows:
+
+:::danger Equation 39 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-39"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+where:
+
+:::danger Equation 40 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-40"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 41 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-41"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 42 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-42"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 43 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-43"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 44 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-44"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 45 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-45"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 46 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-46"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 47 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-47"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+where:
+
+:::danger Equation 48 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-48"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 49 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-49"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+:::danger Equation 50 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-50"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+To illustrate how the seasonally based value changes with time, an example plot is provided in <FigReference figKey="figure-11" />-4; here value is
+expressed as a portion of total exposed value:
+
+<Figure
+  figKey="figure-64"
+  src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0\figures\figure64.png"
+  alt="-4. Seasonal crop value example."
+  caption="-4. Seasonal crop value example."
+/>
+
+As shown in <FigReference figKey="figure-11" />-4, if a crop is planted late, it has a different value function.  It is assumed that if the flood
+does not interrupt the farmer, the crops will be planted on the first plant date. Thus, late planting will only occur if the flood start plus the
+duration ends before the late plant date but after the first plant date. This is intended to reflect that farmers may adopt different schedules for
+application of watering, fertilizer, and other processes in raising the crop.
+
+Damages also fluctuate based on seasonality.  Some crops can better withstand short duration floods if they are out of critical development stages.
+{"\n"}<FigReference figKey="figure-11" />-5 gives a general example of what seasonal duration damage relationships look like.
+
+Generally, longer durations would yield larger losses, and more mature plants would be more robust to damage.  However, as depicted in
+{"\n"}<FigReference figKey="figure-11" />-5, if farmers cannot harvest their crops at the proper time, the crop could be entirely lost.
+
+<Figure
+  figKey="figure-65"
+  src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0\figures\figure65.png"
+  alt="-5. Seasonal crop duration damage example."
+  caption="-5. Seasonal crop duration damage example."
+/>
+
+## Indirect Economic Damage
+
+The ECAM component within LifeSim utilizes the direct damages and life loss, computed as discussed in Chapter 10, are utilized to evaluate the losses
+of capital and labor as a ratio of the overall available capital and labor by sector. After labor losses and capital losses are described, they are
+submitted to the ECAM study component as inputs. ECAM then computes indirect losses.
+
+### Capital Losses
+
+Capital loss results are computed through three steps: (i) calculating the total exposed value per county; (ii) calculating the losses per county
+resulting from the event; and (iii) dividing the losses per county by the total exposed value per county for all non-residential structures, which
+results in a capital loss ratio per county. The procedure for calculating capital loss results is listed below.
+
+Calculate the total capital for county <em>c</em> (<em>TC<sub>c</sub></em>) by summing the structure and content values for all non-residential
+structures within county <em>c</em> using the following equation:
+
+:::danger Equation 51 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-51"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+where <em>TIC<sub>c</sub></em> is the total industrial capital for county <em>c</em>, <em>TCC<sub>c</sub></em> is the total commercial capital for
+county <em>c</em>, and <em>TPC<sub>c</sub></em> is the total public capital for county <em>c</em>.
+
+Calculate the total lost capital by summing the damages for each structure category, as computed in the direct damages computations. The total lost
+capital for county <em>c</em> (<em>LC<sub>c</sub></em>) is calculated using the following equation:
+
+
+
+:::danger Equation 52 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-52"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+where <em>LIC<sub>c</sub></em> is total lost industrial capital for county <em>c</em>, <em>LCC<sub>c</sub></em> is total lost commercial capital for
+county <em>c</em>, and <em>LPC<sub>c</sub></em> is total lost public capital for county <em>c</em>.
+
+Finally, a comparison between the lost capital for county <em>c</em> (<em>LC<sub>c</sub></em>) and the total capital for county <em>c</em>
+(<em>TC<sub>c</sub></em>) is expressed in terms of a capital loss ratio (C<em>L<sub>r</sub></em>). This ratio, which cannot be greater than 1 nor less
+ than 0, is calculated using the following formula:
+
+:::danger Equation 53 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-53"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+### Labor Losses
+
+To compute labor losses within LifeSim, the populations for all structures within the inventory that are impacted by the event are utilized. This
+means that populations in both residential and non-residential structures will be utilized to calculate labor loss based upon the population under the
+ age of 65 at 2:00 PM. The justification for that assumption is that although the entire population is not part of the workforce, it is assumed that
+the ratio of laborers to non-laborers within the study area is fixed both geospatially and temporally. The procedure for calculating labor losses was
+derived from the FEMA’s formulas for estimating population damage (<TableReference tableKey="table-13" />.2, Hazus-MH Technical Manual).  The
+methodology used in LifeSim is described below.
+
+Identify the number of people located in each impacted structure at 2:00 PM.
+
+:::danger Inline Equation Detected
+Insert `<EquationNoRef />` component(s) to render math in the following paragraph.
+:::
+Calculate the impact duration for each structure <em>s</em> () in hours using the following formula:
+
+:::danger Equation 54 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-54"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+where <em>D<sub>s</sub></em> is duration of flooding at structure <em>s</em> (hr), <em>C<sub>s</sub></em> is cleanup time at structure <em>s</em>
+(hr), and <em>R<sub>s</sub></em> is reconstruction time at structure <em>s</em> (hr). <em>I<sub>s</sub></em> may not exceed 8,766 hours (equivalent to
+ one year, or 365.25 days). <em>D<sub>s</sub></em>, <em>C<sub>s</sub></em>, and <em>R<sub>s</sub></em> are defined by the user in the ECAM tab of the
+Edit Alternative dialog.
+
+Calculate the number of labor hours displaced for the working population at each structure (<em>LHD<sub>s</sub></em>) using the following formula:
+
+:::danger Equation 55 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-55"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+where 2000 is the number of working hours per laborer per year, 365.25 is the number of days per year, 24 is the number of hours per day,
+<em>P<sub>s</sub></em> is the total population under 65 in structure <em>s</em>, and <em>L<sub>s</sub></em> is the life loss under 65 for structure
+<em>s</em>.
+
+Calculate the total labor loss at structure <em>s</em> (<em>LL<sub>s</sub></em>) in hours by adding the number of labor hours displaced for the
+working population (<em>LHD<sub>s</sub></em>) to the number of labor hours lost due to life loss using the following formula:
+
+:::danger Equation 56 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-56"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+where <em>L<sub>s</sub></em> is life loss at structure <em>s</em> and 2000 is the number of working hours per laborer per year.
+
+Calculate the cumulative labor loss for county <em>c</em> using the following formula:
+
+:::danger Equation 57 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-57"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+where <em>LL<sub>c</sub></em> is the labor loss for county <em>c</em> in hours, <em>LL<sub>s</sub></em> is the labor loss for structure <em>s</em>,
+and <em>n</em> is the number of structures within county <em>c</em>.
+
+Calculate total population during the day (<em>Popday</em>) per county using the following formula:
+
+:::danger Equation 58 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-58"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+where <em>ResidDay</em> is the daytime residential population, <em>WorkingCom</em> is the number of people commuting, <em>WorkingInd</em> is the
+number of people employed in the industrial sector, <em>Hotel</em> is number of people staying in hotels in the census tract, <em>Visitor</em> is the
+number of regional residents who do not live in the study area, <em>School EnrollmentKto12</em> is the number of grade school students,
+<em>College</em> is the number of collect and university students, and <em>Pop</em> is the census tract population.
+
+Calculate the total available workforce for county <em>c</em> (<em>WF<sub>c</sub></em>) using the following formula:
+
+:::danger Equation 59 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-59"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+where <em>EldersFrac</em> is the fraction of the population over age 65.
+
+Finally, a comparison between the labor loss for the county (<em>LL<sub>c</sub></em>) and the available labor for the county will be expressed in
+terms of a labor loss ratio (<em>LL<sub>r</sub></em>). This ratio, which cannot be greater than 1 nor less than 0, is calculated using the following
+formula:
+
+:::danger Equation 60 Placeholder
+Please replace the following component with your KaTeX-formatted equation:
+<Equation
+  equationKey="equation-60"
+  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+/>
+:::
+
+### Indirect Economic Losses
+
+To convert the capital loss ratio (CL<sub>r</sub>) and labor loss ratio (LL<sub>r</sub>) into a reduction in economic output, the ECAM system model
+requires information about the specific nature of the economy being analyzed. The ECAM system model determines whether the economy in question is
+capital or labor intensive, and what the rate of exchange is between labor and capital. Each county has a unique dataset that is used to define the
+specific economic characteristics assessed in the ECAM system model.
+
+Statistics for production, employment, income and all other economic indicators are based upon the IMPLAN (IMpact Analysis for PLANning) dataset,
+unless otherwise indicated. Each of these datasets can distinguish up to 440 separate production activities, ten household types, and four levels of
+government. The dataset used for evaluating indirect economics with ECAM and LifeSim has been aggregated from the full 440 sectors to 30 sectors.
+Additional information on the IMPLAN dataset is available from IMPLAN Group, LLC. Additional information on the ECAM system model can be found in
+Lehman, et al. .
+
+Outputs from the indirect losses computations include the following:
+
+Indirect Economic Damage Report
+
+Indirect Employment Loss Report
+
+<CitationFootnote />
