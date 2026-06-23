@@ -30,8 +30,8 @@ import VersionSelector from "@site/src/components/VersionSelector";
 
 If traffic is being simulated, road network and destination data are required in a LifeSim study to represent possible routes that people can take
 during an evacuation. The road network features can be categorized into multiple road types with attributes defining their census feature class code
-(CFCC see <TableReference tableKey="table-6" />-1), flow direction, and vertical offset. Destination features represent point locations on roads,
-generally outside of the inundation extents, where evacuating groups travel to and once they arrive are assumed safe.
+(CFCC; see <TableReference tableKey="table-14" />), flow direction, and vertical offset. Destination features represent point locations on roads –
+generally outside of the inundation extents – where evacuating groups travel to, and once they arrive, are assumed safe.
 
 The model simulates traffic along the road network starting with the first evacuating group that initiates protective action. When the evacuation is
 initiated, the road network does not have vehicles on it. Once a vehicle has entered the road network, drivers are able to make decisions about their
@@ -44,177 +44,118 @@ link that has already been found to be flooded.
 
 ## Computational Inputs
 
-LifeSim uses a modified version of the Greenshields traffic simulation model as shown in <EquationReference equationKey="equation-6" />-1 and
-{"\n"}<FigReference figKey="figure-6" />-1 to determine speed of vehicles at each time step <Citation citationKey="Mahmassani2009" />. If density
+LifeSim uses a modified version of the Greenshields traffic simulation model as shown 
+in <EquationReference equationKey="equation-10" />, <EquationReference equationKey="equation-11" />, and <FigReference figKey="figure-36" /> to determine 
+speed of vehicles 
+at each time step (Mahmassani et al., 2009) <Citation citationKey="Mahmassani2009" />. If density
 becomes high enough, speeds will begin to reduce. Break away density is the point at which vehicles transition from free-flow speeds to congested
 conditions and shift to a Greenshields model for speed and density relationships.
 
-:::danger Equation 23 Placeholder
-Please replace the following component with your KaTeX-formatted equation:
 <Equation
-  equationKey="equation-23"
-  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+  equationKey="equation-10"
+  equation="v_i = u_f, \qquad 0 \leq k_i \leq k_{bp}"
 />
-:::
 
-:::danger Inline Equation Detected
-Insert `<EquationNoRef />` component(s) to render math in the following paragraph.
-:::
-		(6-1)
+<Equation
+  equationKey="equation-11"
+  equation="v_i - v_0 = (v_f - v_0)\left(1 - \frac{k_i}{k_{jam}}\right)^\alpha, \qquad k_{bp} \leq k_i \leq k_{jam}"
+/>
 
 where:
 
-:::danger Equation 24 Placeholder
-Please replace the following component with your KaTeX-formatted equation:
-<Equation
-  equationKey="equation-24"
-  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
-/>
-:::
-
-:::danger Equation 25 Placeholder
-Please replace the following component with your KaTeX-formatted equation:
-<Equation
-  equationKey="equation-25"
-  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
-/>
-:::
-
-:::danger Equation 26 Placeholder
-Please replace the following component with your KaTeX-formatted equation:
-<Equation
-  equationKey="equation-26"
-  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
-/>
-:::
-
-:::danger Equation 27 Placeholder
-Please replace the following component with your KaTeX-formatted equation:
-<Equation
-  equationKey="equation-27"
-  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
-/>
-:::
-
-:::danger Equation 28 Placeholder
-Please replace the following component with your KaTeX-formatted equation:
-<Equation
-  equationKey="equation-28"
-  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
-/>
-:::
-
-:::danger Equation 29 Placeholder
-Please replace the following component with your KaTeX-formatted equation:
-<Equation
-  equationKey="equation-29"
-  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
-/>
-:::
-
-:::danger Equation 30 Placeholder
-Please replace the following component with your KaTeX-formatted equation:
-<Equation
-  equationKey="equation-30"
-  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
-/>
-:::
-
-:::danger Equation 31 Placeholder
-Please replace the following component with your KaTeX-formatted equation:
-<Equation
-  equationKey="equation-31"
-  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
-/>
-:::
+> _v<sub>i</sub>_ = speed on link i<br/>
+> _u<sub>f</sub>_ = free flow speed on link i<br/>
+> _k<sub>i</sub>_ = vehicular density on link i<br/>
+> _k<sub>bp</sub>_ = break point density<br/>
+> _v<sub>0</sub>_ = stop and go speed on link i<br/>
+> _v<sub>f</sub>_ = speed intercept<br/>
+> _k<sub>jam</sub>_ = jam density on link i<br/>
+> _α_ = Greenshields power term
 
 <Figure
   figKey="figure-36"
   src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0/figures/figure36.png"
-  alt="-1. The dual-regime modified greenshields model employed in LifeSim."
-  caption="-1. The dual-regime modified greenshields model employed in LifeSim."
+  alt="The dual-regime modified greenshields model employed in LifeSim."
+  caption="The dual-regime modified greenshields model employed in LifeSim."
 />
 
 ### Road Networks
 
 #### Linework
 
-The linework for the road network is generally imported from a shapefile or directly from the OpenStreetMap web service. OpenStreetMap is a
-collaborative project to create free editable maps of the world. It is supported by a large community of dedicated members to provide global GIS data.
+The linework for the road network is generally imported from a shapefile or directly from the OpenStreetMap web 
+service. OpenStreetMap is a collaborative project to create free editable maps of the world <Citation citationKey="OSM" />. It is supported by a 
+large community of dedicated members to provide global GIS data.
  LifeSim can take the road network information stored within the OpenStreetMap database and create a road network. Once the road network data is imported,
  the user can edit the data by defining one-way fields and vertical offsets.
 
 The directionality of one-way roads in the road network is important in LifeSim computations. Direction is determined by the order of the line points,
  where the first line point is the road entry and the last line point is the exit. Vehicles have unidirectional movement on a one-way road and cannot
-turn around. Examples of valid and invalid representations of one-way roads are shown in <FigReference figKey="figure-6" />-2.
+turn around. Examples of valid and invalid representations of one-way roads are shown in <FigReference figKey="figure-37" />.
 
 <Figure
   figKey="figure-37"
   src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0/figures/figure37.png"
-  alt="-2. One-way road valid and invalid representations."
-  caption="-2. One-way road valid and invalid representations."
+  alt="One-way road valid and invalid representations."
+  caption="One-way road valid and invalid representations."
 />
 
 Road network connectivity must be thoroughly reviewed by the user. The road endpoints must be within 2 feet to allow travel from one road segment to
-the next, as shown in <FigReference figKey="figure-6" />-3.
-
-
+the next, as shown in <FigReference figKey="figure-38" />.
 
 <Figure
   figKey="figure-38"
   src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0/figures/figure38.png"
-  alt="-3. Road network connectivity example."
-  caption="-3. Road network connectivity example."
+  alt="Road network connectivity example."
+  caption="Road network connectivity example."
 />
 
-Overpasses can possibly share end points with roads underneath. In <FigReference figKey="figure-6" />-4 (a), vehicles would be able to incorrectly
+Overpasses can possibly share end points with roads underneath. In <FigReference figKey="figure-39" />(a), vehicles would be able to incorrectly
 drive from the overpass directly onto the road underneath.
 
 <Figure
   figKey="figure-39"
   src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0/figures/figure39.png"
-  alt="-4. Road linework connectivity for overpasses."
-  caption="-4. Road linework connectivity for overpasses."
+  alt="Road linework connectivity for overpasses."
+  caption="Road linework connectivity for overpasses."
+  background="transparent"
 />
 
 The hydraulic characteristics for a roadway link is sampled at the centroid of the roadway line segment, this means that care must be taken for long
 roadway segments and steep terrain as the midpoint may not be a representative condition for hydraulics. An example of where the midpoint should be
-modified is shown in <FigReference figKey="figure-6" />-5.
+modified is shown in <FigReference figKey="figure-40" />.
 
 <Figure
   figKey="figure-40"
   src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0/figures/figure40.png"
-  alt="-5. Example of roadway segment that should be split into multiple segments (a) and (c) and an appropriate modification (b) and (d)."
-  caption="-5. Example of roadway segment that should be split into multiple segments (a) and (c) and an appropriate modification (b) and (d)."
+  alt="Example of roadway segment that should be split into multiple segments (a) and (c) and an appropriate modification (b) and (d)."
+  caption="Example of roadway segment that should be split into multiple segments (a) and (c) and an appropriate modification (b) and (d)."
+  background="transparent"
 />
 
-In <FigReference figKey="figure-6" />-5 (a) the road segment is long. If the hydraulic results are sampled at the centroid of the road segment as
-shown in <FigReference figKey="figure-6" />-5 (c), the depth would be a poorly represented in the first half of the road segment. If the same road
-segment is subdivided as shown in <FigReference figKey="figure-6" />-5 (b), then the hydraulic representation would be more accurate
-{"\n"}<FigReference figKey="figure-6" />-5 (d).
+In <FigReference figKey="figure-40" />(a), the road segment is long. If the hydraulic results are sampled at the centroid of the road segment as
+shown in <FigReference figKey="figure-40" />(c), the depth would be a poorly represented in the first half of the road segment. If the same road
+segment is subdivided as shown in <FigReference figKey="figure-40" />(b), then the hydraulic representation would be more 
+accurate <FigReference figKey="figure-40" />(d).
 
 #### Roadway Vertical Offset
 
 The vertical offset accounts for roads with elevations higher than the underlying terrain (e.g., bridges, overpasses, causeways). If the roadway is an
  overpass, then the vertical offset should be set to underlying terrain plus the height to the overpass roadway. Bridge segments typically have their
 midpoint over the channel and require vertical offsets to allow traffic to continue over the bridge without being impacted by the water flowing
-underneath. A schematic of a bridge vertical offset is shown in <FigReference figKey="figure-6" />-6.
+underneath. A schematic of a bridge vertical offset is shown in <FigReference figKey="figure-41" />.
 
 <Figure
   figKey="figure-41"
   src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0/figures/figure41.png"
-  alt="-6. Example of a vertical offset for a bridge segment."
-  caption="-6. Example of a vertical offset for a bridge segment."
+  alt="Example of a vertical offset for a bridge segment."
+  caption="Example of a vertical offset for a bridge segment."
 />
 
 #### Road Classification Data
 
-Roads are classified in LifeSim using common feature classification codes (CFCC). CFCC codes for roadway features are summarized in
-{"\n"}<TableReference tableKey="table-6" />-1.
-
-:::danger
-This table contains cells that span multiple rows or columns. Manually update the React component to properly format the table.
-:::
+Roads are classified in LifeSim using common feature classification codes (CFCC). CFCC codes for roadway features are summarized 
+in <TableReference tableKey="table-14" />.
 
 <TableVertical
   tableKey="table-14"
@@ -229,7 +170,6 @@ This table contains cells that span multiple rows or columns. Manually update th
   columns={
 [
     [
-      { value: "A00-A75 Roads", rowSpan: 1, colSpan: 2 },
       { value: "A00-A09", rowSpan: 1, colSpan: 1 },
       { value: "A10-A29", rowSpan: 1, colSpan: 1 },
       { value: "A30-A39", rowSpan: 1, colSpan: 1 },
@@ -249,7 +189,6 @@ This table contains cells that span multiple rows or columns. Manually update th
       { value: "A75", rowSpan: 1, colSpan: 1 }
     ],
     [
-      null,
       { value: "Primary road with limited access or interstate highway, unseparated or separated", rowSpan: 1, colSpan: 1 },
       { value: "Primary road with or without limited access, U.S. or state highways", rowSpan: 1, colSpan: 1 },
       { value: "Secondary or connecting road, state or county highways", rowSpan: 1, colSpan: 1 },
@@ -270,21 +209,19 @@ This table contains cells that span multiple rows or columns. Manually update th
     ]
   ]
   }
-  alt="-1. Definition of CFCC codes for roadways."
-  caption="-1. Definition of CFCC codes for roadways."
+  alt="Definition of CFCC codes for roadways: A00-A75 Roads."
+  caption="Definition of CFCC codes for roadways: A00-A75 Roads."
+  colWidths={[15, "auto"]}
+  widthMode="intrinsic"
 />
 
 The road classification attribute CFCC helps define common road parameters such as number of lanes, free flow speed, traffic jam density, break-away
-density, stop and go speed, and a Greenshields power term. When the user has a non-typical roadway type (for example, a highway that is 5 lanes) users
+density, stop and go speed, and a Greenshields power term. When the user has a non-typical roadway type (for example, a highway that is 5 lanes), users
  may need to create and define a new CFCC or edit an existing code as necessary to fit the individual situation (for a 5-lane highway example, the
 user could set the type to <em>A11 Primary road with limited access or interstate highway, unseparated,</em> and set the number of lanes to 5 lanes).
-The existing CFCC codes used in the LifeSim model are defaults, but can be edited. However, caution should be used prior to changing these parameters
-as they have a significant impact on the traffic simulation. Road classification data defaults are set in LifeSim and shown in
-{"\n"}<TableReference tableKey="table-6" />-2.
-
-:::danger
-This table contains cells that span multiple rows or columns. Manually update the React component to properly format the table.
-:::
+The existing CFCC codes used in the LifeSim model are defaults but can be edited. However, caution should be used prior to changing these parameters
+as they have a significant impact on the traffic simulation. Road classification data defaults in LifeSim are shown
+in <TableReference tableKey="table-15" />.
 
 <TableVertical
   tableKey="table-15"
@@ -313,10 +250,10 @@ This table contains cells that span multiple rows or columns. Manually update th
     ],
     [
       { value: "3", rowSpan: 1, colSpan: 1 },
-      { value: "2", rowSpan: 2, colSpan: 1 },
-      null,
-      { value: "1", rowSpan: 3, colSpan: 1 },
-      null,
+      { value: "2", rowSpan: 1, colSpan: 1 },
+      { value: "2", rowSpan: 1, colSpan: 1 },
+      { value: "1", rowSpan: 1, colSpan: 1 },
+      { value: "1", rowSpan: 1, colSpan: 1 },
       { value: "1", rowSpan: 1, colSpan: 1 }
     ],
     [
@@ -328,49 +265,45 @@ This table contains cells that span multiple rows or columns. Manually update th
       { value: "4", rowSpan: 1, colSpan: 1 }
     ],
     [
-      { value: "160", rowSpan: 5, colSpan: 1 },
-      null,
-      { value: "160", rowSpan: 3, colSpan: 1 },
-      null,
+      { value: "160", rowSpan: 1, colSpan: 1 },
+      { value: "160", rowSpan: 1, colSpan: 1 },
+      { value: "160", rowSpan: 1, colSpan: 1 },
+      { value: "160", rowSpan: 1, colSpan: 1 },
       { value: "160", rowSpan: 1, colSpan: 1 },
       { value: "90", rowSpan: 1, colSpan: 1 }
     ],
     [
       { value: "28", rowSpan: 1, colSpan: 1 },
-      { value: "23", rowSpan: 2, colSpan: 1 },
-      null,
+      { value: "23", rowSpan: 1, colSpan: 1 },
+      { value: "23", rowSpan: 1, colSpan: 1 },
       { value: "14", rowSpan: 1, colSpan: 1 },
-      { value: "5", rowSpan: 2, colSpan: 1 },
-      null
+      { value: "5", rowSpan: 1, colSpan: 1 },
+      { value: "5", rowSpan: 1, colSpan: 1 },
     ],
     [
-      { value: "4", rowSpan: 6, colSpan: 1 },
-      null,
-      { value: "4", rowSpan: 4, colSpan: 1 },
-      null,
-      { value: "4", rowSpan: 2, colSpan: 1 },
-      null
+      { value: "4", rowSpan: 1, colSpan: 1 },
+      { value: "4", rowSpan: 1, colSpan: 1 },
+      { value: "4", rowSpan: 1, colSpan: 1 },
+      { value: "4", rowSpan: 1, colSpan: 1 },
+      { value: "4", rowSpan: 1, colSpan: 1 },
+      { value: "4", rowSpan: 1, colSpan: 1 },
     ],
     [
       { value: "2.5", rowSpan: 1, colSpan: 1 },
-      { value: "2", rowSpan: 2, colSpan: 1 },
-      null,
-      { value: "1.5", rowSpan: 3, colSpan: 1 },
-      null,
+      { value: "2", rowSpan: 1, colSpan: 1 },
+      { value: "2", rowSpan: 1, colSpan: 1 },
+      { value: "1.5", rowSpan: 1, colSpan: 1 },
+      { value: "1.5", rowSpan: 1, colSpan: 1 },
       { value: "1.5", rowSpan: 1, colSpan: 1 }
     ]
   ]
   }
-  alt="-2. Road classification data defaults in LifeSim."
-  caption="-2. Road classification data defaults in LifeSim."
+  alt="Road classification data defaults in LifeSim."
+  caption="Road classification data defaults in LifeSim."
 />
 
-These values can be manually adjusted by the user for each individual CFCC. <TableReference tableKey="table-6" />-3 describes the CFCC defaults, best
- practices for selecting values, potential source data, and sensitivity of vales to LifeSim results.
-
-:::danger
-This table contains cells that span multiple rows or columns. Manually update the React component to properly format the table.
-:::
+These values can be manually adjusted by the user for each individual CFCC. <TableReference tableKey="table-16" /> describes the CFCC defaults, best
+practices for selecting values, potential source data, and sensitivity of values to LifeSim results.
 
 <TableVertical
   tableKey="table-16"
@@ -403,16 +336,16 @@ This table contains cells that span multiple rows or columns. Manually update th
       { value: "Parameter used to help define the relationship between speed and density of vehicles on the road network.", rowSpan: 1, colSpan: 1 }
     ],
     [
-      { value: "1 – 3", rowSpan: 1, colSpan: 1 },
-      { value: "4 mph – 65 mph", rowSpan: 1, colSpan: 1 },
+      { value: "1 - 3", rowSpan: 1, colSpan: 1 },
+      { value: "4 mph - 65 mph", rowSpan: 1, colSpan: 1 },
       { value: "90 vehicles per mile (vpm) or 160 vpm", rowSpan: 1, colSpan: 1 },
-      { value: "5 vpm – 28 vpm", rowSpan: 1, colSpan: 1 },
+      { value: "5 vpm - 28 vpm", rowSpan: 1, colSpan: 1 },
       { value: "4 mph", rowSpan: 1, colSpan: 1 },
-      { value: "1.5 – 2.5", rowSpan: 1, colSpan: 1 }
+      { value: "1.5 - 2.5", rowSpan: 1, colSpan: 1 }
     ],
     [
-      { value: "High", rowSpan: 2, colSpan: 1 },
-      null,
+      { value: "High", rowSpan: 1, colSpan: 1 },
+      { value: "High", rowSpan: 1, colSpan: 1 },
       { value: "Low", rowSpan: 1, colSpan: 1 },
       { value: "Moderate", rowSpan: 1, colSpan: 1 },
       { value: "Medium-High", rowSpan: 1, colSpan: 1 },
@@ -420,24 +353,25 @@ This table contains cells that span multiple rows or columns. Manually update th
     ]
   ]
   }
-  alt="-3. CFCC parameter use in LifeSim."
-  caption="-3. CFCC parameter use in LifeSim."
+  alt="CFCC parameter use in LifeSim."
+  caption="CFCC parameter use in LifeSim."
+  colWidths={[22, "auto", 20, 20]}
 />
 
-#### Free flow speed
+#### Free Flow Speed
 
 Free flow speed is the speed at which vehicles will travel when unimpeded by other vehicles. Values can be developed by roadway segment based on
 field-collected data. If speed studies are not a viable option, assumed speeds can be developed based on the posted speed limit for roadway segments.
 This value should be user-defined for each roadway type as it will impact model results.
 
-#### Jam density
+#### Jam Density
 
 As congestion begins to build on the roadway, vehicles will begin to form queues. The jam density is the theoretical density when traffic flow begins
 to approach zero. The Highway Capacity Manual states, “Jam density does not affect throughput, it only influences the formation and dissipation of
 queues at bottlenecks. Interestingly, an increase in the jam density value reduces both the forming and recovery wave speeds. The opposite situation
-occurs if jam density is decreased, in which case both the forming and recovery speeds will increase.”  (<Citation citationKey="TRB2016" />).
+occurs if jam density is decreased, in which case both the forming and recovery speeds will increase” (TRB, 2016) <Citation citationKey="TRB2016" />.
 
-#### Break point density
+#### Break Point Density
 
 Break away density is the point at which vehicles transition from free-flow speeds to congested conditions and shift to a Greenshields model for speed
  and density relationships. In general, the break point density should not need to be modified for local conditions.
@@ -445,8 +379,8 @@ Break away density is the point at which vehicles transition from free-flow spee
 #### Stop-and-Go Speed
 
 Stop-and-go speed is the speed that vehicles will travel when traffic jam conditions have been met. Stop-and-go speeds generally range between 1-15
-miles per hour with 5 miles per hour being the general guidelines for standard rush hour traffic. However, during an evacuation other conditions such
-as higher than average load on the network and weather can further reduce stop-and-go speeds. Therefore, a default of 4 mph has been specified.
+miles per hour (mph) with 5 mph being the general guidelines for standard rush hour traffic. However, during an evacuation, other conditions such
+as higher-than-average load on the network and weather can further reduce stop-and-go speeds. Therefore, a default of 4 mph has been specified.
 
 #### Greenshields Power Term
 
