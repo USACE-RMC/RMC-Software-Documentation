@@ -14,14 +14,15 @@ import WebAppIcon from '../components/icons/WebAppIcon';
 import '../css/custom.css';
 
 export default function Dev() {
+  const latestVersionsUrl = addBaseUrl('versions/latestVersions.json');
   const [latestVersions, setLatestVersions] = useState({});
 
   useEffect(() => {
-    fetch('/RMC-Software-Documentation/versions/latestVersions.json')
+    fetch(latestVersionsUrl)
       .then((response) => response.json())
       .then((data) => setLatestVersions(data))
       .catch((error) => console.error('Error loading latest versions:', error));
-  }, []);
+  }, [latestVersionsUrl]);
 
   const dstVersion = latestVersions['dev/dst/database-schema'] || 'v1.0';
 

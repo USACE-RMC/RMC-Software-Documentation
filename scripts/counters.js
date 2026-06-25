@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const reportIdMap = require('../src/reportIdMap'); // Importing the map correctly
+const { shouldExcludeFromBuild } = require('../src/docConfig');
 
 // Base paths
 const docsBasePath = path.join(__dirname, '../docs');
@@ -172,6 +173,12 @@ const allDocPaths = findAllDocumentPaths(docsBasePath);
 
 for (const docPath of allDocPaths) {
   const normalizedDocPath = normalizePath(docPath); // Normalize path here
+
+  // In prod, skip counters generation for docs flagged inactive in
+  // src/docConfig.js — they won't be in the build, so the counters would be
+  // dead weight.
+  if (shouldExcludeFromBuild(normalizedDocPath)) continue;
+
   const reportId = reportIdMap[normalizedDocPath];
 
   if (reportId) {

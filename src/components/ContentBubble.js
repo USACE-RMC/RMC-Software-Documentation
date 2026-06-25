@@ -37,6 +37,18 @@ const ContentBubble = ({
     pointer-events-none cursor-not-allowed
   `;
 
+  // In dev, allow inactive ("Coming Soon") tiles to be clickable so contributors
+  // can preview docs they're working on without flipping the active flag. In
+  // prod, the tile remains a non-clickable visual placeholder. Webpack injects
+  // process.env.NODE_ENV at build time: 'development' for `npm start`,
+  // 'production' for `npm run build`.
+  const isDevPreviewable = !active && process.env.NODE_ENV === 'development' && (doc_location || downloadUrl);
+  const inactiveDevClasses = `
+    coming-soon-gradient-card
+    hover:scale-[1.02]
+    cursor-pointer
+  `;
+
   // Build <ThemedImage /> sources, with fallback to legacy `icon`
   const sources = iconLight || icon ? { light: iconLight ?? icon, dark: iconDark ?? iconLight ?? icon } : null;
 
@@ -74,11 +86,23 @@ const ContentBubble = ({
     );
   }
 
-  return active ? (
-    <a href={doc_location} className={`${baseClasses} ${activeClasses}`}>
-      <Inner isDraft={draft} />
-    </a>
-  ) : (
+  if (active) {
+    return (
+      <a href={doc_location} className={`${baseClasses} ${activeClasses}`}>
+        <Inner isDraft={draft} />
+      </a>
+    );
+  }
+
+  if (isDevPreviewable) {
+    return (
+      <a href={downloadUrl ?? doc_location} className={`${baseClasses} ${inactiveDevClasses}`} {...(downloadUrl ? { download: true } : {})}>
+        <Inner comingSoon isDraft={draft} />
+      </a>
+    );
+  }
+
+  return (
     <div className={`${baseClasses} ${inactiveClasses}`}>
       <Inner comingSoon />
     </div>

@@ -1,0 +1,116 @@
+---
+title: Review and Approval Process Overview
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" />
+
+# Review and Approval Process Overview
+
+This chapter and the six that follow describe the review and approval process for all documentation published on the RMC Software Documentation website. Read this chapter first for the high-level picture, then refer to the role-specific chapter that applies to the task at hand.
+
+## Participants
+
+Six roles participate in the workflow. Only the author needs local development tooling; every other role works in a web browser.
+
+<TableVerticalNoRef
+  alt="Roles that participate in the review and approval workflow"
+  headers={[[{ value: 'Role' }, { value: 'Responsibility' }]]}
+  columns={[
+    [
+      'Author',
+      'Peer reviewer',
+      'RMC Lead Civil',
+      'Technical edit (AI-assisted)',
+      'Director',
+      'Site administrator',
+    ],
+    [
+      'Writes or revises the document. The only role that needs local development tooling.',
+      'Subject-matter expert assigned ad-hoc to review technical accuracy on the preview URL. Works entirely in the GitHub web interface.',
+      'Provides technical oversight and quality assurance. Assigned ad-hoc per document. Reviews on the preview URL.',
+      'AI-powered editorial review covering grammar, clarity, tense, terminology, and Section 508 accessibility. A team member with the necessary tooling triggers the review; the AI posts inline comments on the PR. A human technical editor can be substituted at the site admin\'s discretion.',
+      'The RMC Director provides final approval for new documents only. Reviews the document on the live site (with a DRAFT watermark) and clicks Approve — no file editing required.',
+      'Manages reviewer assignments, checkpoint deploys, merge preparation, and final deploys. The only role with access to protected parts of the repository.',
+    ],
+  ]}
+/>
+
+## The five review lanes
+
+Every change falls into one of five lanes based on its scope.
+
+<TableVerticalNoRef
+  alt="The five review lanes and what each requires"
+  headers={[[{ value: 'Lane' }, { value: 'Use case' }, { value: 'Review chain' }]]}
+  columns={[
+    [
+      'Lane 1: New document',
+      'Lane 2: Major revision',
+      'Lane 3: Minor revision',
+      'Lane 4: Editorial fix',
+      'Lane 5: Dev docs',
+    ],
+    [
+      'A new document being added to the site',
+      'Substantial changes warranting a new major version (e.g., v1.0 → v2.0)',
+      'Smaller updates warranting a minor version bump (e.g., v1.0 → v1.1)',
+      'Typos, broken links, grammatical corrections — no technical change',
+      'Any change to documents under docs/dev/ (developer guides, internal references)',
+    ],
+    [
+      'Peer → Lead Civil → Technical edit → Director',
+      'Peer → Lead Civil → Technical edit',
+      'Peer → Technical edit',
+      'None (site admin self-merges)',
+      'None (site admin self-merges)',
+    ],
+  ]}
+/>
+
+For Lane 1, peer review, Lead Civil review, and the technical edit all happen against the preview URL or the source MDX files. Only after the technical edit completes does the site administrator deploy the document to the live site (watermarked) for Director review at the document's final URL. For Lanes 2 and 3, the entire review happens on the preview URL — the live site continues to show the previously-published version, unwatermarked.
+
+See [Review Lanes](./10-review-lanes.mdx) for branch-prefix conventions and detailed examples.
+
+## The merge gate
+
+Every documentation PR carries a GitHub commit status called `review-workflow` that functions as the merge gate. Branch protection on `main` requires this status to be `success` before a PR can merge, so no participant — not even a site administrator — can merge a PR whose review is incomplete. The stage progression workflow sets the status automatically.
+
+<TableVerticalNoRef
+  alt="When the review-workflow commit status is pending versus success"
+  headers={[[{ value: 'Situation' }, { value: 'Status' }]]}
+  columns={[
+    [
+      'Any active review stage (peer, Lead Civil, AI editor, Director, or needs-lane)',
+      'stage:ready-to-merge (all reviews complete)',
+      'lane:editorial-fix or lane:dev assigned',
+      'Non-docs PR, CI Build passed',
+    ],
+    [
+      'pending',
+      'success',
+      'success (immediately)',
+      'success',
+    ],
+  ]}
+/>
+
+The status is re-evaluated on every push to a PR. The goal is that the merge button reflects the workflow's judgment, not the administrator's discretion.
+
+## The draft watermark
+
+Documents flagged as drafts display a large diagonal "DRAFT" watermark. For Lane 1, the watermark appears on the live site during the Director review phase only — the document is not deployed to the live site until the technical edit is complete. The watermark signals to any reader who finds the live URL that the content is not yet authoritative, and it is removed when the site administrator flips the draft flag after Director approval.
+
+For Lanes 2 and 3, the document under revision exists only on the preview site during review. The currently-published version on the live site is never watermarked.
+
+The watermark is **version-aware**: it renders only on the latest version of a flagged document. Older versions of the same document — accessible via direct URL — stay unwatermarked.
+
+## Where to go next
+
+- Authoring a document: see [Review Lanes](./10-review-lanes.mdx) and [Author Workflow](./11-author-workflow.mdx)
+- Reviewing as a peer or Lead Civil: see [Reviewer Workflow](./12-reviewer-workflow.mdx)
+- Running a technical edit: see [Technical Edit](./13-technical-edit.mdx)
+- Director approval for a new document: see [Director Workflow](./14-director-workflow.mdx)
+- Site administration: see [Site Admin Workflow](./15-site-admin-workflow.mdx)

@@ -137,11 +137,21 @@ The documentation guide is structured to take you from setup through advanced us
 
 8. **[Troubleshooting & FAQ](./08-troubleshooting-faq.mdx)** - Solutions to common problems
 
+### Review and Approval Process
+
+9. **[Review and Approval Process Overview](./09-review-and-approval-overview.mdx)** - Roles, lanes, the merge gate, and the draft watermark
+10. **[Review Lanes](./10-review-lanes.mdx)** - Branch prefixes and which review stages apply to each lane
+11. **[Author Workflow](./11-author-workflow.mdx)** - From branch creation to publication
+12. **[Reviewer Workflow](./12-reviewer-workflow.mdx)** - For peer reviewers and RMC Lead Civils
+13. **[Technical Edit](./13-technical-edit.mdx)** - AI-assisted editorial review (includes the full prompt)
+14. **[Director Workflow](./14-director-workflow.mdx)** - Final approval for new documents
+15. **[Site Admin Workflow](./15-site-admin-workflow.mdx)** - Reviewer assignment, checkpoint deploys, merge prep
+
 ### Appendices (Advanced Topics)
 
-- **[Appendix A: Source Code Structure](./09-appendix-a-source-code-structure.mdx)** - Deep dive into project architecture
-- **[Appendix B: Build Process Overview](./10-appendix-b-build-process-overview.mdx)** - How automation scripts work behind the scenes
-- **[Appendix C: Search Configuration](./11-appendix-c-search-configuration.mdx)** - Algolia search setup (admin-level)
+- **[Appendix A: Source Code Structure](./16-appendix-a-source-code-structure.mdx)** - Deep dive into project architecture
+- **[Appendix B: Build Process Overview](./17-appendix-b-build-process-overview.mdx)** - How automation scripts work behind the scenes
+- **[Appendix C: Search Configuration](./18-appendix-c-search-configuration.mdx)** - Algolia search setup (admin-level)
 
 ---
 
@@ -258,20 +268,24 @@ This is regular text with **bold** and _italic_ formatting.
 
 ## Common Contribution Workflows
 
+The `main` branch is protected. Every change goes through a feature branch and a pull request. The branch prefix routes the PR to one of five review lanes — see [Review Lanes](./10-review-lanes.mdx) for the full mapping.
+
 ### Workflow 1: Convert Existing Word Document
 
 **Use case:** You have an existing RMC document in Word format that needs to be converted to MDX.
 
 **Steps:**
 
-1. Place Word document in `static/source-documents/`
-2. Run DOCX converter script to generate MDX files
-3. Review and refine generated MDX files
-4. Add generated files to appropriate `docs/` folder
-5. Test locally with `npm start`
-6. Commit changes to Git
+1. Create a `docs/new/<slug>` branch off `main`.
+2. Place the Word document in `static/source-documents/`.
+3. Run the DOCX converter script to generate MDX files.
+4. Review and refine generated MDX files.
+5. Add generated files to the appropriate `docs/` folder.
+6. Register the document in `src/docConfig.js` with `active: false, draft: true`.
+7. Test locally with `npm start`.
+8. Commit, push the branch, and open a pull request. The review workflow auto-assigns Lane 1 (peer → Lead Civil → technical edit → Director).
 
-**Typical time:** 1-3 hours depending on document complexity
+**Typical time:** 1-3 hours depending on document complexity.
 
 ---
 
@@ -283,19 +297,20 @@ This is regular text with **bold** and _italic_ formatting.
 
 For a detailed, step-by-step guide to creating a new document from scratch, see [Chapter 04: Creating a New Document - Complete Walkthrough](./04-creating-new-document-walkthrough.mdx).
 
-The walkthrough includes folder setup, asset organization, administrator coordination, testing procedures, and complete examples.
+The walkthrough includes folder setup, asset organization, testing procedures, and complete examples.
 
 :::
 
 **High-Level Steps:**
 
-1. Determine folder location based on hierarchy (see [Complete Walkthrough](./04-creating-new-document-walkthrough.mdx))
-2. Create all folder structures (docs/, static/figures/, static/videos/, static/bibliographies/)
-3. Add supporting assets (figures, videos, bibliography)
-4. Create MDX files (using DOCX converter or manually)
-5. Test locally with `npm start`
-6. Contact site administrator for deployment coordination
-7. Commit changes to repository after approval
+1. Create a `docs/new/<slug>` branch off `main`.
+2. Determine folder location based on hierarchy (see [Complete Walkthrough](./04-creating-new-document-walkthrough.mdx)).
+3. Create all folder structures (`docs/`, `static/figures/`, `static/videos/`, `static/bibliographies/`).
+4. Add supporting assets (figures, videos, bibliography).
+5. Create MDX files (using the DOCX converter or manually).
+6. Register the document in `src/docConfig.js` with `active: false, draft: true`.
+7. Test locally with `npm start`.
+8. Commit, push, and open a PR. The review workflow auto-assigns Lane 1 and guides you through peer → Lead Civil → technical edit → Director review (see [Author Workflow](./11-author-workflow.mdx)).
 
 **For detailed instructions, templates, real-world examples, and troubleshooting, use the [comprehensive walkthrough](./04-creating-new-document-walkthrough.mdx).**
 
@@ -305,23 +320,27 @@ The walkthrough includes folder setup, asset organization, administrator coordin
 
 **Use case:** You need to update an existing document for a new software version or to correct errors.
 
-**For minor edits (typos, small clarifications):**
+**For typos and editorial fixes (Lane 4):**
 
-1. Edit the existing version's MDX files directly
-2. Test locally
-3. Commit changes
+1. Create a `docs/fix/<slug>` branch off `main`.
+2. Edit the existing version's MDX files directly.
+3. Test locally.
+4. Commit, push, and open a PR. The site admin will review and merge — no formal peer review required.
 
-**For major updates (new features, substantial changes):**
+**For minor revisions / new minor version (Lane 3):**
 
-1. Create new version folders (e.g., `v1.1/`)
-2. Copy all files from previous version
-3. Make updates to the new version
-4. Add new images to corresponding `static/figures/` version folder
-5. Update `bib.json` if needed
-6. Test locally
-7. Commit changes
+1. Create a `docs/minor/<slug>-v<version>` branch off `main`.
+2. Create the new version folder (e.g., `v1.1/`) by copying the previous version.
+3. Mirror the version structure for figures, bibliography, and source documents.
+4. Make your updates and flip `draft: true` on the document's entry in `src/docConfig.js`.
+5. Test locally.
+6. Commit, push, and open a PR. The workflow assigns Lane 3 (peer review → technical edit).
 
-**Typical time:** 30 minutes to 2 hours depending on scope
+**For major revisions / new major version (Lane 2):**
+
+Same as Lane 3 but on a `docs/major/<slug>-v<version>` branch. The workflow adds an RMC Lead Civil review stage between peer review and the technical edit.
+
+**Typical time:** 30 minutes to a few hours depending on scope. Review turnaround adds days; plan accordingly.
 
 ---
 

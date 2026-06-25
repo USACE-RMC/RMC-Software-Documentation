@@ -3,6 +3,14 @@ import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 
 import path from 'path';
+import { createRequire } from 'module';
+
+// Load the CommonJS docConfig for the prod-mode exclude list. The docs plugin
+// is happy with glob patterns; we expand each inactive doc_location to a
+// "**/*" glob so every nested MDX under it is excluded from the build.
+const require = createRequire(import.meta.url);
+const { getInactiveDocLocations } = require('./src/docConfig');
+const inactiveDocExcludes = process.env.DOCS_MODE === 'prod' ? getInactiveDocLocations().map((loc) => `${loc}/**`) : [];
 
 // Normalize the drive letter to uppercase on Windows to prevent webpack
 // "modules with names that only differ in casing" warnings.
@@ -69,6 +77,7 @@ export default {
           remarkPlugins: [remarkMath, remarkGfm],
           rehypePlugins: [rehypeKatex],
           breadcrumbs: true,
+          exclude: inactiveDocExcludes,
         },
         theme: {
           customCss: normalizeDriveLetter(require.resolve('./src/css/custom.css')),
@@ -89,14 +98,20 @@ export default {
   ],
 
   plugins: [
-    // Google Analytics plugin
-    [
-      '@docusaurus/plugin-google-gtag',
-      {
-        trackingID: 'G-LB2BWWGDTB',
-        anonymizeIP: true,
-      },
-    ],
+    // Google Analytics plugin — production builds only.
+    // Preview builds set DOCUSAURUS_IS_PREVIEW=true so they don't pollute
+    // the production GA property with pr-preview page views.
+    ...(process.env.DOCUSAURUS_IS_PREVIEW === 'true'
+      ? []
+      : [
+          [
+            '@docusaurus/plugin-google-gtag',
+            {
+              trackingID: 'G-LB2BWWGDTB',
+              anonymizeIP: true,
+            },
+          ],
+        ]),
 
     // TailwindCSS as a custom plugin
     tailwindPlugin,

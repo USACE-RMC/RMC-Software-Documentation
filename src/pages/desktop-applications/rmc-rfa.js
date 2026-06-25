@@ -3,32 +3,29 @@ import Layout from '@theme/Layout';
 import ThemedImage from '@theme/ThemedImage';
 import { useEffect, useState } from 'react';
 import ContentBox from '../../components/ContentBox';
+import { filterByCategoryAndSoftware } from '../../docConfig';
 import '../../css/custom.css';
 
-// Create the list of documents dynamically
-const RFAData = [
-  {
-    icon: 'img/RFA.png',
-    preserveIconColor: true,
-    doc_location: 'desktop-applications/rmc-rfa/users-guide',
-    doc_name: 'RMC RFA Users Guide',
-    active: true,
-    draft: false,
-  },
-];
+const ICON = 'img/RFA.png';
+
+const RFAData = filterByCategoryAndSoftware('desktop-applications', 'rmc-rfa').map((doc) => ({
+  ...doc,
+  icon: ICON,
+  preserveIconColor: true,
+}));
 
 export const RFADocs = RFAData;
 
 export default function RFA() {
+  const latestVersionsUrl = addBaseUrl('versions/latestVersions.json');
   const [latestVersions, setLatestVersions] = useState({});
 
   useEffect(() => {
-    // Fetch the latestVersions JSON file
-    fetch('/RMC-Software-Documentation/versions/latestVersions.json')
+    fetch(latestVersionsUrl)
       .then((response) => response.json())
       .then((data) => setLatestVersions(data))
       .catch((error) => console.error('Error loading latest versions:', error));
-  }, []);
+  }, [latestVersionsUrl]);
 
   const RFAData = RFADocs.map((doc) => ({
     ...doc,

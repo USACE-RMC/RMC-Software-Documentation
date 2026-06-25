@@ -1,9 +1,7 @@
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import { useEffect, useMemo, useState } from 'react';
 import { useReportId } from '../contexts/ReportIdContext';
 import '../css/custom.css';
-
-const STATIC_BASE = '/RMC-Software-Documentation'; // for /static assets like /counters
-const DOCS_ROUTE_BASE = '/RMC-Software-Documentation/docs'; // for doc pages
 
 // strip ".mdx" and any leading "digits-" prefix (e.g., "05-schmertmann" -> "schmertmann")
 const toDocSlug = (docId = '') => docId.replace(/\.mdx$/i, '').replace(/^\d{1,3}-/, '');
@@ -11,10 +9,12 @@ const toDocSlug = (docId = '') => docId.replace(/\.mdx$/i, '').replace(/^\d{1,3}
 const TableReference = ({ tableKey }) => {
   const [tableInfo, setTableInfo] = useState(null);
   const reportId = useReportId();
+  const countersBase = useBaseUrl('counters/');
+  const docsRouteBase = useBaseUrl('docs');
 
   useEffect(() => {
     if (!reportId) return;
-    const jsonPath = `${STATIC_BASE}/counters/${reportId}.json`;
+    const jsonPath = `${countersBase}${reportId}.json`;
     (async () => {
       try {
         const res = await fetch(jsonPath);
@@ -27,7 +27,7 @@ const TableReference = ({ tableKey }) => {
         console.error('Error loading counters:', e);
       }
     })();
-  }, [reportId, tableKey]);
+  }, [reportId, tableKey, countersBase]);
 
   const targetId = tableKey;
 
@@ -35,8 +35,8 @@ const TableReference = ({ tableKey }) => {
 
   const targetDocPath = useMemo(() => {
     if (!tableInfo?.parentDocPath || !docSlug) return '';
-    return `${DOCS_ROUTE_BASE}/${tableInfo.parentDocPath}/${docSlug}`;
-  }, [tableInfo?.parentDocPath, docSlug]);
+    return `${docsRouteBase}/${tableInfo.parentDocPath}/${docSlug}`;
+  }, [tableInfo?.parentDocPath, docSlug, docsRouteBase]);
 
   const isSamePage = useMemo(() => {
     const normalize = (p) => (p?.endsWith('/') ? p.slice(0, -1) : p || '');

@@ -3,51 +3,26 @@ import Layout from '@theme/Layout';
 import { useEffect, useState } from 'react';
 import ContentBox from '../../components/ContentBox';
 import ToolboxIcon from '../../components/icons/ToolboxIcon';
+import { filterByCategoryAndSoftware } from '../../docConfig';
 import '../../css/custom.css';
 
-// Create the list of documents dynamically
-const overtoppingSuite = [
-  {
-    IconComponent: ToolboxIcon,
-    doc_location: `toolbox-technical-manuals/overtopping-suite/riprap-stability`,
-    doc_name: 'Riprap Stability Toolbox Technical Manual',
-    active: false,
-    draft: true,
-  },
-  {
-    IconComponent: ToolboxIcon,
-    doc_location: `toolbox-technical-manuals/overtopping-suite/wave-overtopping`,
-    doc_name: 'Wave Overtopping Toolbox Technical Manual',
-    active: false,
-    draft: true,
-  },
-  {
-    IconComponent: ToolboxIcon,
-    doc_location: `toolbox-technical-manuals/overtopping-suite/scour-behind-floodwalls`,
-    doc_name: 'Scour Behind Floodwalls Toolbox Technical Manual',
-    active: false,
-    draft: true,
-  },
-  {
-    IconComponent: ToolboxIcon,
-    doc_location: `toolbox-technical-manuals/overtopping-suite/overtopping-erosion-toolbox-notes`,
-    doc_name: 'Overtopping Erosion Toolbox User Notes',
-    active: true,
-    draft: false,
-  },
-];
+const overtoppingSuite = filterByCategoryAndSoftware('toolboxes', 'overtopping-suite').map((doc) => ({
+  ...doc,
+  IconComponent: ToolboxIcon,
+}));
 
 export const overtoppingSuiteDocs = overtoppingSuite;
 
 export default function OvertoppingSuite() {
+  const latestVersionsUrl = addBaseUrl('versions/latestVersions.json');
   const [latestVersions, setLatestVersions] = useState({});
 
   useEffect(() => {
-    fetch('/RMC-Software-Documentation/versions/latestVersions.json')
+    fetch(latestVersionsUrl)
       .then((response) => response.json())
       .then((data) => setLatestVersions(data))
       .catch((error) => console.error('Error loading latest versions:', error));
-  }, []);
+  }, [latestVersionsUrl]);
 
   const overtoppingSuite = overtoppingSuiteDocs.map((doc) => ({
     ...doc,

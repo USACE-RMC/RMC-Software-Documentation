@@ -3,37 +3,26 @@ import Layout from '@theme/Layout';
 import { useEffect, useState } from 'react';
 import ContentBox from '../../components/ContentBox';
 import ToolboxIcon from '../../components/icons/ToolboxIcon';
+import { filterByCategoryAndSoftware } from '../../docConfig';
 import '../../css/custom.css';
 
-// Create the list of documents dynamically
-const seismicHazardSuite = [
-  {
-    IconComponent: ToolboxIcon,
-    doc_location: `toolbox-technical-manuals/seismic-hazard-suite/site-classification`,
-    doc_name: 'Site Classification Toolbox Technical Manual',
-    active: true,
-    draft: false,
-  },
-  {
-    IconComponent: ToolboxIcon,
-    doc_location: `toolbox-technical-manuals/seismic-hazard-suite/seismic-hazard-curves`,
-    doc_name: 'Seismic Hazard Curves Toolbox Technical Manual',
-    active: true,
-    draft: false,
-  },
-];
+const seismicHazardSuite = filterByCategoryAndSoftware('toolboxes', 'seismic-hazard-suite').map((doc) => ({
+  ...doc,
+  IconComponent: ToolboxIcon,
+}));
 
 export const seismicHazardSuiteDocs = seismicHazardSuite;
 
 export default function SeismicHazardSuite() {
+  const latestVersionsUrl = addBaseUrl('versions/latestVersions.json');
   const [latestVersions, setLatestVersions] = useState({});
 
   useEffect(() => {
-    fetch('/RMC-Software-Documentation/versions/latestVersions.json')
+    fetch(latestVersionsUrl)
       .then((response) => response.json())
       .then((data) => setLatestVersions(data))
       .catch((error) => console.error('Error loading latest versions:', error));
-  }, []);
+  }, [latestVersionsUrl]);
 
   const seismicHazardSuite = seismicHazardSuiteDocs.map((doc) => ({
     ...doc,

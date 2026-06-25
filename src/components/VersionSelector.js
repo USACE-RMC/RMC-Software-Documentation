@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useLocation } from "@docusaurus/router";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 import "../css/custom.css";
 
 const VersionSelector = ({ document }) => {
   const history = useHistory();
   const location = useLocation();
+  const versionListUrl = useBaseUrl("versions/versionList.json");
 
   const [versions, setVersions] = useState([]);
   const [selectedVersion, setSelectedVersion] = useState("");
@@ -18,7 +20,7 @@ const VersionSelector = ({ document }) => {
   useEffect(() => {
     const fetchVersions = async () => {
       try {
-        const response = await fetch("/RMC-Software-Documentation/versions/versionList.json");
+        const response = await fetch(versionListUrl);
         const data = await response.json();
         const versionList = data[document] || [];
 
@@ -34,7 +36,7 @@ const VersionSelector = ({ document }) => {
     };
 
     fetchVersions();
-  }, [document, location.pathname]);
+  }, [document, location.pathname, versionListUrl]);
 
   const handleVersionChange = async (event) => {
     const newVersion = event.target.value;
