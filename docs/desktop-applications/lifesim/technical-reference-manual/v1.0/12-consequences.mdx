@@ -29,59 +29,67 @@ import VersionSelector from "@site/src/components/VersionSelector";
 ## Chapter Overview
 
 This chapter covers how consequences are calculated in LifeSim. Consequences may be life loss, direct economic damages (e.g., property, agriculture),
-or indirect economic damages. Chapter 4 described how LifeSim calculations re-distribute the initial population by evacuation group through emergency
-response to avoid the oncoming hazard. They may have evacuated vertically in their structure, or evacuated the structure by vehicle or on foot. The
-result of those calculations places each evacuating group in a final location; safe, no hazard, low hazard, and high hazard. In this chapter, the
+or indirect economic damages. 
+Chapter <Link to="/docs/desktop-applications/lifesim/technical-reference-manual/v1.0/structure-inventory-and-associated-properties">Structure Inventory and 
+Associated Properties</Link> described 
+how LifeSim calculations re-distribute the initial population by evacuation group through emergency
+response to avoid the oncoming hazard. They may have evacuated vertically in their structure or evacuated the structure by vehicle or on foot. The
+result of those calculations places each evacuating group in a final location: safe, no hazard, low hazard, or high hazard. In this chapter, the
 impact of the hydraulic conditions are considered for each person and evacuating group to determine direct life loss. In addition, the hydraulic
 conditions at each structure and agricultural field are used to determine direct and indirect economic damages.
 
 ## Life Loss
 
 Based on the assigned hazard zone categories, life-loss estimates are made using life-loss probability distributions developed by McClelland and
-Bowles (2000), updated by Aboelata, Bowles, and McClelland (2003) (Aboelata and Bowles 2008), and revised by USACE (Chapter 9).
-{"\n"}<FigReference figKey="figure-11" />-1 shows the distribution of fatality rates for population groups in the high hazard zone.
+Bowles (2000) <Citation citationKey="McClellandBowles2000" />, updated by Aboelata, Bowles, and 
+McClelland (2003) <Citation citationKey="AboelataBowlesMcClelland2003" />, Aboelata 
+and Bowles (2008) <Citation citationKey="AboelataBowles2008" />, and revised by 
+USACE (Chapter <Link to="/docs/desktop-applications/lifesim/technical-reference-manual/v1.0/fatality-rates">Fatality Rates</Link>).
+<FigReference figKey="figure-61" /> shows the distribution of fatality rates for population groups in the high hazard zone.
 
-As described in Section 4.7, the population is categorized as being in either a low or high hazard zone. LifeSim can calculate life loss for each
-person that ends up in either a low hazard or high hazard zone. The overall calculation is the same for both zones, only the hazard zone function (
-{"\n"}<FigReference figKey="figure-11" />-1) is different. For each group that has been assigned to a zone, a fatality rate is acquired by randomly
+As described in Section <Link to="/docs/desktop-applications/lifesim/technical-reference-manual/v1.0/structure-inventory-and-associated-properties#population-parameters">Population Parameters</Link>, the 
+population is categorized as being in either a low or high hazard zone. LifeSim can calculate life loss for each
+person that ends up in either a low hazard or high hazard zone. The overall calculation is the same for both zones; only the hazard zone 
+function (<FigReference figKey="figure-61" />) is different. For each group that has been assigned to a zone, a fatality rate is acquired by randomly
 sampling the relative frequency of exceedance. In other words, a group in the high hazard zone can be in a scenario representative of any other group
 represented in the dataset. By sampling the frequency of exceedance, naturally variable occurrences such as being able to hang on to passing debris or
  finding an air pocket in a submerged structure are expressed.
 
-<FigReference figKey="figure-11" />-2 provides an example for one evacuating group. Assume the evacuating group consists of 3 people in a structure
+<FigReference figKey="figure-62" /> provides an example for one evacuating group. Assume the evacuating group consists of three people in a structure,
 and the structure loses stability. In this example, the evacuating group is considered in the high hazard zone and randomly assigned a relative
 frequency of exceedance between zero and one (assume 0.58). That value on the x-axis translates to a fatality rate on the y-axis of 0.75. The fatality
  rate represents, on average, 75% of the evacuating group will lose their life.
 
-<Figure
-  figKey="figure-61"
-  src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0/figures/figure61.png"
-  alt="-1. High hazard fatality rate function used in LifeSim."
-  caption="-1. High hazard fatality rate function used in LifeSim."
-/>
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+  <Figure
+    figKey="figure-61"
+    src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0/figures/figure61.png"
+    alt="High hazard fatality rate function used in LifeSim."
+    caption="High hazard fatality rate function used in LifeSim."
+  />
+  <Figure
+    figKey="figure-62"
+    src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0/figures/figure62.png"
+    alt="Example sampling of high hazard fatality rate function for one evacuating group."
+    caption="Example sampling of high hazard fatality rate function for one evacuating group."
+  />
+</div>
 
-<Figure
-  figKey="figure-62"
-  src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0/figures/figure62.png"
-  alt="-2. Example sampling of high hazard fatality rate function for one evacuating group."
-  caption="-2. Example sampling of high hazard fatality rate function for one evacuating group."
-/>
-
-After the fatality rate is determined life loss is calculated for each person in the group. To determine individual fatality, each person in the group
- samples a random value between 0 and 1. If the random number is above 0.75 then the person survives, if it is below 0.75 then the person does not. In
- the example case the structure fails, so all three people are placed in the high hazard zone. However, evacuating groups in flooded structures that
+After the fatality rate is determined, life loss is calculated for each person in the group. To determine individual fatality, each person in the group
+ samples a random value between 0 and 1. If the random number is above 0.75, then the person survives. If it is below 0.75, then the person does not. In
+ the example case, the structure fails, so all three people are placed in the high hazard zone. However, evacuating groups in flooded structures that
 do not collapse may be split between low and high hazard zones based on age and/or mobility.
 
 To reiterate the process, sample one fatality rate per group from either the high or low hazard function, then sample fatality per person in the
 group. By sampling the hazard zone fatality rate function randomly for each evacuating group, the fatality rates sampled for all the evacuating groups
- in the population define the shape of the function. For example, about 47% of evacuating groups will have 100% fatalities in their group, and around
+ in the population define the shape of the function. For example, about 47% of evacuating groups will have 100% fatalities in their group and around
 13% of evacuating groups will have no fatalities in the group. The remaining 40% of the groups have some chance of fatalities and survival defined by
 the function.
 
 The reason for applying fatality rates at the level of the evacuating group is because conditions are going to be fairly consistent for a group. This
 reason is why the data to support the functions was collected at a group level. Research suggests that members of an evacuating group impact each
-other’s chances of survival in complex ways that are not modeled. By capturing these hidden dynamics in the data set, and applying them at the
-evacuating group level, LifeSim more accurately replicates the factors leading to life loss. For example in a family with young children, the adults
+other's chances of survival in complex ways that are not modeled. By capturing these hidden dynamics in the data set and applying them at the
+evacuating group level, LifeSim more accurately replicates the factors leading to life loss. For example, in a family with young children, the adults
 will assist the children to reach safety and be hindered themselves by providing assistance. In a group of capable adults, the overall risk may be
 reduced by cooperation versus each person considered on their own.
 
@@ -91,35 +99,39 @@ reduced by cooperation versus each person considered on their own.
 
 Direct damages to a building, its contents, and its vehicles are calculated for a single structure as follows:
 
-:::danger Equation 38 Placeholder
-Please replace the following component with your KaTeX-formatted equation:
 <Equation
-  equationKey="equation-38"
-  equation="INSERT EQUATION HERE IN KaTeX FORMAT"
+  equationKey="equation-13"
+  equation="D = d_s * v_s + d_c * v_c + d_v * v_v + d_o * v_o"
 />
-:::
 
-where D is the total direct damage for a structure, <em>s</em> is structure, <em>c</em> is contents, <em>v </em>is vehicles, and <em>o</em> is other;
-<em>d</em> is damage (in percent) as a function of depth and depth-damage function, and <em>v</em> is property value.
+where 
+
+> _D_ = total direct damage for a structure.<br/>
+> <sub>s</sub> = structure.<br/>
+> <sub>c</sub> = contents.<br/>
+> <sub>v</sub> = vehicles.<br/>
+> <sub>o</sub> = other.<br/>
+> _d_ = damage (in percent) as a function of depth and depth-damage function.<br/>
+> _v_ = property value.
 
 To determine the percent direct damage to buildings, contents, and vehicles, both the depth at the structure and occupancy type of the structure need
-to be known. The depth is considered the maximum depth at the structure minus the foundation height.  The occupancy type is specified as part of the
+to be known. The depth is considered the maximum depth at the structure minus the foundation height. The occupancy type is specified as part of the
 structure inventory and is associated with three individual depth-percent damage relationships, one each for the building, contents, and vehicles.
 There is also the option to define a fourth depth-percent damage function for an additional “other” category.  Therefore, the depth at the structure
 can be used to determine the percentage that the three components of the structure are damaged. This percent damage can then be multiplied by the
 building, contents, and vehicles values (specified in the structure inventory) to determine the total direct damage that occurs at and within a
 structure.
 
-A schematic of the direct damage computation procedure for a building is shown in <FigReference figKey="figure-11" />-3. At a depth of 7 feet, the
-building is 42% damaged, based on the depth-damage relationship. Multiplying the building value ($100,000) by the damage (42%) results in a direct
-building damage of $42,000. The direct damage to the contents and vehicles will also need to be added to the building damage of $42,000 to determine
+A schematic of the direct damage computation procedure for a building is shown in <FigReference figKey="figure-63" />. At a depth of 7 feet, the
+building is 42% damaged based on the depth-damage relationship. Multiplying the building value (100,000 USD) by the damage (42%) results in a direct
+building damage of 42,000 USD. The direct damage to the contents and vehicles will also need to be added to the building damage of 42,000 USD to determine
 the total damage at and within the structure.
 
 <Figure
   figKey="figure-63"
   src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0/figures/figure63.png"
-  alt="-3. Direct building damage calculation procedure."
-  caption="-3. Direct building damage calculation procedure."
+  alt="Direct building damage calculation procedure."
+  caption="Direct building damage calculation procedure."
 />
 
 Damages to vehicles are not impacted by the number of vehicles that leave during an evacuation. That consideration must be made outside of LifeSim
@@ -128,10 +140,10 @@ number of cars at each structure. Since the population shifts according to work 
 population.
 
 The second consideration that can impact the direct damage computations occurs when a structures stability criteria is exceeded. Prior to any direct
-damage computations, LifeSim will check whether or not the structure lost stability. If the stability is lost the structure, contents, and vehicles
+damage computations, LifeSim will check whether or not the structure lost stability. If the stability is lost, the structure, contents, and vehicles
 will all automatically be assigned a total loss of 100%.
 
-Since collapse criteria require depth-on-structure (depth from ground – foundation height), a structure can’t collapse if flood level is below the
+Since collapse criteria require depth-on-structure (depth from ground minus foundation height), a structure can't collapse if flood level is below the
 foundation height.
 
 ### Agricultural Damage
@@ -333,7 +345,7 @@ To compute labor losses within LifeSim, the populations for all structures withi
 means that populations in both residential and non-residential structures will be utilized to calculate labor loss based upon the population under the
  age of 65 at 2:00 PM. The justification for that assumption is that although the entire population is not part of the workforce, it is assumed that
 the ratio of laborers to non-laborers within the study area is fixed both geospatially and temporally. The procedure for calculating labor losses was
-derived from the FEMA’s formulas for estimating population damage (<TableReference tableKey="table-13" />.2, Hazus-MH Technical Manual).  The
+derived from the FEMA's formulas for estimating population damage (<TableReference tableKey="table-13" />.2, Hazus-MH Technical Manual).  The
 methodology used in LifeSim is described below.
 
 Identify the number of people located in each impacted structure at 2:00 PM.
