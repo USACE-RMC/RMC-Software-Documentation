@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [opened, reopened, synchronize, labeled, edited, review_requested, review_request_removed]
   pull_request_review:
-    types: [submitted]
+    types: [submitted, dismissed]
 
 permissions:
   pull-requests: write
@@ -254,9 +254,9 @@ jobs:
                 await addLabels(['stage:needs-lane']);
                 await setReviewStatus('pending', STAGE_STATUS_DESC['stage:needs-lane']);
                 const reason = branch.startsWith('docs/')
-                  ? `Branch \`${branch}\` starts with \`docs/\` but does not match an expected sub-prefix (\`docs/new/\`, \`docs/major/\`, \`docs/minor/\`, \`docs/fix/\`, \`docs/dev/\`).`
-                  : `Branch \`${branch}\` does not follow the \`docs/{new,major,minor,fix,dev}/\` naming convention, but this PR modifies files under \`docs/\` and therefore requires a review lane.`;
-                await postComment(`⚠️ **Could not determine review lane**\n\n${reason}\n\n@usace-rmc/docs-admin please apply the correct \`lane:*\` label.`);
+                  ? `Branch \`${branch}\` doesn't match a known sub-prefix (\`docs/new/\`, \`docs/major/\`, \`docs/minor/\`, \`docs/fix/\`, \`docs/dev/\`), so the lane can't be auto-detected.`
+                  : `Branch \`${branch}\` doesn't follow the \`docs/{new,major,minor,fix,dev}/\` naming convention, and this PR modifies files under \`docs/\`.`;
+                await postComment(`📋 **Lane assignment needed**\n\n${reason}\n\n@usace-rmc/docs-admin please apply a \`lane:*\` label to route this PR.`);
                 return;
               }
               await initializeLane(lane);
@@ -281,9 +281,9 @@ jobs:
                   await addLabels(['stage:needs-lane']);
                   await setReviewStatus('pending', STAGE_STATUS_DESC['stage:needs-lane']);
                   const reason = branch.startsWith('docs/')
-                    ? `Branch \`${branch}\` starts with \`docs/\` but does not match an expected sub-prefix.`
-                    : `Branch \`${branch}\` does not follow \`docs/{new,major,minor,fix,dev}/\` naming. This PR now modifies files under \`docs/\` and requires a review lane.`;
-                  await postComment(`⚠️ **Could not determine review lane**\n\n${reason}\n\n@usace-rmc/docs-admin please apply the correct \`lane:*\` label.`);
+                    ? `Branch \`${branch}\` doesn't match a known sub-prefix.`
+                    : `Branch \`${branch}\` doesn't follow \`docs/{new,major,minor,fix,dev}/\` naming. This PR now modifies files under \`docs/\`.`;
+                  await postComment(`📋 **Lane assignment needed**\n\n${reason}\n\n@usace-rmc/docs-admin please apply a \`lane:*\` label to route this PR.`);
                   return;
                 }
                 await initializeLane(lane);
@@ -292,58 +292,117 @@ jobs:
 
               // Case B: lane + stage already set. Do NOT reset the stage —
               // revisions during a review round are normal and expected.
-              // Just re-set the commit status on the new head SHA (since
-              // statuses are per-SHA) and ping the assigned reviewer(s) to
-              // backcheck.
               if (existingStage === 'stage:ready-to-merge') {
-                await setReviewStatus('success', STAGE_STATUS_DESC['stage:ready-to-merge']);
-                await postComment(`⚠️ **New commits pushed after PR reached \`stage:ready-to-merge\`**\n\n@usace-rmc/docs-admin please eyeball the new changes before merging — the bot has re-set the \`review-workflow\` status to success, but this bypasses any incremental review of the latest push.`);
+                // Post-approval commits invalidate the merge gate. Flip the
+                // status back to pending until an admin re-acknowledges via
+                // the `admin:approve-merge-after-push` label. This prevents
+                // silent merge of changes that bypassed the review chain.
+                await setReviewStatus('pending', 'New commits pushed after ready-to-merge — admin re-approval required');
+                await postComment(`⚠️ **New commits pushed after PR reached \`stage:ready-to-merge\`**\n\nThe \`review-workflow\` merge gate has been flipped back to **pending** until an admin re-acknowledges the new commits.\n\n@usace-rmc/docs-admin please review the new changes. When ready to merge, apply the label \`admin:approve-merge-after-push\` — the bot will re-set the status to success and remove the label automatically.`);
                 return;
               }
               if (existingStage && STAGE_STATUS_DESC[existingStage]) {
                 await setReviewStatus('pending', STAGE_STATUS_DESC[existingStage]);
               }
               const syncState = await readState();
-              if (syncState && existingStage && syncState[existingStage] && syncState[existingStage].length > 0) {
-                const mentions = syncState[existingStage].map(u => '@' + u).join(', ');
-                const stageDisplay = STAGE_DISPLAY[existingStage] || existingStage;
-                await postComment(`🔄 **New commits pushed by @${prAuthor}.**\n\n${mentions} — please backcheck the revisions for **${stageDisplay}**.`);
+              const stageAssignees = (syncState && existingStage && syncState[existingStage]) || [];
+              if (stageAssignees.length > 0) {
+                // Only ping assignees who have actually submitted a review on
+                // this PR before. If a reviewer has never reviewed yet, there
+                // is nothing to "backcheck" — they'll see the new commits
+                // when they open the PR for the first time. This avoids
+                // pinging a newly-assigned reviewer every time the author
+                // pushes routine fixes before the review has started.
+                const reviewsForBackcheck = await github.paginate(github.rest.pulls.listReviews, {
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  pull_number: prNumber, per_page: 100,
+                });
+                const hasReviewed = new Set(reviewsForBackcheck.map(r => r.user && r.user.login).filter(Boolean));
+                const toNotify = stageAssignees.filter(u => hasReviewed.has(u));
+                if (toNotify.length > 0) {
+                  const mentions = toNotify.map(u => '@' + u).join(', ');
+                  const stageDisplay = STAGE_DISPLAY[existingStage] || existingStage;
+                  await postComment(`🔄 **New commits pushed by @${prAuthor}.**\n\n${mentions} — please backcheck the revisions for **${stageDisplay}**.`);
+                }
               }
               return;
             }
 
             // ── pull_request review_requested ────────────────────────
-            // An admin assigned an individual as a reviewer via the sidebar.
-            // Record them in the state comment under the current stage.
-            // Ignored if the request is for a team (payload.requested_team)
-            // instead of an individual — admins should request individuals.
+            // An admin assigned a reviewer via the sidebar. Two paths:
+            //   * Individual requests get recorded in the state comment
+            //     under either the current stage or an explicitly-pinned
+            //     stage (via an `assign:<stage>` label).
+            //   * Team requests get a one-time guidance comment — the bot
+            //     only gates on individual approvals, so admins still need
+            //     to assign individuals.
             if (eventName === 'pull_request' && action === 'review_requested') {
               if (!existingLane || !existingStage) return;
               if (!ACTIVE_REVIEW_STAGES.includes(existingStage)) return;
+
+              // Team request: post a one-time clarification so admins don't
+              // assume the team request is sufficient. Dedup'd via marker.
+              const requestedTeam = context.payload.requested_team && context.payload.requested_team.slug;
+              if (requestedTeam) {
+                const TEAM_REQUEST_MARKER = '<!-- team-request-guidance -->';
+                const comments = await github.paginate(github.rest.issues.listComments, {
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  issue_number: prNumber, per_page: 100,
+                });
+                const alreadyPosted = comments.some(c => c.body.includes(TEAM_REQUEST_MARKER));
+                if (!alreadyPosted) {
+                  await postComment(`${TEAM_REQUEST_MARKER}\nℹ️ **Team review requests don't advance the stage.**\n\nA review request for **@${context.repo.owner}/${requestedTeam}** is recorded by GitHub but the bot only gates stage advancement on **individual** reviewer approvals.\n\n@usace-rmc/docs-admin please assign one or more individuals via the Reviewers sidebar so their approvals can advance this PR.`);
+                }
+                return;
+              }
+
               const requested = context.payload.requested_reviewer && context.payload.requested_reviewer.login;
               if (!requested) return;
+
+              // Allow admins to pre-assign a reviewer for a later stage by
+              // first applying an `assign:<short-stage>` label (e.g.
+              // `assign:lead-civil-review`). Without that label, the
+              // assignment is recorded under the current stage.
+              const ASSIGN_PREFIX = 'assign:';
+              const assignLabel = labels.find(l => l.startsWith(ASSIGN_PREFIX));
+              let targetStage = existingStage;
+              if (assignLabel) {
+                const candidate = `stage:${assignLabel.slice(ASSIGN_PREFIX.length)}`;
+                if (ACTIVE_REVIEW_STAGES.includes(candidate)) {
+                  targetStage = candidate;
+                }
+              }
+
               const state = await ensureState();
-              if (!state[existingStage]) state[existingStage] = [];
-              if (!state[existingStage].includes(requested)) {
-                state[existingStage].push(requested);
+              if (!state[targetStage]) state[targetStage] = [];
+              if (!state[targetStage].includes(requested)) {
+                state[targetStage].push(requested);
                 await writeState(state);
               }
               return;
             }
 
             // ── pull_request review_request_removed ──────────────────
+            // Mirror the assignment logic: remove the reviewer from
+            // whichever stage's bucket they're in (they may have been
+            // pre-pinned to a stage other than the current one via the
+            // `assign:<stage>` label mechanism).
             if (eventName === 'pull_request' && action === 'review_request_removed') {
               if (!existingLane || !existingStage) return;
-              if (!ACTIVE_REVIEW_STAGES.includes(existingStage)) return;
               const removed = context.payload.requested_reviewer && context.payload.requested_reviewer.login;
               if (!removed) return;
               const state = await readState();
-              if (!state || !state[existingStage]) return;
-              const idx = state[existingStage].indexOf(removed);
-              if (idx !== -1) {
-                state[existingStage].splice(idx, 1);
-                await writeState(state);
+              if (!state) return;
+              let mutated = false;
+              for (const stage of ACTIVE_REVIEW_STAGES) {
+                if (!state[stage]) continue;
+                const idx = state[stage].indexOf(removed);
+                if (idx !== -1) {
+                  state[stage].splice(idx, 1);
+                  mutated = true;
+                }
               }
+              if (mutated) await writeState(state);
               return;
             }
 
@@ -370,12 +429,28 @@ jobs:
                 if (existingLane === 'lane:new-doc') {
                   await addLabels(['stage:director-review']);
                   await setReviewStatus('pending', STAGE_STATUS_DESC['stage:director-review']);
-                  await postComment(`✅ **Technical edit marked complete by site admin override.**\n\nAdvancing to **Director review**.\n\n@usace-rmc/docs-admin next steps:\n1. Trigger a checkpoint deploy of branch \`${branch}\` via Actions → Deploy to GitHub Pages → Run workflow (this is the first deploy of this PR to the live site, with the DRAFT watermark)\n2. Approve the deploy at the production environment gate\n3. Post the live URL in a comment on this PR\n4. Assign a member of @usace-rmc/docs-director via the Reviewers sidebar\n\nThe Director will review at the live URL. If the Director requests changes and the author pushes fixes, re-trigger the checkpoint deploy to refresh the live URL.`);
+                  await postComment(`✅ **Technical edit marked complete** by site admin override. Advancing to **Director review**.\n\n@usace-rmc/docs-admin please trigger the checkpoint deploy of \`${branch}\` and assign a director reviewer. See the Site Admin Workflow chapter of the Documentation Guide for the full sequence.`);
                 } else {
                   await addLabels(['stage:ready-to-merge']);
                   await setReviewStatus('success', STAGE_STATUS_DESC['stage:ready-to-merge']);
-                  await postComment(`✅ **Technical edit marked complete by site admin override.**\n\nThis PR is **ready for final merge and publication**.\n\n@usace-rmc/docs-admin next steps:\n1. Check out this branch\n2. Flip the document's \`draft\` flag to \`false\`\n3. Update \`00-version-history.mdx\`\n4. Commit and push\n5. Merge to \`main\`\n6. Approve the production deploy`);
+                  await postComment(`✅ **Technical edit marked complete** by site admin override. This PR is **ready for final merge and publication**.\n\n@usace-rmc/docs-admin please flip the \`draft\` flag, update \`00-version-history.mdx\`, merge to \`main\`, and approve the production deploy. See the Site Admin Workflow chapter of the Documentation Guide for the full sequence.`);
                 }
+                return;
+              }
+
+              // Admin override: re-approve a `stage:ready-to-merge` PR after
+              // post-approval commits were pushed. The bot flipped the merge
+              // gate to pending when those commits landed; this label flips
+              // it back to success and is then removed.
+              if (added === 'admin:approve-merge-after-push') {
+                if (existingStage !== 'stage:ready-to-merge') {
+                  await removeLabel('admin:approve-merge-after-push');
+                  await postComment(`⚠️ **admin:approve-merge-after-push** can only be applied to a PR currently at \`stage:ready-to-merge\`. Label removed, no action taken.`);
+                  return;
+                }
+                await removeLabel('admin:approve-merge-after-push');
+                await setReviewStatus('success', STAGE_STATUS_DESC['stage:ready-to-merge']);
+                await postComment(`✅ **Post-push merge re-approved** by @${context.payload.sender.login}. The \`review-workflow\` status is back to success and the PR is mergeable.`);
                 return;
               }
 
@@ -409,27 +484,48 @@ jobs:
                     // Lane 1: advance to Director review with checkpoint deploy
                     await addLabels(['stage:director-review']);
                     await setReviewStatus('pending', STAGE_STATUS_DESC['stage:director-review']);
-                    await postComment(`✅ **Technical edit marked complete** by the author.\n\nAdvancing to **Director review**.\n\n@usace-rmc/docs-admin next steps:\n1. Trigger a checkpoint deploy of branch \`${branch}\` via Actions → Deploy to GitHub Pages → Run workflow (this is the first deploy of this PR to the live site, with the DRAFT watermark)\n2. Approve the deploy at the production environment gate\n3. Post the live URL in a comment on this PR\n4. Assign a member of @usace-rmc/docs-director via the Reviewers sidebar\n\nThe Director will review at the live URL. If the Director requests changes and the author pushes fixes, re-trigger the checkpoint deploy to refresh the live URL.`);
+                    await postComment(`✅ **Technical edit marked complete** by the author. Advancing to **Director review**.\n\n@usace-rmc/docs-admin please trigger the checkpoint deploy of \`${branch}\` and assign a director reviewer. See the Site Admin Workflow chapter of the Documentation Guide for the full sequence.`);
                   } else {
                     // Lanes 2 & 3: no Director review — ready to merge
                     await addLabels(['stage:ready-to-merge']);
                     await setReviewStatus('success', STAGE_STATUS_DESC['stage:ready-to-merge']);
-                    await postComment(`✅ **Technical edit marked complete** by the author.\n\nThis PR is **ready for final merge and publication**.\n\n@usace-rmc/docs-admin next steps:\n1. Check out this branch\n2. Flip the document's \`draft\` flag to \`false\`\n3. Update \`00-version-history.mdx\`\n4. Commit and push\n5. Merge to \`main\`\n6. Approve the production deploy`);
+                    await postComment(`✅ **Technical edit marked complete** by the author. This PR is **ready for final merge and publication**.\n\n@usace-rmc/docs-admin please flip the \`draft\` flag, update \`00-version-history.mdx\`, merge to \`main\`, and approve the production deploy. See the Site Admin Workflow chapter of the Documentation Guide for the full sequence.`);
                   }
                 }
               }
               return;
             }
 
-            // ── pull_request_review submitted (approved) ─────────────
-            // Per-individual gating: an approval only advances the stage
-            // if the approver is in the assigned list for the current
-            // stage. Drive-by approvals from non-assigned reviewers are
-            // acknowledged with an info comment but do not advance.
-            if (eventName === 'pull_request_review' && context.payload.review.state === 'approved') {
+            // ── pull_request_review submitted / dismissed ────────────
+            // Three review outcomes are handled:
+            //   * approved  — advance the stage if the approver is in the
+            //                 assigned list for the current stage
+            //   * changes_requested — acknowledge with a comment; no stage
+            //                 change (the author needs to push fixes first)
+            //   * dismissed — warn admin that a prior approval was dropped;
+            //                 do not auto-revert the stage (too risky)
+            // The `commented` and `edited` cases are intentionally ignored.
+            if (eventName === 'pull_request_review') {
               if (!existingLane || !existingStage) return;
               if (!ACTIVE_REVIEW_STAGES.includes(existingStage)) return;
+              const reviewAction = context.payload.action;
+              const reviewState = context.payload.review.state;
               const reviewer = context.payload.review.user.login;
+
+              if (reviewAction === 'submitted' && reviewState === 'changes_requested') {
+                const stageDisplay = STAGE_DISPLAY[existingStage] || existingStage;
+                await postComment(`📝 **Changes requested** by @${reviewer} at **${stageDisplay}**.\n\n@${prAuthor} please address the comments and push fixes. The stage will advance once an assigned reviewer approves.`);
+                return;
+              }
+
+              if (reviewAction === 'dismissed') {
+                const dismissedBy = (context.payload.sender && context.payload.sender.login) || 'unknown';
+                await postComment(`⚠️ **Review by @${reviewer} was dismissed** by @${dismissedBy}.\n\nThe stage label has not been changed automatically. @usace-rmc/docs-admin if this dismissal means a prior stage's approval is no longer valid, please manually revert the stage labels and request a re-review.`);
+                return;
+              }
+
+              // Only approval submissions reach here.
+              if (reviewAction !== 'submitted' || reviewState !== 'approved') return;
 
               const state = await readState();
               const assigned = (state && state[existingStage]) || [];
@@ -444,26 +540,26 @@ jobs:
               if (existingLane === 'lane:new-doc') {
                 if (existingStage === 'stage:peer-review') {
                   nextStage = 'stage:lead-civil-review';
-                  comment = `✅ **Peer review approved** by @${reviewer}.\n\nAdvancing to **RMC Lead Civil review**.\n\n@usace-rmc/docs-admin please assign the Lead Civil reviewer(s) via the Reviewers sidebar. The Lead Civil reviews on the preview URL.`;
+                  comment = `✅ **Peer review approved** by @${reviewer}. Advancing to **RMC Lead Civil review**.\n\n@usace-rmc/docs-admin please assign the Lead Civil reviewer(s) via the Reviewers sidebar. The Lead Civil reviews on the preview URL.`;
                 } else if (existingStage === 'stage:lead-civil-review') {
                   nextStage = 'stage:ai-editor-review';
-                  comment = `✅ **Lead Civil review approved** by @${reviewer}.\n\nAdvancing to **technical edit**.\n\n@usace-rmc/docs-admin please run the \`/technical-edit\` Claude Code skill against this PR (or assign a human technical editor). The technical edit reviews the document source MDX directly and posts inline comments on the PR — **no live deploy is needed at this stage**.\n\nAfter the author addresses the technical edit comments and checks the completion checkbox in the PR description, the document will advance to Director review and the site admin will deploy it to the live site (watermarked) at that point.`;
+                  comment = `✅ **Lead Civil review approved** by @${reviewer}. Advancing to **technical edit**.\n\n@usace-rmc/docs-admin please run the \`/technical-edit\` Claude Code skill against this PR (or assign a human technical editor). No live deploy is needed at this stage — see the Site Admin Workflow chapter of the Documentation Guide for the full sequence.`;
                 } else if (existingStage === 'stage:director-review') {
                   nextStage = 'stage:ready-to-merge';
-                  comment = `✅ **Director review approved** by @${reviewer}.\n\nThis PR is **ready for final merge and publication**.\n\n@usace-rmc/docs-admin next steps:\n1. Check out this branch (locally or via github.dev)\n2. Flip the document's \`draft\` flag to \`false\`\n3. Update \`00-version-history.mdx\` with reviewer and approver names\n4. Commit and push\n5. Merge this PR to \`main\`\n6. Approve the final production deploy in the Actions tab`;
+                  comment = `✅ **Director review approved** by @${reviewer}. This PR is **ready for final merge and publication**.\n\n@usace-rmc/docs-admin please flip the \`draft\` flag, update \`00-version-history.mdx\`, merge to \`main\`, and approve the production deploy. See the Site Admin Workflow chapter of the Documentation Guide for the full sequence.`;
                 }
               } else if (existingLane === 'lane:major-revision') {
                 if (existingStage === 'stage:peer-review') {
                   nextStage = 'stage:lead-civil-review';
-                  comment = `✅ **Peer review approved** by @${reviewer}.\n\nAdvancing to **RMC Lead Civil review**.\n\n@usace-rmc/docs-admin please assign the Lead Civil reviewer(s) via the Reviewers sidebar.`;
+                  comment = `✅ **Peer review approved** by @${reviewer}. Advancing to **RMC Lead Civil review**.\n\n@usace-rmc/docs-admin please assign the Lead Civil reviewer(s) via the Reviewers sidebar.`;
                 } else if (existingStage === 'stage:lead-civil-review') {
                   nextStage = 'stage:ai-editor-review';
-                  comment = `✅ **Lead Civil review approved** by @${reviewer}.\n\nAdvancing to **technical edit**.\n\n@usace-rmc/docs-admin please run the \`/technical-edit\` Claude Code skill against this PR (or assign a human technical editor). The technical edit reviews the document source MDX directly and posts inline comments on the PR.\n\nAfter the author addresses the technical edit comments and checks the completion checkbox in the PR description, the site admin will flip the draft flag, merge, and deploy.`;
+                  comment = `✅ **Lead Civil review approved** by @${reviewer}. Advancing to **technical edit**.\n\n@usace-rmc/docs-admin please run the \`/technical-edit\` Claude Code skill against this PR (or assign a human technical editor).`;
                 }
               } else if (existingLane === 'lane:minor-revision') {
                 if (existingStage === 'stage:peer-review') {
                   nextStage = 'stage:ai-editor-review';
-                  comment = `✅ **Peer review approved** by @${reviewer}.\n\nAdvancing to **technical edit**.\n\n@usace-rmc/docs-admin please run the \`/technical-edit\` Claude Code skill against this PR (or assign a human technical editor). The technical edit reviews the document source MDX directly and posts inline comments on the PR.\n\nAfter the author addresses the technical edit comments and checks the completion checkbox in the PR description, the site admin will flip the draft flag, merge, and deploy.`;
+                  comment = `✅ **Peer review approved** by @${reviewer}. Advancing to **technical edit**.\n\n@usace-rmc/docs-admin please run the \`/technical-edit\` Claude Code skill against this PR (or assign a human technical editor).`;
                 }
               }
 

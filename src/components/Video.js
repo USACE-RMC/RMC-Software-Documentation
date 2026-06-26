@@ -1,5 +1,5 @@
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useReportId } from '../contexts/ReportIdContext';
 import '../css/custom.css';
 
@@ -12,7 +12,7 @@ const Video = ({
   width = '80%',
   id,
   controls, // Show/hide browser video controls, default: true (on)
-  autoPlay, // Start playback automatically, default: off
+  autoPlay, // Auto-start when scrolled into view (muted); paused when scrolled away. Honors prefers-reduced-motion. Default: off
   loop, // Replay when finished, default: off
   muted, // default: on if autoPlay is on
   playsInline = true, // Allows autoplay inline on iOS instead of forcing full-screen playback
@@ -23,6 +23,7 @@ const Video = ({
   credit, // optional source/credit line
 }) => {
   const [videoInfo, setVideoInfo] = useState(null);
+  const videoRef = useRef(null);
   const reportId = useReportId();
   const countersBase = useBaseUrl('counters/');
   const assetsBase = useBaseUrl('/');
@@ -30,6 +31,11 @@ const Video = ({
   const figureId = id || videoKey;
 
   const resolveAsset = (p) => (p ? `${assetsBase}${String(p).replace(/^\//, '')}` : undefined);
+
+  const resolvedAutoPlay = autoPlay ?? false;
+  const resolvedLoop = loop ?? false;
+  const resolvedControls = controls ?? true;
+  const resolvedMuted = muted ?? (resolvedAutoPlay ? true : false);
 
   useEffect(() => {
     if (!reportId) return;
@@ -60,12 +66,42 @@ const Video = ({
     loadCounters();
   }, [reportId, videoKey, countersBase]);
 
-  if (!videoInfo) return <span>Loading...</span>;
+  // Managed autoplay: play only while the video is in the viewport, pause when it
+  // leaves, and never autoplay for users who prefer reduced motion. We drive this
+  // from JS (rather than the native `autoplay` attribute) so the behavior is
+  // consistent across browsers and satisfies WCAG 2.2.2. `videoInfo` is a
+  // dependency because the <video> element isn't rendered until counters load.
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el || !resolvedAutoPlay || typeof window === 'undefined') return;
 
-  const resolvedAutoPlay = autoPlay ?? false;
-  const resolvedLoop = loop ?? false;
-  const resolvedControls = controls ?? true;
-  const resolvedMuted = muted ?? (resolvedAutoPlay ? true : false);
+    const motionQuery = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+    const prefersReduced = () => !!(motionQuery && motionQuery.matches);
+
+    // Older browsers without IntersectionObserver: best-effort play unless reduced motion.
+    if (typeof IntersectionObserver === 'undefined') {
+      if (!prefersReduced()) el.play?.().catch(() => {});
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting && !prefersReduced()) {
+            el.play?.().catch(() => {});
+          } else {
+            el.pause?.();
+          }
+        }
+      },
+      { threshold: 0.25 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [resolvedAutoPlay, videoInfo]);
+
+  if (!videoInfo) return <span>Loading...</span>;
 
   return (
     <figure
@@ -73,10 +109,11 @@ const Video = ({
       className="my-[1em] ml-0 mr-auto w-full justify-items-start border-y border-border-color py-5"
     >
       <video
+        ref={videoRef}
         className="block h-auto"
         style={{ maxWidth: width }}
         poster={resolveAsset(poster)}
-        autoPlay={resolvedAutoPlay}
+        autoPlay={false} // playback is managed by the IntersectionObserver above
         loop={resolvedLoop}
         controls={resolvedControls}
         muted={resolvedMuted}
