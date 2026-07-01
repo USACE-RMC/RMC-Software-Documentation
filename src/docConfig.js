@@ -62,7 +62,7 @@ const docs = [
     software: 'lifesim',
     doc_location: 'desktop-applications/lifesim/applications-guide',
     doc_name: 'LifeSim Applications Guide',
-    active: false,
+    active: true,
     draft: false,
   },
 
