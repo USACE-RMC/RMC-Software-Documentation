@@ -3105,7 +3105,7 @@ import Video from '@site/src/components/Video';
       'Multiple sources <code>[{src, type}]</code>',
       'Display width',
       'Show video controls',
-      'Auto-play on load',
+      'Auto-play when scrolled into view (muted); pauses off-screen; off for reduced-motion users',
       'Loop playback',
       'Mute audio (auto=true if autoPlay)',
       'iOS inline playback',
@@ -3117,6 +3117,27 @@ import Video from '@site/src/components/Video';
     ],
   ]}
 />
+
+**Autoplay behavior:**
+
+When `autoPlay` is set, the video does **not** start on page load. It starts when the user scrolls it into view and pauses when it scrolls out of view (via an `IntersectionObserver`). Autoplay always plays **muted** (browsers block un-muted autoplay), and it is **disabled entirely for visitors who have enabled "reduce motion"** in their operating system.
+
+Use `autoPlay loop` with `controls={false}` as a lightweight, modern replacement for an animated GIF — the same continuous, silent loop, but a far smaller file with built-in pause-when-offscreen behavior:
+
+```jsx
+<Video
+  videoKey="video-gif-style"
+  caption="Looping UI animation"
+  src="/videos/ui-loop.mp4"
+  autoPlay
+  loop
+  controls={false}
+/>
+```
+
+:::warning Keep controls on for longer autoplay clips
+For an `autoPlay loop` clip longer than ~5 seconds, leave `controls` at its default (`true`) so viewers can pause it. Continuous motion with no pause control fails WCAG 2.2.2 (Pause, Stop, Hide), a Section 508 requirement. The `controls={false}` GIF style is only appropriate for very short loops.
+:::
 
 ---
 

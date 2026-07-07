@@ -1,5 +1,7 @@
 # RMC Software Documentation
 
+[![License: 0BSD](https://img.shields.io/badge/License-0BSD-blue.svg)](LICENSE)
+
 This repository contains the official documentation site for the RMC suite of tools, developed and maintained by the U.S. Army Corps of Engineers Risk Management Center (RMC). The site is built using [Docusaurus](https://docusaurus.io/) and is styled with [Tailwind CSS](https://tailwindcss.com/), customized to align with USACE branding.
 
 The project includes:
