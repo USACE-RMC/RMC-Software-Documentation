@@ -82,7 +82,7 @@ The computation process is the same for each alternative in LifeSim. The program
     { // STEP 4
       title: (
         <>
-          The average life loss over all iterations are used to determine average labor loss and capital loss for indirect economic damages.
+          The average life loss over all iterations is used to determine average labor loss and capital loss for indirect economic damages.
         </>
       ),
     },
@@ -106,12 +106,12 @@ other necessary hydraulic parameters can be derived from those data such as arri
 network, structure inventory, or hydraulic input.
 
 In order to conserve computational time and memory, the depth and velocity hydrographs are simplified to reduce the number of data points. 
-The <a href="https://rdp.readthedocs.io/en/latest/" target="_blank" rel="noopener noreferrer">Ramer-Douglas-Peuker algorithm</a> is used 
+The <a href="https://rdp.readthedocs.io/en/latest/" target="_blank" rel="noopener noreferrer">Ramer-Douglas-Peucker algorithm</a> is used 
 to reduce the hydrograph points as demonstrated in <FigReference figKey="figure-48" />. The algorithm concentrates data points in regions of the 
 hydrograph with sharp changes and thins the data
  points where change is minimal between points and a linear interpolation can represent the curve. LifeSim uses a default tolerance of 0.01 for
 eliminating points. In <FigReference figKey="figure-48" />, the original hydraulic data contained 6,000 data points (blue line) but was reduced to
-27 points (orange) using the Ramer-Douglas-Peuker algorithm. LifeSim applies a linear interpolation between the remaining data points with very little
+27 points (orange) using the Ramer-Douglas-Peucker algorithm. LifeSim applies a linear interpolation between the remaining data points with very little
  error introduced (black line). The strategy is particularly useful for reducing memory during long dry periods where zero depth data storage is not
 needed. Fewer data points also significantly reduces simulation lookup times when comparing hydraulic data to the willingness to enter a flooded road,
  for example.
@@ -119,8 +119,8 @@ needed. Fewer data points also significantly reduces simulation lookup times whe
 <Figure
   figKey="figure-48"
   src="figures/desktop-applications/lifesim/technical-reference-manual/v1.0/figures/figure48.png"
-  alt="Example of Ramer-Douglas-Peuker hydrograph simplification."
-  caption="Example of Ramer-Douglas-Peuker hydrograph simplification."
+  alt="Example of Ramer-Douglas-Peucker hydrograph simplification."
+  caption="Example of Ramer-Douglas-Peucker hydrograph simplification."
 />
 
 In structures, the depth is sampled from the terrain at the structure point. For roads, the midpoint of the road is used as the sampling point and the
@@ -306,7 +306,7 @@ to the flood. Initial population distribution is interpolated at each structure 
 the hazard occurrence is set to occur at 2 am and the warning is issued 8 hours prior to the hazard occurrence at 6 pm, then LifeSim will use the
 interpolated population at 6 pm. Since each EPZ's warning issuance time can be unique, they may all use different population snapshot times.
 
-Each EPZ uses its own warning issuance time to define the population. However, population shifts between EPZs is not tracked in LifeSim. For example:
+Each EPZ uses its own warning issuance time to define the population. However, population shifts between EPZs are not tracked in LifeSim. For example:
 if someone has evacuated from one EPZ and travels to another (i.e., a person gets a warning at work in one EPZ but lives in another EPZ that is not
 warned until later). Also, the diffusion of the first alert may take several hours. In which case, people who have not been warned may continue with
 their day as normal and change locations. These people are included at their first location and not tracked to a new location having different warning
@@ -423,7 +423,7 @@ tract.
 
 The height of each story and attic is imported with the inventory (no uncertainty), but the foundation height may have uncertainty that is sampled and
 assigned to the structure. Uncertainty about foundation heights is defined at the occupancy type level. Each structure has a foundation height
-attribute. The structures occupancy type uses the uncertainty defined at the occupancy type level with the static value at the structure to sample a
+attribute. The structure's occupancy type uses the uncertainty defined at the occupancy type level with the static value at the structure to sample a
 new foundation height for the structure. Property values use the same approach as foundation height to sample uncertainty. Depth-damage functions are
 sampled once per occupancy type and use curve sampling to compute new depth-damage functions for each iteration. Submergence criteria are sampled once
 per occupancy type for each iteration.
@@ -663,7 +663,7 @@ Vehicles trying to re-route will attempt to find a new fastest path to a destina
  (all destinations are allowed). If a faster path to a destination is available, it will be selected.
 
 Vehicles are allowed to make a U-turn on most two-way roads. However, limited access 
-highways (<Link to="/docs/desktop-applications/lifesim/technical-reference-manual/v1.0/road-networks-destinations-and-evacuation-parameters#table-14">CFCC code A1-A19</Link>) and 
+highways (<Link to="/docs/desktop-applications/lifesim/technical-reference-manual/v1.0/road-networks-destinations-and-evacuation-parameters#table-14">CFCC code A00-A29</Link>) and 
 one-way roads do not allow
 U-turns, and vehicles will have to go to the end of the road segment before turning around.
 
@@ -676,7 +676,7 @@ Each re-routing vehicle also retains knowledge of every flooded road that caused
 Flooded roads that were successfully crossed may be reused as part of an alternate path. Flooded roads blocked by a caught car are not known to the
 vehicle unless already encountered.
 
-It is assumed that each vehicle re-routing due to flooding does not use live traffic and uses the initial road network graph updated from each agents
+It is assumed that each vehicle re-routing due to flooding does not use live traffic and uses the initial road network graph updated from each agent's
 flooded road memory to find their fastest path to a destination.
 
 ### Evacuating on Foot
