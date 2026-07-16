@@ -1,0 +1,123 @@
+---
+title: Assumptions and Limitations
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" document="dev/system-response-models/bep-screening" />
+
+# Assumptions and Limitations
+
+The BEP screening model applies deliberate simplifications relative to the full toolbox models. They reduce input requirements and are designed
+to avoid false negatives at the screening level. <TableReference tableKey="bep-screening-table-23" /> documents each assumption with its
+engineering basis, its effect on results, and the conditions under which it may not hold. Where an engineering basis is still awaiting
+confirmation, the table cross-references the input marker at the assumption's primary location in this document.
+
+<TableVertical
+  tableKey="bep-screening-table-23"
+  alt="Model assumptions and their implications"
+  caption="Model assumptions, bases, and implications."
+  colWidths={[5, 20, 'minmax(16ch, 1fr)', 'minmax(16ch, 1fr)', 'minmax(16ch, 1fr)']}
+  colAlign={['center']}
+  headers={[[{ value: '#' }, { value: 'Assumption' }, { value: 'Engineering Basis' }, { value: 'Effect on Results' }, { value: 'When It May Not Hold' }]]}
+  columns={[
+    ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16'],
+    [
+      'The site is idealized as one of two blanket-theory configurations (Case 2 or Case 4), selected automatically from the upstream seepage barrier.',
+      'The downstream confining layer carries a linear head profile, decaying from the toe value to zero at its downstream termination.',
+      'When the confining layer extent (or presence) is unknown, the downstream seepage path spans 1 to 5 embankment heights.',
+      'The upstream seepage path length enters the analysis as the mean of its distribution; its uncertainty is not sampled per realization.',
+      'A pre-existing defect fully penetrates the confining layer with probability given by a Weibull survival on thickness (characteristic depth 3.5 ft, shape 1.25).',
+      'The defect and blowout pathways to an unfiltered exit are statistically independent.',
+      'A downstream seepage berm makes the unfiltered exit certain, relocates the exit evaluation point, and lengthens the toe progression path.',
+      'A confirmed confining layer provides a certain pipe roof; otherwise the least capable embankment material governs roof support.',
+      'The pipe path is horizontal (no inclination correction).',
+      'Foundation anisotropy is neglected (horizontal and vertical conductivity equal).',
+      'No underlayer correction is applied beneath the aquifer.',
+      'Foundation sand fines content defaults to 0%, and the fines correction is a step (1.0 at or below 5%, 1.4 above).',
+      'The progression probability is non-decreasing with pool level.',
+      'The flaw probability is independent of pool level.',
+      'A confining layer of unknown presence is evaluated as possibly present: defect and blowout run with the Unknown thickness band, roof support comes from the embankment materials, and both exit pathways are evaluated.',
+      'The downstream control level (the higher of tailwater and the exit reference elevation) is evaluated at the rating points and interpolated linearly between them.',
+    ],
+    [
+      'Screening design decision (engineering judgment): the two cases bracket the screening-relevant configurations — an upstream barrier either exists or does not — and automatic routing removes a selection burden.',
+      'Blanket theory (USACE 1956), cited in the Delegated Models chapter.',
+      'Basis requested — see marker IN-11 (Hydraulic Loading and Seepage Paths).',
+      '[INPUT NEEDED]',
+      'Basis requested — see marker IN-13 (Event Tree).',
+      'Basis requested — see marker IN-15 (Event Tree).',
+      'Basis requested — see markers IN-12 (Hydraulic Loading and Seepage Paths) and IN-14 (Event Tree).',
+      'Roof-support values: Fell et al. (2024), cited in the Event Tree chapter. Layer-as-roof: engineering judgment adopted in the model design — a fine-grained layer able to confine the foundation also sustains the pipe roof.',
+      'Screening design decision (engineering judgment): pipe inclination is rarely known at screening stage.',
+      'Screening design decision (engineering judgment): the conductivity ratio is rarely characterized at screening stage.',
+      'Screening design decision (engineering judgment): underlayer properties are rarely available at screening stage.',
+      'Default is a neutral screening posture (no fines credit taken). Step form: basis requested — see marker IN-16 (Delegated Models).',
+      'Physical reasoning: a higher pool cannot make progression less likely for a fixed seepage geometry.',
+      'Definitional: the flaw is a geologic condition whose existence does not depend on the pool.',
+      'Screening design objective: an unverified layer is neither ignored nor fully credited, avoiding false negatives from either extreme.',
+      'Computational simplification with a bounded, documented effect.',
+    ],
+    [
+      'Sites whose stratigraphy matches other blanket-theory cases (semi-pervious strata, more complex layering) are approximated by the nearest of the two configurations.',
+      'Exit heads are reduced by the path-length ratio; results are more realistic (less conservative) than an infinite-blanket idealization.',
+      'The wide range spreads the sampled exit heads, gradients, and daylight path lengths, widening the uncertainty carried into the blowout, heave, and daylight-progression results.',
+      'The SRP reflects the expected upstream path length but not its spread; uncertainty in the upstream barrier does not widen the result.',
+      'Thin layers produce high defect probabilities (approaching certainty as thickness approaches zero), so the defect pathway often dominates the unfiltered-exit node for the Very Thin and Unknown thickness bands.',
+      'The combined unfiltered-exit probability exceeds either mechanism alone.',
+      'The confining layer receives no defect or blowout credit at a bermed exit; its resistance is retained only through the heave (initiation) node, evaluated at the offset exit point when the layer extent is known.',
+      'With a confirmed layer, no roof-support reduction applies. With multiple materials, the minimum governs — clean sands or gravels anywhere along the path reduce the SRP sharply.',
+      'Neutral for horizontal paths; conservative for downward-inclined paths and non-conservative for upward-inclined paths, with small effect at shallow angles.',
+      'Neglecting anisotropy leaves the effective path length unadjusted; for strongly layered deposits this is slightly non-conservative.',
+      'No credit is taken for a less permeable underlayer that would increase piping resistance; slightly non-conservative where one exists.',
+      'No fines credit is taken by default; sands with real fines content receive less resistance than the full method would assign unless the user overrides the input.',
+      'Sampling noise cannot produce a locally decreasing system response curve.',
+      'The same flaw probability scales the SRP at every pool level.',
+      'Results for unknown-presence sites sit between the confirmed-present and confirmed-absent behaviors, with deliberately wide parameter bands.',
+      'On any rating segment where the tailwater crosses the reference elevation, the interpolated control level slightly overstates the true value, understating the net head there by an amount bounded by the segment tailwater change (slightly non-conservative).',
+    ],
+    [
+      'Sites with well-characterized semi-pervious strata or geometries needing Cases 1, 3, or 5–8; use the toolbox models directly.',
+      'Blankets with strong lateral heterogeneity, relief wells, or toe drains that alter the head profile.',
+      'Sites where mapping or borings bound the layer extent outside 1–5 embankment heights; supply the extent instead.',
+      'Sites where the upstream barrier length is both highly uncertain and a dominant sensitivity.',
+      'Sites with a defect census or verified intact layers (inspection, construction records) contradicting the generic defect population.',
+      'Where the two mechanisms share a common cause (both concentrated at thin spots in the layer), the union may misstate the combined probability.',
+      'Engineered filter berms designed to filter the exit; the model takes no filtering credit for any berm.',
+      'Layers too thin or brittle to sustain a roof over a growing pipe; heavily fractured or desiccated layers.',
+      'Steeply inclined pipe paths (more than about 10° from horizontal).',
+      'Strongly stratified foundations with horizontal conductivity well above vertical.',
+      'A distinct low-permeability stratum beneath the aquifer providing meaningful vertical resistance.',
+      'Sands with significant fines where the user has gradation data; override the fines input.',
+      'Configurations where the net head genuinely falls as the pool rises (tailwater rising faster than headwater); the constraint then overrides a real decrease.',
+      'Pool-dependent flaw mechanisms (for example, first-filling collapse features) are outside the model.',
+      'Once field verification confirms the layer present or absent, re-run with the confirmed answer.',
+      'Tailwater ratings crossing the exit reference within a wide rating segment; add rating points near the crossing to tighten the interpolation.',
+    ],
+  ]}
+/>
+
+:::warning[INPUT NEEDED IN-17 — Engineering Basis]
+Flagged cell: assumption 4 (Engineering Basis column) in the table above. Representing the upstream seepage path length by the mean of its
+distribution — rather than sampling it per Monte Carlo realization — requires an engineering basis or a screening-design attribution to state
+in that cell.
+:::
+
+## Interpretation Cautions
+
+Three aspects of the screening formulation deserve particular attention when reading results:
+
+- **Unknown-driven breadth.** The Unknown selections (layer presence, thickness, extent) intentionally substitute wide characterizations. A
+  high screening SRP at an unknown-heavy site reflects that breadth as much as the site physics; resolving the unknowns with field information
+  and re-running is the intended response.
+
+- **Defect-pathway dominance for thin layers.** Because the defect-survival probability rises steeply as the layer thins, the unfiltered-exit
+  node for Very Thin and Unknown thickness bands is often controlled by the defect pathway rather than blowout, and it does not diminish at
+  low pools (the defect probability is pool-independent). The pool dependence of the SRP then comes mainly from the initiation and progression
+  nodes.
+
+- **No driving head below the exit reference.** Pools at or below the governing exit reference elevation produce zero net head and therefore
+  effectively zero SRP. The reference elevations — and the daylight ground surface in particular — directly position the low-pool end of the
+  system response curve.

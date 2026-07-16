@@ -1,0 +1,175 @@
+---
+title: Flaw Assessment
+---
+
+import Equation from '@site/src/components/Equation';
+import EquationReference from '@site/src/components/EquationReference';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" document="dev/system-response-models/bep-screening" />
+
+# Flaw Assessment
+
+The first event-tree node is the probability that a continuous path of fine to medium, uniform sand exists in the foundation — the flaw that
+backward erosion piping requires. The screening model estimates this probability with a Bayesian assessment: a prior probability based on the
+geologic depositional environment is updated by the available site evidence. The assessment is independent of pool level; the resulting
+probability applies across the entire system response curve.
+
+## Bayesian Framework
+
+The assessment combines up to three pieces of information:
+
+1. **Geologic prior** — The depositional environment of the foundation soils sets the prior probability $p_0$ that a laterally continuous,
+   uniform fine sand layer was deposited.
+2. **Subsurface-data evidence** — When borings, soundings, geophysics, or comparable data inform the judgment, the analyst characterizes the
+   strength of that evidence for (or against) a continuous flaw, together with the quality of the data behind the judgment.
+3. **Seepage-observation evidence** — When seepage has been observed downstream during past loading, the character of the observation serves
+   as evidence that a continuous transmissive pathway already exists.
+
+Each evidence source is expressed as a likelihood ratio $LR$ — the ratio of the probability of the observation given that a continuous flaw
+exists to its probability given no flaw. Ratios above one make the flaw more probable; ratios below one make it less probable. The update is
+performed in log-odds form:
+
+<Equation
+  equationKey="bep-screening-eq-1"
+  equation="\ell_0 = \ln\!\left(\frac{p_0}{1 - p_0}\right)"
+/>
+
+<Equation
+  equationKey="bep-screening-eq-2"
+  equation="\ell = \ell_0 + q \cdot \ln(LR_{sub}) + \ln(LR_{seep})"
+/>
+
+<Equation
+  equationKey="bep-screening-eq-3"
+  equation="P_{flaw} = \frac{1}{1 + e^{-\ell}}"
+/>
+
+where:
+
+> $p_0$ = prior probability of a continuous flaw from the geologic environment  
+> $\ell_0$, $\ell$ = prior and posterior log-odds  
+> $LR_{sub}$ = likelihood ratio for the subsurface-data evidence  
+> $q$ = subsurface data quality factor, which scales the weight given to the subsurface evidence  
+> $LR_{seep}$ = likelihood ratio for the seepage observation  
+> $P_{flaw}$ = posterior probability of a continuous flaw
+
+When subsurface data is not available, the subsurface term drops out of <EquationReference equationKey="bep-screening-eq-2" /> (equivalently,
+$LR_{sub} = 1$). When no seepage has been observed, the seepage term drops out ($LR_{seep} = 1$). The quality factor $q$ acts as an exponent on
+the subsurface likelihood ratio: high-quality data receives full weight ($q = 1$), while lower-quality data is discounted toward neutral
+($q < 1$).
+
+## Uncertainty Quantification
+
+Each categorical selection maps to a *range* of values rather than a single number, reflecting the imprecision of the underlying judgments.
+The model propagates this uncertainty by Monte Carlo simulation: in each realization, the prior probability and each active likelihood ratio
+and quality factor are drawn independently and uniformly from their ranges, and the posterior probability is computed from
+<EquationReference equationKey="bep-screening-eq-3" />. Across realizations this produces a distribution of the posterior flaw probability.
+
+The **mean posterior probability** populates the event-tree node. The 5th–95th percentile band of the posterior is reported alongside it as a
+diagnostic, so the user can see how sharply the evidence constrains the flaw judgment (see
+[Output and Interpretation](./09-output-and-interpretation.mdx)).
+
+## Geologic Environment Priors
+
+<TableReference tableKey="bep-screening-table-15" /> lists the prior probability range for each depositional environment. Environments that
+deposit laterally continuous, well-sorted fine sands — glacial outwash foremost — carry the highest priors. The Unknown selection carries a
+moderate, deliberately broad prior.
+
+<TableVertical
+  tableKey="bep-screening-table-15"
+  alt="Geologic environment prior probability ranges"
+  caption="Prior probability ranges by geologic depositional environment."
+  colAlign={['left', 'center', 'center']}
+  headers={[[{ value: 'Geologic Environment' }, { value: 'Prior, Low' }, { value: 'Prior, High' }]]}
+  columns={[
+    [
+      'Glacial outwash',
+      'High-energy fluvial systems',
+      'Coastal shoreface and barrier systems',
+      'Aeolian dune systems',
+      'Delta deposits',
+      'Alluvial fans',
+      'Shallow marine shelf',
+      'Low-energy deltaic and coastal mud systems',
+      'Residual soils',
+      'Unknown',
+    ],
+    ['0.500', '0.100', '0.100', '0.075', '0.050', '0.050', '0.050', '0.010', '0.001', '0.050'],
+    ['0.900', '0.500', '0.500', '0.500', '0.500', '0.300', '0.300', '0.050', '0.100', '0.300'],
+  ]}
+/>
+
+:::warning[INPUT NEEDED IN-07 — Engineering Basis]
+The prior probability ranges by geologic depositional environment require an engineering basis. Provide a literature citation (to be added to
+the bibliography) or the engineering-judgment attribution to state here — including whether the ranges derive from a published compilation of
+depositional-environment characteristics or from elicited expert judgment.
+:::
+
+## Subsurface-Data Evidence
+
+<TableReference tableKey="bep-screening-table-16" /> lists the likelihood-ratio range for each strength-of-evidence selection, and
+<TableReference tableKey="bep-screening-table-17" /> the quality factor that scales the weight of that evidence. A neutral selection carries a
+likelihood ratio of exactly one (no update in either direction).
+
+<TableVertical
+  tableKey="bep-screening-table-16"
+  alt="Strength of evidence likelihood ratio ranges"
+  caption="Likelihood-ratio ranges for the strength of subsurface-data evidence."
+  colAlign={['left', 'center', 'center']}
+  headers={[[{ value: 'Strength of Evidence' }, { value: 'LR, Low' }, { value: 'LR, High' }]]}
+  columns={[
+    ['Very strong', 'Strong', 'Moderate', 'Neutral', 'Weak', 'Very weak'],
+    ['10.00', '3.00', '1.00', '1.00', '0.10', '0.01'],
+    ['30.00', '10.00', '3.00', '1.00', '0.30', '0.10'],
+  ]}
+/>
+
+<TableVertical
+  tableKey="bep-screening-table-17"
+  alt="Subsurface data quality factor ranges"
+  caption="Quality factor ranges for the subsurface data."
+  colAlign={['left', 'center', 'center']}
+  headers={[[{ value: 'Data Quality' }, { value: 'q, Low' }, { value: 'q, High' }]]}
+  columns={[
+    ['High', 'Moderate', 'Low'],
+    ['1.00', '0.75', '0.50'],
+    ['1.00', '0.90', '0.75'],
+  ]}
+/>
+
+:::warning[INPUT NEEDED IN-08 — Engineering Basis]
+The strength-of-evidence likelihood-ratio ranges and the data-quality factor ranges require an engineering basis. Provide a literature
+citation or the engineering-judgment attribution to state here — including the reasoning behind the order-of-magnitude bands (0.01–30) and
+the quality discounts (0.50–1.00).
+:::
+
+## Seepage-Observation Evidence
+
+<TableReference tableKey="bep-screening-table-18" /> lists the likelihood-ratio range for each observed seepage signature. Localized,
+sediment-transporting observations are the strongest evidence of a continuous transmissive flaw; diffuse wet areas that do not respond to pool
+level are close to uninformative.
+
+<TableVertical
+  tableKey="bep-screening-table-18"
+  alt="Seepage observation likelihood ratio ranges"
+  caption="Likelihood-ratio ranges for the observed seepage signature."
+  colAlign={['left', 'center', 'center']}
+  headers={[[{ value: 'Seepage Observation' }, { value: 'LR, Low' }, { value: 'LR, High' }]]}
+  columns={[
+    ['Sand boils', 'Concentrated seepage', 'Stage-dependent wet areas', 'Stage-independent wet areas'],
+    ['3.50', '2.00', '1.25', '1.00'],
+    ['5.00', '3.50', '2.00', '1.25'],
+  ]}
+/>
+
+:::warning[INPUT NEEDED IN-09 — Engineering Basis]
+The seepage-observation likelihood-ratio ranges require an engineering basis. Provide a literature citation or the engineering-judgment
+attribution to state here.
+:::
+
+A sand-boil or concentrated-seepage observation also interacts with the event tree beyond the flaw node: it activates the
+seepage-through-confining-layer question and, through the trigger elevation, can force the initiation node to certainty at high pools
+(see [Input Parameters](./03-input-parameters.mdx) and [Event Tree](./06-event-tree.mdx)).

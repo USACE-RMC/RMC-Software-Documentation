@@ -8,10 +8,39 @@ import NavContainer from '@site/src/components/NavContainer';
 
 # Preface
 
-This document provides a technical reference for the Backward Erosion Piping (BEP) screening model implemented in the System Response library. The
-model computes a system response probability (SRP) as a function of headwater elevation for the backward erosion piping failure mode. It is designed
-specifically for the Dam Screening Tool (DST), where it operates with screening-level simplifications to reduce input burden while preventing false
+This document provides a technical reference for the Backward Erosion Piping (BEP) screening model in the System Response library. The model
+computes a system response probability (SRP) as a function of headwater elevation for the backward erosion piping failure mode. It is designed for
+the Dam Screening Tool (DST), where it operates with screening-level simplifications intended to reduce input burden while avoiding false
 negatives.
 
-The intended audience includes dam safety engineers evaluating model applicability, peer reviewers checking the technical basis of screening-level
-results, and developers who need to understand the model logic before modifying it.
+The intended audience includes dam and levee safety engineers evaluating whether the model is appropriate for their assessment, and peer reviewers
+checking the technical basis of screening-level results. Readers are assumed to have a general background in internal-erosion risk analysis —
+event trees, seepage mechanics, and probability concepts — but no familiarity with the software implementation is required.
+
+The document covers the model's complete execution pathway: the evidence-based assessment of a continuous foundation flaw, the resolution of
+hydraulic loading and seepage-path geometry from the site inputs, the assembly of the seven-node event tree at each pool level, the assumptions
+made along the way with their engineering bases, the inputs the user provides and the options available, and the results the model produces.
+
+## Document Organization
+
+- **[Model Overview](./02-model-overview.mdx)** — The model's purpose, its role in the Dam Screening Tool, the overall execution pathway from
+  inputs to results, the two exit pathways evaluated, and the relationship to the full toolbox models.
+- **[Input Parameters](./03-input-parameters.mdx)** — Every user input: hydraulic loading, embankment geometry, upstream blanket, downstream
+  seepage berm, confining-layer characterization, flaw-evidence selections, embankment materials, foundation sand properties, unit weights, and
+  the intervention and breach probabilities, with units, valid ranges, defaults, and guidance for each selectable option.
+- **[Flaw Assessment](./04-flaw-assessment.mdx)** — The Bayesian assessment of the probability that a continuous path of fine to medium, uniform
+  sand exists in the foundation: the geology-based prior, the subsurface-data and seepage-observation evidence updates, and the uncertainty
+  quantification.
+- **[Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx)** — The downstream reference elevations, the treatment of
+  tailwater, the net driving head, the resolution of the upstream, embankment, and downstream seepage path lengths, and the selection between the
+  two blanket-theory configurations.
+- **[Event Tree](./06-event-tree.mdx)** — The seven event-tree nodes, how each probability is populated at each pool level (including the
+  composition of the unfiltered-exit node from the defect and blowout pathways), and how the SRP and the governing system response curve are
+  computed.
+- **[Delegated Models](./07-delegated-models.mdx)** — How the screening model invokes the blanket-theory initiation analysis and the Schmertmann
+  progression analysis: the quantities passed in, the outputs consumed, and each fixed screening-level adjustment relative to the dedicated
+  toolbox models.
+- **[Assumptions and Limitations](./08-assumptions-and-limitations.mdx)** — Each modeling assumption with its engineering basis, its effect on
+  results, and the conditions under which it may not hold.
+- **[Output and Interpretation](./09-output-and-interpretation.mdx)** — The complete result inventory, how to read the system response curve,
+  which exit pathway tends to govern, sensitivity to key inputs, and the role of screening results relative to detailed analysis.

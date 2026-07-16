@@ -1,0 +1,251 @@
+---
+title: Event Tree
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import Equation from '@site/src/components/Equation';
+import EquationReference from '@site/src/components/EquationReference';
+import Figure from '@site/src/components/Figure';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" document="dev/system-response-models/bep-screening" />
+
+# Event Tree
+
+The BEP screening model computes the system response probability at each headwater level by multiplying probabilities from a seven-node event
+tree. The tree follows the structure defined in the
+[Typical Event Tree Database](/docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.5/backward-erosion-piping)
+for the backward erosion piping failure mode; every database node maps one-to-one onto a screening-model node.
+
+<Figure
+  figKey="bep-screening-fig-1"
+  src="/event-trees/images/backward-erosion-piping.png"
+  alt="Backward erosion piping event tree showing seven nodes from flaw through breach."
+  caption="Backward erosion piping event tree from the Typical Event Tree Database."
+  width="100%"
+/>
+
+## Node Summary
+
+<TableReference tableKey="bep-screening-table-20" /> summarizes the seven nodes, the engineering question each answers, and how the screening
+model populates each probability. Nodes 2, 3, and 5 vary with pool level and differ between the toe and daylight pathways; the remaining nodes
+are pool-independent and shared by both pathways.
+
+<TableVertical
+  tableKey="bep-screening-table-20"
+  alt="Event tree node definitions"
+  caption="Event tree node definitions and probability sources."
+  colWidths={[6, 16, 'minmax(20ch, 1fr)', 'minmax(20ch, 1fr)']}
+  colAlign={['center']}
+  headers={[[{ value: 'Node' }, { value: 'Name' }, { value: 'Engineering Question' }, { value: 'Screening Model Source' }]]}
+  columns={[
+    ['1', '2', '3', '4', '5', '6', '7'],
+    [
+      'Flaw: Continuous Path',
+      'Flaw: Unfiltered Exit',
+      'Initiation',
+      'Progression: Mechanical Condition',
+      'Progression: Hydraulic Condition',
+      'Unsuccessful Intervention',
+      'Breach',
+    ],
+    [
+      'Does a continuous path of fine to medium, uniform sand exist in the foundation?',
+      'Does seepage exit unfiltered at the ground surface?',
+      'Is the exit gradient sufficient to initiate backward erosion at the unfiltered exit?',
+      'Can the material over the developing pipe sustain a stable roof?',
+      'Is the applied gradient sufficient to advance the pipe toward the impounded water?',
+      'Do detection and intervention fail?',
+      'Does an uncontrolled release of impounded water occur?',
+    ],
+    [
+      'Mean posterior probability from the Bayesian flaw assessment (Flaw Assessment chapter).',
+      'Toe pathway: union of the defect and blowout mechanisms through the confining layer, with overrides to certainty. Daylight pathway: certain.',
+      'Toe pathway: blanket-theory heave probability with berm and trigger-elevation overrides. Daylight pathway: certain.',
+      'Certain when the confining layer is confirmed; otherwise the minimum roof-support probability across the embankment materials.',
+      'Mean probability of advancement from the Schmertmann analysis for the pathway (Delegated Models chapter), non-decreasing with pool level.',
+      'User-specified scalar (default 1.0).',
+      'User-specified scalar (default 1.0).',
+    ],
+  ]}
+/>
+
+## Node 1: Flaw — Continuous Path
+
+The probability $P_{flaw}$ that a continuous path of erodible foundation sand exists is the mean posterior probability from the Bayesian flaw
+assessment documented in [Flaw Assessment](./04-flaw-assessment.mdx). The flaw is a geologic condition, so this probability is constant across
+all pool levels and is shared by both exit pathways.
+
+## Node 2: Flaw — Unfiltered Exit
+
+### Toe pathway
+
+When a confining layer may be present, seepage can reach the surface unfiltered at the toe through either of two mechanisms:
+
+- **Pre-existing defect** — a discontinuity that already penetrates the layer (desiccation crack, root channel, animal burrow, or similar).
+  The probability that a defect passes completely through the layer is evaluated as a survival function on the layer thickness:
+
+  <Equation equationKey="bep-screening-eq-10" equation="P_{defect} = \exp\!\left[-\left(\frac{z_{bl}}{t_c}\right)^{k}\,\right]" />
+
+  where $z_{bl}$ is the confining-layer thickness, $t_c = 3.5$ ft is the characteristic defect penetration depth, and $k = 1.25$ is the shape
+  parameter. The expression is the probability that a defect's penetration depth equals or exceeds the layer thickness under a Weibull
+  distribution of defect depths — thinner layers are more likely to be fully penetrated. The probability is evaluated for each sampled layer
+  thickness and averaged across the Monte Carlo realizations; it does not depend on pool level.
+
+- **Hydraulic blowout** — rupture of the layer when uplift at its base exceeds its buoyant weight. The blowout probability $P_{blowout}(h)$ at
+  each pool level is computed by the blanket-theory analysis using the confining layer's saturated unit weight
+  (see [Delegated Models](./07-delegated-models.mdx)); it increases with pool level.
+
+The two mechanisms are combined as the union of independent pathways:
+
+<Equation
+  equationKey="bep-screening-eq-11"
+  equation="P_{ue}(h) = P_{defect} + \bigl(1 - P_{defect}\bigr)\, P_{blowout}(h)"
+/>
+
+Three site conditions override the composition and force $P_{ue} = 1.0$ at every pool level:
+
+1. **No confining layer** — with the layer's presence answered No, nothing filters the exit.
+2. **A seepage berm is present** — the exit is evaluated beyond the berm, and the unfiltered exit is treated as certain.
+3. **Observed seepage through the layer** — sand boils or concentrated seepage have been observed emerging through the confining layer,
+   demonstrating that an unfiltered exit already exists.
+
+:::warning[INPUT NEEDED IN-13 — Engineering Basis]
+The Weibull defect-survival parameters — characteristic penetration depth $t_c = 3.5$ ft and shape parameter $k = 1.25$ — require an
+engineering basis. These are empirical values with no published-literature provenance recorded. Provide the data source, calibration
+rationale, or engineering-judgment attribution to state here.
+:::
+
+:::warning[INPUT NEEDED IN-14 — Engineering Basis]
+The rule that a downstream seepage berm forces the unfiltered-exit probability to certainty requires an engineering basis to state here. With
+a berm, the model relocates the exit beyond the berm and evaluates the confining layer's resistance only through the initiation node (heave at
+the offset exit point), rather than through the defect/blowout composition. Provide the reasoning — for example, whether a seepage berm is
+presumed non-filtering, and why the layer's blowout resistance is not credited at the relocated exit.
+:::
+
+:::warning[INPUT NEEDED IN-15 — Engineering Basis]
+The union formula treats the defect and blowout mechanisms as statistically independent pathways. Provide the engineering basis or judgment
+attribution for the independence treatment to state here.
+:::
+
+### Daylight pathway
+
+At the daylight exit the confining layer has terminated; there is nothing to filter the seepage. The unfiltered-exit probability on the
+daylight pathway is 1.0 at every pool level.
+
+## Node 3: Initiation
+
+### Toe pathway
+
+Initiation at a confined exit requires the vertical gradient through the layer (or through a defect in it) to fluidize the underlying sand.
+The initiation probability $P_{init}(h)$ at each pool level is the blanket-theory heave probability, computed with the foundation sand's
+saturated unit weight (see [Delegated Models](./07-delegated-models.mdx)). Four site conditions override the computed value and force
+$P_{init} = 1.0$:
+
+1. **No confining layer** — with no overburden to resist heave, initiation accompanies the unfiltered exit.
+2. **A berm overlies a confirmed layer of unknown downstream extent** — a daylighting exit is assumed at the berm toe, beyond the
+   characterized layer.
+3. **A berm extends beyond the known downstream extent of the layer** — the exit clears the layer entirely.
+4. **The pool reaches the trigger elevation** — sand boils have historically activated at or above this pool, demonstrating initiation:
+
+<Equation
+  equationKey="bep-screening-eq-12"
+  equation="P_{init}(h) = \begin{cases} 1.0 & h \geq E_{trigger} \\[4pt] P_{heave}(h) & h < E_{trigger} \end{cases}"
+/>
+
+where $E_{trigger}$ is the trigger elevation and $P_{heave}(h)$ the blanket-theory heave probability.
+
+### Daylight pathway
+
+At the daylight exit the sand is exposed at the surface with no confining layer to resist heave; the initiation probability is 1.0 at every
+pool level.
+
+## Node 4: Progression — Mechanical Condition
+
+A pipe can only progress if the material above it sustains a stable roof. When the confining layer's presence is confirmed (answered Yes), the
+layer itself provides the roof and the probability is 1.0. Otherwise, the probability is evaluated from the embankment materials: each USCS
+class maps to a roof-support probability per <TableReference tableKey="bep-screening-table-21" />, following Fell et
+al. (2024)<Citation citationKey="Fell2024" />, and the minimum across the listed materials governs — every material along the pipe path must
+hold a roof, so the least capable material controls. The probability is constant across pool levels.
+
+<TableVertical
+  tableKey="bep-screening-table-21"
+  alt="USCS classification to roof support probability mapping"
+  caption="Roof-support probability by USCS classification, after Fell et al. (2024)."
+  colAlign={['left', 'left', 'center']}
+  headers={[[{ value: 'USCS Class' }, { value: 'Soil Description' }, { value: 'P(Roof Support)' }]]}
+  columns={[
+    ['GP', 'GW', 'GP-GM', 'SP', 'SW', 'SP-SM', 'SM', 'GM', 'SC', 'GC', 'ML', 'CL-ML', 'CL', 'MH', 'CH'],
+    [
+      'Poorly graded gravel',
+      'Well-graded gravel',
+      'Poorly graded gravel with silt',
+      'Poorly graded sand',
+      'Well-graded sand',
+      'Poorly graded sand with silt',
+      'Silty sand',
+      'Silty gravel',
+      'Clayey sand',
+      'Clayey gravel',
+      'Low-plasticity silt',
+      'Silty clay',
+      'Lean clay',
+      'High-plasticity silt',
+      'Fat clay',
+    ],
+    ['0.01', '0.01', '0.01', '0.01', '0.01', '0.10', '0.85', '0.85', '1.0', '1.0', '1.0', '1.0', '1.0', '1.0', '1.0'],
+  ]}
+/>
+
+## Node 5: Progression — Hydraulic Condition
+
+The probability that the applied gradient is sufficient to advance the pipe from the exit toward the reservoir is the mean probability of
+advancement from the Schmertmann analysis, evaluated at each pool level for the pathway's seepage path length
+(see [Delegated Models](./07-delegated-models.mdx)). The toe pathway uses the path to the embankment or berm toe; the daylight pathway uses
+the longer path to the daylight exit. The resulting probability is constrained to be non-decreasing with pool level, reflecting that a higher
+pool cannot make progression less likely.
+
+## Nodes 6 and 7: Unsuccessful Intervention and Breach
+
+The final two nodes are the user-specified scalar probabilities documented in [Input Parameters](./03-input-parameters.mdx). Both default to
+1.0 — no successful intervention and certain breach — a conservative screening posture.
+
+## SRP Computation
+
+The system response probability for each pathway at each pool level is the product of its seven node probabilities:
+
+<Equation
+  equationKey="bep-screening-eq-13"
+  equation="\mathrm{SRP}(h) = P_{flaw} \times P_{ue}(h) \times P_{init}(h) \times P_{roof} \times P_{prog}(h) \times P_{int} \times P_{br}"
+/>
+
+where:
+
+> $P_{flaw}$ = probability of a continuous flaw (Node 1)  
+> $P_{ue}(h)$ = probability of an unfiltered exit (Node 2)  
+> $P_{init}(h)$ = probability of initiation (Node 3)  
+> $P_{roof}$ = probability of roof support (Node 4)  
+> $P_{prog}(h)$ = probability of hydraulic progression (Node 5)  
+> $P_{int}$ = probability of unsuccessful intervention (Node 6)  
+> $P_{br}$ = probability of breach (Node 7)
+
+On the daylight pathway, $P_{ue}$ and $P_{init}$ are both 1.0 and $P_{prog}$ reflects the longer daylight path.
+
+## Governing SRP
+
+When both pathways are evaluated (the confining layer's presence is Yes or Unknown), the governing SRP at each pool level is the larger of the
+two pathway values:
+
+<Equation
+  equationKey="bep-screening-eq-14"
+  equation="\mathrm{SRP}_{gov}(h) = \max\bigl(\mathrm{SRP}_{toe}(h),\; \mathrm{SRP}_{day}(h)\bigr)"
+/>
+
+When no confining layer is present, only the toe pathway exists and it governs directly.
+
+## References
+
+<CitationFootnote />

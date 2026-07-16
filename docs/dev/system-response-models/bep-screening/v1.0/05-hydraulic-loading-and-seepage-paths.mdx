@@ -1,0 +1,198 @@
+---
+title: Hydraulic Loading and Seepage Paths
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import Equation from '@site/src/components/Equation';
+import EquationReference from '@site/src/components/EquationReference';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/dev" linkTitle="Developer Resources" document="dev/system-response-models/bep-screening" />
+
+# Hydraulic Loading and Seepage Paths
+
+Before the event tree is assembled, the model resolves the hydraulic loading and the seepage-path geometry from the site inputs: the downstream
+reference elevations that control net driving head, the treatment of tailwater, the three seepage path components $L_1$, $L_2$, and $L_3$, the
+selection between the two blanket-theory configurations, and the location of the exit evaluation point. This chapter documents each resolution
+rule in calculation order.
+
+## Downstream Reference Elevations
+
+Two reference elevations define the downstream boundary of the head computations:
+
+- **Toe reference elevation** $E_{toe,ref}$ — the controlling ground surface at the downstream limit of the embankment section. When a seepage
+  berm is present and its toe ground-surface elevation is specified, the berm toe controls; otherwise the downstream embankment toe controls
+  (the ground beneath a berm is then assumed flat, so the berm toe shares the embankment toe elevation).
+
+- **Daylight reference elevation** $E_{day,ref}$ — the controlling ground surface at the downstream termination of the confining layer, where
+  the foundation sand daylights. When the daylight ground-surface elevation is supplied, it controls; otherwise the daylight exit is assumed to
+  share the toe reference elevation. The daylight ground may sit above or below the embankment toe.
+
+The blowout and heave analyses and the daylight progression pathway reference the daylight elevation; the toe progression pathway references the
+toe elevation. Consequently, once a daylight ground surface is supplied, the embankment toe elevation no longer enters the unfiltered-exit and
+initiation head computations at all — the daylight ground is the exit datum for those nodes.
+
+## Tailwater and Net Driving Head
+
+At each pool level, the downstream control level is the higher of the tailwater and the applicable reference elevation. Where no tailwater
+exists — the tailwater series was omitted, or an individual stage has no tailwater — the control level falls directly to the reference
+elevation. The net driving head is then:
+
+<Equation
+  equationKey="bep-screening-eq-4"
+  equation="H(h) = \begin{cases} 0 & h < E_{ref} \\[4pt] \max\bigl(h - \max(t,\, E_{ref}),\; 0\bigr) & h \geq E_{ref} \end{cases}"
+/>
+
+where:
+
+> $h$ = headwater elevation  
+> $t$ = tailwater elevation at that pool level (where one exists)  
+> $E_{ref}$ = the applicable reference elevation ($E_{day,ref}$ for the blowout, heave, and daylight-progression analyses; $E_{toe,ref}$ for  
+> the toe-progression analysis)
+
+A pool at or below the exit reference elevation produces zero net head — no water stands against the seepage path above its exit — so the
+pool-dependent event-tree nodes contribute no failure probability there. This gate is a deliberate feature of the model.
+
+The control level is evaluated at the supplied rating points and varies linearly between them. On any rating segment where the raw tailwater
+crosses the reference elevation, this linear treatment slightly overstates the control level (and so slightly understates the net head) within
+that segment; the effect is bounded by the segment's tailwater change and is noted in
+[Assumptions and Limitations](./08-assumptions-and-limitations.mdx).
+
+## Seepage Path Components
+
+Blanket theory idealizes the seepage path in three segments<Citation citationKey="USACE1956" />: the upstream entry length $L_1$ through or
+beneath the upstream top stratum, the path $L_2$ beneath the embankment, and the downstream path $L_3$ from the embankment toe to the seepage
+exit. The screening model resolves each from the site inputs.
+
+### Upstream Path Length L₁
+
+The upstream path length is resolved by precedence:
+
+1. **Engineered upstream blanket present** — $L_1$ equals the mean of the supplied blanket length distribution.
+2. **Confining layer confirmed and Very Thin** — $L_1 = 0$. A very thin upstream extension is credited with no head loss.
+3. **Confining layer confirmed, impervious, with a supplied upstream extension** — $L_1$ equals the mean of the upstream confining-layer
+   length distribution.
+4. **Otherwise** — $L_1 = 0$. An upstream extension of unknown length, or a layer that is semi-pervious or of unknown permeability, is
+   credited with no upstream head loss.
+
+:::warning[INPUT NEEDED IN-10 — Engineering Basis]
+Two judgments in the upstream-path crediting rules require an engineering basis to state here:
+
+1. A confirmed Very Thin confining layer contributes no upstream path length ($L_1 = 0$), taking precedence over the impervious-extension
+   credit. Proposed (unconfirmed): a layer thinner than about 5 ft cannot be relied on to remain intact and carry head loss over its upstream
+   extent; confirm or replace.
+2. Only a layer characterized as Impervious is credited; Semi-pervious and Unknown permeability contribute nothing.
+
+Provide the citation or engineering-judgment attribution for each.
+:::
+
+### Embankment Path Length L₂
+
+The embankment path length $L_2$ is the derived base width of the outer shell — the crest width plus the horizontal projections of the
+upstream and downstream faces (see [Input Parameters](./03-input-parameters.mdx)). A downstream seepage berm is not part of $L_2$; its length
+extends the downstream path instead.
+
+### Downstream Path Length L₃
+
+The downstream path length $L_3$ — from the embankment toe to the seepage exit — is resolved from the berm and confining-layer inputs
+(<TableReference tableKey="bep-screening-table-19" />).
+
+<TableVertical
+  tableKey="bep-screening-table-19"
+  alt="Downstream seepage path resolution"
+  caption="Resolution of the downstream seepage path length L₃."
+  colWidths={[30, 'minmax(30ch, 1fr)']}
+  headers={[[{ value: 'Site Condition' }, { value: 'Downstream Path Length L₃' }]]}
+  columns={[
+    [
+      'Berm present over a confirmed confining layer',
+      'Berm present, no confirmed confining layer',
+      'No berm, confining layer absent',
+      'No berm, confining layer of unknown presence or unknown downstream extent',
+      'No berm, confirmed confining layer with a supplied downstream extent',
+    ],
+    [
+      'The longer of the berm length and the mean downstream confining-layer extent, as a single value.',
+      'The berm length, as a single value.',
+      'Zero — the path ends at the embankment toe.',
+      'A uniform distribution from 1 to 5 embankment heights (1·H<sub>d</sub> to 5·H<sub>d</sub>), sampled per Monte Carlo realization.',
+      'The supplied downstream confining-layer length distribution, sampled per Monte Carlo realization.',
+    ],
+  ]}
+/>
+
+:::warning[INPUT NEEDED IN-11 — Engineering Basis]
+The default downstream path length for an unknown confining-layer extent — uniform between 1 and 5 embankment heights — requires an
+engineering basis. Provide a literature citation or the engineering-judgment attribution to state here, including the reasoning for scaling
+the range to embankment height.
+:::
+
+## Blanket-Theory Configuration Selection
+
+The blowout and heave analyses run under one of two blanket-theory configurations, selected from the upstream seepage barrier:
+
+- **Blanket Theory Case 2** — impervious top strata on both the riverside and the landside
+  ([dedicated documentation](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation/v1.0/blanket-theory-case-2)).
+  Selected when an engineered upstream blanket is present, **or** when the confining layer is confirmed, impervious, and has a supplied
+  upstream extension length. The total seepage path is:
+
+  <Equation equationKey="bep-screening-eq-5" equation="L_{total} = L_1 + L_2 + L_3" />
+
+- **Blanket Theory Case 4** — no riverside top stratum, impervious landside top stratum only
+  ([dedicated documentation](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation/v1.0/blanket-theory-case-4)).
+  Selected otherwise. With an open seepage entrance, the effective entry length is approximated from the foundation thickness:
+
+  <Equation equationKey="bep-screening-eq-6" equation="L_{total} = 0.43\,d + L_2 + L_3" />
+
+where $d$ is the sampled foundation sand thickness. Note that the Case 2 routing does not test the thickness category: a confirmed Very Thin
+impervious layer with a supplied upstream extension still routes to Case 2, but carries $L_1 = 0$ per the crediting rules above — the
+configuration reflects the presence of an upstream barrier while crediting it with no head loss.
+
+## Exit Evaluation Point
+
+The blowout and heave probabilities are evaluated at an exit point along the downstream blanket. By default the evaluation point is the
+downstream toe (zero offset), where the excess head is highest. One site condition shifts it: when a berm overlies a confirmed confining layer
+whose supplied downstream extent exceeds the berm length, the evaluation point is offset downstream by
+
+<Equation
+  equationKey="bep-screening-eq-7"
+  equation="x = \bar{L}_{cl} - L_b"
+/>
+
+where:
+
+> $x$ = offset of the exit evaluation point from the embankment toe  
+> $\bar{L}_{cl}$ = mean downstream confining-layer extent  
+> $L_b$ = berm length
+
+The excess head available at the offset point follows the linear blanket-theory head profile documented in
+[Delegated Models](./07-delegated-models.mdx); the offset therefore reduces the head (and the blowout and heave probabilities) relative to the
+toe.
+
+:::warning[INPUT NEEDED IN-12 — Definition]
+The physical interpretation of the exit-offset distance requires confirmation. The model computes the offset as the mean confining-layer
+extent minus the berm length, measured from the embankment toe. Under the linear head profile (head decaying from the toe value to zero at
+the blanket termination), the head fraction remaining at this point equals the berm length divided by the confining-layer extent — whereas an
+exit evaluated *at the berm toe* (a distance of one berm length from the embankment toe) would retain the complementary fraction. Confirm
+which exit location the offset is intended to represent, and provide the engineering basis for the chosen construction so it can be stated
+here. The model's computed behavior is documented as-is above.
+:::
+
+## Progression Path Lengths
+
+The Schmertmann progression analysis uses the full geometric path from the upstream limit of the seepage barrier to the exit under evaluation:
+
+<Equation equationKey="bep-screening-eq-8" equation="L_{prog,toe} = L_1 + L_2 + L_b" />
+
+<Equation equationKey="bep-screening-eq-9" equation="L_{prog,day} = L_1 + L_2 + L_3" />
+
+where the berm length $L_b$ is included only when a berm is present, and $L_3$ in the daylight path is sampled per Monte Carlo realization
+whenever it is distributional (an unknown extent, or a supplied extent expressed as a distribution). A longer path reduces the average applied
+gradient and thus the probability of progression.
+
+## References
+
+<CitationFootnote />
