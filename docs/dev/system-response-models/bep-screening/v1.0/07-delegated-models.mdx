@@ -57,7 +57,7 @@ where:
 
 > $h_o$ = excess head above the exit datum at the embankment toe  
 > $h_x$ = excess head at the exit evaluation point, offset $x$ from the toe  
-> $L_3$, $L_{total}$ = downstream and total seepage path lengths (sampled per realization where distributional)  
+> $L_3$, $L_{total}$ = downstream and total seepage path lengths ($L_3$ sampled per realization when the downstream extent is unknown)  
 > $i_{cv}$ = critical vertical gradient  
 > $\gamma_{sat}$ = saturated unit weight ($\gamma_{bl}$ for blowout, $\gamma_{sand}$ for heave)  
 > $\gamma_w$ = unit weight of water (62.4 pcf)  
@@ -75,8 +75,9 @@ Relative to the dedicated blanket-theory documentation, the screening model fixe
 - **Finite-blanket head loss always applies** — the excess head at the toe is always reduced by the path-length ratio
   (<EquationReference equationKey="bep-screening-eq-15" />). The idealization of an infinite downstream blanket carrying the full net head at
   the toe is not used.
-- **Downstream blanket length is sampled** — $L_3$ is drawn per realization from the resolved downstream-path characterization
-  (see [Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx)) rather than entered as a fixed geometric length.
+- **Downstream blanket length follows the resolved downstream path** — $L_3$ enters as the supplied downstream extent's single value, or is
+  drawn per realization from the wide default range when the extent is unknown
+  (see [Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx)).
 - **Confining-layer thickness comes from the category band** — the sampled $z_{bl}$ follows the qualitative thickness category (or the custom
   distribution) documented in [Input Parameters](./03-input-parameters.mdx).
 - **The unit weight is mechanism-specific** — $\gamma_{bl}$ for blowout and $\gamma_{sand}$ for heave, each defaulting per
@@ -135,8 +136,8 @@ In the screening configuration, four factors are fixed at unity and five remain 
       'Depth correction, from the sampled foundation thickness and seepage path length.',
       'Path-length correction, from the seepage path length.',
       'Grain-size correction, from the sampled effective grain size.',
-      'Density correction, from the sampled relative density (per the category mapping in Input Parameters).',
-      'Anisotropy correction disabled: the horizontal-to-vertical conductivity ratio is treated as 1.0. An anisotropy-ratio distribution is accepted among the inputs for contract compatibility, but it has no effect on screening results.',
+      'Density correction, from the sampled relative density (per the category mapping or custom distribution in Input Parameters).',
+      'Anisotropy correction disabled: the horizontal-to-vertical conductivity ratio is treated as 1.0. No anisotropy input is accepted at the screening level.',
       'Underlayer correction disabled: no underlayer beneath the aquifer is characterized at screening level.',
       'Pipe-path inclination fixed horizontal (inclination of 0°), so no inclination correction applies.',
       'Reference correction at its baseline value.',
@@ -182,7 +183,7 @@ At each pool level, the applied gradient is the net head over the pathway's seep
 
 where $L_{prog}$ is the toe or daylight progression path length from
 [Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx) (sampled per realization on the daylight pathway when the
-downstream path is distributional). Within each realization, the correction factors scale the entire family of laboratory quantile curves
+downstream extent is unknown). Within each realization, the correction factors scale the entire family of laboratory quantile curves
 (<EquationReference equationKey="bep-screening-eq-20" />), and the probability of advancement is the cumulative probability that the corrected
 critical gradient is at or below the applied gradient — interpolated from the scaled quantile family, and clamped to 0 and 1 beyond its ends.
 A pool producing no positive net head yields no probability of advancement.

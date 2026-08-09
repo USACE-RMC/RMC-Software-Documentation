@@ -18,7 +18,10 @@ materials, foundation sand properties and unit weights, and the intervention and
 Several inputs are statistical distributions that characterize uncertainty in a physical quantity. A distribution input may take any of five
 forms: a deterministic (single) value, a uniform distribution between a low and high bound, a normal distribution (mean and standard deviation),
 a triangular distribution (low, mode, high), or a PERT distribution (low, mode, high). The Monte Carlo analyses described in
-[Delegated Models](./07-delegated-models.mdx) sample these distributions.
+[Delegated Models](./07-delegated-models.mdx) sample these distributions. Geometric seepage-path lengths — the upstream blanket length, the berm
+length, and the confining-layer extents — are the exception: a known length is a site measurement entered as a single value. Where such a length
+is unknown, the input is omitted and the model substitutes the wide default characterization documented in
+[Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx).
 
 ## Hydraulic Loading
 
@@ -109,10 +112,10 @@ Theory Case 2, which represents impervious strata on both sides of the embankmen
     ['Upstream blanket present', 'Upstream blanket length'],
     ['—', 'L<sub>1</sub>'],
     ['—', 'ft'],
-    ['Yes / No (default No)', 'Distribution with positive mean; required when the blanket is present'],
+    ['Yes / No (default No)', '> 0; required when the blanket is present'],
     [
       'Whether an engineered impervious blanket extends upstream of the embankment toe.',
-      'Length of the blanket measured from the upstream embankment toe. The blanket length is represented in the analysis by its mean value, which serves as the upstream seepage path length L<sub>1</sub>.',
+      'Length of the blanket measured from the upstream embankment toe, entered as a single value. It serves directly as the upstream seepage path length L<sub>1</sub>.',
     ],
   ]}
 />
@@ -210,16 +213,16 @@ thickness characterization rather than assuming either extreme.
       'Very Thin / Thin / Moderate / Thick / Unknown / Custom (default Unknown)',
       'Distribution, ft; non-negative; required when the category is Custom',
       'Impervious / Semi-pervious / Unknown (default Unknown)',
-      'Distribution, ft; non-negative mean; optional (omitted = unknown)',
-      'Distribution, ft; positive mean; optional (omitted = unknown)',
+      'Single value, ft; ≥ 0; optional (omitted = unknown)',
+      'Single value, ft; > 0; optional (omitted = unknown)',
     ],
     [
       'Whether a confining layer overlies the foundation sand downstream of the embankment. Yes confirms the layer: the defect and blowout analyses run with the selected thickness category, and the layer itself is credited as the roof for pipe progression. No removes the layer: seepage exits unfiltered at the toe with certainty, and only the toe pathway is evaluated. Unknown runs the defect and blowout analyses with the Unknown thickness band and evaluates roof support from the embankment materials, so an unverified layer is neither ignored nor fully credited.',
       'Qualitative thickness of the confining layer. Each category maps to a uniform thickness range per the table below. Select the category supported by borings or geologic mapping; select Custom to supply a site-specific distribution; select Unknown when no thickness information exists. When the layer presence is Unknown, the Unknown band is used regardless of the category selected.',
       'Site-specific thickness distribution used when the thickness category is Custom.',
       'Permeability character of the confining layer. Only a layer characterized as Impervious is credited as an upstream seepage barrier (see Hydraulic Loading and Seepage Paths); a Semi-pervious or Unknown layer contributes no upstream head loss.',
-      'Length of the confining layer beyond the upstream embankment toe. When supplied for a confirmed impervious layer, its mean length is credited as the upstream seepage path L<sub>1</sub>. Omitted means unknown: no upstream head loss is credited.',
-      'Length of the confining layer beyond the downstream embankment toe. This is the distance to the daylight exit. Omitted means unknown: the downstream seepage path is characterized by a wide default range scaled to the embankment height (see Hydraulic Loading and Seepage Paths).',
+      'Length of the confining layer beyond the upstream embankment toe, entered as a single value. When supplied for a confirmed impervious layer, it is credited directly as the upstream seepage path L<sub>1</sub>. Omitted means unknown: no upstream head loss is credited.',
+      'Length of the confining layer beyond the downstream embankment toe, entered as a single value. This is the distance to the daylight exit. Omitted means unknown: the downstream seepage path is characterized by a wide default range scaled to the embankment height (see Hydraulic Loading and Seepage Paths). A supplied length is used only when the layer presence is confirmed Yes; when the presence is Unknown, the wide default range applies regardless.',
     ],
   ]}
 />
@@ -312,14 +315,14 @@ defaults that the user may override with site-specific distributions.
     ['ft', '%', '—', 'mm', '%'],
     [
       'Required (no default)',
-      'Default category (triangular, 15–40–65%)',
+      'Default category (uniform, 15–65%)',
       'Triangular (1.1, 2.0, 4.0)',
       'Normal (mean 0.25, standard deviation 0.085), values limited to no less than 0.1',
       'Deterministic 0.0',
     ],
     [
       'Thickness of the pervious foundation (aquifer) layer, as a distribution. Used by both the blanket-theory analysis (seepage path entrance and gradient computations) and the Schmertmann progression analysis (depth correction).',
-      'Qualitative relative density of the foundation sand. Each category maps to a triangular distribution per the table below. Denser sands resist progression through the Schmertmann density correction.',
+      'Qualitative relative density of the foundation sand. Each preset category maps to a uniform distribution per the table below; the Custom category instead uses a site-specific distribution supplied by the user. Denser sands resist progression through the Schmertmann density correction.',
       'Coefficient of uniformity of the foundation sand gradation. Controls the base critical gradient in the Schmertmann method — more uniform sands (lower values) are more erodible.',
       'Grain size at 10% passing for the foundation sand. Controls the Schmertmann grain-size correction.',
       'Fines content of the foundation sand. Feeds the screening fines-content correction in the Schmertmann analysis (see Delegated Models).',
@@ -341,31 +344,33 @@ engineering basis — both the distribution parameters and the lower limit. Prov
 to state here.
 :::
 
-Each relative density category maps to a triangular distribution of relative density $D_r$
+Each preset relative density category maps to a uniform distribution of relative density $D_r$
 (<TableReference tableKey="bep-screening-table-12" />). The Default and Unknown categories share a broad band spanning loose to medium-dense
-conditions.
+conditions. Select the Custom category to supply a site-specific relative-density distribution instead; every value the custom distribution can
+produce must lie within the physical range of 0 to 100% (an unbounded form such as a normal distribution therefore requires explicit lower and
+upper limits).
 
 <TableVertical
   tableKey="bep-screening-table-12"
   alt="Relative density category mapping"
-  caption="Relative density category to triangular distribution mapping."
-  colAlign={['left', 'center', 'center', 'center']}
-  headers={[[{ value: 'Category' }, { value: 'Low (%)' }, { value: 'Mode (%)' }, { value: 'High (%)' }]]}
+  caption="Relative density category to uniform distribution mapping."
+  colAlign={['left', 'center', 'center']}
+  headers={[[{ value: 'Category' }, { value: 'Low (%)' }, { value: 'High (%)' }]]}
   columns={[
     ['Very Loose', 'Loose', 'Medium Dense', 'Dense', 'Very Dense', 'Default', 'Unknown'],
     ['0', '15', '35', '65', '85', '15', '15'],
-    ['7.5', '25', '50', '75', '92.5', '40', '40'],
     ['15', '35', '65', '85', '100', '65', '65'],
   ]}
 />
 
 :::warning[INPUT NEEDED IN-04 — Engineering Basis]
-The relative-density triangular distributions require an engineering basis — the category band boundaries and the choice of the 15–40–65%
-band for the Default and Unknown categories. Provide a literature citation or the engineering-judgment attribution to state here.
+The relative-density uniform ranges require an engineering basis — the category band boundaries and the choice of the 15–65% band for the
+Default and Unknown categories. Provide a literature citation or the engineering-judgment attribution to state here.
 
 Proposed (unconfirmed): the category boundaries (15 / 35 / 65 / 85%) follow the standard qualitative relative-density classification for
-granular soils, with each triangular mode at mid-band; the Default/Unknown band spans loose to medium-dense as a conservative screening
-posture. Confirm or replace, and supply the classification source for the bibliography if the proposal stands.
+granular soils; a uniform distribution over each band takes no position on a most-likely value within the category; and the Default/Unknown
+band spans loose to medium-dense as a conservative screening posture. Confirm or replace, and supply the classification source for the
+bibliography if the proposal stands.
 :::
 
 ## Unit Weights

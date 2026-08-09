@@ -71,10 +71,10 @@ exit. The screening model resolves each from the site inputs.
 
 The upstream path length is resolved by precedence:
 
-1. **Engineered upstream blanket present** — $L_1$ equals the mean of the supplied blanket length distribution.
+1. **Engineered upstream blanket present** — $L_1$ equals the supplied blanket length.
 2. **Confining layer confirmed and Very Thin** — $L_1 = 0$. A very thin upstream extension is credited with no head loss.
-3. **Confining layer confirmed, impervious, with a supplied upstream extension** — $L_1$ equals the mean of the upstream confining-layer
-   length distribution.
+3. **Confining layer confirmed, impervious, with a supplied upstream extension** — $L_1$ equals the supplied upstream confining-layer
+   length.
 4. **Otherwise** — $L_1 = 0$. An upstream extension of unknown length, or a layer that is semi-pervious or of unknown permeability, is
    credited with no upstream head loss.
 
@@ -98,7 +98,8 @@ extends the downstream path instead.
 ### Downstream Path Length L₃
 
 The downstream path length $L_3$ — from the embankment toe to the seepage exit — is resolved from the berm and confining-layer inputs
-(<TableReference tableKey="bep-screening-table-19" />).
+(<TableReference tableKey="bep-screening-table-19" />). A supplied downstream extent enters as its single value; the unknown-extent default is
+the only downstream-path characterization carried as a distribution.
 
 <TableVertical
   tableKey="bep-screening-table-19"
@@ -115,11 +116,11 @@ The downstream path length $L_3$ — from the embankment toe to the seepage exit
       'No berm, confirmed confining layer with a supplied downstream extent',
     ],
     [
-      'The longer of the berm length and the mean downstream confining-layer extent, as a single value.',
+      'The longer of the berm length and the supplied downstream confining-layer extent, as a single value.',
       'The berm length, as a single value.',
       'Zero — the path ends at the embankment toe.',
       'A uniform distribution from 1 to 5 embankment heights (1·H<sub>d</sub> to 5·H<sub>d</sub>), sampled per Monte Carlo realization.',
-      'The supplied downstream confining-layer length distribution, sampled per Monte Carlo realization.',
+      'The supplied downstream confining-layer length, as a single value.',
     ],
   ]}
 />
@@ -159,13 +160,13 @@ whose supplied downstream extent exceeds the berm length, the evaluation point i
 
 <Equation
   equationKey="bep-screening-eq-7"
-  equation="x = \bar{L}_{cl} - L_b"
+  equation="x = L_{cl} - L_b"
 />
 
 where:
 
 > $x$ = offset of the exit evaluation point from the embankment toe  
-> $\bar{L}_{cl}$ = mean downstream confining-layer extent  
+> $L_{cl}$ = supplied downstream confining-layer extent  
 > $L_b$ = berm length
 
 The excess head available at the offset point follows the linear blanket-theory head profile documented in
@@ -173,7 +174,7 @@ The excess head available at the offset point follows the linear blanket-theory 
 toe.
 
 :::warning[INPUT NEEDED IN-12 — Definition]
-The physical interpretation of the exit-offset distance requires confirmation. The model computes the offset as the mean confining-layer
+The physical interpretation of the exit-offset distance requires confirmation. The model computes the offset as the supplied confining-layer
 extent minus the berm length, measured from the embankment toe. Under the linear head profile (head decaying from the toe value to zero at
 the blanket termination), the head fraction remaining at this point equals the berm length divided by the confining-layer extent — whereas an
 exit evaluated *at the berm toe* (a distance of one berm length from the embankment toe) would retain the complementary fraction. Confirm
@@ -189,9 +190,9 @@ The Schmertmann progression analysis uses the full geometric path from the upstr
 
 <Equation equationKey="bep-screening-eq-9" equation="L_{prog,day} = L_1 + L_2 + L_3" />
 
-where the berm length $L_b$ is included only when a berm is present, and $L_3$ in the daylight path is sampled per Monte Carlo realization
-whenever it is distributional (an unknown extent, or a supplied extent expressed as a distribution). A longer path reduces the average applied
-gradient and thus the probability of progression.
+where the berm length $L_b$ is included only when a berm is present. $L_3$ in the daylight path is sampled per Monte Carlo realization only
+when the downstream extent is unknown (the one-to-five-embankment-height default); a supplied extent enters as its single value. A longer path
+reduces the average applied gradient and thus the probability of progression.
 
 ## References
 

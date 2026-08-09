@@ -2,7 +2,9 @@
 
 Answer inline and return this file (or paste its contents into the conversation). Leave an
 Answer blank to keep that marker in place. Do not renumber — the IDs tie each entry to its
-admonition in the document.
+admonition in the document. (IN-17 was retired in the August 2026 update: the mean-of-
+distribution treatment it questioned no longer exists — supplied seepage-path lengths are now
+single values by design.)
 
 ---
 
@@ -48,17 +50,17 @@ parameters and the 0.1 mm lower limit.
 
 ## IN-04 — Engineering Basis — `03-input-parameters.mdx`
 
-**Regarding:** The relative-density category triangular distributions (Very Loose 0–7.5–15%,
-Loose 15–25–35%, Medium Dense 35–50–65%, Dense 65–75–85%, Very Dense 85–92.5–100%, and the
-Default/Unknown band 15–40–65%).
+**Regarding:** The relative-density category uniform ranges (Very Loose 0–15%, Loose 15–35%,
+Medium Dense 35–65%, Dense 65–85%, Very Dense 85–100%, and the Default/Unknown band 15–65%).
 
 **Needed:** Literature citation or engineering-judgment attribution for the band boundaries
 and for the Default/Unknown selection.
 
 **Proposed (unconfirmed):** Boundaries follow the standard qualitative relative-density
-classification for granular soils, with each triangular mode at mid-band; Default/Unknown
-spans loose to medium-dense as a conservative screening posture. If confirmed, supply the
-classification source for the bibliography.
+classification for granular soils; a uniform distribution over each band takes no position on
+a most-likely value within the category; Default/Unknown spans loose to medium-dense as a
+conservative screening posture. If confirmed, supply the classification source for the
+bibliography.
 
 **Answer:**
 
@@ -161,7 +163,7 @@ for scaling the range to embankment height.
 
 **Regarding:** The physical interpretation of the exit-offset distance used when a berm
 overlies a confirmed confining layer whose supplied downstream extent exceeds the berm
-length. The model computes the offset as (mean confining-layer extent − berm length),
+length. The model computes the offset as (supplied confining-layer extent − berm length),
 measured from the embankment toe. Under the linear head profile, the head fraction remaining
 at this point equals (berm length ÷ confining-layer extent) — whereas an exit evaluated at
 the berm toe (one berm length from the embankment toe) would retain the complementary
@@ -220,18 +222,6 @@ replacing the continuous fines-content relationship in the dedicated Schmertmann
 documentation.
 
 **Needed:** Source or engineering-judgment attribution for the step form and the 1.4 value.
-
-**Answer:**
-
----
-
-## IN-17 — Engineering Basis — `08-assumptions-and-limitations.mdx`
-
-**Regarding:** Representing the upstream seepage path length (engineered upstream blanket, or
-impervious upstream confining extension) by the mean of its distribution rather than sampling
-it per Monte Carlo realization (assumption 4 in the assumptions table).
-
-**Needed:** Engineering basis or screening-design attribution.
 
 **Answer:**
 
