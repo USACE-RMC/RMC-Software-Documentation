@@ -29,11 +29,14 @@ Two reference elevations define the downstream boundary of the head computations
 
 - **Daylight reference elevation** $E_{day,ref}$ — the controlling ground surface at the downstream termination of the confining layer, where
   the foundation sand daylights. When the daylight ground-surface elevation is supplied, it controls; otherwise the daylight exit is assumed to
-  share the toe reference elevation. The daylight ground may sit above or below the embankment toe.
+  share the toe reference elevation. The daylight ground may sit above or below the embankment toe. One exception applies: when the daylighting
+  exit is the berm toe itself — a berm over a confirmed layer that reaches or clears its downstream extent, or overlies a layer of unknown
+  extent — the toe reference is the exit's datum, and a separately supplied daylight ground-surface elevation would describe the same location
+  a second time. The supplied value is then ignored and the validation reports a warning.
 
 The blowout and heave analyses and the daylight progression pathway reference the daylight elevation; the toe progression pathway references the
-toe elevation. Consequently, once a daylight ground surface is supplied, the embankment toe elevation no longer enters the unfiltered-exit and
-initiation head computations at all — the daylight ground is the exit datum for those nodes.
+toe elevation. Consequently, once a daylight ground surface is supplied (and the daylighting exit is not the berm toe), the embankment toe
+elevation no longer enters the unfiltered-exit and initiation head computations at all — the daylight ground is the exit datum for those nodes.
 
 ## Tailwater and Net Driving Head
 
@@ -109,14 +112,16 @@ the only downstream-path characterization carried as a distribution.
   headers={[[{ value: 'Site Condition' }, { value: 'Downstream Path Length L₃' }]]}
   columns={[
     [
-      'Berm present over a confirmed confining layer',
-      'Berm present, no confirmed confining layer',
+      'Berm present over a confirmed confining layer with a supplied downstream extent',
+      'Berm present over a confirmed confining layer of unknown downstream extent',
+      'Berm present, no confirmed confining layer (absent or unknown presence)',
       'No berm, confining layer absent',
       'No berm, confining layer of unknown presence or unknown downstream extent',
       'No berm, confirmed confining layer with a supplied downstream extent',
     ],
     [
       'The longer of the berm length and the supplied downstream confining-layer extent, as a single value.',
+      'The berm length, as a single value — a daylighting exit is assumed at the berm toe (see Event Tree).',
       'The berm length, as a single value.',
       'Zero — the path ends at the embankment toe.',
       'A uniform distribution from 1 to 5 embankment heights (1·H<sub>d</sub> to 5·H<sub>d</sub>), sampled per Monte Carlo realization.',
@@ -156,7 +161,9 @@ configuration reflects the presence of an upstream barrier while crediting it wi
 
 The blowout and heave probabilities are evaluated at an exit point along the downstream blanket. By default the evaluation point is the
 downstream toe (zero offset), where the excess head is highest. One site condition shifts it: when a berm overlies a confirmed confining layer
-whose supplied downstream extent exceeds the berm length, the evaluation point is offset downstream by
+whose supplied downstream extent exceeds the berm length — the configuration in which the toe exit remains beneath the layer and the
+through-layer defect and blowout mechanisms are retained (see [Event Tree](./06-event-tree.mdx)) — the evaluation point is offset downstream
+by
 
 <Equation
   equationKey="bep-screening-eq-7"
@@ -171,15 +178,19 @@ where:
 
 The excess head available at the offset point follows the linear blanket-theory head profile documented in
 [Delegated Models](./07-delegated-models.mdx); the offset therefore reduces the head (and the blowout and heave probabilities) relative to the
-toe.
+toe. When the berm instead reaches or clears the layer's downstream extent, no offset arises — the exit daylights at the berm toe and the
+confined-exit nodes are overridden to certainty rather than computed (see [Event Tree](./06-event-tree.mdx)).
 
 :::warning[INPUT NEEDED IN-12 — Definition]
-The physical interpretation of the exit-offset distance requires confirmation. The model computes the offset as the supplied confining-layer
-extent minus the berm length, measured from the embankment toe. Under the linear head profile (head decaying from the toe value to zero at
-the blanket termination), the head fraction remaining at this point equals the berm length divided by the confining-layer extent — whereas an
-exit evaluated *at the berm toe* (a distance of one berm length from the embankment toe) would retain the complementary fraction. Confirm
-which exit location the offset is intended to represent, and provide the engineering basis for the chosen construction so it can be stated
-here. The model's computed behavior is documented as-is above.
+The physical interpretation of the exit-offset distance requires confirmation. The intended evaluation location is the berm toe — the first
+exposed ground beyond the berm. The model computes the offset as the supplied confining-layer extent minus the berm length, measured from the
+embankment toe. Under the linear head profile (head decaying from the toe value to zero at the blanket termination), the head fraction
+remaining at the computed offset equals the berm length divided by the confining-layer extent — whereas an exit evaluated *at the berm toe*
+(a distance of one berm length from the embankment toe) would retain the complementary fraction, the extent minus the berm length divided by
+the extent. The two constructions coincide only when the berm covers exactly half the extent; for a berm covering more than half the layer
+the computed offset retains more head (conservative), and for a shorter berm it retains less (non-conservative). Confirm which exit location
+the offset is intended to represent — if the berm toe, the computation may warrant review. The model's computed behavior is documented as-is
+above.
 :::
 
 ## Progression Path Lengths

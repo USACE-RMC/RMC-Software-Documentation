@@ -43,7 +43,9 @@ analysis configuration.
 
 Every pool-dependent result is reported as a series over the evaluated pool levels, which span the supplied headwater rating
 (<TableReference tableKey="bep-screening-table-25" />). The daylight-pathway series are present only when a confining layer may be present
-(its presence is Yes or Unknown).
+(its presence is Yes or Unknown) *and* the daylighting exit is distinct from the toe exit. When the berm toe is itself the daylighting exit —
+a berm over a confirmed layer that reaches or clears its downstream extent, or overlies a layer of unknown extent — the daylight series are
+absent and the toe series carry the governing curve (see [Event Tree](./06-event-tree.mdx)).
 
 <TableVertical
   tableKey="bep-screening-table-25"
@@ -87,16 +89,33 @@ Every pool-dependent result is reported as a series over the evaluated pool leve
   ]}
 />
 
-## Analysis Audit Values
+## Analysis Audit Record
 
-Three audit values document how the model resolved the analysis configuration, so a reviewer can verify the routing and geometry without
-re-deriving them:
+Alongside the numerical results, the analysis reports an audit record documenting how the model resolved the analysis configuration, so a
+reviewer can verify the routing, geometry, and inputs without re-deriving them. The record is observation-only — assembling it never alters
+the numerical results — and contains:
 
 - **Selected blanket-theory configuration** — Case 2 or Case 4, per the routing rule in
   [Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx); not reported when no confining layer is present (the
   blowout and heave analyses do not run).
-- **Effective seepage path lengths** — the upstream path length $L_1$ and embankment base width $L_2$ actually used, and the low and high
-  bounds of the resolved downstream path length $L_3$ (equal when $L_3$ resolved to a single value).
+- **Effective seepage path lengths** — the upstream path length $L_1$ and embankment base width $L_2$ actually used; the low and high
+  bounds of the resolved downstream path length $L_3$ (equal when $L_3$ resolved to a single value), together with the resolution rule that
+  produced each of $L_1$ and $L_3$; and the toe and daylight progression path lengths.
+- **Resolved hydraulic geometry** — the toe and daylight reference elevations, the exit-evaluation offset, whether the toe exit was treated
+  as a concentrated (hole-type) exit, and whether the daylighting exit resolved to the berm toe (collapsing the daylight pathway into the
+  toe pathway).
+- **Resolved inputs with their origins** — every distribution the analysis used, each marked as supplied by the user, filled from a
+  screening default, derived from a qualitative category, or overridden by the model (for example, the thickness band forced to Unknown when
+  the layer presence is unverified), with an explanatory note wherever the resolution needs one; and the per-material roof-support
+  probabilities behind the governing minimum.
+- **Delegated-analysis records** — one record per delegated analysis (the flaw assessment, the blowout and heave analyses, the defect
+  evaluation, and the toe and daylight progression analyses) documenting the exact quantities passed in and a digest of the outputs
+  consumed, including the net head series and the initiation probabilities at the toe and at the offset exit point.
+- **Node provenance** — which rule produced the toe unfiltered-exit and initiation values: computed from the underlying mechanisms, or
+  forced to certainty by a specific override, with the trigger elevation echoed so per-pool forcing is readable off the series.
+
+Each analysis also carries a version identifier for the screening model, so reported results can be tied to the model revision that computed
+them.
 
 ## Interpreting the System Response Curve
 
@@ -117,7 +136,9 @@ The toe and daylight pathways trade off against each other:
 
 When the confining layer is thick and well characterized, its resistance suppresses the toe pathway and the daylight pathway tends to govern.
 When the layer is thin — or its thickness band is wide because it is unknown — the defect pathway drives the toe unfiltered-exit probability
-up and the toe pathway tends to govern. Both pathways are always reported, so the trade-off is visible directly in the results.
+up and the toe pathway tends to govern. When both pathways are evaluated, both are reported, so the trade-off is visible directly in the
+results. When the berm toe is itself the daylighting exit, only the toe pathway is reported — it *is* the daylighting exit, carrying certain
+unfiltered-exit and initiation probabilities over the berm-extended progression path.
 
 ### Sensitivity to Key Inputs
 

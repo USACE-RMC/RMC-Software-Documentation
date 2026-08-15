@@ -163,16 +163,20 @@ for scaling the range to embankment height.
 
 **Regarding:** The physical interpretation of the exit-offset distance used when a berm
 overlies a confirmed confining layer whose supplied downstream extent exceeds the berm
-length. The model computes the offset as (supplied confining-layer extent − berm length),
-measured from the embankment toe. Under the linear head profile, the head fraction remaining
-at this point equals (berm length ÷ confining-layer extent) — whereas an exit evaluated at
-the berm toe (one berm length from the embankment toe) would retain the complementary
-fraction, (extent − berm length) ÷ extent.
+length — the berm-within-known-extent case in which the through-layer defect/blowout
+composition is retained. The model design notes record the intended evaluation location as
+the berm toe, but the model computes the offset as (supplied confining-layer extent − berm
+length), measured from the embankment toe. Under the linear head profile, the head fraction
+remaining at the computed offset equals (berm length ÷ confining-layer extent) — whereas an
+exit evaluated at the berm toe (one berm length from the embankment toe) would retain the
+complementary fraction, (extent − berm length) ÷ extent. The two coincide only when the berm
+covers exactly half the extent; the computed construction is conservative for longer berms
+and non-conservative for shorter ones relative to the berm-toe reading.
 
 **Needed:** Confirmation of which exit location the offset is intended to represent, and the
-engineering basis for the chosen construction. (If the intent is the berm toe, this may
-indicate the computation warrants review — the document currently describes the computed
-behavior as-is.)
+engineering basis for the chosen construction. (If the intent is the berm toe, the
+computation may warrant review — the document currently describes the computed behavior
+as-is.)
 
 **Answer:**
 
@@ -193,12 +197,23 @@ These are recorded as empirical values with no published-literature provenance.
 
 ## IN-14 — Engineering Basis — `06-event-tree.mdx`
 
-**Regarding:** The rule that a downstream seepage berm forces the unfiltered-exit probability
-to certainty (the exit is relocated beyond the berm, and the layer's resistance is retained
-only through the heave/initiation node).
+**Regarding:** Two judgments in the revised berm treatment (updated August 2026 — the former
+rule that any berm forces the unfiltered exit to certainty no longer exists; the treatment
+now follows where the berm ends relative to the confining layer):
 
-**Needed:** The reasoning — for example, whether a seepage berm is presumed non-filtering,
-and why the layer's blowout resistance is not credited at the relocated exit.
+1. No berm is ever credited with filtering the exit — where the berm end remains beneath the
+   layer, the exit resistance is carried entirely by the layer's defect/blowout composition
+   (evaluated at the offset exit point), and where the berm daylights the exit, the
+   unfiltered exit is certain.
+2. When the layer's presence is unknown and a berm is present, a daylighting exit at the
+   berm toe is assumed (forcing the unfiltered exit to certainty) rather than evaluated.
+
+**Needed:** The engineering basis or judgment attribution for each.
+
+**Proposed (unconfirmed):** For (1): seepage and stability berms are not engineered filters,
+so no filtering credit is taken for any berm. For (2): with the layer itself unverified, its
+lateral extent beneath the berm cannot be relied upon, and assuming a daylighting exit at the
+berm toe is the conservative screening posture.
 
 **Answer:**
 
@@ -217,11 +232,12 @@ pathways in the unfiltered-exit union formula.
 
 ## IN-16 — Engineering Basis — `07-delegated-models.mdx`
 
-**Regarding:** The screening fines-content correction — a step from 1.0 to 1.4 at 5% fines —
-replacing the continuous fines-content relationship in the dedicated Schmertmann
-documentation.
+**Regarding:** The screening fines-content correction — a step from 1.0 to 1.4, with the
+higher factor applying at exactly 5% fines and above — replacing the continuous
+fines-content relationship in the dedicated Schmertmann documentation.
 
-**Needed:** Source or engineering-judgment attribution for the step form and the 1.4 value.
+**Needed:** Source or engineering-judgment attribution for the step form, the 5% threshold,
+and the 1.4 value.
 
 **Answer:**
 
