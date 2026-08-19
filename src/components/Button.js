@@ -1,5 +1,5 @@
 const baseClasses = `
-  px-4 py-[10px]
+  px-4 py-[10px] [&>p]:my-0
   bg-ifm-primary-dark
   text-font-color-inverse
   rounded-md
@@ -25,13 +25,7 @@ export default function Button({ children, onClick, href, to, className = '', ..
 
   if (href || to) {
     return (
-      <a
-        href={href || to}
-        className={classes}
-        target={href ? '_blank' : undefined}
-        rel={href ? 'noopener noreferrer' : undefined}
-        {...props}
-      >
+      <a href={href || to} className={classes} target={href ? '_blank' : undefined} rel={href ? 'noopener noreferrer' : undefined} {...props}>
         {children}
       </a>
     );

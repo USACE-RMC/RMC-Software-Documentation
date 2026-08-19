@@ -1,4 +1,5 @@
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import useBrokenLinks from '@docusaurus/useBrokenLinks';
 import { useEffect, useState } from 'react';
 import { useReportId } from '../contexts/ReportIdContext';
 import '../css/custom.css';
@@ -22,6 +23,11 @@ const TableVertical = ({
   const [tableInfo, setTableInfo] = useState(null);
   const reportId = useReportId();
   const tableId = id || tableKey;
+
+  // Register the anchor so Docusaurus's broken-anchor check can see it.
+  // Docusaurus only collects anchors from Heading and Link; ids rendered by
+  // custom components are invisible to it without this call.
+  useBrokenLinks().collectAnchor(tableId);
   const countersBase = useBaseUrl('counters/');
 
   useEffect(() => {
