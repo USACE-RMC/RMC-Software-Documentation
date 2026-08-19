@@ -79,6 +79,10 @@ export default {
           breadcrumbs: true,
           exclude: inactiveDocExcludes,
         },
+        // No blog on this site. Without an explicit `false`, preset-classic
+        // enables the blog plugin on defaults; Docusaurus 3.10+ then emits an
+        // empty /blog/ listing page and adds it to sitemap.xml.
+        blog: false,
         theme: {
           customCss: normalizeDriveLetter(require.resolve('./src/css/custom.css')),
         },
