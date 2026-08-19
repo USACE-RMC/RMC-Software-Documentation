@@ -21,9 +21,34 @@ Resolve LifeSim User's Guide v1.0 Level 3 QC findings
 
 ## Branch Naming
 
-- Feature branches: `feature/{descriptive-name}` (e.g., `feature/site-upgrades`)
-- Bug fixes: `fix/{descriptive-name}`
-- Documentation: `docs/{descriptive-name}`
+Whether a PR gets a review lane is decided by **content**, not by branch name: a PR
+that changes any file under `docs/` is a documentation PR; one that changes nothing
+under `docs/` has no lane and no review stages.
+
+### Documentation branches (changes under `docs/`)
+
+The prefix routes the PR to a review lane. Use the full two-segment prefix — a bare
+`docs/{name}` does **not** match a lane and strands the PR in `stage:needs-lane`.
+
+- `docs/new/{slug}` — new document (Peer → Lead Civil → Technical edit → Director)
+- `docs/major/{slug}-v{X.0}` — major revision (Peer → Lead Civil → Technical edit)
+- `docs/minor/{slug}-v{X.Y}` — minor revision (Peer → Technical edit)
+- `docs/fix/{slug}` — editorial fix (no review; admin self-merge)
+- `docs/dev/{slug}` — dev docs under `docs/dev/` (no review; admin self-merge)
+
+### Non-documentation branches (components, plumbing, styling, scripts, CI)
+
+No review lane, no review stages — `CI Build` is the only gate.
+
+- `feature/{descriptive-name}` — new components, new site capabilities, enhancements
+- `fix/{descriptive-name}` — bug fixes in components, styles, scripts, build tooling
+- `chore/{descriptive-name}` — dependency bumps, refactors, config, cleanup
+- `ci/{descriptive-name}` — GitHub workflows and repository automation
+
+Use `feature/` rather than `enhancement/`; older branches used the latter.
+
+A PR that touches both site code and content under `docs/` is a documentation PR —
+put it on the matching `docs/…` prefix.
 
 ## Pull Requests
 
