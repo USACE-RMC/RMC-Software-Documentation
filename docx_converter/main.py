@@ -23,7 +23,7 @@ environment = "production"  # ALWAYS start with "development" to test first!
 # This path will have figure filenames appended (e.g., "/figures/path/to/figure-1.png").
 # Must use forward slashes "/" and match the final location in static/figures/.
 # Example: "figures/desktop-applications/your-software/users-guide/v1.0"
-FIGSRC = r"figures/desktop-applications/lifesim/applications-guide/v1.0"
+FIGSRC = r"figures/desktop-applications/lifesim/technical-reference-manual/v1.0"
 
 # ---- Navigation Component Configuration ----
 # These variables configure the NavContainer component shown at the top of each MDX page.
@@ -31,9 +31,9 @@ FIGSRC = r"figures/desktop-applications/lifesim/applications-guide/v1.0"
 # NAVTITLE: The display text shown in the navigation link (e.g., "User's Guide")
 # NAVDOC: Document identifier used to fetch available versions from versionList.json
 #         (e.g., "desktop-applications/your-software/users-guide")
-NAVLINK = r"/desktop-applications/lifesim/applications-guide"
-NAVTITLE = "Applications Guide"
-NAVDOC = r"desktop-applications/lifesim/applications-guide"
+NAVLINK = r"/desktop-applications/lifesim"
+NAVTITLE = "LifeSim"
+NAVDOC = r"desktop-applications/lifesim/technical-reference-manual"
 
 # ---- File Path Configuration ----
 # Set these paths for both development and production environments.
@@ -41,30 +41,30 @@ NAVDOC = r"desktop-applications/lifesim/applications-guide"
 if environment == "production":
     # PRODUCTION ENVIRONMENT - outputs directly to final locations
     # DOCX_PATH: Full path to the source Word document
-    DOCX_PATH = r"C:\Karen\Repositories\RMC-Software-Documentation\static\source-documents\desktop-applications\lifesim\applications-guide\v1.0\LifeSim_Applications_Guide_Aug2024_kwm_ForConversion.docx"
+    DOCX_PATH = r"C:\Karen\Repositories\RMC-Software-Documentation\static\source-documents\desktop-applications\lifesim\technical-reference-manual\v1.0\LifeSim_Technical_Reference_Manual_kwm_forWebsiteFormat.docx"
 
     # BIB_PATH: Full path to the bib.json bibliography file
-    BIB_PATH = r"C:\Karen\Repositories\RMC-Software-Documentation\static\bibliographies\desktop-applications\lifesim\applications-guide\v1.0\bib.json"
+    BIB_PATH = r"C:\Karen\Repositories\RMC-Software-Documentation\static\bibliographies\desktop-applications\lifesim\technical-reference-manual\v1.0\bib.json"
 
     # FIGURES_DIR: Directory where extracted figures will be saved
-    FIGURES_DIR = r"C:\Karen\Repositories\RMC-Software-Documentation\static\figures\desktop-applications\lifesim\applications-guide\v1.0"
+    FIGURES_DIR = r"C:\Karen\Repositories\RMC-Software-Documentation\static\figures\desktop-applications\lifesim\technical-reference-manual\v1.0"
 
     # MDX_DIR: Directory where generated MDX files will be saved
-    MDX_DIR = r"C:\Karen\Repositories\RMC-Software-Documentation\docs\desktop-applications\lifesim\applications-guide\v1.0"
+    MDX_DIR = r"C:\Karen\Repositories\RMC-Software-Documentation\docs\desktop-applications\lifesim\technical-reference-manual\v1.0"
 
 else:
     # DEVELOPMENT ENVIRONMENT - outputs to temporary location for testing
     # DOCX_PATH: Full path to the source Word document (typically same as production)
-    DOCX_PATH = r"C:\Karen\Repositories\RMC-Software-Documentation\static\source-documents\desktop-applications\lifesim\applications-guide\v1.0\LifeSim_Applications_Guide_Aug2024_kwm_ForConversion.docx"
+    DOCX_PATH = r"C:\Karen\Repositories\RMC-Software-Documentation\static\source-documents\desktop-applications\lifesim\technical-reference-manual\v1.0\LifeSim_Technical_Reference_Manual_kwm_forWebsiteFormat.docx"
 
     # BIB_PATH: Full path to the bib.json bibliography file (typically same as production)
-    BIB_PATH = r"C:\Karen\Repositories\RMC-Software-Documentation\static\bibliographies\desktop-applications\lifesim\applications-guide\v1.0\bib.json"
+    BIB_PATH = r"C:\Karen\Repositories\RMC-Software-Documentation\static\bibliographies\desktop-applications\lifesim\technical-reference-manual\v1.0\bib.json"
 
     # FIGURES_DIR: Temporary directory for testing extracted figures
-    FIGURES_DIR = r"C:\ExampleFolder\Example_Project_1\Figures"
+    FIGURES_DIR = r"C:\ExampleFolder\Example_Project_2\Figures"
 
     # MDX_DIR: Temporary directory for testing generated MDX files
-    MDX_DIR = r"C:\ExampleFolder\Example_Project_1\MDX"
+    MDX_DIR = r"C:\ExampleFolder\Example_Project_2\MDX"
 
 # ---- Constants ----
 DOCX_PATH = DOCX_PATH

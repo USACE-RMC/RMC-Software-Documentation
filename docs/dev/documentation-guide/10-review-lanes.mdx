@@ -9,7 +9,9 @@ import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
 
 # Review Lanes
 
-Every change follows one of five review lanes. The workflow assigns a lane automatically using two signals, in order:
+Every change **to documentation** follows one of five review lanes. Changes that touch nothing under `docs/` carry no lane at all — see [Changes with no review lane](#changes-with-no-review-lane) at the end of this chapter.
+
+Whether a pull request gets a lane is decided by content, not by branch name: a PR that changes at least one file under `docs/` is a documentation PR. For those, the workflow assigns a lane automatically using two signals, in order:
 
 1. **Content-based detection.** If every documentation file changed in the PR is under `docs/dev/`, the PR is assigned `lane:dev` regardless of branch name.
 2. **Branch-name detection.** Otherwise, the branch prefix determines the lane.
@@ -35,7 +37,7 @@ Every change follows one of five review lanes. The workflow assigns a lane autom
   ]}
 />
 
-Any PR that touches files under `docs/` is processed by the review workflow, even if its branch name does not start with `docs/`. A documentation change accidentally pushed on a branch named `feature/typo-fix` is still intercepted at PR open time, and a site administrator is asked to assign a lane. Non-documentation PRs (branches that do not touch anything under `docs/`) are silently ignored by the lane workflow and go straight to the merge button once their build passes.
+Any PR that touches files under `docs/` is processed by the review workflow, even if its branch name does not start with `docs/`. A documentation change accidentally pushed on a branch named `feature/typo-fix` is still intercepted at PR open time, and a site administrator is asked to assign a lane.
 
 If a branch starts with `docs/` but does not match one of the five sub-prefixes above — for example, a typo like `docs/newfoo/` or an old-style name like `docs/update` — the workflow applies `stage:needs-lane` and tags a site administrator to assign the correct lane manually. The same happens for a PR that touches documentation from a non-`docs/` branch when content-based dev detection does not apply.
 
@@ -92,6 +94,66 @@ A site administrator can always override the automatically-detected lane by swap
 **No version change, no watermark.**
 
 **Example branches:** `docs/dev/ai-development-guide`, `feature/update-contributor-guide` (content detected under `docs/dev/`)
+
+## Changes with no review lane
+
+Not every change to this repository is a documentation change. React components, CSS, build scripts, Docusaurus configuration, and GitHub workflows all live in the same repository, and none of them carry the review machinery described above.
+
+**The deciding factor is content, not branch name.** A pull request that changes at least one file under `docs/` is a documentation PR and is assigned a lane. A pull request that changes nothing under `docs/` gets no `lane:*` label, no `stage:*` label, and no review stages.
+
+### Branch prefixes for non-documentation work
+
+<TableVerticalNoRef
+  alt="Branch prefixes for changes that carry no review lane"
+  headers={[[{ value: 'Branch prefix' }, { value: 'Use for' }]]}
+  columns={[
+    [
+      'feature/',
+      'fix/',
+      'chore/',
+      'ci/',
+    ],
+    [
+      'New components, new site capabilities, enhancements',
+      'Bug fixes in components, styles, scripts, or build tooling',
+      'Dependency bumps, refactors, configuration, cleanup',
+      'GitHub workflows and repository automation',
+    ],
+  ]}
+/>
+
+These prefixes are a readability convention — nothing in the workflow parses them, and no automation will reject a branch named otherwise. They exist so that a glance at the branch list separates content work from code work. Some older branches in this repository use `enhancement/`; use `feature/` for new work.
+
+**Example branches:** `feature/video-component`, `fix/hardcoded-baseurl-paths`, `chore/bump-docusaurus`, `ci/pr-preview-cleanup`
+
+### The review process, in full
+
+There is none. That is the entire point of this section, and it is worth stating explicitly because the five lanes above can give the impression that everything here is reviewed.
+
+1. Open the pull request. The lane workflow inspects the changed files, finds nothing under `docs/`, and stops. No lane label, no stage label, no bot commentary about reviewers.
+2. **CI Build** runs `npm run build` against the branch. This is the only gate that matters.
+3. When the build passes, `ci-build.yml` sets the `review-workflow` commit status to success and posts a single comment confirming the PR carries no review lane.
+4. A member of `@usace-rmc/docs-admin` merges.
+
+No peer review, no Lead Civil review, no technical edit, no Director approval. If the build passes and an administrator agrees with the change, it ships.
+
+:::note What CODEOWNERS does and doesn't do
+`.github/CODEOWNERS` lists protected paths — `src/components/`, `src/theme/`, `scripts/`, `.github/`, `docusaurus.config.js`, and others. Touching one of them **auto-requests** a review from `@usace-rmc/docs-admin` so the right people see the change.
+
+It is not a merge requirement. Branch protection on `main` sets `require_code_owner_reviews` to false and requires zero approving reviews, so an unanswered code-owner request does not block the merge button. The two required status checks — `CI Build` and `review-workflow` — are the only hard gates.
+:::
+
+### Deploys
+
+Merging to `main` triggers the production deploy when the change touches a path the deploy workflow watches: `docs/`, `src/`, `static/`, `scripts/`, `docusaurus.config.js`, `tailwind.config.js`, `package.json`, or `package-lock.json`. The deploy then pauses at the `production` environment gate for administrator approval, exactly as it does for documentation changes.
+
+A PR that changes only files outside that list — a workflow under `.github/`, for instance — merges without deploying anything. A site administrator can always publish on demand with the `workflow_dispatch` trigger on the deploy workflow.
+
+### Mixed pull requests
+
+A pull request that changes site code **and** content under `docs/` is a documentation PR, because it touches `docs/`. Name the branch with the `docs/` prefix matching the documentation change; otherwise the workflow cannot detect a lane and a site administrator has to assign one by hand.
+
+Where the code change and the documentation change are unrelated, split them into two pull requests. The code change then merges on CI alone, while the documentation change goes through its lane without being held up.
 
 ## Choosing the right lane
 

@@ -33,6 +33,10 @@ jobs:
               pull_number: prNumber,
               per_page: 100,
             });
+            // Branch naming for this path is conventional, not enforced:
+            // feature/, fix/, chore/, ci/. What actually decides the lane is
+            // content -- a PR touching nothing under docs/ has no review lane
+            // and needs only this build to pass.
             const touchesDocs = files.some(f => f.filename.startsWith('docs/'));
             if (touchesDocs) return; // docs PRs are handled by stage-progression.yml
 
@@ -51,7 +55,7 @@ jobs:
 
             const marker = '<!-- ci-admin-merge-bot-comment -->';
             const sha = headSha.substring(0, 7);
-            const body = `${marker}\n\n✅ **CI build passed** for commit \`${sha}\`\n\nThis PR does not touch documentation content under \`docs/\`, so no multi-stage review is required.\n\n@usace-rmc/docs-admin may merge.`;
+            const body = `${marker}\n\n✅ **CI build passed** for commit \`${sha}\`\n\nThis PR changes no files under \`docs/\`, so it carries no review lane. **CI Build is the only gate** - there are no review stages to clear.\n\n@usace-rmc/docs-admin may merge.`;
             const comments = await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber });
             const existing = comments.data.find(c => c.user.type === 'Bot' && c.body.includes(marker));
             if (existing) {

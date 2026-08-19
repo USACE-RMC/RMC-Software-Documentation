@@ -25,8 +25,8 @@ The corresponding value in the JSON is the `currentVersion` (e.g., `v1.0`).
 
 Ask: "Is this a major revision or a minor revision?"
 
-- **Major revision** — substantial changes warranting a new major version. Branch prefix: `docs/major/`. Goes through Lane 2 (Peer → Lead Civil review).
-- **Minor revision** — smaller updates warranting a minor version bump. Branch prefix: `docs/minor/`. Goes through Lane 3 (Peer review only).
+- **Major revision** — substantial changes warranting a new major version. Branch prefix: `docs/major/`. Goes through Lane 2 (Peer → Lead Civil → Technical edit). No Director review.
+- **Minor revision** — smaller updates warranting a minor version bump. Branch prefix: `docs/minor/`. Goes through Lane 3 (Peer → Technical edit). No Director review.
 
 ### 1c — New version number
 

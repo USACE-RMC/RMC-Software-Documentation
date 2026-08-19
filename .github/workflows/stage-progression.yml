@@ -166,11 +166,18 @@ jobs:
                 if (users.length === 0) {
                   lines.push(`- ${display}: _not assigned_`);
                 } else {
-                  lines.push(`- ${display}: ${users.map(u => '@' + u).join(', ')}`);
+                  // Rendered WITHOUT an @ prefix on purpose. An @mention here
+                  // permanently subscribes that user to the PR, so every later
+                  // bot comment -- including stages they already finished --
+                  // emails them. This board is a status readout, not a call to
+                  // action; GitHub's Reviewers sidebar does the notifying.
+                  lines.push(`- ${display}: ${users.map(u => '`' + u + '`').join(', ')}`);
                 }
               }
               lines.push('');
               lines.push('_The first approval from any assigned reviewer at the current stage advances the PR. Approvals from non-assigned reviewers are logged but do not advance the stage._');
+              lines.push('');
+              lines.push('_Names above are deliberately unlinked. An @mention would subscribe each person to every later comment on this PR; GitHub notifies assigned reviewers through the Reviewers sidebar instead._');
               return `${STATE_MARKER}\n${dataLine}\n\n${lines.join('\n')}`;
             }
 
@@ -255,7 +262,7 @@ jobs:
                 await setReviewStatus('pending', STAGE_STATUS_DESC['stage:needs-lane']);
                 const reason = branch.startsWith('docs/')
                   ? `Branch \`${branch}\` doesn't match a known sub-prefix (\`docs/new/\`, \`docs/major/\`, \`docs/minor/\`, \`docs/fix/\`, \`docs/dev/\`), so the lane can't be auto-detected.`
-                  : `Branch \`${branch}\` doesn't follow the \`docs/{new,major,minor,fix,dev}/\` naming convention, and this PR modifies files under \`docs/\`.`;
+                  : `Branch \`${branch}\` doesn't follow the \`docs/{new,major,minor,fix,dev}/\` naming convention, and this PR modifies files under \`docs/\`. Branches for non-documentation work (\`feature/\`, \`fix/\`, \`chore/\`, \`ci/\`) skip the review lanes entirely, but only when the PR changes nothing under \`docs/\`.`;
                 await postComment(`📋 **Lane assignment needed**\n\n${reason}\n\n@usace-rmc/docs-admin please apply a \`lane:*\` label to route this PR.`);
                 return;
               }
@@ -282,7 +289,7 @@ jobs:
                   await setReviewStatus('pending', STAGE_STATUS_DESC['stage:needs-lane']);
                   const reason = branch.startsWith('docs/')
                     ? `Branch \`${branch}\` doesn't match a known sub-prefix.`
-                    : `Branch \`${branch}\` doesn't follow \`docs/{new,major,minor,fix,dev}/\` naming. This PR now modifies files under \`docs/\`.`;
+                    : `Branch \`${branch}\` doesn't follow \`docs/{new,major,minor,fix,dev}/\` naming. This PR now modifies files under \`docs/\`, so it can no longer skip the review lanes.`;
                   await postComment(`📋 **Lane assignment needed**\n\n${reason}\n\n@usace-rmc/docs-admin please apply a \`lane:*\` label to route this PR.`);
                   return;
                 }
@@ -322,7 +329,7 @@ jobs:
                 if (toNotify.length > 0) {
                   const mentions = toNotify.map(u => '@' + u).join(', ');
                   const stageDisplay = STAGE_DISPLAY[existingStage] || existingStage;
-                  await postComment(`🔄 **New commits pushed by @${prAuthor}.**\n\n${mentions} — please backcheck the revisions for **${stageDisplay}**.`);
+                  await postComment(`🔄 **New commits pushed by \`${prAuthor}\`.**\n\n${mentions} — please backcheck the revisions for **${stageDisplay}**.`);
                 }
               }
               return;
@@ -416,14 +423,19 @@ jobs:
               // or when the author isn't around.
               // - Lane 1 (new-doc): advances to Director review
               // - Lanes 2 & 3 (major/minor revision): advances to ready-to-merge
-              if (added === 'admin:advance-to-director') {
+              //
+              // `admin:technical-edit-complete` is the accurate name, because
+              // only Lane 1 continues to a Director. The older
+              // `admin:advance-to-director` is still accepted as a deprecated
+              // alias so PRs already carrying it keep working.
+              if (added === 'admin:technical-edit-complete' || added === 'admin:advance-to-director') {
                 const lanesWithTechEdit = ['lane:new-doc', 'lane:major-revision', 'lane:minor-revision'];
                 if (!lanesWithTechEdit.includes(existingLane) || existingStage !== 'stage:ai-editor-review') {
-                  await removeLabel('admin:advance-to-director');
-                  await postComment(`⚠️ **admin:advance-to-director** can only be applied to a PR currently at \`stage:ai-editor-review\` in a lane that includes technical edit. Label removed, no action taken.`);
+                  await removeLabel(added);
+                  await postComment(`⚠️ **${added}** can only be applied to a PR currently at \`stage:ai-editor-review\` in a lane that includes technical edit. Label removed, no action taken.`);
                   return;
                 }
-                await removeLabel('admin:advance-to-director');
+                await removeLabel(added);
                 await removeLabel('stage:ai-editor-review');
 
                 if (existingLane === 'lane:new-doc') {
@@ -450,7 +462,7 @@ jobs:
                 }
                 await removeLabel('admin:approve-merge-after-push');
                 await setReviewStatus('success', STAGE_STATUS_DESC['stage:ready-to-merge']);
-                await postComment(`✅ **Post-push merge re-approved** by @${context.payload.sender.login}. The \`review-workflow\` status is back to success and the PR is mergeable.`);
+                await postComment(`✅ **Post-push merge re-approved** by \`${context.payload.sender.login}\`. The \`review-workflow\` status is back to success and the PR is mergeable.`);
                 return;
               }
 
@@ -514,13 +526,13 @@ jobs:
 
               if (reviewAction === 'submitted' && reviewState === 'changes_requested') {
                 const stageDisplay = STAGE_DISPLAY[existingStage] || existingStage;
-                await postComment(`📝 **Changes requested** by @${reviewer} at **${stageDisplay}**.\n\n@${prAuthor} please address the comments and push fixes. The stage will advance once an assigned reviewer approves.`);
+                await postComment(`📝 **Changes requested** by \`${reviewer}\` at **${stageDisplay}**.\n\n@${prAuthor} please address the comments and push fixes. The stage will advance once an assigned reviewer approves.`);
                 return;
               }
 
               if (reviewAction === 'dismissed') {
                 const dismissedBy = (context.payload.sender && context.payload.sender.login) || 'unknown';
-                await postComment(`⚠️ **Review by @${reviewer} was dismissed** by @${dismissedBy}.\n\nThe stage label has not been changed automatically. @usace-rmc/docs-admin if this dismissal means a prior stage's approval is no longer valid, please manually revert the stage labels and request a re-review.`);
+                await postComment(`⚠️ **Review by \`${reviewer}\` was dismissed** by \`${dismissedBy}\`.\n\nThe stage label has not been changed automatically. @usace-rmc/docs-admin - if this dismissal means a prior stage's approval is no longer valid, please manually revert the stage labels and request a re-review.`);
                 return;
               }
 
@@ -530,8 +542,8 @@ jobs:
               const state = await readState();
               const assigned = (state && state[existingStage]) || [];
               if (!assigned.includes(reviewer)) {
-                const assignedList = assigned.length ? assigned.map(u => '@' + u).join(', ') : '_(none assigned yet)_';
-                await postComment(`ℹ️ **Approval from @${reviewer} logged, but stage not advanced.**\n\n@${reviewer} is not in the list of assigned reviewers for **${STAGE_DISPLAY[existingStage] || existingStage}**. The stage will advance only when an approval is received from one of the assigned reviewers: ${assignedList}.\n\nIf @${reviewer} should be advancing the stage, @usace-rmc/docs-admin please assign them via the Reviewers sidebar and ask them to re-approve.`);
+                const assignedList = assigned.length ? assigned.map(u => '`' + u + '`').join(', ') : '_(none assigned yet)_';
+                await postComment(`ℹ️ **Approval from \`${reviewer}\` logged, but stage not advanced.**\n\n\`${reviewer}\` is not in the list of assigned reviewers for **${STAGE_DISPLAY[existingStage] || existingStage}**. The stage will advance only when an approval is received from one of the assigned reviewers: ${assignedList}.\n\n@usace-rmc/docs-admin - if \`${reviewer}\` should be advancing the stage, assign them via the Reviewers sidebar and ask them to re-approve.`);
                 return;
               }
 
@@ -540,26 +552,26 @@ jobs:
               if (existingLane === 'lane:new-doc') {
                 if (existingStage === 'stage:peer-review') {
                   nextStage = 'stage:lead-civil-review';
-                  comment = `✅ **Peer review approved** by @${reviewer}. Advancing to **RMC Lead Civil review**.\n\n@usace-rmc/docs-admin please assign the Lead Civil reviewer(s) via the Reviewers sidebar. The Lead Civil reviews on the preview URL.`;
+                  comment = `✅ **Peer review approved** by \`${reviewer}\`. Advancing to **RMC Lead Civil review**.\n\n@usace-rmc/docs-admin please assign the Lead Civil reviewer(s) via the Reviewers sidebar. The Lead Civil reviews on the preview URL.`;
                 } else if (existingStage === 'stage:lead-civil-review') {
                   nextStage = 'stage:ai-editor-review';
-                  comment = `✅ **Lead Civil review approved** by @${reviewer}. Advancing to **technical edit**.\n\n@usace-rmc/docs-admin please run the \`/technical-edit\` Claude Code skill against this PR (or assign a human technical editor). No live deploy is needed at this stage — see the Site Admin Workflow chapter of the Documentation Guide for the full sequence.`;
+                  comment = `✅ **Lead Civil review approved** by \`${reviewer}\`. Advancing to **technical edit**.\n\n@usace-rmc/docs-admin please run the \`/technical-edit\` Claude Code skill against this PR (or assign a human technical editor). No live deploy is needed at this stage — see the Site Admin Workflow chapter of the Documentation Guide for the full sequence.`;
                 } else if (existingStage === 'stage:director-review') {
                   nextStage = 'stage:ready-to-merge';
-                  comment = `✅ **Director review approved** by @${reviewer}. This PR is **ready for final merge and publication**.\n\n@usace-rmc/docs-admin please flip the \`draft\` flag, update \`00-version-history.mdx\`, merge to \`main\`, and approve the production deploy. See the Site Admin Workflow chapter of the Documentation Guide for the full sequence.`;
+                  comment = `✅ **Director review approved** by \`${reviewer}\`. This PR is **ready for final merge and publication**.\n\n@usace-rmc/docs-admin please flip the \`draft\` flag, update \`00-version-history.mdx\`, merge to \`main\`, and approve the production deploy. See the Site Admin Workflow chapter of the Documentation Guide for the full sequence.`;
                 }
               } else if (existingLane === 'lane:major-revision') {
                 if (existingStage === 'stage:peer-review') {
                   nextStage = 'stage:lead-civil-review';
-                  comment = `✅ **Peer review approved** by @${reviewer}. Advancing to **RMC Lead Civil review**.\n\n@usace-rmc/docs-admin please assign the Lead Civil reviewer(s) via the Reviewers sidebar.`;
+                  comment = `✅ **Peer review approved** by \`${reviewer}\`. Advancing to **RMC Lead Civil review**.\n\n@usace-rmc/docs-admin please assign the Lead Civil reviewer(s) via the Reviewers sidebar.`;
                 } else if (existingStage === 'stage:lead-civil-review') {
                   nextStage = 'stage:ai-editor-review';
-                  comment = `✅ **Lead Civil review approved** by @${reviewer}. Advancing to **technical edit**.\n\n@usace-rmc/docs-admin please run the \`/technical-edit\` Claude Code skill against this PR (or assign a human technical editor).`;
+                  comment = `✅ **Lead Civil review approved** by \`${reviewer}\`. Advancing to **technical edit**.\n\n@usace-rmc/docs-admin please run the \`/technical-edit\` Claude Code skill against this PR (or assign a human technical editor).`;
                 }
               } else if (existingLane === 'lane:minor-revision') {
                 if (existingStage === 'stage:peer-review') {
                   nextStage = 'stage:ai-editor-review';
-                  comment = `✅ **Peer review approved** by @${reviewer}. Advancing to **technical edit**.\n\n@usace-rmc/docs-admin please run the \`/technical-edit\` Claude Code skill against this PR (or assign a human technical editor).`;
+                  comment = `✅ **Peer review approved** by \`${reviewer}\`. Advancing to **technical edit**.\n\n@usace-rmc/docs-admin please run the \`/technical-edit\` Claude Code skill against this PR (or assign a human technical editor).`;
                 }
               }
 

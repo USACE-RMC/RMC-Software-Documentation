@@ -40,7 +40,7 @@ Six roles participate in the workflow. Only the author needs local development t
 
 ## The five review lanes
 
-Every change falls into one of five lanes based on its scope.
+Every documentation change falls into one of five lanes based on its scope.
 
 <TableVerticalNoRef
   alt="The five review lanes and what each requires"
@@ -72,11 +72,23 @@ Every change falls into one of five lanes based on its scope.
 
 For Lane 1, peer review, Lead Civil review, and the technical edit all happen against the preview URL or the source MDX files. Only after the technical edit completes does the site administrator deploy the document to the live site (watermarked) for Director review at the document's final URL. For Lanes 2 and 3, the entire review happens on the preview URL — the live site continues to show the previously-published version, unwatermarked.
 
+Only Lane 1 ends in a Director review. Lanes 2 and 3 finish at the technical edit and go straight to `stage:ready-to-merge`; Lanes 4 and 5 have no review stages at all.
+
 See [Review Lanes](./10-review-lanes.mdx) for branch-prefix conventions and detailed examples.
+
+## Changes outside the lanes
+
+The five lanes cover documentation. They do not cover the rest of the repository — React components, CSS, build scripts, Docusaurus configuration, and GitHub workflows.
+
+**A pull request that changes nothing under `docs/` has no review lane and no review stages.** It is not assigned a `lane:*` or `stage:*` label, no reviewers are requested by the workflow, and no approval is required to merge it. The only gate is the `CI Build` check; once `npm run build` passes, the `review-workflow` status flips to success and a site administrator merges.
+
+Branch prefixes for that work are `feature/`, `fix/`, `chore/`, and `ci/`. They are a readability convention rather than a routing signal — what actually decides whether a PR is reviewed is whether it touches `docs/`.
+
+A pull request that changes site code **and** documentation is a documentation PR and needs a `docs/` branch prefix. See [Changes with no review lane](./10-review-lanes.mdx#changes-with-no-review-lane) for the full treatment.
 
 ## The merge gate
 
-Every documentation PR carries a GitHub commit status called `review-workflow` that functions as the merge gate. Branch protection on `main` requires this status to be `success` before a PR can merge, so no participant — not even a site administrator — can merge a PR whose review is incomplete. The stage progression workflow sets the status automatically.
+Every PR carries a GitHub commit status called `review-workflow` that functions as the merge gate. Branch protection on `main` requires this status to be `success` before a PR can merge, so no participant — not even a site administrator — can merge a PR whose review is incomplete. For documentation PRs the stage progression workflow sets it; for PRs with no review lane, the CI build sets it to success as soon as the build passes.
 
 <TableVerticalNoRef
   alt="When the review-workflow commit status is pending versus success"
