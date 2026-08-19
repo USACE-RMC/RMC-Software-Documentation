@@ -42,14 +42,14 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
   const lifeSimUserGuideHref = useBaseUrl(
     `/docs/desktop-applications/lifesim/users-guide/${latestVersions['desktop-applications/lifesim/users-guide'] || 'v1.0'}/preface`,
   );
+  const lifeSimTechRefHref = useBaseUrl(
+    `/docs/desktop-applications/lifesim/technical-reference-manual/${latestVersions['desktop-applications/lifesim/technical-reference-manual'] || 'v1.0'}/preface`,
+  );
   const lifeSimValStudiesHref = useBaseUrl(
     `/docs/desktop-applications/lifesim/validation-studies/${latestVersions['desktop-applications/lifesim/validation-studies'] || 'v1.0'}/preface`,
   );
   const lifeSimAppGuideHref = useBaseUrl(
     `/docs/desktop-applications/lifesim/applications-guide/${latestVersions['desktop-applications/lifesim/applications-guide'] || 'v1.0'}/preface`,
-  );
-  const lifeSimTechRefPdfHref = useBaseUrl(
-    '/source-documents/desktop-applications/lifesim/technical-reference-manual/LifeSim-Technical-Reference-Manual.pdf',
   );
 
   /* -------------------------------------------------------------------------------------------------------------------------------------------------------------- */
@@ -202,12 +202,12 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
           href: lifeSimHref,
           children: [
             { id: 'lifesim-users-guide', text: "LifeSim User's Guide", href: lifeSimUserGuideHref },
+            { id: 'lifesim-tech-ref', text: 'LifeSim Technical Reference Manual', href: lifeSimTechRefHref },
             {
               id: 'lifesim-validation-studies',
               text: 'LifeSim Validation Studies',
               href: lifeSimValStudiesHref,
             },
-            { id: 'lifesim-tech-ref-pdf', text: 'LifeSim Technical Reference Manual (PDF)', href: lifeSimTechRefPdfHref, target: '_blank', rel: 'noopener noreferrer' },
             /* {
               id: 'lifesim-applications-guide',
               text: 'LifeSim Applications Guide',

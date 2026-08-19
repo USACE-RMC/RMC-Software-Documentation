@@ -1,4 +1,5 @@
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import useBrokenLinks from '@docusaurus/useBrokenLinks';
 import { useEffect, useState } from 'react';
 import { useReportId } from '../contexts/ReportIdContext'; // Import the context hook to retrieve the reportId
 import imageDimensions from '../imageDimensions';
@@ -12,6 +13,11 @@ const Figure = ({ figKey, src, alt, caption, width = '80%', background = 'filled
 
   // If id is not passed, fall back to figKey
   const figureId = id || figKey;
+
+  // Register the anchor so Docusaurus's broken-anchor check can see it.
+  // Docusaurus only collects anchors from Heading and Link; ids rendered by
+  // custom components are invisible to it without this call.
+  useBrokenLinks().collectAnchor(figureId);
 
   // Look up intrinsic dimensions from build-time manifest (prevents layout shift)
   const normalizedSrc = src.replace(/^\//, '');

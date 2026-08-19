@@ -1,4 +1,5 @@
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import useBrokenLinks from '@docusaurus/useBrokenLinks';
 import 'katex/dist/katex.min.css';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { BlockMath, InlineMath } from 'react-katex';
@@ -10,6 +11,11 @@ const Equation = ({ equationKey, equation, inline = false, id }) => {
   const [equationNum, setEquationNum] = useState(null);
   const reportId = useReportId();
   const equationId = id || equationKey;
+
+  // Register the anchor so Docusaurus's broken-anchor check can see it.
+  // Docusaurus only collects anchors from Heading and Link; ids rendered by
+  // custom components are invisible to it without this call.
+  useBrokenLinks().collectAnchor(equationId);
   const mathRef = useRef(null);
   const countersBase = useBaseUrl('counters/');
 
