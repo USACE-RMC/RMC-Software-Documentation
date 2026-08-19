@@ -397,9 +397,36 @@ Three buttons sit at the bottom of the composer: **Cancel**, **Comment**, and **
 
 #### Replying to comments and follow-up discussion
 
-Reviews aren't one-way. The author will often reply to your comment asking for clarification — "do you mean Section 4 or Appendix A?" — and you should answer. Each comment has a **Reply…** box directly underneath it. Type your response and click **Comment** to post.
+Reviews aren't one-way. The author will often reply to your comment asking for clarification — "do you mean Section 4 or Appendix A?" — and you should answer. Each comment has a **Reply…** box directly underneath it.
 
-Replies post immediately by design: they're conversational, the author is already in the thread, and queuing replies inside a batch would be confusing. The Reply box doesn't offer a **Start a review** option — only a single **Comment** button.
+**Where you reply changes how many emails it sends**, and this is the single largest source of notification noise on this repository. It catches nearly everyone, because the two reply boxes look identical.
+
+<TableVerticalNoRef
+  alt="How the reply box behaves on the Conversation tab versus the Files changed tab"
+  headers={[[{ value: 'Where you reply' }, { value: 'What the box offers' }, { value: 'Notifications' }]]}
+  columns={[
+    ['<strong>Conversation</strong> tab', '<strong>Files changed</strong> tab'],
+    [
+      'A single <strong>Comment</strong> button. There is no batching option here.',
+      'The same fork as a new comment: one button posts the reply immediately, and <strong>Start a review</strong> adds it to a pending batch instead.',
+    ],
+    [
+      'One email to every participant, per reply, the moment you click.',
+      'One email for the whole batch, when you submit the review.',
+    ],
+  ]}
+  colWidths={['22%', '48%', '30%']}
+/>
+
+Answering twelve threads from the Conversation tab sends twelve separate emails to everyone following the pull request. Answering the same twelve from the Files changed tab with **Start a review** sends one.
+
+This is not a matter of taste — it is how GitHub stores the comments. A batched reply is attached to your pending review and delivered when you submit it. An immediate reply is filed as a standalone review containing exactly one comment, and every standalone review triggers its own notification. A recent document in this repository accumulated twenty-one such single-reply reviews, each one emailing every subscriber.
+
+:::tip The rule
+Answer threads from the **Files changed** tab, batch them with **Start a review**, and submit once when you have worked through everything. Use an immediate reply only for a genuine one-off — a quick "yes, Section 4" when you have nothing else to say.
+:::
+
+This applies to authors as much as reviewers. Working through a technical edit means replying to dozens of threads in one sitting, which is exactly the case where batching matters most.
 
 If a thread gets long, summarize the conclusion in a final reply so a future reader doesn't have to scroll through the back-and-forth to find what was decided.
 
@@ -496,3 +523,34 @@ The moment you click **Submit review**, the Conversation tab updates. A new time
 If your review was an **Approve** and you were the assigned reviewer for the current stage, the stage-progression bot will post a new comment confirming that the stage has advanced. The PR now moves to the next review lane (or, if you were the last reviewer needed, to the **ready-to-merge** state). You don't have to do anything else.
 
 If you receive another notification later — for example, a follow-up question or a new commit — you'll come back and treat it as another backcheck round. Otherwise, your work on this PR is finished.
+
+---
+
+## Managing the volume of email you get
+
+Reviewing a document should not fill your inbox. If it is doing so, one of the causes below is usually responsible, and most of them are fixable in under a minute.
+
+### What the repository already does for you
+
+The stage-progression bot deliberately writes reviewer names **without** an `@` in its status board comment. An `@mention` on GitHub does more than highlight a name — it subscribes that person to the entire pull request, permanently. Before this was changed, a peer reviewer who finished in April kept receiving every notification from the Lead Civil and technical-edit rounds months later, because their name appeared in a bot comment.
+
+The bot still `@mentions` you when it genuinely needs something from you: when you are the assigned reviewer being asked to backcheck new commits, and when a site administrator has to act. Those mentions are the signal; everything else is now unlinked.
+
+### What you can change in your own settings
+
+<ProcessList
+  items={[
+    { title: 'Open the repository on GitHub and find the Watch button at the top right.' },
+    { title: 'If it reads "All Activity", change it to "Participating and @mentions". You will still be notified about pull requests you are assigned to or mentioned in — you just stop receiving every comment on every other pull request in the repository.' },
+    { title: 'To stop following one specific pull request you have finished with, open it and click Unsubscribe in the right-hand sidebar. This does not affect anything else.' },
+    { title: 'For finer control, visit github.com/settings/notifications. Many reviewers turn off email for "Participating" and rely on the GitHub notification inbox instead, which batches everything into one page.' },
+  ]}
+/>
+
+:::caution Don't unwatch the repository entirely
+Setting the repository to **Ignore** suppresses review requests too, and you will miss documents assigned to you. **Participating and @mentions** is the setting you want.
+:::
+
+### If it is still too much
+
+Tell a site administrator. Persistent noise usually means the bot is posting something it shouldn't, and that is a bug worth fixing rather than something to filter around.

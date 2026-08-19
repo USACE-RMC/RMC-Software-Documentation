@@ -27,7 +27,7 @@ The guide includes:
 
 ## Review and Approval Workflow
 
-All changes to documentation go through a pull request against the protected `main` branch. The branch prefix determines which of five review lanes the PR is routed to:
+All changes to documentation go through a pull request against the protected `main` branch. A PR that changes at least one file under `docs/` is a documentation PR, and its branch prefix determines which of five review lanes it is routed to:
 
 | Branch prefix | Lane | Reviews required |
 |---|---|---|
@@ -36,6 +36,12 @@ All changes to documentation go through a pull request against the protected `ma
 | `docs/minor/` | Minor revision (new minor version) | Peer → Technical edit |
 | `docs/fix/` | Editorial fix | None (admin self-merge) |
 | `docs/dev/` | Dev docs (anything under `docs/dev/`) | None (admin self-merge) |
+
+### Non-documentation changes
+
+Work on components, styling, build scripts, configuration, and CI changes nothing under `docs/`, so it carries **no review lane and no review stages**. Use a `feature/`, `fix/`, `chore/`, or `ci/` branch. The only gate is the `CI Build` check; once it passes, a site administrator may merge.
+
+### Preview builds and the merge gate
 
 Each PR receives an automatic preview build at an unadvertised URL where reviewers read the rendered document. Branch protection on `main` requires both the `CI Build` and `review-workflow` status checks to pass before merge, so the merge button reflects the workflow's judgment automatically.
 

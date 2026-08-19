@@ -52,3 +52,6 @@ Tell the user:
 - How many files were reviewed
 - Which review prompt version was used
 - Remind the author to check the "Technical edit comments addressed" checkbox in the PR description when they're done addressing comments
+- Remind the author to reply to threads from the **Files changed** tab using **Start a review**, then submit once. Replying from the Conversation tab files each reply as its own standalone review and emails every PR subscriber separately.
+
+Note that step 4 posts a single bundled review on purpose: one `POST /pulls/:pr/reviews` call with every comment in the `comments` array produces one notification. Never loop over `POST /pulls/:pr/comments` — that creates one standalone review per comment and floods every subscriber.

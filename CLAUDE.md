@@ -104,21 +104,44 @@ Content with <Figure figKey="fig1" src="path" alt="text" caption="..." />
 
 ## Branching and Review Workflow
 
-The `main` branch is protected. All changes go through a pull request. Branch prefixes auto-assign the PR to one of five review lanes via the `stage-progression.yml` GitHub workflow:
+The `main` branch is protected. All changes go through a pull request.
+
+**Whether a PR has a review lane at all is decided by content, not by branch name:** a PR that changes at least one file under `docs/` is a documentation PR and gets a lane; a PR that changes nothing under `docs/` has no lane and no review stages.
+
+### Documentation branches (files under `docs/`)
+
+Branch prefixes auto-assign the PR to one of five review lanes via the `stage-progression.yml` GitHub workflow:
 
 | Prefix | Lane | Reviews required |
 |---|---|---|
 | `docs/new/` | New document | Peer → Lead Civil → Technical edit → Director |
-| `docs/major/` | Major revision (new major version) | Peer → Lead Civil |
-| `docs/minor/` | Minor revision (new minor version) | Peer |
+| `docs/major/` | Major revision (new major version) | Peer → Lead Civil → Technical edit |
+| `docs/minor/` | Minor revision (new minor version) | Peer → Technical edit |
 | `docs/fix/` | Editorial fix | None (admin self-merge) |
 | `docs/dev/` | Dev docs (anything under `docs/dev/`) | None (admin self-merge) |
 
+Only Lane 1 ends in a Director review. Lanes 2 and 3 go straight from the technical edit to `stage:ready-to-merge`.
+
 Dev-docs detection is also content-based: any PR whose changed files under `docs/` are all under `docs/dev/` is auto-routed to `lane:dev` regardless of branch name.
+
+### Non-documentation branches (components, plumbing, styling, scripts, CI)
+
+| Prefix | Use for |
+|---|---|
+| `feature/` | New components, new site capabilities, enhancements |
+| `fix/` | Bug fixes in components, styles, scripts, or build tooling |
+| `chore/` | Dependency bumps, refactors, config and cleanup |
+| `ci/` | Changes to GitHub workflows and repository automation |
+
+These carry **no review lane and no review stages**. The only gate is `CI Build`; once it passes, `ci-build.yml` flips `review-workflow` to success and a `@usace-rmc/docs-admin` member may merge. CODEOWNERS still requires an admin on protected paths.
+
+A PR that mixes site code *and* content under `docs/` is a documentation PR — put it on the matching `docs/…` prefix, or an admin will have to assign the lane by hand.
+
+### Merge gate
 
 Branch protection on `main` requires two status checks:
 - `CI Build` — runs `npm run build` on every PR
-- `review-workflow` — set by `stage-progression.yml`; flips to success when the PR reaches `stage:ready-to-merge` (or immediately for `lane:editorial-fix` and `lane:dev`)
+- `review-workflow` — set by `stage-progression.yml` for documentation PRs (flips to success at `stage:ready-to-merge`, or immediately for `lane:editorial-fix` and `lane:dev`), and by `ci-build.yml` for non-documentation PRs (flips to success as soon as the build passes)
 
 Full details: [docs/dev/documentation-guide/](docs/dev/documentation-guide/) chapters 09–15.
 
