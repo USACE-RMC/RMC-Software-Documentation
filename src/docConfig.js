@@ -52,17 +52,17 @@ const docs = [
   {
     category: 'desktop-applications',
     software: 'lifesim',
-    doc_location: 'desktop-applications/lifesim/validation-studies',
-    doc_name: 'LifeSim Validation Studies',
+    doc_location: 'desktop-applications/lifesim/applications-guide',
+    doc_name: 'LifeSim Applications Guide',
     active: true,
     draft: false,
   },
   {
     category: 'desktop-applications',
     software: 'lifesim',
-    doc_location: 'desktop-applications/lifesim/applications-guide',
-    doc_name: 'LifeSim Applications Guide',
-    active: false,
+    doc_location: 'desktop-applications/lifesim/validation-studies',
+    doc_name: 'LifeSim Validation Studies',
+    active: true,
     draft: false,
   },
 
