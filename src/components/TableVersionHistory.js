@@ -1,7 +1,6 @@
-import React from "react";
 import Link from "@docusaurus/Link";
-import useBaseUrl from "@docusaurus/useBaseUrl";
 import { useLocation } from "@docusaurus/router";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 import "../css/custom.css";
 import "../css/tables.css";
 
@@ -42,7 +41,7 @@ const TableVersionHistory = ({ versions = [], dates = [], descriptions = [], mod
         <thead>
           <tr>
             {HEADERS.map((h, i) => (
-              <th key={h} className="table-header border" style={{ textAlign: HEADERS_ALIGN[i] }}>
+              <th key={h} className="border table-header" style={{ textAlign: HEADERS_ALIGN[i] }}>
                 {h}
               </th>
             ))}
@@ -62,11 +61,11 @@ const TableVersionHistory = ({ versions = [], dates = [], descriptions = [], mod
             return (
               <tr key={rowIndex}>
                 {/* Version (col 0) */}
-                <td className="table-body-cell border table-cell-nowrap" style={{ textAlign: "center" }} title={v}>
+                <td className="border table-body-cell table-cell-nowrap" style={{ textAlign: "left", verticalAlign: "top"}} title={v}>
                   {versionHref ? (
                     <Link
                       to={useBaseUrl(versionHref)}
-                      className="text-ifm-link hover:text-ifm-link-hover no-underline hover:underline"
+                      className="no-underline text-ifm-link hover:text-ifm-link-hover hover:underline"
                     >
                       {v}
                     </Link>
@@ -76,13 +75,13 @@ const TableVersionHistory = ({ versions = [], dates = [], descriptions = [], mod
                 </td>
 
                 {/* Date (col 1) */}
-                <td className="table-body-cell border table-cell-nowrap" style={{ textAlign: "left" }} title={d}>
+                <td className="border table-body-cell table-cell-nowrap" style={{ textAlign: "left", verticalAlign: "top"}} title={d}>
                   {d}
                 </td>
 
                 {/* Description (col 2) */}
                 <td
-                  className="table-body-cell border"
+                  className="border table-body-cell"
                   style={{
                     textAlign: "left",
                     verticalAlign: "top",
@@ -94,7 +93,7 @@ const TableVersionHistory = ({ versions = [], dates = [], descriptions = [], mod
                 >
                   {Array.isArray(ds) ? (
                     ds.length > 1 ? (
-                      <ul className="list-disc pl-5 m-0">
+                      <ul className="pl-5 m-0 list-disc">
                         {ds.map((item, i) => (
                           <li key={i}>{item}</li>
                         ))}
@@ -108,17 +107,17 @@ const TableVersionHistory = ({ versions = [], dates = [], descriptions = [], mod
                 </td>
 
                 {/* Modified By (col 3) */}
-                <td className="table-body-cell border table-cell-nowrap" style={{ textAlign: "left" }} title={m}>
+                <td className="border table-body-cell table-cell-nowrap" style={{ textAlign: "left", verticalAlign: "top"}} title={m}>
                   {m}
                 </td>
 
                 {/* Reviewed By (col 4) */}
-                <td className="table-body-cell border table-cell-nowrap" style={{ textAlign: "left" }} title={r}>
+                <td className="border table-body-cell table-cell-nowrap" style={{ textAlign: "left", verticalAlign: "top"}} title={r}>
                   {r}
                 </td>
 
                 {/* Approved By (col 5) */}
-                <td className="table-body-cell border table-cell-nowrap" style={{ textAlign: "left" }} title={a}>
+                <td className="border table-body-cell table-cell-nowrap" style={{ textAlign: "left", verticalAlign: "top"}} title={a}>
                   {a}
                 </td>
               </tr>
