@@ -22,9 +22,9 @@ import VersionSelector from '@site/src/components/VersionSelector';
 ## Purpose
 
 This example demonstrates the process for estimating consequences for dam failures in LifeSim. This chapter focuses on Curwensville Dam located in
-Clearfield County, PA. This was originally modeled by the by the U.S. Army Corps of 
-Engineers (USACE) <Link href="https://mmc.sec.usace.army.mil/about-us.html" target="_blank" rel="noopener noreferrer">Modeling, Mapping, and Consequence (MMC)</Link> Mandatory 
-Center of Expertise (MCX) in 2022. 
+Clearfield County, PA. This was originally modeled by the by the U.S. Army Corps of
+Engineers (USACE) <Link href="https://mmc.sec.usace.army.mil/about-us.html" target="_blank" rel="noopener noreferrer">Modeling, Mapping, and Consequence (MMC)</Link> Mandatory
+Center of Expertise (MCX) in 2022.
 This chapter walks through developing and importing the necessary data and choosing the appropriate warning and
 evacuation data for a dam LifeSim study.
 
@@ -34,10 +34,10 @@ economic damage estimates for the Curwensville Dam project._
 ## Data Requirements
 
 To take full advantage of LifeSim capabilities, an unsteady Hydrologic Engineering Center's River Analysis System (HEC-RAS) <Citation citationKey="HECRAS2026"/>
-dam fail model with a range of fail and corresponding non-fail events is required. Non-fail events are needed to identify any areas flooded prior
-to the fail, which allows you to understand excess life loss and excess risk of the dam. Alternatively, the inundation footprint from a failure
-model the time step immediately before the breach initiation time can be used to identify areas flooded prior to the failure. For this example, the non-fail inundation
-extents were provided to identify pre-fail flooding. This example also assumes that both maximum depth grids and inundation boundary polygons for each event
+dam failure model with a range of failure and corresponding non-failure events is required. Non-failure events are needed to identify any areas flooded prior
+to the failure, which allows you to understand excess life loss and excess risk of the dam. Alternatively, you can use inundation footprint from the failure
+sceniario, but specifically from the time step immediately before the breach initiation time, to identify areas flooded prior to the failure. For this example, the non-failure inundation
+extents were provided to identify pre-failure flooding. This example also assumes that both maximum depth grids and inundation boundary polygons for each event
 have been created in the HEC-RAS model directory using RAS Mapper.
 
 The hydraulic events used in the example are shown in the table below.
@@ -111,7 +111,7 @@ Once the dissolve is complete, the Simplify Polygon tool is used to reduce the c
 area, enabling follow-on GIS processes and the LifeSim modeling to run more efficiently. The tool is found by navigating to Cartography Tools >
 Generalization in the default Geoprocessing toolboxes. The output of this tool should be your final study area polygon. The simplification tolerance
 determines how far the new simplified line can move. A larger number will make a simpler polygon. Make sure this number is less than the original
-buffer distance. The inundation boundary can be used as an Input Barrier to ensure than the study area is larger that the inundation area. The tool setup
+buffer distance. The inundation boundary can be used as an Input Barrier to ensure that the study area is larger than the inundation area. The tool setup
 is shown on the right-hand side of <FigReference figKey="figure-86"/>.
 
 <Figure
@@ -122,7 +122,7 @@ is shown on the right-hand side of <FigReference figKey="figure-86"/>.
   background="transparent"
 />
 
-Once the Simplify Polygon tool has been run, visually check the new polygon for areas that need cleaned up. Several spots had open
+Once the Simplify Polygon tool has been run, visually check the new polygon for areas that need to be cleaned up. Several spots had open
 areas near the center of the polygon. Those vertices were removed using the Edit ribbon and the Edit Vertices tool. Vertices can be selected and
 deleted by right-clicking on the selected layer and using the option to delete the selected vertices. This is shown in <FigReference figKey="gif-gis-vertices" /> using
 ArcGIS Pro version 3.4.2.
@@ -146,7 +146,7 @@ saves edits to the shapefile.
   caption="Deleting Disconnected Polygons for the final Study Area polygon"
 />
 
-Alternative Methods to Get a Study Area Polygon:
+#### Alternative Methods to Get a Study Area Polygon:
 
 - Create a new shapefile and draw a polygon around the maximum inundation. This can be accomplished in the LifeSim map viewer or in ArcGIS, QGIS, or
   another GIS software.
@@ -158,9 +158,9 @@ EPZs are polygons that allow LifeSim to have different warning and mobilization 
 experience different flooding characteristics (e.g., failure flows and non-failure flows). Depending on the study's purpose and level of detail there
 could be different parameters for different communities or counties. For this example, we will focus our geographic areas on the flood characteristics
 only and assume that parameters influenced by emergency response capability and demographic characteristics can be captured by using the default
-“unknown” curves in LifeSim. Reference <Link to="/docs/desktop-applications/lifesim/technical-reference-manual/v1.0/warning-and-protective-action-parameters">LifeSim 
-Technical Reference Manual - Warning and Protective Action Parameters</Link> for additional information regarding the software's default parameters and 
-the <Link to="/docs/desktop-applications/lifesim/technical-reference-manual/v1.0/appendix-b-eoe-questionnaire">LifeSim Technical Reference Manual - Appendix B</Link> for 
+“unknown” curves in LifeSim. Reference <Link to="/docs/desktop-applications/lifesim/technical-reference-manual/v1.0/warning-and-protective-action-parameters">LifeSim
+Technical Reference Manual - Warning and Protective Action Parameters</Link> for additional information regarding the software's default parameters and
+the <Link to="/docs/desktop-applications/lifesim/technical-reference-manual/v1.0/appendix-b-eoe-questionnaire">LifeSim Technical Reference Manual - Appendix B</Link> for
 information on Expert Opinion Elicitation (EOE) custom curves.
 
 In a standard dam failure scenario where no detailed information about the communities is known, there are three primary areas that may have different
@@ -177,14 +177,14 @@ The non-failure flows rate of rise would also be more gradual than failure flows
 than areas only flooded in the event of a failure.
 
 To simulate this effect in LifeSim, each unique event with different levels of spillway flow needs a unique EPZ polygon because the areas flooded
-prior to a failure are different — this is why you need corresponding non-fail events for each of your fail events. If an event has no flooding prior
+prior to a failure are different — this is why you need corresponding non-failure events for each of your failure events. If an event has no flooding prior
 to the failure, the EPZ only needs two areas:
 
 - The area upstream of the dam (i.e., the reservoir)
 - The area that is only flooded in the event of a failure
 
 However, this requires the hydraulic modeling and structure inventory to be adequately calibrated so that no structures are flooded in the corresponding non-failure
-event (e.g., For the Top of Active Storage failure scenario to only have two zones, there should be zero inundated damages during the Top of Active Storage non-failure
+event (e.g., for the Top of Active Storage failure scenario to only have two zones, there should be zero inundated damages during the Top of Active Storage non-failure
 scenario).
 
 The first step in creating the two zone EPZ is to make a copy of the Study Area and call it “EPZ_NoDoubleWarning”. This is done by right-clicking on
@@ -200,8 +200,8 @@ at the dam (<FigReference figKey="gif-split-inpool" />). Save the edits.
   caption="Splitting the In-Pool Area and Downstream areas for the EPZ_NoDoubleWarning shapefile"
 />
 
-A name field is added so that each polygon can be named appropriately. Right click on the layer name to open the Attribute Table, then 
-select <strong>Add Field</strong> to bring up the Add Field dialog. Set the field name to Name and the Data Type to Text. When finished, hit 
+A name field is added so that each polygon can be named appropriately. Right click on the layer name to open the Attribute Table, then
+select <strong>Add Field</strong> to bring up the Add Field dialog. Set the field name to Name and the Data Type to Text. When finished, click
 the <strong>Save</strong> button in the upper right on the Fields ribbon.
 
 <Figure
@@ -259,7 +259,7 @@ to make a single in-pool polygon (“InPoolEPZ” in the figure below). Hold con
 
 This will leave a single unnamed feature. Right clicking on that feature and selecting <strong>Zoom To</strong> will identify this feature as two
 small, disconnected inundation areas. If needed they could be merged as part of the appropriate fail or non-fail area, but in this example, they
-appear to be unrelated to the failure modeling so they can be completely deleted by selecting that row and hitting the<strong> Delete</strong> button
+appear to be unrelated to the failure modeling so they can be completely deleted by selecting that row and clicking the<strong> Delete</strong> button
 near the top middle of the Edit ribbon (or by right-clicking the row and selecting delete). Once the edits are saved, this should complete the MHP
 Double Warning EPZ. The same steps, starting with the Union, must be repeated with the Intermediate High Pool (IHP) non-failure inundation boundary using
 “EPZ_IHP_DoubleWarning” as the Union output file name.
@@ -274,8 +274,8 @@ the inundation. Various boundary polygons are available from the U.S. Census
 Bureau's <a href="https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html" target="_blank" rel="noopener noreferrer">Cartographic Boundary Files
 webpage</a>.
 
-To make the mileage reach polygon, start by exporting the “EPZ*NoDoubleWarning” layer as a new shapefile by right-clicking on it in the Layers Pane and
-navigating to Data > Export Features. Save to a folder and name it “\_Mileage_Reaches.shp*”. Next, identify a point along the river three miles
+To make the mileage reach polygon, start by exporting the “EPZ_NoDoubleWarning” layer as a new shapefile by right-clicking on it in the Layers Pane and
+navigating to Data > Export Features. Save to a folder and name it “Mileage_Reaches.shp”. Next, identify a point along the river three miles
 downstream of the dam. This can be done by looking at cross section stations from the RAS geometry, creating points along a river centerline every
 mile, or simply by using the measure a path tool in Google Earth or ArcGIS Pro (<FigReference figKey="manual-measure" />).
 
@@ -333,7 +333,7 @@ shapefile called “_City_Boundaries.shp_”. This results in 79 individual citi
 do not have significant impacts and sorting through that many rows of results creates difficulties in interpreting results. Smaller cities farther
 downstream can be removed, as well as cities that are barely touched by the inundation, by selecting individual polygons and using the Delete button
 in the Edit ribbon. Another method of removing cities is to run a test simulation in LifeSim, view the results table, and identify any cities that do
-not have any life loss. The latter was done for this example and based on those results and user judgement the following nine cities were retained for
+not have any life loss. The latter was done for this example and based on those results and user judgment the following nine cities were retained for
 the city boundary results output polygon:
 
 - Clearfield, PA
@@ -344,27 +344,27 @@ the city boundary results output polygon:
 - Milton, PA
 - Muncy, PA
 - Plymptonville, PA
-- South Renevo, PA
+- South Renovo, PA
 
 ### Structure Inventory
 
-The Curwensville Dam structure inventory is developed using the USACE NSI dataset. 
-Reference <Link to="/docs/desktop-applications/lifesim/applications-guide/v1.0/estimating-consequences-for-levees-and-floodwalls/#structure-inventory">Estimating Consequences for Levees and Floodwalls, Structure Inventory</Link> for 
+The Curwensville Dam structure inventory is developed using the USACE NSI dataset.
+Reference <Link to="/docs/desktop-applications/lifesim/applications-guide/v1.0/estimating-consequences-for-levees-and-floodwalls/#structure-inventory">Estimating Consequences for Levees and Floodwalls, Structure Inventory</Link> for
 additional information on the NSI and/or importing structure inventories into LifeSim.
 
 ## LifeSim Model Setup
 
-The subsequent sections will discuss setting up a LifeSim model by importing data and setting EPZ parameters and alternatives for dams. The sections will cover
+The subsequent sections discuss setting up a LifeSim model by importing data and setting EPZ parameters and alternatives for dams. The sections cover
 hydraulic data import, EPZs, structure inventories, creating alternatives, and simulating alternatives.
 
 ### Hydraulic Data
 
 To calculate life loss, LifeSim requires depths, velocities, and arrival times from unsteady hydraulic modeling. The most common
 method of delivering this information into the LifeSim model is through HEC-RAS HDF plan files (Note: Only HEC-RAS versions
-5.0 and later produce the HDF files required by LifeSim). For each hydraulic scenario, the user will need the plan file from HEC-RAS and the terrain files (both
-the HDF and the associated Tagged Image Format (TIF) files) so that LifeSim can calculate depths and arrival times.
+5.0 and later produce the HDF files required by LifeSim). For each hydraulic scenario, the user needs the plan file from HEC-RAS and the terrain files (both
+the HDF and the associated Tagged Image File Format (TIF) files) so that LifeSim can calculate depths and arrival times.
 
-Prior to importing data, create a new study by specifying a name and location to save to study data. To import the hydraulic data from HEC-RAS, right
+Prior to importing data, create a new study by specifying a name and location to save the study data. To import the hydraulic data from HEC-RAS, right
 click on <strong>Hydraulic Data </strong>in the study pane, and select <strong>Import from HEC-RAS</strong>.
 
 <Figure
@@ -376,8 +376,8 @@ click on <strong>Hydraulic Data </strong>in the study pane, and select <strong>I
 
 From the Import from HEC-RAS window, map to the project's HEC-RAS Plan(s) Directory by clicking on the button with the three dots <FigureInline src="figures/desktop-applications/lifesim/applications-guide/v1.0/inline-images/inline-3f9a0143.png" />. The file directory
 selected should contain plan HDF files from HEC-RAS (e.g., _PA00003_Curwensvill.p01.hdf_). Select the specific HEC-RAS plan you want to import by using
-the dropdown next to HEC-RAS Plan. Once selected, the Name of the hydraulic scenario will automatically populate, but the user is able to alter the
-Name. If the terrain is inside the HEC-RAS directory Terrain folder, LifeSim will auto populate the terrain file. If not, map to the project's HEC-RAS
+the dropdown next to HEC-RAS Plan. Once selected, the Name of the hydraulic scenario automatically populates, but the user is able to alter the
+Name. If the terrain is inside the HEC-RAS directory Terrain folder, LifeSim auto populates the terrain file. If not, map to the project's HEC-RAS
 Terrain File (HDF) by clicking on the button with three dots <FigureInline src="figures/desktop-applications/lifesim/applications-guide/v1.0/inline-images/inline-3f9a0143.png" />.
 Once you have the hydraulic data mapped and selected in the Import from HEC-RAS window, you can either select <strong>Import from RAS</strong> or <strong>Import from Map</strong>.
 
@@ -390,10 +390,10 @@ Once you have the hydraulic data mapped and selected in the Import from HEC-RAS 
 
 To specify the timing of the hazard being evaluated, in this case dam breach, the user can either import a hydrograph from a specific cross section or
 a storage area using the Import from RAS option or select a point on the map to generate a hydrograph using the Import from Map option. This example
-uses the Import from Map option for simplicity. Refer to <Link to="/docs/desktop-applications/lifesim/applications-guide/v1.0/estimating-consequences-for-levees-and-floodwalls/#hydraulic-data">Estimating Consequences for Levees and Floodwalls, Hydraulic Data</Link> for 
+uses the Import from Map option for simplicity. Refer to <Link to="/docs/desktop-applications/lifesim/applications-guide/v1.0/estimating-consequences-for-levees-and-floodwalls/#hydraulic-data">Estimating Consequences for Levees and Floodwalls, Hydraulic Data</Link> for
 guidance on utilizing the Import from RAS option.
 
-When you select <strong>Import from Map</strong>, the RAS Map Data Selector window will open.
+When you select <strong>Import from Map</strong>, the RAS Map Data Selector window opens.
 
 <Figure
   figKey="figure-99"
@@ -411,7 +411,7 @@ To view a hydrograph along with its hydraulic timing and depths, use the <strong
   caption="Select Hydrograph Tool in the RAS Map Data Selector"
 />
 
-The RAS Map Data Selector map window will automatically display the 2D areas used in the RAS modeling, the cross sections, the hydraulic animation,
+The RAS Map Data Selector map window automatically displays the 2D areas used in the RAS modeling, the cross sections, the hydraulic animation,
 and a base map. The user can change the base map and add data to the map window (e.g., breach locations shapefile, leveed area shapefile, structure
 inventory, etc.) by clicking on the <strong>Add Data</strong> <FigureInline src="figures/desktop-applications/lifesim/applications-guide/v1.0/inline-images/inline-add-data-arrow.png" /> button.
 
@@ -432,12 +432,12 @@ Hydrograph Tool</strong> and click in the center channel of the inundation just 
   caption="Progress Window in the RAS Map Data Selector after clicking on an area with the Select Hydrograph tool"
 />
 
-Once a representative hydrograph for the hydraulic scenario is loaded, click <strong>OK</strong> and you will return to the Import from HEC-RAS
-window. The window will now display hydraulic timing information as well as the same representative hydrograph. The Hazard Occurrence date and time
+Once a representative hydrograph for the hydraulic scenario is loaded, click <strong>OK</strong> and you return to the Import from HEC-RAS
+window. The window now displays hydraulic timing information as well as the same representative hydrograph. The Hazard Occurrence date and time
 should match the time that failure or overtopping (if applicable) begins within the study area. This information can be found in HEC-RAS or the
-hydraulic engineer will provide this information. For the Curwensville MH Failure, the breach initiation time is 2/3/2099 at 23:00. The red line is the
-Hazard Occurrence time, and the first 31 feet of depth represents spillway flow. The hydrograph then increases steeply after the failure. 
-Press <strong>OK</strong> and the hydraulic scenario will be processed and imported into LifeSim.
+hydraulic engineer provides this information. For the Curwensville MHP Failure, the breach initiation time is 2/3/2099 at 23:00. The red line is the
+Hazard Occurrence time, and the first 31 feet of depth represents spillway flow. The hydrograph then increases steeply after the failure.
+Press <strong>OK</strong> and the hydraulic scenario is processed and imported into LifeSim.
 
 <Figure
   figKey="figure-103"
@@ -446,14 +446,14 @@ Press <strong>OK</strong> and the hydraulic scenario will be processed and impor
   caption="Import from HEC-RAS window following selection of a representative hydrograph from RAS Map Data Selector"
 />
 
-The user will repeat this process for each of the study's hydraulic scenarios. For non-failure scenarios, it is recommended to use the same imminent
+The user repeats this process for each of the study's hydraulic scenarios. For non-failure scenarios, it is recommended to use the same imminent
 hazard time used for the corresponding failure scenario. LifeSim interpolates population between the 2am and 2pm time values. Therefore, using
 different imminent hazard times for failure and non-failure scenarios can cause inconsistencies when calculating excess consequences by subtracting
 non-failure results from failure results.
 
 ### Importing a Structure Inventory
 
-To import a structure inventory from an existing point shapefile, the user will navigate to the Study pane in their model, right-click 
+To import a structure inventory from an existing point shapefile, the user navigates to the Study pane in their model, right-clicks
 on <strong>Structure Inventories</strong>, and select <strong>Import Structures from Shapefile</strong>.
 
 <Figure
@@ -463,7 +463,7 @@ on <strong>Structure Inventories</strong>, and select <strong>Import Structures 
   caption="Importing Structures from Shapefile from the Study Pane"
 />
 
-The user will then be able to either select the Structure Inventory Shapefile from the dropdown, which is available if the shapefile is in the Map
+The user can then select the Structure Inventory Shapefile from the dropdown, which is available if the shapefile is in the Map
 Layers pane of the LifeSim model, or navigate to the shapefile by clicking on the button with the three dots <FigureInline src="figures/desktop-applications/lifesim/applications-guide/v1.0/inline-images/inline-3f9a0143.png" /> next to the dropdown. Once you match up
 your shapefile's attributes (Import Attributes) with the corresponding LifeSim Required Attributes (an example of matched up attributes using the NSI
 is shown in the figure below), click <strong>Next </strong>at the bottom right.
@@ -475,9 +475,9 @@ is shown in the figure below), click <strong>Next </strong>at the bottom right.
   caption="Importing National Structure Inventory 2.0 into LifeSim – Defining structure attributes"
 />
 
-You will then need to match the occupancy types in LifeSim with the occupancy types included in your structure inventory shapefile. If using a version of
-NSI from 2019 or later, the occupancy types will typically exactly match the occupancy type names in LifeSim, but the user should scan through the list to
-ensure everything is matched up correctly. If these are mismatched, the depth-damage functions, evacuation parameters, and submergence criteria will not be
+You then match the occupancy types in LifeSim with the occupancy types included in your structure inventory shapefile. If using a version of
+NSI from 2019 or later, the occupancy types typically exactly match the occupancy type names in LifeSim, but the user should scan through the list to
+ensure everything is matched up correctly. If these are mismatched, the depth-damage functions, evacuation parameters, and submergence criteria are not
 correct for that structure, which would impact the accuracy of your economic damages and life loss. If an occupancy type is missing, the user can add
 occupancy types or edit the existing occupancy types, which is discussed in the next subsection.
 
@@ -501,7 +501,7 @@ structures, and steel structures. For NSI users, you should use the default stab
 
 Reference <Link to="/docs/desktop-applications/lifesim/applications-guide/v1.0/estimating-consequences-for-levees-and-floodwalls/#structure-inventory">
 Estimating Consequences for Levees and Floodwalls, Structure Inventory</Link> for creating new structure criteria rules. Once all structures have
-been assigned a stability criterion, click <strong>Finish</strong>. The inventory will then be imported into LifeSim.
+been assigned a stability criterion, click <strong>Finish</strong>. The inventory is then imported into LifeSim.
 
 ### Emergency Planning Zones
 
@@ -516,16 +516,16 @@ for Warning Issuance Delay, First Alert Diffusion during daytime and nighttime, 
 />
 
 When conducting a detailed consequence analysis in LifeSim, the analyst would work with local emergency managers and other subject matter experts to
-determine the most appropriate curves to select for the entire study area or for specific areas with the study area. However, LifeSim contains generic
+determine the most appropriate curves to select for the entire study area or for specific areas within the study area. However, LifeSim contains generic
 “unknown” curves that represent a maximum amount of uncertainty (relative to the other preset curves) regarding EPZ parameters. The unknown warning
 diffusion and PAI curves are uniform distributions, so given enough iterations the range of results should provide reasonable upper and lower bounds
-of life loss. These unknown parameters are used for most MMC-level LifeSim models and are used in this example. 
-Reference <Link to="/docs/desktop-applications/lifesim/applications-guide/v1.0/estimating-consequences-for-levees-and-floodwalls/#emergency-planning-zones">Estimating 
-Consequences for Levees and Floodwalls, Emergency Planning Zones</Link> and <Link to="/docs/desktop-applications/lifesim/applications-guide/v1.0/estimating-consequences-for-coastal-infrastructure/#emergency-planning-zones">Estimating 
-Consequences for Coastal Infrastructure, Emergency Planning Zones</Link> for more 
+of life loss. These unknown parameters are used for most MMC-level LifeSim models and are used in this example.
+Reference <Link to="/docs/desktop-applications/lifesim/applications-guide/v1.0/estimating-consequences-for-levees-and-floodwalls/#emergency-planning-zones">Estimating
+Consequences for Levees and Floodwalls, Emergency Planning Zones</Link> and <Link to="/docs/desktop-applications/lifesim/applications-guide/v1.0/estimating-consequences-for-coastal-infrastructure/#emergency-planning-zones">Estimating
+Consequences for Coastal Infrastructure, Emergency Planning Zones</Link> for more
 information on how to develop Warning and Protective Action parameters for your specific EPZs.
 
-To import an EPZ, right-click on Emergency Planning Zones and select Import EPZs From Shapefile.
+To import an EPZ, right-click on Emergency Planning Zones and select <strong>Import EPZs from Shapefile</strong>.
 
 <Figure
   figKey="figure-109"
@@ -546,7 +546,7 @@ confirm that there are now three EPZs named BreachEPZ, InPoolEPZ, and NonBreachE
   caption="Showing the 3 Areas in the “EPZ_MHP_DoubleWarning” EPZ"
 />
 
-Each of the three EPZs are now assigned a Warning Issuance Delay curve, a First Alert Curve, and a PAI curve. Each area will have the same assigned
+Each of the three EPZs is now assigned a Warning Issuance Delay curve, a First Alert Curve, and a PAI curve. Each area will have the same assigned
 curves for each uncertainty parameter.
 
 There is a check box for Simulate Traffic (if applicable): <FigureInline src="figures/desktop-applications/lifesim/applications-guide/v1.0/inline-images/inline-checkbox.png" />. The “if applicable” statement is here because there is also a checkbox in the Alternative
@@ -607,7 +607,7 @@ InPoolEPZ, then click <strong>OK</strong> to close the EPZ editor window. Repeat
 
 ### Creating Alternatives in LifeSim
 
-Below the EPZ section of the LifeSim study tree are Road Networks, Destinations, Agricultural Data, and ECAM Data. These sections will be skipped for
+Below the EPZ section of the LifeSim study tree are Road Networks, Destinations, Agricultural Data, and Economic Consequences Assessment Model (ECAM) Data. These sections are skipped for
 this example of a base level study. For information on simulating evacuation, reference <Link to="/docs/desktop-applications/lifesim/applications-guide/v1.0/estimating-consequences-for-levees-and-floodwalls/#simulating-evacuation">Estimating
 Consequences for Levees and Floodwalls, Simulating Evacuation</Link>. Therefore, the next step in this example is to create alternatives.
 
@@ -705,7 +705,7 @@ are incrementally opened. Once this final warning is set, click <strong>OK</stro
 
 To create the additional alternatives, an easy method is to right-click on the alternative just created and click <strong>Copy</strong>. This brings
 up a window where the name of the new alternative can be changed. Change the name to “IHP_Breach_MinWarn” to create the next alternative. Right click
-on the new alternative and select <strong>Edit</strong>. Change the hydraulic event to IH Breach and change the EPZ to the “EPZ_IHP_DoubleWarning”
+on the new alternative and select <strong>Edit</strong>. Change the hydraulic event to IHP Breach and change the EPZ to the “EPZ_IHP_DoubleWarning”
 file. Set the same Imminent Hazard ID time and Hazard Communication Delay for failure, non-failure, and in-pool areas to the same as they were on the MHP
 alternative (-2 to 0 hours for failure and -72 hours for non-failure and in-pool).
 
@@ -740,11 +740,11 @@ hours).
   caption="MHP_Breach_AmpleWarn Alternative"
 />
 
-Finally, set up the non-failure alternatives. For this study we will have non-failure alternatives for only the (1) MH Pool, (2) IH Pool, and (3) TAS
+Finally, set up the non-failure alternatives. For this study we will have non-failure alternatives for only the (1) MHP Pool, (2) IHP Pool, and (3) TAS
 Pool. The TAS event should not have any damages as it should be within control levels, but it needs to be simulated to confirm that and identify any
 inaccuracies in the hydraulics or structure inventory that need to be corrected.
 
-Once all the example alternatives are created, it should match the figure below.
+Once all the example alternatives are created, they should match the figure below.
 
 <Figure
   figKey="figure-121"
@@ -755,7 +755,7 @@ Once all the example alternatives are created, it should match the figure below.
 
 ### Creating Simulations
 
-Simulations are created for testing (e.g., “Test_Sim”) and for each grouping of alternatives (e.g., “MH_Sims”, “IH_Sims”, and “TAS_SS_NH_Sims”; TAS,
+Simulations are created for testing (e.g., “TestSim”) and for each grouping of alternatives (e.g., “MH_Sims”, “IH_Sims”, and “TAS_SS_NH_Sims”; TAS,
 SS, and NH alternatives can be run together since they will all use the two zone EPZ). The “TestSim” is created to run the TAS non-failure alternative
 and any other alternatives that might be run for testing (e.g., MHP Minimal Warning as the most structures will be inundated in this scenario). This
 simulation is helpful for calibrating the structure inventory. As discussed earlier, the TAS non-failure test simulation will help you identify any
@@ -763,19 +763,19 @@ structures that are in the river or reservoir. The MHP scenario will help you id
 the structure attributes need updating (e.g., a high-rise apartment building only has one floor in the attribute table, which does not allow the PAR
 to vertically evacuate in the simulation and may be inflating life loss estimates).
 
-The MH and IH alternatives get their own simulations so that the EPZ polygons can be used as a reporting polygon; remember the non-fail EPZ polygons
-for those events are unique to the MH and IH scenarios. Since the “TestSim” is not for final reporting, the Summary Polygons are less relevant and
-the number of iterations can be lower. Name the simulation “TestSim," select the 2am and 2pm boxes, set the number of iterations to 100, and use the
+The MHP and IHP alternatives get their own simulations so that the EPZ polygons can be used as a reporting polygon; remember the non-fail EPZ polygons
+for those events are unique to the MHP and IHP scenarios. Since the “TestSim” is not for final reporting, the Summary Polygons are less relevant and
+the number of iterations can be lower. Name the simulation “TestSim", select the 2am and 2pm boxes, set the number of iterations to 100, and use the
 NoDoubleWarning EPZ as the Summary Polygon. Select the TAS_NonBreach alternative (and any other alternative needed to help with calibration) to run.
 
 <Figure
   figKey="figure-122"
   src="figures/desktop-applications/lifesim/applications-guide/v1.0/figures/figure122.png"
-  alt="Creating the Test_Sim Simulation"
-  caption="Creating the Test_Sim Simulation"
+  alt="Creating the TestSim Simulation"
+  caption="Creating the TestSim Simulation"
 />
 
-Next create the “MH_Sims”, “IH_Sims”, and “TAS_SS_NH_Sims” simulations. For the “MH_Sims”, select 2am and 2pm, and use 1000 iterations (more
+Next create the “MH_Sims”, “IH_Sims”, and “TAS_SS_NH_Sims” simulations. For the “MH_Sims”, select 2am and 2pm, and use 1,000 iterations (more
 iterations can be used depending on need and simulation times, 1,000 is a recommended minimum). For the Summary Polygons, select the MHP double
 warning EPZ, the Mileage Reaches polygon that was created in ArcGIS previously, and the City Boundaries polygon. For Summary Set Name it is important
 to use the same names for each simulation (EPZs, Reaches, and Cities) to facilitate analysis of results in a spreadsheet.
@@ -803,7 +803,7 @@ The first Simulation to be run is the TestSim, as this will assist in calibratio
 within channel and have no flood damages. If structures are flooded in this scenario, it means those structures would likely be flooded prior to the
 failure in the modeled fail scenario and would not receive any warning within the model.
 
-Right click on the <strong>TestSim </strong>and select <strong>Run Simulation</strong> to simulate the TAS non-fail alternative that was selected.
+Right click on the <strong>TestSim </strong>and select <strong>Run Simulation</strong> to simulate the TAS non-failure alternative that was selected.
 This simulation may take about 20 minutes or more depending on the computer. Once the simulation is finished, right-click on <strong>TestSim</strong>
 and select <strong>View Results Tables</strong>.
 
@@ -815,7 +815,7 @@ and select <strong>View Results Tables</strong>.
 />
 
 The primary output table for the simulation has a row for each Summary area, including totals for the entire summary areas. There are also rows for
-each time of day. In this example, 15 structures were inundated in the TAS non-fail event and these need to be checked and modified before running
+each time of day. In this example, 15 structures were inundated in the TAS non-failure event and these need to be checked and modified before running
 the final simulation sets.
 
 <Figure
@@ -870,7 +870,7 @@ Click <strong>Send Selected to Map Window</strong> in the bottom right to add th
 structure inventory so it is at the top of the list. Next, right-click on the TAS_NonBreach layer and select <strong>Properties</strong>. Change the
 Draw Style to Value, select the Attribute Max_Depth, change the number of bins to 1 and the Minimum to 0.001. Next change both the Line Color and Fill
 Color to yellow and change the size to 5. Next, select the Excluded Values category, and uncheck the boxes next to Line Color and Fill Color. When
-the changes are made hit<strong> Apply</strong> and then <strong>Close</strong> in the bottom right.
+the changes are made click <strong>Apply</strong> and then <strong>Close</strong> in the bottom right.
 
 <Figure
   figKey="figure-131"
@@ -880,7 +880,7 @@ the changes are made hit<strong> Apply</strong> and then <strong>Close</strong> 
 />
 
 These map properties create an effect that highlights any structures that were inundated by more than 0.001 feet in the TAS Non-fail simulation.
-Four of the structures are on or just upstream of the dam itself. Zooming in it is apparent that these are not structure points that should be
+Four of the structures are on or just upstream of the dam itself. Zooming in, it is apparent that these are not structure points that should be
 included in the LifeSim model.
 
 <Figure
@@ -918,9 +918,9 @@ First, the three points on the dam are selected by drawing a box around them.
   caption="Selecting Multiple Structure Points in the LifeSim Map window"
 />
 
-Hit the <strong>Delete</strong> key on your keyboard to delete the structure points.
+Press the <strong>Delete</strong> key on your keyboard to delete the structure points.
 
-Directly west of these structure, across the lake, a highlighted
+Directly west of these structures, across the lake, a highlighted
 structure point in an empty field can also be selected and deleted. The user can zoom out and scroll downstream to locate the other highlighted points
 that were damaged in the TAS non-fail, either deleting points if there are no apparent structures nearby without points or moving them to
 structures if possible. It can be helpful to uncheck the structure inventory layer display to help locate the yellow points. Structures can be moved
@@ -946,7 +946,7 @@ the study tree and verify and re-edit as necessary.
   background="transparent"
 />
 
-Editing the structure points impacted in the TAS Non-fail event represents a minimum level of structure inventory calibration that must be
+Editing the structure points impacted in the TAS non-failure event represents a minimum level of structure inventory calibration that must be
 accomplished to avoid overestimating consequences due to structures not receiving a warning or structures being flooded deeper than they should be.
 There are some cases where a structure point is placed correctly but is still flooded due to either terrain inaccuracies or lack of low flow hydraulic
 model calibration. In these cases, the user must determine the most efficient and effective resolution which could include steps such as moving
@@ -955,9 +955,9 @@ inundation, or performing additional hydraulic model calibration. Some structure
 compensate. Common examples of when this may be required are structures on a hillside where the uphill side is at ground level and the downhill side
 is raised on blocks or piers and floating structures attached to riverside docks (there are several examples of the latter along the Columbia River).
 
-Once the TAS non-fail calibration is complete, edit the test simulation to select both the MH Breach Minimal Warning and the TAS Non-Breach
+Once the TAS non-failure calibration is complete, edit the test simulation to select both the MHP Breach Minimal Warning and the TAS non-failure
 alternatives, then run the simulation with those two alternatives and the inventory edits just completed. This second test will accomplish two important
-tasks: (1) it will verify that the TAS Non-fail event does not flood any structures and (2) it will provide the results needed to verify the
+tasks: (1) it will verify that the TAS non-failure event does not flood any structures and (2) it will provide the results needed to verify the
 attributes and locations of high consequence structures.
 
 Once the simulation is complete, close the simulation then right-click on <strong>TestSim </strong>and select <strong>View Results Tables</strong>. It
@@ -972,7 +972,7 @@ should look like the figure below where the TAS_NonBreach alternative has zero s
 
 Close the table, right-click on <strong>TestSim</strong> again, and select <strong>View Results Maps</strong>. Check the box next to the MHP Breach
 MinWarn 14:00 Structure Summary and click <strong>Send Selected to Map Window</strong> in the bottom right of the window. The map window will now
-contain a heat map of the daytime life loss for the MH MinWarn alternative.
+contain a heat map of the daytime life loss for the MHP MinWarn alternative.
 
 <Figure
   figKey="figure-139"
@@ -994,7 +994,7 @@ area. Repeat the zoom a few more times to zoom to a close view of the structure.
 />
 
 Now with the structure inventory displayed on top of the results map, right-click on the inventory to open the attribute table. Move and organize both
-attribute windows to they can be seen, and then use the<strong> Select</strong> tool (white arrow) to select the structure with the high life loss.
+attribute windows so they can be seen, and then use the<strong> Select</strong> tool (white arrow) to select the structure with the high life loss.
 In the structure attribute table, click on the button to <strong>Show Selected Rows Only</strong> as shown in the figure below.
 
 <Figure
@@ -1018,7 +1018,7 @@ incorrect based on the satellite imagery and (2) the NSI lists the school as a s
 Scrolling right on the inventory shows that there is a daytime under 65 population of 739, which should be the students and teachers combined. The
 structure can be moved based on the imagery, but to check the other attributes, the school must be researched on the internet.
 
-Google Maps and Streetview can typically be used to verify how many stories a building is if street view is available in the area. With a school, the
+Google Maps and Street View can typically be used to verify how many stories a building is if street view is available in the area. With a school, the
 school website also often has pictures which can be used to count stories. A Google Maps search for Clearfield Area High School will bring the user to
 a completely different school location than what is shown in the inventory and in the Mapbox satellite imagery in LifeSim, which poses a unique
 problem.
@@ -1030,7 +1030,7 @@ problem.
   caption="Google Maps Search Results for Clearfield Area High School"
 />
 
-It is helpful to crosscheck the structure's location by utilizing an alternate imagery source. LifeSim contains two streaming sources, MapBox and ESRI.
+It is helpful to crosscheck the structure's location by utilizing an alternate imagery source. LifeSim contains two streaming sources, Mapbox and ESRI.
 The figure below shows the same area with Mapbox imagery on the left and ESRI imagery on the right.
 
 <Figure
@@ -1084,8 +1084,8 @@ structure inventory.
 Once all structure edits have been completed, the three non-test simulations can be computed. Once complete, results can be viewed by right-clicking
 on the simulations and selecting <strong>View Results Plots</strong>, <strong>Tables</strong>, or <strong>Maps</strong>. The results tables can be
 copied into Microsoft Excel and analyzed using pivot tables and formulas. Results can be displayed and compared by downstream reaches and city
-boundaries; additionally, the IHP and MHP results can be viewed by non-fail and fail EPZs. 
-Reference <Link to="/docs/desktop-applications/lifesim/applications-guide/v1.0/estimating-consequences-for-levees-and-floodwalls/#understanding-and-interpreting-results">Estimating 
+boundaries; additionally, the IHP and MHP results can be viewed by non-failure and failure EPZs.
+Reference <Link to="/docs/desktop-applications/lifesim/applications-guide/v1.0/estimating-consequences-for-levees-and-floodwalls/#understanding-and-interpreting-results">Estimating
 Consequences for Levees and Floodwalls, Understanding and Interpreting Results</Link> for more information on analyzing results and calibrating data inputs.
 
 <CitationFootnote />
