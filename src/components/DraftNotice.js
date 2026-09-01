@@ -1,4 +1,5 @@
 import { useLocation } from '@docusaurus/router';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import latestVersions from '@site/static/versions/latestVersions.json';
 import { draftDocs } from '../draftDocs';
 
@@ -20,18 +21,21 @@ import { draftDocs } from '../draftDocs';
 
 export const DRAFT_STATUS_TEXT = 'This document is pending final approval by the RMC Director.';
 
-function getDocInfo(pathname) {
-  const stripped = pathname
-    .replace(/^\/RMC-Software-Documentation\/docs\//, '')
-    .replace(/^\/docs\//, '')
-    .replace(/^docs\//, '');
+function getDocInfo(pathname, docsBase) {
+  // docsBase is derived from siteConfig.baseUrl, so this resolves under every
+  // deployment target: local dev ('/docs/'), production
+  // ('/RMC-Software-Documentation/docs/') and PR previews
+  // ('/RMC-Software-Documentation-Previews/pr-<n>/docs/'). Hardcoding the known
+  // prefixes here silently disabled the strip on any base path not listed.
+  if (!pathname.startsWith(docsBase)) return null;
+  const stripped = pathname.slice(docsBase.length);
   const match = stripped.match(/^(.+?)\/(v\d+\.\d+(?:\.\d+)?)(?:\/|$)/);
   if (!match) return null;
   return { docBasePath: match[1], version: match[2] };
 }
 
-function isDraftPath(pathname) {
-  const info = getDocInfo(pathname);
+function isDraftPath(pathname, docsBase) {
+  const info = getDocInfo(pathname, docsBase);
   if (!info) return false;
   const isFlagged = draftDocs.some((base) => info.docBasePath === base || info.docBasePath.startsWith(base + '/'));
   if (!isFlagged) return false;
@@ -43,7 +47,8 @@ function isDraftPath(pathname) {
 /** True when the current route is the latest version of a doc flagged `draft: true`. */
 export function useIsDraftDoc() {
   const location = useLocation();
-  return isDraftPath(location.pathname);
+  const docsBase = useBaseUrl('docs/');
+  return isDraftPath(location.pathname, docsBase);
 }
 
 /**
