@@ -1,0 +1,141 @@
+/* ===== Draft Status Marking ===== */
+/* Screen: a slim strip at the top of the content column that sticks below the
+           site header as the document scrolls.
+   Print:  a band repeated at the top and bottom of every printed sheet.
+   See src/components/DraftNotice.js. */
+
+/* ── Screen: document status strip ── */
+/* Bounded by the content column, not the viewport: a full-bleed bar reads as
+   site-wide chrome, a column-width bar reads as status for this document. */
+/* The anchor is the sticky element. It carries an opaque, page-coloured band so
+   the gap above the strip is preserved as the document scrolls without text
+   showing through it — the site header itself has a transparent background. */
+.draft-strip-anchor {
+  position: sticky;
+  top: var(--ifm-navbar-height, 0px);
+  z-index: 5;
+
+  /* Holds the gap open as the document scrolls under it. Uses an explicit token
+     rather than --ifm-background-color, which resolves to #0000 in light mode. */
+  padding-top: 1rem;
+  padding-bottom: 0.35rem;
+  /* Cancels the container's top spacing so the strip sits at its stuck position
+     from first paint — it locks in place instead of shifting up on first scroll. */
+  margin-top: -1rem;
+  margin-bottom: 0.7rem;
+  background-color: var(--draft-strip-band);
+}
+
+.draft-strip {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--draft-strip-border);
+  border-radius: var(--ifm-global-radius);
+  background-color: var(--draft-strip-bg);
+
+  color: var(--draft-strip-fg);
+  font-size: 0.8125rem;
+  line-height: 1.3;
+  text-align: center;
+}
+
+/* Light mode — lighter red */
+:root {
+  --draft-strip-bg: #fdf3e0;
+  --draft-strip-border: #eed9ab;
+  --draft-strip-fg: #6f4a08;
+  --draft-strip-band: #f7f8fa;
+}
+
+/* Dark mode — darker red */
+html[data-theme='dark'] {
+  --draft-strip-bg: #33280f;
+  --draft-strip-border: #6a5423;
+  --draft-strip-fg: #f2e0be;
+  --draft-strip-band: #1b1b1b;
+}
+
+@media (max-width: 480px) {
+  .draft-strip {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.7rem;
+  }
+}
+
+/* ── Print frame: inert on screen ── */
+/* display: contents makes the wrapper generate no boxes, so the document lays
+   out exactly as it would without the table. */
+.draft-print-frame,
+.draft-print-frame > thead,
+.draft-print-frame > tbody,
+.draft-print-frame > tfoot,
+.draft-print-frame > * > tr,
+.draft-print-frame > * > tr > td {
+  display: contents;
+}
+
+.draft-print-frame__band {
+  display: none;
+}
+
+/* ── Print ── */
+@media print {
+  /* The viewport strip is a screen affordance; the repeating band replaces it. */
+  .draft-strip-anchor {
+    display: none !important;
+  }
+
+  .draft-print-frame {
+    display: table !important;
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  /* thead/tfoot repeat across page breaks — this is what marks every sheet. */
+  .draft-print-frame > thead {
+    display: table-header-group !important;
+  }
+
+  .draft-print-frame > tfoot {
+    display: table-footer-group !important;
+  }
+
+  .draft-print-frame > tbody {
+    display: table-row-group !important;
+  }
+
+  .draft-print-frame > * > tr {
+    display: table-row !important;
+  }
+
+  .draft-print-frame > * > tr > td {
+    display: table-cell !important;
+    border: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Class specificity beats the `* { color: #000 !important }` reset in print.css. */
+  .draft-print-frame__band {
+    display: block !important;
+    margin: 0 0 8pt !important;
+    padding: 3pt 0 !important;
+    border-top: 1pt solid #8a5a00 !important;
+    border-bottom: 1pt solid #8a5a00 !important;
+    color: #8a5a00 !important;
+    font-size: 8.5pt !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.06em;
+    text-align: center;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .draft-print-frame__band--foot {
+    margin: 8pt 0 0 !important;
+  }
+}
