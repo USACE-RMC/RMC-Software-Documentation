@@ -5,7 +5,8 @@ const TableChangelog = ({ dates = [], categories = [], documents = [], versions 
 
   const HEADERS = ['Date', 'Category', 'Document', 'Version', 'Description'];
   const COL_WIDTHS = ['11%', '13%', '20%', '8%', '48%'];
-  const HEADERS_ALIGN = ['left', 'left', 'left', 'center', 'left'];
+  const HEADERS_ALIGN = ['left', 'left', 'left', 'left', 'left'];
+  const CELL = { textAlign: 'left', verticalAlign: 'top' };
 
   const get = (arr, i) => (Array.isArray(arr) ? arr[i] : undefined) ?? '';
 
@@ -57,30 +58,30 @@ const TableChangelog = ({ dates = [], categories = [], documents = [], versions 
               return (
                 <tr key={rowIndex}>
                   {dateSpan > 0 && (
-                    <td className="table-body-cell border" style={{ textAlign: 'left', verticalAlign: 'top' }} title={date} rowSpan={dateSpan}>
+                    <td className="table-body-cell border" style={CELL} title={date} rowSpan={dateSpan}>
                       {date}
                     </td>
                   )}
 
-                  <td className="table-body-cell border" style={{ textAlign: 'left' }} title={category}>
+                  <td className="table-body-cell border" style={CELL} title={category}>
                     {category}
                   </td>
 
                   <td
                     className="table-body-cell border"
-                    style={{ textAlign: 'left', whiteSpace: 'normal', overflowWrap: 'anywhere', wordBreak: 'break-word' }}
+                    style={{ ...CELL, whiteSpace: 'normal', overflowWrap: 'anywhere', wordBreak: 'break-word' }}
                     title={typeof doc === 'string' ? doc : undefined}
                   >
                     {doc}
                   </td>
 
-                  <td className="table-body-cell table-cell-nowrap border" style={{ textAlign: 'center' }} title={version}>
+                  <td className="table-body-cell table-cell-nowrap border" style={CELL} title={version}>
                     {version}
                   </td>
 
                   <td
                     className="table-body-cell border"
-                    style={{ textAlign: 'left', whiteSpace: 'normal', overflowWrap: 'anywhere', wordBreak: 'break-word', hyphens: 'auto' }}
+                    style={{ ...CELL, whiteSpace: 'normal', overflowWrap: 'anywhere', wordBreak: 'break-word', hyphens: 'auto' }}
                   >
                     {Array.isArray(desc) ? (
                       desc.length > 1 ? (
