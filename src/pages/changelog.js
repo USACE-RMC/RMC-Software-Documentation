@@ -15,9 +15,28 @@ export default function Changelog() {
         </div>
         <div className="mx-auto max-w-[1600px] px-6 pb-16 pt-8 lg:px-12">
           <TableChangelog
-            dates={['August 19, 2026', 'May 19, 2026', 'March 25, 2026', 'March 25, 2026', 'March 25, 2026', 'March 25, 2026', 'March 12, 2026']}
-            categories={['New Document', 'New Document Version', 'PDF Download', 'PDF Download', 'PDF Download', 'PDF Download', 'Website Update']}
+            dates={[
+              'September 1, 2026',
+              'August 19, 2026',
+              'May 19, 2026',
+              'March 25, 2026',
+              'March 25, 2026',
+              'March 25, 2026',
+              'March 25, 2026',
+              'March 12, 2026',
+            ]}
+            categories={[
+              'New Document',
+              'New Document',
+              'New Document Version',
+              'PDF Download',
+              'PDF Download',
+              'PDF Download',
+              'PDF Download',
+              'Website Update',
+            ]}
             documents={[
+              'LifeSim Applications Guide',
               'LifeSim Technical Reference Manual',
               'RMC Breach Toolbox Technical Manual',
               'RMC TotalRisk Verification Report (Draft)',
@@ -26,8 +45,9 @@ export default function Changelog() {
               'LifeSim Technical Reference Manual',
               '-',
             ]}
-            versions={['1.0', '1.1', '-', '-', '-', '-', '-']}
+            versions={['1.0', '1.0', '1.1', '-', '-', '-', '-', '-']}
             descriptions={[
+              'Official release of the LifeSim Applications Guide.',
               'Converted the LifeSim Technical Reference v1.0 as a web document. Removed the direct PDF download.',
               'Corrected an equation in the Unraveling chapter.',
               'Added as direct PDF download.',
