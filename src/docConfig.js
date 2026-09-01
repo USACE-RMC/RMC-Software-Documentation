@@ -55,7 +55,7 @@ const docs = [
     doc_location: 'desktop-applications/lifesim/applications-guide',
     doc_name: 'LifeSim Applications Guide',
     active: true,
-    draft: false,
+    draft: true,
   },
   {
     category: 'desktop-applications',
