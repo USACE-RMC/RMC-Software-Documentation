@@ -7,6 +7,9 @@
  *  - Added FloatingNav FAB + bottom-sheet drawer so users can reach
  *    the same navigation without scrolling to the top when the
  *    viewport is narrow (< 1080 px).
+ *  - Added DraftStatusStrip at the top of the content column and wrapped the
+ *    content in DraftPrintFrame, so draft documents carry a sticky status
+ *    strip on screen and a repeating DRAFT band on every printed page.
  */
 import React from 'react';
 import clsx from 'clsx';
@@ -21,6 +24,7 @@ import DocItemContent from '@theme/DocItem/Content';
 import DocBreadcrumbs from '@theme/DocBreadcrumbs';
 import ContentVisibility from '@theme/ContentVisibility';
 import FloatingNav, { InlineNav } from '@site/src/components/FloatingNav';
+import { DraftPrintFrame, DraftStatusStrip } from '@site/src/components/DraftNotice';
 import styles from './styles.module.css';
 
 function useDocTOC() {
@@ -41,11 +45,14 @@ export default function DocItemLayout({ children }) {
         <ContentVisibility metadata={metadata} />
         <DocVersionBanner />
         <div className={styles.docItemContainer}>
+          <DraftStatusStrip />
           <article>
             <DocBreadcrumbs />
             <DocVersionBadge />
             <InlineNav />
-            <DocItemContent>{children}</DocItemContent>
+            <DraftPrintFrame>
+              <DocItemContent>{children}</DocItemContent>
+            </DraftPrintFrame>
             <DocItemFooter />
           </article>
           <DocItemPaginator />

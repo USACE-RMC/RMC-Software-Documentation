@@ -78,6 +78,7 @@ const docs = [
   {
     category: 'desktop-applications',
     software: 'rmc-totalrisk',
+    doc_location: 'desktop-applications/rmc-totalrisk/verification-report',
     doc_name: 'RMC TotalRisk Verification Report',
     active: true,
     draft: true,
