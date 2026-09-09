@@ -1,35 +1,24 @@
 ## Description
 
-<!-- Briefly describe what this PR does and why. -->
+<!-- Describe what this PR changes and why. -->
 
-## Affected documents
+## Document scope
 
-<!-- List the documents this PR changes. Write "None — non-documentation change"
-     for component, styling, script, workflow, or other site-plumbing work. -->
+<!-- Name the one document changed by this author PR, or write "None — site/code change." Related source, assets, registry, and site changes may be included. -->
 
-- 
+- Document:
+- Document location (`doc_location`, or `-`):
 
 ## Related issue(s)
 
-<!-- Link related issues. Use "Closes #N" to auto-close on merge. -->
+<!-- Use "Closes #N" when appropriate. -->
 
-## Pre-submission checklist
+## Validation
 
-- [ ] I have previewed these changes locally or via the PR preview URL
-- [ ] My branch name uses an expected prefix — documentation: `docs/new/`, `docs/major/`, `docs/minor/`, `docs/fix/`, `docs/dev/`; everything else: `feature/`, `fix/`, `chore/`, `ci/`
-- [ ] I have updated `00-version-history.mdx` if this change warrants a version entry
-- [ ] I have assigned a specific peer reviewer via the Reviewers sidebar (if known)
+- [ ] I previewed the change locally or through the PR preview
+- [ ] I ran the checks appropriate to this change
+- [ ] I updated version history when the document revision warrants it
 
-## Technical edit (Lanes 1, 2, and 3)
+## Review notes
 
-<!-- Check the box below only after every technical edit comment has been addressed.
-     Lane 1 (new document) then advances to Director review.
-     Lanes 2 and 3 (major/minor revision) advance straight to ready-to-merge —
-     neither lane includes a Director review.
-     Non-documentation PRs can ignore this section entirely. -->
-
-- [ ] Technical edit comments addressed
-
-## Notes for reviewers
-
-<!-- Anything reviewers should know. -->
+<!-- Call out areas that need attention. The administrator records classification and assignments with /review commands after the PR opens. Authors do not advance stages by editing this template. -->

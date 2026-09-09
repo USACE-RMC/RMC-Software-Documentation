@@ -139,13 +139,13 @@ The documentation guide is structured to take you from setup through advanced us
 
 ### Review and Approval Process
 
-9. **[Review and Approval Process Overview](./09-review-and-approval-overview.mdx)** - Roles, lanes, the merge gate, and the draft watermark
-10. **[Review Lanes](./10-review-lanes.mdx)** - Branch prefixes and which review stages apply to each lane
+9. **[Review and Approval Process Overview](./09-review-and-approval-overview.mdx)** - Roles, controller state, merge, and publication
+10. **[Review Classifications and Stages](./10-review-lanes.mdx)** - Classifications, descriptive branch prefixes, and required stages
 11. **[Author Workflow](./11-author-workflow.mdx)** - From branch creation to publication
 12. **[Reviewer Workflow](./12-reviewer-workflow.mdx)** - For peer reviewers and RMC Lead Civils
 13. **[Technical Edit](./13-technical-edit.mdx)** - AI-assisted editorial review (includes the full prompt)
-14. **[Director Workflow](./14-director-workflow.mdx)** - Final approval for new documents
-15. **[Site Admin Workflow](./15-site-admin-workflow.mdx)** - Reviewer assignment, checkpoint deploys, merge prep
+14. **[Director Review and Publication](./14-director-workflow.mdx)** - Separate full-document review and publication for new documents
+15. **[Site Admin Workflow](./15-site-admin-workflow.mdx)** - Classification, assignments, exceptions, merge, and deployment
 
 ### Appendices (Advanced Topics)
 
@@ -268,7 +268,7 @@ This is regular text with **bold** and _italic_ formatting.
 
 ## Common Contribution Workflows
 
-The `main` branch is protected. Every change goes through a feature branch and a pull request. For changes under `docs/`, the branch prefix routes the PR to one of five review lanes — see [Review Lanes](./10-review-lanes.mdx) for the full mapping. Work that touches nothing under `docs/` — components, styling, scripts, configuration, CI — uses a `feature/`, `fix/`, `chore/`, or `ci/` branch and has no review lane at all; a passing `CI Build` is the only requirement.
+The `main` branch is protected. Every change goes through a descriptive branch and pull request. Branch prefixes suggest intent; an administrator records the authoritative classification for every PR. Documentation classifications use the stages in [Review Classifications and Stages](./10-review-lanes.mdx). Site-code and infrastructure changes have no formal document stages but still require current CI and administrator merge.
 
 ### Workflow 1: Convert Existing Word Document
 
@@ -283,7 +283,7 @@ The `main` branch is protected. Every change goes through a feature branch and a
 5. Add generated files to the appropriate `docs/` folder.
 6. Register the document in `src/docConfig.js` with `active: false, draft: true`.
 7. Test locally with `npm start`.
-8. Commit, push the branch, and open a pull request. The review workflow auto-assigns Lane 1 (peer → Lead Civil → technical edit → Director).
+8. Commit, push the branch, and open one Content PR for the document. An administrator classifies it as `new` and assigns peer, Lead Civil, and technical-edit stages. It merges as a draft before separate Director review.
 
 **Typical time:** 1-3 hours depending on document complexity.
 
@@ -310,7 +310,7 @@ The walkthrough includes folder setup, asset organization, testing procedures, a
 5. Create MDX files (using the DOCX converter or manually).
 6. Register the document in `src/docConfig.js` with `active: false, draft: true`.
 7. Test locally with `npm start`.
-8. Commit, push, and open a PR. The review workflow auto-assigns Lane 1 and guides you through peer → Lead Civil → technical edit → Director review (see [Author Workflow](./11-author-workflow.mdx)).
+8. Commit, push, and open one Content PR. An administrator classifies it and assigns peer, Lead Civil, and technical editing. It merges as a draft before separate Director review (see [Author Workflow](./11-author-workflow.mdx)).
 
 **For detailed instructions, templates, real-world examples, and troubleshooting, use the [comprehensive walkthrough](./04-creating-new-document-walkthrough.mdx).**
 
@@ -327,18 +327,18 @@ The walkthrough includes folder setup, asset organization, testing procedures, a
 3. Test locally.
 4. Commit, push, and open a PR. The site admin will review and merge — no formal peer review required.
 
-**For minor revisions / new minor version (Lane 3):**
+**For minor revisions / a new minor version:**
 
 1. Create a `docs/minor/<slug>-v<version>` branch off `main`.
 2. Create the new version folder (e.g., `v1.1/`) by copying the previous version.
 3. Mirror the version structure for figures, bibliography, and source documents.
 4. Make your updates and flip `draft: true` on the document's entry in `src/docConfig.js`.
 5. Test locally.
-6. Commit, push, and open a PR. The workflow assigns Lane 3 (peer review → technical edit).
+6. Commit, push, and open one PR for the document. An administrator classifies it as `minor`; it requires peer review and technical editing.
 
-**For major revisions / new major version (Lane 2):**
+**For major revisions / a new major version:**
 
-Same as Lane 3 but on a `docs/major/<slug>-v<version>` branch. The workflow adds an RMC Lead Civil review stage between peer review and the technical edit.
+Use the same process on a `docs/major/<slug>-v<version>` branch. An administrator classifies it as `major`; it requires peer review, RMC Lead Civil review, and technical editing.
 
 **Typical time:** 30 minutes to a few hours depending on scope. Review turnaround adds days; plan accordingly.
 

@@ -30,7 +30,7 @@ under `docs/` has no lane and no review stages.
 The prefix routes the PR to a review lane. Use the full two-segment prefix — a bare
 `docs/{name}` does **not** match a lane and strands the PR in `stage:needs-lane`.
 
-- `docs/new/{slug}` — new document (Peer → Lead Civil → Technical edit → Director)
+- `docs/new/{slug}` — new document (Peer → Lead Civil → Technical edit in the Content PR; separate Director review after draft merge)
 - `docs/major/{slug}-v{X.0}` — major revision (Peer → Lead Civil → Technical edit)
 - `docs/minor/{slug}-v{X.Y}` — minor revision (Peer → Technical edit)
 - `docs/fix/{slug}` — editorial fix (no review; admin self-merge)

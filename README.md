@@ -2,55 +2,37 @@
 
 [![License: 0BSD](https://img.shields.io/badge/License-0BSD-blue.svg)](LICENSE)
 
-This repository contains the official documentation site for the RMC suite of tools, developed and maintained by the U.S. Army Corps of Engineers Risk Management Center (RMC). The site is built using [Docusaurus](https://docusaurus.io/) and is styled with [Tailwind CSS](https://tailwindcss.com/), customized to align with USACE branding.
+This repository contains the official documentation site for the U.S. Army Corps of Engineers Risk Management Center software suite. It is built with Docusaurus and Tailwind CSS and includes user guides, technical manuals, developer documentation, versioned content, figures, equations, citations, search, and accessible navigation.
 
-The project includes:
+See the published [Documentation Guide](https://usace-rmc.github.io/RMC-Software-Documentation/docs/documentation-guide/introduction/) for authoring and component guidance.
 
-- User guides and technical manuals for RMC software tools
-- Detailed component-level documentation (React-based)
-- Tables, figures, citations, equations, and glossary support
-- Versioned documentation management
-- Built-in navigation, search, and dark mode
+## Pull requests and review
 
-The project is organized to support easy contribution, internal consistency, and extensibility across future RMC documentation needs.
+Every change uses a pull request to the protected `main` branch. Branch prefixes describe intent and provide an initial classification; the trusted review controller records the authoritative classification and review state.
 
-For development standards, file structure, custom components, and styling conventions, please refer to the internal [Documentation Guide](https://usace-rmc.github.io/RMC-Software-Documentation/docs/documentation-guide/introduction/).
+| Prefix | Classification | Required document review |
+| --- | --- | --- |
+| `docs/new/` | New document | Peer → Lead Civil → technical edit; separate Director review after draft publication |
+| `docs/major/` | Major revision | Peer → Lead Civil → technical edit |
+| `docs/minor/` | Minor revision | Peer → technical edit |
+| `docs/fix/` | Editorial correction | Administrator handling; no formal document stages |
+| `docs/dev/` | Developer documentation | Administrator handling; no formal document stages |
+| `feature/`, `fix/`, `chore/`, `ci/` | Site code or infrastructure | Administrator handling and required CI |
 
-The guide includes:
+An author PR may cover one document. It may also include directly related source, asset, registry, and site changes. An administrator classifies every PR with `/review classify`, assigns one named reviewer to each required human stage, and may correct the classification at any time. For non-administrators, authors cannot review their own work and the named reviewers must differ between stages. Administrators may act in any role.
 
-- How to write and structure MDX content
-- How to use and customize React components
-- Tailwind utility conventions and shared styles
-- Table formatting and counter file integration
-- Versioning strategy and linking guidelines
-- The full review and approval workflow for all documentation changes
+Completed stages remain complete after new commits until an administrator explicitly restarts a stage. GitHub replies and resolved conversations are useful collaboration tools but are not automated gates. Authors may use `/review ready` to request a new look after revisions.
 
-## Review and Approval Workflow
+New documents use three clearly labeled PRs:
 
-All changes to documentation go through a pull request against the protected `main` branch. A PR that changes at least one file under `docs/` is a documentation PR, and its branch prefix determines which of five review lanes it is routed to:
+1. The Content PR completes peer, Lead Civil, and technical editing, then merges to `main` and publishes as a draft.
+2. An administrator starts a separate Director Review PR against a stable full-document baseline and assigns one Director.
+3. Director approval or an administrator waiver creates a Publication PR that applies the reviewed document changes and removes draft status. An administrator verifies and merges it.
 
-| Branch prefix | Lane | Reviews required |
-|---|---|---|
-| `docs/new/` | New document | Peer → Lead Civil → Technical edit → Director |
-| `docs/major/` | Major revision (new major version) | Peer → Lead Civil → Technical edit |
-| `docs/minor/` | Minor revision (new minor version) | Peer → Technical edit |
-| `docs/fix/` | Editorial fix | None (admin self-merge) |
-| `docs/dev/` | Dev docs (anything under `docs/dev/`) | None (admin self-merge) |
+Only administrators merge to `main` and approve production deployment. Successful merges build automatically; contributors do not deploy from feature branches.
 
-### Non-documentation changes
-
-Work on components, styling, build scripts, configuration, and CI changes nothing under `docs/`, so it carries **no review lane and no review stages**. Use a `feature/`, `fix/`, `chore/`, or `ci/` branch. The only gate is the `CI Build` check; once it passes, a site administrator may merge.
-
-### Preview builds and the merge gate
-
-Each PR receives an automatic preview build at an unadvertised URL where reviewers read the rendered document. Branch protection on `main` requires both the `CI Build` and `review-workflow` status checks to pass before merge, so the merge button reflects the workflow's judgment automatically.
-
-For details on each lane, who reviews what, and step-by-step instructions for authors, reviewers, the Director, and site administrators, see chapters 9 through 15 of the [Documentation Guide](https://usace-rmc.github.io/RMC-Software-Documentation/docs/documentation-guide/introduction/).
+See chapters 9–15 of the Documentation Guide for commands and role-specific instructions.
 
 ## Contact
 
-For questions or support, contact the RMC documentation team:
-
-Adam Gohs
-502-315-6484
-Adam.C.Gohs@usace.army.mil
+For questions or support, contact Adam Gohs at Adam.C.Gohs@usace.army.mil or 502-315-6484.

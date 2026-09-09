@@ -68,9 +68,9 @@ Read `.claude/skills/git-conventions.md` for PR conventions.
 - Derived from the **overall purpose** of all commits on the branch, not just the latest commit
 - Example: "Redesign homepage with product tile grid layout"
 
-### Body — choose the format based on the branch prefix
+### Body — choose the format based on the change
 
-**If the current branch starts with `docs/`** → use the **Template Style** (Step 5a). The repo's PR template at `.github/pull_request_template.md` contains a checklist for document authors, including the Lane 1 "Technical edit comments addressed" checkbox that the stage-progression workflow watches for. Passing `--body` to `gh pr create` overrides the template entirely, so the skill must reproduce the template structure with the auto-generated content filled in.
+**If the change affects a document** → use the **Template Style** (Step 5a). Reproduce the repository template when passing `--body`, including the one-document scope, `doc_location`, related issues, validation, and review notes. Branch prefixes describe intent; an administrator's controller classification is authoritative.
 
 **Otherwise (infrastructure, tooling, dependency, or any non-doc branch)** → use the **Summary Style** (Step 5b). These PRs are silently ignored by the review workflow and don't need the doc-author checklist.
 
@@ -89,7 +89,7 @@ In both styles, the summary content should be based on **ALL** commits on the br
    - Under `## Description`, replace the `<!-- Briefly describe what this PR does and why. -->` comment with the summary bullets.
    - Under `## Affected documents`, replace the bare `- ` line with the list of affected MDX files. Format each as a markdown link relative to the repo root: `- [filename.mdx](docs/full/path/filename.mdx)`. If there are no changed MDX files, write `- _No MDX files changed in this PR._`
    - Leave the `## Related issue(s)` section's comment placeholder unchanged so the author can fill it in.
-   - Leave **all checklist items unchecked**, including the Lane 1 Technical edit checkbox. The author checks them as they complete each item; the workflow specifically depends on the Technical edit checkbox being present and unchecked at PR open time.
+   - Mark validation items only when evidence supports them. Do not add a technical-edit advancement checkbox or manually request stage reviewers.
    - Leave the `## Notes for reviewers` comment placeholder unchanged.
 
 The result should be a complete copy of the template with the Description and Affected documents sections populated.

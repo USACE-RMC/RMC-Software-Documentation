@@ -633,21 +633,17 @@ Unlike the scripts above, this is **not** part of the automated build — it is 
 
 ---
 
-## Deployment to Production (Administrator-Level Only)
+## Production Build and Deployment
 
 :::danger Important - Administrators Only
 
-**Deployment is an administrator-level task.** Contributors should focus on creating and editing documentation content using `npm start` for local testing. Site administrators will handle all building and deployment to production.
+Contributors use `npm start` while editing and should run `npm run build` when their changes can affect the site. Pull-request builds and previews do not receive production publishing credentials.
 
-**Contributors do NOT need to run `npm run build` or `npm run deploy`.** If you encounter any issues while testing locally with `npm start`, contact the repository administrator rather than attempting to troubleshoot build processes.
-
-Unauthorized deployment may overwrite live documentation and disrupt the website.
+Production builds automatically only from `main`. Only administrators merge to `main` and approve the protected production environment. Do not run `npm run deploy` from an author, Director Review, or Publication PR branch.
 
 :::
 
-### Deployment Workflow
-
-If you are a site administrator deploying to **GitHub Pages**, follow these steps:
+### Local production verification
 
 #### Step 1: Build for Production
 
@@ -711,46 +707,11 @@ Always test locally before deploying to catch these issues.
 
 :::
 
-#### Step 3: Set GitHub User Environment Variable
-
-```powershell
-$env:GIT_USER="USACE-RMC"
-```
-
-**Why this is needed:**
-
-- The deploy script needs git credentials to push to the `gh-pages` branch
-- `GIT_USER` specifies the GitHub organization/user account
-- This variable is only needed for the current PowerShell session
-
-#### Step 4: Deploy to GitHub Pages
-
-```powershell
-npm run deploy
-```
-
-**What this does:**
-
-1. Runs `npm run build` again (to ensure latest changes)
-2. Pushes the contents of `build/` directory to `gh-pages` branch
-3. GitHub Pages automatically serves the updated site
-4. Site updates are live within 1-2 minutes
-
-**Expected output:**
-
-```
-Published
-```
-
-:::tip Build Redundancy
-
-Note that `npm run deploy` automatically runs the build process, so technically Step 1 is redundant if you skip testing. However, testing the production build before deployment (Steps 1-2) is **strongly recommended** to catch any production-specific issues before they go live.
-
-:::
+After local verification, push the branch and use the review workflow. An eligible PR merged by an administrator triggers the production build from the exact `main` revision and waits for environment approval.
 
 ### Post-Deployment Verification
 
-After deploying, verify the live site:
+After the approved deployment succeeds, verify the live site:
 
 1. **Visit the production URL:** [https://software.rmc.usace.army.mil](https://software.rmc.usace.army.mil) (or your configured domain)
 
@@ -771,12 +732,6 @@ After deploying, verify the live site:
    - Different browsers (Chrome, Firefox, Edge)
 
 ### Troubleshooting Deployment Issues
-
-**Deployment fails with authentication error:**
-
-- Verify `GIT_USER` is set correctly
-- Check that you have push permissions to the repository
-- Ensure Git credentials are configured
 
 **Build succeeds but site doesn't update:**
 
@@ -821,29 +776,7 @@ After deploying, verify the live site:
 
 ### Rollback Procedure
 
-If deployment causes issues:
-
-1. **Identify last working commit:**
-   ```powershell
-   git log --oneline
-   ```
-
-2. **Revert to previous version:**
-   ```powershell
-   git checkout <commit-hash>
-   npm run deploy
-   ```
-
-3. **Fix issues in development:**
-   - Debug the problem locally
-   - Test thoroughly before redeploying
-   - Consider creating a branch for testing
-
-4. **Redeploy when ready:**
-   ```powershell
-   git checkout main
-   npm run deploy
-   ```
+If deployment fails, preserve completed review state and any Director preview. Correct the problem through a PR to `main`, then let an administrator retry production. Do not automatically restart reviews, publish a historical commit directly, or delete the stable preview.
 
 ---
 

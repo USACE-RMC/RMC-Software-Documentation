@@ -32,8 +32,8 @@ Six roles participate in the workflow. Only the author needs local development t
       'Subject-matter expert assigned ad-hoc to review technical accuracy on the preview URL. Works entirely in the GitHub web interface.',
       'Provides technical oversight and quality assurance. Assigned ad-hoc per document. Reviews on the preview URL.',
       'AI-powered editorial review covering grammar, clarity, tense, terminology, and Section 508 accessibility. A team member with the necessary tooling triggers the review; the AI posts inline comments on the PR. A human technical editor can be substituted at the site admin\'s discretion.',
-      'The RMC Director provides final approval for new documents only. Reviews the document on the live site (with a DRAFT watermark) and clicks Approve — no file editing required.',
-      'Manages reviewer assignments, checkpoint deploys, merge preparation, and final deploys. The only role with access to protected parts of the repository.',
+      'The RMC Director provides final approval for new documents only, in a separate full-document Director Review PR after draft publication.',
+      'Classifies PRs, assigns one named reviewer per stage, records exceptions, merges to main, and approves production.',
     ],
   ]}
 />
@@ -61,7 +61,7 @@ Every documentation change falls into one of five lanes based on its scope.
       'Any change to documents under docs/dev/ (developer guides, internal references)',
     ],
     [
-      'Peer → Lead Civil → Technical edit → Director',
+      'Content PR: Peer → Lead Civil → Technical edit; then separate Director Review and Publication PRs',
       'Peer → Lead Civil → Technical edit',
       'Peer → Technical edit',
       'None (site admin self-merges)',
@@ -70,9 +70,9 @@ Every documentation change falls into one of five lanes based on its scope.
   ]}
 />
 
-For Lane 1, peer review, Lead Civil review, and the technical edit all happen against the preview URL or the source MDX files. Only after the technical edit completes does the site administrator deploy the document to the live site (watermarked) for Director review at the document's final URL. For Lanes 2 and 3, the entire review happens on the preview URL — the live site continues to show the previously-published version, unwatermarked.
+For a new document, peer, Lead Civil, and technical editing happen in the Content PR. That PR then merges to `main` and deploys as a draft. An administrator starts a separate Director Review PR with a stable full-document preview; approval or waiver produces a Publication PR.
 
-Only Lane 1 ends in a Director review. Lanes 2 and 3 finish at the technical edit and go straight to `stage:ready-to-merge`; Lanes 4 and 5 have no review stages at all.
+Only a new document requires Director review. Major and minor revisions finish after technical editing; editorial, developer-documentation, and code changes have no formal document stages.
 
 See [Review Lanes](./10-review-lanes.mdx) for branch-prefix conventions and detailed examples.
 
@@ -80,9 +80,9 @@ See [Review Lanes](./10-review-lanes.mdx) for branch-prefix conventions and deta
 
 The five lanes cover documentation. They do not cover the rest of the repository — React components, CSS, build scripts, Docusaurus configuration, and GitHub workflows.
 
-**A pull request that changes nothing under `docs/` has no review lane and no review stages.** It is not assigned a `lane:*` or `stage:*` label, no reviewers are requested by the workflow, and no approval is required to merge it. The only gate is the `CI Build` check; once `npm run build` passes, the `review-workflow` status flips to success and a site administrator merges.
+Every PR receives an administrator classification. A code-only PR uses `/review classify code -` and has no formal document stages; current required CI and administrator merge still apply.
 
-Branch prefixes for that work are `feature/`, `fix/`, `chore/`, and `ci/`. They are a readability convention rather than a routing signal — what actually decides whether a PR is reviewed is whether it touches `docs/`.
+Branch prefixes are descriptive conventions. The administrator's recorded classification is authoritative.
 
 A pull request that changes site code **and** documentation is a documentation PR and needs a `docs/` branch prefix. See [Changes with no review lane](./10-review-lanes.mdx#changes-with-no-review-lane) for the full treatment.
 
@@ -96,7 +96,7 @@ Every PR carries a GitHub commit status called `review-workflow` that functions 
   columns={[
     [
       'Any active review stage (peer, Lead Civil, AI editor, Director, or needs-lane)',
-      'stage:ready-to-merge (all reviews complete)',
+      'Controller reports all required stages complete or waived',
       'lane:editorial-fix or lane:dev assigned',
       'Non-docs PR, CI Build passed',
     ],
@@ -113,7 +113,7 @@ The status is re-evaluated on every push to a PR. The goal is that the merge but
 
 ## The draft watermark
 
-Documents flagged as drafts display a large diagonal "DRAFT" watermark. For Lane 1, the watermark appears on the live site during the Director review phase only — the document is not deployed to the live site until the technical edit is complete. The watermark signals to any reader who finds the live URL that the content is not yet authoritative, and it is removed when the site administrator flips the draft flag after Director approval.
+Documents flagged as drafts display a large diagonal "DRAFT" watermark. A new-document Content PR deploys from `main` with this watermark before separate Director review. The Publication PR removes draft status after Director approval or waiver.
 
 For Lanes 2 and 3, the document under revision exists only on the preview site during review. The currently-published version on the live site is never watermarked.
 

@@ -12,12 +12,8 @@ on:
       - 'package.json'
       - 'package-lock.json'
       - 'scripts/**'
+      - '.github/workflows/deploy.yml'
   workflow_dispatch:
-    inputs:
-      ref:
-        description: 'Branch or ref to deploy (leave blank for main)'
-        required: false
-        type: string
 
 permissions:
   contents: read
@@ -32,13 +28,19 @@ jobs:
   build:
     name: Build site
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
+      - name: Require main
+        if: github.ref != 'refs/heads/main'
+        run: echo 'Production builds must run from main.' >&2; exit 1
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.ref || github.ref }}
+          ref: ${{ github.sha }}
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
       - run: npm ci
       - run: npm run build
