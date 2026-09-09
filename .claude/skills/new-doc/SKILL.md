@@ -58,9 +58,7 @@ If the category IS `dev/`:
 
 ### 1f — Active / Draft Status
 
-Ask: "Should this document be active (visible and clickable) or inactive (shows 'Coming Soon' badge)? (default: active)"
-
-Record both `active` (true/false) and `draft` (inverse of active) values.
+Ask whether the draft should be active after its Content PR merges. Record `active` independently and always start a new document with `draft: true`. The later Publication PR removes draft status after Director approval or waiver.
 
 ### 1g — File Structure (dev only)
 
@@ -393,3 +391,13 @@ Next steps:
   - Add chapter files (02-*.mdx, 03-*.mdx, etc.)
   - Run `npm start` to preview locally
 ```
+
+## Step 9: Prepare review
+
+Use a descriptive `docs/new/<slug>` branch. The prefix suggests intent; it does not assign review state. Keep the author PR to one document and directly related source, assets, registrations, and site changes. After the Content PR opens, an administrator records:
+
+```text
+/review classify new <doc_location>
+```
+
+The Content PR requires peer, Lead Civil, and manually initiated technical editing. It merges and deploys from `main` as an active draft before an administrator starts the separate Director Review PR. Do not remove `draft: true` in the Content PR and do not deploy the author branch.

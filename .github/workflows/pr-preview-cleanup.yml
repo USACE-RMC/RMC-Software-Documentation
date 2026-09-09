@@ -1,31 +1,20 @@
 name: PR Preview Cleanup
-
 on:
-  pull_request:
+  pull_request_target:
     types: [closed]
-
+  workflow_run:
+    workflows: ['Deploy to GitHub Pages']
+    types: [completed]
+  workflow_dispatch:
 permissions:
-  contents: read
-
+  actions: write
 jobs:
-  cleanup:
-    name: Delete preview directory
+  request-cleanup:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/github-script@v7
         with:
-          repository: usace-rmc/RMC-Software-Documentation-Previews
-          ref: gh-pages
-          ssh-key: ${{ secrets.PREVIEW_DEPLOY_KEY }}
-      - name: Remove PR preview directory
-        env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          if [ -d "pr-${PR_NUMBER}" ]; then
-            rm -rf "pr-${PR_NUMBER}"
-            git add -A
-            git commit -m "Clean up preview for PR #${PR_NUMBER}"
-            git push
-          fi
+          script: |
+            // Publication and deletion share the publisher's serialized transaction.
+            await github.rest.actions.createWorkflowDispatch({...context.repo,
+              workflow_id:'pr-preview.yml', ref:'main'});

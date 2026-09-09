@@ -104,46 +104,24 @@ Content with <Figure figKey="fig1" src="path" alt="text" caption="..." />
 
 ## Branching and Review Workflow
 
-The `main` branch is protected. All changes go through a pull request.
+The `main` branch is protected and all changes use pull requests. Branch prefixes are descriptive starting points; an administrator records the authoritative classification with the trusted review controller.
 
-**Whether a PR has a review lane at all is decided by content, not by branch name:** a PR that changes at least one file under `docs/` is a documentation PR and gets a lane; a PR that changes nothing under `docs/` has no lane and no review stages.
-
-### Documentation branches (files under `docs/`)
-
-Branch prefixes auto-assign the PR to one of five review lanes via the `stage-progression.yml` GitHub workflow:
-
-| Prefix | Lane | Reviews required |
+| Prefix | Classification | Stages |
 |---|---|---|
-| `docs/new/` | New document | Peer → Lead Civil → Technical edit → Director |
-| `docs/major/` | Major revision (new major version) | Peer → Lead Civil → Technical edit |
-| `docs/minor/` | Minor revision (new minor version) | Peer → Technical edit |
-| `docs/fix/` | Editorial fix | None (admin self-merge) |
-| `docs/dev/` | Dev docs (anything under `docs/dev/`) | None (admin self-merge) |
+| `docs/new/` | New document | Peer → Lead Civil → technical edit, followed after draft publication by separate Director review |
+| `docs/major/` | Major revision | Peer → Lead Civil → technical edit |
+| `docs/minor/` | Minor revision | Peer → technical edit |
+| `docs/fix/` | Editorial correction | No formal document stages |
+| `docs/dev/` | Developer documentation | No formal document stages |
+| `feature/`, `fix/`, `chore/`, `ci/` | Site code/infrastructure | No formal document stages |
 
-Only Lane 1 ends in a Director review. Lanes 2 and 3 go straight from the technical edit to `stage:ready-to-merge`.
+Keep each author PR to one document. Directly related source, assets, registry entries, and site changes may accompany it. Administrators classify every PR, may correct a lane, and assign exactly one named human to each required stage. A non-admin author cannot review the same work, and non-admin reviewers must differ between stages. Administrators may act in any role.
 
-Dev-docs detection is also content-based: any PR whose changed files under `docs/` are all under `docs/dev/` is auto-routed to `lane:dev` regardless of branch name.
+Human stages complete through the named reviewer's GitHub approval. Technical editing is manually initiated: new documents receive a full-document edit; revisions focus on changed context. An administrator explicitly completes the AI stage. Completed or waived stages persist across commits until an administrator uses `/review restart <stage>`. Replies and resolved threads are collaboration aids, not merge gates; `/review ready` optionally requests renewed attention.
 
-### Non-documentation branches (components, plumbing, styling, scripts, CI)
+Only administrators merge to `main` and approve production deployments. Builds and deployments are automatic from `main`; never run a feature-branch production deploy. New documents first merge as drafts, then use separate Director Review and Publication PRs. Attribution in document metadata remains a manual edit.
 
-| Prefix | Use for |
-|---|---|
-| `feature/` | New components, new site capabilities, enhancements |
-| `fix/` | Bug fixes in components, styles, scripts, or build tooling |
-| `chore/` | Dependency bumps, refactors, config and cleanup |
-| `ci/` | Changes to GitHub workflows and repository automation |
-
-These carry **no review lane and no review stages**. The only gate is `CI Build`; once it passes, `ci-build.yml` flips `review-workflow` to success and a `@usace-rmc/docs-admin` member may merge. CODEOWNERS still requires an admin on protected paths.
-
-A PR that mixes site code *and* content under `docs/` is a documentation PR — put it on the matching `docs/…` prefix, or an admin will have to assign the lane by hand.
-
-### Merge gate
-
-Branch protection on `main` requires two status checks:
-- `CI Build` — runs `npm run build` on every PR
-- `review-workflow` — set by `stage-progression.yml` for documentation PRs (flips to success at `stage:ready-to-merge`, or immediately for `lane:editorial-fix` and `lane:dev`), and by `ci-build.yml` for non-documentation PRs (flips to success as soon as the build passes)
-
-Full details: [docs/dev/documentation-guide/](docs/dev/documentation-guide/) chapters 09–15.
+Full command and role guidance: [docs/dev/documentation-guide/](docs/dev/documentation-guide/) chapters 09–15.
 
 ## Code Style
 

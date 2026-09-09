@@ -68,11 +68,11 @@ Read `.claude/skills/git-conventions.md` for PR conventions.
 - Derived from the **overall purpose** of all commits on the branch, not just the latest commit
 - Example: "Redesign homepage with product tile grid layout"
 
-### Body — choose the format based on the branch prefix
+### Body — choose the format based on the change
 
-**If the current branch starts with `docs/`** → use the **Template Style** (Step 5a). The repo's PR template at `.github/pull_request_template.md` contains a checklist for document authors, including the Lane 1 "Technical edit comments addressed" checkbox that the stage-progression workflow watches for. Passing `--body` to `gh pr create` overrides the template entirely, so the skill must reproduce the template structure with the auto-generated content filled in.
+**If the change affects a document** → use the **Template Style** (Step 5a). Reproduce the repository template when passing `--body`, including the one-document scope, `doc_location`, related issues, validation, and review notes. Branch prefixes describe intent; an administrator's controller classification is authoritative.
 
-**Otherwise (infrastructure, tooling, dependency, or any non-doc branch)** → use the **Summary Style** (Step 5b). These PRs are silently ignored by the review workflow and don't need the doc-author checklist.
+**Otherwise (infrastructure, tooling, dependency, or any non-doc branch)** → use the **Summary Style** (Step 5b). These PRs still require administrator classification as `code`, the review-workflow gate, and CI; they do not require formal document-review stages.
 
 In both styles, the summary content should be based on **ALL** commits on the branch, not just the most recent one. Read through all the commit messages and the diff to understand the full scope. If `$ARGUMENTS` was provided, use it to focus the title and description.
 
@@ -87,12 +87,12 @@ In both styles, the summary content should be based on **ALL** commits on the br
 3. Compute the list of affected MDX documents: from `git diff --name-only main...HEAD`, keep entries matching `docs/**/*.mdx`. If the base is not `main`, use that instead.
 4. Build the PR body by transforming the template:
    - Under `## Description`, replace the `<!-- Briefly describe what this PR does and why. -->` comment with the summary bullets.
-   - Under `## Affected documents`, replace the bare `- ` line with the list of affected MDX files. Format each as a markdown link relative to the repo root: `- [filename.mdx](docs/full/path/filename.mdx)`. If there are no changed MDX files, write `- _No MDX files changed in this PR._`
+   - Under `## Document scope`, identify the single document and its `doc_location`. List affected MDX files when useful. For an administrator infrastructure overhaul spanning guides, explicitly describe that scope instead of presenting it as a routine one-document author PR.
    - Leave the `## Related issue(s)` section's comment placeholder unchanged so the author can fill it in.
-   - Leave **all checklist items unchecked**, including the Lane 1 Technical edit checkbox. The author checks them as they complete each item; the workflow specifically depends on the Technical edit checkbox being present and unchecked at PR open time.
-   - Leave the `## Notes for reviewers` comment placeholder unchanged.
+   - Mark validation items only when evidence supports them. Do not add a technical-edit advancement checkbox or manually request stage reviewers.
+   - Under `## Review notes`, include any relevant activation requirements or reviewer context.
 
-The result should be a complete copy of the template with the Description and Affected documents sections populated.
+The result should follow the current template with its Description and Document scope sections populated.
 
 ### Step 5b: Summary Style (for non-`docs/` branches)
 

@@ -1,213 +1,41 @@
 ---
-title: Site Admin Workflow
+title: Site Administrator Workflow
 ---
 
 import NavContainer from '@site/src/components/NavContainer';
-import ProcessList from '@site/src/components/ProcessList';
-import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
 
 <NavContainer link="/dev" linkTitle="Developer Resources" />
 
-# Site Admin Workflow
+# Site Administrator Workflow
 
-Responsibilities and procedures for the site administrator role.
+Administrators classify every PR and coordinate its named reviewers. Repository admin permission determines administrative authority.
 
-## Responsibilities
+```text
+/review classify <new|major|minor|editorial|dev|code> <doc_location|->
+/review author <login>
+/review assign <peer|lead|editor|director> <login>
+/review complete <stage>
+/review waive <stage> [reason]
+/review restart <stage>
+/review ready
+```
 
-<ProcessList
-  items={[
-    { title: 'Assigning reviewers (peer, Lead Civil, Director) at each stage transition' },
-    { title: 'Running checkpoint deploys for Lane 1 PRs' },
-    { title: 'Running or coordinating the technical edit' },
-    { title: 'Preparing final merge commits (flipping the draft flag, updating version history)' },
-    { title: 'Merging PRs and approving production deploys' },
-    { title: 'Handling Lane 4 (editorial fix) and Lane 5 (dev doc) PRs as sole reviewer' },
-    { title: 'Resolving edge cases' },
-  ]}
-  numberStyle="plain"
-/>
+Use `/review author` to record additional authors not represented by the PR creator. Assign exactly one authoritative reviewer to each human stage. Non-admin authors and reviewers must be different people across stages; administrators may act in any role. Use `complete` only for an actually completed administrator-controlled stage, including AI technical editing. Use `waive` for an explicit exception; its reason is optional and the outcome remains distinct from approval.
 
-## Daily routine
+Completed and waived stages persist until an administrator intentionally restarts one. New commits alone do not reset a stage. Replies and thread resolution are useful collaboration practices, not automated gates. The controller maintains one low-noise summary and sends actionable handoffs without recurring reminders.
 
-The site administrator monitors PRs that need attention. The stage progression workflow tags `@usace-rmc/docs-admin` at every transition. A useful filter is `is:open label:"stage:ready-to-merge"` or `is:open review-requested:@me`.
+## New-document publication
 
-## Assigning reviewers
+After the Content PR merges to `main` and automatically deploys as a draft:
 
-Reviewers are assigned ad-hoc per PR via the Reviewers sidebar (gear icon → type username → select). There are no standing review teams for peer reviewers or Lead Civils. The workflow's transition comment identifies which role to assign next.
+```text
+/review start-director <doc_location> <version|unversioned> <login>
+/review cancel
+/review retarget <doc_location> <version|unversioned>
+```
 
-For Lane 1, the site administrator assigns up to three people across the lifecycle: the peer reviewer (if the author did not), the Lead Civil after peer approval, and the Director after the technical edit.
+The first command creates a separate Director Review PR using a stable synthetic baseline and assigns one Director. Director approval or an administrator waiver creates the Publication PR automatically. Verify that the Publication PR contains only the selected document, source, related assets, manual attribution updates, and draft removal. It is an administrator delivery step, not another Director round.
 
-For what the assigned reviewer experiences from the email notification through submitting their review, see [Reviewer Workflow](./12-reviewer-workflow.mdx). This is especially useful context when onboarding a first-time reviewer.
+Only administrators merge to `main` and approve the protected production environment. Production builds automatically from `main`; never publish an author or Director branch. If publication conflicts with intervening document changes, reconcile with `/review retarget` without resetting completed review. If deployment fails, preserve review state and the stable Director preview, correct the problem through `main`, and retry.
 
-**Per-individual gating.** When the site administrator assigns someone via the Reviewers sidebar, the stage progression workflow records that person in a hidden state comment on the PR, keyed by the current review stage. Only approvals from those assigned reviewers advance the stage — drive-by approvals from other team members are logged but ignored by the workflow. Multiple people can be assigned at the same stage; the first approval from any of them advances the PR.
-
-To replace an assigned reviewer, the site administrator removes them from the Reviewers sidebar and adds the correct person. The state comment updates automatically.
-
-## Running a checkpoint deploy (Lane 1)
-
-After the author marks the technical edit complete (the PR advances to `stage:director-review`), the site administrator deploys the PR branch to the live site (watermarked) for the Director's review.
-
-<ProcessList
-  items={[
-    { title: 'In the repo, navigate to the Actions tab and click Deploy to GitHub Pages in the sidebar.' },
-    { title: 'Click the Run workflow dropdown (upper right).' },
-    { title: 'Enter the PR branch name in the ref field.' },
-    { title: 'Click Run workflow.' },
-    { title: 'When the build completes, click Review deployments → check production → Approve and deploy.' },
-    { title: 'Verify the document on the live URL with the watermark.' },
-    { title: 'Post a comment on the PR with the live URL so the Director knows where to read.' },
-  ]}
-  numberStyle="plain"
-/>
-
-This is the first time the document appears on the live site. The peer review, Lead Civil review, and technical edit all happened earlier on the preview URL or against source files; the live deploy is deferred until the document has passed editorial review.
-
-The site administrator re-deploys whenever the author pushes revisions during Director review, posting a comment noting the update.
-
-## Running the technical edit
-
-After the preceding review stage approves (the PR advances to `stage:ai-editor-review`), the site administrator runs the AI-assisted technical edit against the PR. If the necessary tooling is not available locally, the site administrator coordinates with a team member who has it. No deploy is required at this stage — the technical edit reads the source MDX directly.
-
-The AI posts inline review comments. The author addresses them and checks the PR description checkbox to advance the PR, at which point (Lane 1) the site administrator runs the checkpoint deploy.
-
-See [Technical Edit](./13-technical-edit.mdx) for the full prompt the AI uses.
-
-**Manual override.** If a human technical editor performed the review instead, or the author is unavailable to check the checkbox, the site administrator applies the `admin:technical-edit-complete` label to the PR. The workflow removes the label and advances the stage the same as a checkbox event, then posts the next-stage instructions — Director review for Lane 1, ready-to-merge for Lanes 2 and 3. (The older label name `admin:advance-to-director` is still accepted as an alias, but it only ever advanced Lane 1 to a Director and is being retired.)
-
-## Preparing the final merge
-
-When a PR reaches `stage:ready-to-merge`, the site administrator prepares and executes the merge.
-
-<ProcessList
-  items={[
-    { title: 'Check out the PR branch locally or via github.dev.' },
-    { title: 'In src/docConfig.js, change the document\'s draft flag from true to false. If the document is going active for the first time, also flip active: true.' },
-    { title: 'Update 00-version-history.mdx with reviewer and approver names.' },
-    { title: 'Commit and push.' },
-    { title: 'Merge the PR to main.' },
-    { title: 'Approve the final production deploy in the Actions tab.' },
-  ]}
-  numberStyle="plain"
-/>
-
-Version history fields are populated by lane.
-
-<TableVerticalNoRef
-  alt="Version history fields by lane"
-  headers={[[{ value: 'Lane' }, { value: 'reviewedBy' }, { value: 'approvedBy' }]]}
-  columns={[
-    [
-      'Lane 1 (new document)',
-      'Lane 2 (major revision)',
-      'Lane 3 (minor revision)',
-      'Lanes 4 and 5',
-    ],
-    [
-      'Peer reviewer and Lead Civil',
-      'Peer reviewer and Lead Civil',
-      'Peer reviewer',
-      'N/A',
-    ],
-    [
-      'Director',
-      '-',
-      '-',
-      'N/A',
-    ],
-  ]}
-/>
-
-## The `review-workflow` commit status
-
-Every documentation PR has a `review-workflow` commit status that branch protection on `main` requires to be `success` before the PR can merge. This is the hard merge gate — no participant, including the site administrator, can click the merge button until the bot flips this status to success. The bot manages the status automatically.
-
-<TableVerticalNoRef
-  alt="When the review-workflow commit status is pending versus success"
-  headers={[[{ value: 'Situation' }, { value: 'Status' }]]}
-  columns={[
-    [
-      'stage:peer-review / stage:lead-civil-review / stage:ai-editor-review / stage:director-review',
-      'stage:needs-lane (workflow could not detect the lane)',
-      'stage:ready-to-merge (all reviews complete)',
-      'lane:editorial-fix or lane:dev assigned',
-      'Non-docs PR, CI Build passed',
-    ],
-    [
-      'pending',
-      'pending',
-      'success',
-      'success (immediately)',
-      'success',
-    ],
-  ]}
-/>
-
-If a PR is stuck because `review-workflow` is pending, the stage label indicates what review is outstanding. If a PR is stuck because `review-workflow` is missing entirely (never got set), lane detection probably failed — the site administrator applies a `lane:*` label manually to re-trigger the workflow.
-
-## Approving deploys
-
-Every deploy pauses at the production environment gate. The site administrator receives an email. Navigating to Actions → the workflow run → Review deployments → check `production` → Approve and deploy releases the deploy.
-
-A Lane 1 document may involve multiple deploys: one checkpoint after the technical edit completes (for Director review), optional re-deploys during Director review if the author pushes fixes, and one final deploy after merge.
-
-## Handling Lane 4 and Lane 5 PRs
-
-Lane 4 (editorial fix) and Lane 5 (dev doc) PRs skip formal review. The site administrator is the reviewer, approver, and merger.
-
-<ProcessList
-  items={[
-    { title: 'Click the preview URL to see the change.' },
-    { title: 'Review the Files changed tab.' },
-    { title: 'Approve, merge, and approve the deploy.' },
-  ]}
-  numberStyle="plain"
-/>
-
-The `review-workflow` commit status flips to success immediately on lane assignment, so the merge button is enabled as soon as CI finishes.
-
-## Edge cases
-
-<TableVerticalNoRef
-  alt="Edge cases the site administrator may encounter"
-  headers={[[{ value: 'Situation' }, { value: 'Resolution' }]]}
-  columns={[
-    [
-      'Wrong lane',
-      'Branch starts with docs/ but does not match a sub-prefix',
-      'Documentation change pushed to a non-docs/ branch',
-      'Non-documentation PR with no lane comments',
-      'Unresponsive reviewer',
-      'Drive-by approval from an unassigned reviewer',
-      'Author pushes new commits during an active review',
-      'Stale checkpoint deploy',
-      'Build fails on checkpoint deploy',
-      'Build fails after merge to main',
-      'Need to force a production redeploy',
-    ],
-    [
-      'Remove the current lane:* label and apply the correct one; the workflow re-initializes.',
-      'The workflow applies stage:needs-lane and tags the site administrator; the administrator applies the correct lane:* label.',
-      'The workflow intercepts at PR open time regardless of branch name because it detects changes under docs/. Content entirely under docs/dev/ auto-assigns lane:dev. Otherwise the workflow applies stage:needs-lane and tags the administrator to assign the correct lane manually.',
-      'Expected behavior. PRs that do not touch docs/ are silently skipped by the lane workflow and pass review-workflow via CI Build. This is normal for infrastructure, tooling, and dependency PRs.',
-      'Ping them on the PR, or remove them from the Reviewers sidebar and assign someone else. The state comment updates automatically.',
-      'The workflow posts a note logging the approval but does not advance the stage. To use that approval, add the approver via the Reviewers sidebar and ask them to re-approve.',
-      'Normal and expected. The workflow does not reset the stage. The bot re-sets the review-workflow commit status on the new head SHA and pings the assigned reviewer(s) to backcheck.',
-      'Re-run the checkpoint deploy and post a comment.',
-      'Coordinate with the author to fix the branch.',
-      'Push a hotfix to main or revert the merge. Re-run the deploy. Note that deploy.yml filters by paths — a merge that does not touch site-affecting files does not trigger a redeploy.',
-      'Actions → Deploy to GitHub Pages → Run workflow, specify the ref (usually main), and approve at the production gate. This is the escape hatch when the path filter would otherwise skip a merge that needs to ship.',
-    ],
-  ]}
-/>
-
-## Onboarding new site administrators
-
-<ProcessList
-  items={[
-    { title: 'Clone the repo and confirm a local build succeeds.' },
-    { title: 'Read Documentation Guide chapters 09 through 15.' },
-    { title: 'Shadow an existing administrator through one full PR lifecycle.' },
-    { title: 'Practice on a Lane 4 editorial fix PR.' },
-  ]}
-  numberStyle="plain"
-/>
+Activation credentials, GitHub App identity, branch rulesets, required-check sources, and environment settings are documented in the repository-root activation checklist.

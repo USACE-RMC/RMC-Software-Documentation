@@ -14,7 +14,7 @@ Every change **to documentation** follows one of five review lanes. Changes that
 Whether a pull request gets a lane is decided by content, not by branch name: a PR that changes at least one file under `docs/` is a documentation PR. For those, the workflow assigns a lane automatically using two signals, in order:
 
 1. **Content-based detection.** If every documentation file changed in the PR is under `docs/dev/`, the PR is assigned `lane:dev` regardless of branch name.
-2. **Branch-name detection.** Otherwise, the branch prefix determines the lane.
+2. **Administrator classification.** The branch prefix suggests intent, but an administrator records or corrects the authoritative classification with `/review classify`.
 
 <TableVerticalNoRef
   alt="Branch prefixes and the lanes they route to"
@@ -47,9 +47,9 @@ A site administrator can always override the automatically-detected lane by swap
 
 **When to use.** Any completely new document being added to the site.
 
-**Required reviews.** Peer review → RMC Lead Civil review → Technical edit (AI-assisted) → Director approval.
+**Required reviews.** Content PR: Peer review → RMC Lead Civil review → Technical edit. Separate Director review follows draft publication.
 
-**What happens.** The document is first visible only on the unadvertised PR preview URL, where peer review, Lead Civil review, and the technical edit all happen. The technical edit reads the source MDX directly and posts inline comments — no deployed version is required. Only after the author marks the technical edit complete does the site administrator deploy the PR branch to the live production site with the DRAFT watermark. The Director then reviews on the live URL. After Director approval, the site administrator flips the draft flag, merges the PR, and deploys the final version — removing the watermark.
+**What happens.** Peer review, Lead Civil review, and the manually initiated technical edit occur in the Content PR. An administrator records technical completion, then merges the PR to `main`, which automatically deploys the document as a draft. A separate full-document Director Review PR follows. Approval or waiver creates a Publication PR that removes the watermark after administrator merge and production approval.
 
 **Example branches:** `docs/new/totalrisk-applications-guide`, `docs/new/lifesim-validation-oroville`
 
@@ -89,7 +89,7 @@ A site administrator can always override the automatically-detected lane by swap
 
 **Required reviews.** None. The site administrator reviews and merges directly, same as Lane 4.
 
-**Automatic assignment.** The workflow uses content-based detection: if every documentation file changed in the PR is under `docs/dev/`, the PR is assigned `lane:dev` regardless of branch name. Dev docs can therefore be authored on any branch prefix (including non-`docs/` branches) and still end up in the correct lane.
+**Classification.** Use a descriptive `docs/dev/` prefix. An administrator records `/review classify dev <doc_location>`; content detection may inform the suggestion but does not replace that action.
 
 **No version change, no watermark.**
 

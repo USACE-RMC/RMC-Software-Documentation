@@ -25,8 +25,8 @@ The corresponding value in the JSON is the `currentVersion` (e.g., `v1.0`).
 
 Ask: "Is this a major revision or a minor revision?"
 
-- **Major revision** — substantial changes warranting a new major version. Branch prefix: `docs/major/`. Goes through Lane 2 (Peer → Lead Civil → Technical edit). No Director review.
-- **Minor revision** — smaller updates warranting a minor version bump. Branch prefix: `docs/minor/`. Goes through Lane 3 (Peer → Technical edit). No Director review.
+- **Major revision** — substantial changes warranting a new major version. Descriptive branch prefix: `docs/major/`. Requires Peer → Lead Civil → Technical edit. No Director review.
+- **Minor revision** — smaller updates warranting a minor version bump. Descriptive branch prefix: `docs/minor/`. Requires Peer → Technical edit. No Director review.
 
 ### 1c — New version number
 
@@ -161,5 +161,13 @@ Next steps:
   1. Edit the new version's MDX files to make your changes
   2. Update 00-version-history.mdx with a real description and your name
   3. Run `npm start` to preview locally
-  4. When ready, commit and open a PR (the workflow will detect the branch prefix and start {Lane 2: Peer → Lead Civil | Lane 3: Peer review} automatically)
+  4. When ready, commit and open one PR for this document
 ```
+
+After the PR opens, an administrator records the authoritative classification:
+
+```text
+/review classify <major|minor> <doc_location>
+```
+
+The branch prefix is descriptive and does not assign review state. The administrator assigns one named reviewer per human stage. Technical editing is manually initiated and reviews the changed content with enough surrounding context to assess it. Production builds only from administrator-merged `main`; do not deploy the revision branch.

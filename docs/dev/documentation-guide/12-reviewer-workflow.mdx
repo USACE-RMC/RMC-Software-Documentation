@@ -172,8 +172,7 @@ You now know what a repository, branch, commit, and pull request are, and where 
 
 ### 2. Getting the review request
 
-When the site administrator assigns you to a PR, GitHub sends you an email. The subject begins with the PR title and the sender is `notifications@github.com`. Inside, GitHub names
-the person who requested the review, the PR number, and offers a **View it on GitHub** button or link that takes you straight to the PR page.
+When the site administrator assigns you as the one authoritative reviewer for a stage, GitHub records the request and may notify you according to your personal GitHub settings. Open the PR from that notification or from the repository's pull-request list.
 
 <FigureNoRef
   src="/figures/dev/reviewer-workflow/fig-01-email.png"
@@ -216,7 +215,7 @@ Three bot comments appear on every PR in this project. Together they give you ev
   alt="The three bot comments that appear on every PR — assigned reviewers, stage progression, and preview deployed"
 />
 
-_(1) **Assigned reviewers for this PR.** A table of who needs to approve at the current stage. This is the source of truth for who the bot is waiting on. (2) **Stage progression.** Shows which review lane this PR is in (peer review, lead civil review, technical edit, director review) and what's required to advance. (3) **Preview deployed.** A URL pointing to the rendered version of the document — this is where you do your actual reading, not the Files changed tab. Click that URL to open the preview site._
+The controller maintains one persistent summary showing the administrator classification, current stage, one named reviewer, completed or waived stages, next action, and preview. Workflow labels make purpose and status easier to scan, but the summary and durable controller state are authoritative.
 
 #### Navigating commits within a PR
 
@@ -382,24 +381,24 @@ Three buttons sit at the bottom of the composer: **Cancel**, **Comment**, and **
   columns={[
     ['<strong>Comment</strong>', '<strong>Start a review</strong>'],
     [
-      'Posts the comment immediately and emails the author right then. No batching.',
+      'Posts the comment immediately. GitHub may notify subscribers according to their settings.',
       'Saves your comment as <strong>pending</strong> — the author cannot see it yet. Each subsequent comment is queued the same way until you submit the whole batch.',
     ],
     [
       'Only when you are leaving exactly one comment and stopping (e.g. &ldquo;the preview link looks broken, pinging you before I keep going&rdquo;).',
-      'Almost every review. One notification to the author when you finish, not one per comment.',
+      'Most multi-comment reviews. It reduces separate review submissions and associated notification noise.',
     ],
   ]}
   colWidths={['20%', '40%', '40%']}
 />
 
-**Default to Start a review unless you have a specific reason not to.** Sending the author 17 separate email notifications across an hour of review is rude; one consolidated notification at the end is what they want.
+**Default to Start a review unless you have a specific reason not to.** Batching keeps the review coherent and reduces notification noise. GitHub's exact email behavior depends on each person's settings and subscriptions.
 
 #### Replying to comments and follow-up discussion
 
 Reviews aren't one-way. The author will often reply to your comment asking for clarification — "do you mean Section 4 or Appendix A?" — and you should answer. Each comment has a **Reply…** box directly underneath it.
 
-**Where you reply changes how many emails it sends**, and this is the single largest source of notification noise on this repository. It catches nearly everyone, because the two reply boxes look identical.
+Where you reply determines whether the response is immediate or part of a pending review. The two reply boxes look similar, so check the available buttons before posting.
 
 <TableVerticalNoRef
   alt="How the reply box behaves on the Conversation tab versus the Files changed tab"
@@ -411,16 +410,14 @@ Reviews aren't one-way. The author will often reply to your comment asking for c
       'The same fork as a new comment: one button posts the reply immediately, and <strong>Start a review</strong> adds it to a pending batch instead.',
     ],
     [
-      'One email to every participant, per reply, the moment you click.',
-      'One email for the whole batch, when you submit the review.',
+      'Posts immediately and may notify subscribers.',
+      'Posts with the rest of the pending review and generally reduces separate notifications.',
     ],
   ]}
   colWidths={['22%', '48%', '30%']}
 />
 
-Answering twelve threads from the Conversation tab sends twelve separate emails to everyone following the pull request. Answering the same twelve from the Files changed tab with **Start a review** sends one.
-
-This is not a matter of taste — it is how GitHub stores the comments. A batched reply is attached to your pending review and delivered when you submit it. An immediate reply is filed as a standalone review containing exactly one comment, and every standalone review triggers its own notification. A recent document in this repository accumulated twenty-one such single-reply reviews, each one emailing every subscriber.
+Batch related responses from **Files changed** with **Start a review** when practical. This creates one coherent submitted review instead of many immediate submissions; do not rely on an exact email count.
 
 :::tip The rule
 Answer threads from the **Files changed** tab, batch them with **Start a review**, and submit once when you have worked through everything. Use an immediate reply only for a genuine one-off — a quick "yes, Section 4" when you have nothing else to say.
@@ -442,7 +439,7 @@ When the author has addressed a comment — either by changing the document or b
 
 _Resolving a thread collapses it visually. The contents are still there — anyone can expand the thread again — but it stops drawing the eye._
 
-The convention in this project: **the author resolves threads** after pushing the fix or replying. The reviewer **re-opens** a thread if the author's response wasn't sufficient. This division of labor avoids confusion about who's responsible. All threads must be resolved before the PR is merged.
+Authors and reviewers may resolve or reopen threads to keep the discussion readable. Replies and thread resolution are useful collaboration practices, but neither is an automated stage or merge gate.
 
 #### Editing or deleting your own comment
 
@@ -470,13 +467,13 @@ Once you've left every comment you intend to leave, you submit the review. Click
 
 <FigureNoRef src="/figures/dev/reviewer-workflow/fig-08-finish-review.png" alt="The Finish your review dialog with its three radio options" />
 
-_(1) The dialog title. (2) An optional text area for an overall review message — leave a short summary here, like "Three minor wording notes; otherwise looks great." (3) The **Comment** radio button: submits your batched comments without taking a position on whether to merge. (4) The **Approve** radio button: submits the comments and signals you're happy for the PR to advance. (5) The **Request changes** radio button: not used in this workflow. (6) The **Submit review** button at the bottom — clicking this posts the batch._
+_(1) The dialog title. (2) An optional text area for an overall review message. (3) **Comment** submits feedback without deciding the stage. (4) **Approve** completes the current human stage when submitted by its named reviewer. (5) **Request changes** records that revisions are required. (6) **Submit review** posts the batch._
 
 Choose the radio that matches the situation:
 
-- **Comment** is the default for every round that leaves feedback. You're saying "here are my notes" without committing to approve or block. Use this on the first review round.
-- **Approve** is what you click on a later round — typically a backcheck after the author has addressed your earlier comments — when you're satisfied with the document.
-- **Request changes** is not used in this workflow. It's the same as **Comment** mechanically but adds an explicit "blocking" flag that complicates the stage-progression logic. Just leave comments and submit as **Comment**; the author will see the notes and respond.
+- **Comment** submits feedback without deciding whether the stage is complete.
+- **Approve** completes the stage when you are its named reviewer and are satisfied.
+- **Request changes** records that the author must revise the work before approval.
 
 <FigureNoRef
   src="/figures/dev/reviewer-workflow/gif-submitting-review.gif"
@@ -494,7 +491,7 @@ Your review is submitted. All of your pending comments are now visible to the au
 
 ### 7. The backcheck round
 
-After you submit a **Comment** review, the author addresses your notes by pushing new commits to the branch. The stage-progression bot then pings you — by email and by GitHub notification — to come back and look at what changed. This second pass is called a **backcheck**.
+After a **Comment** or **Request changes** review, the author may push revisions and optionally use `/review ready` to request renewed attention. GitHub notifications depend on your personal settings. This second pass is a backcheck.
 
 Reload the PR. The Files changed tab now contains everything the author has done on the branch — both your already-reviewed changes and the new commits. You don't want to re-read material you've already reviewed; you only want to see what's new since your last review.
 
@@ -520,7 +517,7 @@ You know how to filter the Files changed tab to **Changes since your last review
 
 The moment you click **Submit review**, the Conversation tab updates. A new timeline event appears with your username, your overall message (if you typed one), and a link to the changes you reviewed.
 
-If your review was an **Approve** and you were the assigned reviewer for the current stage, the stage-progression bot will post a new comment confirming that the stage has advanced. The PR now moves to the next review lane (or, if you were the last reviewer needed, to the **ready-to-merge** state). You don't have to do anything else.
+If you are the named reviewer for the current stage, your **Approve** review completes that stage. The controller updates its persistent summary and identifies the next action. Completed stages persist across later commits unless an administrator explicitly restarts one.
 
 If you receive another notification later — for example, a follow-up question or a new commit — you'll come back and treat it as another backcheck round. Otherwise, your work on this PR is finished.
 
@@ -532,9 +529,7 @@ Reviewing a document should not fill your inbox. If it is doing so, one of the c
 
 ### What the repository already does for you
 
-The stage-progression bot deliberately writes reviewer names **without** an `@` in its status board comment. An `@mention` on GitHub does more than highlight a name — it subscribes that person to the entire pull request, permanently. Before this was changed, a peer reviewer who finished in April kept receiving every notification from the Lead Civil and technical-edit rounds months later, because their name appeared in a bot comment.
-
-The bot still `@mentions` you when it genuinely needs something from you: when you are the assigned reviewer being asked to backcheck new commits, and when a site administrator has to act. Those mentions are the signal; everything else is now unlinked.
+The controller keeps routine progress in one edited summary and uses targeted mentions for actionable handoffs. It does not send automatic inactivity reminders. Native GitHub notifications still depend on each user's settings and cannot be centrally capped to an exact frequency.
 
 ### What you can change in your own settings
 

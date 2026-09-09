@@ -130,12 +130,12 @@ Even when using the DOCX converter (Chapter 05), you'll still need to follow mos
 
 **When to use this guide:**
 
-- Creating documentation for new software (Lane 1 — `docs/new/` branch)
-- Adding a new document type for existing software (Lane 1 — `docs/new/` branch)
+- Creating documentation for new software on a `docs/new/` branch
+- Adding a new document type for existing software on a `docs/new/` branch
 
-For creating a **new version** of an existing document (v1.1, v2.0, etc.), see [Versioning System](./02-versioning-system.mdx) instead — that's Lane 2 (major revision) or Lane 3 (minor revision), not Lane 1.
+For creating a **new version** of an existing document (v1.1, v2.0, etc.), see [Versioning System](./02-versioning-system.mdx) instead.
 
-**The big picture.** Every new document goes through Lane 1 of the review workflow: you author it on a `docs/new/` branch, open a pull request, and the document is reviewed by a peer, the RMC Lead Civil, and an AI-assisted technical edit before the RMC Director gives final approval. The site administrator handles all deploys. See [Review Lanes](./10-review-lanes.mdx) and [Author Workflow](./11-author-workflow.mdx) for the full picture.
+**The big picture.** Author one new document on a `docs/new/` branch. Its Content PR receives peer, Lead Civil, and AI-assisted technical editing, then merges and deploys as a draft. An administrator later starts a separate full-document Director Review PR; approval or waiver produces a Publication PR. See [Review Classifications and Stages](./10-review-lanes.mdx) and [Author Workflow](./11-author-workflow.mdx).
 
 ---
 
@@ -176,10 +176,10 @@ Before you begin, gather and prepare the following:
 
 ## Step 1: Create a Branch
 
-The `main` branch is protected — you cannot push directly to it. All new documents are authored on a feature branch that gets merged via a pull request. For a new document, the branch prefix is **`docs/new/`** — this routes the PR to Lane 1 (the full review workflow with peer, Lead Civil, technical edit, and Director stages).
+The `main` branch is protected. Author new documents on a feature branch and merge them through a pull request. Use **`docs/new/`** to describe the intended classification. An administrator's controller command is authoritative.
 
 :::tip Not creating a new document?
-Five branch prefixes are available, each routing to a different review lane (new document, major revision, minor revision, editorial fix, dev docs). See [Review Lanes](./10-review-lanes.mdx) for the full list and how each lane works. This chapter covers Lane 1 only — for revisions to an existing document, see [Versioning System](./02-versioning-system.mdx) instead.
+Documentation prefixes describe new documents, major revisions, minor revisions, editorial corrections, and developer documentation. See [Review Classifications and Stages](./10-review-lanes.mdx). This chapter covers a new document; for revisions, see [Versioning System](./02-versioning-system.mdx).
 :::
 
 **Branch naming:** `docs/new/<short-slug>` where the slug describes the document. Use lowercase with hyphens.
@@ -623,7 +623,7 @@ Verify the following before proceeding:
 
 Every published document is registered in [`src/docConfig.js`](https://github.com/USACE-RMC/RMC-Software-Documentation/blob/main/src/docConfig.js). This file is the single source of truth for which documents appear on the site and which carry the DRAFT watermark. Without an entry, your document won't appear on the appropriate landing page, won't be indexed by search, and won't be included in the production build.
 
-Add a new entry to the `docs` array, grouped by category and software. For a brand-new document, start with `active: false, draft: true` — this hides the document from the production site until it's ready, but keeps it building in dev mode so you can preview it locally. The site administrator will flip these flags as part of the final merge after Director approval.
+Add a new entry to the `docs` array, grouped by category and software. Set `draft: true`. Choose `active` based on whether the draft should be available in production after the Content PR merges. Publication removes draft status after separate Director review.
 
 **Example entry for a new desktop application document:**
 
@@ -738,7 +738,7 @@ This will:
 
 ## Step 8: Open a Pull Request
 
-When local testing passes, commit your work and open a pull request. The `docs/new/` branch prefix routes the PR to **Lane 1** of the review workflow: peer review → RMC Lead Civil review → AI technical edit → Director approval.
+When local testing passes, commit your work and open a Content pull request. The `docs/new/` prefix describes the intended classification. An administrator records `/review classify new <doc_location>`; the Content PR then requires peer, Lead Civil, and AI technical-edit stages.
 
 ### Commit and push
 
@@ -762,24 +762,19 @@ After pushing, GitHub returns a URL like `https://github.com/USACE-RMC/RMC-Softw
 The repository ships a PR template that prefills a description structure. Fill in the sections:
 
 - **Description** — what document you're adding and why
-- **Affected documents** — the path you created
+- **Document scope** — the one document and its `doc_location`
 - **Related issues** — any tracked issues this addresses
-- **Pre-submission checklist** — confirm branch prefix, local preview, and version-history entry
-- **Technical edit checkbox** — leave unchecked until later in the review
+- **Validation** — record the preview, checks, and version-history update
 
 Click **Create pull request**.
 
 ### What happens automatically
 
-Within a minute or two of opening the PR:
-
-1. A **preview build** is published to an unadvertised URL. Look for the bot comment that says "Preview deployed."
-2. The stage progression workflow assigns `lane:new-doc` and `stage:peer-review` labels, and posts a comment identifying the lane and what's needed next.
-3. The `review-workflow` merge gate is set to `pending` — `main` cannot be merged into until the workflow flips it to success.
+After opening the PR, CI builds the site and the preview workflow reports its result. The administrator classifies the PR and assigns one named peer reviewer. The controller keeps one persistent summary with the classification, stage, reviewer, completed or waived stages, preview, and next action. Labels make purpose and status easy to scan; they do not control state.
 
 ### What you do next
 
-If you have a peer reviewer in mind, assign them via the **Reviewers** sidebar. If you don't, the site administrator will assign one. From here on, follow the [Author Workflow](./11-author-workflow.mdx) chapter — it covers responding to reviewer comments, addressing the technical edit, and what to expect through each review stage.
+Follow the [Author Workflow](./11-author-workflow.mdx). The administrator assigns every stage reviewer. Apply feedback and use `/review ready` if substantial revisions need renewed attention. Replies and resolved threads help the discussion but are not automated gates.
 
 ### When something special is needed
 
@@ -790,7 +785,7 @@ The PR comment thread is the place to coordinate anything unusual. Tag `@usace-r
 - You need a new React component that doesn't exist yet
 - The document has a specific deployment-timing dependency (e.g., must go live alongside a software release)
 
-You no longer need to email the administrator with a deployment request — the PR itself is the coordination point, and the workflow handles the deploy automatically once the review is complete.
+The PR is the coordination point. After the Content PR merges, production builds automatically from `main` and publishes the document as a draft. An administrator later starts the separate Director review.
 
 ---
 
@@ -827,7 +822,7 @@ You no longer need to email the administrator with a deployment request — the 
 
 **7. Test locally** with `npm start`. Verify all figures display, videos play, citations render, and there are no console errors.
 
-**8. Open the pull request:** push the branch, open the PR, fill in the template, and let the workflow take over. Because this is a brand-new software product, add a comment tagging `@usace-rmc/docs-admin` to request the homepage/navigation links be added — that's an admin task that runs alongside the review.
+**8. Open the Content pull request:** push the branch, fill in the template, and identify its `doc_location`. Because this is a brand-new software product, note the required homepage or navigation links in the PR.
 
 ### Example 2: New Toolbox Technical Manual
 
@@ -864,7 +859,7 @@ You no longer need to email the administrator with a deployment request — the 
 
 **7. Test locally** — verify the new tool appears under the existing seismic-hazard-suite in the sidebar.
 
-**8. Open the pull request.** Because the suite already exists, no admin coordination is needed for navigation — the workflow handles everything once the review is complete.
+**8. Open the Content pull request.** Identify the document location and validation so an administrator can classify it and assign review.
 
 ---
 
@@ -931,9 +926,10 @@ Use this scannable checklist to confirm every step is complete:
 ✓ Pushed branch to remote  
 ✓ Opened PR via GitHub web interface or IDE  
 ✓ Filled in PR template description  
-✓ Verified `lane:new-doc` and `stage:peer-review` labels were applied automatically  
+✓ Identified the one document and its `doc_location`
+✓ Verified the controller summary shows administrator classification and assignment
 ✓ Verified preview URL builds and displays the new document  
-✓ Tagged `@usace-rmc/docs-admin` with any special requests (new-software navigation links, custom sidebar exception, new component request, deployment-timing dependency)
+✓ Recorded special navigation, component, or timing needs in the PR
 
 ---
 

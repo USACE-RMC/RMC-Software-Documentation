@@ -21,16 +21,14 @@ Resolve LifeSim User's Guide v1.0 Level 3 QC findings
 
 ## Branch Naming
 
-Whether a PR gets a review lane is decided by **content**, not by branch name: a PR
-that changes any file under `docs/` is a documentation PR; one that changes nothing
-under `docs/` has no lane and no review stages.
+An administrator assigns every PR a review lane using `/review classify`.
+Changed content determines the appropriate classification; branch names are descriptive.
 
 ### Documentation branches (changes under `docs/`)
 
-The prefix routes the PR to a review lane. Use the full two-segment prefix — a bare
-`docs/{name}` does **not** match a lane and strands the PR in `stage:needs-lane`.
+These prefixes describe intent and do not assign or advance a review lane.
 
-- `docs/new/{slug}` — new document (Peer → Lead Civil → Technical edit → Director)
+- `docs/new/{slug}` — new document (Peer → Lead Civil → Technical edit in the Content PR; separate Director review after draft merge)
 - `docs/major/{slug}-v{X.0}` — major revision (Peer → Lead Civil → Technical edit)
 - `docs/minor/{slug}-v{X.Y}` — minor revision (Peer → Technical edit)
 - `docs/fix/{slug}` — editorial fix (no review; admin self-merge)
@@ -38,7 +36,8 @@ The prefix routes the PR to a review lane. Use the full two-segment prefix — a
 
 ### Non-documentation branches (components, plumbing, styling, scripts, CI)
 
-No review lane, no review stages — `CI Build` is the only gate.
+Administrators assign the `code` lane to changes without document edits. It has no
+formal review stages, but both `CI Build` and `review-workflow` must pass before administrator merge.
 
 - `feature/{descriptive-name}` — new components, new site capabilities, enhancements
 - `fix/{descriptive-name}` — bug fixes in components, styles, scripts, build tooling
@@ -47,8 +46,8 @@ No review lane, no review stages — `CI Build` is the only gate.
 
 Use `feature/` rather than `enhancement/`; older branches used the latter.
 
-A PR that touches both site code and content under `docs/` is a documentation PR —
-put it on the matching `docs/…` prefix.
+A PR mixing document content and site code is a specialized administrator-classified
+case. Authors should change only one document per PR; a branch prefix grants no exception.
 
 ## Pull Requests
 

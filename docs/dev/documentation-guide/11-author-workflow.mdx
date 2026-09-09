@@ -14,7 +14,7 @@ What an author does from start to publication, across all five lanes.
 
 ## Starting work
 
-For every lane, the author creates a feature branch off `main` with the appropriate prefix. The branch prefix is what routes the PR to the right review lane — see [Review Lanes](./10-review-lanes.mdx) for the mapping.
+For every classification, the author creates a feature branch off `main` with the descriptive prefix. An administrator records the authoritative classification; the branch name does not control review state.
 
 <TableVerticalNoRef
   alt="Branch prefix and starting actions per lane"
@@ -48,13 +48,13 @@ All steps can be performed in any IDE, via `git` on the command line, or entirel
 
 ## Opening the pull request
 
-The author opens a PR via the GitHub web interface or an IDE's PR integration. The repository ships a PR template that prefills a description structure — the author fills in the Description, Affected documents, Related issues, Pre-submission checklist, and (for Lane 1) the Technical edit checkbox sections. If the author knows who the peer reviewer should be, they assign that person in the Reviewers sidebar; otherwise the site administrator assigns one.
+The author opens one PR for the document via GitHub or an IDE integration and fills in the repository template. Identify the document and its `doc_location`, related issues, and validation. The administrator classifies the PR and assigns one named reviewer per required stage.
 
 Within a minute or two of opening the PR, three bot comments appear:
 
 1. A preview URL where reviewers will read the rendered document
 2. A stage progression comment identifying the lane and what review is needed next
-3. A hidden state comment that renders as an "Assigned reviewers for this PR" block, tracking which individuals the site administrator has assigned to each review stage
+3. One persistent controller summary showing classification, the current named reviewer, completed or waived stages, preview, and next action
 
 For the reviewer's view of these same three bot comments — and the rest of the page a reviewer lands on — see [Reviewer Workflow](./12-reviewer-workflow.mdx).
 
@@ -63,12 +63,12 @@ For the reviewer's view of these same three bot comments — and the rest of the
 Reviewers post comments on specific lines in the Files changed tab. For each comment, the author makes the fix, pushes a commit, and replies explaining what was done. The reviewer resolves the thread when satisfied.
 
 :::tip Batch your replies
-Answer threads from the **Files changed** tab using **Start a review**, then submit once when you have worked through them all. Replying from the Conversation tab posts each reply as its own standalone review, and every one of those sends a separate email to everyone following the PR. See [Reviewer Workflow §5 — Replying to comments](./12-reviewer-workflow.mdx#replying-to-comments-and-follow-up-discussion).
+Answer related threads from **Files changed** using **Start a review**, then submit the batch together. This reduces separate review submissions and notification noise, although exact GitHub email behavior depends on each user's settings. See [Reviewer Workflow §5](./12-reviewer-workflow.mdx#replying-to-comments-and-follow-up-discussion).
 :::
 
 For suggested changes (pre-filled code blocks), the author can click **Commit suggestion** to apply the fix in one click.
 
-**All comment threads must be resolved before the PR can merge.**
+Replies and resolved threads help collaboration but are not automated stage or merge gates.
 
 Authors writing clear, descriptive commit messages make a reviewer's life much easier — see [Reviewer Workflow §3 — Navigating commits within a PR](./12-reviewer-workflow.mdx#navigating-commits-within-a-pr) for how a reviewer uses your commit messages to focus their attention.
 
@@ -78,13 +78,7 @@ After the previous review stage approves the PR, the technical edit stage begins
 
 The author addresses each comment the same way as comments from human reviewers — pushing fixes, replying, and either the author or the site administrator resolves threads as they are addressed.
 
-When all technical edit comments have been addressed, the author checks the checkbox in the PR description:
-
-```
-- [x] Technical edit comments addressed
-```
-
-Checking this box advances the document to the next stage — **Director review for Lane 1 only**. Lanes 2 and 3 have no Director review; checking the box moves them straight to `stage:ready-to-merge`. The author does not check the box until every comment has been addressed.
+Technical editing is manually initiated. When it has actually finished, an administrator records `/review complete editor`. An author checkbox does not advance the workflow. Major and minor revisions need no Director review. A new-document Content PR merges and deploys as a draft before its separate Director Review PR begins.
 
 See [Technical Edit](./13-technical-edit.mdx) for the full prompt the AI uses and the alternative human-editor path.
 
@@ -111,14 +105,14 @@ See [Technical Edit](./13-technical-edit.mdx) for the full prompt the AI uses an
   ]}
 />
 
-If the author pushes revisions during Director review, the site administrator re-deploys so the live URL stays current.
+Director corrections are pushed to the separate Director Review PR, whose stable preview updates without publishing its branch to production.
 
 ## When reviewers ask for changes
 
-Reviewers typically submit feedback as a **Comment** review (not **Request changes**), leaving inline notes on specific lines. The author addresses each comment, pushes a new commit, and replies to the thread explaining what was done. The stage progression bot automatically pings the assigned reviewer(s) to come back and backcheck.
+Reviewers use **Comment**, **Request changes**, or **Approve** as appropriate. The author addresses feedback and may use `/review ready` to request renewed attention.
 
 **The stage does not reset when the author pushes new commits.** A revision during peer review is for the peer reviewer to backcheck; it does not send the document back to start. The same applies to Lead Civil review and Director review. This is intentional — each review round builds on the prior round, rather than restarting from scratch.
 
 ## When the review is complete
 
-The site administrator prepares the merge: flips the draft flag in `src/docConfig.js`, updates the version history, merges the PR, and approves the final deploy. The author receives email notifications as each step happens. Once the deploy completes, the document is live.
+Only an administrator merges to `main` and approves production. Major and minor revisions follow their normal merge. A new document's Content PR retains `draft: true`; Director approval or waiver later creates a separate Publication PR that removes draft status. Document attribution is updated manually.

@@ -1,65 +1,70 @@
 name: CI Build
-
+run-name: 'Validate PR #${{ github.event.pull_request.number || inputs.pr }} at ${{ github.event.pull_request.head.sha || inputs.sha }}'
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: 'PR number to validate (used by review automation)'
+        required: true
+        type: string
+      sha:
+        description: 'Exact PR head revision to validate'
+        required: true
+        type: string
 permissions:
   contents: read
-  pull-requests: write
-  statuses: write
-
+  pull-requests: read
+concurrency:
+  group: ci-${{ github.event.pull_request.number || inputs.pr }}
+  cancel-in-progress: true
 jobs:
   build:
-    name: CI Build
+    name: Build preview artifact
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run build
-      - name: Signal admin-may-merge for non-docs PRs
-        if: success()
+      - name: Resolve PR
+        id: pr
         uses: actions/github-script@v7
         with:
           script: |
-            const prNumber = context.payload.pull_request.number;
-            const files = await github.paginate(github.rest.pulls.listFiles, {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: prNumber,
-              per_page: 100,
-            });
-            // Branch naming for this path is conventional, not enforced:
-            // feature/, fix/, chore/, ci/. What actually decides the lane is
-            // content -- a PR touching nothing under docs/ has no review lane
-            // and needs only this build to pass.
-            const touchesDocs = files.some(f => f.filename.startsWith('docs/'));
-            if (touchesDocs) return; // docs PRs are handled by stage-progression.yml
-
-            // Flip the review-workflow commit status to success so branch
-            // protection allows merge. This is the non-docs counterpart to
-            // stage-progression.yml's status-setting for docs PRs.
-            const headSha = context.payload.pull_request.head.sha;
-            await github.rest.repos.createCommitStatus({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              sha: headSha,
-              state: 'success',
-              context: 'review-workflow',
-              description: 'No doc changes — admin may merge',
-            });
-
-            const marker = '<!-- ci-admin-merge-bot-comment -->';
-            const sha = headSha.substring(0, 7);
-            const body = `${marker}\n\n✅ **CI build passed** for commit \`${sha}\`\n\nThis PR changes no files under \`docs/\`, so it carries no review lane. **CI Build is the only gate** - there are no review stages to clear.\n\n@usace-rmc/docs-admin may merge.`;
-            const comments = await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber });
-            const existing = comments.data.find(c => c.user.type === 'Bot' && c.body.includes(marker));
-            if (existing) {
-              await github.rest.issues.updateComment({ owner: context.repo.owner, repo: context.repo.repo, comment_id: existing.id, body });
-            } else {
-              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber, body });
-            }
+            const n = context.payload.pull_request?.number || Number(context.payload.inputs?.pr);
+            if (!Number.isSafeInteger(n) || n < 1) throw new Error('Invalid PR number');
+            if (context.eventName === 'workflow_dispatch' && context.ref !== 'refs/heads/main') throw new Error('Dispatch from main only');
+            const {data: pr} = await github.rest.pulls.get({...context.repo, pull_number:n});
+            if (pr.state !== 'open') throw new Error('PR is closed');
+            const expected = context.payload.pull_request?.head.sha || context.payload.inputs?.sha;
+            if (expected !== pr.head.sha) throw new Error('PR changed before this build started; build the latest revision');
+            core.setOutput('number', String(n));
+            core.setOutput('sha', pr.head.sha);
+            core.setOutput('repository', pr.head.repo.full_name);
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ steps.pr.outputs.repository }}
+          ref: ${{ steps.pr.outputs.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run test:review --if-present
+      - name: Build preview
+        run: npm run build
+        env:
+          DOCUSAURUS_URL: https://usace-rmc.github.io
+          DOCUSAURUS_BASE_URL: /RMC-Software-Documentation-Previews/pr-${{ steps.pr.outputs.number }}/
+          DOCUSAURUS_IS_PREVIEW: 'true'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: preview-${{ steps.pr.outputs.number }}-${{ steps.pr.outputs.sha }}
+          path: build/
+          if-no-files-found: error
+          retention-days: 7
+    outputs:
+      pr: ${{ steps.pr.outputs.number }}
+      sha: ${{ steps.pr.outputs.sha }}
