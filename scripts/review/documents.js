@@ -23,7 +23,11 @@ function readRegistry(source) {
   return entries(source).map((e) => e.values);
 }
 function validLocation(location) {
-  if (!/^[a-zA-Z0-9][a-zA-Z0-9_./-]*$/.test(location) || location.split('/').some((p) => !p || p === '.' || p === '..'))
+  if (
+    typeof location !== 'string' ||
+    !/^[a-zA-Z0-9][a-zA-Z0-9_./-]*$/.test(location) ||
+    location.split('/').some((p) => !p || p === '.' || p === '..')
+  )
     throw Error('Invalid document location');
   return location;
 }
@@ -40,6 +44,8 @@ const ASSET_ROOTS = ['figures', 'bibliographies', 'files', 'downloads'];
 function registryMap(source) {
   const result = new Map();
   for (const entry of readRegistry(source)) {
+    // Download-only landing-page tiles have no MDX document identity.
+    if (!Object.hasOwn(entry, 'doc_location') && typeof entry.downloadUrl === 'string' && entry.downloadUrl.trim()) continue;
     const location = validLocation(entry.doc_location);
     if (result.has(location)) throw Error(`Duplicate document location: ${location}`);
     result.set(location, entry);
