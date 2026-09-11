@@ -1,7 +1,27 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { readRegistry, flipDraft, documentScope, publicationChanges, registryChanges } = require('../scripts/review/documents');
+const { readRegistry, flipDraft, documentScope, publicationChanges, registryChanges, validLocation } = require('../scripts/review/documents');
 const source = `const docs = [{doc_location:'a/manual', active:true, draft:true},{doc_location:'b/manual',active:true,draft:true}]; module.exports={docs};`;
+test('actual registry supports PDF-only tiles while detecting document changes', () => {
+  const registry = require('node:fs').readFileSync(require('node:path').join(__dirname, '../src/docConfig.js'), 'utf8');
+  assert.deepEqual(registryChanges(registry, registry), []);
+  const changed = registry.replace('const docs = [', "const docs = [{doc_location:'regression/manual',active:true,draft:true},");
+  assert.deepEqual(registryChanges(registry, changed), ['regression/manual']);
+});
+
+test('PDF-only tiles need no document path but malformed document entries are rejected', () => {
+  const pdf = `const docs=[{downloadUrl:'/report.pdf',doc_name:'Report'}];`;
+  assert.deepEqual(registryChanges(pdf, pdf), []);
+  for (const entry of ['{}', "{downloadUrl:''}", "{doc_location:null,downloadUrl:'/report.pdf'}"]) {
+    assert.throws(() => registryChanges(`const docs=[${entry}];`, source), /Invalid document location/);
+  }
+});
+
+test('document locations reject non-string values with a validation error', () => {
+  for (const value of [undefined, null, 123, true, {}, '']) {
+    assert.throws(() => validLocation(value), /Invalid document location/);
+  }
+});
 test('only the explicitly selected registry flag changes', () => {
   const result = flipDraft(source, 'a/manual');
   assert.equal(readRegistry(result)[0].draft, false);
