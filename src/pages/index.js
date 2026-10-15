@@ -13,6 +13,7 @@ import RRFTIcon from '../components/icons/RRFTIcon';
 import SeismicHazardIcon from '../components/icons/SeismicHazardIcon';
 import SpillwayErosionIcon from '../components/icons/SpillwayErosionIcon';
 import StructuralIcon from '../components/icons/StructuralIcon';
+import SystemResponseIcon from '../components/icons/SystemResponseIcon';
 import ToolboxIcon from '../components/icons/ToolboxIcon';
 import WebAppIcon from '../components/icons/WebAppIcon';
 import TourButton from '../components/TourButton';
@@ -115,7 +116,7 @@ export default function Home() {
     },
     {
       IconComponent: WebAppIcon,
-      doc_name: 'Web Applications',
+      doc_name: 'Web Applications and Services',
       contentCardData: [
         {
           IconComponent: RRFTIcon,
@@ -136,6 +137,13 @@ export default function Home() {
           title: 'Dam Screening Tool',
           description: 'Dam risk screening',
           href: addBaseUrl('web-applications/dst'),
+          active: false,
+        },
+        {
+          IconComponent: SystemResponseIcon,
+          title: 'System Response Library',
+          description: 'System response models for screening',
+          href: addBaseUrl('web-applications/system-response'),
           active: false,
         },
       ],

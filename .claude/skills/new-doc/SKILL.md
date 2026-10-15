@@ -20,7 +20,7 @@ Ask: "Which category does this document belong to?"
 Present these options:
 1. **Desktop Applications** (`desktop-applications/`)
 2. **Toolbox Technical Manuals** (`toolbox-technical-manuals/`)
-3. **Web Applications** (`web-applications/`)
+3. **Web Applications and Services** (`web-applications/`)
 4. **Developer Resources** (`dev/`)
 
 ### 1b — Software Product
@@ -332,7 +332,7 @@ If the user chose to add the document to the header nav, edit `src/theme/Layout/
 
 ### Add a version variable (non-dev versioned docs only):
 
-In the appropriate section (Desktop Applications, Toolbox, Web Applications), add a new `const` for the document href:
+In the appropriate section (Desktop Applications, Toolbox, Web Applications and Services), add a new `const` for the document href:
 ```javascript
 const {camelCaseVarName}Href = useBaseUrl(
   `/docs/{category}/{software}/{slug}/${latestVersions['{category}/{software}/{slug}'] || 'v{version}'}/preface`,
