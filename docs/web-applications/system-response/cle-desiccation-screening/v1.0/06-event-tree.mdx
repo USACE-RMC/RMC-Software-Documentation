@@ -1,0 +1,162 @@
+---
+title: Event Tree
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import Equation from '@site/src/components/Equation';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-desiccation-screening" />
+
+# Event Tree
+
+The model computes the SRP at each headwater level from the eight-node event tree shared by the CLE screening models, documented in
+[Event Tree](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree) of the CLE Common Methods manual. The tree is
+evaluated at every supplied headwater value and at additional pool levels between them, as described in
+[Headwater Grid](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#headwater-grid). This chapter states how
+each node is populated for desiccation cracking. Only the flaw node is specific to the mechanism; the other seven follow the crest-crack
+conventions of the shared manual without change.
+
+## Node Summary
+
+<TableVertical
+  tableKey="cle-desiccation-screening-table-9"
+  alt="Event-tree nodes of the CLE desiccation screening model"
+  caption="Event-tree nodes of the CLE desiccation screening model."
+  colAlign={['center', 'left', 'left', 'center']}
+  headers={[[{ value: 'Node' }, { value: 'Name' }, { value: 'Desiccation Model' }, { value: 'Varies with Pool' }]]}
+  columns={[
+    ['1', '2', '3', '4', '5', '6', '7', '8'],
+    [
+      'Flaw',
+      'Initiation',
+      'Continuation',
+      'Progression: Roof Support',
+      'Progression: No Crack Filling',
+      'Progression: No Flow Limitation',
+      'Unsuccessful Intervention',
+      'Breach',
+    ],
+    [
+      'Scored desiccation flaw probability, or 1.0 when observed',
+      '1.0 above the bottom of the crack; zero at or below',
+      'Continuation method at or below the filter top; 1.0 above',
+      'Minimum over the material set for the pool level',
+      'By embankment type',
+      'Minimum over the elements reaching the pool level',
+      'User-specified (default 1.0)',
+      'User-specified (default 1.0)',
+    ],
+    ['No', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'No', 'No'],
+  ]}
+/>
+
+## Node 1: Flaw
+
+*Question:* Does a continuous transverse desiccation crack exist across the crest?
+
+The flaw probability $P_{flaw}$ is the result of [Flaw Probability](./04-flaw-probability.mdx): the scored probability from the surface layer,
+climate, and crest soil, or 1.0 when continuous desiccation cracking has been observed, or a negligibly small value when the mechanism is
+inapplicable or the weighted sum is below 13 without an observation. It is the same at every pool level.
+
+## Node 2: Initiation
+
+*Question:* Does water flowing through the crack erode its walls?
+
+Initiation is the headwater gate of the crest-crack models (see
+[Crest-Crack Models: Headwater Gate](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#crest-crack-models-headwater-gate)
+in the CLE Common Methods manual), applied at the bottom-of-crack elevation $z_{bc}$ of [Crack Depth](./05-crack-depth.mdx#bottom-of-crack-elevation).
+At a headwater (pool) elevation $h$, the initiation probability is
+
+<Equation
+  equationKey="cle-desiccation-screening-eq-5"
+  equation="P_{init}(h) = \begin{cases} 1.0 & \text{the mechanism applies and } h > z_{bc} \\[4pt] 0 & \text{otherwise} \end{cases}"
+/>
+
+At a pool exactly at the bottom of the crack, initiation is zero. When the mechanism is inapplicable, initiation is zero at every pool level. No
+shear stress is computed and tailwater plays no part. Certain initiation above the bottom of the crack is a shared assumption of the crest-crack
+models (Assumption 9 in
+[Assumptions and Limitations](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/assumptions-and-limitations#initiation) of
+the CLE Common Methods manual).
+
+## Node 3: Continuation
+
+*Question:* Does an unfiltered exit allow erosion to continue?
+
+Continuation follows the crest-crack convention of
+[Node 3: Continuation](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-3-continuation)
+in the CLE Common Methods manual. The continuation probability $P_{cont}(h)$ at pool level $h$ is set as follows. With no filter on the failure
+pathway, $P_{cont} = 1.0$ at every pool level. With a filter whose top is at $z_{tf}$, $P_{cont}$ is the probability of continuing erosion
+$P_{ce}$ at pool levels at or below $z_{tf}$, and 1.0 above it, where the water in the upper part of the crack passes over the filter's top. A
+filter caps the pathway when its top reaches the crest and no full-pathway roof materials are given (see
+[The Failure Pathway](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#the-failure-pathway)
+in the CLE Common Methods manual); such a filter gives $P_{ce}$ at every pool level. The value of $P_{ce}$
+is evaluated once, by the shared continuation method, from the filter and the base soils upstream of it (see
+[Method Selection and Governing Base Soil](/docs/web-applications/system-response/continuation-screening/v1.0/method-selection-and-governing-base-soil)
+in the Continuation (Filter Evaluation) manual).
+
+Because initiation is zero at or below the bottom of the crack, a filter that does not cap the pathway and whose top lies at or below $z_{bc}$
+never affects the SRP: at every pool level where initiation occurs, the pool is above the filter's top and continuation is 1.0. A filter that caps
+the pathway is the exception at any crack depth: its continuation value $P_{ce}$ and the below-filter roof-support value apply at every pool level,
+including, for a crack of zero depth, the pool levels above the crest at which initiation occurs.
+
+## Node 4: Progression — Roof Support
+
+*Question:* Does the material over the enlarging pipe hold a roof, so that the pipe stays open?
+
+The roof-support probability $P_{roof}(h)$ is the minimum roof-support probability over the material set that applies at pool level $h$ (see
+[Node 4: Progression — Roof Support](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-4-progression--roof-support)
+in the CLE Common Methods manual): the below-filter materials, taken at the bottom-of-crack elevation, at pool levels at or below $z_{tf}$ (and at
+every pool level when the filter caps the pathway), and the full-pathway materials above $z_{tf}$ (and at every pool level when no filter is
+present). Roof support therefore changes at the filter's top in step with continuation.
+
+The crest soils of the flaw assessment and the roof materials are separate inputs. The crest soils describe the material the crack crosses at the
+crest and set the likelihood and depth of cracking; the roof materials describe the materials along the failure pathway and set the probability
+that the enlarging pipe stays open.
+
+## Node 5: Progression — No Crack Filling
+
+*Question:* Is the enlarging pipe left unfilled by material carried in from upstream?
+
+The probability of no crack filling $P_{nf}$ depends only on the embankment type, per
+[Node 5: Progression — No Crack Filling](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-5-progression--no-crack-filling)
+in the CLE Common Methods manual, following Fell et al. (2024) <Citation citationKey="Fell2024" />. It is the same at every pool level.
+
+## Node 6: Progression — No Flow Limitation
+
+*Question:* Does the flow into the enlarging pipe remain unrestricted by upstream seepage-limiting elements?
+
+The probability of no flow limitation $P_{nl}(h)$ is the minimum over the upstream elements that reach the pool level, per
+[Node 6: Progression — No Flow Limitation](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-6-progression--no-flow-limitation)
+in the CLE Common Methods manual. When a top-of-wall elevation $z_{tw}$ is supplied, every listed element applies at pool levels at or below
+$z_{tw}$; above it the walls drop out and only an upstream facing element remains. With no element listed, $P_{nl} = 1.0$.
+
+## Nodes 7 and 8: Unsuccessful Intervention and Breach
+
+*Questions:* Do detection and intervention fail? Does an uncontrolled release of impounded water occur?
+
+The probabilities $P_{int}$ and $P_{br}$ are the user-specified values, each applied at every pool level and each defaulting to 1.0 (see
+[Nodes 7 and 8: Unsuccessful Intervention and Breach](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#nodes-7-and-8-unsuccessful-intervention-and-breach)
+in the CLE Common Methods manual).
+
+## SRP Computation
+
+The SRP at each pool level is the product of the eight node probabilities:
+
+<Equation
+  equationKey="cle-desiccation-screening-eq-6"
+  equation="\mathrm{SRP}(h) = P_{flaw} \times P_{init}(h) \times P_{cont}(h) \times P_{roof}(h) \times P_{nf} \times P_{nl}(h) \times P_{int} \times P_{br}"
+/>
+
+as in [SRP Computation](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#srp-computation) of the CLE Common
+Methods manual. Wherever the product is zero — for example at and below the bottom of the crack, or where a user-specified probability is zero —
+the SRP is reported as a negligibly small value rather than zero. Above the bottom of the crack the SRP changes with pool level only where the pool crosses the top of a filter or the top of a wall that lies
+above $z_{bc}$.
+
+<TableReference tableKey="cle-desiccation-screening-table-9" /> shows which nodes vary with pool level. Every node is evaluated directly from the
+inputs, so the curve can be reproduced exactly from the reported node values, apart from any sampling in the continuation probability $P_{ce}$.
+
+<CitationFootnote />

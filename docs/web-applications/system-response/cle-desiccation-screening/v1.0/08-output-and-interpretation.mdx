@@ -1,0 +1,112 @@
+---
+title: Output and Interpretation
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-desiccation-screening" />
+
+# Output and Interpretation
+
+The model reports the SRP at each evaluated pool level together with the probability of each of the eight nodes, in the form shared by the
+crest-crack models and documented in
+[Output and Interpretation](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation) of the CLE Common
+Methods manual. This chapter documents the flaw-assessment results specific to desiccation cracking and how to read the curve for this mechanism.
+When a filter intersects the failure pathway, the results of the shared continuation method are also reported, as described in
+[Output and Interpretation](/docs/web-applications/system-response/continuation-screening/v1.0/output-and-interpretation) of the Continuation
+(Filter Evaluation) manual.
+
+## Flaw-Assessment Results
+
+The flaw assessment reports the quantities of [Flaw Probability](./04-flaw-probability.mdx) and [Crack Depth](./05-crack-depth.mdx):
+
+- **Surface-layer, climate, and crest-soil likelihood factors** — $LF_s$, $LF_{cl}$, and $LF_{cs}$. The climate factor is the interpolated value
+  when a net evaporation was supplied.
+- **Governing crest soil** — the listed soil class whose score set $LF_{cs}$. It is absent when the crest soils are unknown and when the mechanism
+  is inapplicable.
+- **Whether the mechanism applies** — no only when every listed crest soil is a clean or nearly clean sand or gravel. The likelihood factor of the
+  soil, the weighted sum, and the raw flaw probability are then reported as zero.
+- **Weighted sum** $\Sigma$.
+- **Raw flaw probability** $P_{raw}$ — the value from the weighted-sum curve, before the observation override; zero when the weighted sum is below
+  13.
+- **Flaw probability** $P_{flaw}$ — the value used in the event tree: 1.0 when the observation override applied, otherwise $P_{raw}$, with a zero
+  replaced by a negligibly small value.
+- **Crack depth** $d_c$, in feet, and the **bottom-of-crack elevation** $z_{bc}$.
+
+## Interpreting the System Response Curve
+
+The curve has the shape described for the crest-crack models in
+[Interpreting the System Response Curve](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#interpreting-the-system-response-curve)
+of the CLE Common Methods manual:
+
+- **At and below the bottom of the crack** $z_{bc}$, the SRP is negligible, because initiation is zero.
+- **Just above the bottom of the crack**, the SRP steps up to the product of the flaw probability and the continuation, progression, intervention,
+  and breach nodes that apply at that pool level.
+- **Further steps** occur only where the pool crosses the top of a filter $z_{tf}$ or the top of a wall $z_{tw}$ that lies above $z_{bc}$.
+
+Two features are particular to desiccation cracking:
+
+- **The height of the curve depends strongly on the crest description.** The flaw probability spans from negligible to 0.5 across the attainable
+  weighted sums, so the surface layer, the climate, and the crest soil can move the curve by several orders of magnitude. The downstream nodes
+  can control the height instead: a low continuation probability below a filter, or a strongly flow-limiting upstream element such as a modern
+  cutoff wall (a probability of no flow limitation of 0.001), lowers the curve by up to three orders of magnitude at the pool levels where it
+  applies.
+- **The pool level at which the curve rises is also set by the crest description.** The same three descriptions select the crack depth, from zero
+  to 20 ft below the crest. A crest whose tabulated depth is zero has a negligible SRP at every pool level up to the crest, even when continuous
+  cracking has been observed (see [Crack Depth](./05-crack-depth.mdx#cracks-of-zero-depth)).
+
+## Example
+
+<TableReference tableKey="cle-desiccation-screening-table-10" /> shows the node values for a homogeneous earthfill embankment with a crest at
+elevation 100 ft, no road or pathway on the crest, a seasonal climate, and a lean clay (CL) crest soil. No filter intersects the failure pathway,
+the full-pathway roof material is lean clay, a sheet pile wall upstream has its top at elevation 98 ft, and intervention and breach take their
+defaults of 1.0. The flaw assessment gives $\Sigma = 3(4) + 2(2) + 1(2) = 18$, a flaw probability halfway in the logarithm between
+1 × 10<sup>-2</sup> and 1 × 10<sup>-1</sup>, $P_{flaw} = 10^{-1.5} = 0.0316$, and a crack depth of 5 ft, so $z_{bc} = 95$ ft.
+
+<TableVertical
+  tableKey="cle-desiccation-screening-table-10"
+  alt="Example node values and SRP for a desiccation crack"
+  caption="Example node values and SRP for a desiccation crack with its bottom at elevation 95 ft."
+  colAlign={['left', 'center', 'center', 'center']}
+  headers={[[{ value: 'Pool Level' }, { value: 'Initiation' }, { value: 'No Flow Limitation' }, { value: 'SRP' }]]}
+  columns={[
+    ['At or below 95 ft', 'Above 95 ft, at or below 98 ft', 'Above 98 ft'],
+    ['0', '1.0', '1.0'],
+    ['0.5', '0.5', '1.0'],
+    ['Negligible', '0.0158', '0.0316'],
+  ]}
+/>
+
+The flaw probability is 0.0316 at every pool level. Continuation, roof support, and crack filling are 1.0 at every pool level, because no filter
+intersects the pathway, a lean clay roof material has a roof-support probability of 1.0, and the embankment is homogeneous earthfill.
+Above the top of the wall the flow entering the upper part of the crack passes over the wall, so flow limitation no longer applies and the SRP
+doubles. Had the crest carried a gravel road instead, the weighted sum would have been 13.5, the flaw probability 1.47 × 10<sup>-3</sup>, and the
+crack depth 1.5 ft: the curve would be lower by more than an order of magnitude and would not rise until the pool exceeded elevation 98.5 ft.
+
+## Checking the Result
+
+The checks of
+[Checking the Result](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#checking-the-result) in
+the CLE Common Methods manual apply. For this model in particular:
+
+- **Flaw probability** — the reported likelihood factors should match the inputs per [Flaw Probability](./04-flaw-probability.mdx), and, when the
+  mechanism applies, the weighted sum should equal $3\,LF_s + 2\,LF_{cl} + LF_{cs}$; when it is inapplicable the weighted sum and the soil
+  likelihood factor are reported as zero (see [Inapplicable Mechanism](./04-flaw-probability.mdx#inapplicable-mechanism)). A flaw probability of 1.0 should appear only when the observation override applied.
+- **Bottom of the crack** — when the mechanism applies, the bottom-of-crack elevation should equal the crest elevation less the tabulated depth of
+  <TableReference tableKey="cle-desiccation-screening-table-8" /> or <TableReference tableKey="cle-desiccation-screening-table-11" />; when it is inapplicable, it equals the crest elevation. A bottom of crack on a different datum from the headwater series, or a crest
+  elevation not in feet, misplaces the step of the curve (see [Input Parameters](./03-input-parameters.mdx#units)).
+- **Plateau** — above the bottom of the crack, the SRP equals the product of the reported node values at that pool level.
+
+## Screening Results Relative to Detailed Analysis
+
+The model's results indicate whether concentrated leak erosion through desiccation cracking at the crest warrants detailed analysis; they are not a
+substitute for one. Where the result is significant to a decision, the flaw probability and the crack depth — the two quantities the crest
+description controls — should be re-examined with site evidence of cracking, such as test pits across the crest and observations after dry
+seasons, and the methods of Fell et al. (2024) <Citation citationKey="Fell2024" /> and the judgment of the risk team should replace the screening
+values.
+
+<CitationFootnote />
