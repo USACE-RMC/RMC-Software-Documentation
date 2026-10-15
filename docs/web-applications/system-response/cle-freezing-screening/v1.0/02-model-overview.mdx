@@ -1,0 +1,146 @@
+---
+title: Model Overview
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-freezing-screening" />
+
+# Model Overview
+
+## Purpose
+
+The CLE freezing screening model computes a system response curve for concentrated leak erosion through a frost crack at the crest of an
+embankment, as a function of headwater elevation. The system response probability (SRP) at each headwater level is the conditional probability of
+breach of the embankment by concentrated leak erosion through such a crack, given that pool level.
+
+The flaw is a transverse crack — one running across the crest, from the upstream to the downstream side — opened in the crest soils by freezing. It
+is open at the crest and extends down to a bottom-of-crack elevation set by the depth of cracking. When the pool rises above the bottom of the crack,
+water can flow through it, erode its walls, and enlarge it into a concentrated leak.
+
+:::warning[INPUT NEEDED IN-01 — Definition]
+The physical mechanism by which freezing opens a transverse crack at the crest is not described, and neither is the reason each of the model's
+three site factors bears on it: why a longer freeze duration, a crest soil of a given classification, and the surface cover over the core
+(paved, gravel road, or no road or pathway) make a continuous frost crack more or less likely. State the mechanism and the direction of each factor
+so that it can be described here, with a literature source where one applies.
+
+Proposed (unconfirmed): freezing of the crest soils causes contraction and ice segregation that open transverse cracks, which deepen and widen
+with the duration of freezing; fine-grained soils are the most susceptible, and a surface cover that is kept clear of snow, such as a paved road,
+changes the insulation of the crest and so the cracking. Confirm, correct, or replace — in particular the direction of the surface-cover factor,
+under which a paved crest scores as the least likely condition.
+:::
+
+## Intended Use
+
+The model is a screening-level assessment of the risk of concentrated leak erosion through a frost crack. It makes simplifying and generally
+conservative assumptions with two goals:
+
+- **Preventing false negatives** — The model aims to avoid underestimating risk at the screening level, so that embankments with a
+  potential frost-cracking concern are flagged for further analysis. This is a goal rather than a guarantee: the score of an Unknown crest soil is
+  not the most conservative choice, and a weighted sum below 13 gives a zero raw flaw probability (Assumptions 3 and 4 in
+  [Assumptions and Limitations](./06-assumptions-and-limitations.mdx#flaw-assessment)). Initiation is taken as certain once water can enter the crack, and the most
+  crack-susceptible of the crest soils governs the flaw assessment.
+- **Reducing input burden** — Three qualitative selections — a freeze-duration climate category, the soil classifications at the crest, and the
+  surface cover over the core — substitute for site-specific measurements of frost penetration and crack geometry. The crack depth follows from
+  the climate category alone.
+
+The model is not intended for detailed or semi-quantitative risk assessments. For higher-level analyses, the internal-erosion probability methods of
+Fell et al. (2024) <Citation citationKey="Fell2024" /> and the crack-geometry initiation analyses of the Concentrated Leak Erosion Initiation
+toolbox provide the complete methodologies (see [Comparison with Detailed Models](#comparison-with-detailed-models)).
+
+## How the Model Works
+
+The model executes the three stages common to the CLE screening family (see the
+[Model Overview](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#how-the-model-works) of the common
+methods manual):
+
+1. **Flaw assessment** — The model scores the freeze-duration climate, the most crack-susceptible soil the crack crosses at the crest, and the
+   surface cover over the core with risk-factor and likelihood-factor weighting, and converts the weighted sum to the probability of a continuous
+   frost crack. An observation of continuous frost cracking overrides the score to certainty. The climate category also sets the crack depth, and
+   the bottom of the crack is the crest elevation less that depth. When every listed crest soil is one that cannot frost-crack, the mechanism does
+   not apply and no crack forms (see [Flaw Assessment](./04-flaw-assessment.mdx)).
+
+2. **Pathway resolution** — The model takes the failure pathway as supplied: the top of the first filter the crack meets, if any, the filter and
+   base-soil description, the soils that must hold a roof over the enlarging pipe below and above the filter's top, the embankment type, and the
+   upstream seepage-limiting elements with the top of any wall (see [Input Parameters](./03-input-parameters.mdx#inputs-shared-with-the-cle-family)).
+
+3. **Event-tree assembly** — At each headwater level, the model composes the eight CLE event-tree node probabilities and multiplies them to produce
+   the SRP. Initiation is zero at or below the bottom of the crack and certain above it; continuation, roof support, and flow limitation are each
+   evaluated for the pathway that governs at that pool level (see [Event Tree](./05-event-tree.mdx)).
+
+Every node is deterministic except continuation, which the shared continuation method evaluates by Monte Carlo simulation when it assesses a
+filter from the soil classifications of the base and filter soils.
+
+## Physics Basis
+
+The model combines the following engineering methods:
+
+- **Risk-factor and likelihood-factor scoring** of the probability of a continuous flaw, in which each site factor receives a likelihood factor
+  weighted by a risk factor and the weighted sum is mapped to a probability <Citation citationKey="Fell2024" />, as documented for the CLE family
+  in [Flaw Conventions](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#risk-factor-and-likelihood-factor-scoring)
+- **A climate-dependent crack depth** that places the bottom of the frost crack below the crest (see
+  [Flaw Assessment](./04-flaw-assessment.mdx#crack-depth-and-bottom-of-the-crack))
+- **A headwater gate at the bottom of the open crack** for initiation, as documented for the crest-crack models in
+  [Initiation](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#crest-crack-models-headwater-gate)
+- **Filter evaluation, roof-support, crack-filling, and flow-limitation probabilities** for continuation and progression, applied through the
+  crest-crack pathway rules documented in
+  [Failure Pathway and Progression](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression)
+
+## Comparison with Detailed Models
+
+In a detailed risk analysis, the probability of a frost crack, its depth and width, and the likelihood that erosion initiates in it are assessed by
+the risk team from the site evidence, informed by the internal-erosion probability methods of Fell et al. (2024) <Citation citationKey="Fell2024" />.
+The initiation of erosion in a crack of known geometry can be evaluated with the
+[Vertical Rectangular Crack](/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/vertical-rectangular-crack)
+and [Vertical Triangular Crack](/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/vertical-triangular-crack)
+analyses of the Concentrated Leak Erosion Initiation toolbox, which compare the hydraulic shear stress in the crack with the critical shear stress
+of its walls. <TableReference tableKey="cle-freezing-screening-table-1" /> summarizes the differences.
+
+<TableVertical
+  tableKey="cle-freezing-screening-table-1"
+  alt="Comparison of the CLE freezing screening model and detailed analysis"
+  caption="Comparison of the CLE freezing screening model and detailed analysis."
+  headers={[[{ value: 'Aspect' }, { value: 'Screening Model' }, { value: 'Detailed Analysis' }]]}
+  columns={[
+    ['Purpose', 'Flaw probability', 'Crack depth', 'Crack width', 'Initiation', 'Progression'],
+    [
+      'Screening-level risk assessment',
+      'Scored from climate, crest soil, and surface cover; observation override',
+      'Tabulated by freeze-duration climate category',
+      'Reported for reference; not used in the event tree',
+      'Certain once the pool rises above the bottom of the crack',
+      'Tabulated roof-support, crack-filling, and flow-limitation probabilities',
+    ],
+    [
+      'Detailed risk analysis',
+      'Estimated by the risk team from the totality of the evidence',
+      'Estimated by the analyst for the site',
+      'An input to the crack-geometry initiation analysis',
+      'Shear stress analysis of the crack geometry',
+      'Assessed by the risk team, informed by the same tables',
+    ],
+  ]}
+/>
+
+## Relationship to the Shared Methods
+
+The model is one of the four crest-crack models of the CLE screening family (see
+[The Two Model Groups](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#the-two-model-groups) in the
+common methods manual). Everything after the flaw assessment is common to those models: the event-tree structure, the headwater gate for
+initiation, the crest-crack pathway rules for continuation and roof support, the crack-filling and flow-limitation tables, and the form of the
+results. This manual documents the frost-cracking flaw assessment in full and, for every other node, states what this model supplies and links the
+chapter of the common methods manual that documents the method. The continuation node hands the filter evaluation to the shared continuation method,
+which combines its results across the base soils the filter protects as described in
+[Method Selection and Governing Base Soil](/docs/web-applications/system-response/continuation-screening/v1.0/method-selection-and-governing-base-soil).
+The model uses no toolbox method.
+
+The closest sibling is the desiccation screening model, which shares the structure of the flaw assessment — three factors, a weighted-sum
+threshold of 13, an observation override, and a set of crest soils in which the mechanism cannot occur. It also scores the climate and the crest
+soil, but on its own tables and with its factors weighted differently: its surface layer carries a risk factor of 3, its climate 2, and its crest
+soil 1.
+
+<CitationFootnote />

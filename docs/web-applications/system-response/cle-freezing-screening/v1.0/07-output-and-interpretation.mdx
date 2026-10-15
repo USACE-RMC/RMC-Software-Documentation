@@ -1,0 +1,85 @@
+---
+title: Output and Interpretation
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-freezing-screening" />
+
+# Output and Interpretation
+
+The model reports the SRP at each evaluated pool level together with the probability of each of the eight event-tree nodes, in the form shared by
+the CLE crest-crack models and documented in
+[Output and Interpretation](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation) of the common
+methods manual, and the results of the frost-cracking flaw assessment.
+
+## Results
+
+- **Pool-independent results** — the flaw probability (Node 1), the probability of no crack filling (Node 5), the probability of no flow limitation
+  with every listed element applying, and the roof-support minimum for each pathway that exists: the full-pathway value (absent when the filter
+  caps the pathway) and the below-filter value (absent when no filter is present). See
+  [Pool-Independent Results](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#pool-independent-results).
+- **Pool-dependent series** — the pool levels, the tailwater at each (blank where there is none), and at each pool level the initiation,
+  continuation, roof-support, flow-limitation, unsuccessful-intervention, and breach probabilities and the SRP. See
+  [Pool-Dependent Series](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#pool-dependent-series).
+- **Continuation result** — when a filter intersects the pathway, the result of the shared continuation method, including the probability of
+  continuing erosion $P_{ce}$, the governing base soil, and the method that produced it (see
+  [Output and Interpretation](/docs/web-applications/system-response/continuation-screening/v1.0/output-and-interpretation) of the continuation
+  manual). No continuation result is reported when no filter is present.
+
+### Flaw-assessment results
+
+- **Likelihood factors** — the climate, crest-soil, and surface-cover scores $LF_{clim}$, $LF_{core}$, and $LF_{surf}$.
+- **Governing crest soil** — the listed class whose score governs $LF_{core}$; blank when the crest soil is Unknown or the mechanism does not apply.
+- **Mechanism applies** — whether at least one listed crest soil can frost-crack, or no soil is listed. When the mechanism does not apply, the
+  crest-soil score, the weighted sum, and the raw flaw probability are reported as zero.
+- **Weighted sum** $\Sigma$.
+- **Raw flaw probability** $P_{raw}$ — before the observation override and before the negligible floor; zero when the weighted sum is below 13.
+- **Observation override applied** — whether continuous frost cracking was reported and set the flaw probability to 1.0.
+- **Flaw probability** $P_{flaw}$ — the value used in the event tree.
+- **Crack depth** $d_c$ in feet, **bottom of the crack** $z_{bc}$, and **crack width** $w_c$ in millimeters (see
+  [Flaw Assessment](./04-flaw-assessment.mdx#crack-depth-and-bottom-of-the-crack)).
+
+## Interpreting the System Response Curve
+
+The curve has the shape of a crest-crack curve, described in
+[Interpreting the System Response Curve](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#interpreting-the-system-response-curve):
+negligible at and below the bottom of the crack, and piecewise constant above it, stepping only where the pool crosses the top of a filter or the
+top of a wall that lies above the bottom of the crack. For frost cracking:
+
+- **The climate sets where the curve rises.** When the mechanism applies, the bottom of the crack is 6, 4, 2, or 1 ft below the crest by climate
+  category, so pools further below the crest contribute nothing whatever the other inputs. In an above-freezing climate, only pools higher than
+  1 ft below the crest can give a non-negligible SRP.
+- **The flaw probability scales the whole curve above the bottom of the crack.** With initiation certain above the bottom of the crack, the SRP at
+  each pool level there is the flaw probability times the continuation and progression nodes that govern at that pool level and the intervention
+  and breach probabilities. The weighted sum, and so the climate, crest soil, and surface cover, set the flaw probability unless an observation
+  override sets it to 1.0.
+- **A negligible curve at every pool level** results, for example, when the mechanism does not apply (every listed crest soil a clean sand or
+  gravel), when the weighted sum is below 13 and no frost cracking has been observed, when a user-supplied intervention or breach probability is
+  zero, or when no evaluated pool level rises above the bottom of the crack. The flaw-assessment results identify the first two cases; the inputs
+  and the evaluated pool levels identify the others.
+- **The crack width does not affect the curve.** The SRP depends on the weighted sum only through the flaw probability; the crack width derived
+  from the weighted sum never enters the curve.
+
+## Checking the Result
+
+The model is deterministic apart from any Monte Carlo filter evaluation in the continuation method, so the curve can be reproduced from the reported
+values: the flaw probability from the factor scores and the curve of [Flaw Assessment](./04-flaw-assessment.mdx#raw-flaw-probability), the bottom of
+the crack from the crest elevation and the climate's crack depth, and the SRP at each pool level from the product of the reported nodes. The
+checks of [Checking the Result](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#checking-the-result)
+apply. Confirm that the step in the curve sits at the crest elevation less the tabulated crack depth, on the same datum and in feet as the headwater. If
+it does not, the crest and headwater elevations are on different datums or in different units (see [Input Parameters](./03-input-parameters.mdx#units)).
+A metric analysis passes this check while still placing the crack too deep (see marker IN-06 in
+[Flaw Assessment](./04-flaw-assessment.mdx#crack-depth-and-bottom-of-the-crack)).
+
+## Screening Results Relative to Detailed Analysis
+
+The model is a screening tool. Its result indicates whether concentrated leak erosion through a frost crack at the crest warrants detailed analysis;
+it is not a substitute for a detailed assessment. The screening simplifications — the three-factor scoring, the tabulated crack depths, the certain
+initiation of an open crack, and the tabulated progression probabilities — are chosen to avoid false negatives. Where the result is significant to a
+decision, the flaw probability, the crack depth, and the governing progression nodes should be re-examined with site-specific information, using the
+methods of Fell et al. (2024) <Citation citationKey="Fell2024" />, a crack-geometry initiation analysis, and the judgment of the risk team.
+
+<CitationFootnote />

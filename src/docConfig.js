@@ -409,7 +409,7 @@ const docs = [
     software: 'system-response',
     doc_location: 'web-applications/system-response/cle-freezing-screening',
     doc_name: 'CLE Freezing Screening Technical Reference Manual',
-    active: false,
+    active: true,
     draft: true,
   },
   {
