@@ -1,0 +1,140 @@
+---
+title: Model Overview
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-core-compaction-screening" />
+
+# Model Overview
+
+## Purpose
+
+The CLE core compaction screening model computes a system response curve for concentrated leak erosion through a continuous zone of poorly
+compacted soil within the embankment core, as a function of headwater elevation. The system response probability (SRP) at each headwater level is
+the conditional probability of breach of the embankment by concentrated leak erosion along such a zone, given that pool level.
+
+The flaw is a zone of poorly compacted soil that runs continuously through the core from the upstream face to the downstream face, so that water
+from the reservoir can flow along it. The model idealizes the zone as a horizontal cylindrical pipe at a base-of-flaw elevation. Erosion begins when
+the hydraulic shear stress of the flow on the pipe wall exceeds the critical shear stress of the core soil, and breach requires the further
+conditions common to every concentrated leak erosion failure mode: an unfiltered exit, a pipe that stays open and is neither filled nor starved of
+flow, unsuccessful intervention, and an uncontrolled release of the impounded water (see the
+[Model Overview](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#purpose) of the CLE Common Methods
+manual).
+
+## Intended Use
+
+The model is a screening-level assessment of concentrated leak erosion through poorly compacted core material. Like the other CLE screening models,
+it makes simplifying and generally conservative assumptions with two goals
+(see [Intended Use](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#intended-use) in the CLE Common
+Methods manual):
+
+- **Preventing false negatives** — The model is designed to avoid underestimating risk at the screening level, so that embankments with a
+  potential core compaction concern are flagged for further analysis.
+- **Reducing input burden** — A qualitative core compaction category and the dimensions of the embankment section stand in for a detailed review of
+  construction records, and default distributions cover the critical shear stress of the core soil and the initial diameter of the flaw. Where the
+  compaction of the core is not known, the user selects Unknown rather than guessing.
+
+The model is not intended for detailed or semi-quantitative risk assessments. For those, the concentrated leak erosion toolbox methods and the
+internal-erosion probability methods of Fell et al. (2024) <Citation citationKey="Fell2024" /> provide the complete methodologies (see
+[Comparison with Detailed Models](#comparison-with-detailed-models)).
+
+## How the Model Works
+
+The model executes three stages:
+
+1. **Flaw assessment** — The model scores three factors: the core compaction category, the continuity of the embankment section (its base width and
+   its width-to-height ratio), and borrow variability, which is fixed. The weighted sum of the scores is converted to a raw flaw probability, which
+   is multiplied by a flaw-continuity probability keyed to the compaction category. The base of the flaw is placed one third of the way from the
+   normal pool to the crest. An observation of embankment leakage or wet spots replaces both results: the flaw probability becomes 1.0 and the base
+   of the flaw becomes the observed elevation. The flaw probability is the same at every pool level (see [Flaw Assessment](./04-flaw-assessment.mdx)).
+
+2. **Pathway resolution** — The flaw is at one elevation, so the failure pathway is fixed: the user states whether a filter intercepts it by
+   supplying, or omitting, the filter and base-soil description, and lists the embankment materials the pipe passes through and the upstream
+   seepage-limiting elements present. A wall whose top is below the base of the flaw is set aside (see [Event Tree](./05-event-tree.mdx)).
+
+3. **Event-tree assembly** — At each headwater level, the model multiplies the probabilities of the eight CLE event-tree nodes to produce the SRP.
+   Initiation is evaluated by a Monte Carlo cylindrical-pipe analysis of the hydraulic shear stress at the base of the flaw and is the only node that
+   varies with pool level; the other seven nodes are each one value (see [Event Tree](./05-event-tree.mdx)).
+
+## Physics Basis
+
+The model combines the following engineering methods:
+
+- **Risk-factor and likelihood-factor scoring** for the probability that a continuous poorly compacted zone exists, in which each factor is
+  assigned a likelihood factor, weighted by a risk factor, and the weighted sum is mapped to a flaw probability <Citation citationKey="Fell2024" />
+  (see the [Risk-Factor and Likelihood-Factor Scoring](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#risk-factor-and-likelihood-factor-scoring)
+  section of the CLE Common Methods manual)
+- **Hydraulic shear stress on the wall of a cylindrical pipe**, compared with the critical shear stress of the core soil, for the initiation of
+  erosion, as documented in the
+  [Cylindrical Pipe](/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/cylindrical-pipe) chapter
+  of the Concentrated Leak Erosion Initiation manual
+- **Filter evaluation** for the probability that erosion continues past a filter intercepting the pathway, through the shared continuation method
+  documented in the
+  [Method Selection and Governing Base Soil](/docs/web-applications/system-response/continuation-screening/v1.0/method-selection-and-governing-base-soil)
+  chapter and the method chapters of the Continuation (Filter Evaluation) Screening manual
+- **Roof-support, crack-filling, and flow-limitation probabilities** for the progression conditions <Citation citationKey="Fell2024" />, as
+  documented in the
+  [Failure Pathway and Progression](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression)
+  chapter of the CLE Common Methods manual
+
+## Comparison with Detailed Models
+
+The detailed counterparts of the screening model are the concentrated leak erosion toolbox methods and the internal-erosion probability methods of
+Fell et al. (2024) <Citation citationKey="Fell2024" /> applied in full. The comparison that holds for the whole CLE family is given in
+[Comparison with Detailed Models](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#comparison-with-detailed-models)
+in the CLE Common Methods manual. <TableReference tableKey="cle-core-compaction-screening-table-1" /> summarizes the differences specific to a core
+compaction flaw.
+
+<TableVertical
+  tableKey="cle-core-compaction-screening-table-1"
+  alt="Comparison of the core compaction screening model and the detailed methods"
+  caption="Comparison of the core compaction screening model and the detailed methods."
+  headers={[[{ value: 'Aspect' }, { value: 'Screening Model' }, { value: 'Detailed Methods' }]]}
+  columns={[
+    ['Flaw probability', 'Flaw observed', 'Flaw elevation', 'Flaw geometry for initiation', 'Filter on the pathway'],
+    [
+      'Scored from the compaction category and the section geometry, with a fixed borrow-variability score',
+      'Leakage or wet spots set the flaw probability to 1.0',
+      'One third of the way from normal pool to crest, or the observed leakage elevation',
+      'Horizontal cylindrical pipe at the base of the flaw',
+      'User states filter presence; the shared screening filter evaluation gives one value at every pool level',
+    ],
+    [
+      'Estimated by the risk team from the totality of the evidence',
+      'Weighed by the risk team with the other evidence',
+      'Specified by the analyst',
+      'Cylindrical pipe or crack geometry (analyst selects)',
+      'Full filter evaluation of the base and filter soils',
+    ],
+  ]}
+/>
+
+## Relationship to the Common Methods and Toolbox Models
+
+The core compaction model is one of the four compaction models of the CLE family (see
+[The Two Model Groups](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#the-two-model-groups) in the CLE
+Common Methods manual). It shares the following with the family, and this manual links the shared documentation rather than repeating it:
+
+- **The eight-node event tree and the SRP computation** — the
+  [Event Tree](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree) chapter of the CLE Common Methods manual.
+- **The scoring scheme, the flaw-continuity stage, and the normal-pool heuristic for the base of the flaw** — the
+  [Flaw Conventions](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions) chapter.
+- **The cylindrical-pipe initiation analysis**, which the model hands to the same method as the standalone Concentrated Leak Erosion Initiation
+  toolbox, supplying the base of the flaw, the embankment section, and default distributions for the critical shear stress and the initial pipe
+  diameter — the
+  [Delegated Method: Cylindrical Pipe Initiation](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#delegated-method-cylindrical-pipe-initiation)
+  section of the Initiation chapter.
+- **The continuation, roof-support, crack-filling, and flow-limitation nodes** — the
+  [Failure Pathway and Progression](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression)
+  chapter, with the continuation method itself in the Continuation (Filter Evaluation) Screening manual.
+
+What this manual documents in full is the flaw assessment ([Flaw Assessment](./04-flaw-assessment.mdx)), the mechanism-specific inputs
+([Input Parameters](./03-input-parameters.mdx)), and the choices this model makes where the family allows more than one
+([Event Tree](./05-event-tree.mdx)).
+
+<CitationFootnote />

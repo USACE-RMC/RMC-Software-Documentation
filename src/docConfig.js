@@ -369,7 +369,7 @@ const docs = [
     software: 'system-response',
     doc_location: 'web-applications/system-response/cle-core-compaction-screening',
     doc_name: 'CLE Core Compaction Screening Technical Reference Manual',
-    active: false,
+    active: true,
     draft: true,
   },
   {
