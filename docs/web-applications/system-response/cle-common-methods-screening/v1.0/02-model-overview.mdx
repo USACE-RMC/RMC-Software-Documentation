@@ -1,0 +1,193 @@
+---
+title: Model Overview
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-common-methods-screening" />
+
+# Model Overview
+
+## Purpose
+
+Each CLE screening model computes a system response curve for one concentrated leak erosion mechanism as a function of headwater elevation. The
+system response probability (SRP) at each headwater level is the conditional probability of breach of the embankment by concentrated leak erosion
+through a flaw of that mechanism, given that pool level. The curve of SRP values across the range of headwater levels characterizes the
+embankment's vulnerability to the mechanism.
+
+Concentrated leak erosion is erosion of the walls of an open crack, gap, or poorly compacted zone by water flowing through it. The failure mode
+requires a continuous flaw through the embankment, a hydraulic shear stress on the flaw walls large enough to initiate erosion, an unfiltered exit
+that lets the eroded soil leave the embankment, an enlarging pipe that stays open and is neither filled nor starved of flow, unsuccessful
+detection and intervention, and finally an uncontrolled release of the impounded water.
+
+## Intended Use
+
+The CLE screening models are screening-level assessments of concentrated leak erosion risk. They make simplifying and generally conservative
+assumptions with two goals:
+
+- **Preventing false negatives** — The models are designed to avoid underestimating risk at the screening level, so that embankments with potential
+  concentrated leak erosion concerns are flagged for further analysis.
+- **Reducing input burden** — Qualitative selections (compaction categories, climate categories, conduit and wall descriptions, the embankment
+  type) substitute for site-specific measurements, and default distributions cover the erodibility and initial-opening properties that are
+  typically unavailable at the screening stage.
+
+The models are not intended for detailed or semi-quantitative risk assessments. For higher-level analyses, the full concentrated leak erosion
+toolbox methods and the internal-erosion probability methods they draw on provide the complete methodologies with full parameterization (see
+[Comparison with Detailed Models](#comparison-with-detailed-models)).
+
+## How the Model Works
+
+Every CLE screening model executes the same three stages:
+
+1. **Flaw assessment** — The model estimates the probability that a continuous flaw of its mechanism exists through the embankment, and the
+   elevation of that flaw. The probability comes from scoring qualitative and geometric site factors (or, for cross-valley settlement, from a
+   settlement-based relationship), and an observation of the flaw — leakage, wet spots, or observed continuous cracking, depending on the model —
+   can override it to certainty. The flaw probability is the same at every pool level (see [Flaw Conventions](./05-flaw-conventions.mdx)).
+
+2. **Pathway resolution** — The model resolves the failure pathway through the embankment at the flaw elevation: whether a filter intersects it
+   and where the filter's top lies, which materials must hold a roof over the enlarging pipe, and which upstream seepage-limiting elements still
+   reach the flaw (see [Failure Pathway and Progression](./07-failure-pathway-and-progression.mdx)).
+
+3. **Event-tree assembly** — At each headwater level, the model composes the eight node probabilities and multiplies them to produce the SRP.
+   Initiation is either a gate on the headwater rising above the bottom of an open crest crack, or a Monte Carlo cylindrical-pipe analysis of the
+   hydraulic shear stress at the flaw (see [Initiation](./06-initiation.mdx) and [Event Tree](./04-event-tree.mdx)).
+
+## Physics Basis
+
+The family combines the following engineering methods:
+
+- **Risk-factor and likelihood-factor scoring** for the probability of a continuous flaw, in which each site factor is assigned a likelihood
+  factor, weighted by a risk factor, and the weighted sum is mapped to a flaw probability <Citation citationKey="Fell2024" /> (see
+  [Flaw Conventions](./05-flaw-conventions.mdx))
+- **Hydraulic shear stress on the walls of a cylindrical pipe** compared with the soil's critical shear stress for the initiation of erosion in a
+  compaction flaw, as documented in the
+  [Cylindrical Pipe](/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/cylindrical-pipe) chapter
+  of the Concentrated Leak Erosion Initiation manual
+- **Roof-support probabilities by soil classification** for the ability of the enlarging pipe to stay open, and **crack-filling probabilities by
+  embankment type** for the chance that upstream material fills the pipe <Citation citationKey="Fell2024" />
+- **Flow-limitation probabilities by upstream element** for the chance that a cutoff wall or upstream facing restricts the flow through the
+  flaw <Citation citationKey="Fell2024" />
+- **Filter evaluation** for the probability that erosion continues past a filter intersecting the failure pathway, applied through the shared
+  continuation method documented in the Continuation (Filter Evaluation) Screening Technical Reference Manual and drawing on the
+  [Filter Evaluation (Continuation)](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/general-overview)
+  toolbox methods
+
+## Comparison with Detailed Models
+
+The detailed counterparts of the screening models are the concentrated leak erosion toolbox methods and the internal-erosion probability methods
+of Fell et al. (2024) <Citation citationKey="Fell2024" /> applied in full. The Concentrated Leak Erosion Initiation manual covers four flaw
+geometries — a cylindrical pipe, a horizontal crack, a vertical rectangular crack, and a vertical triangular crack (see its
+[General Overview](/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/general-overview)) — of
+which the compaction models use the cylindrical pipe. <TableReference tableKey="cle-common-screening-table-1" /> summarizes the differences.
+
+<TableVertical
+  tableKey="cle-common-screening-table-1"
+  alt="Comparison of the CLE screening models and the detailed methods"
+  caption="Comparison of the CLE screening models and the detailed methods."
+  headers={[[{ value: 'Aspect' }, { value: 'Screening Models' }, { value: 'Detailed Methods' }]]}
+  columns={[
+    [
+      'Purpose',
+      'Flaw probability',
+      'Initiation in a crest crack',
+      'Initiation in a compaction flaw',
+      'Critical shear stress',
+      'Initial opening size',
+      'Seepage path length',
+      'Progression',
+    ],
+    [
+      'Screening-level risk assessment',
+      'Scored from qualitative site factors, with observation overrides',
+      'Certain once the headwater rises above the bottom of the crack',
+      'Cylindrical-pipe shear stress analysis only',
+      'Default range by soil classification; user may override',
+      'Default diameter range by mechanism; user may override',
+      'Derived from the embankment section at the flaw; user may override',
+      'Tabulated roof-support, crack-filling, and flow-limitation probabilities',
+    ],
+    [
+      'Detailed risk analysis',
+      'Estimated by the risk team from the totality of the evidence',
+      'Shear stress analysis of the crack geometry',
+      'Cylindrical pipe or crack geometry (analyst selects)',
+      'Estimated from erodibility testing or correlations',
+      'Estimated from cracking analysis, with sensitivity analysis',
+      'Measured or specified by the analyst',
+      'Assessed by the risk team, informed by the same tables',
+    ],
+  ]}
+/>
+
+## The Two Model Groups
+
+The eight models fall into two groups that share their flaw geometry and therefore their initiation treatment and their pathway rules
+(<TableReference tableKey="cle-common-screening-table-2" />):
+
+- **Crest-crack models** — cross-valley differential settlement, differential settlement adjacent to a wall or cliff, desiccation cracking, and
+  frost cracking. The flaw is a transverse crack open at the crest and extending down to a bottom-of-crack elevation. Every node is
+  deterministic except continuation, which the shared continuation method may evaluate by Monte Carlo simulation when a filter intercepts the
+  pathway (its route through the USCS classes of the base and filter soils samples their gradation parameters).
+- **Compaction models** — poor compaction within the core, adjacent to a conduit, adjacent to a wall or cliff, and along the foundation or
+  abutment contact. The flaw is a zone of poorly compacted soil at a fixed base-of-flaw elevation, idealized for initiation as a cylindrical pipe.
+  Initiation is evaluated by Monte Carlo simulation, and continuation may be as well, by the same continuation route as the crest-crack models;
+  every other node is deterministic.
+
+<TableVertical
+  tableKey="cle-common-screening-table-2"
+  alt="The eight CLE screening models, their flaw elevation, and their initiation treatment"
+  caption="The eight CLE screening models, the flaw elevation each passes to the downstream nodes, and the initiation treatment."
+  headers={[[{ value: 'Model' }, { value: 'Group' }, { value: 'Flaw elevation' }, { value: 'Initiation' }]]}
+  columns={[
+    [
+      'Cross-valley differential settlement',
+      'Settlement adjacent to a wall or cliff',
+      'Desiccation cracking at the crest',
+      'Frost cracking at the crest',
+      'Poor compaction within the core',
+      'Poor compaction adjacent to a conduit',
+      'Poor compaction adjacent to a wall or cliff',
+      'Poor compaction along the foundation or abutment',
+    ],
+    ['Crest crack', 'Crest crack', 'Crest crack', 'Crest crack', 'Compaction', 'Compaction', 'Compaction', 'Compaction'],
+    [
+      'Bottom of the crest crack',
+      'Bottom of the crest crack',
+      'Bottom of the crest crack',
+      'Bottom of the crest crack',
+      'Normal-pool heuristic, or the observed leakage elevation',
+      'Bottom of the conduit',
+      'Crest less the wall or cliff height',
+      'Foundation contact, or the normal-pool heuristic at an abutment',
+    ],
+    [
+      'Headwater gate',
+      'Headwater gate',
+      'Headwater gate',
+      'Headwater gate',
+      'Cylindrical pipe',
+      'Cylindrical pipe',
+      'Cylindrical pipe',
+      'Cylindrical pipe',
+    ],
+  ]}
+/>
+
+The flaw elevation is the one flaw quantity every downstream node uses: it sets where initiation can begin, where the failure pathway runs, and
+which filter and upstream elements the pathway meets. [Flaw Conventions](./05-flaw-conventions.mdx#flaw-elevation) documents how each model
+resolves it.
+
+## Relationship to Toolbox Models
+
+The compaction models use the same cylindrical-pipe initiation analysis as the standalone Concentrated Leak Erosion Initiation toolbox. They
+differ mainly in what they supply to it: the embankment section and flaw elevation come from the screening inputs, and the critical shear stress and
+initial pipe diameter default to screening ranges that the user may replace. [Initiation](./06-initiation.mdx#delegated-method-cylindrical-pipe-initiation)
+documents each supplied quantity and its basis. The crest-crack models use no toolbox method for initiation. All eight models hand the continuation node to the
+shared continuation method whenever a filter intersects the failure pathway
+(see [Failure Pathway and Progression](./07-failure-pathway-and-progression.mdx#node-3-continuation)).
+
+<CitationFootnote />

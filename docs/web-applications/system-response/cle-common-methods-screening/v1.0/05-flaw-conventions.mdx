@@ -1,0 +1,210 @@
+---
+title: Flaw Conventions
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import Equation from '@site/src/components/Equation';
+import EquationReference from '@site/src/components/EquationReference';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-common-methods-screening" />
+
+# Flaw Conventions
+
+Node 1 of every CLE screening model is the probability $P_{flaw}$ that a continuous flaw of the model's mechanism exists through the embankment.
+Each model's own manual documents its factors, its category and banding tables, and its flaw-probability curve. This chapter documents the
+conventions those assessments share: the risk-factor and likelihood-factor scoring scheme, the optional flaw-continuity stage, the observation
+overrides, the treatment of an inapplicable mechanism, and the flaw elevation each assessment passes to the downstream nodes.
+
+## Risk-Factor and Likelihood-Factor Scoring
+
+Seven of the eight models — every model except cross-valley differential settlement, which uses a settlement-based relationship documented in its
+own manual — estimate the flaw probability by the risk-factor and likelihood-factor scoring of Fell et al. (2024) <Citation citationKey="Fell2024" />.
+The scheme turns a small number of site factors, each judged on a common scale, into one flaw probability.
+
+### Factors
+
+Each model defines its own list of factors. Every factor $j$ carries two numbers:
+
+- **Risk factor** $RF_j$ — a small integer weight expressing how strongly the factor influences the likelihood of a flaw. Six of the seven
+  scoring models weight three factors 3, 2, and 1; the conduit compaction model weights four factors 3, 2, 2, and 2.
+- **Likelihood factor** $LF_j$ — the factor's score for the site, on a scale on which 1 is the least likely condition for a flaw and 4 the most
+  likely. A factor's likelihood factor comes either from a category the user selects (for example a compaction category or a climate) or from a
+  banding rule that places a measured quantity (for example a width-to-height ratio or a settlement ratio) into one of the bands. Some categories
+  — typically Unknown, or a condition between two bands — carry intermediate scores such as 2.5 or 3.5.
+
+### Weighted sum
+
+The scores combine into the weighted sum
+
+<Equation equationKey="cle-common-screening-eq-2" equation="\Sigma = \sum_{j} RF_j \cdot LF_j" />
+
+which rises as more of the factors, and the more heavily weighted factors, point toward a flaw.
+
+### Flaw probability from the weighted sum
+
+The weighted sum is converted to a flaw probability by a curve tabulated at a few points $(\Sigma_k, P_k)$ for each model. Between two tabulated
+points the logarithm of the probability is interpolated linearly in the weighted sum:
+
+<Equation
+  equationKey="cle-common-screening-eq-3"
+  equation="\log_{10} P_{raw}(\Sigma) = \log_{10} P_k + \frac{\Sigma - \Sigma_k}{\Sigma_{k+1} - \Sigma_k}\,\bigl(\log_{10} P_{k+1} - \log_{10} P_k\bigr), \qquad \Sigma_k \le \Sigma \le \Sigma_{k+1}"
+/>
+
+so that equal steps in the weighted sum multiply the probability by equal factors. A weighted sum beyond either end of the tabulated range takes
+the probability at that end. In several models the lowest tabulated point carries a negligibly small probability, so that the probability falls
+steeply toward the low end of the tabulated range.
+
+Two further rules can force the raw flaw probability $P_{raw}$ to zero before the curve is consulted:
+
+- **Incompatible-condition factors** — a factor may be marked as one whose least likely score (a likelihood factor of exactly 1) describes a
+  condition physically incompatible with a continuous flaw. When any such factor scores 1, the flaw probability is zero whatever the other factors
+  score. The wall or cliff settlement model marks two of its geometric factors this way, and the foundation or abutment compaction model marks its
+  foundation-preparation factor.
+- **Lower threshold** — a model may set a weighted sum below which the flaw probability is zero. The desiccation and frost-cracking models use a
+  threshold of 13: a weighted sum below 13 gives a zero flaw probability, while a sum of exactly 13 takes the first tabulated value.
+
+A flaw probability forced to zero by either rule leaves the SRP at the negligible value described in
+[Event Tree](./04-event-tree.mdx#srp-computation), unless an observation override applies: in the desiccation and frost-cracking models a reported
+observation sets the flaw probability to 1.0 even when the weighted sum is below the threshold of 13 (see
+[Observation Overrides](#observation-overrides)). Only an inapplicable mechanism sets the override aside
+(see [Inapplicable Mechanism](#inapplicable-mechanism)).
+
+:::warning[INPUT NEEDED IN-03 — Engineering Basis]
+The conversion of the weighted sum to a flaw probability by interpolating the logarithm of the probability linearly between tabulated points
+(<EquationReference equationKey="cle-common-screening-eq-3" />), holding the end value beyond the tabulated range, and — in several models —
+anchoring the lowest tabulated point at a negligibly small probability, requires an engineering basis. State whether Fell et al. (2024) presents
+the weighted-sum-to-probability relationships as curves to be interpolated in this way (and cite the figure or table), or provide the
+engineering-judgment attribution.
+
+Proposed (unconfirmed): the tabulated probabilities span several orders of magnitude, so interpolation in the logarithm of probability is the
+natural reading of a relationship plotted on a logarithmic probability axis; the negligible anchor reproduces a relationship that falls toward
+zero at the lowest attainable score. Confirm or replace.
+:::
+
+## Flaw-Continuity Stage
+
+Three compaction models — poor compaction within the core, adjacent to a wall or cliff, and along the foundation or abutment — apply a second
+stage after the scoring. The raw flaw probability is multiplied by a flaw-continuity probability $P_{cf}$, interpolated in the same log-linear
+manner from the likelihood factor of the model's compaction factor:
+
+<Equation equationKey="cle-common-screening-eq-4" equation="P_{flaw} = P_{raw}(\Sigma) \times P_{cf}(LF_{comp})" />
+
+where $LF_{comp}$ is the likelihood factor of the core-compaction category (core compaction), of the wall-fill compaction category (wall or cliff
+compaction), or of the contact-zone compaction method (foundation or abutment compaction). The three models share the flaw-continuity curve of
+<TableReference tableKey="cle-common-screening-table-10" />.
+
+<TableVertical
+  tableKey="cle-common-screening-table-10"
+  alt="Flaw-continuity probability by compaction likelihood factor"
+  caption="Flaw-continuity probability by compaction likelihood factor."
+  colAlign={['center', 'center']}
+  headers={[[{ value: 'Compaction Likelihood Factor' }, { value: 'Flaw-Continuity Probability' }]]}
+  columns={[
+    ['1', '2', '3', '4'],
+    ['Negligible', '1 × 10<sup>-4</sup>', '1 × 10<sup>-3</sup>', '1 × 10<sup>-1</sup>'],
+  ]}
+/>
+
+A fractional compaction score, such as the 3.5 assigned to an Unknown core-compaction category, is interpolated between the tabulated points. The
+other four scoring models (wall or cliff settlement, conduit compaction, desiccation, and frost cracking) use the scored probability directly:
+$P_{flaw} = P_{raw}(\Sigma)$.
+
+:::warning[INPUT NEEDED IN-04 — Engineering Basis]
+The flaw-continuity stage and its curve (<TableReference tableKey="cle-common-screening-table-10" />: likelihood factor 1, 2, 3, 4 →
+negligible, 1 × 10<sup>-4</sup>, 1 × 10<sup>-3</sup>, 1 × 10<sup>-1</sup>) require an engineering basis and a definition. State what the
+flaw-continuity probability represents physically (for example, the probability that a poorly compacted zone is continuous across the full
+width of the embankment, given that it exists) and cite its source, or provide the engineering-judgment attribution. Confirm also that one curve
+is intended for all three models, keyed to a different compaction factor in each.
+:::
+
+## Observation Overrides
+
+Most models accept an observation that demonstrates the flaw directly. When the observation is reported, the flaw probability is set to 1.0 whatever
+the factors score; in the three compaction models with an override, the factor selections also become optional. The observations are:
+
+- **Cross-valley differential settlement** — continuous transverse cracking observed.
+- **Desiccation cracking and frost cracking** — transverse cracking observed and judged continuous.
+- **Poor compaction within the core** — embankment leakage or wet spots observed. The observed elevation of the leakage or wet spots also becomes
+  the flaw elevation (see [Flaw Elevation](#flaw-elevation)).
+- **Poor compaction adjacent to a conduit** — leakage observed adjacent to the conduit. The flaw elevation is unchanged.
+- **Poor compaction adjacent to a wall or cliff** — leakage observed adjacent to the wall. The flaw elevation is unchanged.
+
+The wall or cliff settlement and the foundation or abutment compaction models have no observation override. In the foundation or abutment
+compaction model, a well-prepared foundation (a foundation-preparation likelihood factor of 1) instead forces the flaw probability to zero, as
+described under [incompatible-condition factors](#flaw-probability-from-the-weighted-sum).
+
+The override sets only Node 1. Every downstream node is evaluated as usual, so an observed flaw still needs the pool to reach it, an unfiltered
+exit, and the progression conditions before it contributes to the SRP.
+
+## Inapplicable Mechanism
+
+The desiccation and frost-cracking models score the soils the crest crack would pass through. When every listed crest soil is one in which the
+mechanism cannot occur (one of the clean or nearly clean sands and gravels SP-SM, SW, SP, GP-GM, GW, and GP, the classes with less than
+12 percent fines), the mechanism does not apply: no crack forms, the flaw probability is negligible, the observation
+override is not consulted, and initiation is zero at every pool level (see [Initiation](./06-initiation.mdx#crest-crack-models-headwater-gate)).
+The soil sets are documented in those models' manuals.
+
+## Flaw Elevation
+
+Each flaw assessment passes one elevation to the downstream nodes along with the flaw probability. It fixes where erosion can begin, where the
+failure pathway runs, and which filter and upstream walls the pathway meets.
+
+### Crest-crack models: bottom of the crack
+
+The flaw of a crest-crack model is a transverse crack open at the crest. The flaw assessment estimates the crack depth $d_c$ — from the settlement
+and geometry of the mechanism, or from tabulated depths by climate and soil — and the bottom of the crack is
+
+<Equation equationKey="cle-common-screening-eq-5" equation="z_{bc} = z_c - d_c" />
+
+where $z_c$ is the crest elevation. Water can enter the crack only when the pool rises above $z_{bc}$, which is the initiation gate of
+[Initiation](./06-initiation.mdx#crest-crack-models-headwater-gate). When an inapplicable mechanism produces no crack, the crack depth is zero and
+$z_{bc}$ equals the crest elevation.
+
+### Compaction models: base of the flaw
+
+The flaw of a compaction model is idealized as a cylindrical pipe whose invert is the base-of-flaw elevation $z_f$. The four models resolve it in
+three ways:
+
+- **Normal-pool heuristic** — for poor compaction within the core, and for poor compaction along an abutment contact, the base of the flaw is
+  placed one third of the way from the normal pool elevation $z_{np}$ to the crest:
+
+  <Equation equationKey="cle-common-screening-eq-6" equation="z_f = z_{np} + \tfrac{1}{3}\,\bigl(z_c - z_{np}\bigr)" />
+
+  The crest must be above the normal pool. For the core model, an observation of leakage or wet spots replaces this with the observed elevation.
+- **Direct input** — for poor compaction adjacent to a conduit, the base of the flaw is the bottom-of-conduit elevation; for poor compaction along
+  a foundation contact, it is the embankment–foundation contact elevation.
+- **Derived from the wall height** — for poor compaction adjacent to a wall or cliff, the base of the flaw is the crest elevation less the wall or
+  cliff height $h_w$, $z_f = z_c - h_w$. The model also requires it to lie at or above the lowest segment bottom of the shell section.
+
+In all four models, the base of the flaw may not lie above the top of the embankment section used for initiation (the core section when one is
+supplied, otherwise the shell), nor below the lowest segment bottom of either face of that section, and it must be a positive elevation (see
+[Units and Datum](./03-input-parameters.mdx#units-and-datum)).
+
+:::warning[INPUT NEEDED IN-05 — Engineering Basis]
+The normal-pool heuristic of <EquationReference equationKey="cle-common-screening-eq-6" /> — placing the base of a core or abutment compaction
+flaw one third of the way from the normal pool to the crest — requires an engineering basis. Provide the literature source or the
+engineering-judgment attribution to state here, including why the normal pool and not the base of the embankment is the lower reference.
+
+Proposed (unconfirmed): a screening convention that places the flaw within the band of pools the embankment experiences, so that initiation is
+evaluated above normal pool where loading is frequent. Confirm or replace.
+:::
+
+### Section geometry used in scoring
+
+Where a compaction model scores the geometry of the embankment section — the core compaction and the foundation or abutment compaction models band
+the base width $W$ and the width-to-height ratio $W/H_s$ — the two dimensions come from the section used by the model (the core section when
+supplied, otherwise the shell; see [Common Input Parameters](./03-input-parameters.mdx#embankment-description)):
+
+<Equation equationKey="cle-common-screening-eq-7" equation="H_s = z_t - z_{base}, \qquad W = W_t + S_{us} + S_{ds}" />
+
+where $H_s$ is the height of the section; $z_t$ and $W_t$ are its top elevation and top width — the core top $z_{t,c}$ and core top width
+$W_{t,c}$ for the core section, or the crest $z_c$ and shell top width $W_{t,s}$ for the shell; $z_{base}$ is the lowest segment bottom on
+either face; and $S_{us}$ and $S_{ds}$ are the horizontal spans of the upstream and downstream faces from the top down to $z_{base}$, each the sum over its segments of the
+vertical extent times the segment slope. Both models accept a user-supplied base width and height in place of the derived values; the supplied
+values replace them in the scoring only, while the initiation analysis keeps the section geometry.
+
+<CitationFootnote />

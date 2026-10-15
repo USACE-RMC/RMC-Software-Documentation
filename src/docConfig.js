@@ -345,7 +345,7 @@ const docs = [
     software: 'system-response',
     doc_location: 'web-applications/system-response/cle-common-methods-screening',
     doc_name: 'Concentrated Leak Erosion Common Methods Screening Technical Reference Manual',
-    active: false,
+    active: true,
     draft: true,
   },
   {

@@ -1,0 +1,159 @@
+---
+title: Assumptions and Limitations
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-common-methods-screening" />
+
+# Assumptions and Limitations
+
+The CLE screening models apply deliberate simplifications relative to a detailed internal-erosion risk analysis. They reduce input requirements
+and are designed to avoid false negatives at the screening level. This chapter lists the assumptions the eight models share; each model's own
+manual lists the assumptions of its flaw assessment. Each assumption below states its engineering basis, its effect on results, and the conditions
+under which it may not hold. Where an engineering basis is still awaiting confirmation, the assumption cross-references the input marker at its
+primary location in this document.
+
+## Event Tree
+
+1. **The SRP is the product of the eight node probabilities.** Each node is the probability of its event given that every earlier node has
+   occurred (see [Event Tree](./04-event-tree.mdx#srp-computation)).
+   - *Engineering basis:* Event-tree convention for internal-erosion failure modes, following the node sequence of the concentrated leak erosion
+     trees of the Typical Event Tree Database and the progression conditions of Fell et al. (2024) <Citation citationKey="Fell2024" />.
+   - *Effect on results:* The SRP can be no larger than its smallest node, so a single low node — a filter, a cohesionless roof material, an
+     effective cutoff — can control the curve.
+   - *When it may not hold:* Where the nodes are strongly dependent in ways the conditional values do not capture, for example where the same soil
+     property controls both initiation and roof support; a detailed analysis then assesses the joint condition directly.
+2. **Intervention and breach are single values that apply at every pool level, defaulting to 1.0.**
+   - *Engineering basis:* Screening design decision (engineering judgment): taking no credit for intervention and treating breach as certain is the
+     conservative screening posture, and site-specific values can be supplied.
+   - *Effect on results:* With the defaults, the SRP is the probability of reaching the end of the progression nodes.
+   - *When it may not hold:* Where monitoring and response time, or breach resistance, vary strongly with pool level; a pool-dependent assessment
+     belongs in a detailed analysis.
+3. **The curve is resolved on a grid of pool levels.** The tree is evaluated at every supplied headwater value and at intermediate levels between
+   them (see [Event Tree](./04-event-tree.mdx#headwater-grid)).
+   - *Engineering basis:* Screening simplification (engineering judgment): the nodes that step with pool level — at the bottom of a crest crack, the
+     top of a filter, or the top of a wall — are located to within one grid interval.
+   - *Effect on results:* A step between two grid levels appears in the curve as a change across that interval rather than at its exact elevation.
+   - *When it may not hold:* Where the exact pool level of a step matters; supplying that pool level as a headwater value places a grid level on it.
+
+## Flaw
+
+4. **The flaw probability is the same at every pool level.**
+   - *Engineering basis:* Engineering judgment: the existence of a flaw is a condition of the embankment, not of the loading.
+   - *Effect on results:* Pool dependence of the SRP comes entirely from initiation and, for the crest-crack models, from the pathway gates.
+   - *When it may not hold:* Where cracking itself depends on pool level, such as hydraulic fracture under rising pool; that mechanism is outside
+     the family.
+5. **Qualitative site factors are converted to a flaw probability by risk-factor and likelihood-factor scoring and a log-linear curve.** This applies
+   to every model except cross-valley differential settlement (see [Flaw Conventions](./05-flaw-conventions.mdx#risk-factor-and-likelihood-factor-scoring)).
+   - *Engineering basis:* Fell et al. (2024) <Citation citationKey="Fell2024" /> for the scoring scheme; the interpolation form is requested at
+     marker IN-03 in [Flaw Conventions](./05-flaw-conventions.mdx#flaw-probability-from-the-weighted-sum).
+   - *Effect on results:* The flaw probability moves by roughly constant factors per step of the weighted sum, and takes the end value beyond the
+     tabulated range.
+   - *When it may not hold:* Where site investigation supports a flaw probability more directly than the factor scores do; the risk team's
+     estimate then replaces the screening value.
+6. **Three compaction models multiply the scored probability by a flaw-continuity probability keyed to their compaction factor.**
+   - *Engineering basis:* Basis requested — see marker IN-04 in [Flaw Conventions](./05-flaw-conventions.mdx#flaw-continuity-stage).
+   - *Effect on results:* The best compaction rating (a likelihood factor of 1) reduces the flaw probability to negligible, and each step toward
+     poorer compaction above a likelihood factor of 2 raises it by one to two orders of magnitude. The compaction category enters the flaw
+     probability twice — through its weight in the weighted sum and again through the flaw-continuity probability — so the flaw probability is
+     especially sensitive to that selection.
+   - *When it may not hold:* Where compaction records conflict with field performance, such as observed seepage through an embankment rated well
+     compacted; the observation override then applies.
+7. **An observed flaw has a flaw probability of 1.0.**
+   - *Engineering basis:* Engineering judgment: an observation of leakage, wet spots, or continuous cracking demonstrates the flaw, so its
+     probability is not estimated from site factors.
+   - *Effect on results:* The SRP is governed entirely by the downstream nodes.
+   - *When it may not hold:* Where the observation has another explanation, such as surface cracking that is not continuous or seepage along a
+     different path; the override should be reserved for observations judged to demonstrate the modeled flaw.
+8. **The base of a core or abutment compaction flaw is placed one third of the way from the normal pool to the crest**, unless an observed leakage
+   elevation (core) replaces it.
+   - *Engineering basis:* Basis requested — see marker IN-05 in [Flaw Conventions](./05-flaw-conventions.mdx#compaction-models-base-of-the-flaw).
+   - *Effect on results:* Initiation cannot occur, and the SRP is negligible, at pool levels at or below this elevation, and walls are judged
+     against it. Filter presence is stated by the user, not compared with this elevation.
+   - *When it may not hold:* Where construction records or performance locate the poorly compacted zone; an observed leakage elevation should then
+     be used where the model accepts one.
+
+## Initiation
+
+9. **Initiation in a crest crack is certain once the pool rises above the bottom of the crack, and zero at or below it.** Tailwater plays no part.
+   - *Engineering basis:* Basis requested — see marker IN-06 in [Initiation](./06-initiation.mdx#crest-crack-models-headwater-gate).
+   - *Effect on results:* The crack depth alone sets the pool level at which the crest-crack SRP rises from negligible; no shear stress analysis can
+     lower the initiation probability above that level (conservative).
+   - *When it may not hold:* For narrow cracks in highly erosion-resistant soils, or cracks that close or fill below the surface; a crack-geometry
+     initiation analysis then applies.
+10. **A poorly compacted zone is idealized as a cylindrical pipe of uncertain initial diameter at the base of the flaw.**
+    - *Engineering basis:* The cylindrical-pipe idealization of the Concentrated Leak Erosion Initiation toolbox (see
+      [Initiation](./06-initiation.mdx#delegated-method-cylindrical-pipe-initiation)); the basis of the default diameter ranges is requested at
+      marker IN-11 in [Initiation](./06-initiation.mdx#initial-pipe-diameter).
+    - *Effect on results:* The shear stress rises in proportion to the diameter, so the initial diameter range strongly shapes the initiation curve.
+    - *When it may not hold:* Where the flaw is better represented as a crack, such as a gap against a structure; the toolbox crack geometries then
+      apply.
+11. **The default critical shear stress is a triangular distribution over a range set by the soil classification.**
+    - *Engineering basis:* Basis requested — see markers IN-07 and IN-10 in [Initiation](./06-initiation.mdx#critical-shear-stress).
+    - *Effect on results:* Soils of one classification share one erodibility range regardless of compaction, water content, or dispersivity.
+    - *When it may not hold:* For dispersive soils, soils whose erodibility differs markedly from their classification's range, or where erosion
+      testing is available; a site-specific distribution should then be supplied.
+12. **The compaction mechanisms are not modeled in clean or nearly clean sands and gravels** — the classes SP-SM, SW, SP, GP-GM, GW, and GP,
+    with less than 12 percent fines.
+    - *Engineering basis:* Basis requested — see marker IN-09 in [Initiation](./06-initiation.mdx#critical-shear-stress).
+    - *Effect on results:* A core of SP-SM, SW, SP, GP-GM, GW, or GP cannot be analyzed by the compaction models. Silty soils (SM, GM, ML) are
+      analyzed even where they are non-plastic.
+    - *When it may not hold:* Not applicable within the family; other internal-erosion failure modes address such soils.
+13. **The seepage path is a horizontal line at the base of the flaw across the core section, or across the shell when no core is described.**
+    - *Engineering basis:* The pipe-length measurement of the Concentrated Leak Erosion Initiation toolbox, which measures across the impervious core
+      of a zoned embankment with very permeable outer zones and across the embankment slopes of a homogeneous one.
+    - *Effect on results:* The whole net head is lost along the measured length; a shorter length gives a steeper gradient and a higher initiation
+      probability.
+    - *When it may not hold:* For sloping cores, flaws not perpendicular to the centerline, or outer zones that are not free draining; a supplied
+      seepage path length should then be used.
+14. **The critical shear stress and the initial pipe diameter are uncertain independently, and each realization holds its values at every pool
+    level.**
+    - *Engineering basis:* The probabilistic method of the Concentrated Leak Erosion Initiation toolbox, which samples each from its own
+      distribution.
+    - *Effect on results:* The initiation curve never falls where the gradient rises with pool level (it is non-decreasing there).
+    - *When it may not hold:* Where the two are correlated, for example where a more erodible soil also forms larger initial openings. Under such
+      positive dependence the ratio of diameter to critical shear stress has a wider spread, so the initiation curve rises over a wider range of
+      pool levels than the independent treatment shows.
+
+## Failure Pathway and Progression
+
+15. **On a crest crack, continuation and roof support share one gate at the top of the first filter the pathway meets.** Above that elevation
+    continuation is certain and the full-pathway materials govern roof support; at or below it the continuation method and the below-filter
+    materials apply; a filter reaching the crest with no full-pathway materials given applies at every pool level.
+    - *Engineering basis:* Basis requested — see marker IN-12 in [Failure Pathway and Progression](./07-failure-pathway-and-progression.mdx#node-3-continuation).
+    - *Effect on results:* A crest-crack curve with a filter steps where the pool crosses the filter's top. It steps up when the continuation
+      probability $P_{ce}$ is smaller than the ratio of full-pathway to below-filter roof support, and down when it is larger (see
+      [Node 3: Continuation](./07-failure-pathway-and-progression.mdx#node-3-continuation)).
+    - *When it may not hold:* Where a filter's top varies along the crack, or a second filter lies further downstream on the full pathway; the
+      first filter's top is used throughout.
+16. **On a compaction flaw, the pathway, its filter, its materials, and the walls that reach it are fixed by the flaw elevation.** Continuation,
+    roof support, and flow limitation are each one value at every pool level.
+    - *Engineering basis:* Engineering judgment: the flaw is at one elevation, so what it meets does not change with the pool.
+    - *Effect on results:* Only initiation varies with pool level.
+    - *When it may not hold:* Where the poorly compacted zone extends over a range of elevations; the flaw elevation should then be chosen as the one
+      that governs.
+17. **Roof support is the minimum roof-support probability across the materials on the pathway.**
+    - *Engineering basis:* Fell et al. (2024) <Citation citationKey="Fell2024" /> for the probabilities by soil classification; engineering
+      judgment for the minimum, since every material along the pathway must hold a roof.
+    - *Effect on results:* One cohesionless material on the pathway reduces the SRP by up to two orders of magnitude.
+    - *When it may not hold:* Where the governing material occupies only a short, well-confined length of the pathway.
+18. **Crack filling depends only on the embankment type.**
+    - *Engineering basis:* Fell et al. (2024) <Citation citationKey="Fell2024" />; the meaning of the values is requested at marker IN-13 in
+      [Failure Pathway and Progression](./07-failure-pathway-and-progression.mdx#node-5-progression--no-crack-filling).
+    - *Effect on results:* Only a central-core earth and rockfill embankment receives credit, which halves its SRP.
+    - *When it may not hold:* Where the gradation of the upstream zone is known to be able, or unable, to fill the pipe.
+19. **Flow limitation is the minimum across the applicable upstream elements, and a wall limits flow only below its top.**
+    - *Engineering basis:* Fell et al. (2024) <Citation citationKey="Fell2024" /> for the probabilities; the gating conventions are requested at
+      marker IN-14 in [Failure Pathway and Progression](./07-failure-pathway-and-progression.mdx#walls-that-stop-below-the-crest).
+    - *Effect on results:* A modern cutoff wall that reaches the flaw reduces the SRP by three orders of magnitude; above its top, a crest-crack curve
+      loses that reduction.
+    - *When it may not hold:* Where a wall is discontinuous, damaged, or does not span the flaw laterally.
+20. **The conduit compaction model takes no flow-limitation credit.**
+    - *Engineering basis:* Basis requested — see marker IN-14 in [Failure Pathway and Progression](./07-failure-pathway-and-progression.mdx#walls-that-stop-below-the-crest).
+    - *Effect on results:* An upstream cutoff or facing does not reduce the SRP of a conduit flaw (conservative).
+    - *When it may not hold:* Where an upstream element demonstrably limits flow into the zone around the conduit.
+
+<CitationFootnote />

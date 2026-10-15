@@ -1,0 +1,312 @@
+---
+title: Common Input Parameters
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-common-methods-screening" />
+
+# Common Input Parameters
+
+This chapter documents the inputs that the CLE screening models share. Each model also takes the mechanism-specific flaw inputs documented in its
+own manual — compaction categories, settlement and geometry measures, conduit and wall descriptions, climate and surface-cover selections, and the
+observation that overrides its flaw probability. The shared inputs fall into seven groups: hydraulic loading, the units and datum convention, the
+embankment description, the failure-pathway inputs, the upstream seepage-limiting elements, the initiation material inputs of the compaction models,
+and the intervention and breach probabilities. Each group gives the short facts for its quantities in a table, followed by a description of each
+input and, for selections, a list of the available choices and what each implies. Where an input applies to only one of the two model groups
+(see [The Two Model Groups](./02-model-overview.mdx#the-two-model-groups)), the description says so.
+
+Several initiation inputs of the compaction models are statistical distributions that characterize uncertainty in a physical quantity. A
+distribution input may take any of five forms:
+
+- **Deterministic** — a single value.
+- **Uniform** — a low and a high bound.
+- **Normal** — a mean and a standard deviation.
+- **Triangular** — a low, a most likely (mode), and a high value.
+- **PERT** — a low, a most likely (mode), and a high value.
+
+Any distribution may also carry a lower limit, an upper limit, or both; a sampled value beyond a limit is set to that limit (the sample is clipped; the distribution is not
+renormalized between the limits, and no other treatment of the limits is offered). Every value a distribution can produce
+must be positive, so a normal distribution needs a positive lower limit. The Monte Carlo initiation analysis described in
+[Initiation](./06-initiation.mdx#delegated-method-cylindrical-pipe-initiation) samples these distributions.
+
+## Hydraulic Loading
+
+The hydraulic loading is defined by a headwater series and an optional companion tailwater series
+(<TableReference tableKey="cle-common-screening-table-3" />).
+
+<TableVertical
+  tableKey="cle-common-screening-table-3"
+  alt="Hydraulic loading parameters"
+  caption="Hydraulic loading parameters."
+  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  columns={[
+    ['Headwater elevation series', 'Tailwater elevation series'],
+    ['h', 'h<sub>t</sub>'],
+    ['elevation', 'elevation'],
+    ['At least two distinct finite values', 'Empty, or one entry per headwater value'],
+    ['Required', 'No tailwater'],
+  ]}
+/>
+
+- **Headwater elevation series** — the pool levels at which the event tree is evaluated. The model evaluates every supplied headwater value and
+  additional pool levels distributed between them (see [Event Tree](./04-event-tree.mdx#headwater-grid)). The series need not be sorted; repeated
+  values are merged and evaluated once, keeping the tailwater of the first listed pair for that headwater value, and at least two distinct pool
+  levels must remain.
+- **Tailwater elevation series** — the tailwater paired with each headwater value. The series may be left empty when there is no tailwater at any
+  stage, and any individual entry may be left blank where there is no tailwater at that stage. Tailwater enters only the compaction models, where it
+  reduces the net head across the flaw (see [Initiation](./06-initiation.mdx#delegated-method-cylindrical-pipe-initiation)); the crest-crack models
+  report it with the results but do not use it.
+
+## Units and Datum
+
+All elevations — headwater, tailwater, crest, flaw, filter, and wall elevations, and the slope-segment elevations — are on one common datum, and
+every length is in the same unit as the elevations. Two quantities carry fixed units regardless of the length unit: the critical shear stress in
+pounds per square foot and the initial pipe diameter in millimeters. The hydraulic gradient that the initiation analysis forms from the elevations
+and the seepage path length is dimensionless, so the initiation result does not depend on the length unit chosen.
+
+The cylindrical-pipe initiation analysis of the compaction models accepts only positive elevations for the base of the flaw and for the top of the
+embankment section it uses (the crest for the shell section, or the core top), and rejects zero or negative values. The datum chosen for a
+compaction model must therefore place the embankment above zero elevation. The crest-crack models carry no such restriction.
+
+:::warning[INPUT NEEDED IN-01 — Applicability]
+State the length unit the CLE family is intended to be used in. Several mechanism-specific relationships carry dimensional values with no unit
+conversion — for example the tabulated crest-crack depths of the desiccation and frost-cracking models are in feet, and the compaction models band
+the flaw base width at fixed numerical thresholds — and only the cross-valley settlement model converts its crack-depth relationship between feet
+and meters. The shear stress relationship also uses the unit weight of water in pounds per cubic foot.
+
+Proposed (unconfirmed): the family is intended for US customary units (elevations and lengths in feet); a user working in SI units should convert
+before running any model other than the cross-valley settlement model. Confirm or replace, and state whether this belongs here or in each model's
+manual.
+:::
+
+## Embankment Description
+
+Every model takes the crest elevation and the embankment type (<TableReference tableKey="cle-common-screening-table-4" />). The compaction models
+also describe the embankment cross-section with slope-segment tables, from which they derive the seepage path length through the flaw and, where
+a model scores it, the base width and height of the embankment section.
+
+<TableVertical
+  tableKey="cle-common-screening-table-4"
+  alt="Embankment description parameters"
+  caption="Embankment description parameters."
+  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  columns={[
+    [
+      'Crest elevation',
+      'Embankment type',
+      'Shell top width (compaction models)',
+      'Shell face segments (compaction models)',
+      'Core top elevation and width (compaction models)',
+      'Core face segments (compaction models)',
+    ],
+    [
+      'z<sub>c</sub>',
+      '—',
+      'W<sub>t,s</sub>',
+      'z<sub>b,k</sub><sup>s</sup>, m<sub>k</sub><sup>s</sup>',
+      'z<sub>t,c</sub>, W<sub>t,c</sub>',
+      'z<sub>b,k</sub><sup>c</sup>, m<sub>k</sub><sup>c</sup>',
+    ],
+    ['elevation', 'selection', 'length', 'elevation; horizontal per vertical', 'elevation; length', 'elevation; horizontal per vertical'],
+    [
+      'Finite; > 0 for the compaction models',
+      'One of three types',
+      '> 0',
+      'At least one segment per face',
+      'Elevation > 0; width > 0',
+      'At least one segment per face',
+    ],
+    ['Required', 'Required', 'Required', 'Required', 'Omitted', 'Omitted'],
+  ]}
+/>
+
+- **Crest elevation** — the top of the embankment. The crest-crack models measure the crack depth down from it; the compaction models use it as
+  the top of the shell and, where a model applies the normal-pool heuristic, as the top of dam (see
+  [Flaw Conventions](./05-flaw-conventions.mdx#flaw-elevation)).
+- **Embankment type** — the cross-section archetype that sets the crack-filling probability of Node 5 (see
+  [Failure Pathway and Progression](./07-failure-pathway-and-progression.mdx#node-5-progression--no-crack-filling)). The choices follow
+  Fell et al. (2024) <Citation citationKey="Fell2024" />:
+  - **Homogeneous earthfill** — a single earthfill zone.
+  - **Zoned earthfill** — an earthfill dam with more than one earthfill zone.
+  - **Central-core earth and rockfill** — an earth core flanked by rockfill shells.
+- **Shell top width and face segments** — the outer embankment section. Each face, upstream and downstream, is a list of segments ordered from the
+  crest downward; the top width is $W_{t,s}$, and segment $k$ is described by the elevation of its bottom $z_{b,k}^{s}$ and its slope $m_k^{s}$,
+  expressed as horizontal distance per unit of vertical rise. The lowest segment bottom on either face is the base of the section.
+- **Core top elevation, top width, and face segments** — an optional inner section, described the same way by its top elevation $z_{t,c}$, its top
+  width $W_{t,c}$, and its segments $z_{b,k}^{c}$ and $m_k^{c}$. When a core section is supplied it
+  must be complete, and it replaces the shell for every purpose the section serves — the seepage path length of initiation and any base width and
+  height the flaw assessment scores — whatever the embankment type. When it is omitted, the shell section is used. The later chapters write
+  $z_t$ and $W_t$ for the top elevation and top width of the section used by the model: $z_{t,c}$ and $W_{t,c}$ for the core, or the crest
+  $z_c$ and $W_{t,s}$ for the shell. A low-permeability core flanked
+  by free-draining shells carries the head loss across the core alone, which is why the core section, when supplied, governs
+  (see [Initiation](./06-initiation.mdx#seepage-path-length)).
+
+## Failure-Pathway Inputs
+
+The failure-pathway inputs describe what the seepage path through the flaw meets on its way downstream: whether a filter intersects it, and which
+soils must hold a roof over the enlarging pipe. The two model groups take them in different forms because their flaws differ — a crest crack spans
+a range of elevations, while a compaction flaw sits at one elevation
+(see [Failure Pathway and Progression](./07-failure-pathway-and-progression.mdx)). Each soil is identified by its class in the Unified Soil
+Classification System (USCS).
+
+<TableVertical
+  tableKey="cle-common-screening-table-5"
+  alt="Failure-pathway parameters"
+  caption="Failure-pathway parameters."
+  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  columns={[
+    [
+      'Top-of-filter elevation (crest-crack models)',
+      'Full-pathway roof materials (crest-crack models)',
+      'Below-filter roof materials (crest-crack models)',
+      'Filter presence (compaction models)',
+      'Embankment materials (compaction models)',
+      'Continuation inputs (all models)',
+    ],
+    ['z<sub>tf</sub>', '—', '—', '—', '—', '—'],
+    ['elevation', 'USCS classes', 'USCS classes', 'selection', 'USCS classes', 'filter and base soils'],
+    [
+      'Finite',
+      'At least one, unless the filter top reaches the crest',
+      'At least one when a filter is present',
+      'Present or absent',
+      'At least one',
+      'Required when a filter is present',
+    ],
+    ['No filter', 'Required', 'Omitted', 'Absent', 'Required', 'Omitted'],
+  ]}
+/>
+
+- **Top-of-filter elevation** (crest-crack models) — the top of the first drain or filter zone the failure pathway meets. Leaving it blank states
+  that no filter intersects the pathway. When it is supplied, the continuation inputs and the below-filter roof materials are required; when it is
+  blank, both must be omitted. A filter caps the pathway when its top reaches the crest and no full-pathway roof materials are given: the
+  below-filter pathway then governs at every pool. When full-pathway materials are supplied, pools above the filter's top are evaluated on the
+  full pathway even if the filter reaches the crest.
+- **Full-pathway roof materials** (crest-crack models) — the soil classifications of every non-filter material along the whole failure pathway,
+  from the upstream face to the downstream face. They govern roof support whenever the pool is above the filter's top, and at every pool when no
+  filter is present. The list may be empty only when the filter's top reaches the crest.
+- **Below-filter roof materials** (crest-crack models) — the soil classifications of the non-filter materials on the pathway from the upstream face
+  to the first intersecting filter, taken at the bottom-of-crack elevation. They govern roof support whenever the pool is at or below the filter's
+  top.
+
+:::warning[INPUT NEEDED IN-15 — Definition]
+The elevation, or range of elevations, at which the full-pathway roof materials are to be taken is not stated. The below-filter materials are taken
+at the bottom-of-crack elevation; the full-pathway materials are described only as every non-filter material from the upstream face to the
+downstream face. State the elevation or elevation range the user should cut the section at when listing them (for example, the bottom of the
+crack, the top of the filter, or the whole depth of the crack above the filter's top).
+:::
+
+- **Filter presence** (compaction models) — whether a filter intersects the failure pathway at the flaw elevation (for example, a diaphragm filter
+  around a conduit, or a filter zone against a wall or along the foundation contact). The core compaction model expresses this by whether
+  continuation inputs are supplied.
+- **Embankment materials** (compaction models) — the soil classifications of the materials the pipe passes through, which govern roof support at
+  every pool.
+- **Continuation inputs** — the filter description and the base soils upstream of it, evaluated by the shared continuation method documented in
+  the Continuation (Filter Evaluation) Screening Technical Reference Manual. They are required when a filter is present and used only then. The
+  crest-crack models reject them when no top-of-filter elevation is given; the conduit, wall or cliff, and foundation or abutment compaction models
+  ignore them when no filter is stated; and in the core compaction model, supplying them is what states that a filter is present.
+
+Each soil classification is one of the fifteen USCS classes listed with their roof-support probabilities in
+[Failure Pathway and Progression](./07-failure-pathway-and-progression.mdx#node-4-progression--roof-support).
+
+## Upstream Seepage-Limiting Elements
+
+Every model except the conduit compaction model takes the upstream seepage-limiting elements present and, when one of them is a wall, the
+elevation of the wall's top (<TableReference tableKey="cle-common-screening-table-6" />). The conduit compaction model carries no flow-limitation
+node input; its Node 6 is fixed at 1.0
+(see [Failure Pathway and Progression](./07-failure-pathway-and-progression.mdx#node-6-progression--no-flow-limitation)).
+
+<TableVertical
+  tableKey="cle-common-screening-table-6"
+  alt="Upstream seepage-limiting element parameters"
+  caption="Upstream seepage-limiting element parameters."
+  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  columns={[
+    ['Upstream elements present', 'Top-of-wall elevation'],
+    ['—', 'z<sub>tw</sub>'],
+    ['selections', 'elevation'],
+    ['Any number of the six element types', 'Finite; only when a wall is present'],
+    ['None', 'Wall reaches the crest'],
+  ]}
+/>
+
+- **Upstream elements present** — any combination of the following, following Fell et al. (2024) <Citation citationKey="Fell2024" />. When more
+  than one is present, the most effective governs:
+  - **Upstream facing element** — any upstream facing, such as a concrete slab, soil-cement wave protection, a geomembrane, or an asphalt lining.
+    This is the one element that is not a wall.
+  - **Sheet pile wall**
+  - **Modern cutoff wall**
+  - **Non-cementitious wall**
+  - **Soil-cement-bentonite wall**
+  - **Column wall** — jet-grouted or soil-mixed column construction.
+- **Top-of-wall elevation** — the top of the cutoff or seepage-barrier wall. Leaving it blank states that the wall reaches the crest, or that no wall
+  is present. It may be supplied only when a wall is among the elements present. How it gates the walls differs between the two groups (see
+  [Failure Pathway and Progression](./07-failure-pathway-and-progression.mdx#node-6-progression--no-flow-limitation)).
+
+:::warning[INPUT NEEDED IN-02 — Definition]
+The wall categories "modern cutoff wall" and "non-cementitious wall" are used without a definition. State what each covers (construction type,
+era, or material) so the user can select between them and the soil-cement-bentonite and column-wall categories, or cite the table in Fell et al.
+(2024) that defines them.
+:::
+
+## Initiation Material Inputs
+
+The compaction models take the classification of the flaw material and three optional overrides of the initiation analysis
+(<TableReference tableKey="cle-common-screening-table-7" />). The crest-crack models take none of these inputs.
+
+<TableVertical
+  tableKey="cle-common-screening-table-7"
+  alt="Initiation material parameters of the compaction models"
+  caption="Initiation material parameters of the compaction models."
+  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  columns={[
+    ['Core soil classification', 'Critical shear stress', 'Initial pipe diameter', 'Seepage path length'],
+    ['—', 'τ<sub>c</sub>', 'D', 'L'],
+    ['USCS class', 'lb/ft²', 'mm', 'length'],
+    ['One of nine classes', 'Positive distribution', 'Positive distribution', '> 0'],
+    ['Required', 'Range by soil class', 'Range by model', 'Derived from the section'],
+  ]}
+/>
+
+- **Core soil classification** — the soil in which the flaw would erode. It selects the default critical shear stress range
+  (see [Initiation](./06-initiation.mdx#critical-shear-stress)). The clean and nearly clean sands and gravels — SP-SM, SW, SP, GP-GM, GW,
+  and GP, the classes with less than 12 percent fines — are not accepted: the compaction mechanisms are not modeled in these soils. The silty
+  classes SM, GM, and ML are accepted, although they too can be non-plastic.
+- **Critical shear stress** — the hydraulic shear stress at which erosion of the flaw walls begins. Left blank, it defaults to a triangular
+  distribution over the range for the core soil classification. A site-specific distribution — for example from erodibility testing — replaces the
+  default.
+- **Initial pipe diameter** — the diameter of the idealized cylindrical pipe through the poorly compacted zone. Left blank, it defaults to the
+  model's triangular range (see [Initiation](./06-initiation.mdx#initial-pipe-diameter)). A site-specific distribution replaces the default.
+- **Seepage path length** — the length of the pipe over which the net head is lost. Left blank, it is derived from the embankment section at the
+  flaw elevation (see [Initiation](./06-initiation.mdx#seepage-path-length)). Supplying a length overrides the derivation; it suits a sloping core,
+  a pipe that does not run perpendicular to the embankment centerline, or a surveyed path.
+
+## Intervention and Breach
+
+<TableVertical
+  tableKey="cle-common-screening-table-8"
+  alt="Intervention and breach parameters"
+  caption="Intervention and breach parameters."
+  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  columns={[
+    ['Probability of unsuccessful intervention', 'Probability of breach'],
+    ['P<sub>int</sub>', 'P<sub>br</sub>'],
+    ['—', '—'],
+    ['0 to 1', '0 to 1'],
+    ['1.0', '1.0'],
+  ]}
+/>
+
+- **Probability of unsuccessful intervention** — the probability that detection and intervention fail to stop the developing erosion (Node 7).
+  The default of 1.0 takes no credit for intervention.
+- **Probability of breach** — the probability that the developing erosion leads to an uncontrolled release of the impounded water (Node 8). The
+  default of 1.0 treats breach as certain once the earlier nodes are reached.
+
+Both are single values applied at every pool level.
+
+<CitationFootnote />

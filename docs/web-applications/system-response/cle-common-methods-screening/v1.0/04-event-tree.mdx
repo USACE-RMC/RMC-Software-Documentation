@@ -1,0 +1,159 @@
+---
+title: Event Tree
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import Equation from '@site/src/components/Equation';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-common-methods-screening" />
+
+# Event Tree
+
+Every CLE screening model computes the system response probability at each headwater level by multiplying the probabilities of the same eight-node
+event tree. The tree follows the sequence of the concentrated leak erosion trees in the
+[Typical Event Tree Database](/docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.5/Concentrated-Leak-Erosion)
+— flaw, initiation, continuation, progression, unsuccessful intervention, breach — but no database tree is presented here as the screening tree.
+The database trees compare with it as follows:
+
+- The [homogeneous-embankment](/docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.5/Concentrated-Leak-Erosion#homogeneous-embankment)
+  tree carries progression as a single crack-stability node.
+- The [zoned-embankment](/docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.5/Concentrated-Leak-Erosion#zoned-embankment)
+  tree splits the flaw between the core and the shell and adds two progression nodes, asking whether upstream zoning fails to limit flow into the
+  crack and whether it fails to heal the crack.
+- The [soil-rock interface](/docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.5/Concentrated-Leak-Erosion#at-soil-rock-interface)
+  tree, the closest to a foundation or abutment contact flaw, splits the flaw into continuous rock defects and ineffective foundation treatment,
+  and carries progression as clogging and crack stability, with no crack-filling or flow-limitation node.
+- The [embedded-structure](/docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.5/Concentrated-Leak-Erosion#along-embedded-structure)
+  tree, written for a crack along a conduit, carries the same eight nodes as the screening tree, with flow limitation before crack filling.
+
+The screening tree has one flaw node and always carries three progression nodes — roof support (the crack-stability question), crack filling,
+and flow limitation — each evaluated from a table of Fell et al. (2024) <Citation citationKey="Fell2024" />. Because the SRP is a product of the
+node probabilities, the order of the progression nodes does not affect the result.
+
+## Node Summary
+
+<TableReference tableKey="cle-common-screening-table-9" /> summarizes the eight nodes and how each model group populates them. The sections that
+follow state the engineering question each node answers and where it is documented in full.
+
+<TableVertical
+  tableKey="cle-common-screening-table-9"
+  alt="CLE screening event-tree nodes"
+  caption="CLE screening event-tree nodes and their sources in each model group."
+  colAlign={['center']}
+  headers={[[{ value: 'Node' }, { value: 'Name' }, { value: 'Crest-Crack Models' }, { value: 'Compaction Models' }]]}
+  columns={[
+    ['1', '2', '3', '4', '5', '6', '7', '8'],
+    [
+      'Flaw',
+      'Initiation',
+      'Continuation',
+      'Progression: Roof Support',
+      'Progression: No Crack Filling',
+      'Progression: No Flow Limitation',
+      'Unsuccessful Intervention',
+      'Breach',
+    ],
+    [
+      'Flaw assessment of the model',
+      'Certain above the bottom of the crack; zero at or below',
+      'Continuation method at or below the filter top; 1.0 above',
+      'Minimum over the material set for the pool level',
+      'By embankment type',
+      'Minimum over the elements reaching the pool level',
+      'User-specified (default 1.0)',
+      'User-specified (default 1.0)',
+    ],
+    [
+      'Flaw assessment of the model',
+      'Cylindrical-pipe Monte Carlo analysis',
+      'Continuation method if a filter is present; else 1.0',
+      'Minimum over the embankment materials',
+      'By embankment type',
+      'Minimum over the elements reaching the flaw (fixed 1.0 for conduit)',
+      'User-specified (default 1.0)',
+      'User-specified (default 1.0)',
+    ],
+  ]}
+/>
+
+## Pool Dependence
+
+The nodes that vary with pool level differ between the two groups, because the flaws sit differently in the embankment:
+
+- **Crest-crack models** — the crack is open from the crest down to its bottom, so the pool can stand anywhere within it. Initiation, continuation,
+  roof support, and flow limitation are all evaluated at each pool level, because each depends on where the pool stands relative to the bottom of
+  the crack, the top of the filter, or the top of a wall. Flaw, crack filling, intervention, and breach are the same at every pool level.
+- **Compaction models** — the flaw is at one elevation, so the failure pathway, the filter it meets, the materials it passes through, and the
+  walls that reach it are fixed. Only initiation varies with pool level; the other seven nodes are the same at every pool level.
+
+## Headwater Grid
+
+The event tree is evaluated at every supplied headwater value and at additional pool levels distributed between successive supplied values, with
+the tailwater at each additional level interpolated linearly between the supplied pairs. An added level in an interval next to a blank tailwater
+entry carries no tailwater. The supplied values are sorted, and a repeated headwater
+value is evaluated once. The added levels give the system response curve enough resolution to locate the pool levels at which a node steps — the
+bottom of a crest crack, the top of a filter, or the top of a wall — between widely spaced supplied values; a pool level of particular interest is
+captured exactly by supplying it.
+
+## Node 1: Flaw
+
+*Question:* Does a continuous flaw of the model's mechanism — a transverse crack, or a continuous zone of poorly compacted soil — exist through the
+embankment?
+
+The probability $P_{flaw}$ is the result of the model's own flaw assessment, documented in its manual. The common scoring scheme most of the
+assessments use, the observation overrides, and the flaw elevation that each passes to the downstream nodes are documented in
+[Flaw Conventions](./05-flaw-conventions.mdx). The flaw is a condition of the embankment, so $P_{flaw}$ is the same at every pool level.
+
+## Node 2: Initiation
+
+*Question:* Is the hydraulic shear stress on the walls of the flaw large enough to initiate concentrated leak erosion?
+
+The initiation probability $P_{init}(h)$ is the headwater gate of the crest-crack models or the cylindrical-pipe Monte Carlo analysis of the
+compaction models, both documented in [Initiation](./06-initiation.mdx).
+
+## Nodes 3 to 6: Continuation and Progression
+
+*Questions:* Does an unfiltered exit allow erosion to continue (Node 3)? Does the material over the enlarging pipe hold a roof (Node 4)? Is the
+pipe left unfilled by material from upstream (Node 5)? Does the flow through the pipe remain unrestricted by upstream elements (Node 6)?
+
+The probabilities $P_{cont}$, $P_{roof}$, $P_{nf}$, and $P_{nl}$ follow from the failure pathway — where it runs, which filter it meets, which
+materials it passes through, and which upstream elements reach it — as documented in
+[Failure Pathway and Progression](./07-failure-pathway-and-progression.mdx).
+
+## Nodes 7 and 8: Unsuccessful Intervention and Breach
+
+*Questions:* Do detection and intervention fail (Node 7)? Does an uncontrolled release of impounded water occur (Node 8)?
+
+The final two nodes are the user-specified probabilities $P_{int}$ and $P_{br}$ documented in
+[Common Input Parameters](./03-input-parameters.mdx#intervention-and-breach). Each is one value applied at every pool level. Both default to 1.0 —
+no successful intervention and certain breach — a conservative screening posture.
+
+## SRP Computation
+
+The system response probability at each pool level is the product of the eight node probabilities:
+
+<Equation
+  equationKey="cle-common-screening-eq-1"
+  equation="\mathrm{SRP}(h) = P_{flaw} \times P_{init}(h) \times P_{cont}(h) \times P_{roof}(h) \times P_{nf} \times P_{nl}(h) \times P_{int} \times P_{br}"
+/>
+
+where:
+
+> $P_{flaw}$ = probability of a continuous flaw (Node 1)  
+> $P_{init}(h)$ = probability of initiation (Node 2)  
+> $P_{cont}(h)$ = probability of continuation (Node 3)  
+> $P_{roof}(h)$ = probability of roof support (Node 4)  
+> $P_{nf}$ = probability of no crack filling (Node 5)  
+> $P_{nl}(h)$ = probability of no flow limitation (Node 6)  
+> $P_{int}$ = probability of unsuccessful intervention (Node 7)  
+> $P_{br}$ = probability of breach (Node 8)
+
+For the compaction models, $P_{cont}$, $P_{roof}$, and $P_{nl}$ are the same at every pool level. Every model reports an SRP that is never
+exactly zero: where the product is zero — for example below the bottom of a crest crack, where initiation is zero — the SRP is reported as a
+negligibly small value instead, so that the curve can be carried into calculations that work with the logarithm of probability.
+
+<CitationFootnote />
