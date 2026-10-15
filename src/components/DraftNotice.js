@@ -1,5 +1,6 @@
 import { useLocation } from '@docusaurus/router';
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import latestVersions from '@site/static/versions/latestVersions.json';
 import { draftDocs } from '../draftDocs';
 
@@ -20,6 +21,13 @@ import { draftDocs } from '../draftDocs';
  */
 
 export const DRAFT_STATUS_TEXT = 'This document is pending final approval by the RMC Director.';
+// A PR preview shows the draft while it is still in review, before the Director stage.
+export const PREVIEW_DRAFT_STATUS_TEXT = 'Draft for review. This document has not been approved for publication.';
+
+function useDraftStatusText() {
+  const { siteConfig } = useDocusaurusContext();
+  return siteConfig.customFields?.isPreview ? PREVIEW_DRAFT_STATUS_TEXT : DRAFT_STATUS_TEXT;
+}
 
 function getDocInfo(pathname, docsBase) {
   // docsBase is derived from siteConfig.baseUrl, so this resolves under every
@@ -63,12 +71,13 @@ export function useIsDraftDoc() {
  */
 export const DraftStatusStrip = () => {
   const isDraft = useIsDraftDoc();
+  const statusText = useDraftStatusText();
   if (!isDraft) return null;
 
   return (
     <div className="draft-strip-anchor">
       <div className="draft-strip" role="note" aria-label="Document status">
-        {DRAFT_STATUS_TEXT}
+        {statusText}
       </div>
     </div>
   );
@@ -84,6 +93,7 @@ export const DraftStatusStrip = () => {
  */
 export const DraftPrintFrame = ({ children }) => {
   const isDraft = useIsDraftDoc();
+  const statusText = useDraftStatusText();
   if (!isDraft) return <>{children}</>;
 
   return (
@@ -92,7 +102,7 @@ export const DraftPrintFrame = ({ children }) => {
         <tr>
           <td>
             <div className="draft-print-frame__band" aria-hidden="true">
-              {DRAFT_STATUS_TEXT}
+              {statusText}
             </div>
           </td>
         </tr>
@@ -106,7 +116,7 @@ export const DraftPrintFrame = ({ children }) => {
         <tr>
           <td>
             <div className="draft-print-frame__band draft-print-frame__band--foot" aria-hidden="true">
-              {DRAFT_STATUS_TEXT}
+              {statusText}
             </div>
           </td>
         </tr>
