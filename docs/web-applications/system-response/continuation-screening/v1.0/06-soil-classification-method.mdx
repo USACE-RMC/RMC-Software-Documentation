@@ -1,0 +1,206 @@
+---
+title: Soil Classification Method
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import Equation from '@site/src/components/Equation';
+import EquationReference from '@site/src/components/EquationReference';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/continuation-screening" />
+
+# Soil Classification Method
+
+**Step served:** the probability of continuing erosion $P_{cont,j}$ for a pair whose base soil and filter lack a complete pair of gradation
+envelopes, but whose base soil particle sizes and filter particle size can each be resolved from a classification, a category, or a single
+gradation (see [Method Selection and Governing Base Soil](./04-method-selection-and-governing-base-soil.mdx)).
+
+**Question answered:** Is the filter fine enough to satisfy the no-erosion particle retention criterion for the base soil? The criterion compares
+the filter's $D_{15}$ with a maximum allowable $D_{15}$ set by the base soil's $D_{85}$ and fines content <Citation citationKey="FEMA2011" />. Where the particle sizes are known only as ranges for a soil classification or filter category, the method
+answers the question over Monte Carlo realizations of those sizes and reports the fraction of realizations in which the filter is too coarse. The
+criterion itself is documented in the
+[Particle Retention Criterion](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/design-for-particle-retention#particle-retention-criterion)
+section of the Filter Evaluation (Continuation) Toolbox manual; this chapter documents how the screening model supplies its inputs and uses its
+result.
+
+## Input Resolution
+
+The method needs three quantities for each realization: the filter's $D_{15F}$, and the base soil's $D_{85B}$ and fines content $FC$ (percent
+finer than the No. 200 sieve, 0.075 mm). Each comes either from a supplied gradation, as a single fixed value, or from a range, as a sampled
+value:
+
+- **Filter $D_{15F}$** — the $D_{15}$ of the coarse band of the filter gradation envelope when a filter gradation is supplied and that size is
+  determined. This is the coarsest filter $D_{15}$, the value the particle retention check in the toolbox compares with the criterion. Otherwise,
+  $D_{15F}$ is sampled from the range of the filter category (<TableReference tableKey="continuation-screening-table-11" />).
+- **Base soil $D_{85B}$ and $FC$** — the $D_{85}$ and fines content of the fine band of the base soil gradation envelope when a base soil
+  gradation is supplied and both values are determined. These describe the finest base soil, the gradation the toolbox's particle retention check
+  uses. Otherwise, both are sampled from the ranges of the base soil classification
+  (<TableReference tableKey="continuation-screening-table-10" />).
+
+$D_{85B}$ and $FC$ always come from the same source. They describe the same fine fraction of one soil, so the model never pairs a measured
+$D_{85B}$ with a sampled $FC$ or the reverse: when the base soil gradation determines only one of them, both are taken from the classification
+ranges. A gradation supplied for only one material is used without the regrading of the gradation method (see
+[Assumption 11](./08-assumptions-and-limitations.mdx#soil-classification-method) in Assumptions and Limitations).
+
+:::warning[INPUT NEEDED IN-05 — Engineering Basis]
+When the soil classification method uses a value from a single supplied gradation, it uses the gradation as entered, without the mathematical
+regrading on the No. 4 sieve or on a missing particle size that the gradation method applies. Where the gradation method would regrade the
+band — a gap-graded band, or a band containing gravel unless it has less than 15 percent fines and is not broadly graded — the unregraded
+$D_{85B}$ is larger than the regraded value and the maximum allowable $D_{15F}$ is correspondingly larger. Provide the engineering basis or the
+engineering-judgment attribution for using the unregraded gradation, or confirm that regrading should be applied in this case.
+:::
+
+## Classification Ranges
+
+<TableReference tableKey="continuation-screening-table-10" /> gives the base soil ranges, and
+<TableReference tableKey="continuation-screening-table-11" /> the filter ranges.
+
+<TableVertical
+  tableKey="continuation-screening-table-10"
+  alt="Base soil particle-size ranges by soil classification"
+  caption="Base soil D85 and fines content ranges by soil classification."
+  headers={[[{ value: 'USCS Classification' }, { value: 'D85 Range (mm)' }, { value: 'Fines Content Range (%)' }]]}
+  columns={[
+    ['SM, GM', 'SC, GC', 'ML, CL-ML', 'CL, MH', 'CH'],
+    ['0.4 to 1.0 [INPUT NEEDED]', '0.3 to 0.8 [INPUT NEEDED]', '0.005 to 0.05 [INPUT NEEDED]', '0.005 to 0.02 [INPUT NEEDED]', '0.005 to 0.01 [INPUT NEEDED]'],
+    ['5 to 50 [INPUT NEEDED]', '5 to 50 [INPUT NEEDED]', '50 to 100 [INPUT NEEDED]', '50 to 100 [INPUT NEEDED]', '50 to 100 [INPUT NEEDED]'],
+  ]}
+/>
+
+:::warning[INPUT NEEDED IN-06 — Engineering Basis]
+The base soil ranges in <TableReference tableKey="continuation-screening-table-10" /> require an engineering basis: each $D_{85}$ range (SM and
+GM 0.4 to 1.0 mm; SC and GC 0.3 to 0.8 mm; ML and CL-ML 0.005 to 0.05 mm; CL and MH 0.005 to 0.02 mm; CH 0.005 to 0.01 mm) and each fines content
+range (5 to 50 percent for the silty and clayey sands and gravels; 50 to 100 percent for the silts and clays). Provide a literature citation (full
+bibliographic details for the bibliography) or the engineering-judgment attribution, and state why the clean and slightly silty sands and gravels
+(GP, GW, GP-GM, SP, SW, SP-SM) carry no ranges.
+
+Proposed (unconfirmed): the fines content ranges follow the USCS boundaries between coarse-grained soils with fines (more than 5 and at most 50
+percent fines) and fine-grained soils (50 percent fines or more) <Citation citationKey="ASTM2487" />.
+:::
+
+<TableVertical
+  tableKey="continuation-screening-table-11"
+  alt="Filter D15 ranges by filter category"
+  caption="Filter D15 ranges by filter category."
+  headers={[[{ value: 'Filter Category' }, { value: 'D15 Range (mm)' }]]}
+  columns={[
+    ['Sand', 'Sand with gravel', 'Gravel with sand', 'Gravel'],
+    ['0.1 to 1.0 [INPUT NEEDED]', '0.5 to 3.0 [INPUT NEEDED]', '3.0 to 10.0 [INPUT NEEDED]', '10.0 to 50.0 [INPUT NEEDED]'],
+  ]}
+/>
+
+:::warning[INPUT NEEDED IN-07 — Engineering Basis]
+The filter $D_{15}$ ranges in <TableReference tableKey="continuation-screening-table-11" /> (Sand 0.1 to 1.0 mm, Sand with gravel 0.5 to 3.0 mm,
+Gravel with sand 3.0 to 10.0 mm, Gravel 10.0 to 50.0 mm) require an engineering basis. Provide a literature citation (full bibliographic details
+for the bibliography) or the engineering-judgment attribution, including the reasoning for the overlap between the Sand and Sand with gravel
+ranges.
+:::
+
+## Monte Carlo Evaluation
+
+In each Monte Carlo realization, every quantity resolved from a range is drawn from a uniform distribution between the range's bounds,
+independently of the others, and every quantity resolved from a gradation keeps its fixed value.
+
+:::warning[INPUT NEEDED IN-08 — Engineering Basis]
+Each range-resolved quantity is sampled from a uniform distribution, and $D_{85B}$, $FC$, and $D_{15F}$ are sampled independently of one another
+— including $D_{85B}$ and $FC$ of the same base soil, which describe the same fine fraction. Provide the engineering basis or the
+engineering-judgment attribution for the uniform distribution and for sampling $D_{85B}$ and $FC$ independently.
+
+Proposed (unconfirmed): with only a classification or category known, a uniform distribution takes no position on where within the range the
+soil lies.
+:::
+
+### Base soil category
+
+The realization's base soil category $BSC$ follows from its fines content <Citation citationKey="FEMA2011" />:
+
+<Equation
+  equationKey="continuation-screening-eq-2"
+  equation="BSC = \begin{cases} 1 & FC > 85 \\ 2 & 40 < FC \le 85 \\ 3 & 15 < FC \le 40 \\ 4 & FC \le 15 \end{cases}"
+/>
+
+A classification whose fines content range spans a category boundary — the silty and clayey sands and gravels span categories 2, 3, and 4, and
+the silts and clays span categories 1 and 2 — produces realizations in more than one category.
+
+### Maximum allowable filter D15
+
+The maximum allowable filter $D_{15}$ for the no-erosion condition, $D_{15F}^{max}$, depends on the category and on whether the base soil is
+dispersive <Citation citationKey="FEMA2011" />. For a non-dispersive base soil:
+
+<Equation
+  equationKey="continuation-screening-eq-3"
+  equation="D_{15F}^{max} = \begin{cases} \max(9\,D_{85B},\ 0.2) & BSC = 1 \\ 0.7 & BSC = 2 \\ \dfrac{40 - FC}{40 - 15}\left(4\,D_{85B} - 0.7\right) + 0.7 & BSC = 3 \\ 4\,D_{85B} & BSC = 4 \end{cases}"
+/>
+
+For a dispersive base soil:
+
+<Equation
+  equationKey="continuation-screening-eq-4"
+  equation="D_{15F}^{max} = \begin{cases} \max(6.5\,D_{85B},\ 0.2) & BSC = 1 \\ 0.5 & BSC = 2 \\ \dfrac{40 - FC}{40 - 15}\left(4\,D_{85B} - 0.5\right) + 0.5 & BSC = 3 \\ 4\,D_{85B} & BSC = 4 \end{cases}"
+/>
+
+where:
+
+> $D_{15F}^{max}$ = maximum allowable filter $D_{15}$ for the no-erosion condition (mm)  
+> $D_{85B}$ = base soil $D_{85}$ (mm)  
+> $FC$ = base soil fines content (%)
+
+In category 3, the criterion interpolates linearly in fines content between the category 2 limit at 40 percent fines and the category 4 limit
+$4\,D_{85B}$ at 15 percent fines. When $4\,D_{85B}$ is smaller than the category 2 limit (0.7 mm, or 0.5 mm for a dispersive soil), the model uses
+the category 2 limit for category 3 instead of interpolating, so that a category 3 soil, which has fewer fines than a category 2 soil, is never
+given a more restrictive limit than a category 2 soil. The floor raises the allowable $D_{15F}$ above the interpolated value, so it is the less
+conservative of the two choices: it can lower $P_{cont,j}$.
+
+:::warning[INPUT NEEDED IN-09 — Engineering Basis]
+The category 3 floor — using the category 2 limit (0.7 mm, or 0.5 mm for a dispersive base soil) whenever $4\,D_{85B}$ is smaller than it —
+requires a basis. Provide the literature citation or engineering-judgment attribution. Note also that the no-erosion boundary of the Foster and
+Fell evaluation in the gradation method interpolates category 3 without this floor (see
+[Erosion boundaries](./07-gradation-method.mdx#erosion-boundaries) in the Gradation Method chapter); confirm
+whether the two should agree.
+
+Proposed (unconfirmed): the floor corresponds to the instruction in published filter criteria to use the category 2 limit when $4\,D_{85B}$ is less
+than it.
+:::
+
+### Probability of continuing erosion
+
+The filter fails the criterion in a realization when $D_{15F} > D_{15F}^{max}$. The probability of continuing erosion is the fraction of
+realizations in which it fails:
+
+<Equation
+  equationKey="continuation-screening-eq-5"
+  equation="P_{cont,j} = \frac{N_{fail}}{N}"
+/>
+
+where $N_{fail}$ is the number of realizations in which the filter fails the no-erosion criterion and $N$ is the number of realizations. The
+method makes no distinction between a filter that just fails the no-erosion criterion and one that is coarse enough for continuing erosion: every
+failing realization counts as continuing erosion.
+
+:::warning[INPUT NEEDED IN-10 — Engineering Basis]
+The method counts every realization that fails the no-erosion criterion (<EquationReference equationKey="continuation-screening-eq-3" /> and
+<EquationReference equationKey="continuation-screening-eq-4" />) as continuing erosion, although a filter coarser than the no-erosion limit may
+still seal after some or excessive erosion (see the
+[Foster and Fell](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/foster-and-fell) chapter). Provide the
+engineering basis or the engineering-judgment attribution for this treatment.
+
+Proposed (unconfirmed): without gradation envelopes, the some-erosion and excessive-erosion boundaries cannot be evaluated, so the screening
+method resolves the uncertainty conservatively by treating any filter coarser than the no-erosion limit as allowing continuing erosion.
+:::
+
+## Behavior of the Result
+
+- When the filter $D_{15F}$ is fixed by a gradation and the base soil is sampled, $P_{cont,j}$ is the fraction of the base soil's classification
+  range for which that filter is too coarse. When the base soil is fixed by a gradation and the filter is sampled, it is the fraction of the
+  filter category's $D_{15}$ range that is too coarse for that base soil.
+- With the classification ranges of the silts and clays (categories 1 and 2), $D_{15F}^{max}$ lies between 0.2 mm and 0.7 mm (0.5 mm for a
+  dispersive soil). A filter whose $D_{15F}$ lies entirely above the upper limit — any Gravel with sand or Gravel filter — then fails in every
+  realization, giving $P_{cont,j} = 1.0$, and a filter whose $D_{15F}$ lies entirely below 0.2 mm passes in every realization, giving zero.
+- A dispersive base soil never raises $D_{15F}^{max}$ — it lowers or leaves unchanged the category 1, 2, and 3 limits and leaves category 4
+  unchanged — so it does not reduce the likelihood that the filter fails the criterion. In category 1, both criteria give 0.2 mm when $D_{85B}$
+  is about 0.022 mm or less, which covers the whole CL, MH, and CH ranges, so dispersivity has no effect there.
+- The result is a single value for the pair; it does not depend on the pool level.
+
+<CitationFootnote />

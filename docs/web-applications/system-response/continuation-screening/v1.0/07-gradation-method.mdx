@@ -1,0 +1,313 @@
+---
+title: Gradation Method
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import Equation from '@site/src/components/Equation';
+import EquationReference from '@site/src/components/EquationReference';
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/continuation-screening" />
+
+# Gradation Method
+
+**Step served:** the probability of continuing erosion $P_{cont,j}$ for a pair in which both the base soil and the filter have gradation
+envelopes (see [Method Selection and Governing Base Soil](./04-method-selection-and-governing-base-soil.mdx)).
+
+**Question answered:** How much erosion of the base soil must occur before the filter seals, and how likely is it that the filter never seals?
+A filter that satisfies the no-erosion particle retention criterion stops erosion with little or none; a coarser filter may still seal after some
+or excessive erosion, or may allow erosion to continue. The Foster and Fell method divides the range of filter $D_{15}$ into those outcomes from
+continuing erosion filter tests <Citation citationKey="FosterFell2001" />, and is applied to filters that do not satisfy the no-erosion
+criterion.
+
+The method runs the soil-to-soil filter evaluation of the Filter Evaluation (Continuation) Toolbox. The theory of each step lives in that manual.
+Each section below links the chapter the step follows and documents only what the screening model supplies, what it uses from the result, and
+every screening-level adjustment relative to the manual.
+
+## Step 1: Particle-Size Analysis
+
+The model analyzes each band of the base soil and filter gradation envelopes as described in the
+[Filter Gradation](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/filter-gradation#filter-gradation)
+chapter. For each band it determines the gravel content (75 mm to 4.75 mm), the fines content $FC$ (finer than 0.075 mm), the characteristic
+sizes $D_{10}$, $D_{15}$, $D_{30}$, $D_{60}$, $D_{85}$, $D_{90}$, and $D_{95}$, and the coefficients of uniformity and curvature:
+
+<Equation equationKey="continuation-screening-eq-6" equation="C_u = \frac{D_{60}}{D_{10}}, \qquad C_c = \frac{(D_{30})^2}{D_{10} \cdot D_{60}}" />
+
+$C_u$ and $C_c$ are undetermined for a band that does not extend to 10 percent passing.
+
+## Step 2: Base Soil Regrading Characteristics
+
+The need to regrade the base soil is assessed for each band from four characteristics, following the
+[Needs Assessment for Regrading](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/base-gradation#needs-assessment-for-regrading)
+section of the Base Gradation chapter. In the toolbox the analyst answers each characteristic; the screening model derives three of them from the
+particle-size analysis of the base soil:
+
+- **Particles larger than the No. 4 sieve** — present when the band's gravel content is greater than zero; absent when it is zero or
+  undetermined.
+- **Fines content less than 15 percent** — when the band's $FC$ is less than 15 percent or undetermined.
+- **Broadly graded** — derived from the band's coefficients by the ASTM D2487 limits <Citation citationKey="ASTM2487" />, treating the band as a
+  gravel when its gravel content exceeds 50 percent and as a sand otherwise:
+
+<Equation
+  equationKey="continuation-screening-eq-7"
+  equation="\text{broadly graded} = \begin{cases} C_u \ge 6 \ \text{and} \ 1 \le C_c \le 3 & \text{sand} \\ C_u \ge 4 \ \text{and} \ 1 \le C_c \le 3 & \text{gravel} \end{cases}"
+/>
+
+The gravel-or-sand test is the model's own simplification. ASTM D2487 treats a coarse-grained soil as a gravel when more than half of its coarse
+fraction is gravel, that is, when its gravel content exceeds its sand content <Citation citationKey="ASTM2487" />; the model instead compares the
+gravel content with 50 percent of the whole band. A band with more gravel than sand but no more than 50 percent gravel is therefore treated as a
+sand and needs $C_u \ge 6$, rather than 4, to be broadly graded.
+
+:::warning[INPUT NEEDED IN-17 — Engineering Basis]
+The broad-grading assessment treats a band as a gravel when its gravel content exceeds 50 percent of the band, rather than when its gravel
+content exceeds its sand content as in ASTM D2487. A gravelly band with a substantial sand or fines content is then held to the sand limit
+$C_u \ge 6$; with less than 15 percent fines it is more often taken as not broadly graded and not regraded, which gives a larger $D_{85B}$ and a
+less restrictive no-erosion limit. Provide the engineering basis or the engineering-judgment attribution for the 50 percent rule, or confirm
+that the ASTM D2487 comparison of gravel with sand is intended.
+:::
+
+When a band's fines content is undetermined, because its gradation does not extend down to 0.075 mm (and does not end at zero percent
+passing), the model treats the band as having less than 15 percent fines. When a band's gravel content is undetermined, because its gradation
+does not cover the 75 mm and 4.75 mm sizes, the model treats the band as having no particles larger than the No. 4 sieve. When the fine band's
+fines content is undetermined, the particle retention check also places the base soil in category 4 (see
+[Particle retention check](#particle-retention-check)). These defaults can skip regrading, and they can change the no-erosion limit in either
+direction: an unregraded band keeps a larger $D_{85B}$, while category 4 can give a larger or smaller limit than the category of the soil's actual
+fines content.
+
+:::warning[INPUT NEEDED IN-18 — Engineering Basis]
+When a base soil band's fines content is undetermined, the model treats it as less than 15 percent; when its gravel content is undetermined, the
+model treats the band as having no particles larger than the No. 4 sieve; and when the fine band's fines content is undetermined, the particle
+retention check uses base soil category 4. These defaults can skip regrading and can raise or lower the no-erosion limit. Provide the engineering
+basis or the engineering-judgment attribution for these defaults, or state how an undetermined fines or gravel content should be handled (for
+example, rejecting the input).
+:::
+
+The fourth characteristic, **gap graded**, requires visual examination of the gradation curve and judgment, so the user supplies it with the
+missing particle size $d_{gap}$ (see [Input Parameters](./03-input-parameters.mdx#base-soils)). A user-supplied broadly graded answer replaces the
+derived value.
+
+When $C_u$ and $C_c$ are undetermined and no broadly graded answer is supplied, the band is treated as not broadly graded. The toolbox manual
+instead directs the analyst to extrapolate the gradation curve and calculate the coefficients externally.
+
+:::warning[INPUT NEEDED IN-11 — Engineering Basis]
+When the broad-grading assessment of a band is undetermined (its $C_u$ and $C_c$ cannot be calculated) and the user supplies no answer, the
+model treats the band as not broadly graded. For a band containing gravel with less than 15 percent fines, this skips regrading on the No. 4
+sieve, leaving a larger $D_{85B}$ and a less restrictive no-erosion limit. Provide the engineering basis or the engineering-judgment attribution
+for this default, or confirm that the opposite (broadly graded, and therefore regraded) default is intended.
+:::
+
+## Step 3: Filter Evaluation
+
+### Filter segregation adjustment
+
+When segregation parameters are supplied for a filter band (see
+[Input Parameters](./03-input-parameters.mdx#filter-segregation-adjustment)), the model forms an adjusted filter gradation in which that band is
+reshaped after segregation or washout of its finer fraction, following the
+[Filter Gradation After Segregation or Washout](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/filter-gradation#filter-gradation-after-segregation-or-washout)
+section. A band without parameters keeps its original curve in the adjusted gradation. The adjusted gradation enters only the particle retention
+check below; see [Use of the adjusted filter gradation](#use-of-the-adjusted-filter-gradation).
+
+### Base soil regrading
+
+Each band of the base soil gradation is regraded according to its characteristics, following the
+[Base Soil Gradation After Regrading](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/base-gradation#base-soil-gradation-after-regrading)
+section <Citation citationKey="Sherard1989" />:
+
+1. A gap-graded band is regraded on its missing particle size $d_{gap}$.
+2. Otherwise, a band with no particles larger than the No. 4 sieve is not regraded.
+3. Otherwise, the band is regraded to 100 percent passing the No. 4 sieve (4.75 mm), unless its fines content is less than 15 percent and it is not
+   broadly graded, in which case it is not regraded.
+
+Regrading divides the percent passing at each size at or below the regrading size by the percent passing at the regrading size (interpolated on
+the band), multiplied by 100 percent, and sets the percent passing at larger sizes to 100 percent.
+
+### Particle retention check
+
+The coarsest filter $D_{15}$ (the $D_{15}$ of the coarse band) is compared with the maximum allowable $D_{15F}^{max}$ of the no-erosion criterion
+(<EquationReference equationKey="continuation-screening-eq-3" /> and <EquationReference equationKey="continuation-screening-eq-4" />, including
+the category 3 floor), evaluated from the $D_{85}$ and fines content of the fine band of the regraded base soil — the finest base soil, placed in
+category 4 when its fines content is undetermined — following the
+[Particle Retention Criterion](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/design-for-particle-retention#particle-retention-criterion)
+section <Citation citationKey="FEMA2011" />. When an adjusted filter gradation exists, its coarsest $D_{15}$ is checked against the same limit.
+
+If the original filter gradation, and the adjusted gradation when there is one, both satisfy the criterion, the filter is taken to stop erosion
+with no or practically no erosion of the base soil. The Foster and Fell evaluation is not performed, and the pair takes
+
+<Equation equationKey="continuation-screening-eq-8" equation="P_{NE} = 1, \qquad P_{SE} = P_{EE} = P_{CE} = 0, \qquad P_{cont,j} = 0" />
+
+Otherwise, the Foster and Fell evaluation follows.
+
+### Representative base soil gradations
+
+The Foster and Fell evaluation uses three representative gradations of the regraded base soil — coarse, average, and fine — selected from the
+envelope with the confidence interval $CI$, following the
+[Base Soil Characterization](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/foster-and-fell#base-soil-characterization)
+section of the Foster and Fell chapter <Citation citationKey="Toolbox2008" />. The toolbox manual denotes the percentage of the gradations
+considered representative by $N$; this document calls it the confidence interval $CI$ and keeps $N$ for the number of Monte Carlo realizations
+of the soil classification method. With the tail percentage
+
+<Equation equationKey="continuation-screening-eq-9" equation="t = \frac{100 - CI}{2}" />
+
+the representative coarse gradation moves the coarse band of the regraded envelope toward the fine band by $t$ percent of the distance between
+them at each particle size of the coarse band, and the representative fine gradation moves the fine band toward the coarse band by the same
+fraction at each particle size of the fine band:
+
+<Equation
+  equationKey="continuation-screening-eq-10"
+  equation="F_{rc} = F_c + \frac{t}{100}\left(F_f - F_c\right), \qquad F_{rf} = F_f - \frac{t}{100}\left(F_f - F_c\right)"
+/>
+
+where:
+
+> $F_c$, $F_f$ = percent passing of the coarse and fine bands of the regraded base soil envelope at the particle size  
+> $F_{rc}$, $F_{rf}$ = percent passing of the representative coarse and fine gradations  
+> $t$ = percentage of the envelope excluded at each limit
+
+With the default $CI$ of 90 percent, $t = 5$ percent.
+
+The representative average gradation is formed by averaging the representative coarse and fine gradations point by point: the percent passing
+at each listed size of the coarse gradation is averaged with the percent passing at the same position in the list of the fine gradation, and
+each average is assigned the particle size of the coarse band. This assumes that both bands of the base soil gradation are reported at the same
+sieve sizes (Assumption 19 in [Assumptions and Limitations](./08-assumptions-and-limitations.mdx#gradation-method)). The fines content $FC$ and
+the fine-to-medium sand content $fm$ of the average gradation are the means of those of the representative coarse and fine gradations.
+
+### Erosion boundaries
+
+For each representative gradation, the model evaluates the filter $D_{15}$ boundaries between the erosion conditions, following the
+[No-Erosion Boundary](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/foster-and-fell#no-erosion-boundary),
+[Continuing Erosion Boundary](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/foster-and-fell#continuing-erosion-boundary),
+and
+[Excessive Erosion Boundary](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/foster-and-fell#excessive-erosion-boundary)
+sections <Citation citationKey="FosterFell2001" /> <Citation citationKey="Toolbox2008" />:
+
+- **No-erosion boundary** $(D_{15F})_{NE}$ — the no-erosion criterion of
+  <EquationReference equationKey="continuation-screening-eq-3" /> or <EquationReference equationKey="continuation-screening-eq-4" />, evaluated
+  from the representative gradation's $D_{85B}$ and $FC$. Unlike the particle retention check, the category 3 boundary is interpolated without
+  the floor at the category 2 limit.
+- **Continuing erosion boundary**:
+
+<Equation equationKey="continuation-screening-eq-11" equation="(D_{15F})_{CE} = 9\,D_{95B}" />
+
+- **Excessive erosion boundary**, by the base soil grouping of the representative gradation:
+
+<Equation
+  equationKey="continuation-screening-eq-12"
+  equation="(D_{15F})_{EE} = \begin{cases} 9\,D_{95B} & D_{95B} \le 0.3 \text{ mm} \\ 9\,D_{90B} & 0.3 < D_{95B} \le 2 \text{ mm} \\ 9\,D_{85B} & D_{95B} > 2 \text{ mm},\ FC \le 15 \\ 2.5\left[\dfrac{(4\,D_{85B} - 0.7)(35 - FC)}{20} + 0.7\right] & D_{95B} > 2 \text{ mm},\ 15 < FC \le 35 \\ 0.34 \cdot 1.07^{fm} & D_{95B} > 2 \text{ mm},\ FC > 35 \end{cases}"
+/>
+
+where:
+
+> $D_{85B}$, $D_{90B}$, $D_{95B}$ = characteristic sizes of the representative base soil gradation (mm)  
+> $FC$ = fines content of the representative gradation (%)  
+> $fm$ = fine-to-medium sand content of the representative gradation, the percentage between 1.18 mm and 0.075 mm (%)
+
+The excessive erosion boundary is the same for a dispersive and a non-dispersive base soil; dispersivity enters the evaluation only through the
+no-erosion boundary.
+
+:::warning[INPUT NEEDED IN-12 — Decision]
+The Excessive Erosion Boundary section of the Filter Evaluation (Continuation) Toolbox manual states that the excessive erosion boundary depends on
+whether the base soil is non-dispersive or dispersive, but the model's excessive erosion boundary
+(<EquationReference equationKey="continuation-screening-eq-12" />) does not depend on dispersivity. Confirm which is intended, and whether this
+document or the toolbox manual should be corrected.
+:::
+
+### Erosion probabilities
+
+For each representative gradation, the range of filter $D_{15}$ from the finest filter $D_{15}$ (the fine band of the original filter gradation)
+to the coarsest (the coarse band) is divided among the four erosion conditions, following the
+[Likelihood of Erosion](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/foster-and-fell#likelihood-of-erosion)
+section. The proportion of the range coarser than $(D_{15F})_{CE}$ is the continuing erosion proportion; the proportion between
+$(D_{15F})_{EE}$ and $(D_{15F})_{CE}$ is the excessive erosion proportion; the proportion between $(D_{15F})_{NE}$ and $(D_{15F})_{EE}$ is the
+some-erosion proportion; and the remainder is the no-erosion proportion. Proportions are measured on a logarithmic scale of particle size.
+
+The division needs both filter $D_{15}$ values. When a filter band's smallest measured percent passing is greater than 15 percent, so that the
+gradation does not extend down to that size, its $D_{15}$ is undetermined (see
+[Gradation Envelopes](./03-input-parameters.mdx#gradation-envelopes)). An undetermined coarse-band $D_{15}$ makes the particle retention check
+fail, so the Foster and Fell evaluation runs. In the division, an undetermined $D_{15}$ is taken as zero, and the proportions then follow:
+
+- When the fine band's $D_{15}$ is undetermined, every proportion except no erosion is zero, so $P_{cont,j} = 0$ however coarse the filter is.
+- When only the coarse band's $D_{15}$ is undetermined, the continuing erosion proportion of each representative gradation is 1 if the fine
+  band's $D_{15}$ is at or above that gradation's $(D_{15F})_{CE}$, and every proportion except no erosion is zero otherwise.
+
+The first case can report no continuing erosion for a filter that is far too coarse.
+
+:::warning[INPUT NEEDED IN-16 — Decision]
+When the $D_{15}$ of a filter band is undetermined because the band's smallest measured percent passing is greater than 15 percent, the Foster and Fell division takes it as
+zero. With the fine band's $D_{15}$ undetermined, every erosion proportion except no erosion is zero and $P_{cont,j} = 0$, even for a coarse
+filter whose coarse band fails the particle retention check; with only the coarse band's $D_{15}$ undetermined, the result depends only on
+whether the fine band's $D_{15}$ reaches the continuing erosion boundary of each representative gradation. Confirm whether this treatment is intended and supply the wording of
+its basis, or state how an undetermined filter $D_{15}$ should be handled (for example, rejecting the input or taking $P_{cont,j} = 1.0$).
+:::
+
+The probabilities of the four conditions weight the proportions of the three representative gradations, giving the average gradation the
+weight $CI/100$ and the coarse and fine gradations $(100 - CI)/200$ each:
+
+<Equation
+  equationKey="continuation-screening-eq-13"
+  equation="P_X = \frac{100 - CI}{200}\,X_{coarse} + \frac{CI}{100}\,X_{average} + \frac{100 - CI}{200}\,X_{fine}, \qquad X \in \{NE,\ SE,\ EE,\ CE\}"
+/>
+
+where $P_{NE}$, $P_{SE}$, $P_{EE}$, and $P_{CE}$ are the probabilities of no, some, excessive, and continuing erosion, and $X_{coarse}$,
+$X_{average}$, and $X_{fine}$ are the proportions of condition $X$ for the representative coarse, average, and fine gradations.
+
+## Step 4: Screening Probability of Continuing Erosion
+
+The screening model folds the probability of excessive erosion into the probability of continuing erosion:
+
+<Equation equationKey="continuation-screening-eq-14" equation="P_{cont,j} = P_{CE} + P_{EE}" />
+
+Excessive erosion is erosion extensive enough to damage the embankment before the filter seals (see the
+[Foster and Fell](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/foster-and-fell) chapter), so the
+screening model treats it as continuing erosion. Some erosion, after which the filter quickly seals, is not counted.
+
+:::warning[INPUT NEEDED IN-13 — Engineering Basis]
+The screening probability of continuing erosion is the sum of the Foster and Fell probabilities of continuing and excessive erosion
+(<EquationReference equationKey="continuation-screening-eq-14" />). Provide a literature citation (full bibliographic details for the
+bibliography) or the engineering-judgment attribution for treating excessive erosion as continuing erosion at the screening level.
+:::
+
+## Use of the Adjusted Filter Gradation
+
+The adjusted filter gradation from the segregation adjustment affects only whether the Foster and Fell evaluation runs. When the original
+filter gradation satisfies the particle retention check but the adjusted gradation does not, the Foster and Fell evaluation is performed — but
+its probabilities, and therefore $P_{cont,j}$, are computed from the original filter gradation. The toolbox procedure instead evaluates the
+adjusted gradation in parallel with the original one, as a separate event-tree branch for a segregated or internally unstable filter.
+
+:::warning[INPUT NEEDED IN-14 — Decision]
+The screening probability of continuing erosion always comes from the Foster and Fell evaluation of the original filter gradation; the adjusted
+(segregated or washed-out) filter gradation only decides whether that evaluation runs. Confirm that this is the intended screening treatment, and
+supply the wording of its basis, or state how the adjusted gradation should enter the probability (for example, the larger of the two results).
+:::
+
+## Permeability
+
+The toolbox's soil-to-soil evaluation also checks the permeability (drainage) criterion of the filter, documented in the
+[Permeability](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/permeability) chapter. The screening
+model does not use the permeability result: $P_{cont,j}$ depends on particle retention alone.
+
+:::warning[INPUT NEEDED IN-15 — Engineering Basis]
+The probability of continuing erosion does not consider the permeability criterion of the filter. Provide the engineering basis or the
+engineering-judgment attribution for excluding drainage from the continuation node.
+
+Proposed (unconfirmed): the continuation node addresses whether the filter retains the eroding base soil; whether the filter drains freely
+bears on other aspects of performance and is outside this node.
+:::
+
+## Screening-Level Adjustments
+
+Relative to the soil-to-soil filter evaluation of the Filter Evaluation (Continuation) Toolbox, the screening gradation method fixes the
+following:
+
+- **Regrading characteristics are derived** — the No. 4, fines content, and broad-grading characteristics come from the particle-size analysis,
+  with a user override for broad grading; only gap grading is supplied by the user (Step 2).
+- **The confidence interval defaults to 90 percent** for the representative base soil gradations.
+- **One probability is reported** — the sum of the continuing and excessive erosion probabilities (Step 4).
+- **The adjusted filter gradation decides only whether the Foster and Fell evaluation runs** (see
+  [Use of the Adjusted Filter Gradation](#use-of-the-adjusted-filter-gradation)).
+- **Permeability is not used** (see [Permeability](#permeability)).
+- **Constricted exits are not evaluated** — the toolbox's separate
+  [Constricted Exit](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/constricted-exit) evaluation, for
+  base soil eroding into a pipe, conduit, or crack, is not part of the screening model.
+
+<CitationFootnote />

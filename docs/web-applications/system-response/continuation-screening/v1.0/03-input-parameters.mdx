@@ -1,0 +1,269 @@
+---
+title: Input Parameters
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import EquationReference from '@site/src/components/EquationReference';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/continuation-screening" />
+
+# Input Parameters
+
+This chapter documents every user input to the continuation screening model. Inputs are organized into five groups: the base soils, the filter,
+the optional filter segregation adjustment, the confidence interval for the representative base soil gradations, and the year of construction.
+Each group gives the short facts for its quantities in a table, followed by a description of each input and, for selections, a list of the
+available choices and what each implies.
+
+Almost every input is optional. Which inputs are supplied decides which method evaluates each base soil, as described in
+[Method Selection and Governing Base Soil](./04-method-selection-and-governing-base-soil.mdx). <TableReference tableKey="continuation-screening-table-2" />
+lists the inputs each method uses.
+
+<TableVertical
+  tableKey="continuation-screening-table-2"
+  alt="Inputs used by each method"
+  caption="Inputs used by each method."
+  headers={[[{ value: 'Method' }, { value: 'Base Soil Inputs' }, { value: 'Shared Inputs' }]]}
+  columns={[
+    ['Gradation method', 'Soil classification method', 'Year-of-construction method'],
+    [
+      'Gradation envelope, dispersivity, gap grading and missing particle size, broad grading',
+      'Classification or single gradation, dispersivity',
+      'None',
+    ],
+    [
+      'Filter gradation envelope, segregation, confidence interval',
+      'Filter category or filter gradation envelope',
+      'Year of construction',
+    ],
+  ]}
+/>
+
+## Gradation Envelopes
+
+A gradation envelope describes the range of particle-size distributions measured for one material. It consists of two bands:
+
+- **Coarse band** — the coarsest gradation of the material (the coarse limit of the envelope).
+- **Fine band** — the finest gradation of the material (the fine limit of the envelope).
+
+Each band is a table of sieve designations, the corresponding particle sizes in millimeters listed in descending order (sizes finer than the No.
+200 sieve may come from a hydrometer analysis), and the percent passing by weight at each size, from 0 to 100 percent. The model performs a
+particle-size analysis of each band as described in the
+[Filter Gradation](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/filter-gradation#filter-gradation)
+chapter of the Filter Evaluation (Continuation) Toolbox manual, interpolating particle sizes on a logarithmic scale against percent passing on a
+linear scale. A characteristic size such as $D_{15}$ (the particle size at 15 percent passing) is undetermined for a band whose smallest
+measured percent passing is greater than that percentage; such a band then cannot supply that size to the soil classification method (see
+[Input Resolution](./06-soil-classification-method.mdx#input-resolution) in the Soil Classification Method chapter).
+
+When only one gradation is available for a material, the same gradation is entered as both bands. Because the gradation method averages the two
+bands of the base soil gradation point by point, both bands should be reported at the same sieve sizes (see Assumption 19 in
+[Assumptions and Limitations](./08-assumptions-and-limitations.mdx#gradation-method)).
+
+## Base Soils
+
+At least one base soil is required. Each base soil is a non-filter material upstream of the filter whose particles the filter must retain
+(<TableReference tableKey="continuation-screening-table-3" />). Supply one entry for each such material — for example, the core and an upstream
+shell — in any order. The order does not affect $P_{cont}$, but when pairs tie for the largest probability, the governing base soil and method
+reported are those of the first entered (see
+[Governing Base Soil](./04-method-selection-and-governing-base-soil.mdx#governing-base-soil)). A base soil entry with neither a classification nor a gradation is valid and is
+evaluated by the year-of-construction method or the no-information default.
+
+<TableVertical
+  tableKey="continuation-screening-table-3"
+  alt="Base soil parameters"
+  caption="Base soil parameters (one set for each base soil)."
+  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  columns={[
+    [
+      'Soil classification',
+      'Gradation envelope',
+      'Dispersive base soil',
+      'Gap graded (coarse band, fine band)',
+      'Missing particle size (coarse band, fine band)',
+      'Broadly graded (coarse band, fine band)',
+    ],
+    ['—', '—', '—', '—', 'd<sub>gap</sub>', '—'],
+    ['—', 'mm, %', '—', '—', 'mm', '—'],
+    [
+      'One of 15 USCS classes',
+      'See Gradation Envelopes',
+      'Yes or No',
+      'Yes or No',
+      '> 0',
+      'Yes, No, or derived',
+    ],
+    ['Not supplied', 'Not supplied', 'No', 'No', 'Required when gap graded', 'Derived from the gradation'],
+  ]}
+/>
+
+- **Soil classification** — The Unified Soil Classification System (USCS) group of the base soil <Citation citationKey="ASTM2487" />: GP, GW,
+  GP-GM, GM, GC, SP, SW, SP-SM, SM, SC, ML, CL-ML, CL, MH, or CH. The soil classification method uses the classification to set ranges for the
+  base soil's $D_{85}$ and fines content, and only nine classes carry those ranges: SM, GM, SC, GC, ML, CL-ML, CL, MH, and CH. When a filter
+  category other than Unknown is supplied, the model rejects an input set in which any base soil carries one of the other six classes (GP, GW,
+  GP-GM, SP, SW, or SP-SM) — even when gradations are also supplied that would select the gradation method for it. A clean or slightly silty
+  sand or gravel base soil is therefore evaluated from its gradation, with its classification left out, or without a filter category (see
+  [Classification Ranges](./06-soil-classification-method.mdx#classification-ranges) in the Soil Classification Method chapter and Assumption 9 in
+  [Assumptions and Limitations](./08-assumptions-and-limitations.mdx)).
+- **Gradation envelope** — The coarse and fine bands of the base soil gradation (see [Gradation Envelopes](#gradation-envelopes)). With the
+  filter gradation envelope, it selects the gradation method. Without a filter gradation, it can supply the base soil's $D_{85}$ and fines content
+  to the soil classification method.
+- **Dispersive base soil** (Yes or No) — Whether the base soil is dispersive. A dispersive base soil uses the stricter no-erosion particle
+  retention criterion in both the soil classification and gradation methods, and the stricter no-erosion boundary in the Foster and Fell
+  evaluation <Citation citationKey="FEMA2011" />.
+- **Gap graded** (Yes or No, for each band) — Whether the band of the base soil gradation is gap graded. Identifying a gap-graded soil requires
+  visual examination of the gradation curve and judgment, so the model does not derive it. A gap-graded band is regraded on its missing particle
+  size (see [Base soil regrading](./07-gradation-method.mdx#base-soil-regrading) in the Gradation Method chapter).
+- **Missing particle size** $d_{gap}$ (for each band) — The particle size, in millimeters, at the upper end of the gap, where the gradation curve
+  has its point of inflection. Required for each band marked gap graded.
+- **Broadly graded** (Yes, No, or derived, for each band) — Whether the band of the base soil gradation is broadly graded. When it is not
+  supplied, the model derives it from the coefficients of uniformity and curvature of the band; a supplied Yes or No replaces the derived value.
+  Supply it when the gradation does not extend to the 10 percent passing size, because the coefficients, and therefore the derived value, are then
+  undetermined (see
+  [Step 2: Base Soil Regrading Characteristics](./07-gradation-method.mdx#step-2-base-soil-regrading-characteristics) in the Gradation Method
+  chapter).
+
+The gap-graded, missing-size, and broadly graded inputs affect only the gradation method. Dispersivity affects both the soil classification and
+gradation methods.
+
+## Filter
+
+The filter is the zone downstream of the base soils that is expected to retain them — a designed filter, a transition zone, or another adjacent
+material (<TableReference tableKey="continuation-screening-table-4" />). One filter is shared by every base soil.
+
+<TableVertical
+  tableKey="continuation-screening-table-4"
+  alt="Filter parameters"
+  caption="Filter parameters."
+  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  columns={[
+    ['Filter category', 'Filter gradation envelope'],
+    ['—', '—'],
+    ['—', 'mm, %'],
+    ['One of five categories', 'See Gradation Envelopes'],
+    ['Not supplied', 'Not supplied'],
+  ]}
+/>
+
+- **Filter category** — A qualitative description of the filter material, used by the soil classification method to set the range of the
+  filter's $D_{15}$ when no filter gradation is available:
+  - Sand — a sand filter.
+  - Sand with gravel — a sand filter containing gravel.
+  - Gravel with sand — a gravel filter containing sand.
+  - Gravel — a gravel filter.
+  - Unknown — the filter material is not known. An Unknown filter category supplies no filter $D_{15}$, so a pair with no filter gradation falls
+    to the year-of-construction method or, when no year of construction is supplied, the no-information default ($P_{cont} = 1.0$).
+
+  The $D_{15}$ range for each category is given in
+  [Classification Ranges](./06-soil-classification-method.mdx#classification-ranges) in the Soil Classification Method chapter.
+
+:::warning[INPUT NEEDED IN-01 — Definition]
+The four filter categories (Sand, Sand with gravel, Gravel with sand, Gravel) are defined in the model only by their names and their filter
+$D_{15}$ ranges. Provide the definition of each category — in particular the gravel or sand content that separates Sand from Sand with gravel,
+Sand with gravel from Gravel with sand, and Gravel with sand from Gravel — so a user can assign a filter to a category consistently.
+
+Also state why the filter is described by these categories rather than by USCS classes.
+
+Proposed (unconfirmed): the categories follow the USCS naming convention for the secondary component, in which a sand "with gravel" contains 15
+percent or more gravel, and a gravel is a soil with more gravel than sand. They may be used in place of USCS classes because a clean sand or
+gravel class can fall in either of two categories, depending on its gravel or sand content, which only a gradation can resolve.
+:::
+
+- **Filter gradation envelope** — The coarse and fine bands of the filter gradation (see [Gradation Envelopes](#gradation-envelopes)). With a base
+  soil gradation envelope, it selects the gradation method for that base soil. Otherwise, it supplies the filter's $D_{15}$ to the soil
+  classification method in place of the filter category.
+
+## Filter Segregation Adjustment
+
+A filter may be coarser in place than its design gradation, because of segregation during placement or washout of its finer fraction by internal
+instability. The filter segregation adjustment describes, for each band of the filter gradation, an adjusted gradation after segregation or
+washout (<TableReference tableKey="continuation-screening-table-5" />), following the
+[Filter Gradation After Segregation or Washout](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/filter-gradation#filter-gradation-after-segregation-or-washout)
+section of the Filter Evaluation (Continuation) Toolbox manual. The adjustment is optional and applies only to the gradation method; each band is
+adjusted only when its parameters are supplied.
+
+<TableVertical
+  tableKey="continuation-screening-table-5"
+  alt="Filter segregation adjustment parameters"
+  caption="Filter segregation adjustment parameters (one set for each filter band)."
+  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  columns={[
+    ['Gradation shape', 'Finer fraction', 'Washout', 'Reshaping exponent'],
+    ['—', 'FF', 'W', 'k'],
+    ['—', '%', '%', '—'],
+    ['Broadly graded or gap graded', '0 to 100', '0 to 100', '0.4 to 0.7'],
+    ['Broadly graded', 'Required', 'Required', '0.5 [INPUT NEEDED]'],
+  ]}
+/>
+
+:::warning[INPUT NEEDED IN-02 — Engineering Basis]
+The reshaping exponent $k$ of the gap-graded segregation adjustment defaults to 0.5 and is limited to the range 0.4 to 0.7. Provide a literature
+citation (full bibliographic details for the bibliography) or the engineering-judgment attribution for the default and for the range.
+:::
+
+- **Gradation shape** — The shape of the filter band's gradation curve, which selects how the band is reshaped:
+  - Broadly graded — above the finer-fraction breakpoint, the percent passing is lowered uniformly by $FF \cdot W/100$; below it, the percent
+    passing is scaled in proportion by $(100 - W)/100$.
+  - Gap graded — the band is blended linearly above the breakpoint and reshaped below it by a power curve with exponent $k$.
+- **Finer fraction** $FF$ — The percent passing at the breakpoint between the coarse and finer fractions of the band (the gap or inflection
+  point).
+- **Washout** $W$ — The percentage of the finer fraction lost to segregation or washout. The adjusted percent passing at the breakpoint is
+  $FF \cdot (100 - W)/100$.
+- **Reshaping exponent** $k$ — The exponent of the power-curve reshape below the breakpoint, used only for a gap-graded band. The 0.4 to 0.7
+  range is checked for every adjusted band, including a broadly graded band that does not use $k$.
+
+The effect of the adjusted gradation on the result is limited: it decides whether the Foster and Fell evaluation runs, but the probabilities are
+computed from the original filter gradation (see [Gradation Method](./07-gradation-method.mdx#use-of-the-adjusted-filter-gradation)).
+
+:::warning[INPUT NEEDED IN-03 — Bibliography]
+The reshape relationships of the segregation adjustment (for a broadly graded band, a uniform lowering of the percent passing by
+$FF \cdot W/100$ above the breakpoint and a proportional scaling by $(100 - W)/100$ below it; the linear blend above the breakpoint and the
+power curve $(D/D_{FF})^k$ below it for a gap-graded band, where $D_{FF}$ is the particle size at the finer fraction) are not documented in the
+Filter Evaluation (Continuation) Toolbox manual, which describes the adjustment only conceptually. Provide the source of these relationships (full
+bibliographic details for the bibliography), or confirm that they are the toolbox's own formulation and supply the attribution to state.
+:::
+
+## Confidence Interval
+
+The confidence interval $CI$ sets how the representative base soil gradations of the Foster and Fell evaluation are selected from the base soil
+gradation envelope and how their results are weighted (<TableReference tableKey="continuation-screening-table-6" />). It applies only to the
+gradation method.
+
+<TableVertical
+  tableKey="continuation-screening-table-6"
+  alt="Confidence interval parameter"
+  caption="Confidence interval parameter."
+  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  columns={[['Confidence interval'], ['CI'], ['%'], ['0 to 100'], ['90']]}
+/>
+
+- **Confidence interval** $CI$ — The percentage of the base soil gradations considered representative. The coarse and fine representative
+  gradations each exclude $(100 - CI)/2$ percent of the envelope at its coarse and fine limits. The default of 90 percent follows the
+  recommendation of Fell et al. (2008) to select representative gradations indicative of the finer 5 percent, the average, and the coarser 5
+  percent of the base soil gradations <Citation citationKey="Toolbox2008" />. At 100 percent, the representative coarse and fine gradations
+  are the bands themselves and receive zero weight in the erosion probabilities
+  (<EquationReference equationKey="continuation-screening-eq-13" />). Only the coarse and fine representative gradations lose their weight: the
+  two bands still define the average gradation, and the fine band of the regraded base soil still sets the particle retention check. The toolbox manual uses 100 percent when the representative base soil gradation is entered directly (see the
+  [Base Soil Characterization](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/foster-and-fell#base-soil-characterization)
+  section of the Foster and Fell chapter); in this model, that gradation is entered as both bands.
+
+## Year of Construction
+
+The year of construction is shared by every base soil (<TableReference tableKey="continuation-screening-table-7" />).
+
+<TableVertical
+  tableKey="continuation-screening-table-7"
+  alt="Year of construction parameter"
+  caption="Year of construction parameter."
+  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  columns={[['Year of construction'], ['Y'], ['year'], ['Any year'], ['Not supplied']]}
+/>
+
+- **Year of construction** $Y$ — The year the embankment was constructed. It is used by the year-of-construction method for every base soil whose
+  information supports neither the gradation method nor the soil classification method (see
+  [Year-of-Construction Method](./05-year-of-construction-method.mdx)). When it is not supplied, those base soils take the no-information default,
+  $P_{cont} = 1.0$.
+
+<CitationFootnote />
