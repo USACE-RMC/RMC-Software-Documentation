@@ -353,7 +353,7 @@ const docs = [
     software: 'system-response',
     doc_location: 'web-applications/system-response/cle-cross-valley-settlement-screening',
     doc_name: 'CLE Cross-Valley Settlement Screening Technical Reference Manual',
-    active: false,
+    active: true,
     draft: true,
   },
   {
