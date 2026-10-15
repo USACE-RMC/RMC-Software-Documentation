@@ -9,170 +9,188 @@ import EquationNoRef from '@site/src/components/EquationNoRef';
 import EquationReference from '@site/src/components/EquationReference';
 import NavContainer from '@site/src/components/NavContainer';
 import ProcessList from '@site/src/components/ProcessList';
-import TableReference from '@site/src/components/TableReference';
-import TableVertical from '@site/src/components/TableVertical';
 
 <NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/overtopping-erosion-screening" />
 
 # Erosion Model
 
-The erosion simulation proceeds in two sequential phases for each Monte Carlo realization at each hazard level. The first phase models the removal of
-protective grass cover under sustained overtopping flow. The second phase models the progressive erosion of the exposed embankment soil. Both phases
-are implemented in `OvertoppingModel.SimulateErosion()`.
+For each Monte Carlo realization at each overtopping depth, the model steps through the hydrograph ([Chapter 4](./04-hydrograph-generation.mdx)) in two sequential phases. The first
+phase models the removal of the protective grass cover under sustained overtopping flow. The second phase models the progressive erosion of the
+exposed embankment soil until breach occurs or the hydrograph ends.
 
 ## Phase 1: Grass Cover Removal
 
-When grass cover is present (`GrassCoverQuality` is not `NoGrassCover`), the model tracks the cumulative excess discharge volume until the grass cover
-fails. The grass cover removal algorithm is based on CIRIA research into tolerable time-varying overflow on grass-covered slopes.
-
-<Citation citationKey="Hughes2015" /> <Citation citationKey="Thornton2014" />
+When the downstream face has grass cover (any grass cover condition other than No Grass Cover), the model tracks the cumulative overflow volume in excess
+of a critical discharge and removes the cover when that volume exceeds an erosional limit. The method follows the CIRIA-based approach for tolerable
+time-varying overflow on grass-covered slopes<Citation citationKey="Hughes2015" /><Citation citationKey="Thornton2014" />.
 
 ### Critical Discharge
 
-The critical discharge ($q_c$) is the unit discharge at which grass damage initiates. It is computed from the critical velocity ($u_c$), the friction
-factor ($f$), and the slope angle:
+The critical discharge $q_c$ is the unit discharge at which grass damage begins. It is computed from the critical velocity $u_c$ of the grass cover
+condition, the friction factor $f$ and the slope angle:
 
 <Equation equationKey="overtopping-screening-eq-critical-discharge" equation="q_c = \frac{f}{2 g \sin\theta} \cdot u_c^3" />
 
 where:
 
-> $g$ = gravitational acceleration (9.81 m/s²)  
-> $\theta = \arctan(S)$ = slope angle  
-> $S = 1 / \text\{DownstreamSlope\}$ = slope (V/H)  
-> $u_c$ = critical velocity from the grass cover classification
+> $g$ = gravitational acceleration, 9.81 m/s²  
+> $\theta = \arctan(S)$ = angle of the downstream face from horizontal, with $S = 1/Z$ the slope gradient  
+> $u_c$ = critical velocity of the grass cover condition (m/s)  
+> $f$ = friction factor of flow over the grass cover, named in the model as the Darcy-Weisbach friction factor ([Chapter 3](./03-input-parameters.mdx))
 
-The critical discharge is computed in SI units internally; for US Customary analysis, the result is converted to ft²/s by dividing by $(0.3048)^2$.
+Because $u_c$ and $g$ are in SI units, the equation gives $q_c$ in m²/s; for a US Customary analysis, $q_c$ is converted to ft²/s by dividing by
+$(0.3048)^2$. The grass cover phase uses the sine of the slope angle, $\sin\theta$, whereas the erosion phase uses the slope gradient
+$S = \tan\theta$ (Assumption 13 in [Chapter 7](./07-assumptions-and-limitations.mdx)).
+
+:::warning[INPUT NEEDED IN-18 — Definition]
+The model names $f$ the Darcy-Weisbach friction factor, but the form $q_c = f u_c^3 / (2 g \sin\theta)$, and likewise $VET_c = G_f f / (2 g \sin\theta)$,
+corresponds to the Fanning friction factor; with the Darcy-Weisbach factor the denominator would be $8 g \sin\theta$. The equations here are written
+exactly as the model evaluates them. Confirm which friction factor is meant, checking against the formulation in Hughes and Thornton (2015), so that
+the parameter name, the default value of 0.015 (IN-07) and the equations agree.
+:::
 
 ### Erosional Limit Volume
 
-The erosional limit volume ($VET_c$) is the cumulative excess discharge volume per unit width that must be exceeded for complete grass cover removal:
+The erosional limit volume $VET_c$ is the cumulative excess overflow volume per unit crest length at which the grass cover is removed:
 
 <Equation equationKey="overtopping-screening-eq-vet" equation="VET_c = \frac{G_f \cdot f}{2 g \sin\theta}" />
 
-where:
+where $G_f$ is the erosional limit of the grass cover condition, tabulated in [Chapter 3](./03-input-parameters.mdx) with the units lb·s/ft³. The model evaluates the equation
+with $g$ = 9.81 m/s² in both unit systems. For a US Customary analysis it uses the tabulated $G_f$ and divides the result by $(0.3048)^2$; for an SI
+analysis it multiplies the tabulated $G_f$ by 0.3048 and applies no further conversion.
 
-> $G_f$ = erosional limit from the grass cover classification (lb·s/ft³)
-
-For US Customary analysis, the result is converted to ft³/ft by dividing by $(0.3048)^2$. For SI analysis, $G_f$ is first converted to SI units by
-multiplying by 0.3048 before the calculation.
+:::warning[INPUT NEEDED IN-19 — Definition]
+The physical quantity that the erosional limit $G_f$ represents, and its consistent units, are not established. The tabulated units (lb·s/ft³) do not
+combine with $f$ and $g$ (m/s²) to give a volume per unit crest length for $VET_c$, so the unit conversions above cannot be checked. As evaluated, the
+US Customary and SI results for the same grass cover condition differ by a factor of $1/(0.3048)^3$, whereas converting a volume per unit crest length
+from m² to ft² requires $1/(0.3048)^2$; the model owner should check whether the two unit systems give the same grass cover threshold. Provide the
+definition of $G_f$ (with reference to Hughes and Thornton, 2015) and its consistent units, and confirm the conversions.
+:::
 
 ### Cumulative Excess Volume
 
-At each time step, the model computes the excess discharge above the critical threshold and accumulates the volume using the trapezoidal rule:
+At each time step, the model computes the discharge in excess of the critical discharge and accumulates the excess volume with the trapezoidal rule:
 
 <Equation
   equationKey="overtopping-screening-eq-excess-volume"
-  equation="V_{\text{cum}}(t) = V_{\text{cum}}(t - \Delta t) + \frac{\Delta t_s}{2} \left[ \max(q_t - q_c, 0) + \max(q_{t-1} - q_c, 0) \right]"
+  equation="V_{\text{cum}}(t_i) = V_{\text{cum}}(t_{i-1}) + \frac{\Delta t_s}{2} \left[ \max(q_i - q_c, 0) + \max(q_{i-1} - q_c, 0) \right]"
 />
 
 where:
 
-> $V_\{\text\{cum\}\}(t)$ = cumulative excess volume at time $t$  
-> $\Delta t_s$ = time step in seconds  
-> $q_t$ = discharge at the current time step  
-> $q_c$ = critical discharge
+> $V_{\text{cum}}(t_i)$ = cumulative excess volume per unit crest length at time step $i$  
+> $\Delta t_s$ = hydrograph time step expressed in seconds, $\Delta t_s = 3600 \cdot \Delta t$ with $\Delta t$ in hours  
+> $q_i$ = unit discharge at time step $i$  
+> $q_c$ = critical discharge from <EquationReference equationKey="overtopping-screening-eq-critical-discharge" />
 
-Grass cover removal occurs when $V_\{\text\{cum\}\} > VET_c$. Once the grass cover is removed, the erosion phase begins immediately at the same time
-step. If no grass cover is present, the model enters the erosion phase directly at the start of the simulation.
+The grass cover is removed when $V_{\text{cum}} > VET_c$. Erosion of the exposed soil begins in the same time step. With No Grass Cover, the soil
+is exposed from the onset of overtopping and the model starts in Phase 2.
 
 ## Phase 2: Embankment Erosion
 
-Once the grass cover is removed (or if no grass cover is present), the model computes the erosion rate at each time step using the excess shear stress
-equation. <Citation citationKey="Hanson2011" /> <Citation citationKey="WinDAM" />
+Once the grass cover is removed, the model computes the erosion rate of the exposed soil at each time step with positive discharge, using the excess
+shear stress formulation applied in WinDAM C (USDA NRCS)<Citation citationKey="Hanson2011" />.
 
-### Flow Depth on Slope
+### Flow Depth on the Slope
 
-The flow depth on the downstream slope is computed using Manning's equation for steady uniform flow:
+The flow depth on the downstream face is the normal depth from Manning's equation for steady uniform flow (Assumption 12 in [Chapter 7](./07-assumptions-and-limitations.mdx)). Both the
+flow depth and the applied shear stress use the slope gradient $S = 1/Z = \tan\theta$ in place of the sine of the slope angle (Assumption 13 in
+[Chapter 7](./07-assumptions-and-limitations.mdx)):
 
 <Equation equationKey="overtopping-screening-eq-flow-depth" equation="h_s = \left(\frac{q \cdot n}{k_n \sqrt{S}}\right)^{0.6}" />
 
 where:
 
-> $h_s$ = normal flow depth on the slope (ft or m)  
+> $h_s$ = flow depth on the slope (ft or m)  
 > $q$ = unit discharge at the current time step  
-> $n$ = Manning's roughness coefficient (sampled)  
-> $k_n$ = Manning's equation coefficient (1.486 for US Customary, 1.0 for SI)  
-> $S = 1 / \text\{DownstreamSlope\}$ = slope (V/H)
+> $n$ = Manning's roughness coefficient (sampled; [Chapter 6](./06-monte-carlo-simulation.mdx))  
+> $k_n$ = Manning's equation coefficient, 1.486 (US Customary) or 1.0 (SI)  
+> $S = 1/Z$ = slope gradient of the downstream face
 
 ### Applied Shear Stress
 
-The shear stress applied to the embankment surface by the overtopping flow is:
+The shear stress the overtopping flow applies to the embankment surface is:
 
 <Equation equationKey="overtopping-screening-eq-shear-stress" equation="\tau = \gamma_w \cdot h_s \cdot S" />
 
 where:
 
 > $\tau$ = applied shear stress (psf or Pa)  
-> $\gamma_w$ = unit weight of water (62.4 lb/ft³ for US Customary, 9810 N/m³ for SI)  
+> $\gamma_w$ = unit weight of water, 62.4 lb/ft³ (US Customary) or 9,810 N/m³ (SI)  
 > $h_s$ = flow depth from <EquationReference equationKey="overtopping-screening-eq-flow-depth" />
 
 ### Erosion Rate
 
-The erosion rate is computed using the excess shear stress equation:
+The erosion rate follows the excess shear stress equation:
 
-<Equation equationKey="overtopping-screening-eq-erosion-rate" equation="\varepsilon = K_d \cdot \max(\tau - \tau_c, \, 0)^\alpha" />
+<Equation equationKey="overtopping-screening-eq-erosion-rate" equation="\varepsilon = k_d \cdot \max(\tau - \tau_c, \, 0)^\alpha" />
 
 where:
 
 > $\varepsilon$ = erosion rate (ft/hr or m/hr)  
-> $K_d$ = erodibility coefficient (sampled from the PERT distribution)  
+> $k_d$ = erodibility coefficient (sampled; [Chapter 6](./06-monte-carlo-simulation.mdx))  
 > $\tau$ = applied shear stress from <EquationReference equationKey="overtopping-screening-eq-shear-stress" />  
-> $\tau_c$ = critical shear stress (sampled from the PERT distribution)  
-> $\alpha$ = erosion exponent (`ErosionExponent`, default 1.0)
+> $\tau_c$ = critical shear stress (sampled; [Chapter 6](./06-monte-carlo-simulation.mdx))  
+> $\alpha$ = erosion exponent ([Chapter 3](./03-input-parameters.mdx); default 1.0)
 
-When `ShearStressMethod` is set to `Exclude`, the critical shear stress term is removed and the erosion rate becomes
-$\varepsilon = K_d \cdot \tau^\alpha$.
+When the user excludes the critical shear stress from the erosion equation ([Chapter 3](./03-input-parameters.mdx)), $\tau_c$ is taken as zero and the erosion rate becomes
+$\varepsilon = k_d \cdot \tau^\alpha$.
 
 ### Cumulative Erosion and Breach
 
-The cumulative erosion depth is accumulated at each time step:
+The erosion depth accumulates over the time steps:
 
-<Equation equationKey="overtopping-screening-eq-cumulative-erosion" equation="D(t) = D(t - \Delta t) + \varepsilon(t) \cdot \Delta t" />
+<Equation equationKey="overtopping-screening-eq-cumulative-erosion" equation="D(t_i) = D(t_{i-1}) + \varepsilon(t_i) \cdot \Delta t" />
 
-where:
+where $D(t_i)$ is the cumulative erosion depth at time step $i$ (ft or m) and $\Delta t$ is the hydrograph time step in hours (the same step as
+$\Delta t_s$ in the grass cover phase), matching the units of $\varepsilon$. Breach occurs when the cumulative erosion depth reaches the critical erosion depth:
 
-> $D(t)$ = cumulative erosion depth at time $t$  
-> $\Delta t$ = time step in hours (matching the units of $\varepsilon$)
+<EquationNoRef equation="D(t_i) \geq D_c" />
 
-Breach occurs when the cumulative erosion depth equals or exceeds the critical erosion depth:
-
-<EquationNoRef equation="D(t) \geq D_c" />
-
-Once breach is detected, the simulation for that realization and hazard level terminates immediately.
+Once breach occurs, the realization is recorded as a breach at that overtopping depth and no further time steps are evaluated. If the hydrograph ends
+first, the realization is recorded as no breach.
 
 ## Critical Erosion Depth
 
-The critical erosion depth ($D_c$) represents the perpendicular distance that the downstream embankment face must erode inward to intersect the
-upstream edge of the dam crest. The model assumes that erosion of the downstream face is uniform across the entire slope surface — the downstream face
-translates horizontally into the embankment until it reaches the upstream crest control point.
+The critical erosion depth $D_c$ is the depth, measured perpendicular to the downstream face, that the face must erode for its retreating surface to
+reach the upstream edge of the crest. The model treats erosion of the downstream face as uniform over the whole slope (Assumption 2 in [Chapter 7](./07-assumptions-and-limitations.mdx)): the
+face retreats parallel to itself until it reaches the upstream crest edge (Assumption 3 in [Chapter 7](./07-assumptions-and-limitations.mdx)).
 
-<Equation equationKey="overtopping-screening-eq-dc" equation="D_c = \max\!\left(\frac{W_c}{\sqrt{1 + 1/S^2}}, \; D_{\min}\right)" />
+<Equation equationKey="overtopping-screening-eq-dc" equation="D_c = \max\!\left(\frac{W_c}{\sqrt{1 + Z^2}}, \; D_{\min}\right)" />
 
 where:
 
-> $W_c$ = crest width (`CrestWidth`)  
-> $S = 1 / \text\{DownstreamSlope\}$ = slope (V/H)  
-> $D_\{\min\}$ = minimum critical erosion depth (2.0 ft for US Customary, 0.6 m for SI)
+> $W_c$ = crest width (ft or m)  
+> $Z$ = downstream slope ratio (H:V)  
+> $D_{\min}$ = minimum critical erosion depth, 2.0 ft (US Customary) or 0.6 m (SI)
 
-This calculation is implemented in `OvertoppingModel.RunAsync()`.
+The minimum prevents a small breach threshold for a narrow crest; for a 3H:1V slope it governs when the crest is narrower than about 6.3 ft. The
+critical erosion depth depends only on the geometry, so it is the same for every realization and overtopping depth.
 
-The minimum critical erosion depth prevents unrealistically small breach thresholds for narrow or zero-width crests.
+:::warning[INPUT NEEDED IN-13 — Engineering Basis]
+The breach criterion — breach when the uniformly retreating downstream face reaches the upstream edge of the crest — has no stated engineering basis.
+Provide the literature source (with full bibliographic details) or the engineering-judgment attribution for this criterion.
+:::
 
-## Simulation Flow Summary
+:::warning[INPUT NEEDED IN-14 — Engineering Basis]
+The minimum critical erosion depth $D_{\min}$ = 2.0 ft (0.6 m) has no stated engineering basis. Provide the literature source or the
+engineering-judgment attribution for this value.
+:::
+
+## Calculation Sequence
+
+For one realization at one overtopping depth, the model evaluates the following at each time step of the hydrograph, from the onset of overtopping
+until breach occurs or the scaled duration ends:
 
 <ProcessList
   items={[
-    'Initialize state: grassRemoved = false (or true if no grass cover), cumulativeExcessVolume = 0, cumulativeErosion = 0.',
-    {
-      title: 'For each time step in the pre-computed hydrograph:',
-      child: [
-        'If grass is not yet removed: compute excess discharge, accumulate volume via trapezoidal rule, check if cumulative volume exceeds VET_c.',
-        "If grass is removed and discharge is positive: compute flow depth via Manning's equation, compute applied shear stress, compute erosion rate from excess shear stress, accumulate erosion depth.",
-        'If cumulative erosion ≥ D_c: record breach and exit early.',
-      ],
-    },
-    'Return the final state: whether grass was removed and whether breach occurred.',
+    'While the grass cover is intact, add the excess overflow volume for the time step to the cumulative excess volume, and remove the cover if the cumulative excess volume exceeds the erosional limit volume.',
+    "Once the grass cover is removed (or from the onset, with No Grass Cover), and while the discharge is positive, compute the flow depth on the slope from Manning's equation, the applied shear stress, and the erosion rate, and add the erosion for the time step to the cumulative erosion depth.",
+    'If the cumulative erosion depth reaches the critical erosion depth, record a breach and stop.',
   ]}
 />
+
+The result of each realization at each depth is whether the grass cover was removed and whether breach occurred; [Chapter 6](./06-monte-carlo-simulation.mdx) describes how these
+outcomes become probabilities.
 
 <CitationFootnote />
