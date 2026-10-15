@@ -57,6 +57,9 @@ export default {
   onBrokenAnchors: 'warn',
   url: process.env.DOCUSAURUS_URL || 'https://USACE-RMC.github.io',
   baseUrl: process.env.DOCUSAURUS_BASE_URL || '/RMC-Software-Documentation/',
+  customFields: {
+    isPreview: process.env.DOCUSAURUS_IS_PREVIEW === 'true',
+  },
   favicon: 'img/USACE.png',
   organizationName: 'USACE-RMC', // Your GitHub organization or username
   projectName: 'RMC-Software-Documentation', // Your project name, make sure this matches your GitHub repo name
