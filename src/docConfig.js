@@ -361,7 +361,7 @@ const docs = [
     software: 'system-response',
     doc_location: 'web-applications/system-response/cle-wall-cliff-settlement-screening',
     doc_name: 'CLE Wall/Cliff Settlement Screening Technical Reference Manual',
-    active: false,
+    active: true,
     draft: true,
   },
   {

@@ -1,0 +1,463 @@
+---
+title: Flaw Assessment
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import Equation from '@site/src/components/Equation';
+import EquationReference from '@site/src/components/EquationReference';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer
+  link="/web-applications/system-response"
+  linkTitle="System Response Library"
+  document="web-applications/system-response/cle-wall-cliff-settlement-screening"
+/>
+
+# Flaw Assessment
+
+The flaw assessment answers two questions about the transverse crack that differential settlement against the wall or cliff can open near the
+crest. How likely is a continuous crack through the embankment (Node 1 of the event tree)? And how deep is it, which sets the pool level above
+which the crack can carry a concentrated leak (Node 2)? Both answers come from the same three quantities — the bench-width ratio, the normalized
+settlement, and the abutment slope below the wall or cliff — and both are the same at every pool level. The calculation proceeds in the order of
+this chapter:
+
+1. Form the bench-width ratio and the normalized settlement.
+2. Score the three factors as likelihood factors and form their weighted sum.
+3. Convert the weighted sum to the flaw probability.
+4. Compute the crack width.
+5. Compute the effective wall height and the crack depth, and from the crack depth the bottom-of-crack elevation.
+
+Steps 2 and 3 apply the risk-factor and likelihood-factor scoring scheme shared by seven of the CLE screening models, documented in the
+[Risk-Factor and Likelihood-Factor Scoring](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#risk-factor-and-likelihood-factor-scoring)
+section of the common methods manual; this chapter documents the factors, bands, and curve of this model. The flaw probability is used directly as
+Node 1: the model applies no flaw-continuity stage and no observation override.
+
+## Normalized Ratios
+
+### Bench-width ratio
+
+The bench-width ratio compares the width of the bench at the base of the wall or cliff with the height of the wall or cliff:
+
+<Equation equationKey="cle-wall-cliff-settlement-screening-eq-1" equation="r_b = \frac{W_b}{H_w}" />
+
+where $W_b$ is the bench width and $H_w$ is the wall or cliff height. A ratio of zero describes fill placed directly against the wall or cliff
+with no bench; a large ratio describes a wide bench that sets the fill well back from the wall or cliff.
+
+### Normalized settlement
+
+The normalized settlement $r_s$ is the post-construction settlement expressed as a percentage of the dam height. When the maximum
+post-construction settlement $s$ is supplied,
+
+<Equation equationKey="cle-wall-cliff-settlement-screening-eq-2" equation="r_s = 100\,\frac{s}{H}" />
+
+with $s$ and $H$ in the same length unit. When no settlement is supplied, the normalized settlement takes a default value set by the year of
+construction $Y$:
+
+<Equation
+  equationKey="cle-wall-cliff-settlement-screening-eq-3"
+  equation="r_s = \begin{cases} 0.5\ \% & Y < 1950 \\[4pt] 0.25\ \% & Y \ge 1950 \end{cases}"
+/>
+
+A dam completed in 1950 itself takes the 0.25 percent default. A supplied settlement always takes precedence over the default, whatever the year.
+
+:::warning[INPUT NEEDED IN-04 — Engineering Basis]
+The default normalized settlement used when no settlement is supplied
+(<EquationReference equationKey="cle-wall-cliff-settlement-screening-eq-3" />: 0.5 percent of the dam height for dams completed before 1950,
+0.25 percent for dams completed in 1950 or later, with the year 1950 itself classed with the later dams) requires an engineering basis. Provide the
+literature source for the two values and the 1950 boundary (with full bibliographic details if it is not Fell et al. (2024), and the table or
+section if it is), or the engineering-judgment attribution to state here.
+
+Proposed (unconfirmed): the two values represent typical post-construction crest settlements of embankments built before and after the general
+adoption of controlled compaction of earthfill, with older, less well compacted embankments settling more. Confirm or replace.
+:::
+
+## Likelihood Factors
+
+Each of the three flaw factors is scored as a likelihood factor from 1, the condition least likely to produce a continuous crack, to 4, the most
+likely, by placing its input in one of four bands (<TableReference tableKey="cle-wall-cliff-settlement-screening-table-4" />). Each factor carries
+a risk factor that weights its score (<TableReference tableKey="cle-wall-cliff-settlement-screening-table-5" />), following Fell et al.
+(2024) <Citation citationKey="Fell2024" />:
+
+- **Cross-valley profile** — scored on the bench-width ratio $r_b$. A narrow bench, or none, scores high; a wide bench scores low.
+- **Settlement** — scored on the normalized settlement $r_s$. Larger settlement relative to the dam height scores higher.
+- **Abutment slope** — scored on the abutment slope below the wall or cliff $\beta_1$. A steeper slope scores higher.
+
+<TableVertical
+  tableKey="cle-wall-cliff-settlement-screening-table-4"
+  alt="Likelihood-factor bands for the three flaw factors"
+  caption="Likelihood-factor bands for the three flaw factors."
+  colAlign={['center', 'center', 'center', 'center']}
+  headers={[[{ value: 'Likelihood Factor' }, { value: 'Cross-Valley Profile, r<sub>b</sub>' }, { value: 'Settlement, r<sub>s</sub> (%)' }, { value: 'Abutment Slope, β<sub>1</sub> (°)' }]]}
+  columns={[
+    ['1', '2', '3', '4'],
+    ['> 2.5', '> 1 to 2.5', '0.25 to 1', 'Less than 0.25'],
+    ['≤ 0.25', '> 0.25 to 0.75', '> 0.75 to 2', '> 2'],
+    ['≤ 25', '> 25 to 45', '> 45 to 60', '> 60'],
+  ]}
+/>
+
+The settlement and abutment slope bands each include their upper limit. The cross-valley profile bands differ: the band for a likelihood factor
+of 2 includes its upper limit of 2.5, the band for 3 includes both of its limits, 0.25 and 1, and the band for 4 excludes its upper limit of 0.25.
+A bench-width ratio of exactly 2.5 therefore scores 2, and ratios of exactly 1 and exactly 0.25 both score 3. In the source, the cross-valley
+bands for 2 and 3 both include a ratio of 1. The model assigns that ratio to the band for 3, the more conservative of the two (a screening design
+decision made by engineering judgment), which is why the band for 2 appears in the table as starting above 1. Both era defaults of
+the normalized settlement fall in the two lowest settlement bands: the 0.25 percent default of a dam completed in 1950 or later scores 1, and the
+0.5 percent default of an earlier dam scores 2.
+
+<TableVertical
+  tableKey="cle-wall-cliff-settlement-screening-table-5"
+  alt="Risk factors of the three flaw factors"
+  caption="Risk factors of the three flaw factors."
+  colAlign={['left', 'center', 'center', 'center']}
+  headers={[[{ value: 'Factor' }, { value: 'Input' }, { value: 'Risk Factor' }, { value: 'Score of 1 Forces Zero' }]]}
+  columns={[
+    ['Cross-valley profile', 'Settlement', 'Abutment slope'],
+    ['r<sub>b</sub>', 'r<sub>s</sub>', 'β<sub>1</sub>'],
+    ['3', '2', '1'],
+    ['Yes', 'No', 'Yes'],
+  ]}
+/>
+
+:::warning[INPUT NEEDED IN-05 — Engineering Basis]
+The likelihood-factor bands of <TableReference tableKey="cle-wall-cliff-settlement-screening-table-4" /> and the risk factors of
+<TableReference tableKey="cle-wall-cliff-settlement-screening-table-5" /> (3 for the cross-valley profile, 2 for settlement, 1 for the abutment
+slope) are attributed to Fell et al. (2024). Cite the table or section of Fell et al. (2024) that gives them, and confirm the factor names and
+the band limits as printed, including that the source's cross-valley profile bands for likelihood factors of 2 and 3 both include a bench-width
+ratio of 1.
+:::
+
+### Weighted sum
+
+The three scores combine into the weighted sum defined in the
+[Weighted Sum](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#weighted-sum) section of the common
+methods manual:
+
+<Equation
+  equationKey="cle-wall-cliff-settlement-screening-eq-4"
+  equation="\Sigma = 3\,LF_{xv} + 2\,LF_{s} + 1\,LF_{\beta}"
+/>
+
+where $LF_{xv}$, $LF_{s}$, and $LF_{\beta}$ are the likelihood factors of the cross-valley profile, settlement, and abutment slope. Every
+likelihood factor of this model is a whole number, so the weighted sum is a whole number between 6 and 24.
+
+### Incompatible-condition factors
+
+The cross-valley profile and the abutment slope are incompatible-condition factors (see the
+[Flaw Probability from the Weighted Sum](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#flaw-probability-from-the-weighted-sum)
+section of the common methods manual). When either scores 1 — a bench wider than 2.5 times the wall or cliff height, or an abutment slope of
+25° or flatter — the flaw probability is zero whatever the other two factors score. The settlement factor is not an incompatible-condition factor:
+a settlement score of 1 lowers the weighted sum but does not by itself rule out a crack.
+
+Once neither geometric factor scores 1, each scores at least 2, so every weighted sum that reaches the flaw-probability curve lies between 10 and
+24, and every whole number in that range can occur.
+
+:::warning[INPUT NEEDED IN-06 — Engineering Basis]
+The rule that a cross-valley profile score of 1 (bench-width ratio greater than 2.5) or an abutment slope score of 1 (slope of 25° or flatter)
+forces the flaw probability to zero, while a settlement score of 1 does not, requires an engineering basis. Provide the literature source (the table
+or section of Fell et al. (2024), if it is the source) or the engineering-judgment attribution.
+
+Proposed (unconfirmed): a bench that wide sets the fill far enough from the wall or cliff, and an abutment that flat gives a gradual enough
+transition, that the geometry cannot concentrate differential settlement into a continuous transverse crack, whereas some settlement is always
+present. Confirm or replace.
+:::
+
+## Flaw Probability
+
+The weighted sum is converted to the flaw probability $P_{flaw}$ by the curve of
+<TableReference tableKey="cle-wall-cliff-settlement-screening-table-6" />, interpolated with the logarithm of the probability linear in the
+weighted sum, as documented in the
+[Flaw Probability from the Weighted Sum](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#flaw-probability-from-the-weighted-sum)
+section of the common methods manual.
+The point at a weighted sum of 9 carries a negligible probability. Because no reachable weighted sum is less than 10 and none exceeds 24, the
+curve is never held at either end value.
+
+<TableVertical
+  tableKey="cle-wall-cliff-settlement-screening-table-6"
+  alt="Flaw probability curve points"
+  caption="Flaw probability curve: tabulated points of the weighted sum and the probability of a continuous crack."
+  colAlign={['center', 'center']}
+  headers={[[{ value: 'Weighted Sum, Σ' }, { value: 'Flaw Probability' }]]}
+  columns={[
+    ['9', '11', '13', '19', '24'],
+    ['Negligible', '1 × 10<sup>-3</sup>', '5 × 10<sup>-3</sup>', '2 × 10<sup>-2</sup>', '2 × 10<sup>-1</sup>'],
+  ]}
+/>
+
+Because the weighted sum is a whole number, the flaw probability takes one of fifteen values
+(<TableReference tableKey="cle-wall-cliff-settlement-screening-table-7" />), or zero when an incompatible-condition factor scores 1. The lowest
+reachable sum, 10, requires a cross-valley profile score of 2, a settlement score of 1, and an abutment slope score of 2. It lies between the
+negligible point at 9 and the point at 11, so its flaw probability is negligible, many orders of magnitude below $1 \times 10^{-3}$, and the SRP
+is effectively negligible.
+
+<TableVertical
+  tableKey="cle-wall-cliff-settlement-screening-table-7"
+  alt="Flaw probability at each reachable weighted sum"
+  caption="Flaw probability at each reachable weighted sum, computed from the flaw probability curve."
+  colAlign={['center', 'center', 'center', 'center']}
+  headers={[[{ value: 'Weighted Sum' }, { value: 'Flaw Probability' }, { value: 'Weighted Sum' }, { value: 'Flaw Probability' }]]}
+  columns={[
+    ['10', '11', '12', '13', '14', '15', '16', '17'],
+    [
+      'Negligible',
+      '1.0 × 10<sup>-3</sup>',
+      '2.2 × 10<sup>-3</sup>',
+      '5.0 × 10<sup>-3</sup>',
+      '6.3 × 10<sup>-3</sup>',
+      '7.9 × 10<sup>-3</sup>',
+      '1.0 × 10<sup>-2</sup>',
+      '1.3 × 10<sup>-2</sup>',
+    ],
+    ['18', '19', '20', '21', '22', '23', '24', '—'],
+    [
+      '1.6 × 10<sup>-2</sup>',
+      '2.0 × 10<sup>-2</sup>',
+      '3.2 × 10<sup>-2</sup>',
+      '5.0 × 10<sup>-2</sup>',
+      '8.0 × 10<sup>-2</sup>',
+      '1.3 × 10<sup>-1</sup>',
+      '2.0 × 10<sup>-1</sup>',
+      '—',
+    ],
+  ]}
+/>
+
+One step in the cross-valley profile score moves the weighted sum most: by 3, compared with 2 for the settlement and 1 for the abutment slope. A
+score changes only where its input crosses a band limit, and the abutment slope, like the cross-valley profile, forces the flaw probability to
+zero on its own when it scores 1. Across the reachable range the flaw probability spans from negligible to 0.2.
+
+:::warning[INPUT NEEDED IN-07 — Engineering Basis]
+The flaw-probability curve of <TableReference tableKey="cle-wall-cliff-settlement-screening-table-6" /> (weighted sums 9, 11, 13, 19, 24 →
+negligible, 1 × 10<sup>-3</sup>, 5 × 10<sup>-3</sup>, 2 × 10<sup>-2</sup>, 2 × 10<sup>-1</sup>) is attributed to Fell et al. (2024). Cite the
+table or figure of Fell et al. (2024) that gives it, and state whether the source gives a probability at a weighted sum of 9 (or a lower limit
+below which the probability is zero) that the negligible point represents. The general interpolation form is documented, with its basis, in the
+[Flaw Probability from the Weighted Sum](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#flaw-probability-from-the-weighted-sum)
+section of the common methods manual.
+:::
+
+## No Observation Override
+
+The model has no observation override: an observed transverse crack at the crest does not set the flaw probability to 1.0, and no observation is
+taken as an input. The flaw probability is always the scored value. The common methods manual lists the overrides of the other models in its
+[Observation Overrides](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#observation-overrides)
+section.
+
+:::warning[INPUT NEEDED IN-08 — Engineering Basis]
+The absence of an observation override in this model — where the cross-valley settlement, desiccation, and frost-cracking models each accept an
+observation of continuous transverse cracking that sets the flaw probability to 1.0 — requires an engineering basis or a documentation decision to
+state here. State why an observed crack adjacent to the wall or cliff is not used to override the scored probability, and what a user who has
+observed such a crack should do.
+:::
+
+## Crack Width
+
+The crack width $w$ is computed in two steps, in millimeters whatever the length unit of the other inputs. First, the crack width for
+an abutment slope of 45°, $w_{45}$, is interpolated bilinearly in the normalized settlement and the bench-width ratio from
+<TableReference tableKey="cle-wall-cliff-settlement-screening-table-8" /> and <TableReference tableKey="cle-wall-cliff-settlement-screening-table-9" /> <Citation citationKey="Fell2024" />, which together form one
+table split by bench-width ratio. Second, it is scaled to the abutment slope of the site by an adjustment factor $n_\beta$, interpolated linearly in $\beta_1$ from
+<TableReference tableKey="cle-wall-cliff-settlement-screening-table-10" />:
+
+<Equation equationKey="cle-wall-cliff-settlement-screening-eq-5" equation="w = n_\beta(\beta_1)\; w_{45}(r_s,\, r_b)" />
+
+<TableVertical
+  tableKey="cle-wall-cliff-settlement-screening-table-8"
+  alt="Crack width for an abutment slope of 45 degrees, bench-width ratios 0 to 0.5"
+  caption="Crack width for an abutment slope of 45° (mm), by normalized settlement (rows), at bench-width ratios of 0 to 0.5 (columns)."
+  colAlign={['center', 'center', 'center', 'center']}
+  headers={[[
+    { value: 'r<sub>s</sub> (%)' },
+    { value: 'r<sub>b</sub> = 0' },
+    { value: 'r<sub>b</sub> = 0.25' },
+    { value: 'r<sub>b</sub> = 0.5' },
+  ]]}
+  columns={[
+    ['0', '0.1', '0.25', '0.5', '1', '2'],
+    ['1', '5', '12', '25', '50', '100'],
+    ['1', '4', '10', '20', '40', '80'],
+    ['1', '2.5', '6', '12', '25', '50'],
+  ]}
+/>
+
+<TableVertical
+  tableKey="cle-wall-cliff-settlement-screening-table-9"
+  alt="Crack width for an abutment slope of 45 degrees, bench-width ratios 1 to 2.5"
+  caption="Crack width for an abutment slope of 45° (mm), by normalized settlement (rows), at bench-width ratios of 1 to 2.5 (columns)."
+  colAlign={['center', 'center', 'center', 'center']}
+  headers={[[
+    { value: 'r<sub>s</sub> (%)' },
+    { value: 'r<sub>b</sub> = 1' },
+    { value: 'r<sub>b</sub> = 2' },
+    { value: 'r<sub>b</sub> = 2.5' },
+  ]]}
+  columns={[
+    ['0', '0.1', '0.25', '0.5', '1', '2'],
+    ['1', '1', '2.5', '5', '10', '20'],
+    ['1', '1', '1', '1', '2.5', '5'],
+    ['0', '0', '0', '0', '0', '0'],
+  ]}
+/>
+
+<TableVertical
+  tableKey="cle-wall-cliff-settlement-screening-table-10"
+  alt="Crack width adjustment factor by abutment slope"
+  caption="Crack width adjustment factor by abutment slope."
+  colAlign={['center', 'center']}
+  headers={[[{ value: 'Abutment Slope, β<sub>1</sub> (°)' }, { value: 'Adjustment Factor, n<sub>β</sub>' }]]}
+  columns={[
+    ['15', '30', '45', '60'],
+    ['0.25', '0.75', '1.0', '1.0'],
+  ]}
+/>
+
+The crack width is a supporting result. It does not enter the crack depth or any node of the event tree: in this model, initiation depends only on
+whether the pool stands above the bottom of the crack (see [Event Tree](./05-event-tree.mdx#node-2-initiation)).
+
+At a bench-width ratio of exactly 2.5 the crack width is zero at every settlement and slope, and between ratios of 2 and 2.5 it falls toward zero.
+The other results do not follow it to zero. A ratio of 2.5 still scores a cross-valley profile likelihood factor of 2, so the flaw probability
+is not zero unless the abutment slope scores 1, and the effective wall height ratio is held at its value for a ratio of 2, so the crack depth is
+not zero either. Initiation is then certain above the bottom of a crack that the width relationship gives as zero width.
+
+:::warning[INPUT NEEDED IN-09 — Engineering Basis]
+The crack width relationships of <TableReference tableKey="cle-wall-cliff-settlement-screening-table-8" />, <TableReference tableKey="cle-wall-cliff-settlement-screening-table-9" />, and
+<TableReference tableKey="cle-wall-cliff-settlement-screening-table-10" /> are attributed to Fell et al. (2024). Cite the table or figure of
+Fell et al. (2024) that gives each, and confirm three details: (1) the position at which the width is defined (for example, the width at the
+crest surface); (2) the zero width at a bench-width ratio of 2.5 and the 1 mm width at zero settlement; and (3) that the abutment-slope axis of the
+adjustment factor is 15°, 30°, 45°, 60°, where the effective wall height relationship of
+<TableReference tableKey="cle-wall-cliff-settlement-screening-table-11" /> and <TableReference tableKey="cle-wall-cliff-settlement-screening-table-12" /> uses 15°, 25°, 45°, 60°.
+:::
+
+## Crack Depth
+
+The crack depth is a fraction of an effective wall height $H_e$, which is itself a fraction of the wall or cliff height. The effective wall
+height ratio $r_e = H_e/H_w$ is interpolated bilinearly in the abutment slope and the bench-width ratio from
+<TableReference tableKey="cle-wall-cliff-settlement-screening-table-11" /> and <TableReference tableKey="cle-wall-cliff-settlement-screening-table-12" /> <Citation citationKey="Fell2024" />, which together form one
+table split by bench-width ratio, and the effective wall height is
+
+<Equation equationKey="cle-wall-cliff-settlement-screening-eq-6" equation="H_e = r_e(\beta_1,\, r_b)\; H_w" />
+
+<TableVertical
+  tableKey="cle-wall-cliff-settlement-screening-table-11"
+  alt="Effective wall height ratio, bench-width ratios 0 to 0.5"
+  caption="Effective wall height ratio r<sub>e</sub> = H<sub>e</sub>/H<sub>w</sub> by abutment slope (rows), at bench-width ratios of 0 to 0.5 (columns)."
+  colAlign={['center', 'center', 'center', 'center']}
+  headers={[[
+    { value: 'β<sub>1</sub> (°)' },
+    { value: 'r<sub>b</sub> = 0' },
+    { value: 'r<sub>b</sub> = 0.25' },
+    { value: 'r<sub>b</sub> = 0.5' },
+  ]]}
+  columns={[
+    ['15', '25', '45', '60'],
+    ['1', '1', '1', '1'],
+    ['0.93', '0.88', '0.75', '0.57'],
+    ['0.87', '0.77', '0.50', '0.14'],
+  ]}
+/>
+
+<TableVertical
+  tableKey="cle-wall-cliff-settlement-screening-table-12"
+  alt="Effective wall height ratio, bench-width ratios 1 to 2"
+  caption="Effective wall height ratio r<sub>e</sub> = H<sub>e</sub>/H<sub>w</sub> by abutment slope (rows), at bench-width ratios of 1 and 2 (columns)."
+  colAlign={['center', 'center', 'center']}
+  headers={[[
+    { value: 'β<sub>1</sub> (°)' },
+    { value: 'r<sub>b</sub> = 1' },
+    { value: 'r<sub>b</sub> = 2' },
+  ]]}
+  columns={[
+    ['15', '25', '45', '60'],
+    ['0.73', '0.54', '0.05', '0.05'],
+    ['0.46', '0.08', '0.05', '0.05'],
+  ]}
+/>
+
+With no bench, the effective wall height is the full wall or cliff height at every abutment slope. At each abutment slope the ratio falls, or
+stays the same, as the bench widens, and at each bench-width ratio it falls, or stays the same, as the abutment steepens. On the flatter slopes
+of 15° and 25° it keeps falling up to a bench-width ratio of 2; on the steeper slopes of 45° and 60° it reaches 0.05 at a ratio of 1 and stays
+there.
+
+The normalized crack depth $r_d = 100\, d_c/H_e$, in percent of the effective wall height, is interpolated linearly in the normalized settlement
+from <TableReference tableKey="cle-wall-cliff-settlement-screening-table-13" /> <Citation citationKey="Fell2024" />, and the crack depth is
+
+<Equation equationKey="cle-wall-cliff-settlement-screening-eq-7" equation="d_c = \frac{r_d(r_s)}{100}\; H_e" />
+
+<TableVertical
+  tableKey="cle-wall-cliff-settlement-screening-table-13"
+  alt="Normalized crack depth by normalized settlement"
+  caption="Normalized crack depth by normalized settlement."
+  colAlign={['center', 'center']}
+  headers={[[{ value: 'Normalized Settlement, r<sub>s</sub> (%)' }, { value: 'Normalized Crack Depth, r<sub>d</sub> = d<sub>c</sub>/H<sub>e</sub> (%)' }]]}
+  columns={[
+    ['0', '0.1', '0.25', '0.5', '1', '2'],
+    ['15', '50', '65', '90', '100', '100'],
+  ]}
+/>
+
+The crack reaches the full effective wall height at a normalized settlement of 1 percent or more. At zero settlement the crack depth is still 15
+percent of the effective wall height: the relationship assigns a crack depth even where the settlement factor scores 1. The two era defaults give
+65 percent (0.25 percent settlement) and 90 percent (0.5 percent settlement) of the effective wall height.
+
+Combining <EquationReference equationKey="cle-wall-cliff-settlement-screening-eq-6" /> and
+<EquationReference equationKey="cle-wall-cliff-settlement-screening-eq-7" />, the crack depth is the wall or cliff height multiplied by two
+dimensionless ratios, which is why the result does not depend on the length unit. The crack depth can be no greater than the wall or cliff height.
+
+:::warning[INPUT NEEDED IN-10 — Engineering Basis]
+The effective wall height relationship of <TableReference tableKey="cle-wall-cliff-settlement-screening-table-11" /> and
+<TableReference tableKey="cle-wall-cliff-settlement-screening-table-12" />, and the normalized crack depth
+relationship of <TableReference tableKey="cle-wall-cliff-settlement-screening-table-13" />, are attributed to Fell et al. (2024). Cite the table or
+figure of Fell et al. (2024) that gives each, confirm the definition of the effective wall height $H_e$, and confirm that a crack depth of 15
+percent of the effective wall height is intended at zero settlement.
+:::
+
+## Bottom of the Crack
+
+The bottom-of-crack elevation is the crest elevation less the crack depth, as for every crest-crack model. The crack depth is measured down from
+the crest whatever the elevation of the top of the wall or cliff; the model takes no top-of-wall or top-of-cliff elevation (see marker IN-01 in
+[Input Parameters](./03-input-parameters.mdx#dam-and-wall-or-cliff-geometry)). The convention is documented in the
+[Crest-Crack Models: Bottom of the Crack](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#crest-crack-models-bottom-of-the-crack)
+section of the common methods manual:
+
+<Equation equationKey="cle-wall-cliff-settlement-screening-eq-8" equation="z_{bc} = z_c - d_c" />
+
+It is the initiation gate of the event tree, and the elevation at which the below-filter roof materials are taken (see
+[Event Tree](./05-event-tree.mdx)). It is computed whenever the inputs are valid, including when an incompatible-condition factor forces the flaw
+probability to zero; the SRP is then negligible at every pool level regardless of the crack depth.
+
+## Range of the Tabulated Relationships
+
+The crack width, effective wall height, and crack depth relationships are tabulated over normalized settlements from 0 to 2 percent, bench-width
+ratios from 0 to 2.5 (0 to 2 for the effective wall height), and abutment slopes from 15° to 60°. Beyond the tabulated range of an input, each
+relationship takes its value at the nearest tabulated edge of that input; it is not extrapolated. In particular:
+
+- A normalized settlement above 2 percent gives the crack width and depth of 2 percent: the crack depth is the full effective wall height.
+- An abutment slope steeper than 60° gives the values of 60°, and a slope flatter than 15° gives the values of 15° (such a slope also forces the
+  flaw probability to zero through the abutment slope factor).
+- A bench-width ratio above 2 gives the effective wall height ratio of 2; above 2.5 the cross-valley profile factor also forces the flaw
+  probability to zero.
+
+The likelihood-factor bands of <TableReference tableKey="cle-wall-cliff-settlement-screening-table-4" /> have no such limit: their outer bands
+are open-ended.
+
+:::warning[INPUT NEEDED IN-11 — Applicability]
+State whether the model is intended for inputs beyond the tabulated range of the crack width and depth relationships — in particular normalized
+settlements above 2 percent and abutment slopes steeper than 60° — where the relationships are held at their edge values, and whether a caution
+on such results belongs here.
+:::
+
+## Worked Example
+
+For an embankment of height $H = 100$ ft against a wall of height $H_w = 40$ ft with a bench width $W_b = 10$ ft, a measured post-construction
+settlement $s = 0.5$ ft, and an abutment slope $\beta_1 = 50°$:
+
+1. **Normalized ratios** — $r_b = 10 / 40 = 0.25$ and $r_s = 100 \times 0.5 / 100 = 0.5$ percent.
+2. **Likelihood factors** — the cross-valley profile scores 3 ($0.25 \le r_b \le 1$), the settlement scores 2 ($0.25 < r_s \le 0.75$), and the
+   abutment slope scores 3 ($45° < \beta_1 \le 60°$). Neither incompatible-condition factor scores 1.
+3. **Flaw probability** — $\Sigma = 3 \times 3 + 2 \times 2 + 1 \times 3 = 16$, which gives $P_{flaw} = 1.0 \times 10^{-2}$.
+4. **Crack width** — $w_{45} = 20$ mm at $r_s = 0.5$ percent and $r_b = 0.25$, and $n_\beta = 1.0$ at 50°, so $w = 20$ mm.
+5. **Crack depth** — the effective wall height ratio $r_e$ at 50° and $r_b = 0.25$ is interpolated between 0.75 at 45° and 0.57 at 60° as 0.69, so
+   $H_e = 0.69 \times 40 = 27.6$ ft. The normalized crack depth $r_d$ at 0.5 percent settlement is 90 percent, so $d_c = 0.90 \times 27.6 = 24.8$ ft, and
+   the bottom of the crack lies 24.8 ft below the crest.
+
+<CitationFootnote />
