@@ -329,7 +329,7 @@ const docs = [
     software: 'system-response',
     doc_location: 'web-applications/system-response/backward-erosion-piping-screening',
     doc_name: 'Backward Erosion Piping Screening Technical Reference Manual',
-    active: false,
+    active: true,
     draft: true,
   },
   {

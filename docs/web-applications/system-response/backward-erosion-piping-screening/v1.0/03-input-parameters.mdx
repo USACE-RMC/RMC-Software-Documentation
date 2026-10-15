@@ -1,0 +1,441 @@
+---
+title: Input Parameters
+---
+
+import EquationNoRef from '@site/src/components/EquationNoRef';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/backward-erosion-piping-screening" />
+
+# Input Parameters
+
+This chapter documents every user input to the BEP screening model. Inputs are organized into ten groups: hydraulic loading, embankment geometry,
+upstream blanket, downstream seepage berm, foundation flaw evidence, confining-layer characterization, observed-seepage refinements, embankment
+materials, foundation sand properties and unit weights, and the intervention and breach probabilities.
+
+Several inputs are statistical distributions that characterize uncertainty in a physical quantity. A distribution input may take any of five
+forms: a deterministic (single) value, a uniform distribution between a low and high bound, a normal distribution (mean and standard deviation),
+a triangular distribution (low, mode, high), or a PERT distribution (low, mode, high). The Monte Carlo analyses described in
+[Delegated Models](./07-delegated-models.mdx) sample these distributions. Geometric seepage-path lengths — the upstream blanket length, the berm
+length, and the confining-layer extents — are the exception: a known length is a site measurement entered as a single value. Where such a length
+is unknown, the input is omitted and the model substitutes the wide default characterization documented in
+[Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx).
+
+## Hydraulic Loading
+
+The hydraulic loading is defined by a headwater rating series and an optional companion tailwater series
+(<TableReference tableKey="bep-screening-table-2" />). The model evaluates the event tree across a range of pool levels spanning the supplied
+headwater values.
+
+<TableVertical
+  tableKey="bep-screening-table-2"
+  alt="Hydraulic loading parameters"
+  caption="Hydraulic loading parameters."
+  colWidths={[18, 6, 8, 14, 'minmax(24ch, 1fr)']}
+  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range / Default' }, { value: 'Description' }]]}
+  columns={[
+    ['Headwater elevation series', 'Tailwater elevation series'],
+    ['h', 't'],
+    ['ft', 'ft'],
+    ['At least two distinct values (required)', 'Optional'],
+    [
+      'Headwater (pool) elevations defining the range of hydraulic loading to be evaluated. The series is sorted and any duplicate values are removed before analysis.',
+      'Tailwater elevations paired one-to-one with the headwater series. The tailwater is optional at two levels: the entire series may be omitted (no tailwater at any pool level), or individual stages may be left without a value (no tailwater at that pool level). Wherever no tailwater exists, the downstream ground surface controls the net head computation, as described in Hydraulic Loading and Seepage Paths.',
+    ],
+  ]}
+/>
+
+## Embankment Geometry
+
+The embankment cross-section is described by its crest and by slope-segment tables for the upstream and downstream faces
+(<TableReference tableKey="bep-screening-table-3" />). Each face is a sequence of one or more segments ordered from the crest down to the toe;
+each segment is defined by its bottom elevation and its slope, expressed as horizontal run per unit of vertical rise (H:V). Multiple segments
+accommodate compound slopes and intermediate benches.
+
+<TableVertical
+  tableKey="bep-screening-table-3"
+  alt="Embankment geometry parameters"
+  caption="Embankment geometry parameters."
+  colWidths={[20, 8, 8, 16, 'minmax(22ch, 1fr)']}
+  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range / Default' }, { value: 'Description' }]]}
+  columns={[
+    [
+      'Crest elevation',
+      'Crest width',
+      'Upstream face slope segments',
+      'Downstream face slope segments',
+      'Daylight ground surface elevation',
+    ],
+    ['E<sub>c</sub>', 'W<sub>c</sub>', '—', '—', 'E<sub>day</sub>'],
+    ['ft', 'ft', 'ft, H:V', 'ft, H:V', 'ft'],
+    [
+      'Required',
+      '> 0 (required)',
+      'At least one segment (required)',
+      'At least one segment (required)',
+      'Optional',
+    ],
+    [
+      'Elevation of the embankment crest.',
+      'Width of the embankment crest.',
+      'Bottom elevation and slope of each upstream face segment, ordered from the crest to the toe. Every slope must be positive.',
+      'Bottom elevation and slope of each downstream face segment, ordered from the crest to the toe. Every slope must be positive. The lowest segment elevation defines the downstream toe, which must lie below the crest.',
+      'Ground-surface elevation at the downstream termination of the confining layer — the daylight exit. When omitted, the daylight exit is assumed to share the toe reference elevation (the berm toe when a berm with a specified toe elevation is present, otherwise the downstream embankment toe). When the daylighting exit is the berm toe itself (a berm over a confirmed layer that reaches or clears its downstream extent, or overlies a layer of unknown extent), a supplied value is ignored with a validation warning: the berm-toe reference is the only coherent datum for that exit (see Hydraulic Loading and Seepage Paths).',
+    ],
+  ]}
+/>
+
+Three geometric quantities are derived from the cross-section rather than entered directly:
+
+- **Downstream toe elevation** $E_{toe}$ — the lowest bottom elevation among the downstream face segments.
+- **Embankment base width** $L_2$ — the crest width plus the horizontal projections of the upstream and downstream faces from the crest to
+  their respective toes. This is the embankment component of the seepage path. A downstream seepage berm is *not* part of $L_2$; it extends the
+  downstream seepage path beyond the toe instead (see [Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx)).
+- **Embankment height** $H_d = E_c - E_{toe}$ — used to scale the downstream seepage path when the confining layer extent is unknown.
+
+## Upstream Blanket
+
+An engineered impervious blanket extending upstream of the embankment lengthens the seepage path and reduces gradients at the downstream exit
+(<TableReference tableKey="bep-screening-table-4" />). When an upstream blanket is present, the blowout and heave analyses route to Blanket
+Theory Case 2, which represents impervious strata on both sides of the embankment (see
+[Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx)).
+
+<TableVertical
+  tableKey="bep-screening-table-4"
+  alt="Upstream blanket parameters"
+  caption="Upstream blanket parameters."
+  colWidths={[18, 8, 8, 16, 'minmax(22ch, 1fr)']}
+  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range / Default' }, { value: 'Description' }]]}
+  columns={[
+    ['Upstream blanket present', 'Upstream blanket length'],
+    ['—', 'L<sub>1</sub>'],
+    ['—', 'ft'],
+    ['Yes / No (default No)', '> 0; required when the blanket is present'],
+    [
+      'Whether an engineered impervious blanket extends upstream of the embankment toe.',
+      'Length of the blanket measured from the upstream embankment toe, entered as a single value. It serves directly as the upstream seepage path length L<sub>1</sub>.',
+    ],
+  ]}
+/>
+
+## Downstream Seepage Berm
+
+A downstream seepage or stability berm adds weight over the exit area and displaces the seepage exit beyond the berm
+(<TableReference tableKey="bep-screening-table-5" />). Its consequences for the event tree depend on where the berm ends relative to the
+confining layer: a berm ending within a confirmed layer's known extent retains the through-layer exit mechanisms at an exit point beyond the
+berm, while a berm that reaches or clears the layer's extent — or overlies a layer of unknown extent or unknown presence — is assumed to
+produce a daylighting exit at the berm toe, where the unfiltered exit is certain. Every berm extends the toe progression path. The full rules
+are documented in [Event Tree](./06-event-tree.mdx) and [Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx).
+
+<TableVertical
+  tableKey="bep-screening-table-5"
+  alt="Downstream seepage berm parameters"
+  caption="Downstream seepage berm parameters."
+  colWidths={[20, 8, 8, 16, 'minmax(22ch, 1fr)']}
+  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range / Default' }, { value: 'Description' }]]}
+  columns={[
+    ['Berm present', 'Berm length', 'Berm-toe ground surface elevation'],
+    ['—', 'L<sub>b</sub>', 'E<sub>bt</sub>'],
+    ['—', 'ft', 'ft'],
+    ['Yes / No (default No)', '> 0; required when the berm is present', 'Optional'],
+    [
+      'Whether a downstream seepage or stability berm is present.',
+      'Length of the berm measured from the downstream embankment toe.',
+      'Ground-surface elevation at the downstream toe of the berm. When provided, this elevation becomes the toe reference for the net head on the toe progression pathway. When omitted, the ground beneath the berm is assumed flat and the berm toe shares the downstream embankment toe elevation.',
+    ],
+  ]}
+/>
+
+## Foundation Flaw Evidence
+
+The probability that a continuous path of fine to medium, uniform sand exists in the foundation is assessed from three categories of evidence
+(<TableReference tableKey="bep-screening-table-6" />). The meaning of each selection and the way the evidence combines are documented in
+[Flaw Assessment](./04-flaw-assessment.mdx).
+
+<TableVertical
+  tableKey="bep-screening-table-6"
+  alt="Foundation flaw evidence selections"
+  caption="Foundation flaw evidence selections."
+  colWidths={[20, 22, 'minmax(26ch, 1fr)']}
+  headers={[[{ value: 'Parameter' }, { value: 'Options' }, { value: 'Description' }]]}
+  columns={[
+    [
+      'Geologic depositional environment',
+      'Subsurface data available',
+      'Strength of evidence',
+      'Subsurface data quality',
+      'Seepage observed',
+      'Seepage observation type',
+    ],
+    [
+      'Glacial outwash; high-energy fluvial systems; coastal shoreface and barrier systems; aeolian dune systems; delta deposits; alluvial fans; shallow marine shelf; low-energy deltaic and coastal mud systems; residual soils; unknown',
+      'Yes / No',
+      'Very strong; strong; moderate; neutral; weak; very weak',
+      'High; moderate; low',
+      'Yes / No',
+      'Sand boils; concentrated seepage; stage-dependent wet areas; stage-independent wet areas',
+    ],
+    [
+      'The depositional setting of the foundation soils. Required. Selects the prior probability range for the continuous-flaw assessment; environments that deposit laterally continuous, uniform fine sands carry higher priors.',
+      'Whether borings, cone soundings, geophysics, or comparable subsurface information inform the flaw judgment. When no subsurface data is available, the two selections below are not used.',
+      'The degree to which the available subsurface data supports (or refutes) the presence of a continuous fine sand layer. Selections stronger than neutral increase the flaw probability; selections weaker than neutral decrease it. Required when subsurface data is available.',
+      'The quality of the subsurface data behind the strength-of-evidence judgment — extent of coverage, sampling method, and reliability. Lower quality discounts the evidence toward neutral. Required when subsurface data is available.',
+      'Whether seepage has been observed downstream of the embankment during past loading events.',
+      'The character of the observed seepage. More localized, sediment-carrying signatures (sand boils) are stronger evidence of a continuous transmissive flaw than diffuse wet areas. Required when seepage has been observed.',
+    ],
+  ]}
+/>
+
+## Confining-Layer Characterization
+
+The downstream confining layer — a fine-grained stratum overlying the foundation sand on the landside — controls whether seepage can exit
+unfiltered at the toe. Seven inputs characterize it (<TableReference tableKey="bep-screening-table-7" />). The presence selection is
+deliberately tri-state: when the presence of a layer cannot be established, the model runs the full confined-exit machinery with a wide
+thickness characterization rather than assuming either extreme. The categorical selections carry no preselected answer in the Dam Screening
+Tool: the thickness category, the permeability, and the upstream-extension question start unanswered, and the calculation does not run until
+the user has chosen a category — including Unknown — for each one that applies. The defaults noted in the table are the values the model
+assumes when a request omits the field; they are not presented to the user as a starting selection.
+
+<TableVertical
+  tableKey="bep-screening-table-7"
+  alt="Confining layer parameters"
+  caption="Confining-layer characterization parameters."
+  colWidths={[20, 24, 'minmax(26ch, 1fr)']}
+  headers={[[{ value: 'Parameter' }, { value: 'Options / Range' }, { value: 'Description' }]]}
+  columns={[
+    [
+      'Confining layer presence',
+      'Confining layer thickness category',
+      'Custom thickness distribution',
+      'Confining layer permeability',
+      'Confining layer extends upstream',
+      'Upstream confining layer length',
+      'Downstream confining layer length',
+    ],
+    [
+      'Yes / No / Unknown; required',
+      'Very Thin / Thin / Moderate / Thick / Unknown / Custom; required when the presence is Yes (model default Unknown when omitted)',
+      'Distribution, ft; non-negative; required when the category is Custom',
+      'Impervious / Semi-pervious / Unknown; required when the presence is Yes (model default Unknown when omitted)',
+      'Yes / No / Unknown; required when the presence is Yes, the permeability is Impervious, and no upstream blanket is present',
+      'Single value, ft; > 0; required when the layer extends upstream and its thickness category is not Very Thin',
+      'Single value, ft; > 0; optional (omitted = unknown)',
+    ],
+    [
+      'Whether a confining layer overlies the foundation sand downstream of the embankment. Yes confirms the layer: the defect and blowout analyses run with the selected thickness category, and the layer itself is credited as the roof for pipe progression. No removes the layer: seepage exits unfiltered at the toe with certainty, and only the toe pathway is evaluated. Unknown runs the defect and blowout analyses with the Unknown thickness band and evaluates roof support from the embankment materials, so an unverified layer is neither ignored nor fully credited.',
+      'Qualitative thickness of the confining layer. Each category maps to a uniform thickness range per the table below. Select the category supported by borings or geologic mapping; select Custom to supply a site-specific distribution; select Unknown when no thickness information exists. When the layer presence is Unknown, the Unknown band is used regardless of the category selected.',
+      'Site-specific thickness distribution used when the thickness category is Custom.',
+      'Permeability character of the confining layer. Only a layer characterized as Impervious is credited as an upstream seepage barrier (see Hydraulic Loading and Seepage Paths); a Semi-pervious or Unknown layer contributes no upstream head loss.',
+      'Whether the confirmed impervious layer continues upstream beneath the reservoir. The question is asked only when no engineered upstream blanket is present (a blanket takes precedence as the upstream barrier). Yes credits the layer as the upstream seepage barrier and asks for its length; No and Unknown credit no upstream head loss. A Yes answer for a Very Thin layer is recorded but credits a zero-length extension.',
+      'Length of the confining layer beyond the upstream embankment toe, entered as a single value. Supplied only when the layer extends upstream; it is credited directly as the upstream seepage path L<sub>1</sub>. When the extension question is answered No or Unknown, no upstream head loss is credited.',
+      'Length of the confining layer beyond the downstream embankment toe, entered as a single value. This is the distance to the daylight exit. Omitted means unknown: with no berm, the downstream seepage path is characterized by a wide default range scaled to the embankment height (see Hydraulic Loading and Seepage Paths); with a berm over a confirmed layer, a daylighting exit is assumed at the berm toe. When a berm is present, the supplied extent also determines whether the berm end remains beneath the layer — retaining the through-layer exit mechanisms at an offset exit point — or reaches and clears the layer, producing a daylighting exit at the berm toe (see Event Tree). As a seepage-path length, a supplied extent is used only when the layer presence is confirmed Yes; when the presence is Unknown, the wide default range applies to the no-berm path regardless, although a supplied extent still determines whether a berm reaches or clears the layer.',
+    ],
+  ]}
+/>
+
+Each qualitative thickness category maps to a uniform distribution of confining-layer thickness $z_{bl}$
+(<TableReference tableKey="bep-screening-table-8" />).
+
+<TableVertical
+  tableKey="bep-screening-table-8"
+  alt="Confining layer thickness category ranges"
+  caption="Confining-layer thickness category ranges (uniform distributions)."
+  colAlign={['left', 'center', 'center']}
+  headers={[[{ value: 'Thickness Category' }, { value: 'Low (ft)' }, { value: 'High (ft)' }]]}
+  columns={[
+    ['Very Thin', 'Thin', 'Moderate', 'Thick', 'Unknown'],
+    ['0', '5', '10', '20', '0'],
+    ['5', '10', '20', '35', '10'],
+  ]}
+/>
+
+:::warning[INPUT NEEDED IN-01 — Engineering Basis]
+The thickness ranges assigned to the qualitative confining-layer categories (Very Thin 0–5 ft, Thin 5–10 ft, Moderate 10–20 ft, Thick
+20–35 ft, Unknown 0–10 ft) require an engineering basis. Provide a literature citation (to be added to the bibliography) or the
+engineering-judgment attribution to state here, including the reasoning for the Unknown band spanning 0–10 ft.
+:::
+
+## Observed-Seepage Refinements
+
+When sand boils or concentrated seepage have been observed, two additional inputs refine how that observation enters the event tree
+(<TableReference tableKey="bep-screening-table-9" />).
+
+<TableVertical
+  tableKey="bep-screening-table-9"
+  alt="Observed-seepage refinement parameters"
+  caption="Observed-seepage refinement parameters."
+  colWidths={[22, 8, 20, 'minmax(24ch, 1fr)']}
+  headers={[[{ value: 'Parameter' }, { value: 'Units' }, { value: 'Valid Range / Default' }, { value: 'Description' }]]}
+  columns={[
+    ['Seepage through confining layer', 'Trigger elevation'],
+    ['—', 'ft'],
+    [
+      'Yes / No; required exactly when sand boils or concentrated seepage have been observed, and left unanswered otherwise',
+      'Optional; positive and at or below the crest elevation',
+    ],
+    [
+      'Whether the observed sand boils or concentrated seepage emerged through the confining layer. Yes establishes that an unfiltered exit through the layer already exists, forcing the unfiltered-exit probability to certainty. No records that the observation did not penetrate the layer and has no further effect. The input is deliberately left unanswered when there is no sand-boil or concentrated-seepage observation, keeping "no observation" distinct from "observed, but not through the layer."',
+      'Pool elevation at or above which sand boils have historically activated (or are expected to activate). At pool levels at or above the trigger elevation, the initiation probability is set to certainty, reflecting that initiation has been demonstrated at those loads.',
+    ],
+  ]}
+/>
+
+## Embankment Materials
+
+<TableVertical
+  tableKey="bep-screening-table-10"
+  alt="Embankment materials parameter"
+  caption="Embankment materials."
+  colWidths={[18, 24, 'minmax(26ch, 1fr)']}
+  headers={[[{ value: 'Parameter' }, { value: 'Options / Range' }, { value: 'Description' }]]}
+  columns={[
+    ['Embankment materials'],
+    ['One or more USCS classifications; required unless the confining layer presence is Yes'],
+    [
+      'The Unified Soil Classification System (USCS) classes of the materials overlying the developing pipe along the seepage pathway. Each material maps to a probability that it can sustain a stable pipe roof, and the minimum probability across the listed materials governs (every material along the path must hold a roof for the pipe to remain open). The mapping is documented in the Event Tree chapter. When the confining layer presence is confirmed Yes, the layer itself is credited as the roof and this list is not used.',
+    ],
+  ]}
+/>
+
+## Foundation Sand Properties
+
+The foundation sand — the erodible aquifer beneath the embankment — is characterized by its thickness, relative density, gradation, and fines
+content (<TableReference tableKey="bep-screening-table-11" />). The thickness, the relative density category, and the fines content category
+are required selections with no preselected answer; Unknown is offered for the two categories but must be chosen deliberately. The gradation
+properties carry screening defaults that the user may override with site-specific distributions.
+
+<TableVertical
+  tableKey="bep-screening-table-11"
+  alt="Foundation sand property parameters"
+  caption="Foundation sand properties."
+  colWidths={[18, 7, 7, 26, 'minmax(22ch, 1fr)']}
+  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Default' }, { value: 'Description' }]]}
+  columns={[
+    [
+      'Foundation sand thickness',
+      'Relative density category',
+      'Coefficient of uniformity',
+      'Effective grain size',
+      'Fines content category',
+    ],
+    ['d', 'D<sub>r</sub>', 'C<sub>u</sub>', 'D<sub>10</sub>', '—'],
+    ['ft', '%', '—', 'mm', '%'],
+    [
+      'Required (no default)',
+      'Required (no default); Unknown maps to uniform 15–65%',
+      'Triangular (1.1, 2.0, 4.0)',
+      'Normal (mean 0.25, standard deviation 0.085), values limited to no less than 0.1',
+      'Required (no default); Unknown maps to 0.0',
+    ],
+    [
+      'Thickness of the pervious foundation (aquifer) layer, as a distribution. Used by both the blanket-theory analysis (seepage path entrance and gradient computations) and the Schmertmann progression analysis (depth correction).',
+      'Qualitative relative density of the foundation sand. Each preset category maps to a uniform distribution per the table below; the Custom category instead uses a site-specific distribution supplied by the user. Denser sands resist progression through the Schmertmann density correction.',
+      'Coefficient of uniformity of the foundation sand gradation. Controls the base critical gradient in the Schmertmann method — more uniform sands (lower values) are more erodible.',
+      'Grain size at 10% passing for the foundation sand. Controls the Schmertmann grain-size correction.',
+      'Fines content of the foundation sand, selected as one of three categories: less than 5%, 5% or more, or Unknown. The first two enter the model as deterministic fines contents of 0% and 5%, which place the sand on either side of the step in the screening fines-content correction of the Schmertmann analysis (see Delegated Models). Unknown omits the field, so the model applies its 0% default and takes no fines credit.',
+    ],
+  ]}
+/>
+
+:::warning[INPUT NEEDED IN-02 — Engineering Basis]
+The default coefficient-of-uniformity distribution (triangular with low 1.1, mode 2.0, high 4.0) requires an engineering basis. Provide a
+literature citation or the engineering-judgment attribution to state here.
+
+Proposed (unconfirmed): representative of the poorly graded, uniform fine to medium sands that are susceptible to backward erosion piping;
+confirm or replace.
+:::
+
+:::warning[INPUT NEEDED IN-03 — Engineering Basis]
+The default effective-grain-size distribution (normal with mean 0.25 mm and standard deviation 0.085 mm, limited below at 0.1 mm) requires an
+engineering basis — both the distribution parameters and the lower limit. Provide a literature citation or the engineering-judgment attribution
+to state here.
+:::
+
+Each preset relative density category maps to a uniform distribution of relative density $D_r$
+(<TableReference tableKey="bep-screening-table-12" />). The Unknown category carries a broad band spanning loose to medium-dense conditions;
+the model also accepts a legacy Default category with the same band, which the Dam Screening Tool no longer offers. Select the Custom category to supply a site-specific relative-density distribution instead; every value the custom distribution can
+produce must lie within the physical range of 0 to 100% (an unbounded form such as a normal distribution therefore requires explicit lower and
+upper limits).
+
+<TableVertical
+  tableKey="bep-screening-table-12"
+  alt="Relative density category mapping"
+  caption="Relative density category to uniform distribution mapping."
+  colAlign={['left', 'center', 'center']}
+  headers={[[{ value: 'Category' }, { value: 'Low (%)' }, { value: 'High (%)' }]]}
+  columns={[
+    ['Very Loose', 'Loose', 'Medium Dense', 'Dense', 'Very Dense', 'Unknown', 'Default (legacy alias of Unknown)'],
+    ['0', '15', '35', '65', '85', '15', '15'],
+    ['15', '35', '65', '85', '100', '65', '65'],
+  ]}
+/>
+
+:::warning[INPUT NEEDED IN-04 — Engineering Basis]
+The relative-density uniform ranges require an engineering basis — the category band boundaries and the choice of the 15–65% band for the
+Unknown category. Provide a literature citation or the engineering-judgment attribution to state here.
+
+Proposed (unconfirmed): the category boundaries (15 / 35 / 65 / 85%) follow the standard qualitative relative-density classification for
+granular soils; a uniform distribution over each band takes no position on a most-likely value within the category; and the Unknown
+band spans loose to medium-dense as a conservative screening posture. Confirm or replace, and supply the classification source for the
+bibliography if the proposal stands.
+:::
+
+## Unit Weights
+
+Two saturated unit weights enter the blanket-theory critical-gradient computations
+(<TableReference tableKey="bep-screening-table-13" />): the confining layer's for blowout (rupture of the layer) and the foundation sand's for
+heave through a defect. Both carry screening defaults that may be overridden.
+
+<TableVertical
+  tableKey="bep-screening-table-13"
+  alt="Unit weight parameters"
+  caption="Saturated unit weight parameters."
+  colWidths={[24, 8, 7, 24, 'minmax(20ch, 1fr)']}
+  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Default' }, { value: 'Description' }]]}
+  columns={[
+    ['Foundation sand saturated unit weight', 'Confining layer saturated unit weight'],
+    ['γ<sub>sand</sub>', 'γ<sub>bl</sub>'],
+    ['pcf', 'pcf'],
+    ['Normal (mean 122.0, standard deviation 3.0)', 'Normal (mean 118.0, standard deviation 3.0)'],
+    [
+      'Saturated unit weight of the foundation sand. Sets the critical vertical gradient for heave through a defect in the confining layer.',
+      'Saturated unit weight of the confining-layer material. Sets the critical vertical gradient for hydraulic blowout (rupture) of the layer.',
+    ],
+  ]}
+/>
+
+:::warning[INPUT NEEDED IN-05 — Engineering Basis]
+The default foundation-sand saturated unit weight (normal with mean 122.0 pcf and standard deviation 3.0 pcf) requires an engineering basis.
+Provide a literature citation or the engineering-judgment attribution to state here.
+
+Proposed (unconfirmed): typical of loose to medium-dense saturated alluvial sand; confirm or replace.
+:::
+
+:::warning[INPUT NEEDED IN-06 — Engineering Basis]
+The default confining-layer saturated unit weight (normal with mean 118.0 pcf and standard deviation 3.0 pcf) requires an engineering basis.
+Provide a literature citation or the engineering-judgment attribution to state here.
+:::
+
+## Intervention and Breach Probabilities
+
+The final two event-tree nodes are user-specified scalar probabilities (<TableReference tableKey="bep-screening-table-14" />). Both default to
+1.0 (certain), which is conservative for screening.
+
+<TableVertical
+  tableKey="bep-screening-table-14"
+  alt="Intervention and breach probability parameters"
+  caption="Intervention and breach probabilities."
+  colWidths={[24, 10, 12, 'minmax(24ch, 1fr)']}
+  headers={[[{ value: 'Parameter' }, { value: 'Valid Range' }, { value: 'Default' }, { value: 'Description' }]]}
+  columns={[
+    ['Probability of unsuccessful intervention', 'Probability of breach'],
+    ['0 to 1', '0 to 1'],
+    ['1.0', '1.0'],
+    [
+      'Probability that detection and emergency intervention fail to stop the piping process before breach. The default assumes no successful intervention. Reduce only when documented monitoring, early-warning, and response capabilities support a lower value.',
+      'Probability that an uncontrolled release of impounded water occurs given that the pipe has progressed fully and intervention has failed. The default assumes certain breach.',
+    ],
+  ]}
+/>
