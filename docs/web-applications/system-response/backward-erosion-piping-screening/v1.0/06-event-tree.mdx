@@ -30,17 +30,16 @@ for the backward erosion piping failure mode; every database node maps one-to-on
 
 ## Node Summary
 
-<TableReference tableKey="bep-screening-table-20" /> summarizes the seven nodes, the engineering question each answers, and how the screening
-model populates each probability. Nodes 2, 3, and 5 vary with pool level and differ between the toe and daylight pathways; the remaining nodes
+<TableReference tableKey="bep-screening-table-20" /> summarizes the seven nodes and how the screening model populates each probability on each
+exit pathway. The sections that follow state the engineering question each node answers and give each node in full. Nodes 2, 3, and 5 vary with pool level and differ between the toe and daylight pathways; the remaining nodes
 are pool-independent and shared by both pathways.
 
 <TableVertical
   tableKey="bep-screening-table-20"
   alt="Event tree node definitions"
   caption="Event tree node definitions and probability sources."
-  colWidths={[6, 16, 'minmax(20ch, 1fr)', 'minmax(20ch, 1fr)']}
   colAlign={['center']}
-  headers={[[{ value: 'Node' }, { value: 'Name' }, { value: 'Engineering Question' }, { value: 'Screening Model Source' }]]}
+  headers={[[{ value: 'Node' }, { value: 'Name' }, { value: 'Toe Pathway' }, { value: 'Daylight Pathway' }]]}
   columns={[
     ['1', '2', '3', '4', '5', '6', '7'],
     [
@@ -53,33 +52,37 @@ are pool-independent and shared by both pathways.
       'Breach',
     ],
     [
-      'Does a continuous path of fine to medium, uniform sand exist in the foundation?',
-      'Does seepage exit unfiltered at the ground surface?',
-      'Is the exit gradient sufficient to initiate backward erosion at the unfiltered exit?',
-      'Can the material over the developing pipe sustain a stable roof?',
-      'Is the applied gradient sufficient to advance the pipe toward the impounded water?',
-      'Do detection and intervention fail?',
-      'Does an uncontrolled release of impounded water occur?',
+      'Mean posterior flaw probability',
+      'Union of defect and blowout, with overrides',
+      'Heave probability, with overrides',
+      'Certain if the layer is confirmed; else minimum by material',
+      'Schmertmann advancement over the toe path',
+      'User-specified (default 1.0)',
+      'User-specified (default 1.0)',
     ],
     [
-      'Mean posterior probability from the Bayesian flaw assessment (Flaw Assessment chapter).',
-      'Toe pathway: union of the defect and blowout mechanisms through the confining layer, with overrides to certainty. Daylight pathway: certain.',
-      'Toe pathway: blanket-theory heave probability with berm and trigger-elevation overrides. Daylight pathway: certain.',
-      'Certain when the confining layer is confirmed; otherwise the minimum roof-support probability across the embankment materials.',
-      'Mean probability of advancement from the Schmertmann analysis for the pathway (Delegated Models chapter), non-decreasing with pool level.',
-      'User-specified scalar (default 1.0).',
-      'User-specified scalar (default 1.0).',
+      'Same as toe',
+      'Certain',
+      'Certain',
+      'Same as toe',
+      'Schmertmann advancement over the daylight path',
+      'Same as toe',
+      'Same as toe',
     ],
   ]}
 />
 
 ## Node 1: Flaw — Continuous Path
 
+*Question:* Does a continuous path of fine to medium, uniform sand exist in the foundation?
+
 The probability $P_{flaw}$ that a continuous path of erodible foundation sand exists is the mean posterior probability from the Bayesian flaw
 assessment documented in [Flaw Assessment](./04-flaw-assessment.mdx). The flaw is a geologic condition, so this probability is constant across
 all pool levels and is shared by both exit pathways.
 
 ## Node 2: Flaw — Unfiltered Exit
+
+*Question:* Does seepage exit unfiltered at the ground surface?
 
 ### Toe pathway
 
@@ -98,7 +101,7 @@ extent — seepage can reach the surface unfiltered at the toe through either of
 
 - **Hydraulic blowout** — rupture of the layer when uplift at its base exceeds its buoyant weight. The blowout probability $P_{blowout}(h)$ at
   each pool level is computed by the blanket-theory analysis using the confining layer's saturated unit weight
-  (see [Delegated Models](./07-delegated-models.mdx)); it increases with pool level. The probability is evaluated at the exit evaluation
+  (see [Delegated Methods](./07-delegated-methods.mdx)); it increases with net head. The probability is evaluated at the exit evaluation
   point — the toe by default, offset beyond a berm that ends within the layer's known extent
   (see [Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx)).
 
@@ -157,11 +160,13 @@ daylight pathway is 1.0 at every pool level. The pathway itself is evaluated onl
 
 ## Node 3: Initiation
 
+*Question:* Is the exit gradient sufficient to initiate backward erosion at the unfiltered exit?
+
 ### Toe pathway
 
 Initiation at a confined exit requires the vertical gradient through the layer (or through a defect in it) to fluidize the underlying sand.
 The initiation probability $P_{init}(h)$ at each pool level is the blanket-theory heave probability, computed with the foundation sand's
-saturated unit weight (see [Delegated Models](./07-delegated-models.mdx)). Four site conditions override the computed value and force
+saturated unit weight (see [Delegated Methods](./07-delegated-methods.mdx)). Four site conditions override the computed value and force
 $P_{init} = 1.0$:
 
 1. **No confining layer** — with no overburden to resist heave, initiation accompanies the unfiltered exit.
@@ -169,7 +174,7 @@ $P_{init} = 1.0$:
    characterized layer.
 3. **The berm reaches or clears a supplied downstream extent** — the berm is at least as long as the layer's extent, so the exit sits at or
    beyond the layer's termination. The override applies whether the layer's presence is confirmed or unknown.
-4. **The pool reaches the trigger elevation** — sand boils have historically activated at or above this pool, demonstrating initiation:
+4. **The pool reaches the trigger elevation** — sand boils or concentrated seepage have historically activated at or above this pool, demonstrating initiation:
 
 <Equation
   equationKey="bep-screening-eq-12"
@@ -179,8 +184,9 @@ $P_{init} = 1.0$:
 where $E_{trigger}$ is the trigger elevation and $P_{heave}(h)$ the blanket-theory heave probability.
 
 Over a confirmed layer, the second and third conditions are the berm-toe daylighting cases: they force both this node and the unfiltered-exit
-node to certainty, and the separate daylight pathway is not evaluated (see Governing SRP below). Under a layer of unknown presence, the third
-condition forces this node alone and both pathways remain.
+node to certainty, and the separate daylight pathway is not evaluated (see Governing SRP below). Under a layer of unknown presence, both pathways
+remain: any berm forces the unfiltered-exit node to certainty (see Node 2), and a berm that also reaches or clears a supplied downstream extent
+forces this node to certainty as well; a berm short of a supplied extent, or with the extent unknown, leaves this node at the heave probability.
 
 ### Daylight pathway
 
@@ -188,6 +194,8 @@ At the daylight exit the sand is exposed at the surface with no confining layer 
 pool level.
 
 ## Node 4: Progression — Mechanical Condition
+
+*Question:* Can the material over the developing pipe sustain a stable roof?
 
 A pipe can only progress if the material above it sustains a stable roof. When the confining layer's presence is confirmed (answered Yes), the
 layer itself provides the roof and the probability is 1.0. Otherwise, the probability is evaluated from the embankment materials: each USCS
@@ -226,15 +234,20 @@ hold a roof, so the least capable material controls. The probability is constant
 
 ## Node 5: Progression — Hydraulic Condition
 
+*Question:* Is the applied gradient sufficient to advance the pipe toward the impounded water?
+
 The probability that the applied gradient is sufficient to advance the pipe from the exit toward the reservoir is the mean probability of
 advancement from the Schmertmann analysis, evaluated at each pool level for the pathway's seepage path length
-(see [Delegated Models](./07-delegated-models.mdx)). The toe pathway uses the path to the embankment or berm toe; the daylight pathway uses
-the longer path to the daylight exit. The resulting probability is constrained to be non-decreasing with pool level, reflecting that a higher
-pool cannot make progression less likely.
+(see [Delegated Methods](./07-delegated-methods.mdx)). The toe pathway uses the path to the embankment or berm toe; the daylight pathway uses
+the longer path to the daylight exit. The resulting probability is constrained to be non-decreasing with pool level, reflecting that, for a net
+head that rises with pool level, a higher pool cannot make progression less likely (see assumption 15 in
+[Assumptions and Limitations](./08-assumptions-and-limitations.mdx)).
 
 ## Nodes 6 and 7: Unsuccessful Intervention and Breach
 
-The final two nodes are the user-specified scalar probabilities documented in [Input Parameters](./03-input-parameters.mdx). Both default to
+*Questions:* Do detection and intervention fail (Node 6)? Does an uncontrolled release of impounded water occur (Node 7)?
+
+The final two nodes are the user-specified probabilities documented in [Input Parameters](./03-input-parameters.mdx). Both default to
 1.0 — no successful intervention and certain breach — a conservative screening posture.
 
 ## SRP Computation
@@ -256,15 +269,20 @@ where:
 > $P_{int}$ = probability of unsuccessful intervention (Node 6)  
 > $P_{br}$ = probability of breach (Node 7)
 
-On the daylight pathway, $P_{ue}$ and $P_{init}$ are both 1.0 and $P_{prog}$ reflects the longer daylight path.
+On the daylight pathway, $P_{ue}$ and $P_{init}$ are both 1.0 and $P_{prog}$ reflects the daylight path.
 
 ## Governing SRP
 
 A daylight pathway is evaluated only where the daylighting exit is distinct from the toe exit. When a berm over a confirmed layer reaches or
 clears the layer's downstream extent — or overlies a confirmed layer of unknown extent — the berm toe is itself the daylighting exit: the toe
 pathway then carries a certain unfiltered exit and certain initiation over the berm-extended path, which are exactly the daylighting-exit
-conditions, so a separate daylight pathway would repeat the same exit node for node and is not evaluated. A layer of unknown presence retains
-both pathways even with a berm, because its toe pathway keeps the heave-gated initiation node and the two pathways genuinely differ.
+conditions, so a separate daylight pathway would repeat the same exit node for node and is not evaluated. This merging applies only to a
+confirmed layer: under a layer of unknown presence the model always evaluates both pathways. With a berm over a layer of unknown presence, the
+downstream path resolves to the berm length, so both pathways share the same progression path length and plane-type exit. They then differ only
+in two respects: the toe initiation node, which stays at the heave probability unless the berm reaches or clears a supplied downstream extent
+(Node 3), and the exit datum, because the toe progression references the toe reference elevation and the daylight progression the daylight
+reference elevation. Where the two datums coincide, the daylight SRP is at least the toe SRP, because its unfiltered-exit and initiation nodes
+are certain.
 
 When both pathways are evaluated, the governing SRP at each pool level is the larger of the two pathway values:
 

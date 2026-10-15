@@ -1,8 +1,8 @@
-# Input Needed — BEP Screening Model (v1.0)
+# Input Needed — Backward Erosion Piping Screening Technical Reference Manual (v1.0)
 
 Answer inline and return this file (or paste its contents into the conversation). Leave an
 Answer blank to keep that marker in place. Do not renumber — the IDs tie each entry to its
-admonition in the document. (IN-17 was retired in the August 2026 update: the mean-of-
+admonition in the document. IN-18 to IN-21 were added in the October 2026 revision. (IN-17 was retired in the August 2026 update: the mean-of-
 distribution treatment it questioned no longer exists — supplied seepage-path lengths are now
 single values by design.)
 
@@ -164,8 +164,8 @@ for scaling the range to embankment height.
 **Regarding:** The physical interpretation of the exit-offset distance used when a berm
 overlies a confirmed confining layer whose supplied downstream extent exceeds the berm
 length — the berm-within-known-extent case in which the through-layer defect/blowout
-composition is retained. The model design notes record the intended evaluation location as
-the berm toe, but the model computes the offset as (supplied confining-layer extent − berm
+composition is retained. The intended evaluation location is the berm toe, but the model
+computes the offset as (supplied confining-layer extent − berm
 length), measured from the embankment toe. Under the linear head profile, the head fraction
 remaining at the computed offset equals (berm length ÷ confining-layer extent) — whereas an
 exit evaluated at the berm toe (one berm length from the embankment toe) would retain the
@@ -230,15 +230,70 @@ pathways in the unfiltered-exit union formula.
 
 ---
 
-## IN-16 — Engineering Basis — `07-delegated-models.mdx`
+## IN-16 — Engineering Basis — `07-delegated-methods.mdx`
 
-**Regarding:** The fines-content correction applied by the Schmertmann analysis engine — a
-step from 1.0 to 1.4, with the higher factor applying at exactly 5% fines and above. The
-screening model passes no override; the dedicated Schmertmann documentation does not describe
-the term.
+**Regarding:** The fines-content correction applied in the Schmertmann analysis — a step from
+1.0 to 1.4, with the higher factor applying at exactly 5% fines and above. The same step
+applies in the toolbox Schmertmann analysis; the Schmertmann chapter of the BEP Progression
+manual does not describe the term.
 
 **Needed:** Source or engineering-judgment attribution for the step form, the 5% threshold,
-and the 1.4 value, and an addition to the dedicated Schmertmann documentation.
+and the 1.4 value, and an addition to the Schmertmann chapter of the BEP Progression manual.
+
+**Answer:**
+
+---
+
+## IN-18 — Bibliography — `04-flaw-assessment.mdx`
+
+**Regarding:** The Bayesian formulation of the flaw assessment: each evidence source expressed
+as a likelihood ratio, the prior updated in log-odds form, and the subsurface likelihood ratio
+weighted by the data-quality factor as an exponent. The same formulation is named in the
+Physics Basis section of `02-model-overview.mdx`.
+
+**Needed:** Full bibliographic details for the source of the formulation (for the
+bibliography), or the engineering-judgment attribution for the quality-factor weighting if it
+is specific to this model.
+
+**Answer:**
+
+---
+
+## IN-19 — Engineering Basis — `08-assumptions-and-limitations.mdx`
+
+**Regarding:** Assumption 11 (horizontal pipe path): the statements that the neglected
+inclination effect is small at shallow angles and becomes significant beyond about 10° from
+horizontal.
+
+**Needed:** Literature source with full bibliographic details, or the engineering-judgment
+attribution; confirm or replace the 10° threshold.
+
+**Answer:**
+
+---
+
+## IN-20 — Engineering Basis — `08-assumptions-and-limitations.mdx`
+
+**Regarding:** Assumption 17. Where a daylight ground-surface elevation is supplied (and the
+daylighting exit is not the berm toe), the toe blowout and heave analyses measure the net head
+to the daylight reference elevation rather than the toe ground, so the elevation difference
+between the daylight ground and the toe does not enter the uplift at the toe.
+
+**Needed:** Engineering basis or judgment attribution for this datum choice, or confirmation
+of whether the toe ground should be the datum for the toe blowout and heave analyses.
+
+**Answer:**
+
+---
+
+## IN-21 — Engineering Basis — `08-assumptions-and-limitations.mdx`
+
+**Regarding:** Assumption 18. Under a confining layer of unknown presence, the toe exit is
+treated as plane-type (exit-geometry factor 1.0), which is less conservative than the
+hole-type factor (0.5) applied to a confirmed layer whose exit stays beneath it.
+
+**Needed:** Engineering basis or judgment attribution for this choice, or confirmation of
+whether a possibly present layer should take the hole-type factor.
 
 **Answer:**
 
