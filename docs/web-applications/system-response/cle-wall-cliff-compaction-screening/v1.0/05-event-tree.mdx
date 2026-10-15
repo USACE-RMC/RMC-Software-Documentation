@@ -1,0 +1,180 @@
+---
+title: Event Tree
+---
+
+import Equation from '@site/src/components/Equation';
+import EquationNoRef from '@site/src/components/EquationNoRef';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-wall-cliff-compaction-screening" />
+
+# Event Tree
+
+The model evaluates the eight-node event tree shared by every CLE screening model, documented in
+[Event Tree](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree) in the CLE Common Methods manual, at every pool
+level of the headwater grid described there. This chapter documents how the wall or cliff compaction model populates each node. Because the flaw
+sits at one elevation, the base of the flaw $z_f$, only the initiation node varies with pool level; the other seven nodes are the same at every pool
+level (see [Pool Dependence](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#pool-dependence)).
+
+## Node Summary
+
+<TableVertical
+  tableKey="cle-wall-cliff-compaction-screening-table-7"
+  alt="Event-tree nodes of the wall or cliff compaction model"
+  caption="Event-tree nodes of the wall or cliff compaction model."
+  colAlign={['center']}
+  headers={[[{ value: 'Node' }, { value: 'Name' }, { value: 'Source in This Model' }, { value: 'Varies with Pool' }]]}
+  columns={[
+    ['1', '2', '3', '4', '5', '6', '7', '8'],
+    [
+      'Flaw',
+      'Initiation',
+      'Continuation',
+      'Progression: Roof Support',
+      'Progression: No Crack Filling',
+      'Progression: No Flow Limitation',
+      'Unsuccessful Intervention',
+      'Breach',
+    ],
+    [
+      'Three-factor scoring and flaw continuity, or 1.0 when leakage is observed',
+      'Cylindrical-pipe Monte Carlo analysis at the base of the flaw',
+      'Continuation method if a filter is stated; else 1.0',
+      'Minimum over the embankment materials',
+      'By embankment type',
+      'Minimum over the upstream elements that reach the base of the flaw',
+      'User-specified (default 1.0)',
+      'User-specified (default 1.0)',
+    ],
+    ['No', 'Yes', 'No', 'No', 'No', 'No', 'No', 'No'],
+  ]}
+/>
+
+## Node 1: Flaw
+
+*Question:* Does a continuous zone of poorly compacted fill exist along the wall or cliff, through the embankment?
+
+The flaw probability $P_{flaw}$ is the result of the assessment documented in [Flaw Assessment](./04-flaw-assessment.mdx): the raw flaw probability
+from the weighted sum of the three factor scores, multiplied by the flaw-continuity probability, or 1.0 when leakage adjacent to the wall is
+reported.
+
+## Node 2: Initiation
+
+*Question:* At each pool level, does the flow through a pipe of initial diameter $D$ at the base of the flaw exert a hydraulic shear
+stress on the pipe wall that exceeds the critical shear stress $\tau_c$ of the fill against the wall?
+
+The model hands this question to the cylindrical-pipe initiation analysis documented in
+[Delegated Method: Cylindrical Pipe Initiation](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#delegated-method-cylindrical-pipe-initiation)
+in the CLE Common Methods manual, whose theory is in the
+[Cylindrical Pipe](/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/cylindrical-pipe) chapter
+of the Concentrated Leak Erosion Initiation manual. The initiation probability $P_{init}(h)$ at each pool level is the fraction of Monte Carlo
+realizations in which the shear stress exceeds the critical shear stress. The model supplies the analysis with:
+
+- **Pipe invert** — the base of the flaw, $z_f = z_c - h_w$ (see [Flaw Assessment](./04-flaw-assessment.mdx#base-of-the-flaw)). At pool levels at
+  or below it, initiation is zero.
+- **Hydraulic loading** — each pool level and its tailwater, which together set the net head across the pipe.
+- **Seepage path length** — the user-supplied length, or else the length of a horizontal line at $z_f$ across the core section when one is
+  supplied and across the shell section otherwise, as documented in
+  [Seepage Path Length](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#seepage-path-length). The same length
+  applies at every pool level.
+- **Critical shear stress** — the user-supplied distribution, or else the triangular distribution for the core soil classification documented in
+  [Critical Shear Stress](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#critical-shear-stress). Whether or
+  not a critical shear stress distribution is supplied, the clean and nearly clean sands and gravels are not accepted as the soil of the fill
+  against the wall.
+- **Initial pipe diameter** — the user-supplied distribution, or else this model's default triangular distribution, described below.
+
+The default initial pipe diameter is a triangular distribution with a low value of 5 mm, a most likely value of 5 mm, and a high value of 10 mm.
+Because its most likely value equals its low value, the probability density is greatest at 5 mm and falls linearly to zero at 10 mm, and the mean
+diameter is
+
+<EquationNoRef equation="\bar{D} = \frac{5 + 5 + 10}{3} \approx 6.7\ \text{mm}" />
+
+The range lies above the 2 to 5 mm default of the core compaction model and within the 5 to 12.5 mm default of the conduit compaction model (see
+[Initial Pipe Diameter](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#initial-pipe-diameter) in the CLE
+Common Methods manual, where the engineering basis of every model's default range is requested).
+The shape of the distribution places most realizations near 5 mm. Because the shear stress is proportional to the diameter, those smaller pipes
+need a higher pool to initiate than pipes near 10 mm. A site-specific distribution replaces the default.
+
+The screening-level adjustments the compaction models make to the toolbox method — the cylindrical-pipe geometry only, the probabilistic analysis
+always, and the default distributions and derived seepage path length — apply unchanged (see
+[Screening-Level Adjustments](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#screening-level-adjustments)).
+
+## Node 3: Continuation
+
+*Question:* Where a filter intersects the failure pathway at the base of the flaw, does erosion continue past it?
+
+When the user states that a filter intersects the flaw, the continuation probability $P_{cont}$ is the probability of continuing erosion
+$P_{ce}$ computed by the shared continuation method from the filter and base-soil description, as documented in the
+[Continuation (Filter Evaluation) Screening](/docs/web-applications/system-response/continuation-screening/v1.0/method-selection-and-governing-base-soil)
+manual, which selects the evaluation method the supplied information supports and the governing base soil. When no filter is stated, the exit is
+unfiltered, $P_{cont} = 1.0$, and the continuation method is not evaluated:
+
+<Equation
+  equationKey="cle-wall-cliff-compaction-screening-eq-4"
+  equation="P_{cont} = \begin{cases} P_{ce} & \text{a filter intersects the flaw} \\[4pt] 1.0 & \text{no filter is stated} \end{cases}"
+/>
+
+The value is the same at every pool level (see
+[Node 3: Continuation](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-3-continuation)
+in the CLE Common Methods manual). The model applies the continuation method's result without adjustment.
+
+## Node 4: Progression — Roof Support
+
+*Question:* Does the material over the enlarging pipe hold a roof, so that the pipe stays open?
+
+The roof-support probability $P_{roof}$ is the minimum roof-support probability across the listed embankment materials, by the table of
+[Node 4: Progression — Roof Support](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-4-progression--roof-support)
+in the CLE Common Methods manual. It is the same at every pool level.
+
+## Node 5: Progression — No Crack Filling
+
+*Question:* Does the enlarging pipe remain unfilled by material carried in from upstream?
+
+The probability of no crack filling $P_{nf}$ depends only on the embankment type, by the table of
+[Node 5: Progression — No Crack Filling](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-5-progression--no-crack-filling)
+in the CLE Common Methods manual.
+
+## Node 6: Progression — No Flow Limitation
+
+*Question:* Does the flow into the enlarging pipe remain unrestricted by upstream seepage-limiting elements?
+
+The probability of no flow limitation $P_{nl}$ is the minimum across the listed upstream elements that reach the flaw, or 1.0 when none is listed,
+by the table of
+[Node 6: Progression — No Flow Limitation](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-6-progression--no-flow-limitation)
+in the CLE Common Methods manual. When a top-of-wall elevation $z_{tw}$ is supplied for an upstream cutoff wall, the cutoff wall is compared once with the
+base of the flaw, as documented in
+[Walls That Stop Below the Crest](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#walls-that-stop-below-the-crest):
+
+- When $z_{tw} \ge z_f$, the cutoff wall reaches the flaw and every listed element applies.
+- When $z_{tw} < z_f$, the walls drop out and only an upstream facing element, if listed, still limits the flow.
+
+Because $z_f = z_c - h_w$, a cutoff wall limits flow through the flaw only when its top reaches at least the foot of the wall or cliff. The result is
+one value applied at every pool level.
+
+## Nodes 7 and 8: Unsuccessful Intervention and Breach
+
+*Questions:* Do detection and intervention fail (Node 7)? Does an uncontrolled release of impounded water occur (Node 8)?
+
+The probabilities of unsuccessful intervention $P_{int}$ and of breach $P_{br}$ are the user-specified values documented in
+[Intervention and Breach](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#intervention-and-breach),
+each applied at every pool level.
+
+## SRP Computation
+
+The system response probability at each pool level $h$ is the product of the eight node probabilities, as documented in
+[SRP Computation](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#srp-computation). For this model, every
+node except initiation is the same at every pool level:
+
+<Equation
+  equationKey="cle-wall-cliff-compaction-screening-eq-5"
+  equation="\mathrm{SRP}(h) = P_{flaw} \times P_{init}(h) \times P_{cont} \times P_{roof} \times P_{nf} \times P_{nl} \times P_{int} \times P_{br}"
+/>
+
+where the symbols are those of <TableReference tableKey="cle-wall-cliff-compaction-screening-table-7" /> and the sections above. The SRP is never
+reported below a negligibly small floor: wherever the product falls below that floor — including where it is zero, at pool levels at or below the
+base of the flaw — the SRP is reported at the floor instead (see
+[SRP Computation](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#srp-computation)). Mechanically compacted fill
+slightly wet of optimum always gives a product below the floor, because its negligible flaw-continuity probability sits at that floor before the
+other nodes multiply it (see [Flaw-Continuity Stage](./04-flaw-assessment.mdx#flaw-continuity-stage)), so its SRP is the floor at every pool level.

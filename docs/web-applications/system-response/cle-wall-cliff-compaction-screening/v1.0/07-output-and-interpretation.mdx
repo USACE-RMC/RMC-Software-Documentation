@@ -1,0 +1,109 @@
+---
+title: Output and Interpretation
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import EquationNoRef from '@site/src/components/EquationNoRef';
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-wall-cliff-compaction-screening" />
+
+# Output and Interpretation
+
+The model reports the SRP at each evaluated pool level together with the probability of each of the eight nodes, in the form shared by the CLE
+compaction models (see [Output and Interpretation](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation)
+in the CLE Common Methods manual). This chapter describes the results specific to this model and how to read the system response curve of the wall
+or cliff compaction mechanism.
+
+## Results
+
+**Pool-independent results:**
+
+- **Flaw probability** — Node 1 (see [Flaw Assessment](./04-flaw-assessment.mdx)); 1.0 when leakage adjacent to the wall is reported.
+- **Continuation probability** — Node 3: the continuation method's probability of continuing erosion when a filter is stated, otherwise 1.0.
+- **Roof-support probability** — Node 4, the minimum across the embankment materials.
+- **Crack-filling probability** — Node 5, the probability of no crack filling for the embankment type.
+- **Flow-limitation probability** — Node 6, after any cutoff wall whose top is below the base of the flaw has dropped out; 1.0 when no upstream
+  element applies.
+
+**Pool-dependent series**, over every supplied headwater value and the additional levels between them: the pool levels, the tailwater (reported
+as the base-of-flaw elevation where there is no tailwater), the initiation probability, the unsuccessful-intervention and breach
+probabilities, the flow-limitation probability (the same value at every pool level as the pool-independent result above), and the SRP.
+
+**Supporting results:**
+
+- **Flaw assessment** — the likelihood factors of the wall-fill compaction, the wall slope, and the concrete buttress; the weighted sum; the raw
+  flaw probability; the flaw-continuity probability; the flaw probability; whether the leakage observation override applied; and the base-of-flaw
+  elevation $z_f$. When leakage is reported and a flaw-factor selection is omitted, the scoring results are not reported; the flaw probability
+  (1.0), the override, and the base of the flaw still are.
+- **Continuation** — when a filter is stated, the results of the continuation method, read as documented in
+  [Output and Interpretation](/docs/web-applications/system-response/continuation-screening/v1.0/output-and-interpretation) in the Continuation
+  (Filter Evaluation) Screening manual. When no filter is stated, no continuation results are reported.
+- **Initiation analysis** — at each pool level, the upstream and downstream heads above the base of the flaw, the hydraulic gradient, and the
+  mean and 5th, 50th, and 95th percentiles of the hydraulic shear stress; and the seepage path length used, either the supplied length or the
+  length derived from the section (see
+  [Supporting Results](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#supporting-results)).
+
+## Interpreting the System Response Curve
+
+The curve is negligible at and below the base of the flaw, $z_f = z_c - h_w$. Above it, where the node product exceeds the negligibly small floor
+at which the SRP is reported (see [SRP Computation](./05-event-tree.mdx#srp-computation)), the curve rises with pool level as the hydraulic gradient
+through the pipe grows, following the initiation probability. A rising tailwater that reduces the net head across the pipe can flatten or lower the curve
+over that range. Every other node is the same at every pool level, so the curve approaches their product as
+the initiation probability approaches 1.0:
+
+<EquationNoRef equation="\mathrm{SRP}(h) \le P_{flaw} \times P_{cont} \times P_{roof} \times P_{nf} \times P_{nl} \times P_{int} \times P_{br}" />
+
+The rise and the bound both hold only where the node product exceeds the reporting floor. Where it falls below the floor — always for mechanically
+compacted fill slightly wet of optimum — the curve stays flat at the floor at every pool level and can sit above the stated bound.
+
+The wall or cliff height sets where the curve begins: the taller the wall or cliff, the lower the pool at which initiation can begin. How quickly the
+curve rises above that level is set by the critical shear stress and initial pipe diameter distributions and the seepage path length (see
+[Interpreting the System Response Curve](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#interpreting-the-system-response-curve)
+in the CLE Common Methods manual).
+
+Without a leakage observation, the flaw probability is at most about 5.6 × 10<sup>-3</sup> (see
+[Flaw-Continuity Stage](./04-flaw-assessment.mdx#flaw-continuity-stage)), which bounds the curve at every pool level. With a leakage observation, the
+flaw probability is 1.0 and the curve is set entirely by the downstream nodes.
+
+## Reading the Node Breakdown
+
+The readings of
+[Reading the Node Breakdown](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#reading-the-node-breakdown)
+in the CLE Common Methods manual apply. For this model:
+
+- **The flaw probability** reflects the three selections, and the flaw assessment results show which drives it. The wall-fill compaction selection
+  acts twice — through its weight of 3 in the weighted sum and through the flaw-continuity probability — so the flaw probability is especially
+  sensitive to it.
+- **A stated filter** scales the whole curve by the continuation probability (no change when it is 1.0).
+- **An upstream cutoff wall** lowers the curve by its flow-limitation probability only if its top is at or above the base of the flaw; otherwise
+  only an upstream facing element, if listed, does.
+
+## Checking the Result
+
+In addition to the checks of
+[Checking the Result](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#checking-the-result) in
+the CLE Common Methods manual:
+
+- **Flaw probability** — without a leakage observation, it can be reproduced by hand from the reported likelihood factors with
+  [Flaw Assessment](./04-flaw-assessment.mdx): the weighted sum, the raw flaw probability read from the weighted-sum curve, and the flaw-continuity
+  probability for the compaction category.
+- **Base of the flaw** — the reported base-of-flaw elevation equals the crest elevation less the wall or cliff height, and the curve is negligible
+  at and below it. A curve that rises from an unexpected pool level can point to a wall or cliff height, or a crest elevation, on a different datum
+  from the headwater series.
+- **Flow limitation** — a cutoff wall listed among the upstream elements but given no credit can indicate a top-of-wall elevation below the base
+  of the flaw. It need not: where a listed facing element governs the minimum, a cutoff wall that reaches the flaw also has no visible effect.
+  Compare the top-of-wall elevation $z_{tw}$ with the reported base of the flaw $z_f$ directly.
+
+## Screening Results Relative to Detailed Analysis
+
+The model is a screening tool. Its result indicates whether concentrated leak erosion along a wall or cliff warrants detailed analysis; it is not a
+substitute for one. Where the result is significant to a decision, the governing nodes should be re-examined with site-specific information — the
+construction records of the fill against the face, the face geometry, the location of any observed leakage, and erosion testing of the fill — and the
+detailed toolbox methods, the methods of Fell et al. (2024) <Citation citationKey="Fell2024" />, and the judgment of the risk team should replace
+the screening values (see
+[Screening Results Relative to Detailed Analysis](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#screening-results-relative-to-detailed-analysis)
+in the CLE Common Methods manual).
+
+<CitationFootnote />

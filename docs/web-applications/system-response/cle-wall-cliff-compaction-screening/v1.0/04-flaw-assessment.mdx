@@ -1,0 +1,253 @@
+---
+title: Flaw Assessment
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import Equation from '@site/src/components/Equation';
+import EquationReference from '@site/src/components/EquationReference';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-wall-cliff-compaction-screening" />
+
+# Flaw Assessment
+
+Node 1 of the event tree is the probability $P_{flaw}$ that a continuous zone of poorly compacted fill exists along the wall or cliff, through the
+embankment. The model estimates it in two stages, following the conventions shared by the CLE scoring models (see
+[Flaw Conventions](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions) in the CLE Common Methods
+manual): three site factors are scored by the risk-factor and likelihood-factor scheme of Fell et al. (2024) <Citation citationKey="Fell2024" />
+and their weighted sum is converted to a raw flaw probability, which is then multiplied by a flaw-continuity
+probability keyed to the compaction of the fill. An observation of leakage adjacent to the wall replaces the estimate with certainty. The
+assessment also fixes the base-of-flaw elevation used by every downstream node. The flaw probability is the same at every pool level.
+
+## Factors and Risk Factors
+
+The three factors and their risk-factor weights $RF$ are:
+
+- **Wall-fill compaction**, $RF = 3$ — the compaction of the fill against the wall or cliff.
+- **Wall slope**, $RF = 2$ — the inclination of the face.
+- **Concrete buttress**, $RF = 1$ — whether a concrete buttress is present.
+
+The weights follow the pattern of most CLE scoring models, in which the three factors are weighted 3, 2, and 1 (see
+[Factors](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#factors) in the CLE Common Methods manual).
+
+## Likelihood Factors
+
+Each selection described in [Input Parameters](./03-input-parameters.mdx#flaw-factor-selections) carries the likelihood factor $LF$ of
+<TableReference tableKey="cle-wall-cliff-compaction-screening-table-4" />, on the common scale on which 1 is the condition least likely to produce a
+flaw and 4 the most likely.
+
+<TableVertical
+  tableKey="cle-wall-cliff-compaction-screening-table-4"
+  alt="Likelihood factors of the wall or cliff compaction flaw factors"
+  caption="Likelihood factors of the three flaw factors."
+  colAlign={['left', 'left', 'center']}
+  headers={[[{ value: 'Factor' }, { value: 'Category' }, { value: 'Likelihood Factor' }]]}
+  columns={[
+    [
+      'Wall-fill compaction',
+      'Wall-fill compaction',
+      'Wall-fill compaction',
+      'Wall-fill compaction',
+      'Wall-fill compaction',
+      'Wall slope',
+      'Wall slope',
+      'Wall slope',
+      'Wall slope',
+      'Concrete buttress',
+      'Concrete buttress',
+      'Concrete buttress',
+    ],
+    [
+      'Mechanical, slightly wet of optimum',
+      'Hand, slightly dry of optimum',
+      'Hand, thick layers, dry of optimum',
+      'No formal compaction',
+      'Unknown',
+      'H/V above 0.25',
+      'H/V from 0.1 to 0.25',
+      'Vertical',
+      'Unknown',
+      'Absent',
+      'Present',
+      'Unknown',
+    ],
+    ['1', '2', '3', '4', '3', '1', '2', '3.5', '3', '1', '3.5', '2'],
+  ]}
+/>
+
+The scores rise as the compaction effort falls, as the face steepens, and where a buttress is present. Two categories carry the intermediate score
+3.5: a vertical face and a buttress that is present. The Unknown categories score 3 for the compaction and the slope of the face, and 2 for the
+buttress.
+
+:::warning[INPUT NEEDED IN-06 — Engineering Basis]
+The risk-factor weights (3 for wall-fill compaction, 2 for wall slope, 1 for the concrete buttress) and the likelihood factors of
+<TableReference tableKey="cle-wall-cliff-compaction-screening-table-4" /> require an engineering basis. State whether they are taken from
+Fell et al. (2024), and if so cite the table that gives them, or provide the engineering-judgment attribution — including the basis for the
+intermediate score of 3.5 assigned to a vertical face and to a buttress that is present.
+:::
+
+:::warning[INPUT NEEDED IN-07 — Engineering Basis]
+The scores assigned to the Unknown categories require an engineering basis: 3 for unknown wall-fill compaction, 3 for an unknown wall slope, and 2
+for an unknown buttress. The buttress Unknown score of 2 lies below the midpoint of its Absent (1) and Present (3.5) scores, while the other two
+Unknown scores lie at or above the midpoints of their scales. State the reasoning for each, or the literature source.
+
+Proposed (unconfirmed): an Unknown selection is scored at a moderately unfavorable level to avoid a false negative where information is lacking,
+and buttresses are judged uncommon enough that an unknown buttress is scored nearer to Absent. Confirm or replace.
+:::
+
+## Weighted Sum
+
+The three scores combine into the weighted sum of
+[Flaw Conventions](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#weighted-sum):
+
+<Equation
+  equationKey="cle-wall-cliff-compaction-screening-eq-1"
+  equation="\Sigma = 3\,LF_{comp} + 2\,LF_{slope} + LF_{but}"
+/>
+
+where $LF_{comp}$, $LF_{slope}$, and $LF_{but}$ are the likelihood factors of the wall-fill compaction, the wall slope, and the concrete buttress.
+The attainable weighted sum runs from 6, with every factor at its least likely score, to 22.5, with no formal compaction, a vertical face, and a
+buttress present.
+
+## Raw Flaw Probability
+
+The weighted sum is converted to a raw flaw probability $P_{raw}$ by the curve of
+<TableReference tableKey="cle-wall-cliff-compaction-screening-table-5" />, interpolated linearly in the logarithm of probability between tabulated
+points and held at its end values beyond them, as documented in
+[Flaw Probability from the Weighted Sum](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#flaw-probability-from-the-weighted-sum)
+in the CLE Common Methods manual.
+
+<TableVertical
+  tableKey="cle-wall-cliff-compaction-screening-table-5"
+  alt="Raw flaw probability by weighted sum"
+  caption="Raw flaw probability by weighted sum."
+  colAlign={['center', 'center']}
+  headers={[[{ value: 'Weighted Sum' }, { value: 'Raw Flaw Probability' }]]}
+  columns={[
+    ['9', '11', '13', '18', '24'],
+    ['Negligible', '1 × 10<sup>-4</sup>', '1 × 10<sup>-3</sup>', '1 × 10<sup>-2</sup>', '1 × 10<sup>-1</sup>'],
+  ]}
+/>
+
+A weighted sum of 9 or less gives a negligible raw flaw probability: the curve's lowest point is negligible and sums below it take that end value.
+Between 9 and 11 the probability rises steeply from negligible to 1 × 10<sup>-4</sup>. The curve's
+highest point, a weighted sum of 24, lies beyond the attainable range; the largest attainable sum of 22.5 gives a raw flaw probability of about
+5.6 × 10<sup>-2</sup>. No factor is an incompatible-condition factor — a factor whose least likely score forces the flaw probability to zero (see
+[Flaw Probability from the Weighted Sum](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#flaw-probability-from-the-weighted-sum)
+in the CLE Common Methods manual) — so no single score forces the raw flaw probability to zero. The flaw
+probability itself can still be negligible from one selection: mechanical compaction slightly wet of optimum makes it negligible through the
+flaw-continuity stage (see [Flaw-Continuity Stage](#flaw-continuity-stage)).
+
+:::warning[INPUT NEEDED IN-08 — Engineering Basis]
+The tabulated points of <TableReference tableKey="cle-wall-cliff-compaction-screening-table-5" /> (weighted sums 9, 11, 13, 18, and 24 mapped to
+negligible, 1 × 10<sup>-4</sup>, 1 × 10<sup>-3</sup>, 1 × 10<sup>-2</sup>, and 1 × 10<sup>-1</sup>) require an engineering basis. Cite the
+source of the curve for this mechanism (for example the table or figure of Fell et al. (2024) that relates the weighted sum to the probability of
+a flaw), or provide the engineering-judgment attribution, and state why the curve extends to a weighted sum of 24 when the largest attainable sum
+is 22.5.
+:::
+
+:::warning[INPUT NEEDED IN-09 — Decision]
+The model applies a single weighted-sum curve at every pool level and takes no pool-of-record input. The curve it applies is the one its source
+assigns to pool levels above the pool of record; the source's companion curve for pool levels at or below the pool of record is not used. Decide
+whether this manual should state that the flaw probability takes no credit for the embankment's past performance up to its pool of record, and
+provide the engineering basis for applying the above-pool-of-record curve at every pool level.
+
+Proposed (unconfirmed): applying the above-pool-of-record curve throughout is a conservative screening simplification that removes the pool of
+record as an input; past performance can be credited in a detailed analysis. Confirm or replace.
+:::
+
+## Flaw-Continuity Stage
+
+The raw flaw probability is multiplied by the flaw-continuity probability $P_{cf}$, interpolated in the logarithm of probability from the
+wall-fill compaction score on the curve shared with the core and foundation or abutment compaction models (see
+[Flaw-Continuity Stage](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#flaw-continuity-stage) in the
+CLE Common Methods manual, where its engineering basis is requested):
+
+<Equation
+  equationKey="cle-wall-cliff-compaction-screening-eq-2"
+  equation="P_{flaw} = P_{raw}(\Sigma) \times P_{cf}(LF_{comp})"
+/>
+
+For the wall-fill compaction categories, $P_{cf}$ takes the values of
+<TableReference tableKey="cle-wall-cliff-compaction-screening-table-6" />. Every compaction score of this model is a whole number, so no
+interpolation between the tabulated points is needed.
+
+<TableVertical
+  tableKey="cle-wall-cliff-compaction-screening-table-6"
+  alt="Flaw-continuity probability by wall-fill compaction category"
+  caption="Flaw-continuity probability by wall-fill compaction category."
+  colAlign={['left', 'center', 'center']}
+  headers={[[{ value: 'Wall-Fill Compaction' }, { value: 'Likelihood Factor' }, { value: 'Flaw-Continuity Probability' }]]}
+  columns={[
+    [
+      'Mechanical, slightly wet of optimum',
+      'Hand, slightly dry of optimum',
+      'Hand, thick layers, dry of optimum',
+      'No formal compaction',
+      'Unknown',
+    ],
+    ['1', '2', '3', '4', '3'],
+    ['Negligible', '1 × 10<sup>-4</sup>', '1 × 10<sup>-3</sup>', '1 × 10<sup>-1</sup>', '1 × 10<sup>-3</sup>'],
+  ]}
+/>
+
+The compaction selection therefore enters the flaw probability twice — with the heaviest weight in the weighted sum, and again through the
+flaw-continuity probability. Mechanically compacted fill slightly wet of optimum gives a negligible flaw probability whatever the other two factors
+score. Without a leakage observation, the largest attainable flaw probability is about 5.6 × 10<sup>-3</sup> (no formal compaction, a vertical face,
+and a buttress present); with every selection Unknown, the weighted sum is 17 and the flaw probability is about 6.3 × 10<sup>-6</sup>.
+
+## Worked Example
+
+For fill placed against a wall without formal compaction ($LF_{comp} = 4$), a face battered between 0.1 and 0.25 horizontal per unit of vertical
+rise ($LF_{slope} = 2$), and an unknown buttress ($LF_{but} = 2$):
+
+- The weighted sum is $\Sigma = 3(4) + 2(2) + 2 = 18$, a tabulated point, so $P_{raw} = 1 \times 10^{-2}$.
+- The flaw-continuity probability for no formal compaction is $P_{cf} = 1 \times 10^{-1}$.
+- The flaw probability is $P_{flaw} = (1 \times 10^{-2})(1 \times 10^{-1}) = 1 \times 10^{-3}$.
+
+For a crest elevation of 265 ft and a wall height of 30 ft, the base of the flaw is at 265 − 30 = 235 ft (see
+[Base of the Flaw](#base-of-the-flaw)).
+
+## Leakage Observation Override
+
+When leakage adjacent to the wall is reported, the flaw probability is set to 1.0 whatever the factors score, as documented in
+[Observation Overrides](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#observation-overrides) in the
+CLE Common Methods manual. The three selections become optional: when all three are supplied, their scores, weighted sum, raw flaw probability, and
+flaw-continuity probability are still computed and reported for reference; when any is omitted, the scoring is not performed. Either way the flaw
+probability is 1.0.
+
+The override sets the flaw probability only. The base of the flaw remains at the crest elevation less the wall or cliff height, because it follows
+from the geometry of the wall rather than from the scoring; the elevation at which the leakage was observed is not an input.
+
+## Base of the Flaw
+
+The flaw is idealized for initiation as a cylindrical pipe whose invert is the base-of-flaw elevation $z_f$, placed at the crest elevation $z_c$ less
+the wall or cliff height $h_w$:
+
+<Equation
+  equationKey="cle-wall-cliff-compaction-screening-eq-3"
+  equation="z_f = z_c - h_w"
+/>
+
+This is the third of the ways the compaction models resolve the base of the flaw, alongside the normal-pool heuristic and direct input (see
+[Compaction Models: Base of the Flaw](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#compaction-models-base-of-the-flaw)
+in the CLE Common Methods manual). The base of the flaw sets the pipe invert of the initiation analysis and the elevation against which the top of an
+upstream cutoff wall is compared (see [Event Tree](./05-event-tree.mdx)). The restrictions on where it may lie are listed under
+[Wall or Cliff Geometry](./03-input-parameters.mdx#wall-or-cliff-geometry).
+
+:::warning[INPUT NEEDED IN-10 — Engineering Basis]
+Placing the base of the flaw at the foot of the wall or cliff (<EquationReference equationKey="cle-wall-cliff-compaction-screening-eq-3" />)
+requires an engineering basis to state here — why the flaw is evaluated at the lowest elevation of the fill against the face rather than at another
+elevation along it, or over a range of elevations.
+
+Proposed (unconfirmed): a poorly compacted zone may extend over the full height of the face, and its lowest point carries the largest head above
+the flaw at any pool and is the first to be loaded as the pool rises. The seepage path across the section is also longest at the foot, so the
+hydraulic gradient is not necessarily largest there; state whether evaluating initiation at the foot is intended to be conservative. Note also that
+the foot is the unconservative location for the upstream cutoff-wall comparison, since a cutoff whose top reaches the foot is credited even where
+the poorly compacted zone extends above it. Confirm or replace.
+:::
+
+<CitationFootnote />

@@ -385,7 +385,7 @@ const docs = [
     software: 'system-response',
     doc_location: 'web-applications/system-response/cle-wall-cliff-compaction-screening',
     doc_name: 'CLE Wall/Cliff Compaction Screening Technical Reference Manual',
-    active: false,
+    active: true,
     draft: true,
   },
   {

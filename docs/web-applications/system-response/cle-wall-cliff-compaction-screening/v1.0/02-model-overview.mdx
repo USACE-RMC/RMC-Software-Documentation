@@ -1,0 +1,139 @@
+---
+title: Model Overview
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-wall-cliff-compaction-screening" />
+
+# Model Overview
+
+## Purpose
+
+The wall or cliff compaction screening model computes a system response curve for concentrated leak erosion through poorly compacted fill placed
+against a wall or a cliff. The system response probability (SRP) at each headwater level is the conditional probability of breach of the embankment
+by concentrated leak erosion through such a zone, given that pool level. The curve of SRP values across the range of headwater levels characterizes
+the embankment's vulnerability to this mechanism.
+
+The flaw is a zone of poorly compacted fill along the face of the wall or cliff, continuous through the embankment from its upstream side to its
+downstream side. The model judges the likelihood of such a zone from three conditions: how the fill against the face was compacted, how steep the
+face is, and whether a concrete buttress is present.
+
+:::warning[INPUT NEEDED IN-01 — Applicability]
+State which structures and faces the model is intended to cover — for example concrete walls of spillways, outlet works, or powerhouses that the
+embankment abuts, and natural rock faces at a steep abutment — and whether a wall and a cliff are intended to be treated identically by every input,
+including the concrete-buttress factor, which has no direct counterpart on a natural cliff. Provide also the physical description of the mechanism
+to state here (why fill against a face is prone to poor compaction, and how face slope and a buttress affect it), with its literature source.
+
+Proposed (unconfirmed): the model applies to any steep, effectively rigid face against which embankment fill was placed, natural or constructed,
+and a cliff is scored with the concrete buttress absent; fill against a face is prone to poor compaction because compaction equipment cannot work
+tight against it, and a steeper face or a projecting buttress enlarges the zone that receives less compactive effort. Confirm or replace.
+:::
+
+## Intended Use
+
+The model is a screening-level assessment of concentrated leak erosion along a wall or cliff. Like the other CLE screening models, it makes
+simplifying and generally conservative assumptions to avoid false negatives and to reduce input burden: three qualitative selections describe the
+likelihood of a flaw, the base of the flaw follows from the wall or cliff height, and default distributions cover the erodibility and initial-opening
+properties that are typically unavailable at the screening stage (see
+[Intended Use](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#intended-use) in the CLE Common Methods
+manual).
+
+The model is not intended for detailed or semi-quantitative risk assessments. For higher-level analyses, the concentrated leak erosion toolbox
+methods and the internal-erosion probability methods they draw on provide the complete methodologies (see
+[Comparison with Detailed Models](#comparison-with-detailed-models)).
+
+## How the Model Works
+
+The model executes the three stages common to the CLE compaction models (see
+[How the Model Works](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#how-the-model-works) in the CLE
+Common Methods manual):
+
+1. **Flaw assessment** — The compaction of the fill against the wall, the slope of the wall, and the presence of a concrete buttress are each scored
+   with a likelihood factor. Their weighted sum is converted to a raw flaw probability, which is multiplied by a flaw-continuity probability keyed to
+   the compaction score. An observation of leakage adjacent to the wall sets the flaw probability to 1.0. The base of the flaw is placed at the crest
+   elevation less the wall or cliff height (see [Flaw Assessment](./04-flaw-assessment.mdx)).
+2. **Pathway resolution** — The failure pathway runs through the embankment section at the base of the flaw. The user states whether a filter
+   intersects it, lists the materials it passes through, and lists the upstream seepage-limiting elements; a cutoff wall whose top is below the base
+   of the flaw does not limit flow through it.
+3. **Event-tree assembly** — At each headwater level, the flaw probability is multiplied by the initiation probability from a Monte Carlo
+   cylindrical-pipe analysis at the base of the flaw and by the continuation, progression, intervention, and breach probabilities, which are the
+   same at every pool level (see [Event Tree](./05-event-tree.mdx)).
+
+## Physics Basis
+
+The model combines the following engineering methods, each documented in a shared manual:
+
+- **Risk-factor and likelihood-factor scoring** for the probability of a continuous flaw <Citation citationKey="Fell2024" />, as documented in
+  [Flaw Conventions](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#risk-factor-and-likelihood-factor-scoring)
+  in the CLE Common Methods manual. The three factors and their scores are documented in [Flaw Assessment](./04-flaw-assessment.mdx).
+- **Hydraulic shear stress on the walls of a cylindrical pipe** compared with the critical shear stress of the soil, as documented in
+  [Initiation](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#delegated-method-cylindrical-pipe-initiation)
+  in the CLE Common Methods manual and in the
+  [Cylindrical Pipe](/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/cylindrical-pipe) chapter
+  of the Concentrated Leak Erosion Initiation manual.
+- **Filter evaluation** for the probability that erosion continues past a filter intersecting the flaw, through the shared continuation method
+  documented in the
+  [Method Selection and Governing Base Soil](/docs/web-applications/system-response/continuation-screening/v1.0/method-selection-and-governing-base-soil)
+  chapter of the Continuation (Filter Evaluation) Screening Technical Reference Manual.
+- **Tabulated progression probabilities** for roof support, crack filling, and flow limitation <Citation citationKey="Fell2024" />, as documented in
+  [Failure Pathway and Progression](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression)
+  in the CLE Common Methods manual.
+
+## Comparison with Detailed Models
+
+The detailed counterpart of the screening model is an internal-erosion risk analysis by the methods of Fell et al.
+(2024) <Citation citationKey="Fell2024" />, with initiation evaluated by the concentrated leak erosion toolbox methods.
+<TableReference tableKey="cle-wall-cliff-compaction-screening-table-1" /> summarizes the differences specific to this mechanism; the differences
+common to the CLE family are listed in
+[Comparison with Detailed Models](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#comparison-with-detailed-models)
+in the CLE Common Methods manual.
+
+<TableVertical
+  tableKey="cle-wall-cliff-compaction-screening-table-1"
+  alt="Comparison of the wall or cliff compaction screening model and a detailed analysis"
+  caption="Comparison of the wall or cliff compaction screening model and a detailed analysis."
+  headers={[[{ value: 'Aspect' }, { value: 'Screening Model' }, { value: 'Detailed Analysis' }]]}
+  columns={[
+    ['Flaw probability', 'Flaw location', 'Flaw geometry', 'Filter at the flaw', 'Seepage path length'],
+    [
+      'Scored from three qualitative factors, or 1.0 when leakage is observed',
+      'Crest elevation less the wall or cliff height',
+      'Cylindrical pipe of uncertain initial diameter',
+      'Stated present or absent by the user',
+      'Derived from the embankment section, or supplied',
+    ],
+    [
+      'Estimated by the risk team from the totality of the evidence',
+      'Located by the risk team from the available evidence',
+      'Cylindrical pipe or crack geometry (analyst selects)',
+      'Evaluated by the filter evaluation methods',
+      'Measured or specified by the analyst',
+    ],
+  ]}
+/>
+
+## Relationship to the Shared Manuals
+
+This model belongs to the compaction group of the CLE screening models, with the core, conduit, and foundation or abutment compaction models (see
+[The Two Model Groups](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#the-two-model-groups) in the CLE
+Common Methods manual). It shares with that group the cylindrical-pipe initiation analysis, the single flaw elevation at which every downstream node
+is evaluated, and the tabulated progression nodes. What is specific to it is:
+
+- **The flaw assessment** — three factors weighted 3, 2, and 1, a weighted-sum curve, and the flaw-continuity stage keyed to the compaction of the
+  fill against the wall (see [Flaw Assessment](./04-flaw-assessment.mdx)).
+- **The base of the flaw** — derived from the wall or cliff height rather than from a normal-pool heuristic or a direct input, and unchanged by the
+  leakage observation (see [Flaw Assessment](./04-flaw-assessment.mdx#base-of-the-flaw)).
+- **The default initial pipe diameter** — a triangular distribution from 5 to 10 mm whose most likely value is its low value (see
+  [Event Tree](./05-event-tree.mdx#node-2-initiation)).
+- **The filter statement** — whether a filter intersects the flaw is stated directly; the continuation inputs are used only when it does (see
+  [Input Parameters](./03-input-parameters.mdx#filter-at-the-flaw)).
+
+The model uses no toolbox method other than the cylindrical-pipe initiation analysis, and it delegates the continuation node to the shared
+continuation method when a filter is stated.
+
+<CitationFootnote />
