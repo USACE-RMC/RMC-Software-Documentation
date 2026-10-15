@@ -59,7 +59,7 @@ const buildSteps = (baseUrl, tier) => {
     {
       title: 'Main Navigation',
       content:
-        'The navigation organizes all documentation into three categories: Desktop Applications, Toolbox Technical Manuals, and Web Applications. Each category expands to reveal available tools and their documents. Helpful resources can also be accessed from the navigation.',
+        'The navigation organizes all documentation into three categories: Desktop Applications, Toolbox Technical Manuals, and Web Applications and Services. Each category expands to reveal available tools and their documents. Helpful resources can also be accessed from the navigation.',
       selector: 'header.gw-sticky .md\\:gw-hidden',
       selectorFallback: 'header.gw-sticky .gw-bg-nav-black',
       padding: { top: 4, right: 4, bottom: 4, left: 4 },
@@ -69,12 +69,12 @@ const buildSteps = (baseUrl, tier) => {
       tablet: {
         title: 'Menu Navigation',
         content:
-          'Tap the menu icon to open the navigation drawer. It organizes all documentation into three categories: Desktop Applications, Toolbox Technical Manuals, and Web Applications. Each category expands to reveal available tools and documents.',
+          'Tap the menu icon to open the navigation drawer. It organizes all documentation into three categories: Desktop Applications, Toolbox Technical Manuals, and Web Applications and Services. Each category expands to reveal available tools and documents.',
       },
       phone: {
         title: 'Menu Navigation',
         content:
-          'Tap the menu icon to open the navigation drawer. It lists all documentation organized by category: Desktop Applications, Toolbox Technical Manuals, and Web Applications.',
+          'Tap the menu icon to open the navigation drawer. It lists all documentation organized by category: Desktop Applications, Toolbox Technical Manuals, and Web Applications and Services.',
       },
     },
 

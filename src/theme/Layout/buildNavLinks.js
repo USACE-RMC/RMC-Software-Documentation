@@ -137,10 +137,11 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
 
   /* -------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
-  /* Web Applications links (second level) */
+  /* Web Applications and Services links (second level) */
   const rrftHref = useBaseUrl('/web-applications/rrft');
   const lstHref = useBaseUrl('/web-applications/lst');
   const dstHref = useBaseUrl('/web-applications/dst');
+  const systemResponseHref = useBaseUrl('/web-applications/system-response');
 
   /* RRFT document links (third level) */
   /* None currently */
@@ -151,6 +152,9 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
   );
 
   /* DST document links (third level) */
+  /* None currently */
+
+  /* System Response Library document links (third level) */
   /* None currently */
 
   /* -------------------------------------------------------------------------------------------------------------------------------------------------------------- */
@@ -320,12 +324,17 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
     },
     {
       id: 'web-applications',
-      text: 'Web Applications',
+      text: 'Web Applications and Services',
       children: [
         {
           id: 'dst',
           text: 'Dam Screening Tool (Coming Soon)',
           /*href: dstHref,*/
+        },
+        {
+          id: 'system-response',
+          text: 'System Response Library (Coming Soon)',
+          /*href: systemResponseHref,*/
         },
         {
           id: 'lst',

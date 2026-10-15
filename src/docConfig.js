@@ -289,17 +289,155 @@ const docs = [
     draft: false,
   },
 
-  // --- Web Applications: DST ---
+  // --- Web Applications and Services: DST ---
   {
     category: 'web-applications',
     software: 'dst',
     doc_location: 'web-applications/dst/users-guide',
-    doc_name: 'Dam Screening Tool Users Guide',
+    doc_name: "Dam Screening Tool User's Guide",
+    active: false,
+    draft: true,
+  },
+  {
+    category: 'web-applications',
+    software: 'dst',
+    doc_location: 'web-applications/dst/technical-reference-manual',
+    doc_name: 'Dam Screening Tool Technical Reference Manual',
+    active: false,
+    draft: true,
+  },
+  {
+    category: 'web-applications',
+    software: 'dst',
+    doc_location: 'web-applications/dst/applications-guide',
+    doc_name: 'Dam Screening Tool Applications Guide',
     active: false,
     draft: true,
   },
 
-  // --- Web Applications: LST ---
+  // --- Web Applications and Services: System Response Library ---
+  {
+    category: 'web-applications',
+    software: 'system-response',
+    doc_location: 'web-applications/system-response/overtopping-erosion-screening',
+    doc_name: 'Overtopping Erosion Screening Technical Reference Manual',
+    active: false,
+    draft: true,
+  },
+  {
+    category: 'web-applications',
+    software: 'system-response',
+    doc_location: 'web-applications/system-response/backward-erosion-piping-screening',
+    doc_name: 'Backward Erosion Piping Screening Technical Reference Manual',
+    active: false,
+    draft: true,
+  },
+  {
+    category: 'web-applications',
+    software: 'system-response',
+    doc_location: 'web-applications/system-response/continuation-screening',
+    doc_name: 'Continuation (Filter Evaluation) Screening Technical Reference Manual',
+    active: false,
+    draft: true,
+  },
+  {
+    category: 'web-applications',
+    software: 'system-response',
+    doc_location: 'web-applications/system-response/cle-common-methods-screening',
+    doc_name: 'Concentrated Leak Erosion Common Methods Screening Technical Reference Manual',
+    active: false,
+    draft: true,
+  },
+  {
+    category: 'web-applications',
+    software: 'system-response',
+    doc_location: 'web-applications/system-response/cle-cross-valley-settlement-screening',
+    doc_name: 'CLE Cross-Valley Settlement Screening Technical Reference Manual',
+    active: false,
+    draft: true,
+  },
+  {
+    category: 'web-applications',
+    software: 'system-response',
+    doc_location: 'web-applications/system-response/cle-wall-cliff-settlement-screening',
+    doc_name: 'CLE Wall/Cliff Settlement Screening Technical Reference Manual',
+    active: false,
+    draft: true,
+  },
+  {
+    category: 'web-applications',
+    software: 'system-response',
+    doc_location: 'web-applications/system-response/cle-core-compaction-screening',
+    doc_name: 'CLE Core Compaction Screening Technical Reference Manual',
+    active: false,
+    draft: true,
+  },
+  {
+    category: 'web-applications',
+    software: 'system-response',
+    doc_location: 'web-applications/system-response/cle-conduit-compaction-screening',
+    doc_name: 'CLE Conduit Compaction Screening Technical Reference Manual',
+    active: false,
+    draft: true,
+  },
+  {
+    category: 'web-applications',
+    software: 'system-response',
+    doc_location: 'web-applications/system-response/cle-wall-cliff-compaction-screening',
+    doc_name: 'CLE Wall/Cliff Compaction Screening Technical Reference Manual',
+    active: false,
+    draft: true,
+  },
+  {
+    category: 'web-applications',
+    software: 'system-response',
+    doc_location: 'web-applications/system-response/cle-foundation-abutment-compaction-screening',
+    doc_name: 'CLE Foundation/Abutment Compaction Screening Technical Reference Manual',
+    active: false,
+    draft: true,
+  },
+  {
+    category: 'web-applications',
+    software: 'system-response',
+    doc_location: 'web-applications/system-response/cle-desiccation-screening',
+    doc_name: 'CLE Desiccation Screening Technical Reference Manual',
+    active: false,
+    draft: true,
+  },
+  {
+    category: 'web-applications',
+    software: 'system-response',
+    doc_location: 'web-applications/system-response/cle-freezing-screening',
+    doc_name: 'CLE Freezing Screening Technical Reference Manual',
+    active: false,
+    draft: true,
+  },
+  {
+    category: 'web-applications',
+    software: 'system-response',
+    doc_location: 'web-applications/system-response/gravity-dam-stability-screening',
+    doc_name: 'Gravity Dam Stability Screening Technical Reference Manual',
+    active: false,
+    draft: true,
+  },
+  {
+    category: 'web-applications',
+    software: 'system-response',
+    doc_location: 'web-applications/system-response/verification-report',
+    doc_name: 'System Response Library Verification Report',
+    active: false,
+    draft: true,
+  },
+  {
+    category: 'web-applications',
+    software: 'system-response',
+    doc_location: 'web-applications/system-response/integration-guide',
+    doc_name: 'System Response Library Integration Guide',
+    active: false,
+    draft: true,
+  },
+
+  // --- Web Applications and Services: LST ---
   {
     category: 'web-applications',
     software: 'lst',
@@ -309,7 +447,7 @@ const docs = [
     draft: true,
   },
 
-  // --- Web Applications: RRFT ---
+  // --- Web Applications and Services: RRFT ---
   {
     category: 'web-applications',
     software: 'rrft',
