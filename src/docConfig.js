@@ -462,6 +462,10 @@ function filterByCategoryAndSoftware(category, software) {
   return docs.filter((doc) => doc.category === category && doc.software === software);
 }
 
+function hasActiveDocs(category, software) {
+  return docs.some((doc) => doc.category === category && doc.software === software && doc.active === true);
+}
+
 function getInactiveDocLocations() {
   return docs.filter((doc) => doc.active === false && doc.doc_location).map((doc) => doc.doc_location);
 }
@@ -483,6 +487,7 @@ function shouldExcludeFromBuild(docsRelativePath) {
 module.exports = {
   docs,
   filterByCategoryAndSoftware,
+  hasActiveDocs,
   getInactiveDocLocations,
   getDraftDocLocations,
   shouldExcludeFromBuild,

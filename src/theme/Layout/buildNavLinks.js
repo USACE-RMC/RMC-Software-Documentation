@@ -1,3 +1,5 @@
+import { hasActiveDocs } from '../../docConfig';
+
 /**
  * Build the nested "links" structure for <SiteWrapper>.
  * Pass in useBaseUrl (hook result) and the latestVersions object.
@@ -328,18 +330,21 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
       children: [
         {
           id: 'dst',
-          text: 'Dam Screening Tool (Coming Soon)',
-          /*href: dstHref,*/
+          ...(hasActiveDocs('web-applications', 'dst')
+            ? { text: 'Dam Screening Tool', href: dstHref }
+            : { text: 'Dam Screening Tool (Coming Soon)' }),
         },
         {
           id: 'system-response',
-          text: 'System Response Library (Coming Soon)',
-          /*href: systemResponseHref,*/
+          ...(hasActiveDocs('web-applications', 'system-response')
+            ? { text: 'System Response Library', href: systemResponseHref }
+            : { text: 'System Response Library (Coming Soon)' }),
         },
         {
           id: 'lst',
-          text: 'Levee Screening Tool (Coming Soon)',
-          /*href: lstHref,*/
+          ...(hasActiveDocs('web-applications', 'lst')
+            ? { text: 'Levee Screening Tool', href: lstHref }
+            : { text: 'Levee Screening Tool (Coming Soon)' }),
           /*children: [
             {
               id: 'users-guide',
@@ -350,8 +355,9 @@ export default function buildNavLinks(useBaseUrl, latestVersions = {}) {
         },
         {
           id: 'rrft',
-          text: 'Rainfall Runoff Frequency Tool (Coming Soon)',
-          /*href: rrftHref,*/
+          ...(hasActiveDocs('web-applications', 'rrft')
+            ? { text: 'Rainfall Runoff Frequency Tool', href: rrftHref }
+            : { text: 'Rainfall Runoff Frequency Tool (Coming Soon)' }),
         },
       ],
     },
