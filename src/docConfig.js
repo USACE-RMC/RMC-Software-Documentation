@@ -393,7 +393,7 @@ const docs = [
     software: 'system-response',
     doc_location: 'web-applications/system-response/cle-foundation-abutment-compaction-screening',
     doc_name: 'CLE Foundation/Abutment Compaction Screening Technical Reference Manual',
-    active: false,
+    active: true,
     draft: true,
   },
   {
