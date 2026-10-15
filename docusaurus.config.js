@@ -12,6 +12,10 @@ const require = createRequire(import.meta.url);
 const { getInactiveDocLocations } = require('./src/docConfig');
 const inactiveDocExcludes = process.env.DOCS_MODE === 'prod' ? getInactiveDocLocations().map((loc) => `${loc}/**`) : [];
 
+// Setting `exclude` replaces Docusaurus's default list, so it is restated here to keep
+// underscore-prefixed partials and authoring notes (e.g. `_input-needed.md`) unpublished.
+const docusaurusDefaultDocExcludes = ['**/_*.{js,jsx,ts,tsx,md,mdx}', '**/_*/**', '**/*.test.{js,jsx,ts,tsx}', '**/__tests__/**'];
+
 // Normalize the drive letter to uppercase on Windows to prevent webpack
 // "modules with names that only differ in casing" warnings.
 function normalizeDriveLetter(p) {
@@ -80,7 +84,7 @@ export default {
           remarkPlugins: [remarkMath, remarkGfm],
           rehypePlugins: [rehypeKatex],
           breadcrumbs: true,
-          exclude: inactiveDocExcludes,
+          exclude: [...docusaurusDefaultDocExcludes, ...inactiveDocExcludes],
         },
         // No blog on this site. Without an explicit `false`, preset-classic
         // enables the blog plugin on defaults; Docusaurus 3.10+ then emits an
