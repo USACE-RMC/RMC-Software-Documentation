@@ -113,16 +113,43 @@ the numerical results — and contains:
   consumed, including the net head series and the initiation probabilities at the toe and at the offset exit point.
 - **Node provenance** — which rule produced the toe unfiltered-exit and initiation values: computed from the underlying mechanisms, or
   forced to certainty by a specific override, with the trigger elevation echoed so per-pool forcing is readable off the series.
+- **Request echo and replay** — a verbatim copy of the request as received, and, on each delegated-analysis record, the service endpoint
+  that reproduces that analysis directly from the recorded quantities, so a reviewer can rerun any single delegated analysis in isolation.
+- **Resolution summaries** — the mean of the resolved downstream path length $L_3$ and whether the analysis treated a confining layer as
+  possibly present (presence Yes or Unknown), alongside the full resolution record above.
+- **Sampling health** — the number of degenerate Monte Carlo realizations encountered, in total and split between the progression and
+  blanket-theory analyses, and the mean Schmertmann factor-of-safety series behind the progression digest; a blanket-theory digest also
+  carries the engine's own consistency checks.
+- **Run metadata** — the wall-clock computation time and the UTC completion timestamp, and any non-fatal validation warnings raised while
+  resolving the inputs (for example, an ignored daylight ground-surface elevation).
 
-Each analysis also carries a version identifier for the screening model, so reported results can be tied to the model revision that computed
-them.
+The audit record is requested with the analysis and is included by default; a caller may omit it, which changes no numerical output.
+
+### Monte Carlo Controls
+
+The delegated analyses sample their distributions by Monte Carlo simulation under three controls that the request may override and that
+the audit record echoes. The screening defaults are 10,000 realizations, a fixed random seed of 6414, and 50 points in the expanded
+headwater analysis grid; the synchronous service rejects more than 20,000 realizations. Because the seed is fixed by default, repeated
+analyses of the same inputs reproduce the same results, and the blowout and heave analyses draw identical realizations (see
+[Delegated Models](./07-delegated-models.mdx)); supplying no seed draws a fresh seed for each delegated analysis and removes both
+properties. The flaw assessment runs its own simulation of 5,000 realizations with the same default seed, independent of the screening
+realization count.
+
+### Provenance
+
+Every response, including a failed one, carries three provenance values: the model key (`bep-screening`), which identifies the screening
+model among the models the service exposes; the engineering model version, which changes whenever a formula, default, lookup value,
+sampling order, or seed treatment changes, so a stored result can be tied to the model revision that computed it; and the service build,
+a deployment identifier for troubleshooting only, never to be compared when deciding whether a stored result is current. The audit record
+repeats the model key and version together with the Monte Carlo controls in effect.
 
 ## Interpreting the System Response Curve
 
 The governing SRP series is the system response curve — the conditional probability of breach by backward erosion piping as a function of pool
 level. The curve is non-decreasing with pool level: the flaw, roof-support, intervention, and breach nodes are constant; the blowout and heave
 probabilities rise with net head; and the progression node is explicitly constrained to be non-decreasing. Pools at or below the governing exit
-reference elevation carry effectively zero SRP because no net driving head exists there.
+reference elevation carry effectively zero SRP because no net driving head exists there; the reported value is floored at 10<sup>−16</sup>
+rather than exactly zero, so the curve can be plotted on a logarithmic axis.
 
 ### Which Pathway Governs
 

@@ -51,14 +51,14 @@ parameters and the 0.1 mm lower limit.
 ## IN-04 — Engineering Basis — `03-input-parameters.mdx`
 
 **Regarding:** The relative-density category uniform ranges (Very Loose 0–15%, Loose 15–35%,
-Medium Dense 35–65%, Dense 65–85%, Very Dense 85–100%, and the Default/Unknown band 15–65%).
+Medium Dense 35–65%, Dense 65–85%, Very Dense 85–100%, and the Unknown band 15–65%).
 
 **Needed:** Literature citation or engineering-judgment attribution for the band boundaries
-and for the Default/Unknown selection.
+and for the Unknown selection.
 
 **Proposed (unconfirmed):** Boundaries follow the standard qualitative relative-density
 classification for granular soils; a uniform distribution over each band takes no position on
-a most-likely value within the category; Default/Unknown spans loose to medium-dense as a
+a most-likely value within the category; Unknown spans loose to medium-dense as a
 conservative screening posture. If confirmed, supply the classification source for the
 bibliography.
 
@@ -232,12 +232,13 @@ pathways in the unfiltered-exit union formula.
 
 ## IN-16 — Engineering Basis — `07-delegated-models.mdx`
 
-**Regarding:** The screening fines-content correction — a step from 1.0 to 1.4, with the
-higher factor applying at exactly 5% fines and above — replacing the continuous
-fines-content relationship in the dedicated Schmertmann documentation.
+**Regarding:** The fines-content correction applied by the Schmertmann analysis engine — a
+step from 1.0 to 1.4, with the higher factor applying at exactly 5% fines and above. The
+screening model passes no override; the dedicated Schmertmann documentation does not describe
+the term.
 
 **Needed:** Source or engineering-judgment attribution for the step form, the 5% threshold,
-and the 1.4 value.
+and the 1.4 value, and an addition to the dedicated Schmertmann documentation.
 
 **Answer:**
 

@@ -191,9 +191,12 @@ The probability that a continuous path of fine to medium, uniform sand exists in
 ## Confining-Layer Characterization
 
 The downstream confining layer — a fine-grained stratum overlying the foundation sand on the landside — controls whether seepage can exit
-unfiltered at the toe. Five inputs characterize it (<TableReference tableKey="bep-screening-table-7" />). The presence selection is
+unfiltered at the toe. Seven inputs characterize it (<TableReference tableKey="bep-screening-table-7" />). The presence selection is
 deliberately tri-state: when the presence of a layer cannot be established, the model runs the full confined-exit machinery with a wide
-thickness characterization rather than assuming either extreme.
+thickness characterization rather than assuming either extreme. The categorical selections carry no preselected answer in the Dam Screening
+Tool: the thickness category, the permeability, and the upstream-extension question start unanswered, and the calculation does not run until
+the user has chosen a category — including Unknown — for each one that applies. The defaults noted in the table are the values the model
+assumes when a request omits the field; they are not presented to the user as a starting selection.
 
 <TableVertical
   tableKey="bep-screening-table-7"
@@ -207,15 +210,17 @@ thickness characterization rather than assuming either extreme.
       'Confining layer thickness category',
       'Custom thickness distribution',
       'Confining layer permeability',
+      'Confining layer extends upstream',
       'Upstream confining layer length',
       'Downstream confining layer length',
     ],
     [
-      'Yes / No / Unknown (default Unknown)',
-      'Very Thin / Thin / Moderate / Thick / Unknown / Custom (default Unknown)',
+      'Yes / No / Unknown; required',
+      'Very Thin / Thin / Moderate / Thick / Unknown / Custom; required when the presence is Yes (model default Unknown when omitted)',
       'Distribution, ft; non-negative; required when the category is Custom',
-      'Impervious / Semi-pervious / Unknown (default Unknown)',
-      'Single value, ft; ≥ 0; optional (omitted = unknown)',
+      'Impervious / Semi-pervious / Unknown; required when the presence is Yes (model default Unknown when omitted)',
+      'Yes / No / Unknown; required when the presence is Yes, the permeability is Impervious, and no upstream blanket is present',
+      'Single value, ft; > 0; required when the layer extends upstream and its thickness category is not Very Thin',
       'Single value, ft; > 0; optional (omitted = unknown)',
     ],
     [
@@ -223,7 +228,8 @@ thickness characterization rather than assuming either extreme.
       'Qualitative thickness of the confining layer. Each category maps to a uniform thickness range per the table below. Select the category supported by borings or geologic mapping; select Custom to supply a site-specific distribution; select Unknown when no thickness information exists. When the layer presence is Unknown, the Unknown band is used regardless of the category selected.',
       'Site-specific thickness distribution used when the thickness category is Custom.',
       'Permeability character of the confining layer. Only a layer characterized as Impervious is credited as an upstream seepage barrier (see Hydraulic Loading and Seepage Paths); a Semi-pervious or Unknown layer contributes no upstream head loss.',
-      'Length of the confining layer beyond the upstream embankment toe, entered as a single value. When supplied for a confirmed impervious layer, it is credited directly as the upstream seepage path L<sub>1</sub>. Omitted means unknown: no upstream head loss is credited.',
+      'Whether the confirmed impervious layer continues upstream beneath the reservoir. The question is asked only when no engineered upstream blanket is present (a blanket takes precedence as the upstream barrier). Yes credits the layer as the upstream seepage barrier and asks for its length; No and Unknown credit no upstream head loss. A Yes answer for a Very Thin layer is recorded but credits a zero-length extension.',
+      'Length of the confining layer beyond the upstream embankment toe, entered as a single value. Supplied only when the layer extends upstream; it is credited directly as the upstream seepage path L<sub>1</sub>. When the extension question is answered No or Unknown, no upstream head loss is credited.',
       'Length of the confining layer beyond the downstream embankment toe, entered as a single value. This is the distance to the daylight exit. Omitted means unknown: with no berm, the downstream seepage path is characterized by a wide default range scaled to the embankment height (see Hydraulic Loading and Seepage Paths); with a berm over a confirmed layer, a daylighting exit is assumed at the berm toe. When a berm is present, the supplied extent also determines whether the berm end remains beneath the layer — retaining the through-layer exit mechanisms at an offset exit point — or reaches and clears the layer, producing a daylighting exit at the berm toe (see Event Tree). As a seepage-path length, a supplied extent is used only when the layer presence is confirmed Yes; when the presence is Unknown, the wide default range applies to the no-berm path regardless, although a supplied extent still determines whether a berm reaches or clears the layer.',
     ],
   ]}
@@ -296,8 +302,9 @@ When sand boils or concentrated seepage have been observed, two additional input
 ## Foundation Sand Properties
 
 The foundation sand — the erodible aquifer beneath the embankment — is characterized by its thickness, relative density, gradation, and fines
-content (<TableReference tableKey="bep-screening-table-11" />). Only the thickness is required; the remaining properties carry screening
-defaults that the user may override with site-specific distributions.
+content (<TableReference tableKey="bep-screening-table-11" />). The thickness, the relative density category, and the fines content category
+are required selections with no preselected answer; Unknown is offered for the two categories but must be chosen deliberately. The gradation
+properties carry screening defaults that the user may override with site-specific distributions.
 
 <TableVertical
   tableKey="bep-screening-table-11"
@@ -311,23 +318,23 @@ defaults that the user may override with site-specific distributions.
       'Relative density category',
       'Coefficient of uniformity',
       'Effective grain size',
-      'Fines content',
+      'Fines content category',
     ],
     ['d', 'D<sub>r</sub>', 'C<sub>u</sub>', 'D<sub>10</sub>', '—'],
     ['ft', '%', '—', 'mm', '%'],
     [
       'Required (no default)',
-      'Default category (uniform, 15–65%)',
+      'Required (no default); Unknown maps to uniform 15–65%',
       'Triangular (1.1, 2.0, 4.0)',
       'Normal (mean 0.25, standard deviation 0.085), values limited to no less than 0.1',
-      'Deterministic 0.0',
+      'Required (no default); Unknown maps to 0.0',
     ],
     [
       'Thickness of the pervious foundation (aquifer) layer, as a distribution. Used by both the blanket-theory analysis (seepage path entrance and gradient computations) and the Schmertmann progression analysis (depth correction).',
       'Qualitative relative density of the foundation sand. Each preset category maps to a uniform distribution per the table below; the Custom category instead uses a site-specific distribution supplied by the user. Denser sands resist progression through the Schmertmann density correction.',
       'Coefficient of uniformity of the foundation sand gradation. Controls the base critical gradient in the Schmertmann method — more uniform sands (lower values) are more erodible.',
       'Grain size at 10% passing for the foundation sand. Controls the Schmertmann grain-size correction.',
-      'Fines content of the foundation sand. Feeds the screening fines-content correction in the Schmertmann analysis (see Delegated Models).',
+      'Fines content of the foundation sand, selected as one of three categories: less than 5%, 5% or more, or Unknown. The first two enter the model as deterministic fines contents of 0% and 5%, which place the sand on either side of the step in the screening fines-content correction of the Schmertmann analysis (see Delegated Models). Unknown omits the field, so the model applies its 0% default and takes no fines credit.',
     ],
   ]}
 />
@@ -347,8 +354,8 @@ to state here.
 :::
 
 Each preset relative density category maps to a uniform distribution of relative density $D_r$
-(<TableReference tableKey="bep-screening-table-12" />). The Default and Unknown categories share a broad band spanning loose to medium-dense
-conditions. Select the Custom category to supply a site-specific relative-density distribution instead; every value the custom distribution can
+(<TableReference tableKey="bep-screening-table-12" />). The Unknown category carries a broad band spanning loose to medium-dense conditions;
+the model also accepts a legacy Default category with the same band, which the Dam Screening Tool no longer offers. Select the Custom category to supply a site-specific relative-density distribution instead; every value the custom distribution can
 produce must lie within the physical range of 0 to 100% (an unbounded form such as a normal distribution therefore requires explicit lower and
 upper limits).
 
@@ -359,7 +366,7 @@ upper limits).
   colAlign={['left', 'center', 'center']}
   headers={[[{ value: 'Category' }, { value: 'Low (%)' }, { value: 'High (%)' }]]}
   columns={[
-    ['Very Loose', 'Loose', 'Medium Dense', 'Dense', 'Very Dense', 'Default', 'Unknown'],
+    ['Very Loose', 'Loose', 'Medium Dense', 'Dense', 'Very Dense', 'Unknown', 'Default (legacy alias of Unknown)'],
     ['0', '15', '35', '65', '85', '15', '15'],
     ['15', '35', '65', '85', '100', '65', '65'],
   ]}
@@ -367,10 +374,10 @@ upper limits).
 
 :::warning[INPUT NEEDED IN-04 — Engineering Basis]
 The relative-density uniform ranges require an engineering basis — the category band boundaries and the choice of the 15–65% band for the
-Default and Unknown categories. Provide a literature citation or the engineering-judgment attribution to state here.
+Unknown category. Provide a literature citation or the engineering-judgment attribution to state here.
 
 Proposed (unconfirmed): the category boundaries (15 / 35 / 65 / 85%) follow the standard qualitative relative-density classification for
-granular soils; a uniform distribution over each band takes no position on a most-likely value within the category; and the Default/Unknown
+granular soils; a uniform distribution over each band takes no position on a most-likely value within the category; and the Unknown
 band spans loose to medium-dense as a conservative screening posture. Confirm or replace, and supply the classification source for the
 bibliography if the proposal stands.
 :::
