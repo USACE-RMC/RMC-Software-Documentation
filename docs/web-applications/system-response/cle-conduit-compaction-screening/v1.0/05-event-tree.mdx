@@ -1,0 +1,196 @@
+---
+title: Event Tree
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import Equation from '@site/src/components/Equation';
+import EquationReference from '@site/src/components/EquationReference';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-conduit-compaction-screening" />
+
+# Event Tree
+
+The model computes the SRP at each headwater level as the product of the eight-node CLE event tree, whose structure, node questions, and headwater
+grid are documented in the [Event Tree](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree) chapter of the CLE
+Common Methods manual. This chapter documents how each node is populated for a conduit flaw.
+<TableReference tableKey="cle-conduit-compaction-screening-table-11" /> summarizes the nodes.
+
+<TableVertical
+  tableKey="cle-conduit-compaction-screening-table-11"
+  alt="Event-tree nodes of the conduit compaction model"
+  caption="Event-tree nodes of the conduit compaction model."
+  colAlign={['center', 'left', 'left', 'center']}
+  headers={[[{ value: 'Node' }, { value: 'Name' }, { value: 'Source' }, { value: 'Varies with Pool' }]]}
+  columns={[
+    ['1', '2', '3', '4', '5', '6', '7', '8'],
+    [
+      'Flaw',
+      'Initiation',
+      'Continuation',
+      'Progression: Roof Support',
+      'Progression: No Crack Filling',
+      'Progression: No Flow Limitation',
+      'Unsuccessful Intervention',
+      'Breach',
+    ],
+    [
+      'Four-factor flaw score, or 1.0 when leakage is observed',
+      'Cylindrical-pipe Monte Carlo analysis at the bottom of the conduit',
+      'Continuation method with a diaphragm filter; otherwise 1.0',
+      'Minimum over the embankment materials',
+      'By embankment type',
+      'Fixed at 1.0',
+      'User-specified (default 1.0)',
+      'User-specified (default 1.0)',
+    ],
+    ['No', 'Yes', 'No', 'No', 'No', 'No', 'No', 'No'],
+  ]}
+/>
+
+The flaw is at one elevation, the bottom of the conduit, so the filter it meets and the materials it passes through do not change with pool level.
+Only initiation varies with pool level, as for every compaction model (see
+[Pool Dependence](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#pool-dependence) in the CLE Common Methods
+manual).
+
+## Node 1: Flaw
+
+*Question:* Does a continuous zone of poorly compacted earthfill exist along the conduit, through the embankment?
+
+$P_{flaw}$ is the result of the four-factor scoring, or 1.0 when leakage adjacent to the conduit has been observed, as documented in
+[Flaw Assessment](./04-flaw-assessment.mdx). It is the same at every pool level.
+
+## Node 2: Initiation
+
+*Question:* At each pool level, does the flow through the poorly compacted zone at the bottom of the conduit exert a hydraulic shear
+stress on the walls of the zone that exceeds the critical shear stress of the soil?
+
+The zone is idealized as a cylindrical pipe and the question is answered by the cylindrical-pipe initiation analysis shared by the compaction
+models, documented in the
+[Delegated Method: Cylindrical Pipe Initiation](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#delegated-method-cylindrical-pipe-initiation)
+section of the CLE Common Methods manual and, for its theory, in the
+[Cylindrical Pipe](/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/cylindrical-pipe) chapter of
+the Concentrated Leak Erosion Initiation manual. At each pool level $h$ with tailwater $h_t$, the analysis takes the net head across the pipe above
+its invert, divides it by the seepage path length $L$ to obtain the average hydraulic gradient, computes the hydraulic shear stress on the wall of
+a pipe of initial diameter $D$, and reports the initiation probability $P_{init}(h)$ as the fraction of Monte Carlo realizations, each drawing one
+critical shear stress $\tau_c$ and one diameter $D$, in which the shear stress exceeds the critical shear stress.
+
+The conduit model supplies the analysis with the following:
+
+- **Pipe invert** — the bottom-of-conduit elevation $z_f$. A pool at or below the bottom of the conduit gives no flow through the pipe and zero
+  initiation.
+- **Seepage path length** — unless the user supplies a length, the horizontal width of the embankment section at the bottom of the conduit,
+  measured across the core section when one is supplied and across the shell otherwise, as described in the
+  [Seepage Path Length](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#seepage-path-length) section of the CLE
+  Common Methods manual. A supplied length suits a conduit that does not run perpendicular to the embankment centerline or a surveyed path along
+  the conduit.
+- **Critical shear stress** — unless the user supplies a distribution, the triangular range for the core soil classification from the shared table
+  in the [Critical Shear Stress](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#critical-shear-stress)
+  section of the CLE Common Methods manual. The classifications SP, SW, GP, GW, SP-SM, and GP-GM are not accepted, because non-plastic soils are
+  not modeled (see [Shared Inputs](./03-input-parameters.mdx#shared-inputs)).
+- **Initial pipe diameter** — unless the user supplies a distribution, the triangular distribution with low 5 mm, most likely 10 mm, and high
+  12.5 mm (see [Input Parameters](./03-input-parameters.mdx#initial-pipe-diameter)). This range lies above that of the core compaction model
+  (2, 3, and 5 mm). Because the shear stress is proportional to the diameter, the larger default range shifts initiation to lower pool levels
+  than the core model's default would for the same soil and section: at a given pool level it raises the initiation probability, or leaves it
+  unchanged where both are 0 or both are 1.
+
+The model applies the screening-level adjustments common to the compaction models, listed in the
+[Screening-Level Adjustments](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#screening-level-adjustments)
+section of the CLE Common Methods manual, and makes none of its own.
+
+## Node 3: Continuation
+
+*Question:* Does an unfiltered seepage exit exist that allows erosion along the conduit to continue?
+
+The model answers the question with one statement of the user: whether a diaphragm filter surrounds the conduit. With no diaphragm filter, the
+exit is unfiltered and continuation is certain. With a diaphragm filter, the probability that erosion continues past it, $P_{ce}$, is evaluated by
+the shared continuation method from the description of the filter and the base soils upstream of it:
+
+<Equation
+  equationKey="cle-conduit-compaction-screening-eq-4"
+  equation="P_{cont} = \begin{cases} P_{ce} & \text{a diaphragm filter surrounds the conduit} \\[4pt] 1.0 & \text{otherwise} \end{cases}"
+/>
+
+The continuation method selects, for each base-soil and filter pair, the most informative method whose inputs are available (or certain
+continuation when none is), and the worst base soil governs, as documented in the
+[Method Selection and Governing Base Soil](/docs/web-applications/system-response/continuation-screening/v1.0/method-selection-and-governing-base-soil)
+chapter of the Continuation (Filter Evaluation) Screening manual; the value it returns is described in the
+[Node Result](/docs/web-applications/system-response/continuation-screening/v1.0/output-and-interpretation#node-result) section of that manual.
+With no diaphragm filter the method is not evaluated. Either way, $P_{cont}$ is one value applied at every pool level: the gate is a statement
+about the embankment, not an elevation compared with the pool. This is the compaction-model form of the continuation node described in
+[Node 3: Continuation](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-3-continuation)
+of the CLE Common Methods manual. The applicability of the diaphragm-filter question to other filters is requested at marker IN-05 in
+[Input Parameters](./03-input-parameters.mdx#diaphragm-filter).
+
+## Node 4: Progression — Roof Support
+
+*Question:* Does the material over the enlarging pipe along the conduit hold a roof, so that the pipe stays open?
+
+$P_{roof}$ is the minimum roof-support probability across the embankment materials the pipe passes through, from the table of Fell et al. (2024) <Citation citationKey="Fell2024" /> given
+in
+[Node 4: Progression — Roof Support](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-4-progression--roof-support)
+of the CLE Common Methods manual. It is the same at every pool level.
+
+## Node 5: Progression — No Crack Filling
+
+*Question:* Does the enlarging pipe remain unfilled by material carried in from upstream?
+
+$P_{nf}$ depends only on the embankment type, from the table given in
+[Node 5: Progression — No Crack Filling](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-5-progression--no-crack-filling)
+of the CLE Common Methods manual: 1.0 for homogeneous and zoned earthfill, and 0.5 for central-core earth and rockfill.
+
+## Node 6: Progression — No Flow Limitation
+
+*Question:* Does the flow into the enlarging pipe remain unrestricted by upstream seepage-limiting elements?
+
+The model represents no upstream seepage-limiting element for a conduit flaw: it takes no input of upstream facings or cutoff walls, and the
+probability of no flow limitation is fixed at
+
+<Equation equationKey="cle-conduit-compaction-screening-eq-5" equation="P_{nl} = 1.0" />
+
+at every pool level. No upstream element reduces the SRP of this model, where in the other CLE models an upstream facing or a cutoff wall that
+reaches the flaw does (see
+[Node 6: Progression — No Flow Limitation](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-6-progression--no-flow-limitation)
+in the CLE Common Methods manual).
+
+:::warning[INPUT NEEDED IN-12 — Engineering Basis]
+The model takes no flow-limitation credit for a conduit flaw ($P_{nl} = 1.0$ at every pool level), even where an upstream facing or a cutoff wall
+is present. Provide the engineering basis to state here — the literature source or the engineering-judgment attribution. The same question is
+open as item (3) of marker IN-14 in the CLE Common Methods manual, so the two should be resolved together.
+
+Proposed (unconfirmed): an upstream facing or a cutoff wall does not reliably seal the zone around a conduit that passes through or beneath it, so
+no credit is taken (conservative). Confirm or replace.
+:::
+
+## Nodes 7 and 8: Unsuccessful Intervention and Breach
+
+*Questions:* Do detection and intervention fail (Node 7)? Does an uncontrolled release of impounded water occur (Node 8)?
+
+$P_{int}$ and $P_{br}$ are the user-specified values, each defaulting to 1.0 and applied at every pool level, as documented in
+[Intervention and Breach](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#intervention-and-breach) in the
+CLE Common Methods manual.
+
+## SRP Computation
+
+The SRP at each pool level is the product of the eight node probabilities. With the flow-limitation node fixed at 1.0, it is:
+
+<Equation
+  equationKey="cle-conduit-compaction-screening-eq-6"
+  equation="\mathrm{SRP}(h) = P_{flaw} \times P_{init}(h) \times P_{cont} \times P_{roof} \times P_{nf} \times 1.0 \times P_{int} \times P_{br}"
+/>
+
+Only $P_{init}(h)$ varies with pool level; the other seven factors are constant. Where the product is zero, the SRP is reported as a negligibly
+small value instead, as described in
+[SRP Computation](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#srp-computation) in the CLE Common Methods
+manual. The product is zero at and below the bottom of the conduit; above it, until the hydraulic gradient is large enough for the shear stress
+to reach the critical shear stress in some realizations; wherever the tailwater reaches the headwater, so that there is no net head across the
+pipe; and at every pool level where the user sets the probability of unsuccessful intervention or of breach to 0. Where the tailwater is absent
+or does not rise as fast as the headwater, the curve therefore rises with pool level from that negligible value toward the product of the seven
+constant factors, which it reaches only if every realization initiates; a rising tailwater can flatten or lower it, and it stays negligible at
+every pool level if any constant factor is zero (see <EquationReference equationKey="cle-conduit-compaction-screening-eq-6" /> and
+[Output and Interpretation](./07-output-and-interpretation.mdx)).
+
+<CitationFootnote />

@@ -1,0 +1,250 @@
+---
+title: Flaw Assessment
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import Equation from '@site/src/components/Equation';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-conduit-compaction-screening" />
+
+# Flaw Assessment
+
+Node 1 of the event tree is the probability $P_{flaw}$ that a continuous zone of poorly compacted earthfill exists along the conduit, through the
+embankment. The model estimates it by the risk-factor and likelihood-factor scoring of Fell et al. (2024) <Citation citationKey="Fell2024" />,
+applied to four conduit factors. The scheme — the factors, the weighted sum, and its log-linear conversion to a probability — is documented in the
+[Risk-Factor and Likelihood-Factor Scoring](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#risk-factor-and-likelihood-factor-scoring)
+section of the CLE Common Methods manual. This chapter documents the conduit model's factors, its likelihood-factor tables, its flaw-probability
+curve, its observation override, and its flaw elevation. The assessment does not depend on pool level: $P_{flaw}$ applies across the whole system
+response curve.
+
+## Factors and Risk Factors
+
+The model scores four factors, each with a fixed risk factor $RF$ that weights its influence
+(<TableReference tableKey="cle-conduit-compaction-screening-table-5" />). The conduit type and surround carries the largest weight; the other three
+are weighted equally.
+
+<TableVertical
+  tableKey="cle-conduit-compaction-screening-table-5"
+  alt="Conduit flaw factors and their risk factors"
+  caption="Conduit flaw factors and their risk factors."
+  colAlign={['left', 'center', 'center']}
+  headers={[[{ value: 'Factor' }, { value: 'Likelihood-Factor Symbol' }, { value: 'Risk Factor RF' }]]}
+  columns={[
+    ['Conduit type and surround', 'Cutoff collars', 'Compaction adjacent to the conduit', 'Conduit trench details'],
+    ['LF<sub>cd</sub>', 'LF<sub>col</sub>', 'LF<sub>cmp</sub>', 'LF<sub>tr</sub>'],
+    ['3', '2', '2', '2'],
+  ]}
+/>
+
+:::warning[INPUT NEEDED IN-07 — Bibliography]
+The four conduit factors and their risk factors (3 for the conduit type and surround, 2 for each of the other three) are attributed to the
+risk-factor and likelihood-factor scheme of Fell et al. (2024). Identify the table of Fell et al. (2024) that gives the factors and weights for
+poor compaction adjacent to a conduit, so that it can be cited here, or provide the engineering-judgment attribution if the weights are specific
+to this model. State also the basis for applying no flaw-continuity stage to this model, where the core, wall or cliff, and foundation or
+abutment compaction models multiply their scored probability by a flaw-continuity probability keyed to their compaction factor.
+:::
+
+## Likelihood Factors
+
+Each factor's selection maps to a likelihood factor on the scale of 1 (least likely to produce a flaw) to 4 (most likely). The four lookups follow.
+
+### Conduit type and surround
+
+<TableVertical
+  tableKey="cle-conduit-compaction-screening-table-6"
+  alt="Likelihood factor for the conduit type and surround"
+  caption="Likelihood factor for the conduit type and surround."
+  colAlign={['left', 'center']}
+  headers={[[{ value: 'Conduit Type and Surround' }, { value: 'LF<sub>cd</sub>' }]]}
+  columns={[
+    [
+      'Concrete-encased round pipe with sloping sides',
+      'Concrete-encased round pipe with vertical sides',
+      'Masonry or brick with vertical sides',
+      'Round pipe not encased',
+      'Unknown',
+    ],
+    ['1', '2', '3', '4', '3'],
+  ]}
+/>
+
+### Cutoff collars
+
+<TableVertical
+  tableKey="cle-conduit-compaction-screening-table-7"
+  alt="Likelihood factor for cutoff collars"
+  caption="Likelihood factor for cutoff collars."
+  colAlign={['left', 'center']}
+  headers={[[{ value: 'Cutoff Collars' }, { value: 'LF<sub>col</sub>' }]]}
+  columns={[
+    ['Absent', 'Present', 'Unknown'],
+    ['1', '3', '3'],
+  ]}
+/>
+
+A conduit with cutoff collars scores higher than one without, and an Unknown selection scores the same as Present: when the presence of collars is
+not known, the model takes the less favorable condition.
+
+:::warning[INPUT NEEDED IN-08 — Engineering Basis]
+The cutoff-collar likelihood factors (Absent 1, Present 3, Unknown 3) require an engineering basis to state here: why the presence of cutoff
+collars raises the likelihood of a flaw, why no intermediate value (such as 2) is used, and why an unknown condition is scored the same as collars
+present rather than at an intermediate value. Provide the table of Fell et al. (2024) or the engineering-judgment attribution, and state the
+site conditions under which the collar scores should not be relied on (for Assumption 3 of
+[Assumptions and Limitations](./06-assumptions-and-limitations.mdx#flaw)).
+
+Proposed (unconfirmed): fill around cutoff collars is difficult to compact, so collars increase rather than reduce the likelihood of a poorly
+compacted zone; Unknown takes the unfavorable value so that a missing record does not lower the screening result; the collar scores may not hold where the fill around the collars is known to have been
+compacted to the standard of the rest of the fill. Confirm or replace.
+:::
+
+### Compaction adjacent to the conduit
+
+<TableVertical
+  tableKey="cle-conduit-compaction-screening-table-8"
+  alt="Likelihood factor for the compaction adjacent to the conduit"
+  caption="Likelihood factor for the compaction adjacent to the conduit."
+  colAlign={['left', 'center']}
+  headers={[[{ value: 'Compaction Adjacent to the Conduit' }, { value: 'LF<sub>cmp</sub>' }]]}
+  columns={[
+    [
+      'Mechanical, slightly wet of optimum',
+      'By hand, slightly dry of optimum',
+      'By hand in thick layers, dry of optimum',
+      'No formal compaction',
+      'Unknown',
+    ],
+    ['1', '2', '3', '4', '3'],
+  ]}
+/>
+
+### Conduit trench details
+
+<TableVertical
+  tableKey="cle-conduit-compaction-screening-table-9"
+  alt="Likelihood factor for the conduit trench details"
+  caption="Likelihood factor for the conduit trench details."
+  colAlign={['left', 'center']}
+  headers={[[{ value: 'Conduit Trench Details' }, { value: 'LF<sub>tr</sub>' }]]}
+  columns={[
+    [
+      'Wide, with slopes flatter than 1H:1V',
+      'Medium width, depth, and slope',
+      'Narrow and deep, with near-vertical sides',
+      'Unknown',
+    ],
+    ['2', '3', '4', '3'],
+  ]}
+/>
+
+The trench factor has no choice scored 1: the most favorable trench, wide with slopes flatter than 1H:1V, scores 2. The trench factor therefore
+contributes at least 4 to the weighted sum (twice its risk factor), which sets the minimum attainable sum at 11.
+
+:::warning[INPUT NEEDED IN-09 — Engineering Basis]
+The likelihood factors of the conduit type and surround, the compaction adjacent to the conduit, and the conduit trench details
+(<TableReference tableKey="cle-conduit-compaction-screening-table-6" />, <TableReference tableKey="cle-conduit-compaction-screening-table-8" />,
+and <TableReference tableKey="cle-conduit-compaction-screening-table-9" />) require an engineering basis, including: (1) the score of 3 given to
+an Unknown selection for each of the three factors; and (2) why the trench factor has no choice scored 1, so that its most favorable choice scores
+2. Provide the table of Fell et al. (2024) from which the scores are taken, or the engineering-judgment attribution.
+:::
+
+## Weighted Sum
+
+The likelihood factors combine into the weighted sum described in the
+[Weighted Sum](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#weighted-sum) section of the CLE Common
+Methods manual, which for the four conduit factors is:
+
+<Equation
+  equationKey="cle-conduit-compaction-screening-eq-1"
+  equation="\Sigma = 3\,LF_{cd} + 2\,LF_{col} + 2\,LF_{cmp} + 2\,LF_{tr}"
+/>
+
+Because the trench factor scores at least 2, the weighted sum ranges from 11 (every factor at its most favorable choice) to 34 (every factor at its
+least favorable choice). A selection of Unknown for all four factors gives $\Sigma = 27$.
+
+## Flaw Probability
+
+The weighted sum is converted to the raw flaw probability $P_{raw}$ by interpolating the logarithm of the probability linearly between the points
+of <TableReference tableKey="cle-conduit-compaction-screening-table-10" />, as described in the
+[Flaw Probability from the Weighted Sum](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#flaw-probability-from-the-weighted-sum)
+section of the CLE Common Methods manual.
+
+<TableVertical
+  tableKey="cle-conduit-compaction-screening-table-10"
+  alt="Flaw probability by weighted sum"
+  caption="Flaw probability by weighted sum for the conduit compaction model."
+  colAlign={['center', 'center']}
+  headers={[[{ value: 'Weighted Sum Σ' }, { value: 'Flaw Probability P<sub>raw</sub>' }]]}
+  columns={[
+    ['11', '14', '17', '20', '28', '36'],
+    [
+      '1.5 × 10<sup>-4</sup>',
+      '3 × 10<sup>-4</sup>',
+      '6 × 10<sup>-4</sup>',
+      '2 × 10<sup>-3</sup>',
+      '1 × 10<sup>-2</sup>',
+      '8 × 10<sup>-2</sup>',
+    ],
+  ]}
+/>
+
+Over the attainable range of the weighted sum, the flaw probability runs from $1.5 \times 10^{-4}$ at $\Sigma = 11$ to about
+$4.8 \times 10^{-2}$ at $\Sigma = 34$; the last tabulated point, $\Sigma = 36$, cannot be reached and serves only to interpolate above
+$\Sigma = 28$. With every factor Unknown ($\Sigma = 27$), the flaw probability is about $8.2 \times 10^{-3}$.
+
+The model applies none of the rules that can force the raw flaw probability to zero in other CLE models: no factor is marked as physically
+incompatible with a flaw, and no lower threshold on the weighted sum applies, since the lowest attainable sum is the first tabulated point. Nor does
+the model apply a flaw-continuity stage (see the
+[Flaw-Continuity Stage](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#flaw-continuity-stage) section of
+the CLE Common Methods manual). Without an observation, the flaw probability is the scored value:
+
+<Equation equationKey="cle-conduit-compaction-screening-eq-2" equation="P_{flaw} = P_{raw}(\Sigma)" />
+
+:::warning[INPUT NEEDED IN-10 — Engineering Basis]
+The flaw-probability curve of <TableReference tableKey="cle-conduit-compaction-screening-table-10" /> is recorded in the model as the curve for one
+loading condition, described as the pool of record plus 20 percent, and the model applies it at every pool level. Provide: (1) the table or figure
+of Fell et al. (2024) from which the six points are taken; (2) a definition of the "pool of record plus 20 percent" loading condition; and (3) the
+engineering basis for using the curve of that one loading condition for the flaw probability at every pool level, given that the source may
+tabulate other loading conditions (for example, pools below the pool of record, or first filling) with different probabilities.
+:::
+
+## Leakage Observation Override
+
+When leakage adjacent to the conduit has been observed, the flaw is taken as demonstrated and the flaw probability is set to 1.0:
+
+<Equation
+  equationKey="cle-conduit-compaction-screening-eq-3"
+  equation="P_{flaw} = 1.0 \quad \text{when leakage adjacent to the conduit is observed}"
+/>
+
+The observation makes the four factor selections optional. When all four factors are given, the weighted sum and raw flaw probability remain
+available for comparison, but the flaw probability is 1.0. The override sets only
+Node 1: it does not change the flaw elevation, and every downstream node is evaluated as usual, as described in the
+[Observation Overrides](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#observation-overrides) section
+of the CLE Common Methods manual.
+
+## Flaw Elevation
+
+The base-of-flaw elevation $z_f$ is the bottom-of-conduit elevation the user supplies (see
+[Input Parameters](./03-input-parameters.mdx#flaw-inputs)). It is used directly — no heuristic is applied — and it is not changed by the leakage
+observation. It fixes the invert of the idealized pipe for initiation, the elevation at which the seepage path length is measured, and the
+elevation of the failure pathway that the diaphragm filter and the embankment materials describe (see
+[Compaction Models: Base of the Flaw](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#compaction-models-base-of-the-flaw)
+in the CLE Common Methods manual).
+
+:::warning[INPUT NEEDED IN-11 — Engineering Basis]
+Two choices about the flaw elevation require an engineering basis to state here: (1) placing the flaw at the bottom of the conduit, rather than at
+another elevation along the conduit's height such as its haunches or springline; and (2) keeping the flaw at the bottom of the conduit when
+leakage has been observed, whatever the elevation at which the leakage emerges, where the core compaction model instead moves its flaw to the
+observed leakage elevation. Provide the literature source or the engineering-judgment attribution.
+
+Proposed (unconfirmed): the bottom of the conduit is the lowest elevation a flaw along the conduit can occupy, so initiation can begin at the
+lowest pool level and the net head across the flaw is largest there (the seepage path is also longest there, which partly offsets the larger
+head); leakage along a conduit is taken to follow the conduit, so its emergence point does not locate the flaw better than the conduit itself.
+Confirm or replace.
+:::
+
+<CitationFootnote />

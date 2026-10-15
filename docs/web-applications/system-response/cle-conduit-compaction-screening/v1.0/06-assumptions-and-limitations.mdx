@@ -1,0 +1,118 @@
+---
+title: Assumptions and Limitations
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-conduit-compaction-screening" />
+
+# Assumptions and Limitations
+
+The conduit compaction model shares the assumptions of the CLE screening family — the product form of the event tree, the cylindrical-pipe
+idealization and its default critical shear stress, the horizontal seepage path at the flaw elevation, and the tabulated progression probabilities
+— listed with their bases in the
+[Assumptions and Limitations](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/assumptions-and-limitations) chapter of the
+CLE Common Methods manual. The assumptions of the continuation method are listed in the
+[Assumptions and Limitations](/docs/web-applications/system-response/continuation-screening/v1.0/assumptions-and-limitations) chapter of the
+Continuation (Filter Evaluation) Screening manual. This chapter lists the assumptions specific to a conduit flaw. Each states its engineering
+basis, its effect on results, and the conditions under which it may not hold.
+
+## Flaw
+
+1. **The flaw is a continuous zone of poorly compacted earthfill along the conduit.** Low-stress zones over or beside the conduit, and erosion of
+   embankment soil into the conduit through open joints or defects, are not part of the flaw the model scores.
+   - *Engineering basis:* Scope requested — see marker IN-01 in [Model Overview](./02-model-overview.mdx#intended-use).
+   - *Effect on results:* The flaw probability reflects only the factors that govern how well the fill against the conduit was compacted.
+   - *When it may not hold:* Where differential settlement, arching over a rigid conduit, or conduit deterioration is the more likely cause of a
+     flaw; those conditions call for a separate assessment.
+2. **The flaw probability is scored from four conduit factors weighted 3, 2, 2, and 2, with no flaw-continuity stage.** (See
+   [Flaw Assessment](./04-flaw-assessment.mdx#factors-and-risk-factors).)
+   - *Engineering basis:* The risk-factor and likelihood-factor scheme of Fell et al. (2024) <Citation citationKey="Fell2024" />; the source of the
+     conduit factors and weights, and the basis for applying no flaw-continuity stage, are requested at marker IN-07 in
+     [Flaw Assessment](./04-flaw-assessment.mdx#factors-and-risk-factors).
+   - *Effect on results:* Across its choices, the conduit type and surround moves the weighted sum by up to 9, the compaction adjacent to the
+     conduit by up to 6, and the cutoff collars and the trench details by up to 4 each. The compaction category enters the flaw probability only
+     once, through its weight, unlike the three compaction models that also apply a flaw-continuity probability.
+   - *When it may not hold:* Where construction records or inspection give direct evidence of the fill condition along the conduit; the risk
+     team's estimate of the flaw probability then replaces the screening value.
+3. **Cutoff collars raise the likelihood of a flaw, and an unknown collar condition is scored as collars present.**
+   - *Engineering basis:* Basis requested — see marker IN-08 in [Flaw Assessment](./04-flaw-assessment.mdx#cutoff-collars).
+   - *Effect on results:* Collars present, or unknown, add 4 to the weighted sum relative to collars absent, which multiplies the flaw
+     probability by about 2 to 4, depending on where the sum lies on the curve.
+   - *When it may not hold:* Conditions requested with the basis at marker IN-08 in
+     [Flaw Assessment](./04-flaw-assessment.mdx#cutoff-collars).
+4. **Unknown selections for the conduit type, the compaction adjacent to the conduit, and the trench details score 3, and the trench factor has no
+   choice scored 1.**
+   - *Engineering basis:* Basis requested — see marker IN-09 in [Flaw Assessment](./04-flaw-assessment.mdx#conduit-trench-details).
+   - *Effect on results:* With every factor Unknown, the weighted sum is 27 and the flaw probability is about $8.2 \times 10^{-3}$, about 55
+     times the value for the most favorable conduit ($1.5 \times 10^{-4}$ at a weighted sum of 11). No conduit scores below a weighted sum of 11.
+   - *When it may not hold:* Where the conduit, its fill, or its trench can be characterized from drawings or records; the known choice should then
+     be selected.
+5. **The flaw-probability curve for the pool-of-record-plus-20-percent loading condition applies at every pool level.**
+   - *Engineering basis:* Basis requested — see marker IN-10 in [Flaw Assessment](./04-flaw-assessment.mdx#flaw-probability).
+   - *Effect on results:* The flaw probability does not reflect whether the embankment has experienced the pool levels being evaluated.
+   - *When it may not hold:* For first filling, or for pools well beyond the pool of record, where a loading-specific flaw probability may differ.
+6. **An observation of leakage adjacent to the conduit sets the flaw probability to 1.0 without changing the flaw elevation.**
+   - *Engineering basis:* Engineering judgment for the override, as for the other CLE models (see
+     [Observation Overrides](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#observation-overrides) in
+     the CLE Common Methods manual); the basis for keeping the flaw elevation is requested at marker IN-11 in
+     [Flaw Assessment](./04-flaw-assessment.mdx#flaw-elevation), and the qualifying observation at marker IN-04 in
+     [Input Parameters](./03-input-parameters.mdx#flaw-inputs).
+   - *Effect on results:* With leakage observed, the SRP is governed by the downstream nodes, and initiation still begins at the bottom of the
+     conduit.
+   - *When it may not hold:* Where the leakage has another explanation, such as seepage along a different path or leakage from the conduit
+     itself.
+7. **The flaw lies at the bottom of the conduit.**
+   - *Engineering basis:* Basis requested — see marker IN-11 in [Flaw Assessment](./04-flaw-assessment.mdx#flaw-elevation).
+   - *Effect on results:* Initiation is zero, and the SRP negligible, until the pool rises far enough above the bottom of the conduit for the
+     hydraulic shear stress to reach the lowest critical shear stress, which can be well above the conduit bottom. While the tailwater is below
+     the bottom of the conduit, the bottom of the conduit gives the largest net head across the flaw, but it also measures the seepage path where
+     the embankment section is widest, so the two effects on the hydraulic gradient oppose each other. With the tailwater above the bottom of the
+     conduit, the net head is the headwater minus the tailwater whatever the flaw elevation, as long as that elevation is below the tailwater, and
+   only the path-length effect remains; for a flaw elevation $z$ above the tailwater, the net head would instead be $h - z$.
+   - *When it may not hold:* Where the poorly compacted zone is known to lie at another elevation along the conduit, such as at its haunches.
+
+## Initiation
+
+8. **The poorly compacted zone is idealized as a cylindrical pipe with a default initial diameter between 5 and 12.5 mm, most likely 10 mm.**
+   - *Engineering basis:* The cylindrical-pipe idealization of the Concentrated Leak Erosion Initiation toolbox (see
+     [Event Tree](./05-event-tree.mdx#node-2-initiation)); the basis of the default range is requested at marker IN-06 in
+     [Input Parameters](./03-input-parameters.mdx#initial-pipe-diameter).
+   - *Effect on results:* The shear stress is proportional to the diameter, so the default range, larger than the core compaction model's, places
+     initiation at lower pool levels than the core model's default would.
+   - *When it may not hold:* Where the opening along the conduit is better represented as a gap or crack against the conduit wall, or where its
+     size can be estimated from cracking analysis; a site-specific diameter distribution should then be supplied.
+9. **The seepage path is measured horizontally across the embankment section at the bottom of the conduit.**
+   - *Engineering basis:* The pipe-length measurement of the Concentrated Leak Erosion Initiation toolbox, as adopted by every compaction model
+     (see [Seepage Path Length](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#seepage-path-length) in the CLE
+     Common Methods manual).
+   - *Effect on results:* For a conduit that crosses the embankment on a skew, the measured path is shorter than the true path along the
+     conduit, so the hydraulic gradient and the initiation probability are overstated, or unchanged where initiation is 0 or 1 (conservative).
+     For a conduit whose grade changes elevation across the section, the single bottom-of-conduit elevation also misstates the net head: taken
+     at the higher upstream invert, it understates the head to the lower exit, so the net effect on the gradient can go either way.
+   - *When it may not hold:* For a conduit that crosses the embankment on a skew, or one whose grade changes elevation across the section; the
+     length along the conduit should then be supplied.
+
+## Continuation and Progression
+
+10. **Continuation is credited only for a diaphragm filter around the conduit; with none, continuation is certain.**
+    - *Engineering basis:* Engineering judgment: with no filter credited, the screening takes continuation as certain, to avoid false negatives
+      (conservative; see
+      [Node 3: Continuation](/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-3-continuation)
+      in the CLE Common Methods manual); the treatment of other filters is requested at marker IN-05 in
+      [Input Parameters](./03-input-parameters.mdx#diaphragm-filter).
+    - *Effect on results:* A diaphragm filter multiplies the SRP by the continuation probability at every pool level; without one, the continuation
+      node does not reduce the SRP.
+    - *When it may not hold:* Where another filter intercepts the zone along the conduit, or where erosion exits into an open defect of the
+      conduit itself upstream of the diaphragm. Such erosion bypasses the filter, so crediting $P_{ce}$ there is unconservative; the continuation
+      method does not evaluate exits into the conduit.
+11. **No credit is taken for flow limitation by upstream elements.**
+    - *Engineering basis:* Basis requested — see marker IN-12 in
+      [Event Tree](./05-event-tree.mdx#node-6-progression--no-flow-limitation).
+    - *Effect on results:* An upstream facing or cutoff wall does not reduce the SRP of a conduit flaw (conservative).
+    - *When it may not hold:* Where an upstream element demonstrably limits flow into the zone around the conduit; a detailed analysis
+      can then assess the credit.
+
+<CitationFootnote />

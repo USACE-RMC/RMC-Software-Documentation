@@ -377,7 +377,7 @@ const docs = [
     software: 'system-response',
     doc_location: 'web-applications/system-response/cle-conduit-compaction-screening',
     doc_name: 'CLE Conduit Compaction Screening Technical Reference Manual',
-    active: false,
+    active: true,
     draft: true,
   },
   {
