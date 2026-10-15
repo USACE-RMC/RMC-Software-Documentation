@@ -17,6 +17,7 @@ import SystemResponseIcon from '../components/icons/SystemResponseIcon';
 import ToolboxIcon from '../components/icons/ToolboxIcon';
 import WebAppIcon from '../components/icons/WebAppIcon';
 import TourButton from '../components/TourButton';
+import { hasActiveDocs } from '../docConfig';
 import '../css/custom.css';
 
 export default function Home() {
@@ -123,28 +124,28 @@ export default function Home() {
           title: 'Rainfall Runoff Frequency Tool',
           description: 'Rapid risk framework',
           href: addBaseUrl('web-applications/rrft'),
-          active: false,
+          active: hasActiveDocs('web-applications', 'rrft'),
         },
         {
           IconComponent: LSTIcon,
           title: 'Levee Screening Tool',
           description: 'Levee risk screening and assessment',
           href: addBaseUrl('web-applications/lst'),
-          active: false,
+          active: hasActiveDocs('web-applications', 'lst'),
         },
         {
           IconComponent: DSTIcon,
           title: 'Dam Screening Tool',
           description: 'Dam risk screening',
           href: addBaseUrl('web-applications/dst'),
-          active: false,
+          active: hasActiveDocs('web-applications', 'dst'),
         },
         {
           IconComponent: SystemResponseIcon,
           title: 'System Response Library',
           description: 'System response models for screening',
           href: addBaseUrl('web-applications/system-response'),
-          active: false,
+          active: hasActiveDocs('web-applications', 'system-response'),
         },
       ],
     },
