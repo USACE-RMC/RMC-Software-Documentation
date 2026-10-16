@@ -1,0 +1,132 @@
+---
+title: Hydrograph Generation
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import Equation from '@site/src/components/Equation';
+import EquationReference from '@site/src/components/EquationReference';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/overtopping-erosion-screening" />
+
+# Hydrograph Generation
+
+The model generates a synthetic overtopping hydrograph for each overtopping depth $H$ on the system response curve. The hydrograph is the time history
+of unit discharge (discharge per unit crest length) flowing over the crest and down the downstream face. Its peak discharge and its duration both
+depend on the overtopping depth; its shape is the same at every depth. Because the hydrograph depends only on the overtopping depth and the hydrograph
+inputs, the same hydrograph is used for every Monte Carlo realization at that depth.
+
+## Peak Discharge
+
+The peak unit discharge is computed from the broad-crested weir equation <Citation citationKey="Fell2015" />:
+
+<Equation equationKey="overtopping-screening-eq-peak-discharge" equation="q_p = C_d \cdot H^{3/2}" />
+
+where:
+
+> $q_p$ = peak unit discharge (ft²/s or m²/s)  
+> $C_d$ = broad-crested weir coefficient ([Chapter 3](./03-input-parameters.mdx))  
+> $H$ = overtopping depth (ft or m)
+
+## Duration Scaling
+
+The user specifies the base duration $t_0$, the duration of overtopping at a reference overtopping depth. The duration at any other depth is scaled
+from it with a power law:
+
+<Equation equationKey="overtopping-screening-eq-duration" equation="t_H = t_0 \cdot \left(\frac{H}{H_{\text{ref}}}\right)^{1/1.8}" />
+
+where:
+
+> $t_H$ = overtopping duration at depth $H$ (hours)  
+> $t_0$ = base duration at the reference depth (hours)  
+> $H_{\text{ref}}$ = reference depth, 0.5 ft (US Customary) or 0.15 m (SI)  
+> $1/1.8 \approx 0.556$ = scaling exponent
+
+The relationship makes larger overtopping depths last longer, with sub-linear growth: doubling the overtopping depth multiplies the duration by
+$2^{1/1.8} \approx 1.47$. <TableReference tableKey="overtopping-screening-table-duration-example" /> shows the scaled durations for a base duration
+of 4.0 hours.
+
+<TableVertical
+  tableKey="overtopping-screening-table-duration-example"
+  alt="Example duration scaling for a 4-hour base duration"
+  caption="Example duration scaling for a base duration of 4.0 hours at the reference depth of 0.5 ft."
+  headers={[[{ value: 'Overtopping Depth (ft)' }, { value: 'Depth / Reference Depth' }, { value: 'Scaled Duration (hours)' }]]}
+  columns={[
+    ['0.5', '1.0', '2.0', '3.0', '5.0'],
+    ['1', '2', '4', '6', '10'],
+    ['4.0', '5.9', '8.6', '10.8', '14.4'],
+  ]}
+/>
+
+:::caution
+The reference depth and the scaling exponent are fixed. Reservoirs differ widely in how overtopping duration grows with depth, so the scaled
+durations may be too short or too long for a specific reservoir. The user should check that the durations the scaling produces across the depth range
+are reasonable for the reservoir, and adjust the base duration if they are not (Assumption 4 in [Chapter 7](./07-assumptions-and-limitations.mdx)).
+:::
+
+:::warning[INPUT NEEDED IN-10 — Engineering Basis]
+The duration scaling law (<EquationReference equationKey="overtopping-screening-eq-duration" />) uses a fixed reference depth of 0.5 ft (0.15 m) and a fixed exponent of 1/1.8. The previous edition described
+the exponent only as "a reasonable approximation for typical reservoirs," with no source. Provide the literature source (with full bibliographic details)
+or the engineering-judgment attribution for the exponent and for the reference depth, including what reservoir behavior the exponent represents. The previous edition also stated, without a source, that reservoirs with large storage
+relative to inflow tend to have long overtopping events that lengthen slowly with depth, and reservoirs with small storage short, sharply peaked
+events; provide a source or attribution if that guidance is to be printed.
+:::
+
+## Gamma Hydrograph Shape
+
+The unit discharge at time $t$ after the onset of overtopping follows a gamma-shaped function:
+
+<Equation equationKey="overtopping-screening-eq-hydrograph" equation="q(t) = \frac{q_p}{C_a} \cdot \left(\frac{t}{k}\right)^{a-1} \cdot e^{-t/k}" />
+
+where:
+
+> $q(t)$ = unit discharge at time $t$ (ft²/s or m²/s)  
+> $q_p$ = peak unit discharge from <EquationReference equationKey="overtopping-screening-eq-peak-discharge" />  
+> $a$ = hydrograph shape parameter ([Chapter 3](./03-input-parameters.mdx); default 3.5), dimensionless; not to be confused with the erosion exponent $\alpha$ of [Chapter 5](./05-erosion-model.mdx)  
+> $C_a$ = normalizing constant  
+> $k$ = hydrograph time-scale parameter (hours); not to be confused with the erodibility coefficient $k_d$ or the Manning's equation coefficient $k_n$ of [Chapter 5](./05-erosion-model.mdx)
+
+The normalizing constant makes the peak of the hydrograph equal $q_p$:
+
+<Equation equationKey="overtopping-screening-eq-const-a" equation="C_a = e^{-(a-1)} \cdot (a-1)^{a-1}" />
+
+The time-scale parameter ties the hydrograph to the scaled duration:
+
+<Equation equationKey="overtopping-screening-eq-k-shape" equation="k = \frac{C_a}{2 \cdot \Gamma(a)} \cdot t_H" />
+
+where $\Gamma(a)$ is the gamma function evaluated at $a$ and $t_H$ is the scaled duration from
+<EquationReference equationKey="overtopping-screening-eq-duration" />. With this time scale, the volume under the complete gamma curve equals
+$q_p t_H / 2$, the volume of a triangular hydrograph with peak $q_p$ and base $t_H$.
+
+The resulting hydrograph has the following properties:
+
+- **Zero initial discharge** — discharge is zero at the onset of overtopping ($t = 0$) and rises to the peak.
+- **Single peak** — the peak occurs at $t_{peak} = (a - 1) \cdot k$, where the discharge equals $q_p$. With the default shape parameter, the peak
+  occurs at about 31 percent of the scaled duration.
+- **Asymmetric shape** — the rising limb is steeper than the recession limb.
+- **Same shape at every depth** — the peak discharge and the duration change with overtopping depth, but the shape, set by $a$, does not.
+
+:::warning[INPUT NEEDED IN-11 — Engineering Basis]
+The gamma hydrograph form, the default shape parameter $a$ = 3.5, and the time scale that gives the curve the volume of a triangular hydrograph of base
+$t_H$ (the factor of 2 in the time-scale equation) have no stated engineering basis. The previous edition attributed the asymmetric shape to the behavior
+of flood hydrographs in dam reservoirs, without a source. Provide the literature source (with full bibliographic details) or the engineering-judgment
+attribution for the hydrograph form, the default shape parameter and the time scale.
+:::
+
+## Hydrograph Duration in the Simulation
+
+The model evaluates the hydrograph at a fixed time step from the onset of overtopping through the scaled duration $t_H$; overtopping flow after $t_H$
+is not simulated. The gamma curve has not returned to zero at $t_H$: with the default shape parameter, the discharge at $t_H$ is about 7 percent of
+the peak, and the volume under the curve after $t_H$, about 2 percent of the total, is not applied to the embankment (Assumption 6 in Chapter 7).
+
+:::warning[INPUT NEEDED IN-12 — Engineering Basis]
+The simulation ends each hydrograph at the scaled duration $t_H$, when the discharge is still about 7 percent of the peak with the default shape
+parameter. The previous edition described the recession as continuing asymptotically and stated that the tail has negligible erosive potential; that
+description does not match the model, which omits the tail. Provide the engineering basis or attribution for ending the hydrograph at $t_H$, and
+confirm the statement of its effect on results.
+:::
+
+<CitationFootnote />
