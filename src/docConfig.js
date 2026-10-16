@@ -385,6 +385,7 @@ const docs = [
     software: 'system-response',
     doc_location: 'web-applications/system-response/cle-wall-cliff-compaction-screening',
     doc_name: 'Concentrated Leak Erosion Wall/Cliff Compaction Screening Technical Reference Manual',
+    sidebar_label: 'Concentrated Leak Erosion Wall/Cliff Compaction Screening',
     active: true,
     draft: true,
   },
