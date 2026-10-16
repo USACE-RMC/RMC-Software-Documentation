@@ -380,8 +380,9 @@ const docs = [
     category: 'web-applications',
     software: 'system-response',
     doc_location: 'web-applications/system-response/cle-conduit-compaction-screening',
-    doc_name: 'CLE Conduit Compaction Screening Technical Reference Manual',
-    active: false,
+    doc_name: 'Concentrated Leak Erosion Conduit Compaction Screening Technical Reference Manual',
+    sidebar_label: 'Concentrated Leak Erosion Conduit Compaction Screening',
+    active: true,
     draft: true,
   },
   {
