@@ -1,0 +1,140 @@
+---
+title: Model Overview
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-cross-valley-settlement-screening" />
+
+# Model Overview
+
+## Purpose
+
+The cross-valley settlement screening model computes a system response curve for concentrated leak erosion through a transverse crack caused by
+differential settlement of the embankment across the valley. The system response probability (SRP) at each headwater level is the conditional
+probability of breach of the embankment by concentrated leak erosion through such a crack, given that pool level.
+
+An embankment settles more where the fill beneath the crest is thicker, so the crest settles most over the deepest part of the valley and least
+near the abutments. Where the abutment is steep, or where it carries an abrupt step, the settlement changes rapidly along the
+crest and stretches the fill near the top of the embankment. If that stretching exceeds what the fill can sustain, a transverse crack opens at the
+crest and extends some depth into the embankment. Once the pool rises above the bottom of the crack, water can flow through it, and the crack
+becomes the flaw from which concentrated leak erosion can develop.
+
+## Intended Use
+
+The model is a screening-level assessment of concentrated leak erosion through a cross-valley settlement crack. Like the other CLE screening
+models, it makes simplifying and generally conservative assumptions with two goals (see the
+[Intended Use](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#intended-use) section of the common
+methods manual):
+
+- **Preventing false negatives** — The flaw probability is read from the more conservative of two available relationships, the one for a pool
+  above the period of record, and initiation is taken as certain once the pool rises above the bottom of the crack.
+- **Reducing input burden** — The flaw assessment needs only the dam height, the abutment slope, an optional abutment step, and either the
+  measured settlement or the year of construction, from which a default settlement is assigned.
+
+The model is not intended for detailed or semi-quantitative risk assessments of transverse cracking. Its flaw assessment uses tabulated
+relationships over a limited range of settlement and abutment slope (see [Flaw Assessment](./04-flaw-assessment.mdx)), and its initiation
+treatment does not analyze the hydraulics of the crack.
+
+## How the Model Works
+
+The model executes the three stages common to the CLE screening models (see
+[How the Model Works](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#how-the-model-works) in the common
+methods manual), with a flaw assessment specific to cross-valley settlement:
+
+1. **Flaw assessment** — The maximum post-construction crest settlement, or a default from the year of construction, is normalized by the dam
+   height. The normalized settlement and the abutment slope give the localized tensile strain at the crest, interpolated from tables for an abutment
+   without a step or, when a step is described, from tables for three relative step heights. The strain then gives the probability of a continuous
+   transverse crack, the crack width, and, through a relationship between crack width and crack depth, the depth of the crack below the crest and
+   so the bottom-of-crack elevation. An observation of continuous transverse cracking sets the flaw probability to 1.0 (see
+   [Flaw Assessment](./04-flaw-assessment.mdx)).
+2. **Pathway description** — The model applies the user's description of the failure pathway along the crack, taken at the bottom-of-crack
+   elevation: the top of the first filter the pathway meets, the materials of the full and the below-filter pathways, and the upstream
+   seepage-limiting elements and the top of any wall (see [Input Parameters](./03-input-parameters.mdx#shared-inputs)).
+3. **Event-tree assembly** — At each headwater level, the model evaluates the eight nodes of the CLE event tree and multiplies them. Initiation
+   steps from zero to 1.0 where the pool rises above the bottom of the crack; continuation, roof support, and flow limitation change where the pool
+   crosses the top of a filter or of a wall (see [Event Tree](./05-event-tree.mdx)).
+
+Every step is deterministic. The only part of the calculation that can involve sampling is the continuation probability, when the shared
+continuation method evaluates the filter by its route through the soil classifications of the base and filter soils (see
+[Method Selection and Governing Base Soil](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/method-selection-and-governing-base-soil)
+in the continuation manual).
+
+## Physics Basis
+
+The model combines the following engineering relationships:
+
+- **Localized tensile strain from settlement and abutment geometry** — tabulated relationships between the normalized crest settlement, the
+  abutment slope, the relative height of an abutment step, and the localized tensile strain at the crest (see
+  [Flaw Assessment](./04-flaw-assessment.mdx#localized-tensile-strain))
+- **Flaw probability and crack width from the localized tensile strain** — tabulated relationships between the strain, the probability of a
+  continuous transverse crack, and the crack width (see [Flaw Assessment](./04-flaw-assessment.mdx#flaw-probability))
+- **Crack depth from crack width** — an empirical relationship attributed to Pierson (2023) (see
+  [Flaw Assessment](./04-flaw-assessment.mdx#crack-depth-and-bottom-of-crack-elevation))
+- **Initiation in an open crest crack** — the headwater gate shared by the crest-crack models, documented in the
+  [Crest-Crack Models: Headwater Gate](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#crest-crack-models-headwater-gate)
+  section of the common methods manual
+- **Continuation, roof support, crack filling, and flow limitation** — the failure-pathway conventions and the tabulated progression
+  probabilities of Fell et al. (2024) <Citation citationKey="Fell2024" />, documented in the
+  [Failure Pathway and Progression](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression)
+  chapter of the common methods manual, with filter evaluation by the shared continuation method
+
+## Comparison with Detailed Models
+
+In a detailed risk analysis, the likelihood, width, and depth of a transverse crack are estimated by the risk team from the totality of the
+evidence, and initiation in the crack is assessed with a shear stress analysis of the crack geometry, for example with the
+[Vertical Rectangular Crack](/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/vertical-rectangular-crack)
+or [Vertical Triangular Crack](/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/vertical-triangular-crack)
+geometry of the Concentrated Leak Erosion Initiation toolbox. <TableReference tableKey="cle-cross-valley-screening-table-1" /> summarizes the differences.
+
+<TableVertical
+  tableKey="cle-cross-valley-screening-table-1"
+  alt="Comparison of the cross-valley settlement screening model and detailed methods"
+  caption="Comparison of the cross-valley settlement screening model and detailed methods."
+  headers={[[{ value: 'Aspect' }, { value: 'Screening Model' }, { value: 'Detailed Methods' }]]}
+  columns={[
+    [
+      'Purpose',
+      'Settlement',
+      'Flaw probability',
+      'Crack width and depth',
+      'Initiation',
+      'Progression',
+    ],
+    [
+      'Screening-level risk assessment',
+      'Measured maximum settlement, or a default from the year of construction',
+      'Tabulated from the localized tensile strain, with an observation override',
+      'Tabulated width from the strain; depth from an empirical width-depth relationship',
+      'Certain once the pool rises above the bottom of the crack',
+      'Tabulated roof-support, crack-filling, and flow-limitation probabilities',
+    ],
+    [
+      'Detailed risk analysis',
+      'Site settlement records, interpreted by the risk team',
+      'Estimated by the risk team from the totality of the evidence',
+      'Estimated from cracking analysis, with sensitivity analysis',
+      'Shear stress analysis of the crack geometry',
+      'Assessed by the risk team, informed by the same tables',
+    ],
+  ]}
+/>
+
+## Relationship to the Common CLE Methods
+
+The model is one of the four crest-crack models of the CLE family, with settlement adjacent to a wall or cliff, desiccation cracking, and frost
+cracking (see [The Two Model Groups](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#the-two-model-groups)
+in the common methods manual). It differs from the other three in its flaw assessment: it is the one CLE model that does not use risk-factor and
+likelihood-factor scoring, estimating the flaw probability instead from the settlement-based relationships documented in
+[Flaw Assessment](./04-flaw-assessment.mdx). It is also the one crest-crack model that derives the crack depth from a crack width rather than
+from tabulated depths.
+
+Everything downstream of the flaw assessment follows the common methods: the eight-node event tree, the headwater grid, the initiation gate, the
+pathway gates on the top of the filter and the top of a wall, and the progression tables. This manual does not repeat them; [Event Tree](./05-event-tree.mdx)
+states how each node is populated for this model and links the section of the common methods manual that documents it.
+
+<CitationFootnote />

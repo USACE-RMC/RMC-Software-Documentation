@@ -1,0 +1,110 @@
+---
+title: Assumptions and Limitations
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-cross-valley-settlement-screening" />
+
+# Assumptions and Limitations
+
+The cross-valley settlement model applies deliberate simplifications relative to a detailed assessment of transverse cracking and concentrated
+leak erosion. They reduce input requirements, and most are designed to avoid false negatives at the screening level; Assumptions 2, 4, 5, and 10
+note where they may not. This chapter lists the assumptions
+of the model's flaw assessment. The assumptions it shares with the other CLE screening models — the product form of the event tree, the
+headwater grid, the pool-independent flaw probability, the certain initiation of an open crest crack, the pathway gate at the top of the filter,
+and the progression tables — are listed in the
+[Assumptions and Limitations](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/assumptions-and-limitations) chapter of
+the common methods manual, where they are numbered 1 to 4, 7, 9, 15, and 17 to 19. Each assumption below states its engineering basis, its
+effect on results, and the conditions under which it may not hold. Where an engineering basis is still awaiting confirmation, the assumption
+cross-references the input marker at its primary location in this document.
+
+## Settlement and Abutment Geometry
+
+1. **The settlement, the dam height, the abutment slope, and any abutment step are single values.** The flaw assessment carries no uncertainty in
+   them, and the flaw probability, crack width, and crack depth are each one value.
+   - *Engineering basis:* Basis requested — see marker IN-04 in [Flaw Assessment](./04-flaw-assessment.mdx).
+   - *Effect on results:* The SRP reflects the entered geometry exactly; uncertainty in a measured settlement or slope does not spread the result,
+     and the bottom of the crack is one elevation rather than a range.
+   - *When it may not hold:* Where the settlement record or the abutment profile is uncertain and the result is sensitive to it; the analysis may
+     then be repeated at candidate values.
+2. **Without a settlement record, the normalized settlement is 0.5 percent of the dam height for a dam completed before 1950 and 0.25 percent for
+   one completed in 1950 or later.**
+   - *Engineering basis:* Basis requested — see marker IN-05 in [Flaw Assessment](./04-flaw-assessment.mdx#normalized-settlement).
+   - *Effect on results:* The default fixes the strain, flaw probability, and crack depth for a given abutment; the two eras differ by a factor of
+     two in normalized settlement.
+   - *When it may not hold:* Where the embankment was built by methods atypical of its era, or where it sits on a compressible
+     foundation and the default may understate the settlement (non-conservative).
+3. **One abutment is analyzed.** One abutment slope, and at most one step, describe the abutment geometry.
+   - *Engineering basis:* Basis requested — see marker IN-02 in [Input Parameters](./03-input-parameters.mdx#abutment-geometry),
+     which also asks the basis for analyzing one abutment.
+   - *Effect on results:* The result describes a crack at the abutment entered; a crack at the other abutment is not assessed in the same
+     analysis.
+   - *When it may not hold:* Where both abutments are steep or stepped; each may then be analyzed in turn.
+
+## Localized Tensile Strain
+
+4. **The localized tensile strain at the crest is a tabulated function of the normalized settlement and the abutment slope, and, with a step, of
+   the relative step height.** The tables are interpolated linearly, and an input beyond them takes the value at the nearer end.
+   - *Engineering basis:* Basis requested — see markers IN-07 and IN-08 in
+     [Flaw Assessment](./04-flaw-assessment.mdx#localized-tensile-strain), and IN-15 in
+     [Flaw Assessment](./04-flaw-assessment.mdx#range-of-the-relationships) for the range.
+   - *Effect on results:* The strain rises with settlement and slope within the tables, and is held constant beyond them, so a slope steeper than
+     60 degrees or a normalized settlement above the tabulated range does not raise the strain further and may understate it
+     (non-conservative).
+   - *When it may not hold:* For abutment profiles that are not well described by one slope and one step, for valleys whose shape concentrates
+     settlement differently, and for inputs beyond the tabulated range.
+5. **A step with a relative height of 0.4 or less contributes zero strain.** The strain is interpolated toward zero between relative step
+   heights of 0.6 and 0.4.
+   - *Engineering basis:* Basis requested — see marker IN-09 in [Flaw Assessment](./04-flaw-assessment.mdx#abutment-with-a-step).
+   - *Effect on results:* Entering a step with a relative height of 0.4 or less, including a step height of zero, gives a strain, flaw
+     probability, and crack depth no higher — and generally lower — than describing no step for the same abutment slope and settlement
+     (non-conservative relative to the no-step result).
+   - *When it may not hold:* Where a small step sits on a steep abutment whose slope alone would produce significant strain.
+
+## Flaw Probability and Crack Geometry
+
+6. **The flaw probability is read from the relationship for a pool above the period of record, at every pool level.**
+   - *Engineering basis:* Basis requested — see marker IN-11 in [Flaw Assessment](./04-flaw-assessment.mdx#flaw-probability).
+   - *Effect on results:* For pools within the period of record, the flaw probability is no lower than the at-or-below-record set would give,
+     so the SRP there may be overstated (conservative).
+   - *When it may not hold:* Where the pool range of interest has been experienced without cracking or leakage; a detailed assessment may then
+     credit that performance.
+7. **The flaw probability is interpolated in the logarithm of probability between tabulated strains, with a floor of 5 × 10<sup>-5</sup>.**
+   - *Engineering basis:* Basis requested — see marker IN-10 in [Flaw Assessment](./04-flaw-assessment.mdx#flaw-probability).
+   - *Effect on results:* Even a strain of zero — from zero settlement on an abutment slope of 15 degrees or
+     flatter, or from a step with $h_1/H$ of 0.4 or less — gives a flaw probability of 5 × 10<sup>-5</sup>; within the tabulated strains the
+     flaw probability does not exceed about 0.16 without a step and about 0.22 with one.
+   - *When it may not hold:* For strains near the ends of the relationship, where the floor and the added end point control the value.
+8. **The crack width is a tabulated function of the strain, and the crack depth follows from the width by an empirical relationship.**
+   - *Engineering basis:* Pierson (2023) for the width-depth relationship, whose bibliographic details are requested at marker IN-13; the basis of
+     the width relationship is requested at marker IN-12 (both in
+     [Flaw Assessment](./04-flaw-assessment.mdx#crack-depth-and-bottom-of-crack-elevation)).
+   - *Effect on results:* The crack depth, and so the pool level at which the SRP rises, follows the strain: a crack can reach about 37 ft
+     (11.3 m) below the crest at the largest width, 75 mm.
+   - *When it may not hold:* Where cracks have been observed and their depth is known, or where the fill's tensile behavior differs from that
+     underlying the relationships.
+9. **The crack depth is not limited by the height of the embankment.**
+   - *Engineering basis:* Basis requested — see marker IN-14 in
+     [Flaw Assessment](./04-flaw-assessment.mdx#crack-depth-and-bottom-of-crack-elevation).
+   - *Effect on results:* For a dam lower than the computed crack depth, the bottom of the crack falls below the base of the embankment and
+     initiation is certain at every pool level evaluated above it (conservative).
+   - *When it may not hold:* For low dams, where a crack cannot physically extend below the foundation contact.
+10. **An observation of continuous transverse cracking sets the flaw probability to 1.0 but not the crack geometry.** The crack width, depth, and
+    bottom-of-crack elevation are still computed from the settlement and abutment inputs.
+    - *Engineering basis:* The common CLE observation convention, under which the override sets Node 1 only (Assumption 7 of the common methods
+      manual; see [Observation Overrides](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#observation-overrides)).
+    - *Effect on results:* The SRP above the bottom of the crack rises to the product of the downstream nodes, while the elevation at which it
+      rises stays at the computed bottom of the crack.
+    - *When it may not hold:* Where the observed cracking extends deeper than the computed crack; the computed bottom of the crack may then place
+      the rise of the curve too high.
+
+## Limitations
+
+- **One crack, one mechanism.** The model assesses one transverse crack formed by cross-valley differential settlement at one abutment. Cracking
+  from settlement adjacent to a wall or cliff, from desiccation, or from frost is assessed by the corresponding CLE screening models.
+- **No crack hydraulics.** Initiation is a gate on the bottom of the crack (see
+  [Crest-Crack Models: Headwater Gate](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#crest-crack-models-headwater-gate));
+  the crack width is used only to estimate the crack depth, not to compute the flow or shear stress in the crack.
+- **Tabulated range.** The strain, flaw probability, and crack width relationships are tabulated over limited ranges, and inputs beyond them take
+  the end values (see [Range of the Relationships](./04-flaw-assessment.mdx#range-of-the-relationships)).

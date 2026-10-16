@@ -1,0 +1,420 @@
+---
+title: Flaw Assessment
+---
+
+import Equation from '@site/src/components/Equation';
+import EquationReference from '@site/src/components/EquationReference';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-cross-valley-settlement-screening" />
+
+# Flaw Assessment
+
+Node 1 of the event tree is the probability $P_{flaw}$ that a continuous transverse crack exists through the embankment. The flaw assessment also
+supplies the one flaw quantity the downstream nodes use, the bottom-of-crack elevation $z_{bc}$
+(see [Crest-Crack Models: Bottom of the Crack](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#crest-crack-models-bottom-of-the-crack)
+in the common methods manual). Unlike the other CLE screening models, the assessment does not score qualitative site factors. It is a chain of
+relationships driven by the settlement and the abutment geometry:
+
+1. The crest settlement is normalized by the dam height.
+2. The normalized settlement and the abutment slope, with any abutment step, give the localized tensile strain at the crest.
+3. The strain gives the flaw probability and the crack width.
+4. The crack width gives the crack depth, and the crack depth gives the bottom-of-crack elevation.
+
+Every step is deterministic, and every quantity is the same at every pool level.
+
+:::warning[INPUT NEEDED IN-04 — Engineering Basis]
+The flaw assessment treats the settlement (or the year-of-construction default), the dam height, the abutment slope, and the step height as single
+values, so the flaw probability, crack width, and crack depth carry no uncertainty and the bottom of the crack is one elevation. State the
+engineering basis for this deterministic treatment, or provide the engineering-judgment attribution to state here.
+
+Proposed (unconfirmed): the inputs are geometric and survey quantities entered as best estimates at the screening stage, and the analyst brackets
+their uncertainty by repeating the analysis. Confirm or replace.
+:::
+
+## Normalized Settlement
+
+When the maximum post-construction settlement $s$ is supplied, the normalized settlement, in percent of the dam height, is
+
+<Equation equationKey="cle-cross-valley-screening-eq-1" equation="\bar{s} = 100\,\frac{s}{H}" />
+
+where $H$ is the dam height, in the same length unit as $s$. When no settlement is supplied, the normalized settlement is assigned from the year
+of construction $Y$:
+
+<Equation
+  equationKey="cle-cross-valley-screening-eq-2"
+  equation="\bar{s} = \begin{cases} 0.5 & Y < 1950 \\[4pt] 0.25 & Y \ge 1950 \end{cases}"
+/>
+
+A dam completed in 1950 takes the smaller default. A supplied settlement always takes precedence over the year of construction.
+
+:::warning[INPUT NEEDED IN-05 — Engineering Basis]
+The default normalized settlement assigned from the year of construction
+(<EquationReference equationKey="cle-cross-valley-screening-eq-2" />: 0.5 percent of the dam height for a dam completed before 1950,
+0.25 percent for a dam completed in 1950 or later) requires an engineering basis. Provide the literature source for the two values and for the
+1950 boundary, or the engineering-judgment attribution to state here.
+
+Proposed (unconfirmed): dams built before about 1950 were generally compacted less thoroughly than later dams and settled more after
+construction, so the older dams take the larger default. Confirm or replace.
+:::
+
+## Localized Tensile Strain
+
+The localized tensile strain $e_L$, in percent, is the measure of crest stretching from which the flaw probability and the crack width are read.
+It is interpolated from tables of strain against the normalized settlement $\bar{s}$ and the abutment slope $\theta$. Which tables apply depends on
+whether the abutment has a step.
+
+:::warning[INPUT NEEDED IN-06 — Definition]
+State the physical meaning of the localized tensile strain $e_L$: where along the crest and at what depth it applies (for example, the
+horizontal tensile strain along the dam axis in the crest region over the abutment), and over what gauge length it is "localized." The tables
+below are stated in percent, and the flaw probability and crack width relationships are stated in the same strain.
+:::
+
+### Abutment without a step
+
+When no step height is entered, the strain is interpolated bilinearly from <TableReference tableKey="cle-cross-valley-screening-table-5" /> and
+<TableReference tableKey="cle-cross-valley-screening-table-6" />, which tabulate it at eight normalized settlements and seven abutment slopes.
+With $\bar{s}_i \le \bar{s} \le \bar{s}_{i+1}$ and $\theta_j \le \theta \le \theta_{j+1}$ on the tabulated axes,
+
+<Equation
+  equationKey="cle-cross-valley-screening-eq-3"
+  equation="e_L = (1-t)(1-u)\,e_{i,j} + t\,(1-u)\,e_{i+1,j} + t\,u\,e_{i+1,j+1} + (1-t)\,u\,e_{i,j+1}, \qquad t = \frac{\bar{s} - \bar{s}_i}{\bar{s}_{i+1} - \bar{s}_i}, \quad u = \frac{\theta - \theta_j}{\theta_{j+1} - \theta_j}"
+/>
+
+where $e_{i,j}$ is the tabulated strain at normalized settlement $\bar{s}_i$ and slope $\theta_j$. The tables are split at an abutment slope of
+35 degrees only to keep them readable; they form one relationship. Like the step tables that follow, they list the normalized settlement by row
+and the abutment slope by column. The values of these no-step tables are rounded to three decimal places; the step tables that follow are exact
+as shown, to two decimal places.
+
+<TableVertical
+  tableKey="cle-cross-valley-screening-table-5"
+  alt="Localized tensile strain for an abutment without a step, abutment slope 15 to 35 degrees"
+  caption="Localized tensile strain (%) for an abutment without a step, abutment slope 15 to 35 degrees."
+  colAlign={['center', 'center', 'center', 'center', 'center']}
+  headers={[[{ value: 'Normalized Settlement s̄ (%)' }, { value: 'θ = 15°' }, { value: 'θ = 20°' }, { value: 'θ = 25°' }, { value: 'θ = 35°' }]]}
+  columns={[
+    ['0', '0.1', '0.25', '0.5', '1', '1.5', '2', '2.5'],
+    ['0', '0.067', '0.117', '0.200', '0.491', '0.687', '0.925', '1.035'],
+    ['0.117', '0.150', '0.200', '0.400', '0.745', '1.000', '1.175', '1.267'],
+    ['0.200', '0.280', '0.400', '0.600', '1.000', '1.235', '1.429', '1.600'],
+    ['0.600', '0.680', '0.800', '1.000', '1.400', '1.751', '1.900', '2.000'],
+  ]}
+/>
+
+<TableVertical
+  tableKey="cle-cross-valley-screening-table-6"
+  alt="Localized tensile strain for an abutment without a step, abutment slope 45 to 60 degrees"
+  caption="Localized tensile strain (%) for an abutment without a step, abutment slope 45 to 60 degrees."
+  colAlign={['center', 'center', 'center', 'center']}
+  headers={[[{ value: 'Normalized Settlement s̄ (%)' }, { value: 'θ = 45°' }, { value: 'θ = 55°' }, { value: 'θ = 60°' }]]}
+  columns={[
+    ['0', '0.1', '0.25', '0.5', '1', '1.5', '2', '2.5'],
+    ['1.000', '1.080', '1.200', '1.400', '1.800', '2.075', '2.200', '2.400'],
+    ['1.400', '1.480', '1.600', '1.800', '2.167', '2.600', '2.800', '3.000'],
+    ['1.600', '1.680', '1.800', '2.000', '2.486', '2.829', '3.114', '3.286'],
+  ]}
+/>
+
+The strain rises with both the normalized settlement and the abutment slope throughout the tables: a steeper abutment, or a larger settlement,
+stretches the crest more.
+
+:::warning[INPUT NEEDED IN-07 — Engineering Basis]
+The strain tables for an abutment without a step (<TableReference tableKey="cle-cross-valley-screening-table-5" /> and
+<TableReference tableKey="cle-cross-valley-screening-table-6" />) require a literature source, and the bilinear interpolation between their
+tabulated values (<EquationReference equationKey="cle-cross-valley-screening-eq-3" />) requires a basis. Provide the source (author, year, title,
+publisher or report number, and the figure or table digitized), or the engineering-judgment attribution, and state whether the source presents
+the relationship as curves that are to be interpolated linearly in both settlement and slope.
+:::
+
+### Abutment with a step
+
+When a step height $h_1$ is entered, the strain depends also on the relative step height $r = h_1/H$. Three tables give the strain at relative
+step heights of 0.6, 0.8, and 0.9 (<TableReference tableKey="cle-cross-valley-screening-table-7" /> to
+<TableReference tableKey="cle-cross-valley-screening-table-9" />), each at six normalized settlements and four abutment slopes. The calculation has
+two stages:
+
+1. Each of the three tables is interpolated bilinearly at $(\bar{s}, \theta)$ as in
+   <EquationReference equationKey="cle-cross-valley-screening-eq-3" />, giving the strains $e_{0.6}$, $e_{0.8}$, and $e_{0.9}$.
+2. The strain at the dam's relative step height is interpolated linearly through those three values and a fourth point fixed at zero strain for a
+   relative step height of 0.4:
+
+<Equation
+  equationKey="cle-cross-valley-screening-eq-4"
+  equation="e_L = e_k + \frac{r - r_k}{r_{k+1} - r_k}\,\bigl(e_{k+1} - e_k\bigr), \qquad (r_k, e_k) \in \{(0.4,\ 0),\ (0.6,\ e_{0.6}),\ (0.8,\ e_{0.8}),\ (0.9,\ e_{0.9})\}"
+/>
+
+A relative step height of 0.4 or less takes zero strain, and one of 0.9 or more takes $e_{0.9}$.
+
+<TableVertical
+  tableKey="cle-cross-valley-screening-table-7"
+  alt="Localized tensile strain for an abutment with a step, relative step height 0.6"
+  caption="Localized tensile strain (%) for an abutment with a step, relative step height h1/H = 0.6."
+  colAlign={['center', 'center', 'center', 'center', 'center']}
+  headers={[[{ value: 'Normalized Settlement s̄ (%)' }, { value: 'θ = 15°' }, { value: 'θ = 25°' }, { value: 'θ = 45°' }, { value: 'θ = 60°' }]]}
+  columns={[
+    ['0', '0.1', '0.25', '0.5', '1', '2'],
+    ['0.05', '0.10', '0.13', '0.16', '0.20', '0.25'],
+    ['0.25', '0.35', '0.50', '0.65', '0.80', '1.00'],
+    ['0.60', '0.90', '1.30', '1.60', '2.00', '2.50'],
+    ['0.75', '1.15', '1.60', '2.00', '2.50', '3.25'],
+  ]}
+/>
+
+<TableVertical
+  tableKey="cle-cross-valley-screening-table-8"
+  alt="Localized tensile strain for an abutment with a step, relative step height 0.8"
+  caption="Localized tensile strain (%) for an abutment with a step, relative step height h1/H = 0.8."
+  colAlign={['center', 'center', 'center', 'center', 'center']}
+  headers={[[{ value: 'Normalized Settlement s̄ (%)' }, { value: 'θ = 15°' }, { value: 'θ = 25°' }, { value: 'θ = 45°' }, { value: 'θ = 60°' }]]}
+  columns={[
+    ['0', '0.1', '0.25', '0.5', '1', '2'],
+    ['0.07', '0.10', '0.13', '0.16', '0.20', '0.25'],
+    ['0.30', '0.35', '0.50', '0.65', '0.80', '1.00'],
+    ['0.70', '0.90', '1.30', '1.60', '2.00', '2.50'],
+    ['0.90', '1.15', '1.60', '2.00', '2.50', '3.25'],
+  ]}
+/>
+
+<TableVertical
+  tableKey="cle-cross-valley-screening-table-9"
+  alt="Localized tensile strain for an abutment with a step, relative step height 0.9"
+  caption="Localized tensile strain (%) for an abutment with a step, relative step height h1/H = 0.9."
+  colAlign={['center', 'center', 'center', 'center', 'center']}
+  headers={[[{ value: 'Normalized Settlement s̄ (%)' }, { value: 'θ = 15°' }, { value: 'θ = 25°' }, { value: 'θ = 45°' }, { value: 'θ = 60°' }]]}
+  columns={[
+    ['0', '0.1', '0.25', '0.5', '1', '2'],
+    ['0.08', '0.10', '0.14', '0.18', '0.22', '0.28'],
+    ['0.30', '0.40', '0.55', '0.70', '0.90', '1.15'],
+    ['0.80', '1.00', '1.40', '1.80', '2.20', '2.75'],
+    ['1.00', '1.25', '1.75', '2.25', '2.75', '3.50'],
+  ]}
+/>
+
+The tables for relative step heights of 0.6 and 0.8 differ only at zero normalized settlement. The step tables are not uniformly higher than the
+no-step tables at the same settlement and slope — at zero settlement and a 60-degree slope, for example, the no-step strain is 1.6 percent and the
+step strain at a relative step height of 0.6 is 0.75 percent — and the zero-strain point at a relative step height of 0.4 lowers the strain of a
+small step further. Entering a step therefore does not necessarily raise the strain above the no-step value, and an entered step height of zero
+gives zero strain.
+
+:::warning[INPUT NEEDED IN-08 — Engineering Basis]
+The strain tables for an abutment with a step (<TableReference tableKey="cle-cross-valley-screening-table-7" /> to
+<TableReference tableKey="cle-cross-valley-screening-table-9" />) require a literature source, and the linear interpolation over the relative step
+height (<EquationReference equationKey="cle-cross-valley-screening-eq-4" />) requires a basis. Provide the source (author, year, title, publisher or
+report number, and the figure or table digitized) or the engineering-judgment attribution, and confirm that the tables for relative step heights
+of 0.6 and 0.8 are intended to differ only at zero settlement.
+:::
+
+:::warning[INPUT NEEDED IN-09 — Engineering Basis]
+The zero-strain point at a relative step height of 0.4 (<EquationReference equationKey="cle-cross-valley-screening-eq-4" />) requires an
+engineering basis, and its consequence requires a decision. With it, a step with $h_1/H \le 0.4$ — including an entered step height of zero —
+gives zero strain, the smallest flaw probability, and a negligible crack, while the same abutment entered with no step can give a substantial
+strain; a step between 0.4 and 0.6 is interpolated toward zero. State the basis for the point, and state how a user should enter an abutment with
+a small step (for example, describe no step when $h_1/H \le 0.4$, or take the larger of the step and no-step strains).
+
+Proposed (unconfirmed): small steps contribute no strain in addition to the baseline abutment geometry, so the point was intended to represent
+"no added strain" rather than "no strain." Confirm or replace.
+:::
+
+## Flaw Probability
+
+The strain, converted from percent to a decimal strain $\varepsilon_L = e_L / 100$, gives the probability of a continuous transverse crack from
+the relationship of <TableReference tableKey="cle-cross-valley-screening-table-10" />. That probability, $P_{raw}$, is
+the flaw probability from the strain before any observation override (see [Observation Override](#observation-override)). Between two
+tabulated points $(\varepsilon_k, P_k)$ the logarithm of the probability is interpolated linearly in the strain:
+
+<Equation
+  equationKey="cle-cross-valley-screening-eq-5"
+  equation="\log_{10} P_{raw} = \log_{10} P_k + \frac{\varepsilon_L - \varepsilon_k}{\varepsilon_{k+1} - \varepsilon_k}\,\bigl(\log_{10} P_{k+1} - \log_{10} P_k\bigr), \qquad \varepsilon_k \le \varepsilon_L \le \varepsilon_{k+1}"
+/>
+
+A strain below the first tabulated point takes $5 \times 10^{-5}$, and one at or above the last takes 1.0.
+
+<TableVertical
+  tableKey="cle-cross-valley-screening-table-10"
+  alt="Flaw probability by localized tensile strain"
+  caption="Probability of a continuous transverse crack by localized tensile strain, for a pool above the period of record."
+  colAlign={['center', 'center', 'center']}
+  headers={[[{ value: 'Strain (decimal)' }, { value: 'Strain (%)' }, { value: 'Flaw Probability' }]]}
+  columns={[
+    ['0.0005', '0.002', '0.005', '0.01', '0.02', '0.03', '0.0443'],
+    ['0.05', '0.2', '0.5', '1', '2', '3', '4.43'],
+    [
+      '5 × 10<sup>-5</sup>',
+      '2 × 10<sup>-4</sup>',
+      '1 × 10<sup>-3</sup>',
+      '3 × 10<sup>-3</sup>',
+      '2 × 10<sup>-2</sup>',
+      '1 × 10<sup>-1</sup>',
+      '1.0',
+    ],
+  ]}
+/>
+
+The source relationship gives one set of probabilities for a pool at or below the period of record (the highest pool of record) and another for
+a pool above it. The model adopts the set for a pool above the period of record as the conservative choice and applies it at every pool level
+(see marker IN-11 below).
+
+The last point, at a strain of 0.0443, extends the relationship to a probability of 1.0 beyond its last value of 0.1 at a strain of 0.03. The
+strain tables reach at most 3.29 percent without a step and 3.5 percent with one, so the flaw probability from the relationship is at most about
+0.16 without a step and about 0.22 with one; a probability of 1.0 arises only from the observation override.
+
+:::warning[INPUT NEEDED IN-10 — Engineering Basis]
+The flaw probability relationship of <TableReference tableKey="cle-cross-valley-screening-table-10" /> requires a literature source, including
+(1) the tabulated probabilities from a strain of 0.0005 to 0.03, (2) the added point at a strain of 0.0443 with a probability of 1.0, which
+extends the relationship beyond its last value of 0.1, (3) the interpolation of the logarithm of probability linearly in strain
+(<EquationReference equationKey="cle-cross-valley-screening-eq-5" />), and (4) the floor of $5 \times 10^{-5}$ held for every smaller strain,
+including zero strain. Provide the source (author, year, title, publisher or report number, and the figure or table) or the engineering-judgment
+attribution for each.
+:::
+
+:::warning[INPUT NEEDED IN-11 — Engineering Basis]
+The source relationship carries two sets of probabilities, one for a pool at or below the period of record and one for a pool above it, and the
+model always uses the set for a pool above the period of record, at every pool level. State the engineering basis for always using it — and
+whether the at-or-below set should be offered when the pool range of interest has already been experienced — or provide the engineering-judgment
+attribution.
+
+Proposed (unconfirmed): a conservative screening choice, since a crack that existed would likely have revealed itself at pools already
+experienced, so the above-record set represents the untested condition. Confirm or replace.
+:::
+
+### Observation override
+
+When continuous transverse cracking has been observed at the crest, with a cause attributable to settlement or unknown, the flaw probability is set
+to 1.0:
+
+<Equation
+  equationKey="cle-cross-valley-screening-eq-6"
+  equation="P_{flaw} = \begin{cases} 1.0 & \text{continuous transverse cracking observed} \\[4pt] P_{raw} & \text{otherwise} \end{cases}"
+/>
+
+The override changes the flaw probability only. The crack width, crack depth, and bottom-of-crack elevation are still computed from the strain, so
+the pool level at which the observed crack begins to contribute is set by the settlement and abutment inputs, not by the observed crack. This
+follows the common convention for observation overrides (see
+[Observation Overrides](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#observation-overrides) in the
+common methods manual).
+
+## Crack Width
+
+The decimal strain also gives the crack width $W$, in millimeters, interpolated linearly from
+<TableReference tableKey="cle-cross-valley-screening-table-11" />:
+
+<Equation
+  equationKey="cle-cross-valley-screening-eq-7"
+  equation="W = W_k + \frac{\varepsilon_L - \varepsilon_k}{\varepsilon_{k+1} - \varepsilon_k}\,\bigl(W_{k+1} - W_k\bigr), \qquad \varepsilon_k \le \varepsilon_L \le \varepsilon_{k+1}"
+/>
+
+A strain at or below 0.0005 gives a negligible width, and a strain at or above 0.025 gives 75 mm. The crack width is in millimeters whatever the
+length unit of the analysis.
+
+<TableVertical
+  tableKey="cle-cross-valley-screening-table-11"
+  alt="Crack width by localized tensile strain"
+  caption="Crack width by localized tensile strain."
+  colAlign={['center', 'center', 'center']}
+  headers={[[{ value: 'Strain (decimal)' }, { value: 'Strain (%)' }, { value: 'Crack Width (mm)' }]]}
+  columns={[
+    ['0.0005', '0.002', '0.005', '0.01', '0.02', '0.025'],
+    ['0.05', '0.2', '0.5', '1', '2', '2.5'],
+    ['Negligible', '2', '5', '25', '60', '75'],
+  ]}
+/>
+
+:::warning[INPUT NEEDED IN-12 — Engineering Basis]
+The crack-width relationship of <TableReference tableKey="cle-cross-valley-screening-table-11" /> requires a literature source, including its
+linear interpolation (<EquationReference equationKey="cle-cross-valley-screening-eq-7" />), the negligible width at a strain of 0.0005 and below,
+and the width held at 75 mm for every strain above 0.025. Note that the width relationship ends at a strain of 0.025 while the flaw probability
+relationship continues to 0.0443. Provide the source (author, year, title, publisher or report number, and the figure or table) or the
+engineering-judgment attribution.
+:::
+
+## Crack Depth and Bottom-of-Crack Elevation
+
+The crack depth $d_c$ follows from the crack width by an empirical relationship attributed to Pierson (2023), fitted with the width in millimeters
+and the depth in meters:
+
+<Equation
+  equationKey="cle-cross-valley-screening-eq-8"
+  equation="d_{c,m} = \frac{W}{1000}\,\bigl(250 - 1.33\,W\bigr), \qquad d_c = \begin{cases} d_{c,m} & \text{analysis in meters} \\[4pt] d_{c,m} / 0.3048 & \text{analysis in feet} \end{cases}"
+/>
+
+where $W$ is the crack width in millimeters and $d_{c,m}$ the crack depth in meters. Over the range of widths the model produces, 0 to 75 mm, the
+depth increases with the width, from negligible to about 11.3 m (37.0 ft) at 75 mm. The bottom of the crack is then
+
+<Equation equationKey="cle-cross-valley-screening-eq-9" equation="z_{bc} = z_c - d_c" />
+
+as in the common convention for the crest-crack models (see
+[Crest-Crack Models: Bottom of the Crack](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#crest-crack-models-bottom-of-the-crack)).
+A negligible crack width gives a bottom of the crack at the crest, so the pool must rise above the crest before initiation can occur.
+
+:::warning[INPUT NEEDED IN-13 — Bibliography]
+The crack-depth relationship (<EquationReference equationKey="cle-cross-valley-screening-eq-8" />) is attributed to Pierson (2023), whose
+bibliographic details are not recorded. Provide the full reference — authors, year, title, journal or publisher, and report number — so that it
+can be added to the bibliography and cited here, and confirm that the published form gives the depth in feet as
+$d_c = (W/1000)(250 - 1.33\,W)/0.3048$ with the width in millimeters.
+:::
+
+:::warning[INPUT NEEDED IN-14 — Applicability]
+The crack depth is not limited by the height of the embankment. Up to about 37 ft (11.3 m) of crack depth is possible, so for a low dam the
+bottom-of-crack elevation can fall below the foundation contact, and initiation then begins at the lowest pool evaluated. State whether the crack
+depth should be limited to the dam height (or to another bound) or whether the model is not intended for dams lower than the largest crack depth,
+and whether the relationship applies to the full range of widths the model produces.
+:::
+
+## Range of the Relationships
+
+Each relationship is tabulated over a limited range, and an input beyond the range takes the value at the nearer end:
+
+- **Abutment slope** — tabulated from 15 to 60 degrees. A flatter slope takes the strain at 15 degrees; a steeper one takes the strain at 60
+  degrees.
+- **Normalized settlement** — tabulated from 0 to 2.5 percent without a step and from 0 to 2 percent with one. A larger settlement takes the strain
+  at the end of the table.
+- **Relative step height** — interpolated from 0.4 to 0.9; see [Abutment with a Step](#abutment-with-a-step).
+- **Strain** — the flaw probability is held at $5 \times 10^{-5}$ below a strain of 0.0005 and at 1.0 above 0.0443; the crack width is held
+  negligible below 0.0005 and at 75 mm above 0.025.
+
+:::warning[INPUT NEEDED IN-15 — Applicability]
+State the range of abutment slopes, normalized settlements, and relative step heights over which the model is applicable. Beyond the tabulated
+range the model holds the end value rather than extrapolating, so a slope steeper than 60 degrees or a normalized settlement above 2.5 percent
+(2 percent with a step) is assessed as if it were at the end of the table, which may understate the strain. State whether such inputs are outside
+the intended use of the model, or whether holding the end value is an accepted screening treatment.
+:::
+
+## Worked Example
+
+<TableReference tableKey="cle-cross-valley-screening-table-12" /> follows the flaw assessment for a dam 60 ft high with its crest at elevation
+265 ft, an abutment slope of 35 degrees with no step, and a maximum post-construction settlement of 7 in (0.583 ft), with no observation of
+continuous transverse cracking. The analysis is in feet.
+
+<TableVertical
+  tableKey="cle-cross-valley-screening-table-12"
+  alt="Worked example of the flaw assessment"
+  caption="Worked example of the flaw assessment."
+  headers={[[{ value: 'Step' }, { value: 'Quantity' }, { value: 'Value' }]]}
+  columns={[
+    ['1', '2', '3', '4', '5', '6'],
+    [
+      'Normalized settlement',
+      'Localized tensile strain',
+      'Flaw probability',
+      'Crack width',
+      'Crack depth',
+      'Bottom-of-crack elevation',
+    ],
+    [
+      '100 × 0.583 / 60 = 0.972%',
+      'Between 1.0% and 1.4% at 35°: 1.378%',
+      'Log-interpolated between 0.003 and 0.02: 0.00614',
+      '25 + 0.378 × (60 − 25) = 38.2 mm',
+      '0.0382 × (250 − 1.33 × 38.2) / 0.3048 = 25.0 ft',
+      '265 − 25.0 = 240.0 ft',
+    ],
+  ]}
+/>
+
+In step 2, the slope of 35 degrees is a tabulated value, so the strain is interpolated in settlement only, between 1.0 percent at a normalized
+settlement of 0.5 percent and 1.4 percent at 1 percent. In step 3, the strain of 0.01378 lies 0.378 of the way from 0.01 to 0.02, so the
+logarithm of the flaw probability lies 0.378 of the way from $\log_{10}(0.003)$ to $\log_{10}(0.02)$. The crack is open from the crest down to
+elevation 240.0 ft, and the event tree for the same dam is continued in
+[Event Tree](./05-event-tree.mdx#worked-example).
