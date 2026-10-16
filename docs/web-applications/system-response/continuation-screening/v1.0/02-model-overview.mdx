@@ -1,0 +1,151 @@
+---
+title: Model Overview
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/continuation-screening" />
+
+# Model Overview
+
+## Purpose
+
+The continuation screening model computes the probability of continuing erosion $P_{cont}$ for the continuation node of an internal-erosion event
+tree. The node asks whether, once erosion has initiated in a base soil, a filter or transition zone downstream of the eroding soil is too coarse
+to stop it. $P_{cont}$ is the conditional probability that erosion continues through the filter, given that it has initiated.
+
+Continuation is the phase of internal erosion in which the relationship between the particle-size distributions of the base soil and the
+adjacent filter controls whether erosion will continue. A filter that is fine enough seals against the base soil after little or no erosion; a
+filter that is too coarse lets the eroded particles pass, and erosion continues unrestricted (see the
+[Background](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/background) chapter of the Filter
+Evaluation (Continuation) Toolbox manual).
+
+## Intended Use
+
+The model is a screening-level assessment of continuation. It serves the continuation node of any internal-erosion screening model, such as the
+concentrated leak erosion screening models in the System Response library, and it is independent of the erosion mechanism and of the pool level:
+the same filter and base soils give the same $P_{cont}$ at every headwater. The calling screening model decides whether its continuation node
+applies — for example, whether a filter lies downstream of the flaw at all — and uses this model only where it does.
+
+The model is designed around two goals:
+
+- **Accepting the information that is available** — At the screening stage, filter information ranges from a construction date to full gradation
+  envelopes for the base soil and the filter. The model accepts any of these and uses the most informative method the information supports, so
+  better data refines the estimate without changing the inputs a user must otherwise provide.
+- **Preventing false negatives** — Two rules resolve missing information in the direction of continuing erosion: when no method can be selected and no
+  year of construction is supplied, continuation is certain ($P_{cont} = 1.0$), and with several base soils the worst one governs. Not every default does. An undetermined broad
+  grading is taken as not broadly graded, so a gravelly base soil may not be regraded; a band with more gravel than sand but no more than 50
+  percent gravel is held to the sand limit in the broad-grading assessment and may not be regraded; a single gradation used by the soil
+  classification method is not regraded; the category 3 floor raises the allowable filter $D_{15}$; the gradation method does not count some
+  erosion; the adjusted filter gradation does not set the probability; and in the gradation method, a filter whose fine band does not extend down
+  to 15 percent passing gives $P_{cont,j} = 0$ however coarse it is. Each of these can lower $P_{cont}$ (see Assumptions 11, 12, 14, 15, 16, and 20
+  and the gradation coverage limitation in [Assumptions and Limitations](./08-assumptions-and-limitations.mdx)).
+
+The model is not intended to replace a detailed filter evaluation. The full Filter Evaluation (Continuation) Toolbox procedure gives the analyst
+control over every step that the screening model fixes or derives automatically (see
+[Comparison with Detailed Models](#comparison-with-detailed-models)).
+
+## How the Model Works
+
+The model executes three stages:
+
+1. **Method selection for each base soil** — Each base soil that the filter must protect is paired with the filter, and each pair is assigned the
+   most informative method its inputs support: the gradation method when both the base soil and the filter have gradation envelopes, the soil
+   classification method when the base soil's particle sizes and the filter's particle size can each be resolved from a classification, a
+   category, or a single gradation, and the year-of-construction method otherwise. With none of these inputs, the pair takes $P_{cont} = 1.0$
+   (see [Method Selection and Governing Base Soil](./04-method-selection-and-governing-base-soil.mdx)).
+
+2. **Probability of continuing erosion for each pair** — The selected method computes $P_{cont}$ for the pair:
+   - The **year-of-construction method** assigns a probability from the period in which the embankment was built
+     (see [Year-of-Construction Method](./05-year-of-construction-method.mdx)).
+   - The **soil classification method** compares the filter's $D_{15}$ with the maximum $D_{15}$ allowed by the no-erosion particle retention
+     criterion over Monte Carlo realizations of the particle sizes, and reports the fraction of realizations in which the filter is too coarse
+     (see [Soil Classification Method](./06-soil-classification-method.mdx)).
+   - The **gradation method** runs the full filter evaluation on the gradation envelopes — base-soil regrading, the particle retention check, and
+     the Foster and Fell erosion-boundary evaluation — and combines the probabilities of excessive and continuing erosion
+     (see [Gradation Method](./07-gradation-method.mdx)).
+
+3. **Governing base soil** — The node probability is the largest $P_{cont}$ among the pairs, because the filter must stop erosion of every base
+   soil it protects (see [Method Selection and Governing Base Soil](./04-method-selection-and-governing-base-soil.mdx)).
+
+## Engineering Basis
+
+The model combines the following engineering methods:
+
+- **The no-erosion particle retention criterion** for filters, which relates the maximum allowable filter $D_{15}$ to the base soil's $D_{85}$
+  and fines content by base soil category, with stricter limits for dispersive soils <Citation citationKey="FEMA2011" /> <Citation citationKey="Sherard1984" />. The soil classification method evaluates it over ranges of particle sizes, and the gradation method
+  evaluates it on the gradation envelopes.
+- **Mathematical regrading of the base soil** to remove the gravel and gap-graded coarse fractions that provide no retention capability for the
+  finer fraction <Citation citationKey="Sherard1989" />, with broadly graded soils identified by the coefficients of uniformity and curvature <Citation citationKey="ASTM2487" />.
+- **The Foster and Fell erosion boundaries** for filters coarser than the no-erosion criterion, which divide the range of filter $D_{15}$ into
+  no-erosion, some-erosion, excessive-erosion, and continuing-erosion zones from continuing erosion filter tests <Citation citationKey="FosterFell2001" />, with representative base soil gradations selected and weighted from the gradation envelope <Citation citationKey="Toolbox2008" />.
+- **A year-of-construction prior** for embankments with no filter or base soil information beyond the construction period (the basis of the
+  assigned values is requested at marker IN-04 in [Year-of-Construction Method](./05-year-of-construction-method.mdx)).
+
+## Comparison with Detailed Models
+
+The detailed counterpart of the screening model is the soil-to-soil filter evaluation in the Filter Evaluation (Continuation) Toolbox. The
+screening gradation method runs the same sequence of evaluations: the filter and base soil gradations
+([Filter Gradation](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/filter-gradation) and
+[Base Gradation](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/base-gradation)), the
+[Design for Particle Retention](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/design-for-particle-retention)
+check, and the [Foster and Fell](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/foster-and-fell)
+evaluation. The year-of-construction and soil classification methods have no counterpart in the toolbox; they extend the evaluation to cases
+where gradations are not available. <TableReference tableKey="continuation-screening-table-1" /> summarizes the differences.
+
+<TableVertical
+  tableKey="continuation-screening-table-1"
+  alt="Comparison of the continuation screening model and the full filter evaluation"
+  caption="Comparison of the continuation screening model and the full filter evaluation procedure."
+  headers={[[{ value: 'Aspect' }, { value: 'Screening Model' }, { value: 'Toolbox Procedure' }]]}
+  columns={[
+    [
+      'Information required',
+      'Methods',
+      'Base soils evaluated',
+      'Regrading characteristics',
+      'Representative gradations',
+      'Filter segregation or washout',
+      'Permeability criterion',
+      'Constricted exits',
+      'Result',
+    ],
+    [
+      'Any of: gradations, classifications, or construction year',
+      'Gradation, soil classification, or year-of-construction method',
+      'One or more; the worst governs',
+      'Derived from the gradation; gap grading and broad grading may be specified',
+      'Confidence interval; 90 percent by default',
+      'Decides only whether the Foster and Fell evaluation runs',
+      'Not used',
+      'Not evaluated',
+      'One probability (gradation method: excessive plus continuing erosion)',
+    ],
+    [
+      'Base soil and filter gradation envelopes',
+      'Particle retention and Foster and Fell',
+      'One base soil per evaluation',
+      'Answered by the analyst for each band',
+      'Selected by the analyst',
+      'Evaluated in parallel with the original gradation',
+      'Evaluated',
+      'Separate evaluation available',
+      'Probabilities of no, some, excessive, and continuing erosion',
+    ],
+  ]}
+/>
+
+## Base Soils and the Filter
+
+The model evaluates one filter against one or more base soils. A base soil is any non-filter material upstream of the filter whose particles the
+filter must retain — for example, the core and an upstream shell that an eroding pipe can pass through on its way to the filter. Each base soil
+carries its own classification, gradation, dispersivity, and regrading characteristics; the filter's category, gradation, and segregation
+characteristics, the confidence interval, and the year of construction are shared by every pair. Because each pair selects its own method, the
+pairs of one evaluation may use different methods, and the governing pair identifies both the base soil and the method that set the node
+probability (see [Output and Interpretation](./09-output-and-interpretation.mdx)).
+
+<CitationFootnote />

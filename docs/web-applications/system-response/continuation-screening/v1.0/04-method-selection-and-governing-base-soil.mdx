@@ -1,0 +1,106 @@
+---
+title: Method Selection and Governing Base Soil
+---
+
+import Equation from '@site/src/components/Equation';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/continuation-screening" />
+
+# Method Selection and Governing Base Soil
+
+The model evaluates each base soil against the filter as a separate pair, selects a method for each pair from the inputs that pair has, and then
+combines the pair results into the single probability of continuing erosion $P_{cont}$ for the continuation node. This chapter documents both
+rules. The methods themselves are documented in the three chapters that follow.
+
+## Method Selection for Each Pair
+
+Each pair is assigned the first method in the following order whose inputs are present. The order runs from the most to the least informative
+method, so a pair always uses the best information available to it, and inputs for a lower-priority method are ignored when a higher-priority
+method applies.
+
+1. **Gradation method** — selected when the base soil has a gradation envelope *and* the filter has a gradation envelope (see
+   [Gradation Method](./07-gradation-method.mdx)).
+2. **Soil classification method** — selected when all three of its particle sizes can be resolved for the pair:
+   - the filter's $D_{15}$, from the coarse band of the filter gradation envelope when one is supplied and its $D_{15}$ is determined, otherwise
+     from the $D_{15}$ range of the filter category (any category other than Unknown); and
+   - the base soil's $D_{85}$ and fines content $FC$, together, from the fine band of the base soil gradation envelope when one is supplied and
+     both values are determined, otherwise from the ranges of the base soil classification.
+
+   If either the filter $D_{15}$ or the base soil pair cannot be resolved from either source, the method is not selected (see
+   [Soil Classification Method](./06-soil-classification-method.mdx)).
+3. **Year-of-construction method** — selected when the year of construction is supplied (see
+   [Year-of-Construction Method](./05-year-of-construction-method.mdx)).
+4. **No-information default** — when neither the gradation method nor the soil classification method can be selected and no year of
+   construction is supplied, the pair takes $P_{cont} = 1.0$: without information that resolves both the filter and the base soil, the model
+   cannot credit the filter with stopping erosion. This covers a pair with no information, and also a pair with a full base soil gradation but
+   no filter information.
+
+Because the gradation method needs both envelopes, a gradation supplied for only one of the two materials does not select it. That single
+gradation can still supply its values to the soil classification method, provided the other material has a classification (for the base soil)
+or a category (for the filter). A lone gradation with no classification or category for the other material supplies nothing, and the pair falls
+to the year-of-construction method or the default. <TableReference tableKey="continuation-screening-table-8" /> summarizes the outcomes.
+
+<TableVertical
+  tableKey="continuation-screening-table-8"
+  alt="Method selected for each combination of inputs"
+  caption="Method selected for each combination of base soil and filter inputs."
+  headers={[[{ value: 'Base Soil Information' }, { value: 'Filter Information' }, { value: 'Method Selected' }]]}
+  columns={[
+    [
+      'Gradation envelope',
+      'Gradation envelope',
+      'Classification (supported class)',
+      'Classification (supported class)',
+      'Gradation envelope or classification',
+      'None',
+    ],
+    [
+      'Gradation envelope',
+      'Category (not Unknown)',
+      'Gradation envelope',
+      'Category (not Unknown)',
+      'None, or Unknown category',
+      'Any',
+    ],
+    [
+      'Gradation method',
+      'Soil classification method (base values from the gradation)',
+      'Soil classification method (filter value from the gradation)',
+      'Soil classification method (all values from ranges)',
+      'Year of construction, or the default',
+      'Year of construction, or the default',
+    ],
+  ]}
+/>
+
+In the table, the second row assumes the base soil gradation determines both $D_{85}$ and $FC$ in its fine band; if it does not, the base soil's
+classification ranges are used instead, and without a supported classification the pair falls to the year-of-construction method or, when no
+year of construction is supplied, the no-information default ($P_{cont} = 1.0$). Likewise, the third row assumes the filter gradation determines
+$D_{15}$ in its coarse band; if it does not, the filter category's range is used instead, and without a category other than Unknown the pair
+falls to the year-of-construction method or, when no year is supplied, the no-information default. "Year of
+construction, or the default" means the year-of-construction method when the year is supplied, and $P_{cont} = 1.0$ otherwise.
+
+## Governing Base Soil
+
+The node probability is the largest pair probability:
+
+<Equation equationKey="continuation-screening-eq-1" equation="P_{cont} = \max_{j = 1, \dots, m} P_{cont,j}" />
+
+where:
+
+> $P_{cont}$ = probability of continuing erosion for the continuation node  
+> $P_{cont,j}$ = probability of continuing erosion for the pair formed by base soil $j$ and the filter  
+> $m$ = number of base soils
+
+The filter must stop erosion of every base soil it protects, so the base soil it is least able to retain governs. When two or more pairs share
+the largest probability, the first of them in the order entered is reported as governing; the node probability is the same whichever is chosen.
+The governing pair also identifies the method that produced the node probability (see
+[Output and Interpretation](./09-output-and-interpretation.mdx)).
+
+When no year of construction is supplied, a base soil entry with no classification and no gradation takes the default $P_{cont,j} = 1.0$ and
+therefore makes continuation certain for the whole evaluation. A base soil with a classification or a gradation also takes $P_{cont,j} = 1.0$
+when the filter side is unresolved (no filter gradation and no filter category other than Unknown) and no year of construction is supplied.
+When a year is supplied, such pairs take the year-of-construction probability instead.
