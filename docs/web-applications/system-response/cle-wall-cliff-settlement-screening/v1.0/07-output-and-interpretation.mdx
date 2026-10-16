@@ -1,0 +1,131 @@
+---
+title: Output and Interpretation
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import EquationNoRef from '@site/src/components/EquationNoRef';
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer
+  link="/web-applications/system-response"
+  linkTitle="System Response Library"
+  document="web-applications/system-response/cle-wall-cliff-settlement-screening"
+/>
+
+# Output and Interpretation
+
+The model reports the SRP at each evaluated pool level together with the probability of each of the eight event-tree nodes, and the intermediate
+results of its flaw assessment. The node results take the form common to the crest-crack CLE models, documented in the
+[Output and Interpretation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation) chapter of the
+common methods manual. This chapter summarizes them and documents the flaw-assessment results and how they shape the curve.
+
+## Node Results
+
+**Pool-independent results:**
+
+- **Flaw probability** — Node 1, the scored flaw probability of [Flaw Assessment](./04-flaw-assessment.mdx#flaw-probability).
+- **Crack-filling probability** — Node 5, the probability of no crack filling for the embankment type.
+- **Flow-limitation probability** — the minimum across all listed upstream elements, or 1.0 when none is listed. It is the Node 6 value at pool
+  levels at or below the top of a wall, and at every pool level when no top-of-wall elevation is given.
+- **Roof-support probabilities** — the minimum across the full-pathway materials, not applicable for a filter that caps the pathway (one whose
+  top reaches the crest, so that no full-pathway materials are listed), and the minimum across the below-filter materials, not applicable when no
+  filter is present.
+
+**Pool-dependent series**, evaluated at every pool level of the headwater grid (see the
+[Pool-Dependent Series](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#pool-dependent-series)
+section of the common methods manual):
+
+- **Pool levels and tailwater** — the evaluated headwater elevations and the tailwater at each. Tailwater is reported for reference only; there is
+  none when no tailwater is given.
+- **Initiation probability** — Node 2: zero at and below the bottom of the crack, 1.0 above it.
+- **Continuation probability** — Node 3: the continuation method's result at or below the filter's top, and 1.0 above it or where no filter is
+  present.
+- **Roof-support probability** — Node 4: the below-filter or full-pathway value that governs at each pool level.
+- **Flow-limitation probability** — Node 6 after any wall has dropped out above its top.
+- **Unsuccessful-intervention and breach probabilities** — Nodes 7 and 8, the user-specified values.
+- **SRP** — the product of the eight nodes: the system response curve.
+
+When a filter intersects the failure pathway, the continuation method also reports which method it applied to each base soil and the result of
+each (see the
+[Output and Interpretation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/output-and-interpretation) chapter of the
+Continuation (Filter Evaluation) Screening Technical Reference Manual).
+
+## Flaw-Assessment Results
+
+The flaw assessment reports each intermediate quantity of [Flaw Assessment](./04-flaw-assessment.mdx), so that the calculation can be followed
+step by step:
+
+- **Normalized ratios** — the bench-width ratio $r_b$ and the normalized settlement $r_s$ (in percent), whether measured or the era default.
+- **Likelihood factors** — the scores of the cross-valley profile, the settlement, and the abutment slope.
+- **Weighted sum** $\Sigma$ — the risk-factor-weighted sum of the three scores.
+- **Crack width** $w$ — in millimeters, at the abutment slope of the site. It is a supporting result only and does not enter the event tree.
+- **Effective wall height ratio and effective wall height** — $r_e = H_e/H_w$ and $H_e$.
+- **Normalized crack depth and crack depth** — $r_d = 100\, d_c/H_e$ (in percent) and $d_c$.
+- **Bottom-of-crack elevation** $z_{bc}$ — the initiation gate of the event tree.
+
+The flaw probability is reported with the node results. It equals the scored value, since the model has no observation override.
+
+## Interpreting the System Response Curve
+
+The curve has the piecewise-constant form of every crest-crack model (see the
+[Interpreting the System Response Curve](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#interpreting-the-system-response-curve)
+section of the common methods manual). It is negligible at and below the bottom of the crack and steps up as soon as the pool rises above it.
+Above the bottom of the crack, at each pool level,
+
+<EquationNoRef equation="\mathrm{SRP} = P_{flaw} \times P_{cont} \times P_{roof} \times P_{nf} \times P_{nl} \times P_{int} \times P_{br}" />
+
+with continuation, roof support, and flow limitation taking the values that govern at that pool level. The flaw assessment controls two features
+of the curve:
+
+- **The pool level of the first step** is the bottom of the crack, $z_{bc} = z_c - d_c$. It moves down as the wall or cliff height increases.
+  It moves down, or stays where it is, as the normalized settlement increases, and moves up, or stays where it is, as the bench widens. It no
+  longer changes once the normalized settlement reaches 1 percent, once the bench-width ratio reaches 2, or, at abutment slopes of 45° to 60°,
+  once the bench-width ratio reaches 1. With no bench and a normalized settlement of 1 percent or more, the crack extends
+  the full height of the wall or cliff below the crest.
+- **The height of the curve** scales with the flaw probability, which ranges from negligible to 0.2 (see
+  [Flaw Probability](./04-flaw-assessment.mdx#flaw-probability)). A flaw probability of zero — a bench wider than 2.5 times the wall or cliff
+  height, or an abutment slope of 25° or flatter — leaves the curve negligible at every pool level, and the lowest reachable weighted sum, 10, leaves it effectively negligible.
+
+The bench-width ratio enters both features: a narrower bench raises, or leaves unchanged, the cross-valley profile score and so the flaw
+probability, and it raises, or leaves unchanged, the effective wall height and so the crack depth. The normalized settlement likewise raises, or
+leaves unchanged, both the settlement score and the crack depth. The abutment slope can act in both directions: a steeper slope raises its score
+where it crosses a band limit, and where there is a bench it lowers the effective wall height, or leaves it unchanged, and so makes the crack
+shallower or leaves it unchanged. The effective wall height does not change with slope between 45° and 60° at bench-width ratios of 1 or more,
+nor beyond 60° or below 15°.
+
+Further steps occur where the pool crosses the top of a filter or the top of a wall above the bottom of the crack (see
+[Where the Crack Meets the Pathway Gates](./05-event-tree.mdx#where-the-crack-meets-the-pathway-gates)). The node series show which node changes
+at each step; the common methods manual's
+[Reading the Node Breakdown](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#reading-the-node-breakdown)
+section describes the typical readings.
+
+## Checking the Result
+
+Every node except continuation is deterministic, so the curve can be reproduced from the reported values. The continuation probability itself may
+be a Monte Carlo estimate when the continuation method uses its soil classification route. The following checks apply in addition to those of the
+[Checking the Result](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#checking-the-result)
+section of the common methods manual:
+
+- **Likelihood factors** — each score can be read against the bands of
+  [Likelihood Factors](./04-flaw-assessment.mdx#likelihood-factors) from the reported ratios and the abutment slope, and the weighted sum is
+  $3\,LF_{xv} + 2\,LF_{s} + LF_{\beta}$.
+- **Crack depth** — the crack depth equals $(r_d/100) \times r_e \times H_w$ and is no greater than the wall or cliff height; the
+  bottom of the crack lies that distance below the crest.
+- **Era default** — when no settlement was supplied, the normalized settlement is exactly 0.5 or 0.25 percent, according to the year of
+  construction.
+- **Bottom of the crack against the embankment** — the crack depth is a multiple of the wall or cliff height and does not depend on any datum.
+  Because it is no greater than the wall or cliff height, a bottom of the crack more than the dam height below the crest indicates a wall or cliff
+  height greater than the dam height; a bottom of the crack below a known foundation elevation can also indicate a dam height inconsistent with
+  the crest elevation (see [Input Parameters](./03-input-parameters.mdx#dam-and-wall-or-cliff-geometry)).
+
+## Screening Results Relative to Detailed Analysis
+
+The model is a screening tool. Its results indicate whether settlement cracking adjacent to a wall or cliff warrants detailed analysis; they are
+not a substitute for a detailed assessment. The flaw probability and crack depth come from tabulated relationships in four measurements and a
+settlement, the era default stands in for an unknown settlement, and an open crack is taken to initiate erosion as soon as the pool reaches it.
+Where a screening result is significant to a decision, the crack likelihood and depth should be re-examined with site-specific information —
+settlement records, crest inspections, and investigation at the wall or cliff — and the methods of Fell et al. (2024) <Citation citationKey="Fell2024" />
+and the judgment of the risk team should replace the screening values.
+
+<CitationFootnote />
