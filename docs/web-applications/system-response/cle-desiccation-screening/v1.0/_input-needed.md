@@ -1,4 +1,4 @@
-# Input Needed — CLE Desiccation Screening Technical Reference Manual (v1.0)
+# Input Needed — Concentrated Leak Erosion Desiccation Screening Technical Reference Manual (v1.0)
 
 Answer inline and return this file (or paste its contents into the conversation). Leave an
 Answer blank to keep that marker in place. Do not renumber — the IDs tie each entry to its
