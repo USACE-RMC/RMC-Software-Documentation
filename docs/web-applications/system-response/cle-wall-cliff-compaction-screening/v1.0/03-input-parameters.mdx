@@ -1,0 +1,163 @@
+---
+title: Input Parameters
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-wall-cliff-compaction-screening" />
+
+# Input Parameters
+
+This chapter documents the inputs specific to the wall or cliff compaction model: the wall or cliff height, the three flaw-factor selections, the
+observation of leakage adjacent to the wall, and the statement of whether a filter intersects the flaw. The model also takes the inputs shared by
+the CLE compaction models, documented in
+[Common Input Parameters](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters) in the CLE Common Methods
+manual; the first section below lists them and notes how each applies to this model.
+
+## Inputs Shared with the CLE Family
+
+- **Hydraulic loading** — the headwater series and the optional tailwater series, as documented in
+  [Hydraulic Loading](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#hydraulic-loading). Tailwater
+  reduces the net head across the flaw in the initiation analysis where it stands above the base of the flaw.
+- **Units and datum** — every elevation and length on one datum and in one unit, with the base of the flaw and the top of the section used for
+  initiation at positive elevations, as documented in
+  [Units and Datum](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#units-and-datum).
+- **Embankment description** — the crest elevation $z_c$, the embankment type, the shell section, and the optional core section, as documented in
+  [Embankment Description](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#embankment-description). In
+  this model the crest elevation is also the elevation from which the wall or cliff height is measured
+  (see [Wall or Cliff Geometry](#wall-or-cliff-geometry)). The embankment type sets the crack-filling node only; the core section, when supplied,
+  replaces the shell for the seepage path length whatever the embankment type.
+- **Embankment materials** — the soil classifications of the materials the flaw passes through, which govern roof support, as documented in
+  [Failure-Pathway Inputs](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#failure-pathway-inputs).
+  At least one is required.
+- **Upstream seepage-limiting elements** — the upstream facing and cutoff walls present and, when one is a wall, its top elevation $z_{tw}$, as
+  documented in
+  [Upstream Seepage-Limiting Elements](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#upstream-seepage-limiting-elements).
+  The wall in this input is an upstream cutoff or seepage-barrier wall that limits flow into the flaw; it is a different structure from the wall
+  or cliff against which the fill was placed. Its top elevation is compared with the base of the flaw, not with the pool.
+- **Initiation material inputs** — the core soil classification and the optional critical shear stress, initial pipe diameter, and seepage path
+  length, as documented in
+  [Initiation Material Inputs](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#initiation-material-inputs).
+  The core soil classification is the soil of the fill against the wall or cliff, in which the flaw would erode. The default initial pipe
+  diameter of this model is documented in [Event Tree](./05-event-tree.mdx#node-2-initiation).
+- **Intervention and breach** — the probabilities of unsuccessful intervention and of breach, each defaulting to 1.0, as documented in
+  [Intervention and Breach](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#intervention-and-breach).
+
+## Wall or Cliff Geometry
+
+<TableVertical
+  tableKey="cle-wall-cliff-compaction-screening-table-2"
+  alt="Wall or cliff geometry parameter"
+  caption="Wall or cliff geometry parameter."
+  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  columns={[
+    ['Wall or cliff height'],
+    ['h<sub>w</sub>'],
+    ['length'],
+    ['> 0, and no taller than the embankment'],
+    ['Required'],
+  ]}
+/>
+
+- **Wall or cliff height** $h_w$ — the height of the wall or cliff against which the fill was placed. It is distinct from the pool level $h$. The base of the flaw is placed at the crest
+  elevation less this height, $z_f = z_c - h_w$ (see [Flaw Assessment](./04-flaw-assessment.mdx#base-of-the-flaw)). The height must be positive,
+  and the wall or cliff may not be taller than the embankment: the resulting base of the flaw may not lie below the lowest segment bottom of the
+  shell section. It must also lie within the section used for initiation — not above its top (the core top, when a core section is supplied) and
+  not below the lowest segment bottom of either of its faces — as documented in
+  [Compaction Models: Base of the Flaw](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#compaction-models-base-of-the-flaw)
+  in the CLE Common Methods manual.
+
+:::warning[INPUT NEEDED IN-02 — Definition]
+State how the wall or cliff height $h_w$ is to be measured. The model places the base of the flaw at $z_c - h_w$, which reads the height as the
+depth below the embankment crest of the lowest point of the face in contact with the fill. State whether that is the intended definition, and how the
+user should enter the height when the wall or cliff does not reach the crest, when its foot varies in elevation along the embankment, or when the
+fill against it rests on a foundation above the wall's foot.
+
+Proposed (unconfirmed): $h_w$ is the vertical distance from the embankment crest down to the lowest elevation at which fill is in contact with the
+wall or cliff face on the section being screened. Confirm or replace.
+:::
+
+## Flaw-Factor Selections
+
+The flaw assessment scores three factors, each selected from a list of categories
+(<TableReference tableKey="cle-wall-cliff-compaction-screening-table-3" />). Each selection is required unless leakage adjacent to the wall is
+reported (see [Leakage Observation](#leakage-observation)). The likelihood factor each category carries, and how the three combine into the
+flaw probability, are documented in [Flaw Assessment](./04-flaw-assessment.mdx#likelihood-factors).
+
+<TableVertical
+  tableKey="cle-wall-cliff-compaction-screening-table-3"
+  alt="Flaw-factor selections"
+  caption="Flaw-factor selections."
+  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  columns={[
+    ['Wall-fill compaction', 'Wall slope', 'Concrete buttress'],
+    ['LF<sub>comp</sub>', 'LF<sub>slope</sub>', 'LF<sub>but</sub>'],
+    ['selection', 'selection', 'selection'],
+    ['One of five categories', 'One of four categories', 'One of three categories'],
+    ['Required', 'Required', 'Required'],
+  ]}
+/>
+
+- **Wall-fill compaction** — how the fill against the wall or cliff was placed and compacted. The choices are:
+  - **Mechanical, slightly wet of optimum** — the fill was compacted with mechanical equipment at a water content slightly wet of optimum.
+  - **Hand, slightly dry of optimum** — the fill was compacted by hand-operated equipment at a water content slightly dry of optimum.
+  - **Hand, thick layers, dry of optimum** — the fill was compacted by hand-operated equipment in thick layers at a water content dry of optimum.
+  - **No formal compaction** — the fill was placed against the face without formal compaction.
+  - **Unknown** — the compaction of the fill against the face is not known.
+- **Wall slope** — the inclination of the wall or cliff face, expressed as the ratio of its horizontal run to its vertical rise ($H/V$). The
+  choices are:
+  - **Vertical** — the face is vertical.
+  - **H/V from 0.1 to 0.25** — the face is battered, with a horizontal run of 0.1 to 0.25 per unit of vertical rise.
+  - **H/V above 0.25** — the face is battered more flatly than 0.25 horizontal per unit of vertical rise.
+  - **Unknown** — the slope of the face is not known.
+- **Concrete buttress** — whether a concrete buttress is present at the wall. The choices are:
+  - **Absent** — no concrete buttress is present at the wall or cliff.
+  - **Present** — a concrete buttress is present at the wall or cliff.
+  - **Unknown** — whether a concrete buttress is present is not known.
+
+:::warning[INPUT NEEDED IN-03 — Definition]
+The wall-fill compaction categories do not state their boundaries, and they do not cover every combination of compaction method and water content.
+State (1) what layer thickness distinguishes "thick layers" from the layers of the other categories; (2) what range of water content is meant by
+"slightly wet" and "slightly dry" of optimum; and (3) which category the user should select for fill that does not match any category exactly — for
+example mechanically compacted fill dry of optimum, or hand-compacted fill wet of optimum.
+:::
+
+:::warning[INPUT NEEDED IN-04 — Definition]
+The wall-slope categories leave two conditions undefined. State which category the user should select (1) for a face battered at less than 0.1
+horizontal per unit of vertical rise, which is neither vertical nor within the 0.1 to 0.25 band, and (2) for an overhanging face. State also
+whether the slope is that of the face over its full height or of its steepest part, and whether a cliff's slope is to be judged the same way as a
+wall's.
+
+Proposed (unconfirmed): "Vertical" covers every face steeper than 0.1 horizontal per unit of vertical rise, including an overhanging face, and the
+slope is judged over the height in contact with the fill. Confirm or replace.
+:::
+
+:::warning[INPUT NEEDED IN-05 — Definition]
+State what qualifies as a concrete buttress for this factor — for example a buttress or counterfort projecting from the wall face into the fill,
+a buttress supporting the wall from the embankment side, or a concrete block placed against a cliff — and what physical effect of the buttress
+makes a flaw more likely (the Present category scores higher than Absent).
+
+Proposed (unconfirmed): a concrete buttress is any concrete element projecting from the face into the fill, which creates confined corners and
+re-entrant zones against which fill is difficult to compact. Confirm or replace.
+:::
+
+## Leakage Observation
+
+- **Leakage adjacent to the wall observed** — a report that leakage has been observed adjacent to the wall or cliff. When it is reported, the flaw
+  probability is set to 1.0 and the three flaw-factor selections become optional; when all three are still supplied they are scored and reported,
+  but they do not change the flaw probability. The base of the flaw is unchanged (see
+  [Flaw Assessment](./04-flaw-assessment.mdx#leakage-observation-override)). The default is that no leakage has been observed.
+
+## Filter at the Flaw
+
+- **Filter at the flaw** — whether a filter intersects the failure pathway at the base of the flaw, for example a filter zone against the wall.
+  The default is that no filter intersects it. When no filter is stated, continuation is certain and the
+  continuation inputs are not used. When a filter is stated, the continuation inputs are required.
+- **Continuation inputs** — the filter description and the base soils upstream of it, evaluated by the shared continuation method as documented in
+  [Input Parameters](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/input-parameters) in the Continuation (Filter
+  Evaluation) Screening manual. They are required, and evaluated, only when a filter is stated; otherwise they are ignored.
+
+The model takes no filter elevation and does not check the filter statement against the base of the flaw, so the user states a filter as present
+only after confirming that it intersects the pathway at that elevation.
