@@ -369,6 +369,7 @@ const docs = [
     software: 'system-response',
     doc_location: 'web-applications/system-response/cle-core-compaction-screening',
     doc_name: 'Concentrated Leak Erosion Core Compaction Screening Technical Reference Manual',
+    sidebar_label: 'Concentrated Leak Erosion Core Compaction Screening',
     active: true,
     draft: true,
   },
