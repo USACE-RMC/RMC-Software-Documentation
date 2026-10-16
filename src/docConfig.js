@@ -353,6 +353,7 @@ const docs = [
     software: 'system-response',
     doc_location: 'web-applications/system-response/cle-cross-valley-settlement-screening',
     doc_name: 'Concentrated Leak Erosion Cross-Valley Settlement Screening Technical Reference Manual',
+    sidebar_label: 'Concentrated Leak Erosion Cross-Valley Settlement Screening',
     active: true,
     draft: true,
   },
