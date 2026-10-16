@@ -1,0 +1,157 @@
+---
+title: Input Parameters
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-core-compaction-screening" />
+
+# Input Parameters
+
+The core compaction model takes two kinds of input. Most are the inputs shared by the CLE family, documented in full in the
+[Common Input Parameters](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters) chapter of the CLE Common
+Methods manual: the hydraulic loading, the units and datum convention, the embankment description, the failure-pathway inputs, the upstream
+seepage-limiting elements, the initiation material inputs of the compaction models, and the intervention and breach probabilities. The rest are
+specific to this mechanism: the normal pool elevation, the flaw inputs, and two optional dimensions that replace the section geometry in the flaw
+scoring. This chapter documents the mechanism-specific inputs in full, then states how the model takes each shared input where the family allows
+more than one form.
+
+## Mechanism-Specific Inputs
+
+<TableReference tableKey="cle-core-compaction-screening-table-2" /> lists the mechanism-specific inputs. All elevations are on the datum of the
+headwater series and all lengths are in its unit (see
+[Units and Datum](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#units-and-datum) in the CLE Common
+Methods manual).
+
+<TableVertical
+  tableKey="cle-core-compaction-screening-table-2"
+  alt="Mechanism-specific input parameters of the core compaction model"
+  caption="Mechanism-specific input parameters of the core compaction model."
+  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  columns={[
+    [
+      'Normal pool elevation',
+      'Core compaction category',
+      'Embankment leakage or wet spots observed',
+      'Leakage or wet-spot elevation',
+      'Flaw base width',
+      'Flaw height',
+    ],
+    ['z<sub>np</sub>', '—', '—', 'z<sub>lk</sub>', 'W', 'H'],
+    ['elevation', 'selection', 'yes or no', 'elevation', 'length', 'length'],
+    [
+      'Finite; below the crest',
+      'One of four categories',
+      'Yes or no',
+      'Finite; within the embankment section',
+      '> 0',
+      '> 0',
+    ],
+    [
+      'Required',
+      'Required unless leakage is observed',
+      'No',
+      'Required when leakage is observed',
+      'Derived from the section',
+      'Derived from the section',
+    ],
+  ]}
+/>
+
+### Normal pool elevation
+
+The normal pool elevation $z_{np}$ is the lower reference of the heuristic that places the base of the flaw one third of the way from the normal
+pool to the crest (see [Flaw Assessment](./04-flaw-assessment.mdx#base-of-the-flaw)). It is supplied by the user and is not taken from the headwater
+series. The crest elevation $z_c$ must be above it. The normal pool is required even when an observation of leakage sets the base of the flaw,
+although it then has no effect on the result.
+
+### Core compaction category
+
+The core compaction category describes the compaction of the core material and is the most heavily weighted factor of the flaw assessment (see
+[Flaw Assessment](./04-flaw-assessment.mdx#compaction-factor)). The choices are:
+
+- **Well compacted** — the least likely condition for a continuous poorly compacted zone.
+- **Poorly compacted**
+- **Very poorly compacted** — the most likely condition for a continuous poorly compacted zone.
+- **Unknown** — the compaction of the core cannot be judged from the available information.
+
+The category is required unless an observation of leakage or wet spots is reported. When the observation is reported, the category is optional; if
+it is supplied, the model still scores it and reports the scores, but the scores do not affect the result.
+
+:::warning[INPUT NEEDED IN-01 — Definition]
+The four core compaction categories (Well compacted, Poorly compacted, Very poorly compacted, Unknown) are offered without a definition. State what
+construction practice or evidence each category represents — for example, the compaction equipment, lift thickness, moisture control, and density
+testing that place a core in each category — so that the user can select between them, or cite the table in Fell et al. (2024) that defines them.
+State also when Unknown should be selected rather than a judged category, given that Unknown scores between Poorly compacted and Very poorly
+compacted (see [Flaw Assessment](./04-flaw-assessment.mdx#compaction-factor)).
+:::
+
+### Embankment leakage or wet spots observed
+
+Reporting that leakage or wet spots have been observed on the embankment states that the flaw is demonstrated. The flaw probability is then 1.0,
+whatever the compaction category and the section geometry would score, and the base of the flaw is set to the observed elevation (see
+[Flaw Assessment](./04-flaw-assessment.mdx#observation-override)). When no observation is reported, the flaw probability is scored.
+
+### Leakage or wet-spot elevation
+
+The leakage or wet-spot elevation $z_{lk}$ is the elevation of the observed leakage or wet spots. It is required when an observation is reported
+and becomes the base of the flaw, replacing the normal-pool heuristic. Like any base of the flaw, it must lie within the embankment section used for
+initiation: at or below the top of that section, at or above the lowest segment bottom of each face, and at a positive elevation (see
+[Flaw Assessment](./04-flaw-assessment.mdx#base-of-the-flaw)). What the elevation should represent is requested at marker IN-08 in
+[Flaw Assessment](./04-flaw-assessment.mdx#observation-override).
+
+### Flaw base width and flaw height
+
+The continuity factor of the flaw assessment bands the base width $W$ of the embankment section and its width-to-height ratio $W/H$ (see
+[Flaw Assessment](./04-flaw-assessment.mdx#continuity-factor)). By default both are derived from the embankment section the model uses — the core
+section when one is supplied, the shell section otherwise — as described in
+[Section Geometry Used in Scoring](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#section-geometry-used-in-scoring)
+in the CLE Common Methods manual: $W$ is the top width of the section plus the horizontal spans of both faces down to its lowest segment bottom, and
+$H$ is the height of the section from that bottom to its top.
+
+Either dimension may be supplied instead, and each must then be positive. A supplied value replaces the derived value in the flaw scoring only; the
+initiation analysis always uses the embankment section itself. The section must still resolve to a positive height and base width.
+
+:::warning[INPUT NEEDED IN-02 — Definition]
+State what the user-supplied flaw base width $W$ and flaw height $H$ are meant to represent and when they should be supplied in place of the
+dimensions derived from the embankment section — for example, where the low-permeability part of the section is bounded by a drain or filter zone
+that the slope-segment tables do not describe, or where the core section is not supplied.
+
+Proposed (unconfirmed): $W$ is the horizontal width of the section at its base, measured from the upstream toe to the first drain or filter zone the
+pathway meets (or from toe to toe when there is none), and $H$ is the height from the crest to the lower of the two toes. Confirm or replace.
+:::
+
+## How the Model Takes the Shared Inputs
+
+The shared inputs are documented in the CLE Common Methods manual. Where the family allows a choice, the core compaction model takes them as
+follows.
+
+- **Hydraulic loading** — a headwater series and an optional tailwater series, as described in
+  [Hydraulic Loading](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#hydraulic-loading). Tailwater
+  reduces the net head across the flaw in the initiation analysis.
+- **Embankment description** — the crest elevation $z_c$, the embankment type, the shell section, and the optional core section, as described in
+  [Embankment Description](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#embankment-description).
+  When a core section is supplied, it is used for both the flaw scoring and the initiation analysis, whatever the embankment type;
+  otherwise the shell section is used. A partially described core section leaves the inputs inconsistent, and the analysis is not evaluated; the shell is not substituted for it. The embankment type sets only the crack-filling probability. The crest elevation, not the top of the core,
+  is the upper reference of the base-of-flaw heuristic.
+- **Filter presence and continuation inputs** — this model has no separate filter-presence selection. Supplying the filter and base-soil
+  description of the shared continuation method states that a filter intercepts the failure pathway at the base of the flaw; omitting it states
+  that none does (see
+  [Failure-Pathway Inputs](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#failure-pathway-inputs) and
+  the [Input Parameters](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/input-parameters) chapter of the Continuation (Filter
+  Evaluation) Screening manual). The model does not compare the filter with any elevation, so the user decides whether the filter reaches the base
+  of the flaw.
+- **Embankment materials** — the USCS classes of the materials the pipe passes through, at least one, which set the roof-support probability. The
+  core soil classification is not added to this list automatically; the core material is listed here if the pipe passes through it.
+- **Upstream seepage-limiting elements and top-of-wall elevation** — as described in
+  [Upstream Seepage-Limiting Elements](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#upstream-seepage-limiting-elements).
+  A top-of-wall elevation may be given only when a wall is among the elements, and is compared once with the base of the flaw.
+- **Initiation material inputs** — the core soil classification and the optional critical shear stress, initial pipe diameter, and seepage path
+  length, as described in
+  [Initiation Material Inputs](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#initiation-material-inputs).
+  Left blank, the initial pipe diameter defaults to a triangular distribution with a low value of 2 mm, a most likely value of 3 mm, and a high
+  value of 5 mm (see [Event Tree](./05-event-tree.mdx#node-2-initiation)).
+- **Intervention and breach** — the probabilities of unsuccessful intervention and of breach, each defaulting to 1.0, as described in
+  [Intervention and Breach](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#intervention-and-breach).

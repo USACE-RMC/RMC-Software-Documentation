@@ -1,0 +1,114 @@
+---
+title: Assumptions and Limitations
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-core-compaction-screening" />
+
+# Assumptions and Limitations
+
+The core compaction model makes every assumption shared by the CLE family — the product form of the event tree, the cylindrical-pipe idealization
+of a compaction flaw, the default critical shear stress ranges, the fixed failure pathway of a compaction flaw, and the tabulated progression
+probabilities — each listed with its basis, effect, and limits in the
+[Assumptions and Limitations](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/assumptions-and-limitations) chapter of the
+CLE Common Methods manual. This chapter lists the assumptions the core compaction model adds or makes specific. Each states its engineering basis,
+its effect on results, and the conditions under which it may not hold. Where a basis is still awaiting confirmation, the assumption
+cross-references the input marker at its primary location.
+
+## Flaw Assessment
+
+1. **The likelihood of a continuous poorly compacted zone is captured by three factors: core compaction, the continuity of the section, and borrow
+   variability.** No other influence on the flaw is scored (see [Flaw Assessment](./04-flaw-assessment.mdx#factors)).
+   - *Engineering basis:* The risk-factor and likelihood-factor scheme of Fell et al. (2024) <Citation citationKey="Fell2024" />; the basis of the
+     factors and weights is requested at marker IN-03 in [Flaw Assessment](./04-flaw-assessment.mdx#factors).
+   - *Effect on results:* The core compaction factor, with a weight of 3, moves the weighted sum by up to 9; the continuity factor, with a weight of
+     2, by up to 6; borrow variability adds a constant 2.5.
+   - *When it may not hold:* Where site information bears on the flaw in ways the three factors do not represent; the risk team's estimate then
+     replaces the screening value.
+2. **The compaction of the core is described by one of four qualitative categories, and Unknown is scored between Poorly compacted and Very poorly
+   compacted.**
+   - *Engineering basis:* Requested at markers IN-01 in [Input Parameters](./03-input-parameters.mdx#core-compaction-category) and IN-04 in
+     [Flaw Assessment](./04-flaw-assessment.mdx#compaction-factor).
+   - *Effect on results:* Selecting Unknown gives a flaw probability about 19 to 25 times that of Poorly compacted for the same section (see
+     [Resulting Flaw Probability](./04-flaw-assessment.mdx#resulting-flaw-probability)).
+   - *When it may not hold:* Where the core's compaction varies along its length or with depth; one category represents the whole core.
+3. **The continuity of a poorly compacted zone is scored from the base width and width-to-height ratio of the section, and the less favorable of the
+   two governs.**
+   - *Engineering basis:* Requested at marker IN-05 in [Flaw Assessment](./04-flaw-assessment.mdx#continuity-factor).
+   - *Effect on results:* Without an observation, a narrow or slender section raises the flaw probability by a factor of about 2 to 3.5 per band
+     for a Poorly compacted, Very poorly compacted, or Unknown core. A well-compacted core stays negligible whatever the geometry, and under the
+     observation override the geometry does not affect the flaw probability.
+   - *When it may not hold:* Where the section is described in a length unit other than the one the base-width bands assume (see marker IN-05), or
+     where the low-permeability part of the section differs from the section described by the slope-segment tables; the flaw base width and height
+     can then be supplied (see [Input Parameters](./03-input-parameters.mdx#flaw-base-width-and-flaw-height)).
+4. **Borrow variability is fixed at a likelihood factor of 2.5 for every site.**
+   - *Engineering basis:* Requested at marker IN-06 in [Flaw Assessment](./04-flaw-assessment.mdx#borrow-variability-factor).
+   - *Effect on results:* Borrow variability contributes the same 2.5 to every weighted sum, so it never distinguishes between sites.
+   - *When it may not hold:* Where the borrow sources are known to be uniform, the fixed 2.5 overstates the flaw probability; where they are known
+     to be highly variable, it understates it.
+5. **The compaction category enters the flaw probability twice** — through its weight in the weighted sum and again through the flaw-continuity
+   probability (see [Flaw Assessment](./04-flaw-assessment.mdx#flaw-continuity)).
+   - *Engineering basis:* The flaw-continuity stage shared with the wall or cliff and foundation or abutment compaction models, documented in the
+     [Flaw-Continuity Stage](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#flaw-continuity-stage)
+     section of the CLE Common Methods manual.
+   - *Effect on results:* A well-compacted core has a negligible flaw probability whatever the section geometry, and the flaw probability spans
+     many orders of magnitude across the four categories.
+   - *When it may not hold:* Where compaction records conflict with field performance, such as observed seepage through a core rated well
+     compacted; the observation override then applies.
+6. **An observation of embankment leakage or wet spots demonstrates the flaw and locates it.** The flaw probability is set to 1.0 and the base of the
+   flaw to the observed elevation (see [Flaw Assessment](./04-flaw-assessment.mdx#observation-override)).
+   - *Engineering basis:* Engineering judgment that an observation demonstrates the flaw, as for every CLE observation override (see the
+     [assumptions of the CLE Common Methods manual](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/assumptions-and-limitations#flaw));
+     the meaning of the observed elevation is requested at marker IN-08 in
+     [Flaw Assessment](./04-flaw-assessment.mdx#observation-override).
+   - *Effect on results:* The SRP is governed entirely by the downstream nodes, and initiation, flow limitation, and the user's filter judgment are
+     all evaluated at the observed elevation.
+   - *When it may not hold:* Where the leakage or wet spots have another source, such as seepage through the foundation or along a conduit, or where
+     the observed exit lies below or above the flaw within the core.
+7. **Without an observation, the base of the flaw is one third of the way from the normal pool to the crest, measured to the crest even when a lower
+   core top is described.**
+   - *Engineering basis:* The normal-pool heuristic shared with the abutment case of the foundation or abutment compaction model, documented in
+     [Compaction Models: Base of the Flaw](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#compaction-models-base-of-the-flaw)
+     in the CLE Common Methods manual.
+   - *Effect on results:* The SRP is negligible at pool levels at or below this elevation, and a wall is credited only if its top reaches it. A
+     core top below this elevation leaves the inputs inconsistent, and the analysis is not evaluated.
+   - *When it may not hold:* Where construction records or performance locate the poorly compacted zone. A zone lower in the core carries more
+     head at every pool level and begins to initiate at a lower pool, so the heuristic is unconservative there: the SRP at normal pool, for
+     example, is negligible even if the zone lies below normal pool. When leakage or wet spots locate the zone, the observation override should be
+     used.
+
+## Failure Pathway and Initiation
+
+8. **The user decides whether a filter intercepts the pathway, and the continuation probability is one value at every pool level.** Supplying the
+   filter and base-soil description states that a filter is present; the model does not compare the filter with the base of the flaw (see
+   [Event Tree](./05-event-tree.mdx#node-3-continuation)).
+   - *Engineering basis:* Engineering judgment: a compaction flaw is at one elevation, so the filter it meets does not change with the pool (see
+     the [assumptions of the CLE Common Methods manual](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/assumptions-and-limitations#failure-pathway-and-progression)).
+   - *Effect on results:* A supplied filter multiplies the SRP at every pool level by the continuation probability $P_{ce}$, which lowers it
+     whenever $P_{ce}$ is below 1.0.
+   - *When it may not hold:* Where the filter's top lies near the base of the flaw, or where the base of the flaw is uncertain; supplying a filter
+     that does not reach the flaw credits it wrongly, so the user should confirm that it reaches the base of the flaw.
+9. **When a core section is supplied, it governs both the flaw scoring and the initiation analysis, whatever the embankment type.**
+   - *Engineering basis:* The pipe-length measurement of the Concentrated Leak Erosion Initiation toolbox, which measures across the impervious core
+     of a zoned embankment with very permeable outer zones (see
+     [Seepage Path Length](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#seepage-path-length) in the CLE
+     Common Methods manual); for the flaw scoring, the dimensions the continuity factor should measure are requested at marker IN-02 in
+     [Input Parameters](./03-input-parameters.mdx#flaw-base-width-and-flaw-height).
+   - *Effect on results:* A core narrower than the shell gives a shorter seepage path, a steeper gradient, and a higher initiation probability, and
+     can raise the continuity score.
+   - *When it may not hold:* Where the shells are not free draining and share the head loss with the core; the shell section or a supplied seepage
+     path length then describes the flaw better.
+10. **The default initial pipe diameter is a triangular distribution from 2 mm to 5 mm, most likely 3 mm.**
+    - *Engineering basis:* See
+      [Initial Pipe Diameter](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#initial-pipe-diameter) in the CLE
+      Common Methods manual.
+    - *Effect on results:* The hydraulic shear stress is proportional to the diameter, so the range sets how high the pool must rise before
+      initiation becomes likely; larger diameters (a range shifted upward) lower that pool level. The critical shear stress and the seepage path
+      length also set that pool level.
+    - *When it may not hold:* Where the poorly compacted zone is expected to carry a larger or smaller initial opening; a site-specific distribution
+      should then be supplied.
+
+<CitationFootnote />
