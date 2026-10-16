@@ -1,0 +1,205 @@
+---
+title: Failure Pathway and Progression
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import Equation from '@site/src/components/Equation';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-common-methods-screening" />
+
+# Failure Pathway and Progression
+
+Nodes 3 through 6 of the CLE event tree depend on what the eroding flaw meets on its way through the embankment: whether a filter intercepts it,
+which soils must hold a roof over the enlarging pipe, whether material from upstream can fill it, and whether an upstream element restricts the
+flow into it. This chapter documents the failure-pathway conventions that decide those questions and how each of the four nodes is evaluated.
+
+## The Failure Pathway
+
+The failure pathway is the route the concentrated leak takes through the embankment, from the upstream face to the downstream face. Its form follows
+from the flaw:
+
+- **Crest-crack models** — the pathway runs along the transverse crack, which is open over a range of elevations from its bottom $z_{bc}$ up to the
+  crest. The first drain or filter zone the pathway meets defines the top-of-filter elevation $z_{tf}$. While the pool is at or below $z_{tf}$, the
+  water entering the crack reaches the filter: this is the **below-filter pathway**, from the upstream face to the filter, taken at the
+  bottom-of-crack elevation. Once the pool rises above $z_{tf}$, the water entering the upper part of the crack passes over the filter's top: this
+  is the **full pathway**, from the upstream face to the downstream face. A filter **caps the pathway** when its top reaches the crest and no
+  full-pathway materials are given: the below-filter pathway then governs at every pool level. If full-pathway materials are supplied, pools
+  above the filter's top are evaluated on the full pathway. With no filter on the pathway, the full pathway governs at every pool level.
+- **Compaction models** — the pathway runs through the embankment section at the base-of-flaw elevation $z_f$. The flaw, and so the pathway, is at
+  one elevation: whether a filter intercepts it, which materials it passes through, and which walls reach it are the same at every pool level.
+
+The user resolves the pathway against the embankment section and supplies the result — the top-of-filter elevation, the filter and base-soil
+description, and the material lists — as documented in [Common Input Parameters](./03-input-parameters.mdx#failure-pathway-inputs).
+
+## Node 3: Continuation
+
+*Question:* Does an unfiltered seepage exit exist that allows erosion to continue?
+
+Where a filter intercepts the pathway, the probability that erosion continues past it, $P_{ce}$, is evaluated by the shared continuation method
+from the filter and base-soil description. The method, its alternative evaluation routes, and its basis are documented in the Continuation (Filter
+Evaluation) Screening Technical Reference Manual; it draws on the toolbox methods of the
+[Filter Evaluation (Continuation)](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/general-overview)
+manual. Where no filter intercepts the pathway, the exit is unfiltered and continuation is certain.
+
+**Crest-crack models.** Continuation follows the pathway that governs at each pool level:
+
+<Equation
+  equationKey="cle-common-screening-eq-13"
+  equation="P_{cont}(h) = \begin{cases} P_{ce} & \text{a filter is present and } \bigl(h \le z_{tf} \text{ or the filter caps the pathway}\bigr) \\[4pt] 1.0 & \text{otherwise} \end{cases}"
+/>
+
+Above the top of a filter that does not cap the pathway, the water in the upper part of the crack passes over the filter and exits unfiltered, so
+continuation is certain there. A crest-crack SRP curve with a filter therefore steps where the pool crosses $z_{tf}$: continuation rises from
+$P_{ce}$ to 1.0, but roof support switches at the same level from the below-filter minimum to the full-pathway minimum, which can be much lower
+(for example 0.01 for a downstream rockfill shell classified as GP on the full pathway). The SRP steps up where $P_{ce}$ is smaller than the ratio of the
+full-pathway to the below-filter roof support, and steps down where it is larger (see
+[Node 4: Progression — Roof Support](#node-4-progression--roof-support)).
+
+**Compaction models.** Continuation is one value for every pool level: $P_{ce}$ when a filter intercepts the pathway at the flaw elevation, and
+1.0 when none does. The continuation method is not evaluated when no filter is present.
+
+:::warning[INPUT NEEDED IN-12 — Engineering Basis]
+The crest-crack pathway convention requires an engineering basis to state here: (1) continuation and roof support share one gate at the top of the
+first filter the pathway meets, so that above that elevation erosion is taken to exit unfiltered over the filter's top with certain continuation;
+(2) the below-filter roof materials are taken at the bottom-of-crack elevation; and (3) a filter whose top reaches the crest, with no full-pathway
+materials given, caps the pathway at every pool level. Provide the literature source or the engineering-judgment attribution.
+
+Proposed (unconfirmed): a crest crack is open over its full depth, so a pool above the filter's top drives flow through the upper part of the
+crack over the filter, where nothing filters the exit; below the filter's top, all flow through the crack reaches the filter. Confirm or replace.
+:::
+
+## Node 4: Progression — Roof Support
+
+*Question:* Does a continuous stable roof form over the enlarging pipe, so that it stays open?
+
+Each soil classification on the pathway maps to a roof-support probability per <TableReference tableKey="cle-common-screening-table-13" />,
+following Fell et al. (2024) <Citation citationKey="Fell2024" />. Every material along the pathway must hold a roof for the pipe to progress, so
+the least capable material governs and the node takes the minimum across the listed materials:
+
+<Equation equationKey="cle-common-screening-eq-14" equation="P_{roof} = \min_{m \in \mathcal{M}} P_{roof}(m)" />
+
+where $\mathcal{M}$ is the material set that applies:
+
+- **Crest-crack models** — the below-filter materials at pool levels at or below $z_{tf}$ (and at every pool level when the filter caps the
+  pathway), and the full-pathway materials above it (and at every pool level when no filter is present). Roof support can therefore change where
+  the pool crosses $z_{tf}$, in step with continuation.
+- **Compaction models** — the embankment materials the pipe passes through, at every pool level.
+
+<TableVertical
+  tableKey="cle-common-screening-table-13"
+  alt="Roof-support probability by USCS classification"
+  caption="Roof-support probability by USCS classification, after Fell et al. (2024)."
+  colAlign={['left', 'left', 'center']}
+  headers={[[{ value: 'USCS Class' }, { value: 'Soil Description' }, { value: 'P(Roof Support)' }]]}
+  columns={[
+    ['GP', 'GW', 'GP-GM', 'SP', 'SW', 'SP-SM', 'SM', 'GM', 'SC', 'GC', 'ML', 'CL-ML', 'CL', 'MH', 'CH'],
+    [
+      'Poorly graded gravel',
+      'Well-graded gravel',
+      'Poorly graded gravel with silt',
+      'Poorly graded sand',
+      'Well-graded sand',
+      'Poorly graded sand with silt',
+      'Silty sand',
+      'Silty gravel',
+      'Clayey sand',
+      'Clayey gravel',
+      'Low-plasticity silt',
+      'Silty clay',
+      'Lean clay',
+      'High-plasticity silt',
+      'Fat clay',
+    ],
+    ['0.01', '0.01', '0.01', '0.01', '0.01', '0.10', '0.85', '0.85', '1.0', '1.0', '1.0', '1.0', '1.0', '1.0', '1.0'],
+  ]}
+/>
+
+## Node 5: Progression — No Crack Filling
+
+*Question:* Does the enlarging pipe remain unfilled, rather than being filled and healed by material carried in from upstream?
+
+The probability $P_{nf}$ depends only on the embankment type, per <TableReference tableKey="cle-common-screening-table-14" />, following Fell
+et al. (2024) <Citation citationKey="Fell2024" />. It is the same at every pool level for both groups.
+
+<TableVertical
+  tableKey="cle-common-screening-table-14"
+  alt="Probability of no crack filling by embankment type"
+  caption="Probability of no crack filling by embankment type, after Fell et al. (2024)."
+  colAlign={['left', 'center']}
+  headers={[[{ value: 'Embankment Type' }, { value: 'P(No Crack Filling)' }]]}
+  columns={[
+    ['Homogeneous earthfill', 'Zoned earthfill', 'Central-core earth and rockfill'],
+    ['1.0', '1.0', '0.5'],
+  ]}
+/>
+
+:::warning[INPUT NEEDED IN-13 — Definition]
+Confirm the physical meaning of the values in <TableReference tableKey="cle-common-screening-table-14" />. The model's source table is described
+as giving the probability of crack filling, while the event-tree node multiplies the tabulated value directly as the probability of no crack
+filling. The two readings agree only for the central-core earth and rockfill value of 0.5; for the earthfill types, a tabulated 1.0 read as the
+probability of crack filling would mean certain healing. State which reading the source table supports, cite its table number in Fell et al.
+(2024).
+
+Proposed (unconfirmed): the tabulated value is the probability that crack filling does not stop the erosion — an earthfill embankment has no
+upstream zone of material able to wash into and fill the pipe, so no credit is taken, while the upstream zone of a central-core earth and
+rockfill embankment is credited with a one-in-two chance of filling it. Confirm or replace.
+:::
+
+## Node 6: Progression — No Flow Limitation
+
+*Question:* Does the flow into the enlarging pipe remain unrestricted by upstream seepage-limiting elements?
+
+Each upstream element maps to a probability of no flow limitation per <TableReference tableKey="cle-common-screening-table-15" />, following Fell
+et al. (2024) <Citation citationKey="Fell2024" />. When more than one element applies, the most effective one controls the flow, so the node takes
+the minimum across the applicable elements; with no applicable element, flow is not limited and $P_{nl} = 1.0$:
+
+<Equation equationKey="cle-common-screening-eq-15" equation="P_{nl} = \min_{e \in \mathcal{E}} P_{nl}(e), \qquad P_{nl} = 1.0 \text{ when } \mathcal{E} \text{ is empty}" />
+
+<TableVertical
+  tableKey="cle-common-screening-table-15"
+  alt="Probability of no flow limitation by upstream element"
+  caption="Probability of no flow limitation by upstream element, after Fell et al. (2024)."
+  colAlign={['left', 'center', 'center']}
+  headers={[[{ value: 'Upstream Element' }, { value: 'Wall' }, { value: 'P(No Flow Limitation)' }]]}
+  columns={[
+    [
+      'Upstream facing element',
+      'Sheet pile wall',
+      'Modern cutoff wall',
+      'Non-cementitious wall',
+      'Soil-cement-bentonite wall',
+      'Column wall',
+    ],
+    ['No', 'Yes', 'Yes', 'Yes', 'Yes', 'Yes'],
+    ['0.5', '0.5', '0.001', '0.005', '0.05', '0.05'],
+  ]}
+/>
+
+### Walls that stop below the crest
+
+A wall limits flow only over its own height. When the user supplies the top-of-wall elevation $z_{tw}$, the walls apply only where the leak
+passes beneath their top, while the upstream facing element, which is not a wall, applies wherever it is present. The applicable set $\mathcal{E}$
+is therefore:
+
+- **Crest-crack models** — gated per pool level. At pool levels at or below $z_{tw}$ every listed element applies; above it the walls drop out
+  and only the upstream facing element remains, because the flow entering the crack above the wall's top passes over it.
+- **Compaction models** — gated once, against the flaw elevation. When $z_{tw} \ge z_f$ the wall reaches the flaw and every listed element applies;
+  when $z_{tw} < z_f$ the walls drop out and only the upstream facing element remains. Either way, one value applies at every pool level.
+
+With no top-of-wall elevation, the walls are taken to reach the crest and every listed element applies at every pool level.
+
+The conduit compaction model carries no flow-limitation input: it models no upstream element, and its Node 6 is fixed at 1.0.
+
+:::warning[INPUT NEEDED IN-14 — Engineering Basis]
+The flow-limitation conventions require an engineering basis to state here: (1) the minimum across several upstream elements governs; (2) a wall
+stops limiting flow above its top — per pool level for a crest crack, and against the base of the flaw for a compaction flaw — while an upstream
+facing element applies at every pool level; and (3) the conduit compaction model takes no flow-limitation credit at all. Provide the literature
+source (including the table in Fell et al. (2024) that gives the values of
+<TableReference tableKey="cle-common-screening-table-15" />) or the engineering-judgment attribution.
+:::
+
+<CitationFootnote />

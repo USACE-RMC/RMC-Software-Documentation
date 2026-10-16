@@ -1,0 +1,130 @@
+---
+title: Output and Interpretation
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import EquationNoRef from '@site/src/components/EquationNoRef';
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-common-methods-screening" />
+
+# Output and Interpretation
+
+Every CLE screening model reports the SRP at each evaluated pool level together with the probability of each of the eight nodes, so that the
+contribution of every node to the curve can be read directly. The results fall into three groups: values that do not depend on pool level, series
+evaluated at each pool level, and the supporting results of the flaw assessment and the initiation analysis. Each model's
+own manual describes its flaw-assessment results.
+
+## Pool-Independent Results
+
+- **Flaw probability** — Node 1, from the model's flaw assessment (see [Flaw Conventions](./05-flaw-conventions.mdx)); 1.0 when an observation
+  override applies.
+- **Crack-filling probability** — Node 5, the probability of no crack filling for the embankment type.
+- **Flow-limitation probability** — Node 6, the minimum across the applicable upstream elements, or 1.0 when none is listed:
+  - *Crest-crack models* — the value with every listed element applying, which governs at pool levels at or below the top of a wall.
+  - *Compaction models* — the value after the walls are gated against the flaw elevation, so the walls are excluded when the top of the wall
+    $z_{tw}$ is below the base of the flaw $z_f$. This is the value used at every pool level.
+  - *Conduit compaction model* — no flow-limitation result is reported; its node is fixed at 1.0.
+- **Roof-support probabilities** — for the crest-crack models, the minimum across the full-pathway materials and the minimum across the
+  below-filter materials, each reported only where that pathway exists (the full-pathway value is absent when the filter caps the pathway; the
+  below-filter value is absent when no filter is present). For the compaction models, the single roof-support probability across the embankment
+  materials.
+- **Continuation probability** (compaction models) — Node 3: the continuation method's result when a filter intercepts the pathway, otherwise
+  1.0.
+
+## Pool-Dependent Series
+
+Every pool-dependent result is a series over the evaluated pool levels — every supplied headwater value and the additional levels distributed
+between them (see [Event Tree](./04-event-tree.mdx#headwater-grid)):
+
+- **Pool levels** — the headwater elevations at which the event tree is evaluated.
+- **Tailwater** — the tailwater at each pool level, interpolated between the supplied pairs (see
+  [Event Tree](./04-event-tree.mdx#headwater-grid)). Where there is no tailwater, the crest-crack models report the entry as blank, while the
+  compaction models report the pipe-invert elevation $z_f$, the level at which tailwater gives no submergence.
+- **Initiation probability** — Node 2 at each pool level.
+- **Continuation probability** (crest-crack models) — Node 3 at each pool level: the continuation method's result at or below the filter's top,
+  and 1.0 above it or where no filter is present.
+- **Roof-support probability** (crest-crack models) — Node 4 at each pool level: the below-filter or full-pathway value that governs there.
+- **Flow-limitation probability** — Node 6 at each pool level, after any wall has dropped out. For the compaction models it is the same at every
+  pool level; for the crest-crack models it changes where the pool crosses the top of a wall. The conduit compaction model reports no
+  flow-limitation series; its Node 6 is fixed at 1.0.
+- **Unsuccessful-intervention and breach probabilities** — Nodes 7 and 8, the user-specified values at every pool level.
+- **SRP** — the product of the eight nodes at each pool level: the system response curve.
+
+## Supporting Results
+
+- **Flaw assessment** — the factor scores, the weighted sum, the raw and final flaw probabilities, whether an override applied, and the flaw
+  elevation (the bottom of the crack, or the base of the flaw), as documented in each model's manual.
+- **Initiation analysis** (compaction models) — at each pool level, the upstream and downstream heads above the pipe invert, the hydraulic
+  gradient, and the mean and 5th, 50th, and 95th percentiles of the hydraulic shear stress; and the seepage path length.
+
+## Interpreting the System Response Curve
+
+The SRP series is the system response curve — the conditional probability of breach by concentrated leak erosion through the modeled flaw as a
+function of pool level. Its shape differs between the two groups.
+
+**Crest-crack models.** The curve is negligible at and below the bottom of the crack. It steps up as soon as the pool rises above it, provided
+every other node is non-zero there: a negligible flaw probability (an inapplicable mechanism, or a factor or threshold forcing it to zero), or a
+user-supplied unsuccessful-intervention or breach probability of 0, keeps the curve negligible at every pool level. An observation override takes
+precedence over the threshold rule, so a reported observation restores a flaw probability of 1.0 (see
+[Flaw Conventions](./05-flaw-conventions.mdx#flaw-probability-from-the-weighted-sum)). Above that level the curve is piecewise
+constant: with initiation equal to 1.0, the SRP at each pool level is the product of the remaining nodes,
+
+<EquationNoRef equation="\mathrm{SRP} = P_{flaw} \times P_{cont} \times P_{roof} \times P_{nf} \times P_{nl} \times P_{int} \times P_{br}" />
+
+with $P_{cont}$, $P_{roof}$, and $P_{nl}$ taking the values that govern at that pool level. Further steps occur where the pool crosses the top of
+a filter (continuation becomes certain and the full-pathway roof materials take over, so the curve can step up or down; see
+[Node 3: Continuation](./07-failure-pathway-and-progression.mdx#node-3-continuation)) and where it crosses the top of a wall (the wall's
+flow-limitation credit is lost). Each step location can be read from the node series.
+
+**Compaction models.** The curve is negligible at and below the base of the flaw and rises with pool level as the hydraulic gradient through the
+pipe grows, following the initiation probability. The other seven nodes are constant, so the curve approaches the product of those nodes as the
+initiation probability approaches 1.0. A rising tailwater that reduces the net head across the pipe can flatten or lower the curve over that range.
+
+## Reading the Node Breakdown
+
+Because the SRP is a product, the node with the lowest probability at a pool level limits the curve there, and the breakdown shows which it is.
+Typical readings:
+
+- **A low flaw probability** places the whole curve low; it reflects the factor scores, and the flaw assessment results show which factors drive
+  it.
+- **A filter on the pathway** lowers the curve by the continuation probability — on a crest crack only up to the filter's top.
+- **A cohesionless material on the pathway** lowers the curve by its roof-support probability, by up to two orders of magnitude.
+- **An effective upstream element** lowers the curve by its flow-limitation probability, but only where it applies.
+- **For the compaction models**, the pool level at which the curve begins to rise, and how fast it rises, are set by the critical shear stress and
+  initial pipe diameter. A curve that levels off below the product of the other nodes reflects realizations that do not initiate within the
+  evaluated pool range. Such realizations may never initiate at any physically possible pool, because the crest limits the largest gradient the
+  pipe can carry, so the plateau can be real. Extending the headwater series shows whether the curve rises further, but only up to the crest or
+  the maximum credible pool.
+
+## Checking the Result
+
+In the crest-crack models, the curve can be reproduced exactly from the reported node values, since initiation, roof support, crack filling, and
+flow limitation are deterministic. The continuation probability $P_{ce}$ itself may be a Monte Carlo estimate, when the continuation method
+evaluates the filter by its sampling route through the USCS classes of the base and filter soils. In the compaction models, the
+initiation probability at each pool level is a Monte Carlo point estimate, the fraction of realizations that initiate, and no confidence bounds
+are reported with it; small irregularities between neighboring pool levels can reflect sampling rather than the physics. The following checks
+apply to every result:
+
+- **Upper bound** — in the compaction models, the SRP at every pool level is no larger than the product of the seven nodes that do not vary with
+  pool level, and approaches it only as initiation approaches 1.0. In the crest-crack models, the SRP above the bottom of the crack equals the
+  product of the nodes that govern at that pool level.
+- **Step locations** — in the crest-crack models, steps of the curve can occur only at the bottom of the crack $z_{bc}$, the top of the filter
+  $z_{tf}$, and the top of a wall $z_{tw}$ (to within one interval of the headwater grid), and at a filter or wall top only where it lies above
+  $z_{bc}$. A filter or wall top at or below the bottom of the crack produces no visible step.
+- **Lower end** — the curve is negligible at and below the bottom of the crack $z_{bc}$ (crest-crack models) or the base of the flaw $z_f$
+  (compaction models).
+
+A curve that fails one of these checks can point to an input that does not describe the intended embankment, such as a flaw elevation, filter top,
+or wall top on a different datum from the headwater series.
+
+## Screening Results Relative to Detailed Analysis
+
+The CLE screening models are screening tools. Their results indicate whether a concentrated leak erosion mechanism warrants detailed analysis;
+they are not substitutes for a detailed assessment. The screening defaults — the critical shear stress and initial pipe diameter ranges, the
+flaw-elevation heuristics, the certain initiation of an open crest crack, and the tabulated progression probabilities — are chosen to avoid false
+negatives. Where a screening result is significant to a decision, the governing nodes should be re-examined with site-specific information, and the
+detailed toolbox methods, the methods of Fell et al. (2024) <Citation citationKey="Fell2024" />, and the judgment of the risk team should replace the screening values.
+
+<CitationFootnote />
