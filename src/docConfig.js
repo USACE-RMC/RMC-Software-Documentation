@@ -392,7 +392,7 @@ const docs = [
     category: 'web-applications',
     software: 'system-response',
     doc_location: 'web-applications/system-response/cle-foundation-abutment-compaction-screening',
-    doc_name: 'CLE Foundation/Abutment Compaction Screening Technical Reference Manual',
+    doc_name: 'Concentrated Leak Erosion Foundation/Abutment Compaction Screening Technical Reference Manual',
     active: true,
     draft: true,
   },
