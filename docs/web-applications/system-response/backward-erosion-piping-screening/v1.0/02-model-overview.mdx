@@ -1,0 +1,159 @@
+---
+title: Model Overview
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/backward-erosion-piping-screening" />
+
+# Model Overview
+
+## Purpose
+
+The BEP screening model computes a system response curve for the backward erosion piping failure mode as a function of headwater elevation.
+The system response probability (SRP) at each headwater level represents the conditional probability of dam or levee breach due to backward
+erosion piping, given that pool level. The model produces a curve of SRP values across a range of headwater elevations that
+characterizes the structure's vulnerability to this failure mode.
+
+Backward erosion piping is the progressive removal of cohesionless foundation soil by seepage, beginning at an unfiltered downstream exit and
+eroding backward (upstream) beneath the embankment until a continuous pipe connects the impounded water to the exit. The failure mode requires a
+continuous path of erodible material, an unfiltered exit, sufficient gradient to initiate erosion, a soil roof that keeps the developing pipe
+open, and sufficient gradient to advance the pipe to the reservoir.
+
+## Intended Use
+
+The model is a screening-level assessment of backward erosion piping risk. It makes simplifying and generally conservative assumptions with two
+goals:
+
+- **Preventing false negatives** — The model is designed to avoid underestimating risk at the screening level, so that structures with
+  potential BEP concerns are flagged for further analysis.
+- **Reducing input burden** — The model requires fewer inputs than the full BEP toolbox models. Qualitative selections (confining-layer
+  thickness category, relative density category, geologic environment) substitute for site-specific distributions, and default distributions
+  cover material properties that are typically unavailable at the screening stage. Where a site characteristic is genuinely unknown — the
+  presence of a confining layer, or the extent of that layer beyond the embankment — the model accepts Unknown as an answer and substitutes a
+  deliberately wide characterization rather than requiring the user to guess.
+
+The model is not intended for detailed or semi-quantitative risk assessments. For higher-level analyses, the full BEP Initiation and BEP
+Progression toolbox models provide the complete methodologies with full parameterization (see
+[Comparison with Detailed Models](#comparison-with-detailed-models)).
+
+## How the Model Works
+
+The screening model executes three stages:
+
+1. **Flaw assessment** — A Bayesian analysis estimates the probability that a continuous path of fine to medium, uniform sand exists in the
+   foundation. A prior probability based on the geologic depositional environment is updated with subsurface-data evidence and observed-seepage
+   evidence when available. The mean posterior probability populates the first event-tree node and is independent of pool level
+   (see [Flaw Assessment](./04-flaw-assessment.mdx)).
+
+2. **Hydraulic and seepage-geometry resolution** — The model resolves the downstream reference elevations that control net driving head, the
+   upstream seepage path length $L_1$, the embankment base width $L_2$, and the downstream seepage path length $L_3$ from the site inputs, and
+   selects the blanket-theory configuration — Case 2 when an upstream seepage barrier is present, Case 4 otherwise
+   (see [Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx)).
+
+3. **Event-tree assembly** — At each headwater level, the model composes seven node probabilities and multiplies them to produce the SRP. Blanket
+   theory computes the blowout and heave probabilities feeding the unfiltered-exit and initiation nodes, a defect-survival relationship gives the
+   probability that a pre-existing defect already penetrates the confining layer, and the Schmertmann critical-gradient method computes the
+   probability of pipe progression. The blanket-theory and Schmertmann analyses are evaluated by Monte Carlo simulation over the uncertain
+   material and geometric inputs (see [Event Tree](./06-event-tree.mdx) and [Delegated Methods](./07-delegated-methods.mdx)).
+
+## Physics Basis
+
+The model combines the following engineering methods:
+
+- **Bayesian updating in log-odds form** for the probability of a continuous foundation flaw, combining a geology-based prior with likelihood
+  ratios for the site evidence (see [Flaw Assessment](./04-flaw-assessment.mdx); the source of the formulation is requested at marker IN-18)
+- **Blanket theory** for the excess head beneath the downstream confining layer and the vertical exit gradient through it, from which the
+  blowout and heave probabilities follow <Citation citationKey="USACE1956" />
+- **A Weibull defect-survival relationship** for the probability that a pre-existing defect fully penetrates the confining layer (see
+  [Event Tree](./06-event-tree.mdx))
+- **Roof-support probabilities by soil classification** for the mechanical condition of pipe progression <Citation citationKey="Fell2024" />
+- **The Schmertmann critical-gradient method** for the hydraulic condition of pipe progression <Citation citationKey="Schmertmann2000" />, with
+  an exit-geometry factor that distinguishes concentrated from distributed exits <Citation citationKey="vanBeek2015" />
+
+## Comparison with Detailed Models
+
+The detailed counterparts of the screening model are the full BEP Initiation and BEP Progression toolbox models. The BEP Initiation manual
+covers all eight blanket-theory configurations (see its [General Overview](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation/v1.0/general-overview)), of which the screening model uses
+[Blanket Theory Case 2](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation/v1.0/blanket-theory-case-2) and [Blanket Theory Case 4](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation/v1.0/blanket-theory-case-4). The BEP Progression manual covers the
+[Schmertmann](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/schmertmann) method used by the screening model and the alternative [Sellmeijer](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/sellmeijer) method.
+<TableReference tableKey="bep-screening-table-1" /> summarizes the differences.
+
+<TableVertical
+  tableKey="bep-screening-table-1"
+  alt="Comparison of screening model and toolbox models"
+  caption="Comparison of the BEP screening model and the full toolbox models."
+  headers={[[{ value: 'Aspect' }, { value: 'Screening Model' }, { value: 'Toolbox Models' }]]}
+  columns={[
+    [
+      'Purpose',
+      'Flaw probability',
+      'Initiation method',
+      'Progression method',
+      'Downstream blanket extent',
+      'Pipe path inclination',
+      'Anisotropy correction',
+      'Underlayer correction',
+      'Distribution inputs',
+    ],
+    [
+      'Screening-level risk assessment',
+      'Bayesian assessment from geology, subsurface data, and seepage observations',
+      'Blanket Theory Case 2 or Case 4, selected from the upstream seepage barrier',
+      'Schmertmann only',
+      'Resolved from confining-layer and berm inputs; wide default range when unknown',
+      'Fixed horizontal',
+      'Fixed at the reference value',
+      'Not applied',
+      'Defaults provided; user may override selected distributions',
+    ],
+    [
+      'Detailed risk analysis',
+      'Assessed outside the toolbox and supplied by the analyst',
+      'Blanket Theory Case 1 through 8 (user selects)',
+      'Schmertmann or Sellmeijer (user selects)',
+      'User-specified',
+      'User-specified (−90° to +40°)',
+      'User-specified distribution',
+      'User-specified underlayer properties',
+      'All distributions user-specified',
+    ],
+  ]}
+/>
+
+## Exit Pathways
+
+The model evaluates up to two seepage exit pathways:
+
+- **Toe pathway** — Seepage exits at the downstream toe of the embankment, or at the toe of the downstream seepage berm when one is present.
+  This pathway is always evaluated. When a confining layer may be present and the toe exit remains beneath it — no berm, or a berm ending
+  within the layer's known extent — the unfiltered-exit probability at the toe is composed from two mechanisms (a pre-existing defect through
+  the layer, and hydraulic blowout of the layer), and the initiation probability is the blanket-theory heave probability. Where a berm instead
+  places the exit at or beyond the layer's downstream termination, the exit daylights at the berm toe and the unfiltered-exit and initiation
+  probabilities are certain there.
+
+- **Daylight pathway** — Seepage exits at the downstream termination of the confining layer, where the underlying sand daylights at the ground
+  surface. This pathway is evaluated whenever a confining layer may be present (its presence is confirmed or unknown) *and* the daylighting
+  exit is distinct from the toe exit. At the daylight exit there is no confining layer to penetrate, so the unfiltered-exit and initiation
+  probabilities are both certain. With no berm, or with a berm inside a confirmed layer's known extent, the daylight pathway is also
+  distinguished by its longer seepage path to the exit. When a berm over a confirmed layer reaches or clears the layer's downstream extent — or
+  overlies a confirmed layer whose extent is unknown — the berm toe is itself the daylighting exit: the toe pathway then represents that exit
+  directly, and no separate daylight pathway is evaluated. A layer of unknown presence always retains both pathways; with a berm, both then
+  share the berm-extended path length and differ in the toe initiation node and the exit datum (see [Event Tree](./06-event-tree.mdx)).
+
+The governing SRP at each headwater level is the larger of the two pathway SRPs, so the more critical exit condition controls the screening
+result. When only the toe pathway is evaluated, it governs directly.
+
+## Relationship to Toolbox Models
+
+The screening model uses the same blanket-theory and Schmertmann methods as the standalone toolbox models for its blowout, heave, and
+progression computations. The screening model differs only in what it supplies to
+them: it builds their geometry and material inputs from the screening selections and fixes several choices that the toolbox models leave to
+the analyst (<TableReference tableKey="bep-screening-table-1" />). [Delegated Methods](./07-delegated-methods.mdx) documents each fixed choice
+and its basis.
+
+<CitationFootnote />

@@ -1,0 +1,242 @@
+---
+title: Delegated Methods
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import Equation from '@site/src/components/Equation';
+import EquationReference from '@site/src/components/EquationReference';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/backward-erosion-piping-screening" />
+
+# Delegated Methods
+
+The screening model hands two of its event-tree calculations to established analysis methods, each documented in a dedicated technical manual:
+
+- **Blanket theory** evaluates the blowout and heave probabilities behind Node 2 (Flaw: Unfiltered Exit) and Node 3 (Initiation) on the toe
+  pathway.
+- **The Schmertmann critical-gradient method** evaluates the probability of pipe advancement behind Node 5 (Progression: Hydraulic Condition) on
+  both pathways.
+
+The theory of each method lives in its manual. Each section below states the node the method serves and the question it answers there, links
+the chapter of the manual that covers it, and then documents only what the screening model supplies, what it uses from the result, and every
+screening-level adjustment relative to the manual. The flaw assessment (Node 1) and the defect-survival relationship (part of Node 2) are the
+screening model's own calculations, documented in [Flaw Assessment](./04-flaw-assessment.mdx) and [Event Tree](./06-event-tree.mdx).
+
+## Blanket Theory — Blowout and Heave
+
+**Nodes served:** Node 2 (Flaw: Unfiltered Exit) and Node 3 (Initiation), on the toe pathway, wherever a confining layer may be present and the
+toe exit remains beneath it.
+
+**Questions answered:** At Node 2, is the uplift pressure at the base of the confining layer large enough to rupture the layer (blowout), opening
+an unfiltered exit? At Node 3, is the vertical gradient through a defect in the layer large enough to fluidize the underlying sand (heave),
+starting erosion at the exit? Both questions compare the vertical exit gradient through the layer with a critical gradient set by a saturated
+unit weight, which is what blanket theory computes <Citation citationKey="USACE1956" />.
+
+### Blanket-theory configuration
+
+The model evaluates one of two blanket-theory configurations, selected from the upstream seepage barrier by the rule documented in
+[Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx#blanket-theory-configuration-selection):
+
+- **Case 2** — impervious top strata on both the riverside and the landside, used when an upstream seepage barrier is present. The theory,
+  including the exit head at the landside toe and at a given distance beyond it, is in
+  [Blanket Theory Case 2](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation/v1.0/blanket-theory-case-2)
+  of the BEP Initiation manual.
+- **Case 4** — no riverside top stratum and an impervious landside top stratum, used otherwise. The theory, including the effective entrance
+  length of $0.43\,d$ for an open riverside entrance, is in
+  [Blanket Theory Case 4](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation/v1.0/blanket-theory-case-4)
+  of the BEP Initiation manual.
+
+### Blowout and heave evaluations
+
+The model evaluates the selected configuration **twice with identical sampled realizations** of the foundation thickness, confining-layer
+thickness, and downstream path length:
+
+- **Blowout** — the critical gradient is computed from the *confining layer's* saturated unit weight $\gamma_{bl}$, representing rupture
+  of the layer against its buoyant weight. The result feeds Node 2.
+- **Heave** — the critical gradient is computed from the *foundation sand's* saturated unit weight $\gamma_{sand}$, representing
+  fluidization of the sand column at a defect through the layer. The result feeds Node 3.
+
+Because the two evaluations share their sampled realizations, the blowout and heave probabilities differ only through the unit weight entering
+the critical gradient.
+
+### Governing relationships
+
+Within each Monte Carlo realization, and at each pool level with net head $H$ (defined in
+[Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx)):
+
+<Equation equationKey="bep-screening-eq-15" equation="h_o = H \cdot \frac{L_3}{L_{total}}" />
+
+<Equation
+  equationKey="bep-screening-eq-16"
+  equation="h_x = \begin{cases} h_o \cdot \dfrac{L_3 - x}{L_3} & x < L_3 \\[6pt] 0 & x \geq L_3 \end{cases}"
+/>
+
+<Equation equationKey="bep-screening-eq-17" equation="i_{cv} = \frac{\gamma_{sat} - \gamma_w}{\gamma_w}" />
+
+<Equation equationKey="bep-screening-eq-18" equation="i_v = \frac{h_x}{z_{bl}}, \qquad FS = \frac{i_{cv}}{i_v}" />
+
+where:
+
+> $h_o$ = excess head above the exit datum at the embankment toe  
+> $h_x$ = excess head at the exit evaluation point, offset $x$ from the toe  
+> $L_3$, $L_{total}$ = downstream and total seepage path lengths ($L_3$ sampled per realization when no berm is present and the extent or the layer's presence is unknown)  
+> $i_{cv}$ = critical vertical gradient  
+> $\gamma_{sat}$ = saturated unit weight ($\gamma_{bl}$ for blowout, $\gamma_{sand}$ for heave)  
+> $\gamma_w$ = unit weight of water (62.4 pcf)  
+> $i_v$ = vertical exit gradient through the confining layer  
+> $z_{bl}$ = sampled confining-layer thickness  
+> $FS$ = factor of safety against the vertical gradient
+
+The blowout or heave probability at each pool level is the fraction of Monte Carlo realizations in which $FS < 1$. Realizations with no exit
+gradient (zero net head) contribute no failure.
+
+### Screening-level adjustments
+
+Relative to the blanket-theory chapters of the BEP Initiation manual, the screening model fixes the following:
+
+- **Finite-blanket head loss always applies** — the excess head at the toe is always reduced by the path-length ratio
+  (<EquationReference equationKey="bep-screening-eq-15" />). The idealization of an infinite downstream blanket carrying the full net head at
+  the toe is not used.
+- **Downstream blanket length follows the resolved downstream path** — $L_3$ enters as the supplied downstream extent, or is drawn per
+  realization from the wide default range when no berm is present and the extent or the layer's presence is unknown
+  (see [Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx)).
+- **Confining-layer thickness comes from the category band** — the sampled $z_{bl}$ follows the qualitative thickness category (or the custom
+  distribution) documented in [Input Parameters](./03-input-parameters.mdx).
+- **The unit weight is mechanism-specific** — $\gamma_{bl}$ for blowout and $\gamma_{sand}$ for heave, each defaulting per
+  [Input Parameters](./03-input-parameters.mdx).
+- **Foundation permeability does not influence the screening result** — hydraulic conductivity affects only the seepage-quantity results of
+  blanket theory, which the screening model does not use; the exit-gradient computations are independent of it.
+
+## Schmertmann Method — Progression
+
+**Node served:** Node 5 (Progression: Hydraulic Condition), on the toe pathway and, when it is evaluated, the daylight pathway.
+
+**Question answered:** Once erosion has initiated at the exit and a roof is available, is the average hydraulic gradient along the seepage path
+large enough to keep advancing the pipe upstream through the foundation sand until it reaches the reservoir? The Schmertmann
+method <Citation citationKey="Schmertmann2000" /> answers it by comparing the average applied gradient with a field critical gradient derived from
+laboratory piping tests and corrected for site conditions. The complete method is documented in the
+[Schmertmann](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/schmertmann) chapter of the BEP
+Progression manual; the subsections below link the part of that chapter each step follows.
+
+### Base critical gradient
+
+The base critical gradient derives from laboratory piping-model tests, represented as a family of quantile curves linear in the coefficient of
+uniformity (see
+[Laboratory Horizontal Critical Gradient](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/schmertmann#laboratory-horizontal-critical-gradient)):
+
+<Equation equationKey="bep-screening-eq-19" equation="i_{pmt}(\xi) = m(\xi)\,C_u + b(\xi)" />
+
+where $i_{pmt}(\xi)$ is the laboratory critical gradient at cumulative probability $\xi$, and $m(\xi)$ and $b(\xi)$ are the quantile regression
+coefficients from the BEP Progression manual. The screening model uses these laboratory relationships without modification.
+
+### Field critical gradient and correction factors
+
+The field critical gradient scales the laboratory gradient by the correction factors (see
+[Field Horizontal Critical Gradient](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/schmertmann#field-horizontal-critical-gradient)):
+
+<Equation
+  equationKey="bep-screening-eq-20"
+  equation="i_{ch}(\xi) = i_{pmt}(\xi) \cdot \frac{C_D \, C_L \, C_S \, C_K \, C_\gamma \, C_Z}{C_R} \cdot C_\alpha \cdot C_{OF}"
+/>
+
+In the screening configuration, five factors remain active and four are fixed at unity
+(<TableReference tableKey="bep-screening-table-22" />).
+
+<TableVertical
+  tableKey="bep-screening-table-22"
+  alt="Schmertmann correction factors in the screening configuration"
+  caption="Schmertmann correction factors in the screening configuration."
+  colAlign={['center', 'left', 'left']}
+  headers={[[{ value: 'Factor' }, { value: 'Correction' }, { value: 'Screening Treatment' }]]}
+  columns={[
+    ['C<sub>D</sub>', 'C<sub>L</sub>', 'C<sub>S</sub>', 'C<sub>γ</sub>', 'C<sub>OF</sub>', 'C<sub>K</sub>', 'C<sub>Z</sub>', 'C<sub>α</sub>', 'C<sub>R</sub>'],
+    [
+      'Depth',
+      'Seepage path length',
+      'Grain size',
+      'Density',
+      'Overall field correction',
+      'Anisotropy',
+      'Underlayer',
+      'Pipe-path inclination',
+      'Axis curvature',
+    ],
+    ['Active', 'Active', 'Active', 'Active', 'Active', 'Fixed at 1.0', 'Fixed at 1.0', 'Fixed at 1.0', 'Fixed at 1.0'],
+  ]}
+/>
+
+The active factors take their values from the screening inputs:
+
+- $C_D$ — from the sampled foundation thickness $d$ and the pathway's seepage path length
+- $C_L$ — from the pathway's seepage path length
+- $C_S$ — from the sampled effective grain size $D_{10}$
+- $C_\gamma$ — from the sampled relative density $D_r$ (per the category mapping or custom distribution in
+  [Input Parameters](./03-input-parameters.mdx))
+- $C_{OF}$ — the product of the fines-content correction and the exit-geometry factor, given below
+
+The fixed factors reflect information that is rarely available at the screening stage:
+
+- $C_K$ — taken as 1.0, which the BEP Progression manual's anisotropy relationship, $C_K = (1.5/R_{kf})^{0.5}$, gives for a reference
+  conductivity ratio $R_{kf} = k_h/k_v$ of 1.5; the seepage path length is not transformed for anisotropy (assumption 12 in
+  [Assumptions and Limitations](./08-assumptions-and-limitations.mdx))
+- $C_Z$ — taken as 1.0, the value for no higher-permeability underlayer; no stratum beneath the aquifer is characterized (assumption 13)
+- $C_\alpha$ — the pipe path is fixed horizontal (inclination 0°), so no inclination correction applies (see
+  [Pipe Path Inclination](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/schmertmann#pipe-path-inclination))
+- $C_R$ — the axis is treated as straight, as in the BEP Progression manual
+
+### Exit geometry and fines corrections
+
+The overall field correction is:
+
+<Equation equationKey="bep-screening-eq-21" equation="C_{OF} = C_{FC} \cdot C_{3d}" />
+
+The exit-geometry factor $C_{3d}$ distinguishes concentrated (hole-type) exits from distributed (plane-type) exits. Van Beek et
+al. (2015) <Citation citationKey="vanBeek2015" /> found that three-dimensional flow converging toward a single exit point produces critical
+gradients roughly half those predicted for the two-dimensional configuration. Their comparison was made against the Dutch (Sellmeijer) piping
+model, and the BEP Progression manual notes that the reduction was not developed and calibrated for the Schmertmann method; the screening model
+applies it to the Schmertmann critical gradient by engineering judgment, as the manual does, so a hole-type exit takes $C_{3d} = 0.5$ and a
+plane-type exit $C_{3d} = 1.0$. The screening model assigns the exit type as follows:
+
+- **Toe pathway** — hole-type ($C_{3d} = 0.5$) when the confining layer is confirmed, *unless* a berm is present and either the layer's
+  downstream extent is unknown or the berm reaches or clears that extent (the exit then daylights beyond the layer and is plane-type). When
+  the layer's presence is No or Unknown, the toe exit is plane-type (assumption 18 in
+  [Assumptions and Limitations](./08-assumptions-and-limitations.mdx)).
+- **Daylight pathway** — always plane-type ($C_{3d} = 1.0$); the exit is an exposed sand surface.
+
+The fines-content correction is a step function of the foundation sand's fines content:
+
+<Equation
+  equationKey="bep-screening-eq-22"
+  equation="C_{FC} = \begin{cases} 1.0 & \text{fines} < 5\% \\[4pt] 1.4 & \text{fines} \geq 5\% \end{cases}"
+/>
+
+The higher factor applies at exactly 5% fines and above; a fines content below 5% takes no correction.
+
+:::warning[INPUT NEEDED IN-16 — Engineering Basis]
+The fines-content correction applied in the Schmertmann analysis — a step from 1.0 to 1.4, with the higher factor applying at exactly 5% fines
+and above — requires an engineering basis. Provide the source or engineering-judgment attribution for the step form, the 5% threshold, and the
+1.4 value, and add the term to the Schmertmann chapter of the BEP Progression manual, which currently omits it.
+:::
+
+### Probability of advancement
+
+At each pool level, the applied gradient is the net head over the pathway's seepage path length (see
+[Likelihood of Backward Erosion Piping Progression](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/schmertmann#likelihood-of-backward-erosion-piping-progression)):
+
+<Equation equationKey="bep-screening-eq-23" equation="i_{adv}(h) = \frac{H(h)}{L_{prog}}" />
+
+where $L_{prog}$ is the toe or daylight progression path length from
+[Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx) (sampled per realization on the daylight pathway when no berm is
+present and the downstream extent or the layer's presence is unknown). Within each realization, the correction factors scale the entire family of laboratory quantile curves
+(<EquationReference equationKey="bep-screening-eq-20" />), and the probability of advancement is the cumulative probability that the corrected
+critical gradient is at or below the applied gradient — interpolated from the scaled quantile family, and limited to 0 and 1 beyond its ends.
+A pool producing no positive net head yields no probability of advancement.
+
+The Node 5 probability at each pool level is the mean probability of advancement across the Monte Carlo realizations, then constrained to be
+non-decreasing with pool level as described in [Event Tree](./06-event-tree.mdx).
+
+<CitationFootnote />
