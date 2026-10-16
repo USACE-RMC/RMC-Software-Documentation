@@ -26,6 +26,10 @@
  * with watermark, fully searchable) or inactive+draft (unpublished, no
  * watermark visible because the doc isn't on the prod site).
  *
+ * Sidebar label (optional): `sidebar_label` sets the document's name in its sidebar
+ * and breadcrumbs. Without it, the name is the title-cased folder name, which is
+ * wrong for folders that abbreviate (e.g. "cle-freezing-screening" → "Cle …").
+ *
  * Download-only entries (downloadUrl, no doc_location) are tiles that link
  * directly to a PDF — they have no associated MDX folder and are unaffected
  * by the active/draft build-inclusion logic.
