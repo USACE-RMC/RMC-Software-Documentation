@@ -4,7 +4,9 @@ Answer inline and return this file (or paste its contents into the conversation)
 Answer blank to keep that marker in place. Do not renumber — the IDs tie each entry to its
 admonition in the document. IN-18 to IN-21 were added in the October 2026 revision. (IN-17 was retired in the August 2026 update: the mean-of-
 distribution treatment it questioned no longer exists — supplied seepage-path lengths are now
-single values by design.)
+single values by design. IN-12 was retired in the October 2026 model update: blowout and heave beneath a berm
+are now evaluated at the berm toe, the location the marker asked to confirm. IN-20 was retired in the same update: the
+blowout and heave net head now combines the daylight exit level with the ground at the evaluation point.)
 
 ---
 
@@ -159,29 +161,6 @@ for scaling the range to embankment height.
 
 ---
 
-## IN-12 — Definition — `05-hydraulic-loading-and-seepage-paths.mdx`
-
-**Regarding:** The physical interpretation of the exit-offset distance used when a berm
-overlies a confirmed confining layer whose supplied downstream extent exceeds the berm
-length — the berm-within-known-extent case in which the through-layer defect/blowout
-composition is retained. The intended evaluation location is the berm toe, but the model
-computes the offset as (supplied confining-layer extent − berm
-length), measured from the embankment toe. Under the linear head profile, the head fraction
-remaining at the computed offset equals (berm length ÷ confining-layer extent) — whereas an
-exit evaluated at the berm toe (one berm length from the embankment toe) would retain the
-complementary fraction, (extent − berm length) ÷ extent. The two coincide only when the berm
-covers exactly half the extent; the computed construction is conservative for longer berms
-and non-conservative for shorter ones relative to the berm-toe reading.
-
-**Needed:** Confirmation of which exit location the offset is intended to represent, and the
-engineering basis for the chosen construction. (If the intent is the berm toe, the
-computation may warrant review — the document currently describes the computed behavior
-as-is.)
-
-**Answer:**
-
----
-
 ## IN-13 — Engineering Basis — `06-event-tree.mdx`
 
 **Regarding:** The Weibull defect-survival parameters — characteristic defect penetration
@@ -267,20 +246,6 @@ horizontal.
 
 **Needed:** Literature source with full bibliographic details, or the engineering-judgment
 attribution; confirm or replace the 10° threshold.
-
-**Answer:**
-
----
-
-## IN-20 — Engineering Basis — `08-assumptions-and-limitations.mdx`
-
-**Regarding:** Assumption 17. Where a daylight ground-surface elevation is supplied (and the
-daylighting exit is not the berm toe), the toe blowout and heave analyses measure the net head
-to the daylight reference elevation rather than the toe ground, so the elevation difference
-between the daylight ground and the toe does not enter the uplift at the toe.
-
-**Needed:** Engineering basis or judgment attribution for this datum choice, or confirmation
-of whether the toe ground should be the datum for the toe blowout and heave analyses.
 
 **Answer:**
 

@@ -41,7 +41,8 @@ unit weight, which is what blanket theory computes <Citation citationKey="USACE1
 The model evaluates one of two blanket-theory configurations, selected from the upstream seepage barrier by the rule documented in
 [Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx#blanket-theory-configuration-selection):
 
-- **Case 2** — impervious top strata on both the riverside and the landside, used when an upstream seepage barrier is present. The theory,
+- **Case 2** — impervious top strata on both the riverside and the landside, used when an upstream seepage barrier is credited with an
+  upstream path length. The theory,
   including the exit head at the landside toe and at a given distance beyond it, is in
   [Blanket Theory Case 2](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation/v1.0/blanket-theory-case-2)
   of the BEP Initiation manual.
@@ -65,7 +66,7 @@ the critical gradient.
 
 ### Governing relationships
 
-Within each Monte Carlo realization, and at each pool level with net head $H$ (defined in
+Within each Monte Carlo realization, and at each pool level with net driving head $H$ above the exit level $E$ (both defined in
 [Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx)):
 
 <Equation equationKey="bep-screening-eq-15" equation="h_o = H \cdot \frac{L_3}{L_{total}}" />
@@ -75,14 +76,18 @@ Within each Monte Carlo realization, and at each pool level with net head $H$ (d
   equation="h_x = \begin{cases} h_o \cdot \dfrac{L_3 - x}{L_3} & x < L_3 \\[6pt] 0 & x \geq L_3 \end{cases}"
 />
 
+The head in the sand beneath the layer at the evaluation point is $\min(h, E) + h_x$, and the net head across the layer, $h_{net}$, is that head
+less the water standing on the layer there (<EquationReference equationKey="bep-screening-eq-26" />). The gradient and factor of safety follow:
+
 <Equation equationKey="bep-screening-eq-17" equation="i_{cv} = \frac{\gamma_{sat} - \gamma_w}{\gamma_w}" />
 
-<Equation equationKey="bep-screening-eq-18" equation="i_v = \frac{h_x}{z_{bl}}, \qquad FS = \frac{i_{cv}}{i_v}" />
+<Equation equationKey="bep-screening-eq-18" equation="i_v = \frac{h_{net}}{z_{bl}}, \qquad FS = \frac{i_{cv}}{i_v}" />
 
 where:
 
-> $h_o$ = excess head above the exit datum at the embankment toe  
-> $h_x$ = excess head at the exit evaluation point, offset $x$ from the toe  
+> $h_o$ = excess head above the exit level at the embankment toe, from flow beneath the layer  
+> $h_x$ = excess head above the exit level at the exit evaluation point, a distance $x$ downstream of the toe  
+> $h_{net}$ = net head across the confining layer at the exit evaluation point  
 > $L_3$, $L_{total}$ = downstream and total seepage path lengths ($L_3$ sampled per realization when no berm is present and the extent or the layer's presence is unknown)  
 > $i_{cv}$ = critical vertical gradient  
 > $\gamma_{sat}$ = saturated unit weight ($\gamma_{bl}$ for blowout, $\gamma_{sand}$ for heave)  
@@ -91,8 +96,8 @@ where:
 > $z_{bl}$ = sampled confining-layer thickness  
 > $FS$ = factor of safety against the vertical gradient
 
-The blowout or heave probability at each pool level is the fraction of Monte Carlo realizations in which $FS < 1$. Realizations with no exit
-gradient (zero net head) contribute no failure.
+The blowout or heave probability at each pool level is the fraction of Monte Carlo realizations in which $FS < 1$. Realizations with no
+upward gradient (no positive net head across the layer) contribute no failure.
 
 ### Screening-level adjustments
 
@@ -101,6 +106,11 @@ Relative to the blanket-theory chapters of the BEP Initiation manual, the screen
 - **Finite-blanket head loss always applies** — the excess head at the toe is always reduced by the path-length ratio
   (<EquationReference equationKey="bep-screening-eq-15" />). The idealization of an infinite downstream blanket carrying the full net head at
   the toe is not used.
+- **The exit and the evaluation point may sit at different ground elevations** — the blanket-theory chapters measure the exit head against a
+  single landside ground surface. The screening model measures the driving head to the exit level at the daylighting exit and the net head
+  against the water standing on the layer at the evaluation point, so a daylighting exit above the toe adds the difference to the uplift and
+  one below the toe reduces it. With a pool below the exit level, no seepage flows and the foundation sand stands at pool level beneath the
+  layer. Where the two ground surfaces coincide, the net head equals the blanket-theory excess head $h_x$.
 - **Downstream blanket length follows the resolved downstream path** — $L_3$ enters as the supplied downstream extent, or is drawn per
   realization from the wide default range when no berm is present and the extent or the layer's presence is unknown
   (see [Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx)).

@@ -16,8 +16,8 @@ import TableVertical from '@site/src/components/TableVertical';
 
 Before the event tree is assembled, the model resolves the hydraulic loading and the seepage-path geometry from the site inputs: the downstream
 reference elevations that control net driving head, the treatment of tailwater, the three seepage path components $L_1$, $L_2$, and $L_3$, the
-selection between the two blanket-theory configurations, and the location of the exit evaluation point. This chapter documents each resolution
-rule in calculation order.
+selection between the two blanket-theory configurations, the location of the exit evaluation point, and the head that acts across the confining
+layer there. This chapter documents each resolution rule in calculation order.
 
 ## Downstream Reference Elevations
 
@@ -30,15 +30,15 @@ Two reference elevations define the downstream boundary of the head computations
 - **Daylight reference elevation** $E_{day,ref}$ — the controlling ground surface at the downstream termination of the confining layer, where
   the foundation sand daylights. When the daylight ground-surface elevation is supplied, it controls; otherwise the daylight exit is assumed to
   share the toe reference elevation. The daylight ground may sit above or below the embankment toe. One exception applies: when the daylighting
-  exit is the berm toe itself — a berm over a confirmed layer that reaches or clears its downstream extent, or overlies a confirmed layer of
-  unknown extent — the toe reference is the exit's datum, and a separately supplied daylight ground-surface elevation would describe the same location
-  a second time. The supplied value is then not used.
+  exit is the berm toe itself — a berm that reaches or clears a confirmed layer's downstream extent, overlies a confirmed layer of unknown
+  extent, or overlies a layer of unknown presence — the toe reference is the exit's datum, and a separately supplied daylight ground-surface
+  elevation would describe the same location a second time. The supplied value is then not used.
 
-The blowout and heave analyses and the daylight progression pathway reference the daylight elevation; the toe progression pathway references the
-toe elevation. Consequently, once a daylight ground surface is supplied (and the daylighting exit is not the berm toe), the embankment toe
-elevation no longer enters the unfiltered-exit and initiation head computations at all — the daylight ground is the exit datum for those nodes,
-even though the blowout and heave probabilities are evaluated at the toe (assumption 17 in
-[Assumptions and Limitations](./08-assumptions-and-limitations.mdx)).
+The two elevations play different roles. Seepage beneath the confining layer leaves the foundation sand at the daylighting exit, so the
+daylight reference elevation sets the exit level that controls the driving head for the blowout, heave, and daylight progression analyses.
+The toe reference elevation sets the level of the water standing on the confining layer at the exit evaluation point, against which the
+blowout and heave net head is measured (see [Head Beneath the Confining Layer](#head-beneath-the-confining-layer)), and it controls the toe
+progression pathway. Both elevations therefore enter the blowout and heave analyses whenever they differ.
 
 ## Tailwater and Net Driving Head
 
@@ -58,8 +58,10 @@ where:
 > $E_{ref}$ = the applicable reference elevation ($E_{day,ref}$ for the blowout, heave, and daylight-progression analyses; $E_{toe,ref}$ for  
 > the toe-progression analysis)
 
-A pool at or below the exit reference elevation produces zero net head — no water stands against the seepage path above its exit — so the
-pool-dependent event-tree nodes contribute no failure probability there.
+A pool at or below the exit reference elevation produces zero net driving head: no seepage flows out of that exit, so the progression analysis
+along that pathway is not loaded. Zero driving head does not by itself mean zero load on the confining layer. Where the daylight ground sits
+above the toe, a pool between the two elevations fills the foundation sand to pool level and still acts upward on the layer at the toe; the
+blowout and heave analyses account for this static case (see [Head Beneath the Confining Layer](#head-beneath-the-confining-layer)).
 
 The control level is evaluated at each supplied headwater–tailwater pair and varies linearly between successive supplied headwater values.
 Within any interval between successive supplied headwater values where the supplied tailwater crosses the reference elevation, this linear treatment slightly overstates the
@@ -145,8 +147,8 @@ The blowout and heave analyses run under one of two blanket-theory configuration
 - **Blanket Theory Case 2** — impervious top strata on both the riverside and the landside (see
   [Blanket Theory Case 2](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation/v1.0/blanket-theory-case-2)
   in the BEP Initiation manual).
-  Selected when an engineered upstream blanket is present, **or** when the confining layer is confirmed, impervious, and has a supplied
-  upstream extension length. The total seepage path is:
+  Selected whenever the upstream path length is credited ($L_1 > 0$): an engineered upstream blanket is present, or the confining layer is
+  confirmed, impervious, not Very Thin, and has a supplied upstream extension length. The total seepage path is:
 
   <Equation equationKey="bep-screening-eq-5" equation="L_{total} = L_1 + L_2 + L_3" />
 
@@ -157,45 +159,75 @@ The blowout and heave analyses run under one of two blanket-theory configuration
 
   <Equation equationKey="bep-screening-eq-6" equation="L_{total} = 0.43\,d + L_2 + L_3" />
 
-where $d$ is the sampled foundation sand thickness. Case 2 is selected regardless of the thickness category: a confirmed Very Thin
-impervious layer with a supplied upstream extension still routes to Case 2, but carries $L_1 = 0$ per the crediting rules above — the
-configuration reflects the presence of an upstream barrier while crediting it with no head loss.
+where $d$ is the sampled foundation sand thickness. A confirmed Very Thin layer is credited with $L_1 = 0$ per the crediting rules above, so it
+routes to Case 4 and retains the open-entrance length $0.43\,d$; crediting neither an upstream path nor an entrance length would understate the
+head loss upstream of the embankment.
 
 ## Exit Evaluation Point
 
 The blowout and heave probabilities are evaluated at an exit point along the downstream blanket. By default the evaluation point is the
 downstream toe (zero offset), where the excess head is highest. One site condition shifts it: when a berm overlies a confirmed confining layer
 whose supplied downstream extent exceeds the berm length — the configuration in which the toe exit remains beneath the layer and the
-through-layer defect and blowout mechanisms are retained (see [Event Tree](./06-event-tree.mdx)) — the evaluation point is offset downstream
-by
+through-layer defect and blowout mechanisms are retained (see [Event Tree](./06-event-tree.mdx)) — the evaluation point moves to the berm toe,
+the first exposed ground beyond the berm:
 
 <Equation
   equationKey="bep-screening-eq-7"
-  equation="x = L_{cl} - L_b"
+  equation="x = L_b"
 />
 
 where:
 
-> $x$ = offset of the exit evaluation point from the embankment toe  
-> $L_{cl}$ = supplied downstream confining-layer extent  
+> $x$ = distance of the exit evaluation point downstream of the embankment toe  
 > $L_b$ = berm length
 
-The excess head available at the offset point follows the linear blanket-theory head profile documented in
-[Delegated Methods](./07-delegated-methods.mdx); the offset therefore reduces the head (and the blowout and heave probabilities) relative to the
-toe. When the berm instead reaches or clears the layer's downstream extent, no offset arises — the exit daylights at the berm toe and the
+The confining layer then extends $L_3 - x$ beyond the evaluation point, and the excess head available there follows the linear blanket-theory
+head profile, reduced by the factor $(L_3 - x)/L_3$ relative to the toe (see [Head Beneath the Confining Layer](#head-beneath-the-confining-layer)).
+When the berm instead reaches or clears the layer's downstream extent, no offset arises — the exit daylights at the berm toe and the
 confined-exit nodes are set to certainty rather than computed (see [Event Tree](./06-event-tree.mdx)).
 
-:::warning[INPUT NEEDED IN-12 — Definition]
-The physical interpretation of the exit-offset distance requires confirmation. The intended evaluation location is the berm toe — the first
-exposed ground beyond the berm. The model computes the offset as the supplied confining-layer extent minus the berm length, measured from the
-embankment toe. Under the linear head profile (head decaying from the toe value to zero at the blanket termination), the head fraction
-remaining at the computed offset equals the berm length divided by the confining-layer extent — whereas an exit evaluated *at the berm toe*
-(a distance of one berm length from the embankment toe) would retain the complementary fraction, the extent minus the berm length divided by
-the extent. The two constructions coincide only when the berm covers exactly half the extent; for a berm covering more than half the layer
-the computed offset retains more head (conservative), and for a shorter berm it retains less (non-conservative). Confirm which exit location
-the offset is intended to represent — if the berm toe, the computation may warrant review. The model's computed behavior is documented as-is
-above.
-:::
+## Head Beneath the Confining Layer
+
+Blowout and heave depend on the net head across the confining layer at the exit evaluation point: the head in the foundation sand beneath the
+layer less the head of the water standing on the layer there. The two heads are referenced to different ground surfaces. The seepage beneath
+the layer exits at the daylighting exit, so the exit level is
+
+<Equation
+  equationKey="bep-screening-eq-24"
+  equation="E = \max(t,\, E_{day,ref}) \qquad T = \max(t,\, E_{check})"
+/>
+
+where:
+
+> $E$ = exit level, the control level at the daylighting exit  
+> $T$ = level of the water standing on the confining layer at the exit evaluation point  
+> $E_{check}$ = ground surface at the exit evaluation point: $E_{toe,ref}$ (the berm-toe ground when a berm is present)
+
+The head in the sand beneath the layer at the evaluation point combines the exit level with the share of the driving head that remains after
+the head loss along the path upstream of that point <Citation citationKey="USACE1956" />:
+
+<Equation
+  equationKey="bep-screening-eq-25"
+  equation="h_{under} = \min(h,\, E) + \max(h - E,\, 0)\,\frac{L_3 - x}{L_{total}}"
+/>
+
+and the net head across the layer is
+
+<Equation equationKey="bep-screening-eq-26" equation="h_{net} = h_{under} - T" />
+
+where $L_{total}$ is the total seepage path of the selected configuration (<EquationReference equationKey="bep-screening-eq-5" /> or
+<EquationReference equationKey="bep-screening-eq-6" />), evaluated per Monte Carlo realization, and $x$ is the evaluation-point distance of
+<EquationReference equationKey="bep-screening-eq-7" />. A distance $x$ at or beyond $L_3$ leaves no head from flow at the evaluation point.
+
+The first term covers two loading states. When the pool stands above the exit level, seepage flows and $\min(h, E) = E$: the head beneath the
+layer is the exit level plus the remaining share of the driving head. When the pool stands at or below the exit level, no seepage flows, the
+second term vanishes, and the foundation sand fills to pool level, so $h_{under} = h$. A daylight ground above the toe therefore adds the
+difference between the two ground surfaces to the uplift at the toe, and a daylight ground below the toe reduces it. Where the daylight ground
+equals the toe ground, <EquationReference equationKey="bep-screening-eq-26" /> reduces to the excess head of the blanket-theory toe solution.
+
+The blowout analysis compares the upward gradient $h_{net}/z_{bl}$ with the critical gradient of the confining layer, and the heave analysis
+with the critical gradient of the foundation sand (see [Delegated Methods](./07-delegated-methods.mdx)). A realization with no positive net head
+does not fail.
 
 ## Progression Path Lengths
 

@@ -92,8 +92,11 @@ accommodate compound slopes and intermediate benches.
   lowest segment elevation defines the downstream toe, which must lie below the crest.
 - **Daylight ground-surface elevation** $E_{day}$ — Ground-surface elevation at the downstream termination of the confining layer, where the
   foundation sand daylights. It may lie above or below the embankment toe. When it is left blank, the daylight exit is assumed to share the toe
-  reference elevation (the berm toe when a berm with a specified toe elevation is present, otherwise the downstream embankment toe). When the
-  daylighting exit is the berm toe itself, a supplied value is not used, because the berm-toe reference elevation is then the exit datum (see [Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx)).
+  reference elevation (the berm toe when a berm with a specified toe elevation is present, otherwise the downstream embankment toe). It sets the
+  exit level that controls the driving head for the blowout, heave, and daylight progression analyses; the blowout and heave net head is still
+  measured against the water standing on the layer at the toe or berm toe. When the daylighting exit is the berm toe itself, a supplied value
+  is not used, because the berm-toe reference elevation is then the exit datum (see
+  [Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx)).
 
 Three geometric quantities are derived from the cross-section rather than entered directly:
 
@@ -133,7 +136,7 @@ Theory Case 2, which represents impervious strata on both sides of the embankmen
 A downstream seepage or stability berm moves the seepage exit beyond the berm. The model credits no berm weight in the blowout and heave
 factors of safety, which depend on the confining-layer thickness alone
 (<TableReference tableKey="bep-screening-table-5" />). Its effect on the event tree depends on where the berm ends relative to the confining
-layer: a berm ending within a confirmed layer's known extent retains the through-layer exit mechanisms at an exit point beyond the berm, while a
+layer: a berm ending within a confirmed layer's known extent retains the through-layer exit mechanisms, evaluated at the berm toe, while a
 berm that reaches or clears the layer's extent — or overlies a confirmed layer of unknown extent, or a layer of unknown presence — is assumed to produce a daylighting
 exit at the berm toe, where the unfiltered exit is certain. Every berm lengthens the toe progression path. The full rules are documented in
 [Event Tree](./06-event-tree.mdx) and [Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx).
@@ -242,8 +245,8 @@ are:
 Whether the confirmed impervious layer continues upstream beneath the reservoir. An engineered upstream blanket takes precedence as the upstream
 barrier, so the question is not asked when one is present. The choices are:
 
-- Yes — the layer is treated as the upstream seepage barrier and its upstream length is entered; a Very Thin layer still selects Blanket
-  Theory Case 2 but is credited with zero upstream length
+- Yes — the layer is treated as the upstream seepage barrier and its upstream length is entered; a Very Thin layer is credited with zero
+  upstream length and so uses Blanket Theory Case 4
 - No — no upstream head loss is credited
 - Unknown — no upstream head loss is credited
 
@@ -271,11 +274,11 @@ The two confining-layer extents are entered as single lengths (<TableReference t
   - With no berm, the downstream seepage path is characterized by a wide default range scaled to the embankment height (see
     [Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx)).
   - With a berm over a confirmed layer, a daylighting exit is assumed at the berm toe.
-- When a berm is present, a supplied extent also decides whether the berm end remains beneath the layer (retaining the through-layer exit
-  mechanisms at an offset exit point) or reaches and clears it (producing a daylighting exit at the berm toe; see
+- When a berm is present over a confirmed layer, a supplied extent also decides whether the berm end remains beneath the layer (retaining the
+  through-layer exit mechanisms, evaluated at the berm toe) or reaches and clears it (producing a daylighting exit at the berm toe; see
   [Event Tree](./06-event-tree.mdx)).
 - As a seepage-path length, a supplied downstream extent is used only when the presence is Yes. When the presence is Unknown, the wide default
-  range applies to the no-berm path regardless, although a supplied extent still decides whether a berm reaches or clears the layer.
+  range applies to the no-berm path regardless, and any berm is taken to end the layer at the berm toe.
 
 <TableVertical
   tableKey="bep-screening-table-8"

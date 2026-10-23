@@ -101,9 +101,10 @@ extent — seepage can reach the surface unfiltered at the toe through either of
 
 - **Hydraulic blowout** — rupture of the layer when uplift at its base exceeds its buoyant weight. The blowout probability $P_{blowout}(h)$ at
   each pool level is computed by the blanket-theory analysis using the confining layer's saturated unit weight
-  (see [Delegated Methods](./07-delegated-methods.mdx)); it increases with net head. The probability is evaluated at the exit evaluation
-  point — the toe by default, offset beyond a berm that ends within the layer's known extent
-  (see [Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx)).
+  (see [Delegated Methods](./07-delegated-methods.mdx)); it increases with the net head across the layer. The probability is evaluated at the
+  exit evaluation point — the toe by default, or the berm toe when a berm ends within the layer's known extent — with the net head measured
+  against the water standing on the layer there
+  (see [Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx#head-beneath-the-confining-layer)).
 
 The two mechanisms are combined as the union of independent pathways:
 
@@ -115,17 +116,16 @@ The two mechanisms are combined as the union of independent pathways:
 Three site conditions override the composition and force $P_{ue} = 1.0$ at every pool level:
 
 1. **No confining layer** — with the layer's presence answered No, nothing filters the exit.
-2. **The exit daylights at the berm toe** — for a confirmed layer, a berm that reaches or clears the supplied downstream extent, or overlies
-   a layer of unknown extent: the berm toe then sits at or beyond the layer's termination, so nothing filters the exit there. In these cases
-   the berm toe is itself the daylighting exit and no separate daylight pathway is evaluated (see Governing SRP below). For a layer of
-   unknown presence, any berm forces this override — a daylighting exit at the berm toe is assumed rather than established — and both
-   pathways are retained.
+2. **The exit daylights at the berm toe** — a berm that reaches or clears a confirmed layer's supplied downstream extent, or overlies a
+   confirmed layer of unknown extent: the berm toe then sits at or beyond the layer's termination, so nothing filters the exit there. For a
+   layer of unknown presence, any berm forces this override — a daylighting exit at the berm toe is assumed rather than established. In all
+   these cases the berm toe is itself the daylighting exit and no separate daylight pathway is evaluated (see Governing SRP below).
 3. **Observed seepage through the layer** — sand boils or concentrated seepage have been observed emerging through the confining layer,
    demonstrating that an unfiltered exit already exists. The override applies to any toe exit that remains beneath the layer, with or
    without a berm.
 
 A berm ending within a confirmed layer's known extent triggers none of these overrides: the through-layer composition above is retained, with
-the blowout probability evaluated at the offset exit point beyond the berm.
+the blowout probability evaluated at the berm toe.
 
 :::warning[INPUT NEEDED IN-13 — Engineering Basis]
 The Weibull defect-survival parameters — characteristic penetration depth $t_c = 3.5$ ft and shape parameter $k = 1.25$ — require an
@@ -137,7 +137,7 @@ rationale, or engineering-judgment attribution to state here.
 Two judgments in the berm treatment require an engineering basis to state here:
 
 1. No berm is ever credited with filtering the exit: where the berm end remains beneath the layer, the exit resistance is carried entirely
-   by the layer's defect and blowout composition (evaluated at the offset exit point), and where the berm daylights the exit, the unfiltered
+   by the layer's defect and blowout composition (evaluated at the berm toe), and where the berm daylights the exit, the unfiltered
    exit is certain.
 2. When the layer's presence is unknown and a berm is present, a daylighting exit at the berm toe is assumed (forcing the unfiltered exit to
    certainty) rather than evaluated.
@@ -166,14 +166,14 @@ daylight pathway is 1.0 at every pool level. The pathway itself is evaluated onl
 
 Initiation at a confined exit requires the vertical gradient through the layer (or through a defect in it) to fluidize the underlying sand.
 The initiation probability $P_{init}(h)$ at each pool level is the blanket-theory heave probability, computed with the foundation sand's
-saturated unit weight (see [Delegated Methods](./07-delegated-methods.mdx)). Four site conditions override the computed value and force
-$P_{init} = 1.0$:
+saturated unit weight and the same net head across the layer as the blowout analysis (see [Delegated Methods](./07-delegated-methods.mdx)).
+Four site conditions override the computed value and force $P_{init} = 1.0$:
 
 1. **No confining layer** — with no overburden to resist heave, initiation accompanies the unfiltered exit.
-2. **A berm overlies a confirmed layer of unknown downstream extent** — a daylighting exit is assumed at the berm toe, beyond the
-   characterized layer.
+2. **A berm overlies a layer of unknown presence, or a confirmed layer of unknown downstream extent** — a daylighting exit is assumed at the
+   berm toe, beyond the characterized layer.
 3. **The berm reaches or clears a supplied downstream extent** — the berm is at least as long as the layer's extent, so the exit sits at or
-   beyond the layer's termination. The override applies whether the layer's presence is confirmed or unknown.
+   beyond the layer's termination.
 4. **The pool reaches the trigger elevation** — sand boils or concentrated seepage have historically activated at or above this pool, demonstrating initiation:
 
 <Equation
@@ -183,15 +183,21 @@ $P_{init} = 1.0$:
 
 where $E_{trigger}$ is the trigger elevation and $P_{heave}(h)$ the blanket-theory heave probability.
 
-Over a confirmed layer, the second and third conditions are the berm-toe daylighting cases: they force both this node and the unfiltered-exit
-node to certainty, and the separate daylight pathway is not evaluated (see Governing SRP below). Under a layer of unknown presence, both pathways
-remain: any berm forces the unfiltered-exit node to certainty (see Node 2), and a berm that also reaches or clears a supplied downstream extent
-forces this node to certainty as well; a berm short of a supplied extent, or with the extent unknown, leaves this node at the heave probability.
+The second and third conditions are the berm-toe daylighting cases: they force both this node and the unfiltered-exit node to certainty, and
+the separate daylight pathway is not evaluated (see Governing SRP below).
 
 ### Daylight pathway
 
-At the daylight exit the sand is exposed at the surface with no confining layer to resist heave; the initiation probability is 1.0 at every
-pool level.
+At the daylight exit the sand is exposed at the surface with no confining layer to resist heave, so initiation is certain once seepage
+leaves the sand there. Seepage leaves the sand only while the pool stands above the exit level; a pool at or below it fills the sand without
+flowing out. The initiation probability on the daylight pathway is therefore
+
+<Equation
+  equationKey="bep-screening-eq-27"
+  equation="P_{init,day}(h) = \begin{cases} 1.0 & h > \max(t,\, E_{day,ref}) \\[4pt] 0 & h \leq \max(t,\, E_{day,ref}) \end{cases}"
+/>
+
+where $t$ is the tailwater elevation at that pool level, where one exists.
 
 ## Node 4: Progression — Mechanical Condition
 
@@ -269,20 +275,16 @@ where:
 > $P_{int}$ = probability of unsuccessful intervention (Node 6)  
 > $P_{br}$ = probability of breach (Node 7)
 
-On the daylight pathway, $P_{ue}$ and $P_{init}$ are both 1.0 and $P_{prog}$ reflects the daylight path.
+On the daylight pathway, $P_{ue}$ is 1.0, $P_{init}$ follows <EquationReference equationKey="bep-screening-eq-27" />, and $P_{prog}$
+reflects the daylight path.
 
 ## Governing SRP
 
-A daylight pathway is evaluated only where the daylighting exit is distinct from the toe exit. When a berm over a confirmed layer reaches or
-clears the layer's downstream extent — or overlies a confirmed layer of unknown extent — the berm toe is itself the daylighting exit: the toe
-pathway then carries a certain unfiltered exit and certain initiation over the berm-extended path, which are exactly the daylighting-exit
-conditions, so a separate daylight pathway would repeat the same exit node for node and is not evaluated. This merging applies only to a
-confirmed layer: under a layer of unknown presence the model always evaluates both pathways. With a berm over a layer of unknown presence, the
-downstream path resolves to the berm length, so both pathways share the same progression path length and plane-type exit. They then differ only
-in two respects: the toe initiation node, which stays at the heave probability unless the berm reaches or clears a supplied downstream extent
-(Node 3), and the exit datum, because the toe progression references the toe reference elevation and the daylight progression the daylight
-reference elevation. Where the two datums coincide, the daylight SRP is at least the toe SRP, because its unfiltered-exit and initiation nodes
-are certain.
+A daylight pathway is evaluated only where the daylighting exit is distinct from the toe exit. When a berm reaches or clears a confirmed
+layer's downstream extent, overlies a confirmed layer of unknown extent, or overlies a layer of unknown presence, the berm toe is itself the
+daylighting exit: the toe pathway then carries a certain unfiltered exit and certain initiation over the berm-extended path, which are exactly
+the daylighting-exit conditions, so a separate daylight pathway would repeat the same exit node for node and is not evaluated. A separately
+supplied daylight ground-surface elevation is not used in these cases.
 
 When both pathways are evaluated, the governing SRP at each pool level is the larger of the two pathway values:
 
