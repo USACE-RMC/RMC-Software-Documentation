@@ -1,0 +1,104 @@
+---
+title: Output and Interpretation
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import EquationNoRef from '@site/src/components/EquationNoRef';
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-core-compaction-screening" />
+
+# Output and Interpretation
+
+The core compaction model reports the SRP at each evaluated pool level together with the probability of each of the eight nodes and the supporting
+results of the flaw assessment and the initiation analysis. The results it shares with the other compaction models — the pool-independent node
+values, the pool-dependent series, and the initiation results — are described in the
+[Output and Interpretation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation) chapter of the CLE
+Common Methods manual. This chapter describes the results specific to this model and how to read them.
+
+## Results
+
+**Pool-independent results:**
+
+- **Flaw probability** $P_{flaw}$ — Node 1, from the flaw assessment; 1.0 when the observation override applies.
+- **Continuation probability** $P_{cont}$ — Node 3: the continuation method's result when filter inputs are supplied, otherwise 1.0. When the
+  continuation method is evaluated, its own results are reported with it — the governing base soil and method and the result for each base soil
+  (see the [Output and Interpretation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/output-and-interpretation) chapter of the
+  Continuation (Filter Evaluation) Screening manual).
+- **Roof-support probability** $P_{roof}$ — Node 4, the minimum across the embankment materials.
+- **Crack-filling probability** $P_{nf}$ — Node 5, for the embankment type.
+- **Flow-limitation probability** $P_{nl}$ — Node 6, after any wall below the base of the flaw has dropped out.
+
+**Pool-dependent series**, at every evaluated pool level: the pool level, the tailwater, the initiation probability, the flow-limitation,
+unsuccessful-intervention, and breach probabilities (each the same at every pool level), and the SRP. Where there is no tailwater, the tailwater
+entry is the base-of-flaw elevation, the level at which tailwater gives no submergence.
+
+**Flaw assessment results:**
+
+- The compaction, continuity, and borrow variability likelihood factors $LF_{comp}$, $LF_{cont}$, and $LF_{var}$.
+- The weighted sum $\Sigma$, the raw flaw probability $P_{raw}$, and the flaw-continuity probability $P_{cf}$.
+- The base width $W$, the height $H$, and the ratio $W/H$ that the continuity factor scored — the user-supplied values when given, otherwise those
+  of the section.
+- The base-of-flaw elevation $z_f$, and whether the observation override applied.
+
+When the override applies with no compaction category, no scoring is performed, so the flaw probability rests on the observation alone.
+
+**Initiation results:** at each pool level, the upstream and downstream heads above the pipe invert, the hydraulic gradient, and the mean and 5th,
+50th, and 95th percentiles of the hydraulic shear stress; the seepage path length; and the low, most likely, and high values of the critical shear
+stress and initial pipe diameter distributions used.
+
+## Reading the Flaw Assessment
+
+The flaw assessment results show what sets the level of the curve:
+
+- **The compaction category** acts through two stages. Without an observation, a well-compacted core gives a negligible flaw probability and a
+  negligible curve at every pool level, whatever the other inputs; for the same section, the other three categories differ from each other by one to three orders of magnitude (see
+  [Resulting Flaw Probability](./04-flaw-assessment.mdx#resulting-flaw-probability)). Because Unknown scores above Poorly compacted, replacing
+  Unknown with a judged category of Poorly compacted lowers the flaw probability by a factor of about 19 to 25.
+- **The continuity score** shows whether the section's width or its slenderness is raising the probability. The reported $W$ and $H$ show which
+  dimensions were scored; if they are not the intended dimensions of the low-permeability section, the flaw base width and height can be supplied.
+- **Whether the observation override applied** shows whether the observation set the flaw probability to 1.0. With the override, the curve reflects the observed
+  elevation, not the heuristic.
+
+## Interpreting the System Response Curve
+
+The curve has the shape described for the compaction models in
+[Interpreting the System Response Curve](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#interpreting-the-system-response-curve)
+in the CLE Common Methods manual. It is negligible at and below the base of the flaw and rises with pool level as the hydraulic gradient through the
+pipe grows. Because only initiation varies with pool level, the curve approaches the product of the other seven nodes,
+
+<EquationNoRef equation="\mathrm{SRP}_{max} = P_{flaw} \times P_{cont} \times P_{roof} \times P_{nf} \times P_{nl} \times P_{int} \times P_{br}" />
+
+as the initiation probability approaches 1.0. The pool level at which the curve begins to rise depends on the base of the flaw, the seepage path
+length (measured from the section, or as supplied), the tailwater, and the critical shear stress and initial pipe diameter ranges; how close it comes to $\mathrm{SRP}_{max}$ within the evaluated pool range depends on how many
+realizations initiate before the highest headwater. The node breakdown shows which node limits the curve (see
+[Reading the Node Breakdown](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#reading-the-node-breakdown)
+in the CLE Common Methods manual).
+
+## Checking the Result
+
+The checks of
+[Checking the Result](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#checking-the-result) in
+the CLE Common Methods manual apply. In addition:
+
+- **Flaw probability** — without the observation override, the reported $P_{flaw}$ can be reproduced from the reported likelihood factors with
+  [Flaw Assessment](./04-flaw-assessment.mdx#resulting-flaw-probability), and should match the entry of the table for the reported category and
+  continuity score.
+- **Base of the flaw** — without the override, the reported $z_f$ equals $z_{np} + (z_c - z_{np})/3$. A curve that rises from an unexpected pool
+  level can point to a normal pool or crest elevation on a different datum from the headwater series.
+- **Filter credit** — a continuation probability below 1.0 means filter inputs were supplied; confirm that the filter reaches the reported base of
+  the flaw.
+- **Wall credit** — when a top-of-wall elevation below $z_f$ is given, the reported flow-limitation probability $P_{nl}$ should equal the value
+  for the upstream elements other than walls (or 1.0 when no other element is listed).
+
+## Screening Results Relative to Detailed Analysis
+
+The core compaction model is a screening tool. Its result indicates whether concentrated leak erosion through poorly compacted core material
+warrants detailed analysis; it is not a substitute for a detailed assessment. The compaction category, the continuity bands, the fixed borrow
+variability score, the normal-pool heuristic for the flaw elevation, and the default critical shear stress and initial pipe diameter ranges are
+screening values. Where the result is significant to a decision, the governing nodes should be re-examined with site-specific information —
+construction records, compaction test data, erodibility testing, and the location of any observed seepage — and the detailed toolbox methods, the
+methods of Fell et al. (2024) <Citation citationKey="Fell2024" />, and the judgment of the risk team should replace the screening values.
+
+<CitationFootnote />
