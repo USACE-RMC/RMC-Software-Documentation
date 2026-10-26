@@ -1,0 +1,89 @@
+---
+title: Output and Interpretation
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-cross-valley-settlement-screening" />
+
+# Output and Interpretation
+
+The model reports the SRP at each evaluated pool level together with the probability of each of the eight event-tree nodes, in the form shared by
+the CLE crest-crack models, and the results of its flaw assessment. The node results and the system response curve are described in the
+[Output and Interpretation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation) chapter of the
+common methods manual; this chapter describes the flaw-assessment results and what is specific to reading a cross-valley settlement result.
+
+## Node Results
+
+The model reports the results of the crest-crack models (see
+[Pool-Independent Results](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#pool-independent-results)
+and
+[Pool-Dependent Series](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#pool-dependent-series)):
+
+- **Pool-independent values** — the flaw probability; the roof-support minimums of the full pathway and of the below-filter pathway, each where
+  that pathway exists; the probability of no crack filling; and the probability of no flow limitation with every listed element applying.
+- **Series at each pool level** — the pool levels and tailwater, and the initiation, continuation, roof-support, flow-limitation,
+  unsuccessful-intervention, and breach probabilities, and the SRP.
+- **Continuation results** — when a filter intersects the pathway, the probability of continuing erosion from the shared continuation method and
+  the filter-evaluation method that set it (see the
+  [Output and Interpretation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/output-and-interpretation) chapter of the
+  continuation manual).
+
+## Flaw-Assessment Results
+
+The flaw assessment reports each quantity in its chain, so that every stage can be traced (see [Flaw Assessment](./04-flaw-assessment.mdx)):
+
+- **Normalized settlement** $\bar{s}$ — in percent of the dam height, from the supplied settlement or the year-of-construction default.
+- **Localized tensile strain** $e_L$ — in percent.
+- **Crack width** $W$ — in millimeters, whatever the length unit of the analysis.
+- **Crack depth** $d_c$ — in the length unit of the analysis.
+- **Bottom-of-crack elevation** $z_{bc}$ — in the length unit and datum of the analysis.
+- **Observed cracking** — whether the probability of a continuous transverse crack was set to 1.0 by the observation of continuous transverse
+  cracking.
+- **Flaw probability** $P_{flaw}$ — the value used in Node 1.
+
+When the override applies, the reported strain, width, depth, and bottom of the crack are still those computed from the settlement and abutment
+inputs.
+
+## Reading the System Response Curve
+
+The curve has the shape of every crest-crack curve (see
+[Interpreting the System Response Curve](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#interpreting-the-system-response-curve)):
+negligible at and below the bottom of the crack, then piecewise constant, with further jumps possible at the top of a filter and the top of a wall
+that lie above the bottom of the crack. Two features are specific to this model:
+
+- **The flaw-assessment inputs set both the level and the start of the curve.** The settlement and abutment inputs set the strain, and the strain
+  sets both the flaw probability, which scales the curve, and the crack depth, which sets the pool level at which it rises. Within the tabulated
+  range, a larger settlement or a steeper abutment gives a larger strain, except with a step whose relative height $h_1/H$ is 0.4 or less, which
+  holds the strain at zero. A larger strain raises the curve, unless continuous transverse cracking has been observed and the flaw probability is
+  held at 1.0. It also lowers the pool level at which the curve rises, until the crack width reaches 75 mm at a strain of 2.5 percent; the strain
+  tables reach 3.29 percent (3.5 percent with a step), so above 2.5 percent a larger strain can still raise the curve but no longer moves its rise.
+  At or below a strain of 0.05 percent the flaw probability stays at its floor, the crack width is negligible, and the bottom of the crack is at
+  the crest, so the curve stays negligible at every pool at or below the crest, and a small increase in settlement or slope within that range
+  changes neither the level nor the rise of the curve. Somewhat larger strains give a shallow but non-zero crack.
+- **The observation override raises the curve but does not move its rise.** With continuous transverse cracking observed, the curve above the
+  bottom of the crack equals the product of the downstream nodes, but it still rises at the computed bottom of the crack.
+
+## Checking the Result
+
+Every value of the model can be reproduced by hand, except the continuation probability when the continuation method samples it:
+
+- **Flaw chain** — the normalized settlement, strain, flaw probability, crack width, and crack depth can be recomputed from the reported inputs
+  and the tables and relationships of [Flaw Assessment](./04-flaw-assessment.mdx), as in its worked example.
+- **Bottom of the crack** — the reported bottom-of-crack elevation equals the crest elevation less the reported crack depth, and the first pool
+  level with non-zero initiation is the first one above it.
+- **Level of the curve** — above the bottom of the crack, the SRP at each pool level equals the product of the node values reported for that pool
+  level.
+- **Plausibility of the crack** — a crack depth comparable to or greater than the dam height, or a bottom of the crack below the foundation,
+  should be examined, because the crack depth is not limited by the dam height (see marker IN-14 in
+  [Flaw Assessment](./04-flaw-assessment.mdx#crack-depth-and-bottom-of-crack-elevation)). A settlement or slope at or beyond the end of the
+  tables is assessed at the end value (see [Range of the Relationships](./04-flaw-assessment.mdx#range-of-the-relationships)).
+
+## Screening Results Relative to Detailed Analysis
+
+The model is a screening tool. Its result indicates whether cross-valley settlement cracking warrants detailed analysis; it is not a substitute
+for a detailed assessment of transverse cracking. Where the result is significant to a decision, the flaw probability, the crack depth, and the
+governing downstream nodes should be re-examined with the settlement record, the abutment profile, and any observed cracking, and the detailed
+methods and the judgment of the risk team should replace the screening values (see
+[Screening Results Relative to Detailed Analysis](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#screening-results-relative-to-detailed-analysis)
+in the common methods manual).
