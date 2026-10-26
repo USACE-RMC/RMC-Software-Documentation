@@ -299,7 +299,8 @@ const docs = [
     software: 'dst',
     doc_location: 'web-applications/dst/users-guide',
     doc_name: "Dam Screening Tool User's Guide",
-    active: false,
+    sidebar_label: "Dam Screening Tool User's Guide",
+    active: true,
     draft: true,
   },
   {
