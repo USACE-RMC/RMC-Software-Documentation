@@ -364,8 +364,9 @@ const docs = [
     category: 'web-applications',
     software: 'system-response',
     doc_location: 'web-applications/system-response/cle-wall-cliff-settlement-screening',
-    doc_name: 'CLE Wall/Cliff Settlement Screening Technical Reference Manual',
-    active: false,
+    doc_name: 'Concentrated Leak Erosion Wall/Cliff Settlement Screening Technical Reference Manual',
+    sidebar_label: 'Concentrated Leak Erosion Wall/Cliff Settlement Screening',
+    active: true,
     draft: true,
   },
   {
