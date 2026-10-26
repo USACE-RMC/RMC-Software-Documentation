@@ -1,0 +1,107 @@
+---
+title: Monte Carlo Simulation
+---
+
+import Equation from '@site/src/components/Equation';
+import EquationNoRef from '@site/src/components/EquationNoRef';
+import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/overtopping-erosion-screening" />
+
+# Monte Carlo Simulation
+
+The model uses Monte Carlo simulation to propagate the uncertainty in the embankment material properties through the erosion model ([Chapter 5](./05-erosion-model.mdx)) and
+compute the probability of breach at each overtopping depth. The sampled quantities are the erodibility coefficient $k_d$, the critical shear stress
+$\tau_c$ and Manning's roughness coefficient $n$. The geometry, the grass cover parameters, the hydraulic coefficients and the hydrographs are not
+sampled.
+
+## Correlated Material Property Sampling
+
+The three material properties are sampled jointly rather than independently, so that each realization is a physically consistent combination of
+properties ([Chapter 3](./03-input-parameters.mdx) gives the correlation inputs).
+
+### Gaussian Copula
+
+The model uses a Gaussian copula, which imposes a correlation structure while preserving each property's own (marginal) distribution (the literature
+basis for this method and for Latin Hypercube sampling is pending, IN-20 below):
+
+<ProcessList
+  items={[
+    {
+      title: 'Build the correlation matrix',
+      child: [
+        'Assemble the 3×3 correlation matrix of the three properties from the two specified correlations and the implied correlation between the erodibility coefficient and the roughness coefficient.',
+      ],
+    },
+    {
+      title: 'Generate correlated standard normal samples',
+      child: [
+        'Draw one set of three correlated standard normal values per realization from a multivariate normal distribution with zero means and that correlation matrix, using Latin Hypercube sampling.',
+      ],
+    },
+    {
+      title: 'Transform to probabilities',
+      child: [
+        'Convert each standard normal value to a non-exceedance probability with the standard normal cumulative distribution function.',
+      ],
+    },
+    {
+      title: 'Transform to the property distributions',
+      child: [
+        'Convert each probability to a property value through the inverse cumulative distribution function of that property: by default, PERT for the erodibility coefficient and the critical shear stress and Uniform for the roughness coefficient, or the site-specific distribution supplied by the user (with any lower and upper bounds applied).',
+      ],
+    },
+  ]}
+/>
+
+### Correlation Matrix
+
+The correlation matrix is:
+
+<Equation
+  equationKey="overtopping-screening-eq-correlation-matrix"
+  equation="\mathbf{R} = \begin{bmatrix} 1 & \rho_{k_d,\tau_c} & \rho_{k_d,\tau_c} \cdot \rho_{\tau_c,n} \\ \rho_{k_d,\tau_c} & 1 & \rho_{\tau_c,n} \\ \rho_{k_d,\tau_c} \cdot \rho_{\tau_c,n} & \rho_{\tau_c,n} & 1 \end{bmatrix}"
+/>
+
+With the default correlations ($\rho_{k_d,\tau_c} = -0.6$, $\rho_{\tau_c,n} = -0.2$), the matrix is:
+
+<EquationNoRef equation="\mathbf{R} = \begin{bmatrix} 1.0 & -0.6 & 0.12 \\ -0.6 & 1.0 & -0.2 \\ 0.12 & -0.2 & 1.0 \end{bmatrix}" />
+
+Setting the correlation between $k_d$ and $n$ to the product of the other two is equivalent to assuming that, in the copula's normal space, $k_d$ and
+$n$ are independent once $\tau_c$ is known: their only association comes through the critical shear stress (Assumption 11 in [Chapter 7](./07-assumptions-and-limitations.mdx)). A matrix with
+this structure is a valid (positive-definite) correlation matrix for any pair of specified correlations strictly between −1 and 1.
+
+:::warning[INPUT NEEDED IN-15 — Engineering Basis]
+The implied correlation structure — $k_d$ and $n$ associated only through $\tau_c$, so that $\rho_{k_d,n} = \rho_{k_d,\tau_c} \cdot \rho_{\tau_c,n}$
+— has no stated engineering basis. The previous edition stated that the relationship arises because the other two correlations "are established
+through data analysis," without a source. Provide the literature source or the engineering-judgment attribution for this structure.
+:::
+
+### Latin Hypercube Sampling
+
+Latin Hypercube sampling divides the probability range of each variable into equal-probability intervals and draws one value from each interval. It
+covers the full range of each property more evenly than simple random sampling, so stable breach probabilities are reached with fewer realizations.
+
+:::warning[INPUT NEEDED IN-20 — Bibliography]
+The Gaussian copula and Latin Hypercube sampling are stated without a citation. Provide literature sources with full bibliographic details for
+`bib.json` (for example, a standard reference on copula-based dependence modeling and one on Latin Hypercube sampling) so the methods can be cited.
+:::
+
+## Simulation of Each Realization
+
+Each realization draws one set of material properties and evaluates the erosion model ([Chapter 5](./05-erosion-model.mdx)) at every overtopping depth on the system response
+curve with that same set. Because the same properties are used at every depth, the differences between depths in the result come from the
+hydrographs alone, not from resampling the material.
+
+## Breach Probability
+
+After all realizations are complete, the breach probability at each overtopping depth is the proportion of realizations that reached breach:
+
+<Equation
+  equationKey="overtopping-screening-eq-breach-prob"
+  equation="P(\text{breach} \mid H) = \frac{\text{number of realizations with breach at depth } H}{N}"
+/>
+
+where $N$ is the number of Monte Carlo realizations. The model also counts, at each depth, the realizations in which the grass cover was removed;
+[Chapter 8](./08-output-and-interpretation.mdx) describes the grass removal and conditional breach curves built from those counts.
