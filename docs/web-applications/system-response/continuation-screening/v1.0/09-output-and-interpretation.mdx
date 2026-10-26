@@ -1,0 +1,82 @@
+---
+title: Output and Interpretation
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/continuation-screening" />
+
+# Output and Interpretation
+
+The model produces one probability of continuing erosion for the continuation node, the method and base soil that produced it, and the result of
+each base soil pair. None of the results depends on the pool level.
+
+## Node Result
+
+- **Probability of continuing erosion** $P_{cont}$ — the continuation-node probability: the largest of the pair probabilities
+  (see [Method Selection and Governing Base Soil](./04-method-selection-and-governing-base-soil.mdx)).
+- **Governing method** — the method that produced $P_{cont}$ for the governing pair: the gradation method, the soil classification method, the
+  year-of-construction method, or the no-information default.
+- **Governing base soil** — the base soil whose pair produced $P_{cont}$. When pairs tie, the first of them in the order entered.
+
+The governing pair's details, listed under Pair Results, also describe the node result.
+
+## Pair Results
+
+For each base soil, in the order entered:
+
+- **Probability of continuing erosion** $P_{cont,j}$ and the **method** that produced it.
+- **Foster and Fell probabilities** (gradation method only) — $P_{NE}$, $P_{SE}$, $P_{EE}$, and $P_{CE}$, the probabilities of no, some,
+  excessive, and continuing erosion before they are combined into $P_{cont,j} = P_{CE} + P_{EE}$. When the filter satisfied the particle
+  retention check, they are 1, 0, 0, and 0 (see [Gradation Method](./07-gradation-method.mdx)).
+
+How the regrading characteristics and the particle sizes used by each method are resolved from the inputs is described in
+[Gradation Method](./07-gradation-method.mdx#step-2-base-soil-regrading-characteristics) and
+[Soil Classification Method](./06-soil-classification-method.mdx#input-resolution).
+
+## Reading the Result
+
+**Which method governs.** The governing method shows how much information stands behind $P_{cont}$. A result from the gradation method rests on
+measured gradations of both materials; a result from the soil classification method rests on classification ranges for at least one of them; a
+result from the year-of-construction method rests on the construction period alone; and the default, $P_{cont} = 1.0$, rests on no information.
+When the governing pair used a less informative method than the other pairs, the least-characterized base soil may be controlling the node:
+supplying its gradation or classification is the most direct way to refine the result.
+
+**Which base soil governs.** Because the worst pair governs, adding base soils never lowers $P_{cont}$. A base soil entered with no
+classification, no gradation, and no year of construction makes $P_{cont} = 1.0$.
+
+**Gradation method results.** $P_{cont,j} = 0$ results either when the filter satisfied the no-erosion criterion for the finest regraded base
+soil with every filter gradation considered, or when the whole filter range falls in the no-erosion and some-erosion zones of every
+representative gradation. It also results when the fine band of the filter gradation does not extend down to 15 percent passing, so that its
+$D_{15}$ is undetermined, and when only the coarse band's $D_{15}$ is undetermined and the fine band's $D_{15}$ is below the continuing erosion
+boundary of every representative gradation (see
+[Erosion probabilities](./07-gradation-method.mdx#erosion-probabilities) in the Gradation Method chapter). A positive result is the share of the filter $D_{15}$ range, weighted over the representative base soil
+gradations, that lies in the excessive or continuing erosion zones; comparing $P_{EE}$ and $P_{CE}$ shows whether the filter is expected to seal
+after damaging erosion or not at all. Because $P_{SE}$ is not counted, a filter range lying entirely between the no-erosion and excessive erosion
+boundaries of every representative gradation gives zero even though the filter fails the no-erosion criterion.
+
+**Soil classification method results.** The result is the fraction of Monte Carlo realizations in which the filter is coarser than the
+no-erosion limit. It is sensitive to the classification and category ranges: a filter category whose $D_{15}$ range lies entirely above the
+limits of a fine-grained base soil gives a result of 1.0 (see [Soil Classification Method](./06-soil-classification-method.mdx)). Because every
+failing realization counts as continuing erosion, the result does not credit a filter that seals after some erosion.
+
+**Reasonableness checks.**
+
+- A gradation-method result of zero alongside a supplied filter segregation adjustment does not show that the adjusted filter gradation
+  satisfied the criterion. When the original gradation passes and the adjusted one fails, the Foster and Fell evaluation runs on the original
+  gradation, which returns zero whenever the original filter range lies at or below the excessive erosion boundary of every representative
+  gradation. For very fine clays ($D_{95B}$ below about 0.022 mm), $9\,D_{95B}$ falls below the 0.2 mm no-erosion limit, so an original filter
+  that passes the check can still lie in the continuing erosion zone and return a positive result (see Assumption 16 in
+  [Assumptions and Limitations](./08-assumptions-and-limitations.mdx#gradation-method)).
+- A large difference between pairs using different methods can reflect the methods rather than the soils; supplying gradations for the
+  less-characterized base soils puts the pairs on a common footing.
+
+## Screening Versus Detailed Analysis
+
+The model gives a screening-level estimate. Its no-information default and its governing-pair rule resolve incomplete information in the
+direction of continuing erosion, but several of its defaults can lower the result (see [Intended Use](./02-model-overview.mdx#intended-use)). It fixes or derives steps that a
+detailed evaluation leaves to the analyst, reports a single probability rather than the separate erosion conditions, and does not evaluate the
+segregation branch, the permeability criterion, or constricted exits on their own terms (see
+[Gradation Method](./07-gradation-method.mdx#screening-level-adjustments)). Where the continuation node is important to the risk estimate, a
+detailed evaluation with the Filter Evaluation (Continuation) Toolbox — beginning with representative gradations selected by the analyst from all
+available gradation tests — provides the basis for a higher-level analysis.

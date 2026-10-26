@@ -341,7 +341,8 @@ const docs = [
     software: 'system-response',
     doc_location: 'web-applications/system-response/continuation-screening',
     doc_name: 'Continuation (Filter Evaluation) Screening Technical Reference Manual',
-    active: false,
+    sidebar_label: 'Continuation (Filter Evaluation) Screening',
+    active: true,
     draft: true,
   },
   {
