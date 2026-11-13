@@ -45,7 +45,7 @@ detail.
       'Continuation method at or below the filter top; 1.0 above',
       'Minimum over the material set for the pool level',
       'By embankment type',
-      'Minimum over the elements whose top is at or above the pool level',
+      'Facing element times the governing wall, where the wall top is at or above the pool level',
       'User-specified (default 1.0)',
       'User-specified (default 1.0)',
     ],
@@ -126,9 +126,11 @@ It is the same at every pool level.
 
 *Question:* Does the flow into the enlarging pipe remain unrestricted by upstream seepage-limiting elements?
 
-$P_{nl}$ is the minimum probability of no flow limitation across the upstream elements that reach the pool level, or 1.0 when none is listed, per
+$P_{nl}$ is the probability of no flow limitation of the upstream facing element times that of the governing wall (the most effective of the walls
+listed), counting only the elements that reach the pool level; an element that is absent or does not reach it contributes 1.0, so $P_{nl}$ is 1.0
+when none is listed, per
 [Node 6: Progression — No Flow Limitation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-6-progression--no-flow-limitation).
-When a top-of-wall elevation $z_{tw}$ is supplied, every listed element applies at pool levels at or below $z_{tw}$; above it the walls drop out and
+When a top-of-wall elevation $z_{tw}$ is supplied, the walls apply at pool levels at or below $z_{tw}$; above it the walls drop out and
 only an upstream facing element, if one is listed, still applies (otherwise $P_{nl} = 1.0$), as described in
 [Walls That Stop Below the Crest](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#walls-that-stop-below-the-crest).
 
@@ -213,4 +215,6 @@ upstream element. Intervention and breach take their defaults.
 
 The SRP is negligible at pool levels up to and including 263 ft and $1.831 \times 10^{-6}$ at every pool level above it, a single step at the
 bottom of the crack. The cutoff wall governs the result there, reducing it by three orders of magnitude; were the wall's top below the crest but above
-the bottom of the crack, the curve would step up by a factor of 1,000 where the pool rises above the top of the wall.
+the bottom of the crack, the curve would step up by a factor of 1,000 where the pool rises above the top of the wall. Had an upstream facing element, with a probability of
+no flow limitation of 0.5, also been present, it would multiply the wall's value: $P_{nl} = 0.5 \times 0.001 = 0.0005$ and an SRP of
+$9.16 \times 10^{-7}$ above the bottom of the crack, and 0.5 alone above the top of a wall that stops below the crest.
