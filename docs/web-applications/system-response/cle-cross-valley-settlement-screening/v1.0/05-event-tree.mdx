@@ -44,7 +44,7 @@ the crack (see [Measured Crack Depth](./04-flaw-assessment.mdx#measured-crack-de
       'Continuation method at or below the filter top; 1.0 above it or with no filter',
       'Minimum over the below-filter or full-pathway materials, by pool level',
       'By embankment type',
-      'Minimum over the upstream elements; walls only at or below their top',
+      'Facing element times the governing wall; walls only at or below their top',
       'User-specified (default 1.0)',
       'User-specified (default 1.0)',
     ],
@@ -96,8 +96,9 @@ The probability of no crack filling is set by the embankment type and is the sam
 
 ### Node 6: Progression — No Flow Limitation
 
-The probability of no flow limitation is the minimum over the upstream elements present. When a top-of-wall elevation $z_{tw}$ is given, the
-walls apply only at pool levels at or below it, and only the upstream facing element applies above it (see
+The probability of no flow limitation is the probability of the upstream facing element times that of the governing wall, the most effective of
+the walls listed; an element that is absent contributes 1.0. When a top-of-wall elevation $z_{tw}$ is given, the walls apply only at pool levels
+at or below it, and only the upstream facing element applies above it (see
 [Walls That Stop Below the Crest](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#walls-that-stop-below-the-crest)).
 
 ### Nodes 7 and 8: Unsuccessful Intervention and Breach
@@ -147,9 +148,9 @@ $z_{tw}$. Because initiation is zero at and below $z_{bc}$, a filter or wall top
   [Node 3: Continuation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-3-continuation)).
 - **A wall top at or below $z_{bc}$** — the walls never apply at a pool level where initiation is non-zero, so only the upstream facing element,
   if present, limits flow.
-- **A wall top above $z_{bc}$** — between $z_{bc}$ and $z_{tw}$ the walls apply with the other elements present; above $z_{tw}$ the wall credit
-  drops out and only the upstream facing element, if present, limits flow. The curve rises at $z_{tw}$ unless the facing element alone gives the
-  same minimum.
+- **A wall top above $z_{bc}$** — between $z_{bc}$ and $z_{tw}$ the governing wall multiplies the upstream facing element's probability, if a
+  facing element is present; above $z_{tw}$ the wall credit drops out and only the upstream facing element, if present, limits flow. The curve
+  rises at $z_{tw}$ by the inverse of the governing wall's probability.
 
 Because the crack depth comes from the flaw assessment, a change in the settlement or abutment inputs, or in a measured crack depth, can move
 $z_{bc}$ across a filter or wall top and so change which of these cases applies.
@@ -185,7 +186,10 @@ seepage-limiting element, and the default intervention and breach probabilities
 />
 
 The system response curve is negligible up to elevation 240.0 ft and constant at 0.00522 above it. Adding a modern cutoff wall that reaches the
-crest would multiply the SRP above the bottom of the crack by its probability of no flow limitation, 0.001, giving $5.2 \times 10^{-6}$; an
+crest would multiply the SRP above the bottom of the crack by its probability of no flow limitation, 0.001, giving $5.2 \times 10^{-6}$. An
+upstream facing element and a sheet pile wall whose top is at elevation 240 ft, each with a probability of no flow limitation of 0.5, would give a
+flow-limitation probability of $0.5 \times 0.5 = 0.25$ at pool levels at or below 240 ft and 0.5 above it; because the wall's top is at the
+bottom of the crack, only the facing element applies where initiation is possible, and the SRP above 240.0 ft would be 0.00261. An
 observation of continuous transverse cracking would raise the flaw probability to 1.0 and the SRP above the bottom of the crack to 0.85. If the
 observed crack were also measured at 12.5 ft deep, the bottom of the crack would move up to elevation 252.5 ft (see the
 [flaw-assessment worked example](./04-flaw-assessment.mdx#worked-example)): the curve would be negligible up to 252.5 ft and 0.85 above it.
