@@ -167,27 +167,3 @@ admonition in the document.
 **Answer:**
 
 ---
-
-## IN-16 — Definition — `03-input-parameters.mdx`
-
-**Regarding:** Definition and determination of the measured crack depth $d_m$.
-
-**Needed:** The measured crack depth $d_m$ is not defined beyond "the depth of the observed crack below the crest." State how it is to be determined — for example, from test pits, trenches, or borings along the crack, or from dye or water tracing — and which value to enter when the observations differ or when an exploration stopped before reaching the bottom of the crack (for example, the deepest depth at which the crack was found, or a depth judged from all the observations). Also state whether a measured depth that may understate the depth of the crack should be used as entered, or whether the deeper of the measured and computed depths should govern.
-
-**Proposed (unconfirmed):** the deepest depth below the crest at which the continuous crack was observed, recognizing that an exploration that did not reach the bottom of the crack gives a lower bound on its depth, and that depth is used as entered. Confirm or replace.
-
-**Answer:**
-
----
-
-## IN-17 — Engineering Basis — `04-flaw-assessment.mdx`
-
-**Regarding:** Basis for replacing the computed crack geometry with the measured depth of an observed crack (Assumption 11 in `06-assumptions-and-limitations.mdx`).
-
-**Needed:** Replacing the computed crack geometry with the measured depth of an observed crack — and with it, setting aside the settlement and abutment inputs entirely — requires an engineering basis or the engineering-judgment attribution to state. The question of a measured depth that may understate the depth of the crack is asked separately, at IN-16.
-
-**Proposed (unconfirmed):** a measurement of the observed crack is direct evidence of its geometry and supersedes the estimate from the tabulated settlement relationships, consistent with the treatment of field evidence in a detailed risk analysis. Confirm or replace.
-
-**Answer:**
-
----
