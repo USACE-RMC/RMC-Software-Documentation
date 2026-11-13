@@ -9,8 +9,8 @@ import NavContainer from '@site/src/components/NavContainer';
 # Assumptions and Limitations
 
 The cross-valley settlement model applies deliberate simplifications relative to a detailed assessment of transverse cracking and concentrated
-leak erosion. They reduce input requirements, and most are designed to avoid false negatives at the screening level; Assumptions 2, 4, 5, and 10
-note where they may not. This chapter lists the assumptions
+leak erosion. They reduce input requirements, and most are designed to avoid false negatives at the screening level; Assumptions 2, 4, 5, 10,
+and 11 note where they may not. This chapter lists the assumptions
 of the model's flaw assessment. The assumptions it shares with the other CLE screening models — the product form of the event tree, the
 headwater grid, the pool-independent flaw probability, the certain initiation of an open crest crack, the pathway gate at the top of the filter,
 and the progression tables — are listed in the
@@ -21,7 +21,7 @@ cross-references the input marker at its primary location in this document.
 
 ## Settlement and Abutment Geometry
 
-1. **The settlement, the dam height, the abutment slope, and any abutment step are single values.** The flaw assessment carries no uncertainty in
+1. **The settlement, the dam height, the abutment slope, any abutment step, and any measured crack depth are single values.** The flaw assessment carries no uncertainty in
    them, and the flaw probability, crack width, and crack depth are each one value.
    - *Engineering basis:* Basis requested — see marker IN-04 in [Flaw Assessment](./04-flaw-assessment.mdx).
    - *Effect on results:* The SRP reflects the entered geometry exactly; uncertainty in a measured settlement or slope does not spread the result,
@@ -82,22 +82,34 @@ cross-references the input marker at its primary location in this document.
      [Flaw Assessment](./04-flaw-assessment.mdx#crack-depth-and-bottom-of-crack-elevation)).
    - *Effect on results:* The crack depth, and so the pool level at which the SRP rises, follows the strain: a crack can reach about 37 ft
      (11.3 m) below the crest at the largest width, 75 mm.
-   - *When it may not hold:* Where cracks have been observed and their depth is known, or where the fill's tensile behavior differs from that
-     underlying the relationships.
-9. **The crack depth is not limited by the height of the embankment.**
+   - *When it may not hold:* Where cracks have been observed and their depth is known, in which case the measured depth may be entered instead
+     (Assumption 11), or where the fill's tensile behavior differs from that underlying the relationships.
+9. **The computed crack depth is not limited by the height of the embankment.** A measured crack depth is limited to the dam height
+   (Assumption 11).
    - *Engineering basis:* Basis requested — see marker IN-14 in
      [Flaw Assessment](./04-flaw-assessment.mdx#crack-depth-and-bottom-of-crack-elevation).
    - *Effect on results:* For a dam lower than the computed crack depth, the bottom of the crack falls below the base of the embankment and
      initiation is certain at every pool level evaluated above it (conservative).
    - *When it may not hold:* For low dams, where a crack cannot physically extend below the foundation contact.
-10. **An observation of continuous transverse cracking sets the flaw probability to 1.0 but not the crack geometry.** The crack width, depth, and
-    bottom-of-crack elevation are still computed from the settlement and abutment inputs.
+10. **Without a measured depth, an observation of continuous transverse cracking sets the flaw probability to 1.0 but not the crack geometry.**
+    The crack width, depth, and bottom-of-crack elevation are still computed from the settlement and abutment inputs.
     - *Engineering basis:* The common CLE observation convention, under which the override sets Node 1 only (Assumption 7 of the common methods
       manual; see [Observation Overrides](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#observation-overrides)).
     - *Effect on results:* The SRP above the bottom of the crack rises to the product of the downstream nodes, while the elevation at which it
       rises stays at the computed bottom of the crack.
     - *When it may not hold:* Where the observed cracking extends deeper than the computed crack; the computed bottom of the crack may then place
-      the rise of the curve too high.
+      the rise of the curve too high, and a measured depth, where one is available, may be entered instead (Assumption 11).
+11. **A measured depth of an observed continuous transverse crack replaces the computed crack geometry.** The crack depth is the measured depth,
+    the bottom of the crack is the crest elevation less that depth, the flaw probability is 1.0, and the settlement and abutment inputs are not
+    used. The measured depth must be greater than zero and no greater than the dam height.
+    - *Engineering basis:* Basis requested — see marker IN-17 in
+      [Flaw Assessment](./04-flaw-assessment.mdx#measured-crack-depth).
+    - *Effect on results:* The pool level at which the SRP rises is set by the measurement rather than by the settlement relationships, and the
+      curve above it equals the product of the downstream nodes. A deeper measured crack lowers the rise of the curve; the settlement and abutment
+      inputs have no effect on the result.
+    - *When it may not hold:* Where the measurement does not reach the bottom of the crack; the bottom of the crack, and the rise of the curve, are
+      then placed too high (non-conservative). How the depth is to be determined is requested at marker IN-16 in
+      [Input Parameters](./03-input-parameters.mdx#measured-crack-depth).
 
 ## Limitations
 
@@ -107,4 +119,5 @@ cross-references the input marker at its primary location in this document.
   [Crest-Crack Models: Headwater Gate](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#crest-crack-models-headwater-gate));
   the crack width is used only to estimate the crack depth, not to compute the flow or shear stress in the crack.
 - **Tabulated range.** The strain, flaw probability, and crack width relationships are tabulated over limited ranges, and inputs beyond them take
-  the end values (see [Range of the Relationships](./04-flaw-assessment.mdx#range-of-the-relationships)).
+  the end values (see [Range of the Relationships](./04-flaw-assessment.mdx#range-of-the-relationships)). The ranges do not apply when a measured
+  crack depth is entered.

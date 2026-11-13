@@ -15,7 +15,8 @@ The model evaluates the eight-node event tree shared by the CLE screening models
 the SRP. The tree, its node questions, and the reasons for its structure are documented in the
 [Event Tree](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree) chapter of the common methods manual. This
 chapter states how each node is populated for cross-valley settlement. Every node follows the common treatment of the crest-crack models; the
-model adds no node and changes no node rule.
+model adds no node and changes no node rule. A measured crack depth, when entered, changes only how the flaw assessment sets the bottom of
+the crack (see [Measured Crack Depth](./04-flaw-assessment.mdx#measured-crack-depth)).
 
 ## Node Summary
 
@@ -53,15 +54,18 @@ model adds no node and changes no node rule.
 ### Node 1: Flaw
 
 $P_{flaw}$ is the result of the flaw assessment, $P_{raw}$ from the localized tensile strain or 1.0 when continuous transverse cracking has
-been observed (see [Flaw Assessment](./04-flaw-assessment.mdx#flaw-probability)). It is the same at every pool level.
+been observed, whether or not its depth was measured (see [Flaw Assessment](./04-flaw-assessment.mdx#flaw-probability)). It is the same at every
+pool level.
 
 ### Node 2: Initiation
 
 Initiation is the headwater gate of the crest-crack models at the bottom-of-crack elevation $z_{bc}$ from the flaw assessment: zero while the pool
 is at or below $z_{bc}$, and 1.0 once it rises above it (see
 [Crest-Crack Models: Headwater Gate](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#crest-crack-models-headwater-gate)
-in the common methods manual). Tailwater takes no part. Because $z_{bc}$ is the crest elevation less the crack depth, the settlement and abutment
-inputs set the pool level at which the SRP rises from negligible. Between strains of 0.0005 and 0.025 (0.05 and 2.5 percent), a larger strain gives a
+in the common methods manual). Tailwater takes no part. Because $z_{bc}$ is the crest elevation less the crack depth, the crack depth sets the pool
+level at which the SRP rises from negligible. When a measured crack depth is entered, $z_{bc}$ is the crest elevation less the measured depth (see
+[Measured Crack Depth](./04-flaw-assessment.mdx#measured-crack-depth)), and the gate is otherwise unchanged. Otherwise the settlement and
+abutment inputs set the crack depth: between strains of 0.0005 and 0.025 (0.05 and 2.5 percent), a larger strain gives a
 wider and deeper crack and so a lower pool level at which the SRP rises; at or below 0.0005 the crack width is negligible and the bottom of the
 crack stays at the crest; above 0.025 the crack width holds at 75 mm, and the crack depth and that pool level
 no longer change (see [Crack Width](./04-flaw-assessment.mdx#crack-width)).
@@ -82,7 +86,8 @@ Roof support is the minimum roof-support probability over the below-filter mater
 full-pathway materials above it or with no filter (see
 [Node 4: Progression — Roof Support](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-4-progression--roof-support)).
 The below-filter materials are those on the pathway from the upstream face to the filter at the bottom-of-crack elevation computed in
-[Flaw Assessment](./04-flaw-assessment.mdx#crack-depth-and-bottom-of-crack-elevation).
+[Flaw Assessment](./04-flaw-assessment.mdx#crack-depth-and-bottom-of-crack-elevation), or set by a measured crack depth (see
+[Measured Crack Depth](./04-flaw-assessment.mdx#measured-crack-depth)).
 
 ### Node 5: Progression — No Crack Filling
 
@@ -146,8 +151,8 @@ $z_{tw}$. Because initiation is zero at and below $z_{bc}$, a filter or wall top
   drops out and only the upstream facing element, if present, limits flow. The curve rises at $z_{tw}$ unless the facing element alone gives the
   same minimum.
 
-Because the crack depth comes from the flaw assessment, a change in the settlement or abutment inputs can move $z_{bc}$ across a filter or wall top
-and so change which of these cases applies.
+Because the crack depth comes from the flaw assessment, a change in the settlement or abutment inputs, or in a measured crack depth, can move
+$z_{bc}$ across a filter or wall top and so change which of these cases applies.
 
 ## Worked Example
 
@@ -181,4 +186,6 @@ seepage-limiting element, and the default intervention and breach probabilities
 
 The system response curve is negligible up to elevation 240.0 ft and constant at 0.00522 above it. Adding a modern cutoff wall that reaches the
 crest would multiply the SRP above the bottom of the crack by its probability of no flow limitation, 0.001, giving $5.2 \times 10^{-6}$; an
-observation of continuous transverse cracking would raise the flaw probability to 1.0 and the SRP above the bottom of the crack to 0.85.
+observation of continuous transverse cracking would raise the flaw probability to 1.0 and the SRP above the bottom of the crack to 0.85. If the
+observed crack were also measured at 12.5 ft deep, the bottom of the crack would move up to elevation 252.5 ft (see the
+[flaw-assessment worked example](./04-flaw-assessment.mdx#worked-example)): the curve would be negligible up to 252.5 ft and 0.85 above it.

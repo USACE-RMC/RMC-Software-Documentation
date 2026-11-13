@@ -10,7 +10,7 @@ admonition in the document.
 
 **Regarding:** Definition of the dam height H and the maximum post-construction settlement s.
 
-**Needed:** The dam height $H$ and the maximum post-construction settlement $s$ (see [Settlement](#settlement)) are used only as the ratio $s/H$, and neither is defined beyond its name. State how each is to be measured: for $H$, whether it is the maximum height of the embankment at the deepest section of the valley, measured from the crest to the lowest foundation contact or to the original ground surface; and for $s$, whether it is the largest crest settlement measured along the crest since the end of construction, and whether it includes settlement of the foundation.
+**Needed:** The dam height $H$ and the maximum post-construction settlement $s$ (see [Settlement](#settlement)) enter the flaw assessment through the ratio $s/H$ (the dam height also sets the relative step height and bounds a measured crack depth), and neither is defined beyond its name. State how each is to be measured: for $H$, whether it is the maximum height of the embankment at the deepest section of the valley, measured from the crest to the lowest foundation contact or to the original ground surface; and for $s$, whether it is the largest crest settlement measured along the crest since the end of construction, and whether it includes settlement of the foundation.
 
 **Proposed (unconfirmed):** $H$ is the maximum embankment height at the deepest section, and $s$ is the largest crest settlement observed since the end of construction, both from survey records. Confirm or replace.
 
@@ -44,7 +44,7 @@ admonition in the document.
 
 **Regarding:** Deterministic treatment of the settlement, dam height, abutment slope, and step height.
 
-**Needed:** The flaw assessment treats the settlement (or the year-of-construction default), the dam height, the abutment slope, and the step height as single values, so the flaw probability, crack width, and crack depth carry no uncertainty and the bottom of the crack is one elevation. State the engineering basis for this deterministic treatment, or provide the engineering-judgment attribution to state here.
+**Needed:** The flaw assessment treats the settlement (or the year-of-construction default), the dam height, the abutment slope, and the step height, or the measured crack depth, as single values, so the flaw probability, crack width, and crack depth carry no uncertainty and the bottom of the crack is one elevation. State the engineering basis for this deterministic treatment, or provide the engineering-judgment attribution to state here.
 
 **Proposed (unconfirmed):** the inputs are geometric and survey quantities entered as best estimates at the screening stage, and the analyst brackets their uncertainty by repeating the analysis. Confirm or replace.
 
@@ -152,7 +152,7 @@ admonition in the document.
 
 **Regarding:** Crack depth not limited by the dam height.
 
-**Needed:** The crack depth is not limited by the height of the embankment. Up to about 37 ft (11.3 m) of crack depth is possible, so for a low dam the bottom-of-crack elevation can fall below the foundation contact, and initiation then begins at the lowest pool evaluated. State whether the crack depth should be limited to the dam height (or to another bound) or whether the model is not intended for dams lower than the largest crack depth, and whether the relationship applies to the full range of widths the model produces.
+**Needed:** The computed crack depth is not limited by the height of the embankment. Up to about 37 ft (11.3 m) of crack depth is possible, so for a low dam the bottom-of-crack elevation can fall below the foundation contact, and initiation then begins at the lowest pool evaluated. State whether the crack depth should be limited to the dam height (or to another bound) or whether the model is not intended for dams lower than the largest crack depth, and whether the relationship applies to the full range of widths the model produces.
 
 **Answer:**
 
@@ -163,6 +163,30 @@ admonition in the document.
 **Regarding:** Applicable range of abutment slope, normalized settlement, and relative step height.
 
 **Needed:** State the range of abutment slopes, normalized settlements, and relative step heights over which the model is applicable. Beyond the tabulated range the model holds the end value rather than extrapolating, so a slope steeper than 60 degrees or a normalized settlement above 2.5 percent (2 percent with a step) is assessed as if it were at the end of the table, which may understate the strain. State whether such inputs are outside the intended use of the model, or whether holding the end value is an accepted screening treatment.
+
+**Answer:**
+
+---
+
+## IN-16 — Definition — `03-input-parameters.mdx`
+
+**Regarding:** Definition and determination of the measured crack depth $d_m$.
+
+**Needed:** The measured crack depth $d_m$ is not defined beyond "the depth of the observed crack below the crest." State how it is to be determined — for example, from test pits, trenches, or borings along the crack, or from dye or water tracing — and which value to enter when the observations differ or when an exploration stopped before reaching the bottom of the crack (for example, the deepest depth at which the crack was found, or a depth judged from all the observations). Also state whether a measured depth that may understate the depth of the crack should be used as entered, or whether the deeper of the measured and computed depths should govern.
+
+**Proposed (unconfirmed):** the deepest depth below the crest at which the continuous crack was observed, recognizing that an exploration that did not reach the bottom of the crack gives a lower bound on its depth, and that depth is used as entered. Confirm or replace.
+
+**Answer:**
+
+---
+
+## IN-17 — Engineering Basis — `04-flaw-assessment.mdx`
+
+**Regarding:** Basis for replacing the computed crack geometry with the measured depth of an observed crack (Assumption 11 in `06-assumptions-and-limitations.mdx`).
+
+**Needed:** Replacing the computed crack geometry with the measured depth of an observed crack — and with it, setting aside the settlement and abutment inputs entirely — requires an engineering basis or the engineering-judgment attribution to state. The question of a measured depth that may understate the depth of the crack is asked separately, at IN-16.
+
+**Proposed (unconfirmed):** a measurement of the observed crack is direct evidence of its geometry and supersedes the estimate from the tabulated settlement relationships, consistent with the treatment of field evidence in a detailed risk analysis. Confirm or replace.
 
 **Answer:**
 

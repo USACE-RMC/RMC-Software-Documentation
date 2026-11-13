@@ -23,10 +23,13 @@ relationships driven by the settlement and the abutment geometry:
 3. The strain gives the flaw probability and the crack width.
 4. The crack width gives the crack depth, and the crack depth gives the bottom-of-crack elevation.
 
+When continuous transverse cracking has been observed and its depth measured, the measured depth replaces this chain: the flaw probability is 1.0
+and the bottom of the crack is set by the measured depth (see [Measured Crack Depth](#measured-crack-depth)).
+
 Every step is deterministic, and every quantity is the same at every pool level.
 
 :::warning[INPUT NEEDED IN-04 — Engineering Basis]
-The flaw assessment treats the settlement (or the year-of-construction default), the dam height, the abutment slope, and the step height as single
+The flaw assessment treats the settlement (or the year-of-construction default), the dam height, the abutment slope, and the step height, or the measured crack depth, as single
 values, so the flaw probability, crack width, and crack depth carry no uncertainty and the bottom of the crack is one elevation. State the
 engineering basis for this deterministic treatment, or provide the engineering-judgment attribution to state here.
 
@@ -289,11 +292,12 @@ to 1.0:
   equation="P_{flaw} = \begin{cases} 1.0 & \text{continuous transverse cracking observed} \\[4pt] P_{raw} & \text{otherwise} \end{cases}"
 />
 
-The override changes the flaw probability only. The crack width, crack depth, and bottom-of-crack elevation are still computed from the strain, so
-the pool level at which the observed crack begins to contribute is set by the settlement and abutment inputs, not by the observed crack. This
-follows the common convention for observation overrides (see
+Unless a measured crack depth is entered, the override changes the flaw probability only. The crack width, crack depth, and bottom-of-crack elevation
+are still computed from the strain, so the pool level at which the observed crack begins to contribute is set by the settlement and abutment
+inputs, not by the observed crack. This follows the common convention for observation overrides (see
 [Observation Overrides](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#observation-overrides) in the
-common methods manual).
+common methods manual). When the depth of the observed crack has been measured, the measured depth sets the bottom of the crack instead (see
+[Measured Crack Depth](#measured-crack-depth)).
 
 ## Crack Width
 
@@ -356,10 +360,47 @@ $d_c = (W/1000)(250 - 1.33\,W)/0.3048$ with the width in millimeters.
 :::
 
 :::warning[INPUT NEEDED IN-14 — Applicability]
-The crack depth is not limited by the height of the embankment. Up to about 37 ft (11.3 m) of crack depth is possible, so for a low dam the
+The computed crack depth is not limited by the height of the embankment. Up to about 37 ft (11.3 m) of crack depth is possible, so for a low dam the
 bottom-of-crack elevation can fall below the foundation contact, and initiation then begins at the lowest pool evaluated. State whether the crack
 depth should be limited to the dam height (or to another bound) or whether the model is not intended for dams lower than the largest crack depth,
 and whether the relationship applies to the full range of widths the model produces.
+:::
+
+## Measured Crack Depth
+
+When continuous transverse cracking has been observed and the depth of the crack below the crest has been measured, the measured depth $d_m$ may be
+entered in place of the chain of relationships above (see [Input Parameters](./03-input-parameters.mdx#measured-crack-depth)). The chain is then
+not evaluated: no normalized settlement, localized tensile strain, or crack width is computed, and the settlement, year of construction, abutment
+slope, and step height take no part in the result. The flaw probability is 1.0, as for the observation override, and the crack depth and the bottom
+of the crack are
+
+<Equation
+  equationKey="cle-cross-valley-screening-eq-measured-depth"
+  equation="P_{flaw} = 1.0, \qquad d_c = d_m, \qquad z_{bc} = z_c - d_m"
+/>
+
+where $z_c$ is the crest elevation. The measured depth is entered in the length unit of the analysis and used as entered; the width-depth
+relationship of <EquationReference equationKey="cle-cross-valley-screening-eq-8" /> is not applied. The bottom of the crack then gates initiation
+exactly as a computed bottom of the crack does (see [Event Tree](./05-event-tree.mdx#node-2-initiation)).
+
+Two conditions apply to the measured depth:
+
+- **It requires an observation of continuous transverse cracking.** The measured depth describes an observed crack, so it is accepted only when
+  continuous transverse cracking has been observed, and the flaw probability is then 1.0.
+- **It must be greater than zero and no greater than the dam height $H$.** Unlike the computed crack depth (see marker IN-14 above), a measured
+  crack therefore never places the bottom of the crack lower than the crest elevation less the dam height.
+
+The measured depth departs from the common convention for observation overrides, under which an observation sets Node 1 only (see
+[Observation Overrides](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#observation-overrides) in the
+common methods manual): here the observation of the crack's depth also sets the bottom of the crack.
+
+:::warning[INPUT NEEDED IN-17 — Engineering Basis]
+Replacing the computed crack geometry with the measured depth of an observed crack — and with it, setting aside the settlement and abutment inputs
+entirely — requires an engineering basis or the engineering-judgment attribution to state here. The question of a measured depth that may understate
+the depth of the crack is asked separately, at marker IN-16 in [Input Parameters](./03-input-parameters.mdx#measured-crack-depth).
+
+Proposed (unconfirmed): a measurement of the observed crack is direct evidence of its geometry and supersedes the estimate from the tabulated
+settlement relationships, consistent with the treatment of field evidence in a detailed risk analysis. Confirm or replace.
 :::
 
 ## Range of the Relationships
@@ -373,6 +414,8 @@ Each relationship is tabulated over a limited range, and an input beyond the ran
 - **Relative step height** — interpolated from 0.4 to 0.9; see [Abutment with a Step](#abutment-with-a-step).
 - **Strain** — the flaw probability is held at $5 \times 10^{-5}$ below a strain of 0.0005 and at 1.0 above 0.0443; the crack width is held
   negligible below 0.0005 and at 75 mm above 0.025.
+
+None of these ranges applies when a measured crack depth is entered, because the relationships are then not evaluated.
 
 :::warning[INPUT NEEDED IN-15 — Applicability]
 State the range of abutment slopes, normalized settlements, and relative step heights over which the model is applicable. Beyond the tabulated
@@ -418,3 +461,7 @@ settlement of 0.5 percent and 1.4 percent at 1 percent. In step 3, the strain of
 logarithm of the flaw probability lies 0.378 of the way from $\log_{10}(0.003)$ to $\log_{10}(0.02)$. The crack is open from the crest down to
 elevation 240.0 ft, and the event tree for the same dam is continued in
 [Event Tree](./05-event-tree.mdx#worked-example).
+
+Had continuous transverse cracking been observed at this dam and its depth measured at 12.5 ft, steps 1, 2, 4, and 5 would not be evaluated: the
+flaw probability would be 1.0, the crack depth 12.5 ft, and the bottom of the crack at elevation 265 − 12.5 = 252.5 ft
+(<EquationReference equationKey="cle-cross-valley-screening-eq-measured-depth" />).
