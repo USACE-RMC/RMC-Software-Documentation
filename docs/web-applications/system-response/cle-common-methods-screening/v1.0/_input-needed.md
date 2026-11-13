@@ -221,8 +221,9 @@ credited with a one-in-two chance of filling it.
 
 ## IN-14 — Engineering Basis — `07-failure-pathway-and-progression.mdx`
 
-**Regarding:** The flow-limitation conventions: (1) the minimum across several upstream elements
-governs; (2) a wall stops limiting flow above its top — per pool level for a crest crack, and
+**Regarding:** The flow-limitation conventions: (1) an upstream facing element and a wall combine
+as the product of their probabilities, while the most effective of several listed walls governs the
+walls; (2) a wall stops limiting flow above its top — per pool level for a crest crack, and
 against the base of the flaw for a compaction flaw — while an upstream facing element applies at
 every pool level; (3) the conduit compaction model takes no flow-limitation credit.
 

@@ -154,10 +154,19 @@ rockfill embankment is credited with a one-in-two chance of filling it. Confirm 
 *Question:* Does the flow into the enlarging pipe remain unrestricted by upstream seepage-limiting elements?
 
 Each upstream element maps to a probability of no flow limitation per <TableReference tableKey="cle-common-screening-table-15" />, following Fell
-et al. (2024) <Citation citationKey="Fell2024" />. When more than one element applies, the most effective one controls the flow, so the node takes
-the minimum across the applicable elements; with no applicable element, flow is not limited and $P_{nl} = 1.0$:
+et al. (2024) <Citation citationKey="Fell2024" />. An upstream facing element and a wall
+are separate barriers that the flow passes in turn, so when both apply the node is the product of the facing element's probability and the
+wall's. When more than one wall type is listed, the walls describe the single barrier located by the top-of-wall elevation, so the most effective
+wall governs rather than the walls compounding. An element that is absent, or that does not apply, contributes 1.0: with one applicable element
+the node is that element's probability, and with none, flow is not limited and $P_{nl} = 1.0$:
 
-<Equation equationKey="cle-common-screening-eq-15" equation="P_{nl} = \min_{e \in \mathcal{E}} P_{nl}(e), \qquad P_{nl} = 1.0 \text{ when } \mathcal{E} \text{ is empty}" />
+<Equation equationKey="cle-common-screening-eq-15" equation="P_{nl} = P_{nl,f} \times \min_{w \in \mathcal{W}} P_{nl}(w), \qquad P_{nl,f} = 1.0 \text{ with no facing element}, \qquad \min_{w \in \mathcal{W}} P_{nl}(w) = 1.0 \text{ when } \mathcal{W} \text{ is empty}" />
+
+> where:
+>
+> $P_{nl,f}$ = probability of no flow limitation of the upstream facing element  
+> $\mathcal{W}$ = set of walls that apply  
+> $P_{nl}(w)$ = probability of no flow limitation of wall $w$
 
 <TableVertical
   tableKey="cle-common-screening-table-15"
@@ -182,20 +191,28 @@ the minimum across the applicable elements; with no applicable element, flow is 
 ### Walls that stop below the crest
 
 A wall limits flow only over its own height. When the user supplies the top-of-wall elevation $z_{tw}$, the walls apply only where the leak
-passes beneath their top, while the upstream facing element, which is not a wall, applies wherever it is present. The applicable set $\mathcal{E}$
-is therefore:
+passes beneath their top, while the upstream facing element, which is not a wall, applies wherever it is present. The set of walls
+$\mathcal{W}$ that apply is therefore:
 
-- **Crest-crack models** — gated per pool level. At pool levels at or below $z_{tw}$ every listed element applies; above it the walls drop out
-  and only the upstream facing element remains, because the flow entering the crack above the wall's top passes over it.
-- **Compaction models** — gated once, against the flaw elevation. When $z_{tw} \ge z_f$ the wall reaches the flaw and every listed element applies;
-  when $z_{tw} < z_f$ the walls drop out and only the upstream facing element remains. Either way, one value applies at every pool level.
+- **Crest-crack models** — gated per pool level. At pool levels at or below $z_{tw}$ the walls apply, and the node is the facing element's
+  probability times the governing wall's; above it the walls drop out and only the upstream facing element remains, because the flow entering the
+  crack above the wall's top passes over it.
+- **Compaction models** — gated once, against the flaw elevation. When $z_{tw} \ge z_f$ the wall reaches the flaw and the walls apply; when
+  $z_{tw} < z_f$ the walls drop out and only the upstream facing element remains. Either way, one value applies at every pool level.
 
-With no top-of-wall elevation, the walls are taken to reach the crest and every listed element applies at every pool level.
+With no top-of-wall elevation, the walls are taken to reach the crest and apply at every pool level.
+
+For example, consider a crest crack in a dam whose crest is at elevation 265 ft, with an upstream facing element and a sheet pile wall whose top
+is at elevation 240 ft, each with a probability of no flow limitation of 0.5. At pool levels at or below 240 ft both barriers apply, and
+$P_{nl} = 0.5 \times 0.5 = 0.25$. Above 240 ft the flow passes over the wall, only the facing element applies, and $P_{nl} = 0.5$. Had a modern
+cutoff wall been listed with the sheet pile wall, the modern cutoff wall would govern the walls, giving $P_{nl} = 0.5 \times 0.001 = 0.0005$ at or
+below 240 ft and 0.5 above it.
 
 The conduit compaction model carries no flow-limitation input: it models no upstream element, and its Node 6 is fixed at 1.0.
 
 :::warning[INPUT NEEDED IN-14 — Engineering Basis]
-The flow-limitation conventions require an engineering basis to state here: (1) the minimum across several upstream elements governs; (2) a wall
+The flow-limitation conventions require an engineering basis to state here: (1) an upstream facing element and a wall combine as the product of their probabilities, while
+the most effective of several walls governs the walls; (2) a wall
 stops limiting flow above its top — per pool level for a crest crack, and against the base of the flaw for a compaction flaw — while an upstream
 facing element applies at every pool level; and (3) the conduit compaction model takes no flow-limitation credit at all. Provide the literature
 source (including the table in Fell et al. (2024) that gives the values of
