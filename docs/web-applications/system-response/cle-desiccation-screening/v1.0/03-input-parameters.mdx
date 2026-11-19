@@ -1,0 +1,178 @@
+---
+title: Input Parameters
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-desiccation-screening" />
+
+# Input Parameters
+
+This chapter documents the inputs specific to the desiccation model — the five flaw inputs that describe the crest — and summarizes the inputs the
+model shares with the other CLE screening models, which are documented in full in
+[Common Input Parameters](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters) of the CLE Common Methods
+manual. The model takes no distribution inputs: every input is a single value, a selection, or a list of soil classes.
+
+## Flaw Inputs
+
+The flaw inputs describe the crest of the embankment where a desiccation crack would form
+(<TableReference tableKey="cle-desiccation-screening-table-2" />). They set the probability of a continuous crack (see
+[Flaw Probability](./04-flaw-probability.mdx)) and its depth (see [Crack Depth](./05-crack-depth.mdx)).
+
+<TableVertical
+  tableKey="cle-desiccation-screening-table-2"
+  alt="Flaw input parameters of the CLE desiccation screening model"
+  caption="Flaw input parameters."
+  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  columns={[
+    [
+      'Surface layer over the core',
+      'Climate',
+      'Average annual net evaporation',
+      'Crest soil classifications',
+      'Continuous desiccation cracking observed',
+    ],
+    ['—', '—', 'E<sub>n</sub>', '—', '—'],
+    ['selection', 'selection', 'mm', 'USCS classes', 'yes or no'],
+    ['One of three surfaces', 'One of four climates', '0 or greater', 'Any of the fifteen accepted classes', 'Yes or no'],
+    ['No road or pathway', 'Temperate', 'Not supplied', 'Unknown', 'No'],
+  ]}
+/>
+
+### Surface layer over the core
+
+The surface layer is what covers the core soil at the crest. It sets the surface-layer likelihood factor and selects the row of the crack-depth
+table. The choices are:
+
+- **Paved** — a concrete or otherwise sealed roadway or pathway over the core. It is the least likely condition for a desiccation crack (likelihood
+  factor 1) and takes the crack depths tabulated for a gravel roadway.
+- **Gravel road** — a gravel roadway over the core (likelihood factor 2.5), with the crack depths tabulated for a gravel roadway.
+- **No road or pathway** — the core soil is exposed at the crest, or carries no roadway or pathway (likelihood factor 4), with the crack depths
+  tabulated for a crest with no road or pathway.
+
+There is no Unknown choice. When no surface layer is given, the model takes a crest with no road or pathway, the most crack-prone of the three:
+it carries the highest surface-layer likelihood factor and the deeper of the two crack-depth rows. Its basis is requested together with that of
+the climate default under [Climate](#climate).
+
+The model sets no flaw probability to zero on account of the surface layer alone, so a paved crest lowers the flaw probability without ruling
+the mechanism out in every case. In a seasonal or temperate climate, however, a paved crest always falls below the lower threshold of the scoring,
+so in practice the mechanism is ruled out there; in an arid or monsoonal climate it can reach the threshold, depending on the crest soil (see
+[Flaw Probability](./04-flaw-probability.mdx#lower-threshold)).
+
+### Climate
+
+The climate describes the precipitation and temperature regime at the dam. It sets the climate likelihood factor and selects the climate of the
+crack-depth table, unless a measured net evaporation is supplied, in which case the climate selection is not used. The choices are:
+
+- **Arid** — less than 10 in of annual rainfall and high summer temperatures (likelihood factor 4).
+- **Monsoonal** — monsoonal or other distinct wet and dry periods, with high summer temperatures (likelihood factor 3).
+- **Seasonal** — annual rainfall greater than 20 in, with no prolonged hot, dry periods (likelihood factor 2).
+- **Temperate** — rainfall distributed uniformly throughout the year (likelihood factor 1).
+
+There is no Unknown choice. When no climate is given, the model takes a temperate climate, the least crack-prone of the four: it carries the
+lowest climate likelihood factor and crack depths no deeper than those of any other climate. This default is not conservative — for the other
+inputs given, it gives a flaw probability no higher and a bottom of crack no lower than any other climate would — so a result computed with the
+climate defaulted can understate both the flaw probability and the crack depth. When a measured net evaporation is supplied, the climate
+selection, given or defaulted, is not used.
+
+:::warning[INPUT NEEDED IN-01 — Definition]
+The four climate descriptions above need a source and a rule for sites they do not clearly cover. As stated, the descriptions overlap and leave
+gaps: a site with 10 to 20 in of annual rainfall and no distinct wet and dry periods fits none of them, and a site with less than 10 in of rainfall
+and distinct wet and dry periods fits two. Cite the table of Fell et al. (2024) from which the descriptions are taken, and state how the user should
+classify a site that falls between them (for example, by selecting the drier category, or by supplying a measured net evaporation instead).
+:::
+
+:::warning[INPUT NEEDED IN-13 — Engineering Basis]
+The defaults of the two selections require an engineering basis. When no surface layer is given the model takes a crest with no road or pathway,
+the most crack-prone surface; when no climate is given it takes a temperate climate, the least crack-prone climate (likelihood factor 1, and
+crack depths no deeper than those of any other climate). Provide the engineering basis or the engineering-judgment attribution for each default
+— in particular for the temperate default, which is the least conservative of the four climates — or state that both selections are always to be
+supplied and the defaults are not to be relied on.
+:::
+
+### Average annual net evaporation
+
+The average annual net evaporation $E_n$ is an optional measured alternative to the climate selection, in millimeters regardless of the length unit
+used for elevations. When it is supplied, it replaces the climate selection in both places the climate is used: the climate likelihood factor is
+interpolated from it (see [Flaw Probability](./04-flaw-probability.mdx#climate)), and the crack depth is interpolated between the depths of the
+four climates (see [Crack Depth](./05-crack-depth.mdx#crack-depth-from-measured-net-evaporation)). It must be zero or positive. A measured value
+suits a site whose climate falls between the categories, or where a published evaporation record is available.
+
+:::warning[INPUT NEEDED IN-02 — Definition]
+State how the average annual net evaporation is to be determined — in particular whether it is the annual potential (pan or lake) evaporation less
+the annual rainfall, and over what period of record it is averaged — and cite the source that defines it for use with the desiccation crack-depth
+tables.
+
+Proposed (unconfirmed): the annual evaporation less the annual rainfall, averaged over the period of record, as used by Fell et al. (2024) to
+characterize the climate in its desiccation crack-depth tables. Confirm or replace.
+:::
+
+### Crest soil classifications
+
+The crest soil classifications are the classes in the Unified Soil Classification System (USCS) of every material, other than a drain or filter,
+that the crack would cross at the crest. Only the fifteen classes named below are accepted. Other dual symbols, such as SC-SM, GC-GM, SW-SM, or
+GW-GC, and the organic soils have no entry of their own, so the user has to map each such soil to one of the fifteen before entering it. The
+classifications set the soil likelihood factor and select the column of the crack-depth table:
+
+- **Plastic and silty soils** — the nine classes SM, GM, ML, SC, GC, CL-ML, CL, MH, and CH are scored, and the most crack-prone of the listed soils
+  governs (see [Flaw Probability](./04-flaw-probability.mdx#crest-soil)).
+- **Clean and nearly clean sands and gravels** — the six classes SP-SM, SW, SP, GP-GM, GW, and GP are accepted in the list but are not scored,
+  because desiccation cracking is not modeled in them. When every listed soil is one of these six, the mechanism does not apply (see
+  [Flaw Probability](./04-flaw-probability.mdx#inapplicable-mechanism)).
+- **Unknown** — leaving the list empty states that the crest soils are unknown. The model then assigns an intermediate soil score (see
+  [Flaw Probability](./04-flaw-probability.mdx#crest-soil)).
+
+### Continuous desiccation cracking observed
+
+This input reports an observation of the crack itself. It is answered yes only when all three of the following hold: transverse cracking has been
+observed at the crest, the cracking is attributed to desiccation, and it is judged continuous across the crest. A yes sets the flaw probability to
+1.0 (see [Flaw Probability](./04-flaw-probability.mdx#observation-override)); it does not change the crack depth. The default, no, takes no
+observation into account.
+
+## Shared Inputs
+
+The model also takes the following inputs in the form documented for the crest-crack models in
+[Common Input Parameters](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters) of the CLE Common Methods
+manual. None of them is modified for desiccation cracking.
+
+- **Hydraulic loading** — the headwater series and the optional tailwater series (see
+  [Hydraulic Loading](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#hydraulic-loading)). The model
+  reports the tailwater with its results but does not use it.
+- **Crest elevation** $z_c$ and **embankment type** (see
+  [Embankment Description](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#embankment-description)). The
+  crack depth is measured down from the crest elevation, and the embankment type sets the crack-filling probability. The model takes no
+  slope-segment description of the embankment section.
+- **Failure-pathway inputs** — the top-of-filter elevation $z_{tf}$, the full-pathway and below-filter roof materials, and the continuation inputs
+  of the shared continuation method (see
+  [Failure-Pathway Inputs](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#failure-pathway-inputs) and the
+  [Input Parameters](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/input-parameters) chapter of the Continuation (Filter
+  Evaluation) manual). The below-filter roof materials are the materials the user describes along the below-filter pathway, cut at the bottom of
+  the crack. The user therefore has to work out the bottom-of-crack elevation — the crest elevation less the tabulated crack depth of
+  [Crack Depth](./05-crack-depth.mdx#bottom-of-crack-elevation) — before entering them.
+- **Upstream seepage-limiting elements** and the **top-of-wall elevation** $z_{tw}$ (see
+  [Upstream Seepage-Limiting Elements](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#upstream-seepage-limiting-elements)).
+- **Probabilities of unsuccessful intervention and of breach**, each defaulting to 1.0 (see
+  [Intervention and Breach](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#intervention-and-breach)).
+
+The model takes none of the initiation material inputs of the compaction models — no critical shear stress, initial pipe diameter, or seepage path
+length — because its initiation node is a headwater gate rather than a shear stress analysis.
+
+## Units
+
+Elevations — the headwater, tailwater, crest, top-of-filter, and top-of-wall elevations — are on one common datum and in one length unit, as
+described in [Units and Datum](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#units-and-datum) of the
+CLE Common Methods manual. Two quantities carry fixed units: the net evaporation is in millimeters, and the tabulated crack depths are in feet. The
+crack depth is subtracted from the crest elevation without conversion (see [Crack Depth](./05-crack-depth.mdx#bottom-of-crack-elevation)), so the
+bottom-of-crack elevation is correct only when elevations are in feet.
+
+:::warning[INPUT NEEDED IN-03 — Applicability]
+The tabulated crack depths are in feet and are subtracted from the crest elevation with no unit conversion, so a crest elevation in meters
+produces a bottom-of-crack elevation that is wrong by the factor between the two units. State the length unit the model is intended to be used in,
+and the instruction to give a user working in SI units. This is the desiccation-model instance of the family-wide question raised at marker IN-01
+of the CLE Common Methods manual.
+
+Proposed (unconfirmed): the model is intended for elevations in feet; a user working in SI units converts the elevations to feet before running
+the model. Confirm or replace.
+:::

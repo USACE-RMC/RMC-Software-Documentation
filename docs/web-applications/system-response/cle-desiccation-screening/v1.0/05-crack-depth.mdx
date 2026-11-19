@@ -1,0 +1,145 @@
+---
+title: Crack Depth
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import Equation from '@site/src/components/Equation';
+import EquationReference from '@site/src/components/EquationReference';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-desiccation-screening" />
+
+# Crack Depth
+
+The flaw assessment passes one elevation to the downstream nodes along with the flaw probability: the bottom of the desiccation crack. Water can
+enter the crack only when the pool rises above it, so it sets the pool level at which initiation begins. It is also the elevation at which the user cuts the
+below-filter pathway when describing the below-filter roof materials (see
+[Input Parameters](./03-input-parameters.mdx#shared-inputs)); the model does not cut the pathway itself (see
+[Crest-crack models: bottom of the crack](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#crest-crack-models-bottom-of-the-crack)
+in the CLE Common Methods manual). This chapter documents how the model obtains the crack depth from the climate, the crest soil, and the surface
+layer.
+
+The crack depth is computed whatever the flaw probability, including when the flaw probability is negligible or when the observation override sets
+it to 1.0. The exception is an inapplicable mechanism — every listed crest soil a clean or nearly clean sand or gravel — when the crack depth is
+zero rather than tabulated (see [Inapplicable Mechanism](./04-flaw-probability.mdx#inapplicable-mechanism)).
+
+## Tabulated Crack Depths
+
+The crack depth $d_c$, in feet, is read from <TableReference tableKey="cle-desiccation-screening-table-8" /> or
+<TableReference tableKey="cle-desiccation-screening-table-11" />, adapted from Tables 5.10 to 5.13 of Fell et al.
+(2024) <Citation citationKey="Fell2024" />. The tables are entered with three of the flaw inputs:
+
+- **Surface layer** — a crest with no road or pathway takes <TableReference tableKey="cle-desiccation-screening-table-8" />; a gravel road and a
+  paved crest both take the gravel-roadway depths of <TableReference tableKey="cle-desiccation-screening-table-11" />.
+- **Climate** — the climate selection selects the row.
+- **Soil column** — the governing crest-soil likelihood factor $LF_{cs}$ of [Flaw Probability](./04-flaw-probability.mdx#crest-soil), 1 to 4,
+  selects the column. An unknown crest soil, scored 2, takes the column $LF_{cs} = 2$.
+
+<TableVertical
+  tableKey="cle-desiccation-screening-table-8"
+  alt="Desiccation crack depth on a crest with no road or pathway, by climate and crest-soil likelihood factor"
+  caption="Desiccation crack depth (ft) on a crest with no road or pathway, by climate and crest-soil likelihood factor, adapted from Fell et al. (2024)."
+  colAlign={['left', 'center', 'center', 'center', 'center']}
+  headers={[[{ value: 'Climate' }, { value: 'LF<sub>cs</sub> = 1' }, { value: 'LF<sub>cs</sub> = 2' }, { value: 'LF<sub>cs</sub> = 3' }, { value: 'LF<sub>cs</sub> = 4' }]]}
+  columns={[
+    ['Temperate', 'Seasonal', 'Monsoonal', 'Arid'],
+    ['1.5', '1.5', '3', '5'],
+    ['3', '5', '6.5', '15'],
+    ['5', '6.5', '10', '20'],
+    ['8', '12', '15', '20'],
+  ]}
+/>
+
+<TableVertical
+  tableKey="cle-desiccation-screening-table-11"
+  alt="Desiccation crack depth under a gravel roadway or a paved crest, by climate and crest-soil likelihood factor"
+  caption="Desiccation crack depth (ft) under a gravel roadway (gravel road or paved crest), by climate and crest-soil likelihood factor, adapted from Fell et al. (2024)."
+  colAlign={['left', 'center', 'center', 'center', 'center']}
+  headers={[[{ value: 'Climate' }, { value: 'LF<sub>cs</sub> = 1' }, { value: 'LF<sub>cs</sub> = 2' }, { value: 'LF<sub>cs</sub> = 3' }, { value: 'LF<sub>cs</sub> = 4' }]]}
+  columns={[
+    ['Temperate', 'Seasonal', 'Monsoonal', 'Arid'],
+    ['0', '0', '0', '2'],
+    ['1.5', '1.5', '3', '5'],
+    ['2.5', '3', '5', '10'],
+    ['5', '8', '10', '15'],
+  ]}
+/>
+
+The tabulated depth never decreases with a drier climate, a more plastic soil, or an unprotected crest, although several neighboring entries are
+equal — for example, the temperate and seasonal depths for a soil scored 1, and the arid depths with no road or pathway for soils scored 3 and 4.
+The conditions that raise the flaw probability therefore never raise the bottom of the crack. Paving, however, lowers the flaw probability
+without changing the depth, because a paved crest and a gravel road share the gravel-roadway depths. The deepest crack, 20 ft, occurs in an
+arid climate on a crest with no road or pathway in a soil scored 3 or 4.
+
+:::warning[INPUT NEEDED IN-09 — Engineering Basis]
+The adaptation of Fell et al. (2024) Tables 5.10 to 5.13 into <TableReference tableKey="cle-desiccation-screening-table-8" /> and
+<TableReference tableKey="cle-desiccation-screening-table-11" /> requires an engineering basis to state here. Confirm (1) that each of the
+four source tables corresponds to one climate; (2) how the source tables' soil descriptions were mapped onto the four crest-soil likelihood
+factors used as columns; (3) whether the tabulated values are the source depths or a selection from a range given in the source (for example, a
+central or upper value); and (4) the source of the zero gravel-roadway depths for a soil scored 1 in the temperate, seasonal, and monsoonal
+climates. Provide the page or table references, or the engineering-judgment attribution, for each adaptation.
+:::
+
+:::warning[INPUT NEEDED IN-10 — Engineering Basis]
+A paved crest takes the crack depths tabulated for a gravel roadway, so the model assigns it the same crack depth as a gravel road although it
+scores it as less likely to crack (likelihood factor 1 against 2.5). Provide the engineering basis — a literature source, or the
+engineering-judgment attribution — for treating the depth of a desiccation crack beneath a paved surface as equal to that beneath a gravel road.
+
+Proposed (unconfirmed): the source tables give depths only for an unprotected crest and for a crest under a roadway; a sealed pavement is a
+roadway, and treating it as such keeps the crack depth on the deeper of the two available values for a protected crest. Confirm or replace.
+:::
+
+## Crack Depth from Measured Net Evaporation
+
+When a measured average annual net evaporation $E_n$ is supplied, the crack depth is not read for one climate. Instead the model reads the four
+depths for the user's surface layer and soil column — one for each climate — and interpolates linearly between them in $E_n$ on the same points as
+the climate likelihood factor (<TableReference tableKey="cle-desiccation-screening-table-4" /> in
+[Flaw Probability](./04-flaw-probability.mdx#climate)):
+
+- $E_n$ of 425 mm or less takes the temperate depth.
+- Between 425 and 450 mm, the depth moves linearly from the temperate to the seasonal depth; from 450 to 900 mm it is the seasonal depth.
+- Between 900 and 925 mm, the depth moves linearly from the seasonal to the monsoonal depth; from 925 to 1500 mm it is the monsoonal depth.
+- Above 1500 mm, the depth is the arid depth.
+
+Measured net evaporation therefore resolves to the depth of one climate category except within the two short transitions. For example, on a crest
+with no road or pathway and a lean clay core (soil score 2), a net evaporation of 437.5 mm gives a depth halfway between the temperate 3 ft and the
+seasonal 5 ft, $d_c = 4$ ft.
+
+:::warning[INPUT NEEDED IN-11 — Engineering Basis]
+Interpolating the crack depth in net evaporation between the depths of the four climate categories, on the same band boundaries as the climate
+likelihood factor, requires an engineering basis. State whether Fell et al. (2024) relates crack depth to net evaporation directly (and cite the
+table), or provide the engineering-judgment attribution for using the climate-category depths at fixed net-evaporation bands.
+:::
+
+## Bottom-of-Crack Elevation
+
+The bottom of the crack is the crest elevation less the crack depth:
+
+<Equation equationKey="cle-desiccation-screening-eq-4" equation="z_{bc} = z_c - d_c" />
+
+where $z_c$ is the crest elevation. This is the crest-crack relationship of the CLE Common Methods manual (see
+[Crest-crack models: bottom of the crack](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#crest-crack-models-bottom-of-the-crack)).
+The crack depth is in feet and is subtracted without conversion, so the crest elevation must be in feet for $z_{bc}$ to be correct (see
+[Units](./03-input-parameters.mdx#units) in Input Parameters). When the mechanism is inapplicable — every listed crest soil a clean or nearly clean
+sand or gravel — the crack depth is zero and $z_{bc} = z_c$.
+
+## Cracks of Zero Depth
+
+Three entries of <TableReference tableKey="cle-desiccation-screening-table-11" /> are zero: a soil scored 1 under a paved crest or a gravel road in
+a temperate, seasonal, or monsoonal climate. For these crests — and, when a net evaporation is supplied, for any value of 1500 mm or less on such a crest — the
+bottom of the crack is at the crest. Because initiation requires the pool to rise above the bottom of the crack
+(<EquationReference equationKey="cle-desiccation-screening-eq-5" /> in [Event Tree](./06-event-tree.mdx#node-2-initiation)), the SRP is then
+negligible at every pool level up to the crest, whatever the flaw probability. This holds even when continuous desiccation cracking has been
+observed: the observation sets the flaw probability to 1.0 but supplies no crack depth.
+
+:::warning[INPUT NEEDED IN-12 — Applicability]
+State how the model is to be used when continuous desiccation cracking has been observed at a crest whose tabulated crack depth is zero, or is
+shallower than the cracking observed. The model always takes the tabulated depth, so an observed crack in a low-plasticity crest under a roadway in
+a temperate, seasonal, or monsoonal climate contributes nothing to the SRP below the crest. State whether this outcome is intended, and whether the
+user should instead evaluate an observed crack of known depth by other means.
+:::
+
+<CitationFootnote />
