@@ -14,7 +14,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { shouldExcludeFromBuild } = require('../src/docConfig');
+const { docs: registry, shouldExcludeFromBuild } = require('../src/docConfig');
 
 const DOCS_DIR = path.join(__dirname, '..', 'docs');
 const SIDEBAR_PATH = path.join(__dirname, '..', 'sidebars.js');
@@ -576,7 +576,7 @@ function generateSidebars() {
     const versionFormatted = version.replace(/\./g, '_');
     const sidebarKey = `${groupCamel}${folderCamel}_${versionFormatted}`;
 
-    const documentName = titleCase(folderName);
+    const documentName = registry.find((d) => d.doc_location === docPath)?.sidebar_label || titleCase(folderName);
 
     // Only create if not already present
     if (!sidebarContent[sidebarKey]) {
