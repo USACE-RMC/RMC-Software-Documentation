@@ -13,12 +13,91 @@ import TableVertical from '@site/src/components/TableVertical';
 
 # Getting Started
 
-Every session in the Dam Screening Tool (DST) begins on the Dashboard. The Dashboard lists the screenings the user works on, the review assignments the
-user holds, and a catalog of every official screening in DST. From the Dashboard the user creates new screenings, opens existing ones, manages each
-screening's team, and requests access to screenings owned by others.
+A user reaches the Dam Screening Tool (DST) by signing in from its public home page. Every session then begins on the Dashboard, which lists the
+screenings the user works on, the review assignments the user holds, and a catalog of every official screening in DST. From the Dashboard the user
+creates new screenings, opens existing ones, manages each screening's team, and requests access to screenings owned by others.
 
-This chapter describes the Dashboard and the actions available from it. Working inside a screening — navigation, automatic saving, verification and
-the other behaviors shared by every screening page — is described in [Chapter 4, Working in DST](./04-working-in-dst.mdx).
+This chapter describes requesting an account, signing in, the Dashboard and the actions available from it, and the Profile page. Working inside a
+screening — navigation, automatic saving, verification and the other behaviors shared by every screening page — is described in
+[Chapter 4, Working in DST](./04-working-in-dst.mdx).
+
+## Signing In
+
+DST's home page is public. Its top bar holds two buttons, **Request Access** for a person without an account and **Log In** for a person with one; on a
+phone the two buttons sit side by side at the full width of the bar. Following a link to a DST page while signed out returns the user to the home page
+with the Log In dialog open, and after signing in the user goes on to the page the link pointed to.
+
+:::caution[Screenshot pending]
+
+A figure of the Log In dialog (shot `dst-users-guide-fig-getting-started-log-in`) will be added here.
+
+:::
+
+### Requesting an account
+
+Every DST account is approved by a DST administrator. A person without an account selects **Request Access** on the home page, which opens the
+**Request an Account** dialog. Every field is required:
+
+<TableVertical
+  tableKey="dst-users-guide-table-account-request-fields"
+  colWidths={['20ch', 'minmax(30ch, 1fr)']}
+  alt="Fields of the Request an Account dialog"
+  caption="Request an Account fields"
+  headers={[[{ value: 'Field' }, { value: 'Description' }]]}
+  columns={[
+    ['First Name', 'Last Name', 'Email', 'Organization Type', 'Organization', 'Password', 'Confirm Password'],
+    [
+      'Up to 100 characters.',
+      'Up to 100 characters.',
+      'The address DST uses to identify the user and send email, up to 254 characters.',
+      'Federal, State, Local, Private or Academic.',
+      "The name of the user's agency or company, up to 200 characters.",
+      'At least 15 characters, with at least one uppercase letter, one lowercase letter, one number and one special character.',
+      'The same password again.',
+    ],
+  ]}
+/>
+
+A checklist under the password fields turns each requirement green as it is met, and its **passwords match** item turns red while the two entries
+differ. **Show** beside each password field reveals what was typed. **Submit** becomes available once every entry is valid. After submitting, the
+dialog confirms "Account request submitted" and explains that a DST administrator will review the request. DST emails the user when the request is
+received and again when it is approved or denied. Once approved, the user signs in with the email address and password from the request.
+
+### Logging in
+
+**Log In** opens the Log In dialog, which offers two ways to sign in:
+
+- **Sign in with Login.gov** sends the user to Login.gov and returns the user to DST signed in. The first time, DST links the Login.gov identity to the
+  DST account with the same email address. If no DST account uses that address, DST reports "No DST account is linked to this Login.gov identity.
+  Request an account to get started." and opens the Request an Account dialog with the user's name and email address filled in.
+- **Email and password.** Selecting **or sign in with email** opens the email form (it opens on its own the next time for a user who last signed in
+  this way). The user enters **Email** and **Password** and selects **Log In**.
+
+An incorrect password reports "That email and password combination doesn't match our records." with the number of attempts remaining. After five
+failed attempts the account locks (see [Forgotten passwords and locked accounts](#forgotten-passwords-and-locked-accounts)). Too many sign-in attempts
+from one location in a short time are refused with "Too many requests. Please wait and try again."
+
+After signing in, the user arrives at the Dashboard, or at the page a link pointed to.
+
+### Forgotten passwords and locked accounts
+
+DST administrators handle password resets and account unlocks:
+
+- **Forgot password?** beside the Password field opens the **Forgot Password** dialog. The user enters the account's email address and selects
+  **Submit Request**; the request goes to a DST administrator. Once it is approved, DST emails the user a temporary password. At the next sign-in DST
+  asks for a new password before going any further.
+- **Locked account.** A locked account shows the **Account Locked** view in the Log In dialog, with **I Forgot My Password** and **Request Unlock**.
+  Either request goes to a DST administrator, and the account stays locked until an administrator acts on it. DST emails the user when the unlock
+  request is received and again when the account is unlocked.
+
+A user who signs in only with Login.gov has no DST password; **Forgot password?** sets one if the user also wants to sign in by email.
+
+### Staying signed in
+
+A session ends after 15 minutes without activity. Two minutes before it ends, a **Session Expiring** notice counts down the remaining time;
+**Stay Logged In** keeps the session open. When a session ends, the **Session Expired** dialog asks the user to sign in again, over the page the user
+was on, so work continues where it stopped. **Logout** in the avatar menu ends the session deliberately (see
+[Chapter 4, Working in DST](./04-working-in-dst.mdx#the-site-header)).
 
 ## The Dashboard
 
@@ -45,7 +124,7 @@ The Dashboard opens after the user signs in, and the user returns to it at any t
     ['Greeting', 'Information ticker', 'Tabs', 'Filters', 'Search', 'New Screening', 'Screenings table', 'Status badge', 'Row actions'],
     [
       'A greeting with the user\'s first name and the current date.',
-      'Announcements from the DST administrators. Each message advances on its own; the arrows and dots move between messages, and × hides the ticker for the rest of the browser session.',
+      'Announcements from the DST administrators. Each message advances on its own every few seconds and pauses while the pointer rests on it; the arrows and dots move between messages, and × hides the ticker until the browser tab is closed.',
       'My Screenings, My Reviews and Search Catalog. The My Reviews badge counts the user\'s current review assignments.',
       'Status, Type and Per page drop-downs. Administrators also see an All screenings toggle.',
       'Searches the user\'s screenings by screening name, dam name, description or screening ID.',
@@ -86,6 +165,10 @@ reviewer appear on the My Reviews tab instead. Selecting a screening's name open
   ]}
 />
 
+On phones and tablets (screens narrower than 1,024 pixels) the table becomes a grid of cards. Each card shows the screening ID, status and type badges,
+the **⋮** actions button, the screening name, the dam and when the screening was last modified. Cards have no column headings, so the card view does not
+sort.
+
 Selecting a column heading sorts the table by that column, and selecting it again reverses the order. The table opens sorted by **Modified**, newest
 first. **Status** sorts in workflow order rather than alphabetically.
 
@@ -101,8 +184,8 @@ An Official screening shows one of these statuses:
 - **Submitted** — the Facilitator has submitted the screening. Submission starts the first review level immediately, so this status is usually brief.
 - **Under Review** — one of the screening's review levels is in progress. Inputs are locked except during a review level's resolution period.
 - **Complete** — every review level is approved.
-- **Needs Facilitator** — the screening lost its Facilitator, for example because the Facilitator's account was deactivated. Inputs stay locked until an
-  administrator assigns a new Facilitator.
+- **No Facilitator** — the screening lost its Facilitator, for example because the Facilitator's account was deactivated. Inputs stay locked until a
+  new Facilitator is assigned.
 
 The review process behind these statuses is described in Chapter 27, Review.
 
@@ -110,7 +193,7 @@ The review process behind these statuses is described in Chapter 27, Review.
 
 The filter bar narrows the list:
 
-- **Status** — All, In Progress, Submitted, Under Review, Complete or Needs Facilitator.
+- **Status** — All, In Progress, Submitted, Under Review, Complete or No Facilitator.
 - **Type** — All, Official or Testing.
 - **Per page** — 15, 25 or 50 screenings per page.
 - **Search** — matches any part of the screening name, dam name or description, and a whole number also matches that screening ID. Pressing the **/**
@@ -160,7 +243,8 @@ actions the user is permitted to take appear.
 
 Rename and Delete disappear once a screening is submitted: its name stays fixed through review, and only an administrator can delete it.
 
-**Delete** asks for confirmation. A deleted screening disappears for everyone, but it is not erased; an administrator can restore it.
+**Delete** asks for confirmation; the dialog notes "This action can be undone by an administrator." A deleted screening disappears for everyone, but it
+is not erased; an administrator can restore it.
 
 #### When there are no screenings
 
@@ -179,13 +263,18 @@ hide every screening, the table is replaced by "No screenings match your filters
 ### My Reviews
 
 The **My Reviews** tab lists every review level on which the user is a reviewer
-(<FigReference figKey="dst-users-guide-fig-dashboard-my-reviews" />). It is organized into three tables:
+(<FigReference figKey="dst-users-guide-fig-dashboard-my-reviews" />). Regular review assignments are organized into three tables:
 
 - **Active Reviews** — review levels in progress now, or about to start because every earlier level is approved. Rows that need the user's action are
   listed first.
 - **Upcoming Reviews** — review levels that will start after an earlier level finishes.
-- **Completed Reviews** — approved review levels, newest first. The **Show** drop-down sets how far back the list reaches: the last 90 days (the
-  default), 6 months, a year, or all.
+- **Completed Reviews** — approved review levels, newest first. The list starts with the last 90 days; once it holds at least one review, the
+  **Show** drop-down extends it to 6 months, a year, or all.
+
+A user who also reviews for the National Cadre or the SOG sees **National Cadre Reviews** and **SOG Reviews** sections first, with the three tables
+above under **Regular Reviews**. In those sections screenings are grouped by the review cycle they are scheduled for, each group can be opened or
+closed, and screenings without a cycle appear under **No cycle assigned**. A user with no review assignments sees "No review assignments. You'll see
+screenings here when you're assigned as a reviewer."
 
 <Figure
   figKey="dst-users-guide-fig-dashboard-my-reviews"
@@ -207,7 +296,7 @@ The **My Reviews** tab lists every review level on which the user is a reviewer
       'The screening name, with its screening status beneath.',
       'The dam name.',
       'The review level the user is assigned to.',
-      'The level\'s phase: Not Started, Review Period, Resolution, Backcheck or Approved.',
+      'The level\'s phase: Not Started, Review Period, Resolution, Backcheck, Acknowledged or Approved.',
       'Pending, Participated or Unresponsive. A reviewer who has not participated is marked Unresponsive when the review period ends.',
       'Open comments out of the total for the current review cycle.',
       'What happens next. A blue dot marks a step that waits on the user.',
@@ -255,7 +344,8 @@ access. Testing screenings never appear in the catalog.
 />
 
 The **Status** drop-down and the search box filter both the pending requests and the browse list, and **Per page** sets the length of the browse list
-(25, 50 or 100). The catalog refreshes itself every 45 seconds while it is open, so an approved request moves out of the pending list without a reload.
+(25, 50 or 100). Selecting a column heading sorts that list. While the catalog is open, DST checks for answered requests every 45 seconds, so an
+approved request moves out of the pending list without a reload. On phones and tablets both lists appear as cards.
 
 #### Requesting access to a screening
 
@@ -290,7 +380,7 @@ The **Status** drop-down and the search box filter both the pending requests and
 />
 
 A request cannot be withdrawn from the Dashboard. After a denial the screening returns to the browse list and the user may request access again. A request
-for a screening with status Needs Facilitator waits until a Facilitator is assigned.
+for a screening with status No Facilitator waits until a Facilitator is assigned.
 
 ## Creating a Screening
 
@@ -395,7 +485,7 @@ administrator adds one.
 
 ### After the screening is created
 
-DST opens the new screening's Screening Information page. No confirmation message appears. Every new screening starts with two review levels, Level 1 and
+DST opens the new screening's Screening Information page. No confirmation message appears unless DST has a warning to report. Every new screening starts with two review levels, Level 1 and
 Level 2. DST also begins collecting background data for the dam — reservoir data for the stage-duration curve, and seismic hazard data where the dam's
 location supports it — which may take a few minutes to appear on the Hazards pages.
 
@@ -434,7 +524,7 @@ followed by the original name and asks for its **Type**, which defaults to the o
 Official copy of a USACE dam, which needs a USACE Facilitator as described in [USACE dams](#usace-dams).
 
 A copy carries over the screening's name, description, vertical datum, units and dam data. It does not carry over hazards, the information
-entered on the Dam Information pages, failure mode screening, selection or evaluation, consequences, risk analysis, Major Findings, documents, the
+entered on the Dam Information pages, failure mode screening, selection or evaluation, consequences, risk analysis, Major Findings, the
 screening team, or review history, and the dam data in the copy is unverified. The copy starts with its own Level 1 and Level 2 review levels and opens
 on its Screening Information page.
 
@@ -443,3 +533,20 @@ on its Screening Information page.
 **Rename** opens a dialog with the screening's current name. The user edits the name (up to 200 characters) and selects **Rename**; DST confirms the new
 name. A screening can be renamed only while it is In Progress or Testing. If another user changed the screening at the same moment, DST reports that the
 page was refreshed and the rename is not applied; the user renames it again.
+
+## The Profile Page
+
+**View Profile** in the avatar menu at the right of the site header opens the Profile page. Its heading shows the user's initials, name, email address
+and role.
+
+:::caution[Screenshot pending]
+
+A figure of the Profile page (shot `dst-users-guide-fig-getting-started-profile`) will be added here.
+
+:::
+
+- **Personal Information** — **First Name** and **Last Name** can be changed; each saves when the user leaves the field, and **Saving…** appears in
+  the heading while a save is in progress. **Email**, **Organization Type** and **Organization** are shown for reference and cannot be changed here.
+- **Change Password** — the user enters **Current Password**, then **New Password** and **Confirm New Password**, which must meet the same
+  requirements as a new account's password and differ from the current one, and selects **Change Password**. DST confirms "Password changed". An
+  account that signs in only with Login.gov has no password to change.
