@@ -1,0 +1,208 @@
+---
+title: Assumptions and Limitations
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/continuation-screening" />
+
+# Assumptions and Limitations
+
+The continuation screening model applies deliberate simplifications relative to a full filter evaluation. They let the model accept whatever
+filter information is available. Several resolve missing information in the direction of continuing erosion, but not all: Assumptions 11, 12,
+15, 16, and 20 can each lower the probability, the gradation method does not count some erosion (Assumption 14), and a filter gradation whose
+fine band does not extend down to 15 percent passing gives zero in the gradation method (see Gradation coverage under
+[Limitations](#limitations)). Each assumption below states
+its engineering basis, its effect on results, and the conditions under which it may not hold. Where an engineering basis is still awaiting confirmation, the
+assumption cross-references the input marker at its primary location in this document.
+
+## Method Selection and Combination
+
+1. **Each base soil is evaluated by the most informative method its inputs support.** Inputs for a lower-priority method are ignored when a
+   higher-priority method applies (see [Method Selection and Governing Base Soil](./04-method-selection-and-governing-base-soil.mdx)).
+   - *Engineering basis:* Screening design decision (engineering judgment): measured gradations describe the base soil and filter more
+     completely than classification ranges, which in turn describe them more completely than a construction period.
+   - *Effect on results:* Supplying better data changes the method and can move the result in either direction. A year of construction
+     supplied alongside a gradation or classification has no effect on that pair only when the gradation method applies (both materials have
+     gradation envelopes), or when both sides of the pair resolve for the soil classification method: the filter side through a filter
+     gradation that determines $D_{15}$ or a filter category other than Unknown, and the base side through a supported classification or a base
+     soil gradation whose fine band determines both $D_{85}$ and fines content. Otherwise the pair falls to the year-of-construction method, and
+     the year decides the result — for example, a base soil classification or gradation with no filter gradation and no filter category (or an
+     Unknown category).
+   - *When it may not hold:* Gradations that are not representative of the materials in place (for example, a few tests from a borrow area
+     rather than the constructed zone), where a less detailed method could be the better indicator.
+2. **The base soil the filter is least able to retain governs.** The node probability is the largest pair probability.
+   - *Engineering basis:* Screening design decision (engineering judgment): the filter must stop erosion of every base soil it protects, so
+     the worst pair controls.
+   - *Effect on results:* Adding a base soil can only raise or leave unchanged the node probability. An entry with no information takes
+     $P_{cont} = 1.0$ and governs.
+   - *When it may not hold:* A base soil listed that cannot in fact reach the filter along the erosion path under consideration, which then
+     controls the result without physical justification.
+3. **When no method can be selected for a pair and no year of construction is supplied, continuation is certain.** No method can be selected
+   when neither the gradation method nor the soil classification method has its inputs: the pair lacks either envelope, and the filter
+   $D_{15}$ or the base soil $D_{85}$ and fines content cannot be resolved. This covers a pair with no information, and also a pair with a full
+   base soil gradation but no filter information.
+   - *Engineering basis:* Screening design decision (engineering judgment): without evidence that the filter can retain the base soil, the
+     filter cannot be credited with stopping erosion.
+   - *Effect on results:* $P_{cont} = 1.0$ for such pairs, the most conservative value.
+   - *When it may not hold:* Filters known from construction records or inspection to be well designed, for which supplying a gradation,
+     classification, or construction year gives a more realistic result.
+4. **Continuation does not depend on the pool level or on the erosion mechanism.** The same inputs give the same probability at every
+   headwater, for any internal-erosion failure mode.
+   - *Engineering basis:* Particle retention is governed by the relationship between the particle-size distributions of the base soil and the
+     filter <Citation citationKey="FEMA2011" />, and the Foster and Fell erosion boundaries were derived from continuing erosion filter tests under
+     high water pressures <Citation citationKey="FosterFell2001" />.
+   - *Effect on results:* The calling screening model applies one continuation probability across its range of pool levels.
+   - *When it may not hold:* Flow conditions at the filter face well beyond those of the filter tests on which the criteria rest, such as much
+     higher hydraulic gradients or flow velocities, where the head could affect whether and how quickly the filter seals.
+
+## Year-of-Construction Method
+
+5. **The construction period alone sets the probability of continuing erosion when nothing else is known.** The probability is 0.9 before 1950,
+   0.5 from 1950 to 1970, 0.25 from 1971 to 1985, and 0.1 after 1985.
+   - *Engineering basis:* Basis requested — see marker IN-04 in [Year-of-Construction Method](./05-year-of-construction-method.mdx).
+   - *Effect on results:* Every pair evaluated by this method receives the same probability, whatever its base soil.
+   - *When it may not hold:* Embankments whose filters were designed ahead of, or behind, the practice of their period, and zones that were
+     never designed as filters.
+
+## Soil Classification Method
+
+6. **The ranges for each soil classification represent the base soil's $D_{85}$ and fines content.**
+   - *Engineering basis:* Basis requested — see marker IN-06 in [Soil Classification Method](./06-soil-classification-method.mdx).
+   - *Effect on results:* The ranges set the spread of maximum allowable filter $D_{15}$ and therefore the fraction of realizations that fail.
+   - *When it may not hold:* Base soils whose measured particle sizes fall outside the ranges for their classification; a base soil gradation
+     then gives a better result.
+7. **The ranges for each filter category represent the filter's $D_{15}$.**
+   - *Engineering basis:* Basis requested — see markers IN-07 in [Soil Classification Method](./06-soil-classification-method.mdx) and IN-01
+     (category definitions) in [Input Parameters](./03-input-parameters.mdx).
+   - *Effect on results:* A category range that lies wholly above the base soil's maximum allowable $D_{15F}$ gives $P_{cont,j} = 1.0$, and one
+     that lies wholly below it gives zero, whatever the actual filter $D_{15}$ is within that range. The Gravel range (10 to 50 mm) lies above
+     every limit the base soil classification ranges can produce, so a Gravel filter gives 1.0 against any base soil evaluated from its
+     classification ranges.
+   - *When it may not hold:* Filters near a category boundary or outside their category's range; a filter gradation then gives a better
+     result.
+8. **Range-resolved quantities are uniform and independent.** $D_{85B}$, $FC$, and $D_{15F}$ are each drawn from a uniform distribution, with no
+   correlation between them.
+   - *Engineering basis:* Basis requested — see marker IN-08 in [Soil Classification Method](./06-soil-classification-method.mdx).
+   - *Effect on results:* Realizations can pair a coarse $D_{85B}$ with a high fines content, combinations that may be rare in real soils of
+     that classification.
+   - *When it may not hold:* Soils in which the $D_{85}$ and fines content are strongly related, as they are within one gradation curve.
+9. **Only silty and clayey sands and gravels, silts, and clays carry classification ranges.** The clean and slightly silty sands and gravels
+   (GP, GW, GP-GM, SP, SW, SP-SM) have no ranges, and an input set that pairs one of these classes with a filter category other than Unknown is
+   rejected.
+   - *Engineering basis:* Basis requested — see marker IN-06 in [Soil Classification Method](./06-soil-classification-method.mdx).
+   - *Effect on results:* Such base soils need a gradation for any method other than the year-of-construction method or the default. With a
+     filter category other than Unknown, the input set is rejected even when a gradation is supplied, unless the classification is left out
+     (see [Base Soils](./03-input-parameters.mdx#base-soils) in Input Parameters).
+   - *When it may not hold:* Embankments with clean sand or gravel zones upstream of the filter and no gradations available.
+10. **Failing the no-erosion criterion counts as continuing erosion.** The method does not distinguish some or excessive erosion from
+    continuing erosion.
+    - *Engineering basis:* Basis requested — see marker IN-10 in [Soil Classification Method](./06-soil-classification-method.mdx).
+    - *Effect on results:* For the same materials, the probability can exceed the gradation method's, which credits filters that seal after
+      some erosion.
+    - *When it may not hold:* Filters only moderately coarser than the no-erosion limit, which the Foster and Fell evaluation would place in the
+      some-erosion or excessive-erosion zone.
+11. **A single supplied base soil gradation is used without regrading.** The base soil $D_{85}$ and fines content are taken from the gradation
+    as entered.
+    - *Engineering basis:* Basis requested — see marker IN-05 in [Soil Classification Method](./06-soil-classification-method.mdx).
+    - *Effect on results:* Where the full evaluation would regrade the band — a gap-graded band, or a band containing gravel unless it has less
+      than 15 percent fines and is not broadly graded — the unregraded $D_{85}$ is larger than the regraded value, which raises the allowable
+      filter $D_{15}$ and can lower the probability.
+    - *When it may not hold:* Gravelly or gap-graded base soils, for which regrading would apply in a full evaluation.
+12. **The category 3 limit is not allowed to fall below the category 2 limit.** When $4\,D_{85B}$ is smaller than 0.7 mm (0.5 mm for a dispersive
+    soil), the category 3 criterion uses the category 2 limit.
+    - *Engineering basis:* Basis requested — see marker IN-09 in [Soil Classification Method](./06-soil-classification-method.mdx).
+    - *Effect on results:* Fine base soils in category 3 receive the same limit as category 2 soils rather than a more restrictive one. The floor
+      raises the allowable filter $D_{15}$, so it can lower the probability. The Foster and Fell no-erosion boundary in the gradation method does
+      not apply the floor, so the particle retention check and the Foster and Fell evaluation can use different no-erosion limits for the same
+      soil.
+    - *When it may not hold:* Category 3 soils whose fine fraction is fine enough that the interpolated limit lies well below the category 2
+      value, for which the floored limit may be coarser than needed to retain them.
+
+## Gradation Method
+
+13. **A filter that satisfies the no-erosion criterion with every filter gradation considered stops erosion.** The Foster and Fell evaluation is
+    not performed, and the probability of continuing erosion is zero.
+    - *Engineering basis:* Filters meeting the no-erosion particle retention criterion seal with no or practically no erosion of the base soil <Citation citationKey="FEMA2011" /> <Citation citationKey="FosterFell2001" />; see the
+      [Design for Particle Retention](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/design-for-particle-retention)
+      chapter.
+    - *Effect on results:* The result is zero while the coarsest filter $D_{15}$ is within the limit for the finest regraded base soil, unless
+      an adjusted filter gradation fails the check. The Foster and Fell evaluation then runs on the original gradation with no-erosion
+      boundaries that do not apply the category 3 floor, so in edge cases the result can be positive. Beyond the limit, the Foster and Fell
+      evaluation sets the result, which is positive only when part of the filter range lies in the excessive or continuing erosion zone.
+    - *When it may not hold:* Filters whose gradation in place is coarser than the gradations supplied, through segregation or internal
+      instability not captured by the segregation adjustment.
+14. **Excessive erosion counts as continuing erosion.** The screening probability is the sum of the Foster and Fell probabilities of continuing
+    and excessive erosion.
+    - *Engineering basis:* Basis requested — see marker IN-13 in [Gradation Method](./07-gradation-method.mdx).
+    - *Effect on results:* The probability is at least the Foster and Fell probability of continuing erosion, and larger whenever part of the
+      filter range lies in the excessive erosion zone.
+    - *When it may not hold:* Embankments that can tolerate the erosion and leakage that occur before an excessive-erosion filter seals.
+15. **An undetermined broad-grading assessment is taken as not broadly graded.**
+    - *Engineering basis:* Basis requested — see marker IN-11 in [Gradation Method](./07-gradation-method.mdx).
+    - *Effect on results:* A gravelly band with less than 15 percent fines is then not regraded, giving a larger $D_{85B}$ and a less
+      restrictive no-erosion limit.
+    - *When it may not hold:* Base soil gradations that do not extend to 10 percent passing; supplying the broad-grading answer removes the
+      default.
+16. **The adjusted filter gradation decides only whether the Foster and Fell evaluation runs.** The probabilities are computed from the original
+    filter gradation.
+    - *Engineering basis:* Basis requested — see marker IN-14 in [Gradation Method](./07-gradation-method.mdx).
+    - *Effect on results:* The adjustment matters only when the original gradation passes the particle retention check and the adjusted one
+      fails it. The original gradation's Foster and Fell result is then zero only when its filter range lies at or below the excessive erosion
+      boundary of every representative gradation. Passing the particle retention check does not ensure this: for very fine clays ($D_{95B}$
+      below about 0.022 mm), $9\,D_{95B}$ falls below the 0.2 mm no-erosion limit, so a filter that passes the check can still lie in the
+      continuing erosion zone and give a positive result.
+    - *When it may not hold:* Filters for which segregation or washout is likely, where the adjusted gradation's own Foster and Fell result
+      would be larger.
+17. **The permeability criterion does not enter the probability.**
+    - *Engineering basis:* Basis requested — see marker IN-15 in [Gradation Method](./07-gradation-method.mdx).
+    - *Effect on results:* A filter that retains the base soil but drains poorly is credited fully at the continuation node.
+    - *When it may not hold:* Filters whose limited permeability allows pressures to build up and the filter or the base soil to be bypassed.
+18. **The excessive erosion boundary does not depend on dispersivity.**
+    - *Engineering basis:* Decision requested — see marker IN-12 in [Gradation Method](./07-gradation-method.mdx).
+    - *Effect on results:* For a dispersive base soil, the excessive erosion zone is the same as for a non-dispersive soil of the same gradation.
+    - *When it may not hold:* Dispersive base soils, if the excessive erosion boundary should be stricter for them.
+19. **Both bands of the base soil gradation are reported at the same sieve sizes.** The representative average gradation is formed by averaging
+    the representative coarse and fine gradations point by point.
+    - *Engineering basis:* The average gradation is obtained for each input sieve size across the envelope (see
+      [Base Soil Characterization](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/foster-and-fell#base-soil-characterization)
+      in the Foster and Fell chapter of the toolbox manual).
+    - *Effect on results:* With matching sieve sizes, the average gradation lies midway between the representative coarse and fine gradations at
+      every size, and its characteristic sizes set the average gradation's erosion boundaries, which carry the weight $CI/100$.
+    - *When it may not hold:* Bands reported at different sieve sizes or in a different number of sizes, for which the averaged points do not
+      correspond to a common particle size and the average gradation, and therefore the result, is distorted.
+20. **A band is treated as a gravel in the broad-grading assessment when its gravel content exceeds 50 percent.** Otherwise it is treated as a
+    sand.
+    - *Engineering basis:* Basis requested — see marker IN-17 in [Gradation Method](./07-gradation-method.mdx#step-2-base-soil-regrading-characteristics).
+    - *Effect on results:* A band with more gravel than sand but no more than 50 percent gravel must reach $C_u \ge 6$, not 4, to be broadly
+      graded. With less than 15 percent fines, it is then more often taken as not broadly graded and not regraded, which leaves a larger
+      $D_{85B}$ and a less restrictive no-erosion limit.
+    - *When it may not hold:* Gravelly base soils with a substantial sand or fines content, which the classification standard would call a
+      gravel.
+
+## Limitations
+
+- **One filter boundary per evaluation.** The model evaluates one filter against its base soils. For a multi-stage filter, each zone boundary is
+  a separate evaluation, from the finest to the coarsest filter material, with the finer filter acting as the base soil for the next (see the
+  [Background](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/background) chapter of the toolbox
+  manual).
+- **Gradation coverage.** A characteristic size outside the range of a supplied gradation is undetermined. A filter gradation whose smallest
+  measured percent passing is greater than 15 percent, or a base soil gradation whose smallest measured percent passing is greater than 85
+  percent, does not extend down to that size and cannot supply it; the representative gradations
+  and erosion boundaries of the Foster and Fell evaluation also depend on the bands covering a common range of particle sizes. In the gradation
+  method, a filter band that does not extend down to 15 percent passing gives an unconservative result: when the fine band's $D_{15}$ is undetermined,
+  $P_{cont,j} = 0$ however coarse the filter (see
+  [Erosion probabilities](./07-gradation-method.mdx#erosion-probabilities) in the Gradation Method chapter and marker IN-16).
+- **Soil filters only.** Erosion into a concentrated exit such as an open joint, defect, or crack in a pipe or conduit is not evaluated. The
+  toolbox evaluates it separately as a
+  [Constricted Exit](/docs/toolbox-technical-manuals/internal-erosion-suite/filter-evaluation-continuation/v1.0/constricted-exit) rather than as
+  a soil filter.
+- **Very high fine-to-medium sand content.** For a representative base soil gradation with more than 35 percent fines and a very high
+  fine-to-medium sand content, the excessive erosion boundary can exceed the continuing erosion boundary. The some-erosion and continuing erosion
+  zones then overlap and the proportions no longer divide the filter range consistently. The literature does not address this combination.
+- **Screening level.** The result is a screening-level estimate. A detailed filter evaluation with the Filter Evaluation (Continuation) Toolbox
+  gives the analyst control over the representative gradations, the regrading assessment, the segregation branch, and the permeability check.
+
+<CitationFootnote />
