@@ -1,0 +1,234 @@
+---
+title: Initiation
+---
+
+import Equation from '@site/src/components/Equation';
+import EquationReference from '@site/src/components/EquationReference';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-common-methods-screening" />
+
+# Initiation
+
+Node 2 of every CLE screening model asks whether the hydraulic shear stress exerted on the walls of the flaw by the water flowing through it is
+large enough to begin eroding them. The two model groups answer it differently. The crest-crack models apply a headwater gate at the bottom of the
+open crack. The compaction models hand the question to the cylindrical-pipe initiation analysis of the Concentrated Leak Erosion Initiation
+toolbox, evaluated by Monte Carlo simulation over the soil's critical shear stress and the initial pipe diameter.
+
+## Crest-Crack Models: Headwater Gate
+
+**Models:** cross-valley differential settlement, settlement adjacent to a wall or cliff, desiccation cracking, and frost cracking.
+
+The flaw is a transverse crack open from the crest down to the bottom-of-crack elevation $z_{bc}$
+(see [Flaw Conventions](./05-flaw-conventions.mdx#crest-crack-models-bottom-of-the-crack)). Water enters the crack only once the pool rises above
+its bottom, and once it does, initiation is taken as certain:
+
+<Equation
+  equationKey="cle-common-screening-eq-8"
+  equation="P_{init}(h) = \begin{cases} 1.0 & h > z_{bc} \\[4pt] 0 & h \le z_{bc} \end{cases}"
+/>
+
+The gate turns on strictly above the bottom of the crack: at a pool exactly at $z_{bc}$, initiation is zero. No shear stress is computed, no
+cylindrical-pipe analysis is performed, and tailwater plays no part. In the desiccation and frost-cracking models, an inapplicable mechanism (see
+[Flaw Conventions](./05-flaw-conventions.mdx#inapplicable-mechanism)) holds initiation at zero at every pool level.
+
+The gate makes the crack depth the controlling quantity of the crest-crack models' initiation: the deeper the crack, the lower the pool at which
+the SRP steps from negligible to its full value. Above $z_{bc}$, the SRP of a crest-crack model varies with pool level only through the
+continuation, roof-support, and flow-limitation nodes (see [Failure Pathway and Progression](./07-failure-pathway-and-progression.mdx)).
+
+:::warning[INPUT NEEDED IN-06 — Engineering Basis]
+The initiation probability of 1.0 applied once the pool rises above the bottom of an open crest crack
+(<EquationReference equationKey="cle-common-screening-eq-8" />) requires an engineering basis to state here. The model records two different
+attributions for it: one describes it as a conservative screening-level convention that is not an explicit finding of Pierson (2023), while
+others attribute the certain initiation of a transverse crest crack to Pierson (2023). Resolve which is intended. If Pierson (2023) is to be
+cited, provide its full bibliographic details (authors, title, publisher or journal, and report number) so that it can be added to the
+bibliography.
+
+Proposed (unconfirmed): an open transverse crack at the crest is wide enough that the shear stress of any flow through it exceeds the critical
+shear stress of the crack walls, so initiation is taken as certain once water can enter the crack — a conservative screening posture under which a
+site needing a lower value would adjust the SRP. Confirm or replace.
+:::
+
+## Delegated Method: Cylindrical Pipe Initiation
+
+**Node served:** Node 2 (Initiation) of the compaction models — poor compaction within the core, adjacent to a conduit, adjacent to a wall or
+cliff, and along the foundation or abutment.
+
+**Question answered:** At each pool level, does the flow through a pipe of initial diameter $D$ at the base of the flaw exert a hydraulic shear
+stress $\tau$ on the pipe wall that exceeds the critical shear stress $\tau_c$ of the soil? A poorly compacted zone is idealized as such a pipe,
+and the cylindrical-pipe analysis compares the two stresses over the uncertainty in $\tau_c$ and $D$. The theory is in the
+[Cylindrical Pipe](/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/cylindrical-pipe) chapter
+of the Concentrated Leak Erosion Initiation manual; this section documents what the screening models supply to it, what they take from it, and
+each screening-level choice.
+
+### Governing relationships
+
+The pipe invert is the base-of-flaw elevation $z_f$ resolved by the flaw assessment
+(see [Flaw Conventions](./05-flaw-conventions.mdx#compaction-models-base-of-the-flaw)). At each pool level $h$ with tailwater $h_t$, the upstream
+and downstream heads above the invert are each limited to be no less than zero:
+
+<Equation
+  equationKey="cle-common-screening-eq-9"
+  equation="H_1 = \max(h - z_f,\, 0), \qquad H_2 = \max(h_t - z_f,\, 0), \qquad i = \frac{H_1 - H_2}{L}"
+/>
+
+where $L$ is the seepage path length and $i$ the average hydraulic gradient along the pipe. A pool at or below the invert gives no flow and no
+initiation; a tailwater below the invert, or no tailwater, gives no submergence. The hydraulic shear stress on the wall of a cylindrical pipe
+carrying this gradient is, as derived in the toolbox manual's
+[Hydraulic Shear Stress](/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/cylindrical-pipe#hydraulic-shear-stress)
+section,
+
+<Equation equationKey="cle-common-screening-eq-10" equation="\tau = \gamma_w\, i\, \frac{D}{4}" />
+
+with $\gamma_w$ the unit weight of water (62.4 lb/ft³) and $D$ converted from millimeters to feet. Erosion initiates in a realization when
+$\tau > \tau_c$. The initiation probability at each pool level is the fraction of Monte Carlo realizations in which it does, as in the toolbox
+manual's
+[Likelihood of Initiation](/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/cylindrical-pipe#likelihood-of-initiation-of-concentrated-leak-erosion)
+section:
+
+<Equation equationKey="cle-common-screening-eq-11" equation="P_{init}(h) = \frac{1}{N} \sum_{n=1}^{N} \mathbf{1}\bigl[\tau_n(h) > \tau_{c,n}\bigr]" />
+
+where each of the $N$ realizations draws one critical shear stress $\tau_{c,n}$ and one initial pipe diameter $D_n$ and holds them at every pool
+level. Because the same draws are carried across pool levels, the initiation probability does not decrease wherever the gradient rises with pool
+level: it rises, or stays flat at 0, at 1, or at a plateau between them. It can fall only where a rising tailwater reduces the net head across the
+pipe faster than the pool raises it.
+
+### Seepage path length
+
+Unless the user supplies a seepage path length, the model measures the pipe as a horizontal line at the invert elevation across the embankment
+section — the core section when one is supplied, the shell section otherwise (see
+[Common Input Parameters](./03-input-parameters.mdx#embankment-description)):
+
+<Equation equationKey="cle-common-screening-eq-12" equation="L = W_t + S_{us}(z_f) + S_{ds}(z_f)" />
+
+where $W_t$ is the top width of the section ($W_{t,c}$ for the core, $W_{t,s}$ for the shell) and $S_{us}(z_f)$ and $S_{ds}(z_f)$ are the
+horizontal spans of the upstream and downstream faces from the top of the section down to the invert. Each span is the sum, over the face
+segments, of the vertical extent of each segment above the invert (only the part above it, for the segment the invert cuts) times the segment's
+slope. This is the measurement the toolbox manual prescribes in its
+[Core Geometry](/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/cylindrical-pipe#core-geometry)
+and Hydraulic Shear Stress sections: across the embankment slopes for a homogeneous embankment, and across the impervious core for a zoned
+embankment whose outer zones are very permeable. As the manual recommends, a user-supplied length replaces the derivation for a sloping core or a
+pipe that does not run perpendicular to the embankment centerline; a surveyed path length may be supplied the same way. The length is the same at every pool level.
+
+### Critical shear stress
+
+Left blank, the critical shear stress is a triangular distribution whose low, most likely, and high values are taken from
+<TableReference tableKey="cle-common-screening-table-11" /> for the core soil classification. All four compaction models share this table. The
+toolbox manual's
+[Critical Shear Stress and Initial Pipe Diameter](/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/cylindrical-pipe#critical-shear-stress-and-initial-pipe-diameter)
+section directs the estimation of a site-specific critical shear stress to the
+[Erodibility Parameters](/docs/toolbox-technical-manuals/internal-erosion-suite/erodibility-parameters/v1.0/preface) toolbox; a site-specific
+distribution supplied by the user replaces the default.
+
+<TableVertical
+  tableKey="cle-common-screening-table-11"
+  alt="Default critical shear stress range by soil classification"
+  caption="Default critical shear stress range by soil classification (lb/ft²)."
+  colAlign={['left', 'left', 'center', 'center', 'center']}
+  headers={[[{ value: 'USCS Class' }, { value: 'Soil Description' }, { value: 'Low' }, { value: 'Most Likely' }, { value: 'High' }]]}
+  columns={[
+    ['SM', 'SC', 'ML', 'GM', 'CL-ML', 'GC', 'CL', 'MH', 'CH'],
+    [
+      'Silty sand',
+      'Clayey sand',
+      'Low-plasticity silt',
+      'Silty gravel',
+      'Silty clay',
+      'Clayey gravel',
+      'Lean clay',
+      'High-plasticity silt',
+      'Fat clay',
+    ],
+    ['0.02089', '0.02089', '0.02089', '0.021', '0.04177', '0.04177', '0.04177', '0.04177', '0.2089'],
+    ['0.04177', '0.04177', '0.04177', '0.08354', '0.08354', '0.08354', '0.1044', '0.1044', '0.5221'],
+    ['0.1044', '0.1044', '0.1044', '0.2089', '0.2089', '0.418', '0.4177', '0.4177', '1.044'],
+  ]}
+/>
+
+The six clean and nearly clean sand and gravel classes — SP-SM, SW, SP, GP-GM, GW, and GP, the classes with less than 12 percent fines — have
+no entry: the compaction models do not accept them as the core soil classification. The silty classes SM, GM, and ML, which can also be
+non-plastic, are accepted.
+
+:::warning[INPUT NEEDED IN-07 — Engineering Basis]
+The default critical shear stress ranges of <TableReference tableKey="cle-common-screening-table-11" /> require a literature source or an
+engineering-judgment attribution. Provide the full bibliographic details of the source table (for example, the erodibility data set or
+correlation the ranges are taken from) so that it can be added to the bibliography.
+
+Proposed (unconfirmed): the tabulated values are conversions of round values in pascals — 1, 2, 4, 5, 10, 20, 25, and 50 Pa — which suggests
+a source table published in SI units. Confirm or replace.
+:::
+
+:::warning[INPUT NEEDED IN-08 — Decision]
+Two entries of <TableReference tableKey="cle-common-screening-table-11" /> do not follow the pascal conversion of the rest of the table: the low
+value for GM is 0.021 lb/ft² where 1 Pa is 0.02089 lb/ft², and the high value for GC is 0.418 lb/ft² where 20 Pa is 0.4177 lb/ft². State whether
+these two values are intended as printed or should match the converted values used elsewhere in the table. The difference does not change any
+result materially but determines what this table should state.
+:::
+
+:::warning[INPUT NEEDED IN-09 — Engineering Basis]
+The exclusion of the six clean and nearly clean sand and gravel classes (SP-SM, SW, SP, GP-GM, GW, GP) from all four compaction models requires an engineering basis to
+state here — why a poorly compacted zone in these soils is not modeled as a concentrated leak erosion flaw.
+
+Proposed (unconfirmed): a cohesionless soil cannot sustain an open pipe or crack, so a compaction flaw in it would collapse rather than carry a
+concentrated leak; such soils are addressed by other internal-erosion failure modes. Confirm or replace.
+:::
+
+:::warning[INPUT NEEDED IN-10 — Engineering Basis]
+The choice of a triangular distribution over the tabulated low, most likely, and high values as the default critical shear stress distribution
+requires an engineering basis or an engineering-judgment attribution.
+
+Proposed (unconfirmed): the triangular form follows the probabilistic input of the Concentrated Leak Erosion Initiation toolbox, which represents
+the critical shear stress and the initial pipe diameter by triangular distributions over their minimum, most likely, and maximum values. Confirm
+or replace.
+:::
+
+### Initial pipe diameter
+
+Left blank, the initial pipe diameter is a triangular distribution set by the model (<TableReference tableKey="cle-common-screening-table-12" />).
+The toolbox manual's
+[Critical Shear Stress and Initial Pipe Diameter](/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/cylindrical-pipe#critical-shear-stress-and-initial-pipe-diameter)
+section directs the estimation of an initial opening to the
+Concentrated Leak Erosion (Cracking)
+toolbox and, because the initial diameter is very difficult to predict, recommends sensitivity analysis; a site-specific distribution supplied by
+the user replaces the default.
+
+<TableVertical
+  tableKey="cle-common-screening-table-12"
+  alt="Default initial pipe diameter by compaction model"
+  caption="Default initial pipe diameter by compaction model (mm, triangular)."
+  colAlign={['left', 'center', 'center', 'center']}
+  headers={[[{ value: 'Model' }, { value: 'Low' }, { value: 'Most Likely' }, { value: 'High' }]]}
+  columns={[
+    [
+      'Poor compaction within the core',
+      'Poor compaction adjacent to a conduit',
+      'Poor compaction adjacent to a wall or cliff',
+      'Poor compaction along the foundation or abutment',
+    ],
+    ['2', '5', '5', '2'],
+    ['3', '10', '5', '3'],
+    ['5', '12.5', '10', '5'],
+  ]}
+/>
+
+:::warning[INPUT NEEDED IN-11 — Engineering Basis]
+The default initial pipe diameter ranges of <TableReference tableKey="cle-common-screening-table-12" /> require an engineering basis, including
+why the conduit model's range is larger than the core model's, and why the wall or cliff model's range has its most likely value at its low
+value. Provide a literature source or the engineering-judgment attribution to state here.
+:::
+
+### Screening-level adjustments
+
+Relative to the toolbox method, the compaction models:
+
+1. **Use the cylindrical-pipe geometry only.** The horizontal, vertical rectangular, and vertical triangular crack geometries of the toolbox are
+   not offered; a poorly compacted zone is idealized as a pipe.
+2. **Always run the probabilistic analysis.** The toolbox's deterministic option, which compares the most likely values only, is not used, so the
+   initiation probability always reflects the uncertainty in the critical shear stress and the initial pipe diameter.
+3. **Supply default distributions** for the critical shear stress and the initial pipe diameter, which the user may replace.
+4. **Derive the seepage path length** from the screening section at the flaw elevation, which the user may replace.
+
+The toolbox's further results — the critical pipe diameter, the headwater level for initiation, and the steady flow through the pipe — do not
+enter the event tree.
