@@ -1,0 +1,171 @@
+---
+title: Output and Interpretation
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/backward-erosion-piping-screening" />
+
+# Output and Interpretation
+
+The model produces two groups of results: probabilities that do not depend on pool level, and series evaluated at each pool level. The
+governing SRP series is the system response curve.
+
+## Pool-Independent Results
+
+- **Flaw probability** — the mean posterior probability of a continuous foundation flaw (Node 1), from the Bayesian assessment in
+  [Flaw Assessment](./04-flaw-assessment.mdx).
+- **Flaw probability spread** — the 5th, 25th, 50th, 75th, and 95th percentiles of the posterior flaw probability, which show how sharply the
+  evidence constrains the flaw judgment.
+- **Defect probability** — the mean probability that a pre-existing defect fully penetrates the confining layer; produced only when a confining
+  layer may be present.
+- **Roof-support probability** — the probability that the material over the developing pipe sustains a roof (Node 4): 1.0 with a confirmed
+  confining layer, otherwise the minimum across the listed embankment materials.
+- **Intervention and breach probabilities** — the user-specified probabilities for Nodes 6 and 7.
+
+## Pool-Dependent Series
+
+Every pool-dependent result is a series over the evaluated pool levels: every supplied headwater value and additional pool levels distributed
+between them (see [Input Parameters](./03-input-parameters.mdx)). The daylight-pathway series
+are produced only when a confining layer may be present (its presence is Yes or Unknown) *and* the daylighting exit is distinct from the toe
+exit. When the berm toe is itself the daylighting exit — a berm that reaches or clears a confirmed layer's downstream extent, overlies a
+confirmed layer of unknown extent, or overlies a layer of unknown presence — there are no daylight series and the toe series carry the
+governing curve (see [Event Tree](./06-event-tree.mdx)).
+
+**Hydraulic series:**
+
+- **Pool levels** — the headwater elevations at which the event tree is evaluated.
+- **Tailwater** — the tailwater at each pool level, interpolated between the supplied pairs, and blank wherever no tailwater exists.
+- **Toe control level** — the higher of the tailwater and the toe reference elevation: the downstream control level of the toe progression
+  pathway, and the water standing on the confining layer in the blowout and heave analyses.
+- **Daylight control level** — the higher of the tailwater and the daylight reference elevation: the exit level that sets the driving head of
+  the blowout, heave, and daylight-progression analyses.
+
+**Toe pathway series:**
+
+- **Unfiltered-exit probability** — Node 2: the defect–blowout composition with its overrides applied; 1.0 at every pool when no confining layer
+  is present.
+- **Blowout probability** — the blowout probability alone, before it is combined with the defect probability, so the two contributions to
+  Node 2 can be compared; produced only when a confining layer may be present.
+- **Initiation probability** — Node 3: the heave probability with the berm and trigger-elevation overrides applied; 1.0 at every pool when no
+  confining layer is present.
+- **Progression probability** — Node 5: the mean probability of advancement over the toe path, non-decreasing with pool level.
+- **SRP** — the product of the seven nodes on the toe pathway.
+
+**Daylight pathway series:**
+
+- **Unfiltered-exit probability** — Node 2: 1.0 at every pool level.
+- **Initiation probability** — Node 3: 1.0 at pool levels above the daylight control level, and 0 at or below it.
+- **Progression probability** — Node 5: the mean probability of advancement over the longer daylight path, non-decreasing with pool level.
+- **SRP** — the product of the seven nodes on the daylight pathway.
+
+**Governing series:**
+
+- **Governing SRP** — the system response curve: the larger of the toe and daylight SRP at each pool level, equal to the toe SRP when no
+  daylight pathway is evaluated.
+
+## Interpreting the System Response Curve
+
+The governing SRP series is the system response curve — the conditional probability of breach by backward erosion piping as a function of pool
+level. While the net head does not decrease as the pool rises, the curve is non-decreasing with pool level: the flaw, roof-support,
+intervention, and breach nodes are constant; the blowout and heave probabilities rise with net head; and the progression node is explicitly
+constrained to be non-decreasing. Where the tailwater rises faster than the headwater, the net head can fall and the blowout and heave
+probabilities with it. Each pathway carries zero SRP at pools at or below its own control level, because its progression analysis has no
+driving head there.
+
+### Which Pathway Governs
+
+The governing curve is the larger of the two pathway SRPs at each pool level, and the two pathways differ in opposite directions:
+
+- The **toe pathway** carries unfiltered-exit and initiation probabilities that can be below one, because the confining layer resists both. Its
+  progression analysis runs over a path no longer than the daylight path — shorter with no berm, or with a berm inside a confirmed layer's
+  known extent — which raises the average applied gradient, and, when the layer is confirmed and the exit stays beneath it, uses the hole-type
+  exit that halves the Schmertmann critical gradient.
+- The **daylight pathway** carries certain unfiltered exit, because nothing confines the exit there, and certain initiation whenever seepage
+  leaves the sand there. Its progression analysis runs over the path to the layer's termination with a plane-type exit.
+
+The daylight pathway governs at a pool level when the reduction the confining layer gives the toe pathway through Nodes 2 and 3 outweighs any
+progression advantage the toe pathway gains from its shorter path and exit type; otherwise the toe pathway governs. (The path-length and depth
+corrections of the Schmertmann method also change with path length, so the progression comparison itself depends on the site.) Which side of that balance a site falls on depends on the
+layer thickness band, the unit weights, the downstream extent, and the foundation sand properties, and it can change with pool level. When both
+pathways are evaluated, both are produced, so the balance can be read directly from the results. When the berm toe is itself the daylighting
+exit, only the toe pathway is evaluated: it *is* the daylighting exit, with certain unfiltered-exit and initiation probabilities over the
+berm-extended progression path.
+
+### How Key Inputs Affect the SRP
+
+The effect of each input depends on the site configuration. The following describes the mechanism by which each key input changes the SRP and
+the conditions under which it controls the result:
+
+- **Flaw evidence selections** — the flaw probability multiplies the SRP at every pool level, so the effect of the geologic environment, the
+  strength of evidence, and the observed-seepage selections on the flaw likelihood scales the whole curve by the same factor, whatever the other
+  inputs. A sand-boil or concentrated-seepage observation also enables the seepage-through-layer and trigger-elevation inputs, which can set
+  Nodes 2 and 3 to certainty and so change the curve beyond that factor (see [Event Tree](./06-event-tree.mdx)).
+- **Confining-layer thickness category** — thickness enters the defect probability (pool-independent, and rising steeply as the layer thins)
+  and the vertical exit gradient in the blowout and heave analyses (a thinner layer gives a larger gradient for the same head). It affects the
+  toe pathway only, and only where a confining layer may be present. Where no layer is present, or where a berm daylights the exit, Nodes 2
+  and 3 are certain and thickness has no effect.
+- **Downstream confining-layer extent** — with no berm, a longer downstream path $L_3$ leaves a larger share of the net head at the toe
+  (raising the toe blowout and heave probabilities) and lengthens the daylight progression path (lowering the daylight progression
+  probability). With a berm ending inside a confirmed layer's known extent, the blowout and heave are evaluated at the berm toe, where the
+  head from flow is the driving head times the layer length remaining beyond the berm divided by the total path length, so a longer extent
+  raises them. When no berm is
+  present and the extent or the layer's presence is unknown, the 1 to 5 embankment-height default spreads these effects across a wide range.
+  With a berm, the extent also decides which exit treatment applies (see [Event Tree](./06-event-tree.mdx)).
+- **Relative density category** — denser sand raises the Schmertmann critical gradient through the density correction and lowers the
+  progression probability on both pathways. It has little effect at pool levels where the progression probability is already close to 0 or 1.
+- **Coefficient of uniformity, effective grain size, and fines content** — these set the base critical gradient, the grain-size correction,
+  and the fines-content correction of the Schmertmann analysis, and they act on Node 5 of both pathways in the same way as relative density.
+- **Embankment materials** — when the confining layer is not confirmed, the minimum roof-support probability multiplies the SRP at every pool
+  level, so a single listed material with a low roof-support probability lowers the whole curve by that factor. With a confirmed layer, the
+  materials have no effect.
+- **Reference elevations** — the toe and daylight ground surfaces set the pool levels below which each pathway has no driving head, and so
+  position the low-pool end of the curve. Their difference also enters the blowout and heave analyses directly: a daylight ground above the toe
+  adds that difference to the uplift at the toe, including at pools below the daylight ground, and a daylight ground below the toe reduces it.
+
+### Checking the Result
+
+The documented method implies several relationships that every result must satisfy. A result that breaks one of the identities below
+indicates a computation error in the model, not a property of the site:
+
+- **Product of nodes** — at each pool level, each pathway SRP equals the product of its seven node probabilities, all of which are reported.
+- **Governing value** — the governing SRP equals the larger of the toe and daylight SRP at each pool level, or the toe SRP when no daylight
+  pathway is evaluated.
+- **Upper bound** — no SRP exceeds the product of the pool-independent nodes: the flaw, roof-support, unsuccessful-intervention, and breach
+  probabilities.
+- **Unfiltered-exit floor** — on the toe pathway, the unfiltered-exit probability is never less than either the defect probability or the
+  blowout probability.
+- **Certain nodes** — on the daylight pathway, the unfiltered-exit probability is 1.0 at every pool level and the initiation probability is
+  1.0 above the daylight control level and 0 at or below it; on the toe pathway both are 1.0 at every pool level when the confining-layer
+  presence is No.
+- **Zero-head threshold** — each pathway's SRP is zero at pool levels where its progression analysis has no net head: at or below the higher
+  of the tailwater and the toe reference elevation for the toe pathway, and of the tailwater and the daylight reference elevation for the
+  daylight pathway.
+- **Monotonic progression** — the progression probabilities never decrease with pool level.
+- **Trigger elevation** — where a trigger elevation is supplied, the toe initiation probability is 1.0 at every pool level at or above it.
+
+Two further checks follow from the method and help judge whether a result is reasonable for the site:
+
+- **Flaw ceiling** — the governing SRP never exceeds the flaw probability, so a curve that approaches the flaw probability at high pools means
+  every other node is close to certain there; the analyst can confirm that this matches the site's confining layer, materials, and berm.
+- **Low-pool unfiltered exit** — for a confirmed layer with no berm, the blowout probability falls toward zero as the net head falls, so at low
+  pools the toe unfiltered-exit probability should approach the defect probability; a much larger value at low pools points to a forcing
+  condition (for example, observed seepage through the layer) that the analyst can confirm.
+
+### Screening Versus Detailed Analysis
+
+A high screening SRP does not by itself indicate a high risk of failure — it indicates that the structure warrants analysis with the full
+toolbox models, where:
+
+- the blanket-theory case matching the actual stratigraphy can be selected from all eight configurations (see the
+  [General Overview](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation/v1.0/general-overview) of the BEP Initiation manual);
+- site-specific blanket geometry replaces the screening defaults and unknown-value ranges;
+- the anisotropy and underlayer corrections (see
+  [Field Horizontal Critical Gradient](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/schmertmann#field-horizontal-critical-gradient)) and the pipe-inclination correction (see
+  [Pipe Path Inclination](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/schmertmann#pipe-path-inclination)) can be applied to the Schmertmann analysis;
+- the Sellmeijer method is available as an alternative progression formulation (see
+  [Sellmeijer](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/sellmeijer)); and
+- the flaw judgment can be refined by targeted subsurface investigation rather than screening-level evidence categories.
+
+A low screening SRP provides reasonable confidence that backward erosion piping is not a critical concern at the screening level, subject to
+the assumptions and limitations documented in this reference.
