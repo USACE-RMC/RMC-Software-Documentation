@@ -1,0 +1,125 @@
+---
+title: Assumptions and Limitations
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer
+  link="/web-applications/system-response"
+  linkTitle="System Response Library"
+  document="web-applications/system-response/cle-wall-cliff-settlement-screening"
+/>
+
+# Assumptions and Limitations
+
+The wall or cliff settlement model applies deliberate simplifications relative to a detailed concentrated leak erosion risk analysis. They reduce
+input requirements and are designed to avoid false negatives at the screening level. This chapter lists the assumptions specific to this model.
+Each assumption states its engineering basis, its effect on results, and the conditions under which it may not hold. Where an engineering basis is
+still awaiting confirmation, the assumption cross-references the input marker at its primary location in this document.
+
+## Shared Assumptions
+
+The model also makes the assumptions common to the CLE screening models, documented with their bases in the
+[Assumptions and Limitations](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/assumptions-and-limitations) chapter of
+the common methods manual. Those that apply to this model are the event-tree assumptions (the SRP as the product of the nodes, the single-valued
+intervention and breach probabilities, and the headwater grid), the pool-independent flaw probability, the scoring of site factors into a flaw
+probability, the certain initiation of an open crest crack above its bottom, and the crest-crack pathway, roof-support, crack-filling, and
+flow-limitation conventions. The compaction-model assumptions of that chapter do not apply.
+
+## Flaw Probability
+
+1. **The likelihood of a continuous crack is scored from three factors: the bench-width ratio, the normalized settlement, and the abutment slope
+   below the wall or cliff, with risk factors 3, 2, and 1.** (See [Likelihood Factors](./04-flaw-assessment.mdx#likelihood-factors).)
+   - *Engineering basis:* The risk-factor and likelihood-factor method of Fell et al. (2024) <Citation citationKey="Fell2024" />; the source of the
+     bands and weights is requested at marker IN-05 in [Flaw Assessment](./04-flaw-assessment.mdx#likelihood-factors).
+   - *Effect on results:* One step in the cross-valley profile score moves the weighted sum three times as far as one step in the abutment slope
+     score, so the bench-width ratio carries the largest risk-factor weight. A score changes only where its input crosses a band limit, and the
+     abutment slope, like the bench-width ratio, forces the flaw probability to zero on its own when it scores 1.
+   - *When it may not hold:* Where cracking against the wall or cliff is controlled by conditions the three factors do not describe, such as
+     irregularities in the face of the wall or cliff or compressible foundation soils beneath the fill. The risk team's estimate then replaces the
+     screening value.
+2. **A bench-width ratio of exactly 1 is scored in the band for a likelihood factor of 3.**
+   - *Engineering basis:* Screening design decision (engineering judgment): in the source, the cross-valley profile bands for likelihood factors of 2
+     and 3 both include a ratio of 1, and the model assigns that ratio to the more conservative of the two (see marker IN-05 in
+     [Flaw Assessment](./04-flaw-assessment.mdx#likelihood-factors)).
+   - *Effect on results:* At a ratio of exactly 1 the weighted sum is 3 higher than it would be in the band for 2, which raises the flaw
+     probability (conservative).
+   - *When it may not hold:* Not applicable as a site condition; it affects only a ratio at the boundary itself.
+3. **A bench wider than 2.5 times the wall or cliff height, or an abutment slope of 25° or flatter, rules out a continuous crack.** Either sets the
+   flaw probability to zero, whatever the settlement (see
+   [Incompatible-Condition Factors](./04-flaw-assessment.mdx#incompatible-condition-factors)).
+   - *Engineering basis:* Basis requested — see marker IN-06 in
+     [Flaw Assessment](./04-flaw-assessment.mdx#incompatible-condition-factors).
+   - *Effect on results:* The SRP is negligible at every pool level for such a geometry.
+   - *When it may not hold:* Where a large settlement or poor compaction against the wall or cliff could crack the embankment despite a wide
+     bench or a flat abutment; other CLE mechanisms, such as poor compaction adjacent to a wall or cliff, should then be considered (see the CLE Wall/Cliff Compaction Screening Technical Reference Manual).
+4. **When the settlement is not known, the normalized settlement defaults to 0.5 percent of the dam height for a dam completed before 1950 and
+   0.25 percent for a dam completed in 1950 or later.** (See [Normalized Settlement](./04-flaw-assessment.mdx#normalized-settlement).)
+   - *Engineering basis:* Basis requested — see marker IN-04 in [Flaw Assessment](./04-flaw-assessment.mdx#normalized-settlement).
+   - *Effect on results:* The later-era default scores a settlement likelihood factor of 1 and gives a crack depth of 65 percent of the effective
+     wall height; the earlier-era default scores 2 and gives 90 percent. Moving the year of construction across 1950 therefore always changes the
+     crack depth. It also changes the flaw probability unless an incompatible-condition factor already forces it to zero.
+   - *When it may not hold:* For embankments with settlement known or suspected to be larger than the default — compressible foundations, poorly
+     compacted fill, or a history of crest repairs — where a measured settlement should be supplied.
+5. **The weighted sum is converted to a flaw probability by a log-linear curve with a negligible point at a weighted sum of 9.** (See
+   [Flaw Probability](./04-flaw-assessment.mdx#flaw-probability).)
+   - *Engineering basis:* Fell et al. (2024) <Citation citationKey="Fell2024" />; the source of the curve is requested at marker IN-07 in
+     [Flaw Assessment](./04-flaw-assessment.mdx#flaw-probability).
+   - *Effect on results:* The lowest reachable weighted sum, 10, gives a negligible flaw probability, many orders of magnitude below
+     $1 \times 10^{-3}$, and an effectively negligible SRP; the highest, 24, gives 0.2.
+   - *When it may not hold:* Where site investigation supports a flaw probability more directly than the factor scores do.
+6. **An observation of cracking does not override the scored flaw probability.** (See
+   [No Observation Override](./04-flaw-assessment.mdx#no-observation-override).)
+   - *Engineering basis:* Basis requested — see marker IN-08 in
+     [Flaw Assessment](./04-flaw-assessment.mdx#no-observation-override).
+   - *Effect on results:* An embankment with an observed transverse crack adjacent to the wall or cliff receives the same flaw probability as one
+     without it, which may understate the SRP.
+   - *When it may not hold:* Wherever such a crack has been observed; a detailed assessment should then weigh the observation directly.
+
+## Crack Geometry
+
+7. **The crack depth is a tabulated fraction of an effective wall height, which is itself a tabulated fraction of the wall or cliff height.** (See
+   [Crack Depth](./04-flaw-assessment.mdx#crack-depth).)
+   - *Engineering basis:* Fell et al. (2024) <Citation citationKey="Fell2024" />; the source of the relationships is requested at marker IN-10 in
+     [Flaw Assessment](./04-flaw-assessment.mdx#crack-depth).
+   - *Effect on results:* The crack depth never exceeds the wall or cliff height, reaches the full effective wall height at 1 percent normalized
+     settlement, and is 15 percent of the effective wall height at zero settlement. A deeper crack lowers the pool level at which the SRP steps up.
+   - *When it may not hold:* Where the crack depth is known from investigation, such as test pits or trenches at the crest; a detailed analysis
+     then uses the observed depth.
+8. **The crack width, crack depth, and effective wall height relationships take their edge values beyond their tabulated ranges.** (See
+   [Range of the Tabulated Relationships](./04-flaw-assessment.mdx#range-of-the-tabulated-relationships).)
+   - *Engineering basis:* Basis requested — see marker IN-11 in
+     [Flaw Assessment](./04-flaw-assessment.mdx#range-of-the-tabulated-relationships).
+   - *Effect on results:* A normalized settlement above 2 percent gives the crack depth of 2 percent, the full effective wall height; an abutment
+     slope steeper than 60° gives the values of 60°.
+   - *When it may not hold:* For settlements or slopes well outside the tabulated range, where the edge values may not represent the crack.
+9. **The crack width does not enter the event tree.** Initiation depends only on whether the pool stands above the bottom of the crack, even
+   where the crack width is zero.
+   - *Engineering basis:* The headwater gate of the crest-crack models, documented with its basis in the
+     [Crest-Crack Models: Headwater Gate](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#crest-crack-models-headwater-gate)
+     section of the common methods manual.
+   - *Effect on results:* A narrow crack and a wide crack of the same depth give the same SRP. The assumption is conservative for narrow cracks:
+     it overstates initiation where a narrow crack would not erode. At a bench-width ratio of exactly 2.5 the crack width is zero, yet the flaw
+     probability and the crack depth are not, so initiation is certain above the bottom of a zero-width crack (see
+     [Crack Width](./04-flaw-assessment.mdx#crack-width)).
+   - *When it may not hold:* For narrow cracks in erosion-resistant soils; a crack-geometry initiation analysis then applies.
+10. **One wall or cliff geometry is evaluated per run, and the inputs are not checked against one another.** The model does not require the wall or
+    cliff height to be less than the dam height or the bottom of the crack to lie above the base of the embankment.
+    - *Engineering basis:* Basis requested — see markers IN-01 and IN-03 in [Input Parameters](./03-input-parameters.mdx#dam-and-wall-or-cliff-geometry).
+    - *Effect on results:* A wall or cliff height that exceeds the embankment height can place the bottom of the crack below the base of the
+      embankment, so that initiation is certain at every pool level above that elevation.
+    - *When it may not hold:* Where the embankment abuts several walls or cliffs, or a wall or cliff taller than the embankment; each geometry and
+      the height in contact with the fill should then be considered (see marker IN-01).
+
+## Limitations
+
+- **Scope of the mechanism** — The model addresses cracking by differential settlement against a steep wall or cliff at an abutment. Poor
+  compaction of the fill against the wall or cliff is a separate CLE mechanism with its own screening model (see the CLE Wall/Cliff Compaction Screening Technical Reference Manual).
+- **Screening-level geometry** — The flaw is described by four measurements and a settlement. Irregular abutment profiles, several benches, or a
+  wall or cliff whose height varies along the embankment are represented only through the values the user chooses to supply.
+- **Deterministic flaw assessment** — The flaw probability and crack depth carry no uncertainty in the inputs. Where an input is uncertain, the
+  effect can be bracketed by running the model with alternative values.
+
+<CitationFootnote />
