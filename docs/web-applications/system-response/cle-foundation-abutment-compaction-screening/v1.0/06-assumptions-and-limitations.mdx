@@ -1,0 +1,123 @@
+---
+title: Assumptions and Limitations
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-foundation-abutment-compaction-screening" />
+
+# Assumptions and Limitations
+
+The model shares the assumptions of the CLE screening family — the event-tree product, the pool-independent flaw, the cylindrical-pipe
+idealization and its defaults, and the progression tables — listed in the
+[Assumptions and Limitations](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/assumptions-and-limitations) chapter of
+the common methods manual, and the assumptions of the continuation method listed in the
+[Assumptions and Limitations](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/assumptions-and-limitations) chapter of the
+continuation manual. This chapter lists the assumptions specific to the foundation or abutment compaction mechanism. Each states its engineering
+basis, its effect on results, and the conditions under which it may not hold. Where an engineering basis is awaiting confirmation, the assumption
+cross-references the input marker at its primary location in this document.
+
+## Flaw Location
+
+1. **A foundation flaw lies on the embankment–foundation contact.** Its base is the contact elevation supplied by the user (see
+   [Base-of-Flaw Elevation](./04-flaw-assessment.mdx#base-of-flaw-elevation)).
+   - *Engineering basis:* Definition of the mechanism: the poorly compacted zone is the fill placed on the foundation surface.
+   - *Effect on results:* Initiation is zero, and the SRP negligible, at pool levels at or below the contact. The seepage path through a section whose
+     base is at the contact spans its full base width, which gives the lowest gradient the section allows for a given net head.
+   - *When it may not hold:* Where the contact steps or slopes across the section, so that the poorly compacted zone lies above the contact
+     elevation supplied.
+2. **An abutment flaw lies one third of the way from the normal pool to the crest.**
+   - *Engineering basis:* Basis requested — see marker IN-05 in [Flaw Assessment](./04-flaw-assessment.mdx#base-of-flaw-elevation); the
+     heuristic itself is addressed in
+     [Compaction models: base of the flaw](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#compaction-models-base-of-the-flaw)
+     in the common methods manual.
+   - *Effect on results:* Initiation is zero, and the SRP negligible, at pool levels at or below that elevation, which lies above normal pool,
+     however low on the abutment the contact runs. For a flaw that lies lower on the abutment, the placement is unconservative: the model gives a
+     negligible SRP at every pool level from the actual flaw up to $z_f$, including pool levels between normal pool and $z_f$, and above $z_f$ it
+     applies less net head over the pipe invert than the lower flaw would carry. The higher placement also shortens the seepage path, which steepens
+     the gradient for a given net head, so above $z_f$ whether initiation is underestimated or overestimated depends on the section. Walls are
+     judged against the same elevation.
+   - *When it may not hold:* Where construction records or performance locate the poorly compacted zone on the abutment, such as at a steep or
+     overhanging section of the valley wall below normal pool.
+3. **One run evaluates one contact location.** The foundation and abutment contacts are alternative flaw locations, selected by the user.
+   - *Engineering basis:* Basis requested — see marker IN-01 in [Input Parameters](./03-input-parameters.mdx#flaw-location).
+   - *Effect on results:* A site with concerns at both contacts needs a run for each to describe both.
+   - *When it may not hold:* Where one continuous poorly compacted zone runs from the valley floor up the abutment, so that neither the foundation
+     contact elevation nor the abutment heuristic elevation represents the flaw on its own.
+
+## Flaw Scoring
+
+4. **The flaw probability is scored from three factors, weighted 3, 2, and 1.** The factors are the foundation preparation, the contact-zone
+   compaction method, and the section geometry.
+   - *Engineering basis:* The risk-factor and likelihood-factor scheme of Fell et al. (2024) <Citation citationKey="Fell2024" />; the factor
+     weights and tables are requested at markers IN-06 to IN-09 and IN-11 in [Flaw Assessment](./04-flaw-assessment.mdx#scored-factors).
+   - *Effect on results:* The flaw probability takes one of the values of
+     [Range of the Flaw Probability](./04-flaw-assessment.mdx#range-of-the-flaw-probability), no larger than about 5.6 × 10<sup>-3</sup>, which
+     caps the SRP.
+   - *When it may not hold:* Where other evidence — continuous rock defects, open joints, or erodible foundation soils against the fill — bears on
+     a flaw along the contact more directly than the three factors do; a detailed analysis then estimates the flaw probability from that evidence.
+5. **An Unknown selection is scored as a specific known condition.** An Unknown foundation preparation is scored as irregular or poorly prepared
+   (3.5), and an Unknown compaction method as bulldozer compaction at the limit of compaction (3).
+   - *Engineering basis:* Basis requested — see markers IN-07 and IN-08 in [Flaw Assessment](./04-flaw-assessment.mdx#foundation-preparation).
+   - *Effect on results:* An Unknown preparation receives the least favorable score of its factor. An Unknown compaction method does not: poor
+     compaction in thick layers scores 4 and, for a surface that is not well prepared, raises the flaw probability more than two orders of
+     magnitude above the Unknown value. On a well-prepared surface both selections give a negligible flaw probability.
+   - *When it may not hold:* Where the construction era or practice indicates poor compaction of the contact zone; poor compaction in thick layers
+     should then be selected.
+6. **The section geometry factor scores the width and height of the section supplied.** The core section governs when one is supplied, and the
+   user may replace both dimensions.
+   - *Engineering basis:* Basis requested — see markers IN-09 and IN-10 in [Flaw Assessment](./04-flaw-assessment.mdx#section-geometry).
+   - *Effect on results:* A section scores 1 only if its base width is greater than 50 and its width-to-height ratio is greater than 2. Across
+     its full range, the factor changes the flaw probability by a factor of about 3 to 5, unless the surface is well prepared or special methods
+     with good documentation were used, when the flaw probability is negligible whatever the geometry.
+   - *When it may not hold:* For an abutment flaw, where the section at the flaw is lower and narrower than the section supplied; the flaw base
+     width and height inputs should then carry the section at the flaw.
+7. **A well-prepared foundation or abutment surface rules out the flaw.** Compacted soil on a soil foundation, or a regular or treated rock
+   surface, forces the flaw probability to a negligible value whatever the other factors score.
+   - *Engineering basis:* Basis requested — see marker IN-12 in [Flaw Assessment](./04-flaw-assessment.mdx#well-prepared-surface).
+   - *Effect on results:* The SRP is negligible at every pool level.
+   - *When it may not hold:* Where the contact zone was poorly compacted on a well-prepared surface, or where the surface preparation is
+     recorded but not verified.
+8. **No observation sets the flaw probability to 1.0.**
+   - *Engineering basis:* Basis requested — see marker IN-12 in [Flaw Assessment](./04-flaw-assessment.mdx#well-prepared-surface).
+   - *Effect on results:* Observed seepage or wet spots along the contact do not change the screening result.
+   - *When it may not hold:* Where such observations are judged to demonstrate a flaw along the contact; the screening flaw probability then
+     understates the condition, and a detailed analysis should take the observation as evidence.
+9. **The flaw-continuity stage is keyed to the contact-zone compaction method.** The scored probability is multiplied by the flaw-continuity
+   probability of the compaction method's likelihood factor.
+   - *Engineering basis:* The flaw-continuity curve shared by three compaction models (see
+     [Flaw-Continuity Stage](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#flaw-continuity-stage) in
+     the common methods manual, where its basis is addressed).
+   - *Effect on results:* Special methods with good documentation give a negligible flaw probability whatever the surface preparation and
+     geometry, and the compaction method enters the flaw probability twice, so the result is especially sensitive to that selection.
+   - *When it may not hold:* Where the continuity of a poorly compacted zone along the contact depends on the surface preparation rather than on
+     the compaction method, such as a continuous open joint or overhang in a rock abutment.
+
+## Initiation and Pathway
+
+10. **The default initial pipe diameter is triangular with 2, 3, and 5 mm**, the same range as the core compaction model.
+    - *Engineering basis:* The default ranges of the compaction models are addressed in
+      [Initial pipe diameter](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#initial-pipe-diameter) in the
+      common methods manual.
+    - *Effect on results:* The shear stress is proportional to the diameter, so the range sets how high above the base of the flaw the pool must
+      rise before initiation becomes likely.
+    - *When it may not hold:* Where the contact has open defects, such as open joints or a gap against an overhanging rock surface, larger than a
+      few millimeters; a site-specific distribution should then be supplied.
+11. **Filter presence at the contact is a user statement, independent of the base-of-flaw elevation.**
+    - *Engineering basis:* The user resolves the failure pathway against the section and supplies the result (see
+      [The Failure Pathway](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#the-failure-pathway)
+      in the common methods manual); what counts as a filter at the contact is requested at marker IN-04 in
+      [Input Parameters](./03-input-parameters.mdx#filter-presence-and-continuation).
+    - *Effect on results:* A filter stated present multiplies the SRP by the probability of continuing erosion $P_{ce}$ at every pool level.
+    - *When it may not hold:* Where a filter covers only part of the contact, such as a foundation filter that does not extend up the abutment.
+12. **Walls are judged against the base of the flaw.** A wall whose top is below the base of the flaw gives no flow-limitation credit.
+    - *Engineering basis:* The flow-limitation convention of the compaction models (see
+      [Walls that stop below the crest](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#walls-that-stop-below-the-crest)
+      in the common methods manual).
+    - *Effect on results:* A cutoff wall reaching at or above the foundation contact limits flow into a foundation flaw; for an abutment flaw, the wall
+      top must reach the heuristic elevation above normal pool.
+    - *When it may not hold:* Where a cutoff wall does not extend along the abutment contact, even though its top is above the base of the flaw.
+
+<CitationFootnote />

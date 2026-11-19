@@ -1,0 +1,98 @@
+---
+title: Output and Interpretation
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-foundation-abutment-compaction-screening" />
+
+# Output and Interpretation
+
+The model reports the results common to the CLE compaction models — the pool-independent node probabilities, the series evaluated at each pool
+level, and the supporting results of the initiation analysis — documented in the
+[Output and Interpretation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation) chapter of the
+common methods manual. This chapter describes the flaw-assessment results specific to the model and how they bear on reading and checking the
+system response curve.
+
+## Results Common to the Compaction Models
+
+- **Pool-independent results** — the flaw, continuation, roof-support, crack-filling, and flow-limitation probabilities (see
+  [Pool-Independent Results](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#pool-independent-results)).
+  The flow-limitation probability is the value after the walls are checked against the base of the flaw.
+- **Pool-dependent series** — the pool levels, the tailwater, the initiation probability, the flow-limitation, unsuccessful-intervention, and
+  breach probabilities, and the SRP (see
+  [Pool-Dependent Series](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#pool-dependent-series)).
+- **Initiation analysis** — the heads above the pipe invert, the hydraulic gradient, the shear stress statistics, and the seepage path length (see
+  [Supporting Results](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#supporting-results)).
+- **Continuation results** — when a filter is present, the results of the continuation method (see the
+  [Output and Interpretation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/output-and-interpretation) chapter of the
+  continuation manual). When no filter is present, the continuation probability is 1.0 and no continuation results are reported.
+
+## Flaw-Assessment Results
+
+The flaw assessment reports each quantity of [Flaw Assessment](./04-flaw-assessment.mdx), so that the flaw probability can be traced from the
+selections:
+
+- **Likelihood factors** — the foundation preparation factor $LF_{fdn}$, the contact-zone compaction factor $LF_{comp}$, and the section geometry
+  factor $LF_{geom}$.
+- **Section dimensions** — the base width $W$, the height $H_s$, and their ratio $W/H_s$ used in scoring: the user's values where supplied,
+  otherwise those derived from the section.
+- **Weighted sum** $\Sigma$ and **raw flaw probability** $P_{raw}$ — the raw flaw probability is zero when the well-prepared-surface rule applies.
+- **Flaw-continuity probability** $P_{cf}$ — keyed to the contact-zone compaction factor.
+- **Flaw probability** $P_{flaw}$ — the Node 1 value, never reported as exactly zero.
+- **Base-of-flaw elevation** $z_f$ — the contact elevation, or the abutment heuristic elevation.
+- **Well-prepared surface** — whether the foundation preparation factor scored 1 and forced the flaw probability to a negligible value.
+
+## Interpreting the System Response Curve
+
+Only initiation varies with pool level, so the curve is the initiation curve scaled by the product of the other seven nodes
+(see [SRP Computation](./05-event-tree.mdx#srp-computation)). It is negligible at and below the base of the flaw $z_f$, rises with pool level as the
+gradient through the pipe grows, and approaches the product of the other seven nodes as initiation approaches 1.0. The general reading of a
+compaction-model curve — its shape, the effect of tailwater, and a plateau below the product of the other nodes — is described in
+[Interpreting the System Response Curve](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#interpreting-the-system-response-curve)
+in the common methods manual.
+
+Two features are specific to the mechanism:
+
+- **Among the flaw selections, the compaction method moves the ceiling most when the surface is not well prepared.** The flaw probability, and
+  so the ceiling of the curve, takes one of the values of
+  [Range of the Flaw Probability](./04-flaw-assessment.mdx#range-of-the-flaw-probability). For a surface that is not well prepared, changing the
+  compaction method moves the ceiling by more than an order of magnitude per step, while changing the section geometry moves it by a factor of
+  about 3 to 5 across its full range; on a well-prepared surface the ceiling is negligible whatever the compaction method. The other nodes that
+  scale the curve — continuation, roof support, and flow limitation — can move the ceiling as much or more. The flaw-assessment results show
+  which selection drives a result.
+- **For an abutment contact, the curve starts above normal pool.** The base of the flaw lies one third of the way from normal pool to the crest,
+  so the curve is negligible at every pool level up to that elevation, and the headwater series must extend above it for the curve to rise.
+
+## Checking the Result
+
+In addition to the checks common to the compaction models (see
+[Checking the Result](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#checking-the-result) in
+the common methods manual):
+
+- **Flaw probability** — the reported flaw probability should be one of the values of
+  [Range of the Flaw Probability](./04-flaw-assessment.mdx#range-of-the-flaw-probability), or negligible for a well-prepared surface or for
+  special methods with good documentation. It can be reproduced by hand from the reported likelihood factors.
+- **Upper bound** — the SRP at every pool level is no larger than about 5.6 × 10<sup>-3</sup>, the largest flaw probability the model can produce.
+- **Lower end** — the curve is negligible at and below the reported base-of-flaw elevation. For a foundation contact, that elevation should match
+  the contact elevation supplied; for an abutment contact, it should lie one third of the way from normal pool to the crest.
+- **Wall credit** — the flow-limitation probability excludes the walls only when the top-of-wall elevation is below the reported base of the
+  flaw.
+
+Three causes of a negligible curve at every pool level are specific to the model: a well-prepared surface, special compaction methods with good
+documentation, and, for an abutment contact, a headwater series that does not rise above the heuristic base of the flaw. The flaw-assessment
+results and the base-of-flaw elevation show whether one of them applies.
+
+## Screening Results Relative to Detailed Analysis
+
+The model is a screening tool. Its result indicates whether concentrated leak erosion along the foundation or abutment contact warrants detailed
+analysis; it is not a substitute for one. Where the result is significant to a decision — and in particular where the flaw probability rests on
+Unknown selections, or where seepage has been observed along the contact, which the model does not take as evidence — the flaw should be
+re-examined with construction records, foundation geology, and performance, following Fell et al. (2024) <Citation citationKey="Fell2024" /> and
+the judgment of the risk team (see
+[Screening Results Relative to Detailed Analysis](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/output-and-interpretation#screening-results-relative-to-detailed-analysis)
+in the common methods manual).
+
+<CitationFootnote />

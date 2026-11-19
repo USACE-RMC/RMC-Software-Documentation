@@ -1,0 +1,135 @@
+---
+title: Model Overview
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-foundation-abutment-compaction-screening" />
+
+# Model Overview
+
+## Purpose
+
+The model computes a system response curve for concentrated leak erosion through poorly compacted fill along the foundation or abutment contact,
+as a function of headwater elevation. The system response probability (SRP) at each headwater level is the conditional probability of breach of
+the embankment by this mechanism, given that pool level.
+
+The mechanism is a continuous zone of loose or poorly compacted embankment fill against the surface the embankment is built on — the foundation
+along the valley floor, or the abutment along the valley walls. Such a zone forms where the foundation surface was left irregular or poorly
+prepared, or where the fill against it could not be, or was not, compacted as well as the body of the embankment. Water from the reservoir flowing
+along the zone can erode its walls; if the exit is unfiltered and the enlarging pipe stays open, the erosion can progress to breach.
+
+## Intended Use
+
+The model is a screening-level assessment of concentrated leak erosion along the foundation or abutment contact. Like the other CLE screening
+models, it makes simplifying and generally conservative assumptions to prevent false negatives and to reduce input burden (see
+[Intended Use](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#intended-use) in the common methods
+manual). The placement of an abutment flaw by the normal-pool heuristic is an exception: for a flaw that lies lower on the abutment it is
+unconservative, because it gives a negligible SRP from the actual flaw elevation up to the heuristic elevation above normal pool (see Assumption 2
+in [Assumptions and Limitations](./06-assumptions-and-limitations.mdx#flaw-location)). For this mechanism the input burden is reduced to three qualitative selections describing the contact — the foundation material, how its
+surface was prepared, and how the fill against it was compacted — together with the embankment section and the screening inputs shared by the
+family.
+
+The model is not intended for detailed or semi-quantitative risk assessments (see
+[Comparison with Detailed Models](#comparison-with-detailed-models)).
+
+## How the Model Works
+
+The model executes the three stages common to the CLE family (see
+[How the Model Works](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#how-the-model-works) in the
+common methods manual), with the following mechanism-specific content:
+
+1. **Flaw assessment** — The model places the base of the flaw at the embankment–foundation contact elevation for a foundation contact, or at
+   one third of the way from normal pool to the crest for an abutment contact. It scores three factors: the preparation of the foundation or
+   abutment surface, the method used to compact the fill in the contact zone, and the width and width-to-height ratio of the embankment section.
+   The weighted score is converted to a raw flaw probability, which is multiplied by a flaw-continuity probability keyed to the compaction method.
+   A well-prepared surface forces the flaw probability to a negligible value. The model has no observation override
+   (see [Flaw Assessment](./04-flaw-assessment.mdx)).
+
+2. **Pathway resolution** — The failure pathway runs through the embankment section at the base of the flaw. The user states whether a filter
+   intercepts it; the materials it passes through set roof support; and the upstream seepage-limiting elements are checked against the base of the
+   flaw (see [Event Tree](./05-event-tree.mdx)).
+
+3. **Event-tree assembly** — At each headwater level, the model multiplies the eight node probabilities. Initiation is the cylindrical-pipe Monte
+   Carlo analysis of the common methods, with this model's default initial pipe diameter; every other node is the same at every pool level
+   (see [Event Tree](./05-event-tree.mdx)).
+
+## Physics Basis
+
+The model combines the methods of the CLE family (see
+[Physics Basis](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#physics-basis) in the common methods
+manual). Specific to this mechanism:
+
+- **Risk-factor and likelihood-factor scoring** of the probability of a continuous flaw along the contact <Citation citationKey="Fell2024" />, with
+  three factors that describe the contact surface, the compaction of the contact zone, and the embankment section, and a flaw-continuity stage
+  keyed to the compaction method (see [Flaw Assessment](./04-flaw-assessment.mdx)).
+- **Hydraulic shear stress on the walls of a cylindrical pipe** at the base of the flaw, compared with the critical shear stress assigned
+  through the core soil classification, by the cylindrical-pipe initiation analysis shared by the four compaction models (see
+  [Cylindrical Pipe Initiation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#delegated-method-cylindrical-pipe-initiation)
+  in the common methods manual). Which soil along the contact that classification describes is requested at marker IN-14 in
+  [Initiation Default](./03-input-parameters.mdx#initiation-default).
+- **Tabulated progression probabilities** for roof support, crack filling, and flow limitation <Citation citationKey="Fell2024" />, applied as for
+  every compaction model, and **filter evaluation** by the shared continuation method when a filter intercepts the pathway.
+
+## Comparison with Detailed Models
+
+The detailed counterpart is an internal-erosion risk analysis of a flaw at the soil–rock or soil–soil contact, following
+Fell et al. (2024) <Citation citationKey="Fell2024" /> in full. The common methods manual compares the CLE screening family with the detailed methods (see
+[Comparison with Detailed Models](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#comparison-with-detailed-models)).
+<TableReference tableKey="cle-foundation-abutment-screening-table-1" /> lists the differences specific to this mechanism.
+
+<TableVertical
+  tableKey="cle-foundation-abutment-screening-table-1"
+  alt="Comparison of the foundation or abutment compaction screening model and a detailed analysis"
+  caption="Comparison of the foundation or abutment compaction screening model and a detailed analysis."
+  headers={[[{ value: 'Aspect' }, { value: 'Screening Model' }, { value: 'Detailed Analysis' }]]}
+  columns={[
+    [
+      'Flaw probability',
+      'Flaw location',
+      'Foundation defects',
+      'Section geometry',
+      'Observed seepage at the contact',
+    ],
+    [
+      'Scored from three selections and the section dimensions',
+      'One elevation: the contact, or a heuristic level for an abutment',
+      'Described only through the surface preparation selection',
+      'Width and height of the core section, or the shell, unless the user supplies them',
+      'Not accepted as an override',
+    ],
+    [
+      'Estimated by the risk team from the totality of the evidence',
+      'Located from construction records, geology, and performance',
+      'Continuous rock defects assessed separately from the treatment',
+      'Section at the flaw location',
+      'Weighed directly as evidence of a flaw',
+    ],
+  ]}
+/>
+
+## Relationship to the Shared Methods
+
+The model shares everything except its flaw assessment with the other CLE compaction models:
+
+- **Common CLE methods** — the event tree and SRP product, the risk-factor and likelihood-factor scoring and flaw-continuity conventions, the
+  cylindrical-pipe initiation analysis with its critical shear stress table, and the roof-support, crack-filling, and flow-limitation tables are
+  documented in the
+  [Concentrated Leak Erosion Common Methods Screening Technical Reference Manual](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/preface).
+  [Event Tree](./05-event-tree.mdx) links each node to its section there.
+- **Continuation** — when a filter intercepts the pathway, the continuation node is the result of the shared continuation method documented in the
+  [Continuation (Filter Evaluation) Screening Technical Reference Manual](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/preface)
+  (see [Node 3: Continuation](./05-event-tree.mdx#node-3-continuation)).
+
+Within the family, the model is closest to the core compaction model: both band the width and width-to-height ratio of the embankment section,
+both place a flaw by the normal-pool heuristic (here only for an abutment contact), both apply the flaw-continuity stage, and both use the same
+default initial pipe diameter range. It differs in having a foundation-preparation factor in place of a core-compaction category, a
+well-prepared-surface rule in place of an observation override, and in the factor that keys the flaw-continuity stage: both key it to their
+compaction factor, but here that factor carries a risk factor of 2, while in the core compaction model it is the factor with the highest risk
+factor, 3.
+
+<CitationFootnote />
