@@ -16,6 +16,7 @@ export default function Changelog() {
         <div className="mx-auto max-w-[1600px] px-6 pb-16 pt-8 lg:px-12">
           <TableChangelog
             dates={[
+              'October 26, 2026',
               'September 1, 2026',
               'August 19, 2026',
               'May 19, 2026',
@@ -26,6 +27,7 @@ export default function Changelog() {
               'March 12, 2026',
             ]}
             categories={[
+              'New Document Version',
               'New Document',
               'New Document',
               'New Document Version',
@@ -36,6 +38,7 @@ export default function Changelog() {
               'Website Update',
             ]}
             documents={[
+              'RMC Backward Erosion Piping (Progression) Toolbox Technical Manual',
               'LifeSim Applications Guide',
               'LifeSim Technical Reference Manual',
               'RMC Breach Toolbox Technical Manual',
@@ -45,8 +48,9 @@ export default function Changelog() {
               'LifeSim Technical Reference Manual',
               '-',
             ]}
-            versions={['1.0', '1.0', '1.1', '-', '-', '-', '-', '-']}
+            versions={['1.1', '1.0', '1.0', '1.1', '-', '-', '-', '-', '-']}
             descriptions={[
+              'Corrected an equation in the Sellmeijer chapter.',
               'Official release of the LifeSim Applications Guide.',
               'Converted the LifeSim Technical Reference v1.0 as a web document. Removed the direct PDF download.',
               'Corrected an equation in the Unraveling chapter.',
