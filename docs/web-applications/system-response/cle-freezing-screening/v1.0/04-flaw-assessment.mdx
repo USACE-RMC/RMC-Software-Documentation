@@ -1,0 +1,311 @@
+---
+title: Flaw Assessment
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import Equation from '@site/src/components/Equation';
+import EquationReference from '@site/src/components/EquationReference';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-freezing-screening" />
+
+# Flaw Assessment
+
+Node 1 of the event tree is the probability $P_{flaw}$ that a continuous transverse frost crack exists across the crest. The flaw assessment also
+produces the one flaw quantity the downstream nodes use — the bottom-of-crack elevation $z_{bc}$, below which water cannot enter the crack — and a
+crack width reported for reference. The assessment follows the risk-factor and likelihood-factor scoring of Fell et al. (2024) <Citation citationKey="Fell2024" />,
+in the form shared by the CLE screening family and documented in
+[Flaw Conventions](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#risk-factor-and-likelihood-factor-scoring).
+It proceeds in five steps:
+
+1. Score the three site factors — climate, crest soil, and surface cover — each with a likelihood factor.
+2. Form the weighted sum of the likelihood factors.
+3. Convert the weighted sum to a raw flaw probability, applying the lower threshold.
+4. Apply the observation override to obtain $P_{flaw}$.
+5. Take the crack depth from the climate and the bottom of the crack from the crest elevation less that depth; take the crack width from the
+   weighted sum.
+
+A preliminary check precedes the scoring: when every listed crest soil is one that cannot frost-crack, the mechanism does not apply and the
+assessment ends there (see [Crest Soils That Cannot Frost-Crack](#crest-soils-that-cannot-frost-crack)).
+
+## Factor Scores
+
+Each factor $j$ carries a risk factor $RF_j$, its weight, and a likelihood factor $LF_j$, its score for the site on a scale on which 1 is the least
+likely condition for a frost crack and 4 the most likely (<TableReference tableKey="cle-freezing-screening-table-4" />). The likelihood-factor
+tables follow Fell et al. (2024) <Citation citationKey="Fell2024" />.
+
+<TableVertical
+  tableKey="cle-freezing-screening-table-4"
+  alt="Frost-cracking flaw factors and their risk factors"
+  caption="Frost-cracking flaw factors."
+  colAlign={['left', 'center', 'center', 'left']}
+  headers={[[{ value: 'Factor' }, { value: 'Symbol' }, { value: 'Risk Factor' }, { value: 'Likelihood Factor Range' }]]}
+  columns={[
+    ['Climate', 'Crest soil (core material)', 'Surface cover'],
+    ['LF<sub>clim</sub>', 'LF<sub>core</sub>', 'LF<sub>surf</sub>'],
+    ['3', '2', '1'],
+    ['1 to 4', '2 to 4', '2 to 4'],
+  ]}
+/>
+
+None of the three factors is an incompatible-condition factor in the sense of the common scoring scheme: a likelihood factor of 1 does not by
+itself force the flaw probability to zero. Only the climate can score 1, and an above-freezing climate is instead limited by its shallow crack (see
+[Crack Depth and Bottom of the Crack](#crack-depth-and-bottom-of-the-crack)).
+
+### Climate
+
+The climate likelihood factor and the crack depth both come from the freeze-duration climate category
+(<TableReference tableKey="cle-freezing-screening-table-5" />). The crack depth is documented in
+[Crack Depth and Bottom of the Crack](#crack-depth-and-bottom-of-the-crack).
+
+<TableVertical
+  tableKey="cle-freezing-screening-table-5"
+  alt="Climate likelihood factor and crack depth by freeze-duration climate category"
+  caption="Climate likelihood factor and crack depth by freeze-duration climate category."
+  colAlign={['left', 'center', 'center']}
+  headers={[[{ value: 'Climate Category' }, { value: 'LF<sub>clim</sub>' }, { value: 'Crack Depth d<sub>c</sub> (ft)' }]]}
+  columns={[
+    [
+      'Sub-arctic or alpine, below freezing 3 months or more',
+      'Sub-arctic or alpine, below freezing 1 to 3 months',
+      'Temperate, below freezing up to a month',
+      'Above freezing except possibly overnight',
+    ],
+    ['4', '3', '2', '1'],
+    ['6', '4', '2', '1'],
+  ]}
+/>
+
+### Crest soil
+
+Each crest soil class that can frost-crack maps to a core-material likelihood factor per
+<TableReference tableKey="cle-freezing-screening-table-6" />.
+
+<TableVertical
+  tableKey="cle-freezing-screening-table-6"
+  alt="Core-material likelihood factor by USCS classification"
+  caption="Core-material likelihood factor by crest soil classification."
+  colAlign={['left', 'left', 'center']}
+  headers={[[{ value: 'USCS Class' }, { value: 'Soil Description' }, { value: 'LF<sub>core</sub>' }]]}
+  columns={[
+    ['GC', 'MH', 'CL-ML', 'SM', 'GM', 'ML', 'SC', 'CL', 'CH', 'Unknown (none listed)'],
+    [
+      'Clayey gravel',
+      'High-plasticity silt',
+      'Silty clay',
+      'Silty sand',
+      'Silty gravel',
+      'Low-plasticity silt',
+      'Clayey sand',
+      'Lean clay',
+      'Fat clay',
+      '—',
+    ],
+    ['4', '4', '3.5', '3', '3', '3', '3', '3', '2', '3'],
+  ]}
+/>
+
+When several classes are listed, the governing likelihood factor is the highest among the listed classes that can frost-crack:
+
+<Equation
+  equationKey="cle-freezing-screening-eq-1"
+  equation="LF_{core} = \max_{s \in \mathcal{S}^{*}} LF_{core}(s)"
+/>
+
+where $\mathcal{S}^{*}$ is the set of listed crest soil classes, excluding the clean and nearly clean sands and gravels described below. The class
+that attains the maximum is reported as the governing crest soil; when two classes tie, the first listed is reported. Taking the most
+crack-susceptible soil is a screening design decision (engineering judgment): the maximum is the conservative choice, consistent with the
+continuation method's use of the largest probability across the base soils a filter protects. When no class is listed, the crest soil is Unknown and $LF_{core} = 3$.
+
+:::warning[INPUT NEEDED IN-03 — Engineering Basis]
+The likelihood factor of 3 assigned to an Unknown crest soil (no class listed) requires an engineering basis. State whether Unknown is a category of
+the core-material table of Fell et al. (2024) or a screening choice, and if the latter, provide the engineering-judgment attribution. Note that
+the value is below the 4 of GC and MH and the 3.5 of CL-ML, so an Unknown crest scores lower than a crest known to be of any of those classes.
+
+Proposed (unconfirmed): an intermediate value representing the most common fine-grained crest soils (SM, GM, ML, SC, CL all score 3). Confirm or
+replace.
+:::
+
+### Surface cover
+
+The surface cover over the core maps to the surface-cover likelihood factor per <TableReference tableKey="cle-freezing-screening-table-7" />. No
+category scores 1.
+
+<TableVertical
+  tableKey="cle-freezing-screening-table-7"
+  alt="Surface-cover likelihood factor"
+  caption="Surface-cover likelihood factor."
+  colAlign={['left', 'center']}
+  headers={[[{ value: 'Surface Cover Over the Core' }, { value: 'LF<sub>surf</sub>' }]]}
+  columns={[
+    ['Paved', 'Gravel road', 'No road or pathway'],
+    ['2', '3', '4'],
+  ]}
+/>
+
+## Weighted Sum
+
+The three scores combine into the weighted sum of
+[Flaw Conventions](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#weighted-sum):
+
+<Equation
+  equationKey="cle-freezing-screening-eq-2"
+  equation="\Sigma = 3\,LF_{clim} + 2\,LF_{core} + 1\,LF_{surf}"
+/>
+
+The weighted sum is always a whole number, because the one fractional score (3.5, for CL-ML) carries a risk factor of 2. It ranges from 9 — an
+above-freezing climate, a fat clay (CH) crest, and a paved surface — to 24 — the longest freeze duration, a clayey gravel (GC) or high-plasticity
+silt (MH) crest, and no road or pathway. Because the climate carries the largest weight, one step in the climate category moves the weighted sum by
+3, one step in the crest soil by 2 (or 1 for the half step to or from CL-ML), and one step in the surface cover by 1.
+
+## Raw Flaw Probability
+
+The weighted sum is converted to the raw flaw probability $P_{raw}$ by the curve tabulated in
+<TableReference tableKey="cle-freezing-screening-table-8" />. Between tabulated points, the logarithm of the probability is interpolated linearly in
+the weighted sum, as described in
+[Flaw Probability from the Weighted Sum](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#flaw-probability-from-the-weighted-sum)
+of the common methods manual. A weighted sum above 24 cannot occur, so the curve's upper end is the largest attainable value.
+
+<TableVertical
+  tableKey="cle-freezing-screening-table-8"
+  alt="Raw flaw probability by weighted sum"
+  caption="Raw flaw probability of a frost crack by weighted sum."
+  colAlign={['center', 'center']}
+  headers={[[{ value: 'Weighted Sum Σ' }, { value: 'Raw Flaw Probability P<sub>raw</sub>' }]]}
+  columns={[
+    ['Below 13', '13', '16', '21', '24'],
+    ['0', '0.001', '0.01', '0.1', '0.9'],
+  ]}
+/>
+
+The model applies a lower threshold of 13:
+
+<Equation
+  equationKey="cle-freezing-screening-eq-3"
+  equation="P_{raw}(\Sigma) = \begin{cases} 0 & \Sigma < 13 \\[4pt] \text{log-linear interpolation of the tabulated curve} & 13 \le \Sigma \le 24 \end{cases}"
+/>
+
+A weighted sum of exactly 13 takes the first tabulated value, 0.001; only a sum strictly below 13 gives zero. With a weighted sum of 14, for
+example, the raw probability is one third of the way from 0.001 to 0.01 on a logarithmic scale, $10^{-3 + 1/3} \approx 2.15 \times 10^{-3}$.
+
+The threshold can be reached only in the two mildest climates:
+
+- **Above freezing** ($LF_{clim} = 1$) — the weighted sum reaches 13 only when $2\,LF_{core} + LF_{surf} \ge 10$: a GC or MH crest with any
+  surface cover, a CL-ML crest with a gravel road or no road, or a crest scoring 3 (including Unknown) with no road or pathway. A CH crest is always
+  below the threshold.
+- **Temperate** ($LF_{clim} = 2$) — only a CH crest with a paved surface (a weighted sum of 12) is below the threshold.
+
+In the two sub-arctic climates the weighted sum is at least 15, so the threshold never applies.
+
+:::warning[INPUT NEEDED IN-04 — Engineering Basis]
+The weighted-sum curve of <TableReference tableKey="cle-freezing-screening-table-8" /> (13, 16, 21, 24 → 0.001, 0.01, 0.1, 0.9) and its lower
+threshold of 13, below which the raw flaw probability is zero, require an engineering basis. Provide the table or figure of Fell et al. (2024) that
+gives this relationship for frost cracking, or the engineering-judgment attribution, and state why a weighted sum below 13 is treated as
+incompatible with a continuous frost crack rather than as a small probability.
+
+Proposed (unconfirmed): the frost-cracking relationship between the weighted sum and the probability of cracking of Fell et al. (2024), with the
+threshold at the lowest weighted sum the source tabulates. Confirm or replace.
+:::
+
+## Observation Override
+
+When continuous frost cracking has been observed (see
+[Input Parameters](./03-input-parameters.mdx#continuous-frost-cracking-observed)), the flaw probability is 1.0. Otherwise it is the raw
+probability, never less than a negligibly small value:
+
+<Equation
+  equationKey="cle-freezing-screening-eq-4"
+  equation="P_{flaw} = \begin{cases} 1.0 & \text{continuous frost cracking observed} \\[4pt] \max\bigl(P_{raw}, \varepsilon\bigr) & \text{otherwise} \end{cases}"
+/>
+
+where $\varepsilon$ is the negligibly small probability the CLE family uses in place of zero (see
+[SRP Computation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#srp-computation)). The override takes
+precedence over the lower threshold: an observed continuous frost crack has a flaw probability of 1.0 even where the weighted sum is below 13. It
+sets Node 1 only — the crack depth and every downstream node are evaluated as usual — and it applies only when the mechanism applies, as described
+in [Observation Overrides](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#observation-overrides).
+
+## Crest Soils That Cannot Frost-Crack
+
+The six clean and nearly clean sand and gravel classes — SP-SM, SW, SP, GP-GM, GW, and GP, the classes with less than 12 percent fines — do not
+frost-crack and are not scored. A listed class of this group is set aside, and the remaining listed classes govern by
+<EquationReference equationKey="cle-freezing-screening-eq-1" />. When every listed class belongs to this group, the mechanism does not apply, as
+described in [Inapplicable Mechanism](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#inapplicable-mechanism):
+
+- the flaw probability is the negligible value $\varepsilon$, and no weighted sum is formed;
+- the observation override is not consulted, since observed cracking in such a crest cannot be frost cracking;
+- no crack forms, so the crack depth and crack width are zero and the bottom of the crack is the crest elevation;
+- initiation is zero at every pool level, and the SRP is negligible throughout.
+
+The silty classes SM, GM, and ML are scored, although they can be non-plastic.
+
+:::warning[INPUT NEEDED IN-05 — Engineering Basis]
+The treatment of SP-SM, SW, SP, GP-GM, GW, and GP as crest soils that cannot frost-crack — set aside when other classes are listed, and making the
+mechanism inapplicable when they are the only classes listed — requires an engineering basis, including why the silty classes SM, GM, and ML, which
+can also be non-plastic, are scored. Provide the literature source or the engineering-judgment attribution.
+
+Proposed (unconfirmed): a cohesionless soil cannot sustain an open frost crack, so these classes are absent from the core-material table of
+Fell et al. (2024). Confirm or replace.
+:::
+
+## Crack Depth and Bottom of the Crack
+
+The crack depth $d_c$ depends on the climate category alone (<TableReference tableKey="cle-freezing-screening-table-5" />); it does not depend
+on the crest soil, the surface cover, or the weighted sum. The bottom of the crack follows from
+[Crest-crack models: bottom of the crack](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#crest-crack-models-bottom-of-the-crack):
+
+<Equation equationKey="cle-freezing-screening-eq-5" equation="z_{bc} = z_c - d_c" />
+
+where $z_c$ is the crest elevation. Initiation is possible only at pool levels above $z_{bc}$ (see [Event Tree](./05-event-tree.mdx#node-2-initiation)).
+When the mechanism applies, the bottom of the crack is computed this way whatever the flaw probability, including when the override applies or the
+weighted sum is below the threshold. When it does not apply, the crack depth is zero and the bottom of the crack is the crest elevation (see
+[Crest Soils That Cannot Frost-Crack](#crest-soils-that-cannot-frost-crack)).
+
+The shallow 1 ft crack of an above-freezing climate is what limits that climate's contribution: the flaw probability of an above-freezing site can
+be non-negligible (up to $4.6 \times 10^{-3}$ from the scored factors, at a weighted sum of 15), but the SRP can rise from negligible only for
+pools higher than 1 ft below the crest.
+
+The tabulated depths are in feet. They are subtracted from the crest elevation as given, with no unit conversion.
+
+:::warning[INPUT NEEDED IN-06 — Applicability]
+The crack depths of <TableReference tableKey="cle-freezing-screening-table-5" /> are in feet and are subtracted from the crest elevation with no
+conversion, so an analysis in which elevations are entered in meters would place the bottom of the crack 6, 4, 2, or 1 m below the crest — about
+3.3 times too deep. State whether the model is to be used only with elevations in feet, or how a user working in SI units should proceed, so that
+the limitation can be stated here. (The family-level question is marker IN-01 of the common methods manual.)
+:::
+
+:::warning[INPUT NEEDED IN-07 — Engineering Basis]
+The crack depths by climate category (<TableReference tableKey="cle-freezing-screening-table-5" />: 6, 4, 2, and 1 ft), and their independence from
+the crest soil and the surface cover, require an engineering basis. Provide the literature source (for example, a frost-penetration or
+frost-crack-depth relationship) or the engineering-judgment attribution.
+
+Proposed (unconfirmed): the depths represent the depth of frost penetration into the crest for each freeze duration, over which frost cracks can
+extend. Confirm or replace.
+:::
+
+### Crack width
+
+The model also reports a crack width $w_c$, interpolated linearly (not logarithmically) in the weighted sum between the points of
+<TableReference tableKey="cle-freezing-screening-table-9" />, following the crack-width relationship of Fell et al. (2024) <Citation citationKey="Fell2024" />.
+A weighted sum at or below 12 gives zero width, and a sum of 24 gives the largest width, 20 mm. With a
+weighted sum of 14, for example, the crack width is 3 mm.
+
+<TableVertical
+  tableKey="cle-freezing-screening-table-9"
+  alt="Crack width by weighted sum"
+  caption="Crack width of a frost crack by weighted sum."
+  colAlign={['center', 'center']}
+  headers={[[{ value: 'Weighted Sum Σ' }, { value: 'Crack Width w<sub>c</sub> (mm)' }]]}
+  columns={[
+    ['12 or less', '13', '16', '21', '24'],
+    ['0', '2', '5', '10', '20'],
+  ]}
+/>
+
+The crack width is reported for reference only. It does not enter the bottom of the crack, the initiation node, or the SRP, since initiation in an
+open crest crack is taken as certain without a shear stress analysis. It can inform the crack opening assumed in a detailed crack-geometry
+initiation analysis.
+
+<CitationFootnote />

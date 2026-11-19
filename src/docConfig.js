@@ -412,8 +412,9 @@ const docs = [
     category: 'web-applications',
     software: 'system-response',
     doc_location: 'web-applications/system-response/cle-freezing-screening',
-    doc_name: 'CLE Freezing Screening Technical Reference Manual',
-    active: false,
+    doc_name: 'Concentrated Leak Erosion Freezing Screening Technical Reference Manual',
+    sidebar_label: 'Concentrated Leak Erosion Freezing Screening',
+    active: true,
     draft: true,
   },
   {
