@@ -1,0 +1,135 @@
+---
+title: Model Overview
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/overtopping-erosion-screening" />
+
+# Model Overview
+
+## Purpose
+
+The overtopping erosion screening model computes a system response curve for the overtopping erosion failure mode as a function of overtopping depth.
+The system response probability (SRP) at each depth is the conditional probability of embankment breach by erosion, given that the reservoir overtops
+the dam crest by that depth. The model produces a curve of SRP values across a range of overtopping depths that characterizes the embankment's
+vulnerability to breach from overtopping flow.
+
+## Intended Use
+
+The model is a screening-level assessment of overtopping erosion. It makes simplifying assumptions with two goals:
+
+- **Rapid estimates** — The model generates its own overtopping hydrographs and draws material properties from default distributions, so a
+  screening can be completed without hydrograph development or detailed site characterization.
+- **Reduced input burden** — The model requires only embankment geometry, an erodibility classification, the grass cover condition and an
+  overtopping duration. Material properties are drawn from default distributions for the selected erodibility classification unless the user
+  supplies site-specific distributions.
+
+The model is not intended for detailed or semi-quantitative risk assessments. For those analyses, engineers should use detailed overtopping erosion
+analysis software such as WinDAM C (U.S. Department of Agriculture, Natural Resources Conservation Service), DLBreach or EMBREA, which accept
+site-specific hydrographs, zoned embankment geometry and calibrated erosion parameters.
+
+:::warning[INPUT NEEDED IN-01 — Bibliography]
+WinDAM C is cited in this document (here, in Physics Basis, and in Chapters 5 and 7), but its bibliography entry lacks a year, version and full title
+of the software or its user's manual, so it is cited in prose and has been left out of `bib.json`. DLBreach and EMBREA are named here with no source
+at all. Provide the complete bibliographic details (author or agency, title, version or report number, year, publisher and URL) for WinDAM C,
+DLBreach and EMBREA so they can be cited.
+
+Proposed (unconfirmed): U.S. Department of Agriculture, Natural Resources Conservation Service, WinDAM C software and user's manual, with the release
+year of the version the screening model was compared against.
+:::
+
+## How the Model Works
+
+The model runs a Monte Carlo simulation that determines whether breach occurs for each combination of sampled material properties and overtopping
+depth. The execution pathway has four stages:
+
+<ProcessList
+  items={[
+    {
+      title: 'Hydrograph generation',
+      child: [
+        'For each overtopping depth, the model generates a gamma-shaped discharge hydrograph. The peak discharge is computed from the broad-crested weir equation, and the duration is scaled from a user-specified base duration using a power-law relationship.',
+      ],
+    },
+    {
+      title: 'Material property sampling',
+      child: [
+        "The model draws correlated samples of the erodibility coefficient, the critical shear stress and Manning's roughness coefficient of the embankment soil using a Gaussian copula with Latin Hypercube sampling. The distributions come from the embankment erodibility classification or from site-specific distributions supplied by the user.",
+      ],
+    },
+    {
+      title: 'Erosion simulation',
+      child: [
+        'For each set of sampled properties, the model steps through the hydrograph in two phases. First, it accumulates the overflow volume in excess of the grass cover threshold until the grass cover fails. Second, it computes the erosion rate of the exposed soil from the excess shear stress equation and accumulates erosion depth until breach occurs or the hydrograph ends.',
+      ],
+    },
+    {
+      title: 'Response curve assembly',
+      child: [
+        'At each overtopping depth, the breach probability is the proportion of Monte Carlo realizations that reach breach. The model also reports the probability of grass cover removal and the probability of breach given grass cover removal.',
+      ],
+    },
+  ]}
+/>
+
+## Physics Basis
+
+The model combines several established engineering methods:
+
+- **Broad-crested weir equation** for computing overtopping discharge from overtopping depth <Citation citationKey="Fell2015" />
+- **Gamma-shaped hydrograph** for representing the time history of overtopping flow ([Chapter 4](./04-hydrograph-generation.mdx))
+- **CIRIA (Construction Industry Research and Information Association) grass cover erosion resistance** for modeling the removal of protective vegetation under sustained overtopping <Citation citationKey="Hughes2015" /> <Citation citationKey="Thornton2014" />
+- **Excess shear stress erosion equation** for computing erosion of the exposed embankment soil, following the approach used in WinDAM C (USDA
+  NRCS) <Citation citationKey="Hanson2011" />
+- **Erodibility categories by soil type** for the default material property distributions <Citation citationKey="Briaud2019" /> <Citation citationKey="Wibowo2018" />
+
+## Comparison with Detailed Models
+
+The screening model trades the site-specific detail of the detailed models for a small set of inputs. The overtopping evaluation process with WinDAM C
+is described in the [Overtopping Erosion Toolbox Notes](/docs/toolbox-technical-manuals/overtopping-suite/overtopping-erosion-toolbox-notes/v1.0/overtopping-evaluation-process).
+
+<TableVertical
+  tableKey="overtopping-screening-table-comparison"
+  alt="Comparison of screening model and detailed models"
+  caption="Comparison of the overtopping screening model and detailed overtopping erosion analysis tools."
+  headers={[[{ value: 'Aspect' }, { value: 'Screening Model' }, { value: 'Detailed Models (WinDAM C, DLBreach, EMBREA)' }]]}
+  columns={[
+    [
+      'Purpose',
+      'Hydrograph input',
+      'Embankment geometry',
+      'Material properties',
+      'Erosion mechanism',
+      'Grass cover',
+      'Armoring (riprap)',
+      'Non-erodible elements',
+    ],
+    [
+      'Screening-level risk assessment',
+      'Generated from a gamma function and a base duration',
+      'Homogeneous section: downstream slope and crest width',
+      'Default distributions by erodibility classification, or user-supplied distributions',
+      'Uniform retreat of the downstream face (surface erosion)',
+      'CIRIA-based time-varying removal model',
+      'Not supported',
+      'Not supported',
+    ],
+    [
+      'Detailed risk analysis',
+      'User-specified or imported from a hydrologic model',
+      'Zoned embankments, benches, variable slopes, internal features',
+      'User-specified from site investigation and laboratory testing',
+      'Headcut erosion, surface erosion, or combined mechanisms',
+      'User-configurable with site-specific parameters',
+      'Riprap stability and removal modeling',
+      'Cutoff walls, sheet pile, concrete caps',
+    ],
+  ]}
+/>
+
+<CitationFootnote />

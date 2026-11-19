@@ -1,0 +1,170 @@
+---
+title: Assumptions and Limitations
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/overtopping-erosion-screening" />
+
+# Assumptions and Limitations
+
+The overtopping erosion screening model applies simplifying assumptions so that a screening can be completed with few inputs. Each assumption below is
+stated with its engineering basis, its effect on results and the conditions under which it may not hold. Other chapters refer to these assumptions by
+number.
+
+:::warning[INPUT NEEDED IN-16 — Decision]
+Assumptions 1, 2, 9, 10, 12 and 14, and the advisory checks in [Chapter 3](./03-input-parameters.mdx) (downstream slopes steeper than 1H:1V and base durations longer than one
+week are unusual), rest on engineering judgment, but the document does not yet say whose judgment it is. Provide the attribution wording to print
+for each (for example, the model developers, the Risk Management Center, or a named review), and any literature that supports them.
+
+For Assumption 13, confirm whether using the slope gradient $\tan\theta$ in the erosion phase, while the grass cover phase uses $\sin\theta$, is
+intended. If it is not, the model owner should review the erosion-phase equations; if it is, provide its basis and attribution.
+:::
+
+## Embankment and Erosion Mechanism
+
+1. **The embankment is homogeneous with a uniform downstream slope.** A single set of material properties applies to the whole downstream face, and
+   no zone boundaries, benches, berms or slope changes are represented.
+   - *Engineering basis:* Engineering judgment adopted for screening-level use (attribution pending, IN-16).
+   - *Effect on results:* Results reflect one material and one slope; the influence of a core, shells or slope changes on erosion is not captured.
+   - *When it may not hold:* Zoned embankments (for example, a clay core with granular shells), embankments with downstream berms or benches, and
+     embankments whose slope varies along the downstream face.
+2. **Erosion removes material uniformly over the whole downstream face.** The face retreats parallel to itself (surface erosion); headcut formation,
+   migration and deepening are not modeled.
+   - *Engineering basis:* Engineering judgment adopted for screening-level use (attribution pending, IN-16).
+   - *Effect on results:* Spreading erosion over the whole face underestimates the local erosion depth, and the speed at which breach develops, where
+     erosion concentrates at a headcut or in localized scour channels. Where that mechanism governs, the model is unconservative: it can understate
+     the breach probability.
+   - *When it may not hold:* Sites where headcut erosion is the dominant mechanism; a headcut concentrates erosion and can advance through the
+     embankment faster than uniform surface erosion.
+3. **Breach occurs when the retreating face reaches the upstream edge of the crest.** The critical erosion depth is the perpendicular distance from
+   the downstream face to the upstream crest edge, with a minimum of 2.0 ft (0.6 m) ([Chapter 5](./05-erosion-model.mdx)).
+   - *Engineering basis:* See IN-13 and IN-14 in [Chapter 5](./05-erosion-model.mdx).
+   - *Effect on results:* A wider crest or a steeper downstream slope raises the critical erosion depth, and a flatter slope lowers it; where
+     the minimum governs, the geometry has no further effect on the breach threshold.
+   - *When it may not hold:* Embankments whose breach develops by another sequence, such as headcut advance through the crest (Assumption 2).
+
+## Hydrograph
+
+4. **Overtopping duration scales with depth from a single reference depth.** The user gives one duration at 0.5 ft (0.15 m), and the model scales it to
+   other depths with a fixed exponent of 1/1.8 ([Chapter 4](./04-hydrograph-generation.mdx)).
+   - *Engineering basis:* See IN-10 in [Chapter 4](./04-hydrograph-generation.mdx).
+   - *Effect on results:* The base duration sets the exposure time at every depth; durations that are too long raise the breach probability and
+     durations that are too short lower it.
+   - *When it may not hold:* Reservoirs whose duration–depth relationship departs from the power law (see IN-10 in [Chapter 4](./04-hydrograph-generation.mdx)).
+5. **Every hydrograph has the same gamma shape.** The shape parameter (default 3.5) is the same at every depth, and the curve has the volume of a
+   triangular hydrograph with the scaled duration as its base ([Chapter 4](./04-hydrograph-generation.mdx)).
+   - *Engineering basis:* See IN-11 in [Chapter 4](./04-hydrograph-generation.mdx).
+   - *Effect on results:* The shape sets how the overflow volume is distributed in time, and so how long the discharge exceeds the grass cover
+     threshold and how much erosion the peak produces.
+   - *When it may not hold:* Hydrographs with a sudden onset (an upstream dam failure), a sustained plateau (controlled releases) or several peaks.
+6. **Overtopping ends at the scaled duration.** The simulation stops at $t_H$, when the discharge is still about 7 percent of the peak with the default
+   shape parameter; the remaining tail of the curve is not applied ([Chapter 4](./04-hydrograph-generation.mdx)).
+   - *Engineering basis:* See IN-12 in [Chapter 4](./04-hydrograph-generation.mdx).
+   - *Effect on results:* Omitting the tail removes about 2 percent of the hydrograph volume with the default shape parameter, which can turn
+     realizations close to the breach threshold into non-breaches, lowering the breach probability slightly.
+   - *When it may not hold:* Events in which the recession is long and the low flows still exceed the grass cover threshold or the critical shear
+     stress.
+
+## Materials and Erosion Rate
+
+7. **Material properties come from the erodibility classification unless the user supplies distributions.** The default erodibility coefficient and
+   critical shear stress follow PERT distributions, and the roughness coefficient a Uniform distribution, for the selected classification ([Chapter 3](./03-input-parameters.mdx)).
+   - *Engineering basis:* The soil-type categories and the erodibility coefficient and critical shear stress ranges follow published erodibility
+     charts and soil testing <Citation citationKey="Briaud2019" /> <Citation citationKey="Hanson2011" /> <Citation citationKey="Wibowo2018" />; the
+     roughness ranges are pending (IN-03 in [Chapter 3](./03-input-parameters.mdx)).
+   - *Effect on results:* The default distributions span the range of behavior within each category, so the results reflect that whole range rather
+     than the site's material.
+   - *When it may not hold:* Sites where jet erosion tests or hole erosion tests <Citation citationKey="Wahl2008" /> give properties that differ
+     significantly from the category defaults; such results can be supplied as site-specific distributions.
+8. **The erosion rate is linear in the excess shear stress.** The default erosion exponent is 1.0 ([Chapter 5](./05-erosion-model.mdx)).
+   - *Engineering basis:* The linear excess shear stress equation is the standard formulation in the WinDAM C model framework (USDA
+     NRCS) <Citation citationKey="Hanson2011" />.
+   - *Effect on results:* With a linear relationship, the erosion rate grows in direct proportion to the shear stress in excess of the critical
+     shear stress.
+   - *When it may not hold:* Soils whose tested erosion rate does not grow linearly with the excess shear stress; the user can change the exponent,
+     but the erodibility coefficient distributions must then be consistent with that exponent, because the default $k_d$ ranges and their units assume
+     $\alpha = 1$ ([Chapter 3](./03-input-parameters.mdx)).
+9. **Grass cover is the only protection modeled.** The model represents grass cover removal by the CIRIA-based method <Citation citationKey="Hughes2015" /> <Citation citationKey="Thornton2014" />,
+   but not riprap stability or removal, or other armoring.
+   - *Engineering basis:* Engineering judgment adopted for screening-level use (attribution pending, IN-16).
+   - *Effect on results:* The protective effect of riprap or other armoring, which can delay or prevent erosion at significant overtopping depths, is
+     not credited, so results for armored embankments can overestimate the breach probability.
+   - *When it may not hold:* Embankments with riprap, articulated concrete blocks or other armoring on the downstream face.
+10. **The embankment contains no non-erodible elements.** Cutoff walls, sheet pile walls, concrete caps and other features that would stop or redirect
+    erosion are not represented.
+    - *Engineering basis:* Engineering judgment adopted for screening-level use (attribution pending, IN-16).
+    - *Effect on results:* Embankments with such elements may resist breach considerably better than the model predicts.
+    - *When it may not hold:* Embankments with structural elements that intersect the erosion path.
+11. **The erodibility coefficient and the roughness coefficient are associated only through the critical shear stress.** Their correlation is the
+    product of the two specified correlations, 0.12 with the defaults ([Chapter 6](./06-monte-carlo-simulation.mdx)).
+    - *Engineering basis:* See IN-15 in [Chapter 6](./06-monte-carlo-simulation.mdx); the default correlation values are pending (IN-09 in [Chapter 3](./03-input-parameters.mdx)).
+    - *Effect on results:* With the default values the implied correlation is weak, so its influence on the sampled combinations is small.
+    - *When it may not hold:* Sites where measurements show a correlation between the erodibility coefficient and the roughness coefficient that
+      differs materially from the implied value.
+12. **The flow on the downstream face is at normal depth.** At each time step, the flow depth on the slope is the steady uniform flow depth from
+    Manning's equation for the current discharge ([Chapter 5](./05-erosion-model.mdx)).
+    - *Engineering basis:* Engineering judgment adopted for screening-level use (attribution pending, IN-16).
+    - *Effect on results:* The applied shear stress follows the discharge directly, without the development length or acceleration of flow down the
+      face.
+    - *When it may not hold:* Short or steep downstream faces on which the flow does not reach normal depth.
+13. **The erosion phase uses the slope gradient in place of the sine of the slope angle.** Manning's equation and the applied shear stress use
+    $S = 1/Z = \tan\theta$, while the grass cover phase uses $\sin\theta$ ([Chapter 5](./05-erosion-model.mdx)).
+    - *Engineering basis:* Pending. Whether the use of the gradient in the erosion phase is intended, and its basis, are open questions (IN-16).
+    - *Effect on results:* $\tan\theta$ exceeds $\sin\theta$, so the applied shear stress is higher than with the sine. For a 3H:1V slope the gradient
+      is about 5 percent larger than the sine, which raises the applied shear stress by about 4 percent; the difference grows as the slope steepens.
+    - *When it may not hold:* Steep downstream faces, where the gradient and the sine of the slope angle differ materially.
+14. **Each realization uses the same material properties at every overtopping depth.** One sample of $k_d$, $\tau_c$ and $n$ is drawn per
+    realization and evaluated at all depths on the curve ([Chapter 6](./06-monte-carlo-simulation.mdx)).
+    - *Engineering basis:* Engineering judgment adopted for screening-level use (attribution pending, IN-16).
+    - *Effect on results:* Reusing the samples does not change the breach probability at any single depth, which depends only on the distribution of
+      the properties. It makes the curve consistent from depth to depth: differences between depths come from the hydrographs alone, not from
+      resampling the material.
+
+## Duration Scaling
+
+The model takes a single duration at the reference depth and extrapolates every other duration with a fixed exponent (Assumption 4). The scaled
+durations govern both phases of the erosion model. Grass cover removal is a threshold on the cumulative excess overflow volume, which grows with the
+duration, so the duration controls whether the cover is removed at all. Once the cover is removed and the applied shear stress exceeds the critical
+shear stress, the erosion depth grows with the time the flow lasts, so an error in the scaled duration carries directly into the erosion depth. The
+duration has little effect on erosion only where the applied shear stress stays below the critical shear stress. How overtopping duration grows
+with depth differs from reservoir to reservoir (see IN-10 in [Chapter 4](./04-hydrograph-generation.mdx)). The engineer should check that the scaled durations across the depth range are
+plausible for the reservoir and adjust the base duration if they are not.
+
+## Uniform Erosion
+
+The uniform erosion assumption (Assumption 2) is a fundamental simplification. Overtopping erosion of embankment dams often proceeds by headcut
+formation and migration: a steep scarp forms on the downstream face and advances upstream through the embankment (source pending, IN-22). Detailed software such as WinDAM C
+(USDA NRCS) models the headcut mechanism; this screening model does not, and its breach timing can therefore differ from that of a headcut model.
+
+The screening results have been compared with Quantitative Risk Assessment (QRA) response functions from USACE dam safety studies to confirm that they
+are reasonable relative to detailed assessments ([Chapter 8](./08-output-and-interpretation.mdx) lists the studies).
+
+:::warning[INPUT NEEDED IN-17 — Bibliography]
+The comparison of screening results with QRA response functions from USACE dam safety studies (Benbrook, Cherry Creek, Delaware, Grapevine, J. Percy
+Priest, Keystone, Kinzua, Lookout Point, Mojave, Painted Rock, Stillhouse Hollow, W. Kerr Scott and Wister Dams) is stated without a citable source.
+Provide the report or study that documents the comparison (author, title, year, report number), or the attribution wording to print, and state how
+closely the screening curves matched.
+:::
+
+:::warning[INPUT NEEDED IN-22 — Bibliography]
+The statement that overtopping erosion of embankment dams often proceeds by headcut formation and migration has no citation. The Overtopping Erosion
+Toolbox Notes page on the WinDAM C evaluation process mentions headcut breach of the upstream crest only in passing and does not describe the
+mechanism, so it does not support the statement. Provide a literature source with full bibliographic details for `bib.json`.
+:::
+
+## Scope Exclusions
+
+The following are outside the scope of the screening model:
+
+- **Rockfill embankments** — the erodibility classifications and erosion equations apply to earth embankments; rockfill erodes by different
+  mechanisms.
+- **Riprap removal** — the stability and progressive removal of riprap armoring are not modeled (Assumption 9).
+- **Headcut erosion** — the model uses surface erosion and does not model the headcut mechanism (Assumption 2).
+- **Zoned embankments** — internal zoning, filters and drains are not represented (Assumption 1).
+- **Non-erodible elements** — cutoff walls, sheet pile, concrete caps and other features that would stop erosion are not represented
+  (Assumption 10).
+
+<CitationFootnote />

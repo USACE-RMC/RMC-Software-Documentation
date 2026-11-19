@@ -1,0 +1,93 @@
+---
+title: Output and Interpretation
+---
+
+import EquationNoRef from '@site/src/components/EquationNoRef';
+import NavContainer from '@site/src/components/NavContainer';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/overtopping-erosion-screening" />
+
+# Output and Interpretation
+
+## Result Curves
+
+The model produces three curves, each giving a probability at every overtopping depth evaluated ([Overtopping Depth Range](./03-input-parameters.mdx#overtopping-depth-range) in Chapter 3):
+
+- **System response curve** — the probability of breach at each overtopping depth: the proportion of Monte Carlo realizations that reached breach
+  ([Chapter 6](./06-monte-carlo-simulation.mdx)). This is the model's primary result and the system response curve used in the risk analysis.
+- **Grass removal curve** — the probability that the overtopping flow removes the grass cover at each depth: the proportion of realizations in which
+  the cumulative excess overflow volume exceeded the erosional limit volume ([Chapter 5](./05-erosion-model.mdx)).
+- **Conditional breach curve** — the probability of breach given that the grass cover was removed: the number of realizations with breach divided by
+  the number with grass removal. Where no realization removes the grass cover, the conditional probability is undefined; the model reports it as zero by convention.
+
+## Reading the System Response Curve
+
+The system response curve maps each overtopping depth to a breach probability between 0 and 1. At zero overtopping depth there is no flow and the
+probability is zero. The curve normally rises with depth, because a larger depth produces both a larger peak discharge and a longer overtopping duration
+while each realization keeps the same material properties at every depth ([Chapter 6](./06-monte-carlo-simulation.mdx)).
+
+Where the curve rises depends on the balance between the protection, the erosion resistance and the exposure:
+
+- **Grass cover** — breach cannot occur until the grass cover is removed, so a better grass cover condition, with a higher critical velocity and
+  erosional limit, moves the rise of the curve to larger depths. With No Grass Cover, erosion starts at the onset of overtopping.
+- **Material erodibility** — once the soil is exposed, a higher erodibility coefficient and a lower critical shear stress produce faster erosion, so
+  more erodible classifications tend to reach breach at smaller depths.
+- **Roughness** — a higher Manning's roughness coefficient raises the flow depth on the slope and with it the applied shear stress. The
+  classifications differ in their default roughness ranges as well as in their erodibility ([Chapter 3](./03-input-parameters.mdx)).
+- **Overtopping duration** — a longer base duration lengthens the exposure at every depth, which raises, or leaves unchanged, the breach probability at each depth.
+- **Crest width** — a wider crest raises the critical erosion depth, so more erosion is needed for breach; where the minimum critical erosion depth
+  governs, the crest width has no effect.
+- **Downstream slope** — a steeper slope raises the applied shear stress for a given discharge and lowers the grass cover thresholds, which increases
+  erosion; it also raises the critical erosion depth, which resists breach. Which effect controls depends on the other inputs.
+- **Correlation of the erodibility coefficient and the critical shear stress** — a stronger negative correlation makes combinations of high
+  erodibility coefficient with low critical shear stress, and the reverse, more frequent, which widens the spread of erosion behavior among
+  realizations.
+
+## Decomposing the Result
+
+Because breach can occur only after the grass cover has been removed, the system response curve is the product of the other two curves at every
+depth where the grass cover is removed in at least one realization:
+
+<EquationNoRef equation="P(\text{breach} \mid H) = P(\text{grass removed} \mid H) \cdot P(\text{breach} \mid \text{grass removed}, H)" />
+
+The two factors separate the protection the grass cover provides from the erosion resistance of the embankment soil:
+
+- A high grass removal probability with a low conditional breach probability means the exposed soil resists erosion to breach even after the grass
+  cover fails.
+- A low grass removal probability with a high conditional breach probability means the grass cover is the main protection against breach at that
+  depth.
+- With No Grass Cover, the grass removal probability is 1 at every depth and the conditional breach curve equals the system response curve.
+
+## Checking the Result
+
+Before using a screening curve, the engineer should check:
+
+- **The scaled durations** — that the durations produced from the base duration ([Chapter 4](./04-hydrograph-generation.mdx)) are plausible for the reservoir across the depth range
+  (Assumption 4).
+- **The material representation** — that the selected erodibility classification, or the supplied distributions, represent the downstream face
+  material, and that the embankment is close enough to homogeneous for Assumption 1.
+- **The protection and internal features** — that the face has no riprap or other armoring and the embankment no non-erodible elements that the model
+  would ignore (Assumptions 9 and 10).
+- **The shape of the curve** — that the curve rises from zero and that the grass removal and conditional breach curves explain where it rises.
+
+The curve values are point estimates computed from a finite number of realizations; the model does not report confidence bounds on them.
+
+## Screening Versus Detailed Analysis
+
+The screening system response curve is an estimate intended to identify structures that warrant further analysis. The screening results have been
+compared with Quantitative Risk Assessment (QRA) response functions from USACE dam safety studies of Benbrook, Cherry Creek, Delaware, Grapevine,
+J. Percy Priest, Keystone, Kinzua, Lookout Point, Mojave, Painted Rock, Stillhouse Hollow, W. Kerr Scott and Wister Dams (source pending, IN-17 in
+[Chapter 7](./07-assumptions-and-limitations.mdx)).
+
+A high screening breach probability does not by itself indicate a high risk of failure; it indicates that the structure should be evaluated with
+detailed overtopping erosion analysis software, in which:
+
+- Site-specific hydrographs from hydrologic routing replace the gamma-shaped approximation.
+- Zoned embankment geometry is represented with distinct material zones and internal features.
+- Zone-specific erosion parameters calibrated from testing are applied to each material zone.
+- Headcut erosion is modeled explicitly.
+- Riprap and other armoring are accounted for.
+
+A low screening breach probability across the credible range of overtopping depths indicates low vulnerability to overtopping erosion, within the
+assumptions of [Chapter 7](./07-assumptions-and-limitations.mdx). It is not by itself a finding of low risk: the system response curve is combined with the frequency of overtopping loading
+in the risk analysis.
