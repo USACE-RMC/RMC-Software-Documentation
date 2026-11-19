@@ -1,0 +1,201 @@
+---
+title: Input Parameters
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-conduit-compaction-screening" />
+
+# Input Parameters
+
+The conduit compaction model takes most of the inputs shared by the CLE compaction models, documented in the
+[Common Input Parameters](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters) chapter of the CLE Common
+Methods manual, and adds the inputs specific to a conduit flaw. This chapter lists which shared inputs apply, then documents the conduit-specific
+inputs: the four flaw factors, the leakage observation, the bottom-of-conduit elevation, the diaphragm filter, and the default initial pipe
+diameter. Each group gives the short facts for its quantities in a table, followed by a description of each input and, for selections, the list of
+available choices.
+
+## Shared Inputs
+
+The model takes the following shared inputs, each as documented in the CLE Common Methods manual:
+
+- **[Hydraulic loading](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#hydraulic-loading)** — the
+  headwater elevation series $h$ and the optional tailwater series $h_t$. Tailwater, when it stands above the bottom of the
+  conduit, reduces the net head across the pipe in the initiation analysis.
+- **[Units and datum](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#units-and-datum)** — every
+  elevation on one common datum, with the embankment above zero elevation.
+- **[Embankment description](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#embankment-description)**
+  — the crest elevation $z_c$, the embankment type, the shell top width and face segments, and the optional core section. When a core section is
+  supplied it is used for the seepage path length and for the limits on the bottom-of-conduit elevation, whatever the embankment type; otherwise
+  the shell section is used. The model scores no section geometry in its flaw assessment.
+- **[Failure-pathway inputs](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#failure-pathway-inputs)**
+  of the compaction models — the filter presence, stated here as the presence of a diaphragm filter around the conduit (see
+  [Diaphragm Filter](#diaphragm-filter)), the embankment materials the pipe passes through, and the continuation inputs.
+- **[Initiation material inputs](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#initiation-material-inputs)**
+  — the core soil classification, and the optional critical shear stress distribution, initial pipe diameter distribution, and seepage path
+  length. The core soil classification may not be SP, SW, GP, GW, SP-SM, or GP-GM, because non-plastic soils are not modeled; these
+  classifications are refused even when a critical shear stress distribution is supplied. The initial pipe diameter default specific to this model is given under [Initial Pipe Diameter](#initial-pipe-diameter).
+- **[Intervention and breach](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#intervention-and-breach)**
+  — the probabilities of unsuccessful intervention $P_{int}$ and of breach $P_{br}$, each defaulting to 1.0.
+
+The model does not take the
+[upstream seepage-limiting elements](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#upstream-seepage-limiting-elements)
+or a top-of-wall elevation: it has no flow-limitation input, and its Node 6 is fixed at 1.0 (see
+[Event Tree](./05-event-tree.mdx#node-6-progression--no-flow-limitation)).
+
+:::warning[INPUT NEEDED IN-02 — Definition]
+The core soil classification selects the default critical shear stress range of the initiation analysis. For this model it is not stated which
+soil it describes: the earthfill compacted adjacent to the conduit, in which the flaw would erode, or the core of the embankment. State which soil
+the user should classify, and how to choose when the fill adjacent to the conduit differs from the core.
+
+Proposed (unconfirmed): the classification of the earthfill adjacent to the conduit, since that is the soil whose walls the concentrated leak
+erodes. Confirm or replace.
+:::
+
+## Flaw Inputs
+
+The flaw inputs describe the conduit and the fill around it, and fix the elevation of the flaw
+(<TableReference tableKey="cle-conduit-compaction-screening-table-2" />). How the model scores them is documented in
+[Flaw Assessment](./04-flaw-assessment.mdx).
+
+<TableVertical
+  tableKey="cle-conduit-compaction-screening-table-2"
+  alt="Flaw inputs of the conduit compaction model"
+  caption="Flaw inputs of the conduit compaction model."
+  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  columns={[
+    [
+      'Conduit type and surround',
+      'Cutoff collars',
+      'Compaction adjacent to the conduit',
+      'Conduit trench details',
+      'Leakage adjacent to the conduit observed',
+      'Bottom-of-conduit elevation',
+    ],
+    ['—', '—', '—', '—', '—', 'z<sub>f</sub>'],
+    ['—', '—', '—', '—', '—', 'ft or m'],
+    [
+      'One of five choices',
+      'One of three choices',
+      'One of five choices',
+      'One of four choices',
+      'Yes or no',
+      'Within the section used; > 0',
+    ],
+    [
+      'None (required)',
+      'None (required)',
+      'None (required)',
+      'None (required)',
+      'No',
+      'None (required)',
+    ],
+  ]}
+/>
+
+The four conduit factors are required unless leakage adjacent to the conduit is observed.
+
+- **Conduit type and surround** — the form of the conduit and of any concrete encasing it. The choices are:
+  - **Concrete-encased round pipe with sloping sides** — a round pipe in a concrete encasement whose sides slope.
+  - **Concrete-encased round pipe with vertical sides** — a round pipe in a concrete encasement whose sides are vertical.
+  - **Masonry or brick with vertical sides** — a masonry or brick conduit with vertical sides.
+  - **Round pipe not encased** — a round pipe with no concrete encasement.
+  - **Unknown** — the conduit type or its surround is not known.
+- **Cutoff collars** — whether cutoff collars (also called seepage collars) project from the conduit into the surrounding fill. The choices are
+  **Absent**, **Present**, and **Unknown**.
+- **Compaction adjacent to the conduit** — how the earthfill against the conduit was compacted. The choices are:
+  - **Mechanical, slightly wet of optimum** — compacted by mechanical equipment at a water content slightly wet of optimum.
+  - **By hand, slightly dry of optimum** — compacted by hand at a water content slightly dry of optimum.
+  - **By hand in thick layers, dry of optimum** — compacted by hand in thick layers at a water content dry of optimum.
+  - **No formal compaction** — the fill against the conduit was not formally compacted.
+  - **Unknown** — the method of compaction is not known.
+- **Conduit trench details** — the geometry of the trench in which the conduit was laid. The choices are:
+  - **Wide, with slopes flatter than 1H:1V** — a wide trench whose side slopes are flatter than one horizontal to one vertical.
+  - **Medium width, depth, and slope** — a trench of intermediate width, depth, and side slope.
+  - **Narrow and deep, with near-vertical sides** — a narrow, deep trench with near-vertical sides.
+  - **Unknown** — the trench geometry is not known.
+- **Leakage adjacent to the conduit observed** — whether leakage has been observed adjacent to the conduit. A yes sets the flaw probability to
+  1.0 and makes the four factor selections optional; the bottom-of-conduit elevation is still required and is not changed (see
+  [Flaw Assessment](./04-flaw-assessment.mdx#leakage-observation-override)).
+- **Bottom-of-conduit elevation** — the elevation of the bottom of the conduit, which the model uses as the base-of-flaw elevation $z_f$: the
+  invert of the idealized pipe, and the elevation of the failure pathway (see
+  [Flaw Assessment](./04-flaw-assessment.mdx#flaw-elevation)). It must be a positive elevation on the common datum, no higher than the top of the
+  embankment section used for initiation (the core top when a core section is supplied, otherwise the crest), and no lower than the lowest
+  segment bottom of each face of that section.
+
+:::warning[INPUT NEEDED IN-03 — Definition]
+The conduit-factor categories are named without fuller definitions. State what each covers so that a user can select among them, in particular:
+(1) whether "round pipe not encased" includes corrugated metal and other flexible pipes, and which choice applies to conduits not listed, such as
+a cast-in-place rectangular or horseshoe conduit or a concrete box culvert; (2) whether "no formal compaction" also covers poor compaction in very
+thick lifts without moisture control; and (3) the trench widths, depths, and side slopes that separate the wide, medium, and narrow trench
+categories, given that only the wide category carries a stated slope limit (flatter than 1H:1V). Cite the table of Fell et al. (2024) that
+defines the categories, if they are taken from it.
+
+Proposed (unconfirmed): "round pipe not encased" includes corrugated metal pipe; "no formal compaction" covers poor compaction with very thick
+lifts and no moisture control; and the narrow, deep trench is one backfilled with soil. Confirm or replace.
+:::
+
+:::warning[INPUT NEEDED IN-04 — Definition]
+State what observation qualifies as "leakage adjacent to the conduit" for the override — for example, seepage emerging along the outside of the
+conduit at its outlet, wet areas over the conduit alignment on the downstream slope, or flow carrying fines — and whether leakage into the conduit
+through its joints qualifies.
+:::
+
+## Diaphragm Filter
+
+The model states the presence of a filter on the failure pathway as the presence of a diaphragm filter around the conduit
+(<TableReference tableKey="cle-conduit-compaction-screening-table-3" />).
+
+<TableVertical
+  tableKey="cle-conduit-compaction-screening-table-3"
+  alt="Diaphragm filter and continuation inputs"
+  caption="Diaphragm filter and continuation inputs."
+  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  columns={[
+    ['Diaphragm filter around the conduit', 'Continuation inputs'],
+    ['—', '—'],
+    ['—', '—'],
+    ['Yes or no', '—'],
+    ['No', 'Omitted'],
+  ]}
+/>
+
+- **Diaphragm filter around the conduit** — whether a diaphragm filter surrounds the conduit and intercepts the failure pathway. With no
+  diaphragm filter, the exit is taken as unfiltered and continuation is certain.
+- **Continuation inputs** — the description of the diaphragm filter and of the base soils upstream of it, as documented in the
+  [Base Soils](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/input-parameters#base-soils) and
+  [Filter](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/input-parameters#filter) sections of the Continuation (Filter
+  Evaluation) Screening manual. They are required, and checked, only when a diaphragm filter is present; with no diaphragm filter they are not
+  used, even if supplied.
+
+:::warning[INPUT NEEDED IN-05 — Applicability]
+The model recognizes only a diaphragm filter around the conduit as a filter on the failure pathway. State whether the user should answer yes for
+other filters that intercept the zone along the conduit — for example, a chimney or blanket filter that the conduit passes through, or a filter
+envelope placed around the downstream portion of the conduit — or whether those are intended to be left uncredited at the screening level.
+:::
+
+## Initial Pipe Diameter
+
+The initial pipe diameter $D$ of the idealized cylindrical pipe is an optional distribution input, shared with the other compaction models (see
+[Initiation Material Inputs](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#initiation-material-inputs)
+in the CLE Common Methods manual). Left blank, it defaults to the triangular distribution of
+<TableReference tableKey="cle-conduit-compaction-screening-table-4" />, which is specific to this model. A site-specific distribution, of any of
+the five distribution forms the compaction models accept, replaces the default.
+
+<TableVertical
+  tableKey="cle-conduit-compaction-screening-table-4"
+  alt="Default initial pipe diameter of the conduit compaction model"
+  caption="Default initial pipe diameter of the conduit compaction model (mm, triangular)."
+  colAlign={['center', 'center', 'center']}
+  headers={[[{ value: 'Low' }, { value: 'Most Likely' }, { value: 'High' }]]}
+  columns={[['5'], ['10'], ['12.5']]}
+/>
+
+:::warning[INPUT NEEDED IN-06 — Engineering Basis]
+The default initial pipe diameter of the conduit compaction model (triangular, low 5 mm, most likely 10 mm, high 12.5 mm) requires an engineering
+basis, including why it is larger than the core compaction model's default (triangular, 2, 3, and 5 mm). Provide a literature source or the
+engineering-judgment attribution to state here. The same question is open for the family's default diameters in the CLE Common Methods manual
+(its marker IN-11), so the two should be resolved together.
+:::
