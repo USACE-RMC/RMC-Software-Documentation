@@ -1,0 +1,387 @@
+---
+title: 'PFM-22: Gate Failure'
+---
+
+import Link from '@docusaurus/Link';
+import Figure from '@site/src/components/Figure';
+import FigReference from '@site/src/components/FigureReference';
+import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/dst" linkTitle="Dam Screening Tool" document="web-applications/dst/users-guide" />
+
+# PFM-22: Gate Failure
+
+The PFM-22 page evaluates potential failure mode PFM-22, Gate Failure: failure of a spillway gate, where the loading on the gate overstresses its strut arms, girders or diaphragms and the load cannot be redistributed to other members. The loading is the reservoir pool on the gate, evaluated at stages from the spillway crest through the top of gates to the top of dam. The user estimates a probability for each node
+of the PFM-22 event tree at each stage, and DST combines them into the location's system response probability (SRP) at each stage, which Risk
+Analysis uses for the location.
+
+The page layout, locations and the parts every event tree page shares are described in [Chapter 11, Failure Mode Evaluation](./11-failure-mode-evaluation.mdx#event-trees).
+This chapter documents what is particular to PFM-22: its cross section, stages, nodes and results.
+
+The user opens the page from the Failure Mode Evaluation page by selecting a PFM-22 location (see [Opening a location](./11-failure-mode-evaluation.mdx#opening-a-location)).
+The page opens only when PFM-22 is selected for evaluation on the Failure Mode Selection page; otherwise it reads "PFM-22 isn't being evaluated".
+<FigReference figKey="dst-users-guide-fig-pfm-22-page" /> shows the page, and <TableReference tableKey="dst-users-guide-table-pfm-22-regions" /> describes each numbered region.
+
+<Figure
+  figKey="dst-users-guide-fig-pfm-22-page"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/pfm-22-page.png"
+  alt={"The PFM-22 page for a location of the Thistlewood Dam Screening. The sub-navigation bar shows the Response pages and the breadcrumb PFM-22 followed by the location name, with the page messages button and the verification badge at its right end. Below it is the heading \"22 - Gate Failure\" and a grey toolbar with the Location box showing the location name, the Cross Section drop-down showing the selected section and, at the right, the SRP mode control with Event tree selected. Section 1, Stages to evaluate, shows a table with the columns Zero point, Elevation (ft), Stage and Source, listing the Spillway Crest, Top of Gates and Top of Dam stages lowest first, with the zero point on the lowest stage, and an Add stage button below. Section 2, Event tree evaluation, begins below it with the progress text and the top of the event tree. Numbered callouts mark: 1 Sub-navigation, 2 Page messages, 3 Verification badge, 4 Page heading, 5 Location, 6 Cross Section, 7 SRP mode, 8 Stages to evaluate, 9 Event tree evaluation."}
+  caption={"The PFM-22 page."}
+  width="100%"
+/>
+
+<TableVertical
+  tableKey="dst-users-guide-table-pfm-22-regions"
+  colWidths={['5ch', '22ch', 'minmax(30ch, 1fr)']}
+  alt={"Description of each numbered region of the PFM-22 page"}
+  caption={"PFM-22 page regions"}
+  headers={[[{ value: "#" }, { value: "Region" }, { value: "Description" }]]}
+  columns={[
+    [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+    ],
+    [
+      "Sub-navigation",
+      "Page messages",
+      "Verification badge",
+      "Page heading",
+      "Location",
+      "Cross Section",
+      "SRP mode",
+      "Stages to evaluate",
+      "Event tree evaluation",
+    ],
+    [
+      "The Response pages, with the breadcrumb PFM-22 · <location name> for this location.",
+      <>The location's required inputs, warnings and errors (see <a href="#page-messages">Page Messages</a>).</>,
+      <>Shows whether the location's SRP is verified, and verifies it (see <Link to="/docs/web-applications/dst/users-guide/v1.0/working-in-dst#human-verification">Human Verification</Link>).</>,
+      "The failure mode number and name, which read \"22 - Gate Failure\".",
+      <>The location's name (see <a href="#location-and-cross-section">Location and Cross Section</a>).</>,
+      <>The cross section the location reads (see <a href="#location-and-cross-section">Location and Cross Section</a>).</>,
+      <><strong>Event tree</strong> or <strong>User defined</strong> (see <a href="#location-and-cross-section">Location and Cross Section</a>).</>,
+      <>The elevations at which the event tree is evaluated (see <a href="#stages-to-evaluate">Stages to Evaluate</a>).</>,
+      <>The event tree and the selected node's probabilities (see <a href="#event-tree-evaluation">Event Tree Evaluation</a>).</>,
+    ],
+  ]}
+/>
+
+Inputs on this page save automatically (see [Saving](./04-working-in-dst.mdx#saving)), and the results recalculate automatically when an input changes (see
+[Automatic Calculation](./04-working-in-dst.mdx#automatic-calculation)). Any change on the page, including the location name and the SRP mode, clears the
+location's verification (see [Human Verification](./04-working-in-dst.mdx#human-verification)).
+
+:::caution
+
+A change to a source of a default stage, such as the Dam Data spillway crest or the dam crest, also clears the location's verification,
+even though the stage keeps its elevation until the user moves it.
+
+:::
+
+## Location and Cross Section
+
+The grey toolbar under the page heading names the location, selects the cross section it reads and sets the SRP mode.
+<TableReference tableKey="dst-users-guide-table-pfm-22-toolbar-inputs" /> describes each field, and the toolbar itself is described in [The page toolbar](./11-failure-mode-evaluation.mdx#the-page-toolbar).
+
+<TableVertical
+  tableKey="dst-users-guide-table-pfm-22-toolbar-inputs"
+  colWidths={['18ch', '8ch', '18ch', 'minmax(30ch, 1fr)']}
+  alt={"Fields in the PFM-22 page toolbar, with units, requirement and description"}
+  caption={"PFM-22 toolbar fields"}
+  headers={[[{ value: "Field" }, { value: "Units" }, { value: "Required" }, { value: "Description" }]]}
+  columns={[
+    [
+      "Location",
+      "Cross Section",
+      "SRP mode",
+    ],
+    [
+      "—",
+      "—",
+      "—",
+    ],
+    [
+      "Optional",
+      "Conditional: required when the dam has a gated concrete cross section",
+      "Required",
+    ],
+    [
+      "The location's name. The default is \"Location 1\" for the first location; a blank name reverts to the default. The name appears in the breadcrumb and on the Failure Mode Evaluation page.",
+      "One of the dam's gated concrete cross sections from the Dam Information page. Its gate top is the Top of Gates stage. The drop-down reads \"No usable cross sections\" when the dam has none.",
+      "Event tree (the default) or User defined. Event tree evaluates the location on the PFM-22 event tree; User defined replaces the event tree with an entered SRP curve.",
+    ],
+  ]}
+/>
+
+PFM-22 reads the top of gates from one gated concrete cross section. The **Cross Section** drop-down lists only the dam's concrete cross
+sections that have a gate on the Dam Information page (see [Chapter 8, Dam Information](./08-dam-information.mdx)). The top of the selected section's
+gate becomes the Top of Gates stage, and choosing a different section moves that stage. Without a gated section, DST places the Top of Gates stage a
+third of the way from the spillway crest to the top of dam. The top of dam does not come from the selected section; it is the lowest crest across the
+dam's cross sections.
+
+Each location of PFM-22 has its own cross section, stages, node probabilities and results. PFM-22 has no limit on the number of
+locations, and a copied location keeps the cross section, stages, node probabilities and rationales of the location it copies
+(see [Locations](./11-failure-mode-evaluation.mdx#locations) and [Copying a location](./11-failure-mode-evaluation.mdx#copying-a-location)).
+
+## Stages to Evaluate
+
+The **Stages to evaluate** section lists the pool elevations at which the PFM-22 event tree is evaluated, lowest first. PFM-22 has three
+default stages, which DST places from other pages. <TableReference tableKey="dst-users-guide-table-pfm-22-default-stages" /> lists them with the text of their
+**Source** column. The user cannot edit a default stage's elevation on this page. When its source is missing, the stage's elevation reads
+"Source missing" and the page messages name the input to complete (see [Page Messages](#page-messages)).
+
+<TableVertical
+  tableKey="dst-users-guide-table-pfm-22-default-stages"
+  colWidths={['20ch', '30ch', 'minmax(30ch, 1fr)']}
+  alt={"The default stages of PFM-22, the text of their Source column, and where each elevation comes from"}
+  caption={"PFM-22 default stages"}
+  headers={[[{ value: "Stage" }, { value: "Source" }, { value: "Elevation" }]]}
+  columns={[
+    [
+      "Spillway Crest",
+      "Top of Gates",
+      "Top of Dam",
+    ],
+    [
+      "Spillway crest, Dam Data",
+      "Top of gates from the cross section, or crest plus a third to top of dam",
+      "Top of dam, cross section or Dam Data",
+    ],
+    [
+      "The spillway crest elevation in the Key Elevations & Storage section of the Dam Data page.",
+      "The top of the gate in the gated cross section selected in the toolbar. Without a gated section, DST places it a third of the way from the spillway crest to the top of dam.",
+      "The lowest crest drawn across the dam's cross sections on the Dam Information page, or the dam crest elevation from Dam Data when no crest is drawn.",
+    ],
+  ]}
+/>
+
+The **Zero point** column marks the stage at and below which the system response is fixed at 1.00E-16 and nodes take no probability. By default the
+zero point is the lowest stage; the user may choose another stage. Nodes take probabilities at every stage above the zero point.
+
+The user may add stages between the lowest and highest default stages, for example to describe the event tree at an intermediate pool.
+<TableReference tableKey="dst-users-guide-table-pfm-22-stage-inputs" /> describes the inputs. Moving the zero point, adding and deleting stages, and the notice that appears
+when a source value changes are described in [Stages](./11-failure-mode-evaluation.mdx#stages).
+
+<TableVertical
+  tableKey="dst-users-guide-table-pfm-22-stage-inputs"
+  colWidths={['20ch', '8ch', '18ch', 'minmax(30ch, 1fr)']}
+  alt={"Inputs in the PFM-22 Stages to evaluate section, with units, requirement and description"}
+  caption={"PFM-22 stage inputs"}
+  headers={[[{ value: "Field" }, { value: "Units" }, { value: "Required" }, { value: "Description" }]]}
+  columns={[
+    [
+      "Zero point",
+      "Elevation (added stage)",
+      "Stage (added stage)",
+    ],
+    [
+      "—",
+      "ft",
+      "—",
+    ],
+    [
+      "Optional",
+      "Conditional: required for each added stage",
+      "Optional",
+    ],
+    [
+      "One stage per location. The default is the lowest stage. Stages at and below it are shown in grey.",
+      "The added stage's pool elevation. It must lie between the lowest and highest default stages and differ from every other stage's elevation.",
+      "The added stage's description, up to 200 characters. A blank description becomes \"Added stage\". The Source column reads \"Added, every node\".",
+    ],
+  ]}
+/>
+
+:::caution
+
+Deleting an added stage also deletes the probabilities entered at it.
+
+:::
+
+## Event Tree Evaluation
+
+The **Event tree evaluation** section shows the PFM-22 event tree and, below it, the panel of the selected node. The tree starts at the Flood loading
+on the left and ends at breach, marked by a red triangle, on the right. The section header counts the complete nodes, for example "2 of 3 nodes complete"; a node is
+complete when it has a probability at every stage above the zero point and an estimate rationale. <FigReference figKey="dst-users-guide-fig-pfm-22-event-tree" /> shows
+the tree with Node 2 selected.
+
+<Figure
+  figKey="dst-users-guide-fig-pfm-22-event-tree"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/pfm-22-event-tree.png"
+  alt={"The Event tree evaluation section of the PFM-22 page. At the top right the header reads \"2 of 3 nodes complete\". The event tree runs left to right from a steel-blue fan labelled Flood through Nodes 1 to 3 on one line to a red triangle at the right. Each node is a numbered circle with its title below it. All nodes but Node 3 are green with a white check mark (complete); Node 3 is pale amber with an amber ring (started). Node 2 has a dark selection ring. Below the tree is the panel for Node 2, headed \"Node 2 – Unsuccessful Intervention\" and the question \"Intervention to reduce the load such that the strut arms are no longer overstressed is unsuccessful?\". The panel lists the columns Stage (ft) and Probability with slider labels from Virtually Impossible to Virtually Certain, one row per stage with its elevation, stage name, probability box and slider, an Add stage to this node button, and the Estimate rationale editor marked Required. Previous node and Next node buttons are at the bottom right."}
+  caption={"The PFM-22 event tree with Node 2 selected."}
+  width="100%"
+/>
+
+PFM-22 has three nodes. <TableReference tableKey="dst-users-guide-table-pfm-22-nodes" /> lists each node as numbered in the tree and whether it takes
+one probability at each stage or one for all stages, with the question its panel shows under the node title. Every PFM-22 node takes a probability at each stage.
+
+<TableVertical
+  tableKey="dst-users-guide-table-pfm-22-nodes"
+  colWidths={['7ch', '24ch', '18ch', 'minmax(30ch, 1fr)']}
+  alt={"The nodes of the PFM-22 event tree and their questions"}
+  caption={"PFM-22 event tree nodes"}
+  headers={[[{ value: "Node" }, { value: "Title" }, { value: "Probabilities" }, { value: "Question" }]]}
+  columns={[
+    [
+      "1",
+      "2",
+      "3",
+    ],
+    [
+      "Gate Overstress",
+      "Unsuccessful Intervention",
+      "Breach",
+    ],
+    [
+      "One at each stage",
+      "One at each stage",
+      "One at each stage",
+    ],
+    [
+      "The loading on the gate overstresses the strut arms, girders, and/or diaphragms?",
+      "Intervention to reduce the load such that the strut arms are no longer overstressed is unsuccessful?",
+      "The load in the strut arms, girders, and/or diaphragms cannot be sufficiently distributed to other members and the gate fails?",
+    ],
+  ]}
+/>
+
+The user selects a node in the tree, or moves through the nodes with **Previous node** and **Next node**, to open its panel. Until a node is selected,
+the panel reads "No node selected". <TableReference tableKey="dst-users-guide-table-pfm-22-node-inputs" /> describes the panel's inputs, and the typical order of work is:
+
+<ProcessList
+  items={[
+    { title: <>The user selects Node 1, Gate Overstress, in the tree.</> },
+    { title: <>The user enters the node's probability at each stage above the zero point, in the box or with the slider.</> },
+    { title: <>The user enters the <strong>Estimate rationale</strong> for the node.</> },
+    { title: <>The user selects <strong>Next node</strong> and repeats until the header reads "3 of 3 nodes complete".</> },
+  ]}
+/>
+
+<TableVertical
+  tableKey="dst-users-guide-table-pfm-22-node-inputs"
+  colWidths={['22ch', '8ch', '12ch', 'minmax(30ch, 1fr)']}
+  alt={"Inputs in the PFM-22 node panel, with units, requirement and description"}
+  caption={"PFM-22 node panel inputs"}
+  headers={[[{ value: "Field" }, { value: "Units" }, { value: "Required" }, { value: "Description" }]]}
+  columns={[
+    [
+      "Probability",
+      "Estimate rationale",
+      "Add stage to this node",
+    ],
+    [
+      "—",
+      "—",
+      "ft",
+    ],
+    [
+      "Required",
+      "Required",
+      "Optional",
+    ],
+    [
+      "The node's probability at the stage, from 0 to 1, entered in the box or set with the slider. A 0 is stored as 1.00E-16. One row per stage above the zero point; rows at and below the zero point are disabled.",
+      "The case for the nodal estimate across all of its stages. A node without a rationale is not complete.",
+      "Stage-by-stage nodes only. Adds an elevation and description that apply to this node only; the panel reads \"Adds a stage to Node <n> only.\" The other nodes take an interpolated value there.",
+    ],
+  ]}
+/>
+
+Node colors, the probability slider's labels and node navigation are described in [The event tree diagram](./11-failure-mode-evaluation.mdx#event-tree-diagram) and
+[Nodes](./11-failure-mode-evaluation.mdx#nodes).
+
+## System Response
+
+The **System Response** section shows the location's SRP at each stage. It appears once every node has a probability at every stage above the zero
+point and the stages and probabilities have no errors; until then the section reads "No system response curve yet". To its left is a table of
+the results, described in <TableReference tableKey="dst-users-guide-table-pfm-22-results" />, and to its right a chart of the same values. The information icon in each
+column heading explains the column, and the section's layout is described in [Event tree system response](./11-failure-mode-evaluation.mdx#event-tree-system-response).
+
+<TableVertical
+  tableKey="dst-users-guide-table-pfm-22-results"
+  colWidths={['16ch', 'minmax(30ch, 1fr)']}
+  alt={"Columns of the PFM-22 System Response table and what each shows"}
+  caption={"PFM-22 system response columns"}
+  headers={[[{ value: "Column" }, { value: "Description" }]]}
+  columns={[
+    [
+      "Stage (ft)",
+      "Total SRP",
+    ],
+    [
+      "The stage elevation. Stages at and below the zero point are shown in grey with a system response of 1.00E-16.",
+      "The system response probability at the stage: the product of the node probabilities along the pathway to breach.",
+    ],
+  ]}
+/>
+
+The chart plots the Total SRP against Pool Elevation (ft) on a logarithmic System Response
+Probability axis. **Download SRP curves as a CSV file** saves the plotted values (see [SRP charts](./11-failure-mode-evaluation.mdx#srp-charts)). The Total SRP is the curve
+DST sends to Risk Analysis for the location (see [Active SRP](./11-failure-mode-evaluation.mdx#active-srp)). If the Total SRP decreases from one stage to the next, the table and
+chart still show, but the page messages report an error and the curve is not sent to Risk Analysis.
+
+## User Defined SRP
+
+With **User defined** selected in the toolbar, the page replaces Stages to evaluate, Event tree evaluation and System Response with a table of
+**Pool Elevation (ft)** and **Probability** pairs and its chart, and the entered curve becomes the location's SRP. The stages, node probabilities and
+rationales stay saved and return when the user selects **Event tree** again. The table and chart are described in
+[User-defined SRP](./11-failure-mode-evaluation.mdx#user-defined-srp).
+
+## Failure Mode Summary
+
+The failure mode summary tray at the bottom of the page includes a **Node probabilities** section for PFM-22. It shows a table of every node, its
+status (Not started, Started or Complete) and its probability at every stage, with one column per stage headed by its elevation and name. A shaded cell
+marks a stage that is not one of the node's stages, and "—" marks a stage at or below the zero point. The tray itself is
+described in [Summary Tray](./04-working-in-dst.mdx#summary-tray), and its other sections, including the **System response rationale**, in
+[Failure mode summary](./11-failure-mode-evaluation.mdx#failure-mode-summary).
+
+## Page Messages
+
+The page messages button lists the location's required inputs, warnings and errors (see [Page Messages](./04-working-in-dst.mdx#page-messages)).
+<TableReference tableKey="dst-users-guide-table-pfm-22-messages" /> lists the messages that come from the PFM-22 stage sources and cross section. The
+messages about added stages, probabilities that fall outside 0 to 1 or decrease with stage, and a decreasing total, which every event tree page can
+show, are listed in [Event tree messages](./11-failure-mode-evaluation.mdx#event-tree-messages). Text in angle brackets stands for the value shown.
+
+<TableVertical
+  tableKey="dst-users-guide-table-pfm-22-messages"
+  colWidths={['16ch', 'minmax(30ch, 2fr)', 'minmax(24ch, 1fr)']}
+  alt={"Messages the PFM-22 page shows about its stage sources and cross section"}
+  caption={"PFM-22 source messages"}
+  headers={[[{ value: "Type" }, { value: "Message" }, { value: "When it appears" }]]}
+  columns={[
+    [
+      "Required input",
+      "Required input",
+      "Required input",
+      "Required input",
+      "Error",
+    ],
+    [
+      "Enter the spillway crest elevation in the Key Elevations & Storage section of the Dam Data page.",
+      "Select a cross section for this location.",
+      "The selected cross section no longer has a gate, so the top of gates is placed a third of the way from the spillway crest to the top of dam. Select a gated cross section.",
+      "Enter the dam crest elevation in the Key Elevations & Storage section of the Dam Data page so the top of dam can be derived.",
+      "The spillway crest (<elevation>) must be below the top of dam (<elevation>).",
+    ],
+    [
+      "Dam Data has no spillway crest elevation.",
+      "No cross section is selected and the dam has at least one gated concrete cross section.",
+      "The gate was removed from the selected cross section on the Dam Information page.",
+      "No cross section has a drawn crest and Dam Data has no dam crest elevation.",
+      "The Spillway Crest stage is at or above the Top of Dam stage.",
+    ],
+  ]}
+/>
+
+Submission Readiness lists each PFM-22 location that has nodes without probabilities or rationales, for example "PFM-22 — Location 1: 2 nodes missing
+probabilities, 3 missing rationales.", together with its required inputs and errors (see [Submission Readiness](./04-working-in-dst.mdx#submission-readiness)).
