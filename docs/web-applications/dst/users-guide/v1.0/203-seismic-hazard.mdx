@@ -64,12 +64,23 @@ coordinates."
 Once the curves are in place, the status line reads **Last fetched:** and the date, and its information icon, **USGS Data Source**, lists the **NSHM Model**,
 the **Coordinates** and the **Service**, with a **Dam location** map. **Re-fetch** opens the **Re-fetch from USGS?** dialog: re-fetching replaces the current curves with a fresh pull
 for the dam's current coordinates. When the dam's coordinates change after a fetch, the saved curves no longer match and the page must be fetched
-again before it can be verified.
+again before it can be verified. Until then the page shows the required input "The saved USGS Seismic Hazard data does not match the current
+project coordinates." If the coordinates change while a re-fetch is starting, DST loads the latest data and shows the warning "The project
+coordinates changed while this re-fetch was starting. The latest data has been loaded — try the fetch again."
 
 Under **Chart Filters**, the filters **Site Classes**, **Source Components** and **Intensity Measure Types (IMTs)** each choose one or more values. They control only what the
 page displays: "These filters only control data visualization for this page. They do not select hazard curves for any seismic potential failure
 modes." The table **Summary Table for Common Return Periods** lists, for each plotted curve, the ground motion at return periods of 145, 225, 475, 975, 2,475 and 10,000 years. The
 chart plots **Annual Exceedance Probability** against **Ground Motion (g)**.
+
+A new screening starts with **Site Classes** set to **BC**, **Source Components** to **Total** and **Intensity Measure Types (IMTs)** to **PGA**,
+which plots one curve, as in <FigReference figKey="dst-users-guide-fig-seismic-hazard-dst-based" />. The table and chart show one curve for every
+combination of the selected values: two site classes and two IMTs with **Total**, for example, plot four curves. The filter choices save with the
+page, so the screening reopens with the same curves shown. When a filter is cleared, nothing matches, the return period table is left blank, and
+the chart reads "No hazard curves match the selected filters."; a filter that is still empty when the page next opens returns to its default value.
+
+The chart zooms and pans (see [Charts](./040-working-in-dst.mdx#charts)). Its download button, **Export to CSV**, saves the plotted curves as a CSV
+file with the columns Curve Name, Ground Motion (g) and Annual Exceedance Probability.
 
 ## User Defined
 
@@ -77,6 +88,10 @@ In User Defined mode the user enters each curve. A row of chips above the table 
 plots every curve with the selected one emphasized (<FigReference figKey="dst-users-guide-fig-seismic-hazard-user-defined" />). A chip without a
 justification is marked. Under the curve table, the **Summary Table for Common Return Periods** lists the ground motion of each curve
 at the same return periods as in DST Based mode.
+
+Until a curve has points to plot, the chart reads "Enter values in the curve table to plot the hazard curves." (or, when the page is read-only, "No
+seismic hazard curves have been entered."). The chart zooms and pans like the DST Based chart (see [Charts](./040-working-in-dst.mdx#charts)), and
+**Export to CSV** saves every curve's points.
 
 <Figure
   figKey="dst-users-guide-fig-seismic-hazard-user-defined"
@@ -114,8 +129,9 @@ the other tables in DST (see [Tables](./040-working-in-dst.mdx#tables)).
   ]}
 />
 
-At least one curve is required, and a screening holds at most 20. <TableReference tableKey="dst-users-guide-table-hazards-seismic-hazard-messages" />
-lists the page messages for the curves; each begins with the curve's label.
+At least one curve is required, and a screening holds at most 20. **Add curve** does not stop at 20; instead, DST refuses to save the page
+while it holds more than 20 curves and shows the error "No more than 20 user-defined curves are allowed." Deleting the extra curve lets the page
+save again. <TableReference tableKey="dst-users-guide-table-hazards-seismic-hazard-messages" /> lists the page messages for the curves; each begins with the curve's label.
 
 <TableVertical
   tableKey="dst-users-guide-table-hazards-seismic-hazard-messages"
@@ -141,6 +157,18 @@ lists the page messages for the curves; each begins with the curve's label.
 
 The Submission Readiness page lists a curve without a justification as "Seismic Hazard: write a justification for the user-defined curve
 '[name]' (on the Seismic Hazard page)."
+
+## Common return periods
+
+The **Summary Table for Common Return Periods** reads each curve at six return periods, 145, 225, 475, 975, 2,475 and 10,000 years, in both modes.
+It has one column per curve, headed by the curve's name and a swatch of its chart color. For each return period T, DST converts T to the annual
+exceedance probability 1 − e^(−1/T) (about 1/T for these return periods), finds the two curve points whose AEPs bracket it, and interpolates
+between them linearly in the logarithms of both AEP and ground motion. Where either point has a ground motion of zero, it interpolates on the
+plain values instead. The result is rounded to three significant figures and shown to three decimal places.
+
+A curve is never extended past its own points. When the return period's AEP falls outside the range of the curve's AEPs, the cell shows "—". For
+example, a curve whose smallest AEP is 1E-4 shows "—" in the 10,000-year row, because that row's AEP, 1 − e^(−1/10,000), is just below 1E-4. A
+curve with fewer than two points shows "—" in every row.
 
 ## Seismic hazard summary
 

@@ -8,6 +8,8 @@ import NavContainer from '@site/src/components/NavContainer';
 import ProcessList from '@site/src/components/ProcessList';
 import TableReference from '@site/src/components/TableReference';
 import TableVertical from '@site/src/components/TableVertical';
+import Video from '@site/src/components/Video';
+import VideoReference from '@site/src/components/VideoReference';
 import { MEDIA_WIDTH } from './_media-width.js';
 
 <NavContainer link="/web-applications/dst" linkTitle="Dam Screening Tool" document="web-applications/dst/users-guide" />
@@ -111,6 +113,10 @@ for example "Datum matches: NAVD88". When the record needs attention, an amber c
   the screening's units, then selects **Apply**.
 - **Re-resolve the datum**, when the screening's datum or units changed after the record was reconciled.
 
+**Apply** checks the card before saving and names what is missing: "Select the datum these elevations are referenced to." when no source datum is
+chosen, "Choose whether to add or subtract the offset." when neither **ADD** nor **SUBTRACT** is chosen, and "Enter the offset as a positive number
+of feet." (or meters) when the offset is empty or negative.
+
 Until the datum is resolved, the curve is not used for the normal pool. A converted record shows the conversion on the status line, for example
 "NGVD29 → NAVD88 (−0.8 ft)", with **Edit** to change it.
 
@@ -124,6 +130,9 @@ When the Flood Hazard curve reaches above the highest observed stage, DST extend
 with a dashed line. The line under the curve chart says which applies, for example "Extrapolated above 1,250.00 ft-NAVD88 to 1,262.40 ft-NAVD88 using
 the Flood Hazard curve (dashed).", "Not extrapolated: the observed curve already reaches the top of the Flood Hazard curve." or "Not extrapolated: no
 Flood Hazard curve has been entered." The information icon on the curve chart heading explains the extension.
+
+The Stage time series chart zooms and pans (see [Charts](./040-working-in-dst.mdx#charts)), which helps when drawing a short trimmed period on a
+long record. The curve chart does not zoom.
 
 A trimmed period is a date range left out of the record, such as a construction period or a gage outage. DST derives the curve from the record
 without the trimmed periods. There are two ways to add one:
@@ -152,8 +161,55 @@ without the trimmed periods. There are two ways to add one:
 Each period in the list has **Edit period** (the pencil) and **Delete period** (the trash icon), and resting the pointer on a period highlights it on
 the chart. A period that removes records needs a justification, entered in the list (**Add justification**) or in the summary tray. When periods
 are trimmed, the **Untrimmed** check box at the lower left of the curve chart ("Overlay the curve computed from the untrimmed data") overlays the
-curve without trimming as a dashed line. A period with only one date, or with **To** before **From**, is incomplete and must be finished or removed
+curve without trimming as a dashed line. The check box is selected by default; clearing it is a view setting that is not saved, so the overlay
+returns the next time the page opens. A period with only one date, or with **To** before **From**, is incomplete and must be finished or removed
 before the page can be verified.
+
+<VideoReference videoKey="dst-users-guide-video-stage-duration-zoom" /> shows the time series zoomed into a few years, panned and reset, with the
+pointer reading a day's stage.
+
+<Video
+  videoKey="dst-users-guide-video-stage-duration-zoom"
+  src="/videos/web-applications/dst/users-guide/v1.0/stage-duration-zoom.mp4"
+  caption="Zooming and panning the stage time series."
+  width={MEDIA_WIDTH}
+/>
+
+### Drawing trimmed periods on the chart
+
+**Draw trim range on chart** (the scissors) turns on draw mode on the Stage time series chart. While it is on, the chart stops panning and zooming so
+the bands stay where the user draws them, and the button's tooltip reads "Exit draw mode"; selecting it again turns draw mode off. In draw mode the pointer
+does one of three things, depending on where the drag starts:
+
+- **On an open part of the plot**, dragging across the chart draws a new period. A drag shorter than a day, or a click without a drag, adds nothing.
+- **On the edge of a shaded band**, where the pointer becomes a two-headed arrow, dragging moves that edge to resize the period. The edge stops a day
+  short of the other edge, so a period never shrinks below one day or turns inside out.
+- **Inside a shaded band**, where the pointer becomes a four-headed arrow, dragging moves the whole period, keeping its length.
+
+Every band snaps to whole days and stays within the dates of the record. Each band carries a numbered badge that matches its row in the
+**Trimmed periods** list, and resting the pointer on a band or a row highlights both. A new or changed period saves when the user releases the
+pointer, the same as an edit in the list. Escape cancels a drag in progress and leaves the period as it was; a second Escape, with no drag in
+progress, exits draw mode. Periods are deleted from the list only, not on the chart, and the list remains the way to enter exact dates from the
+keyboard.
+
+## How DST derives the curve
+
+DST derives the stage–duration curve the same way from a fetched record and from a pasted one:
+
+- **Daily values.** The curve is ranked from one value per day, so that each value stands for the same length of time. A record taken more often
+  than daily (hourly or every 15 minutes, for example), or at irregular times, is reduced to the mean of each calendar day (UTC), and days with no
+  readings are left out. A record already at a regular daily or longer interval is used as it is. For a fetched record, the **Normalized to** entry
+  of the data source details reports this step; for a pasted one, the **On import** line of the paste dialog does.
+- **Trimmed periods.** Values that fall within any trimmed period, including its first and last days, are removed. Overlapping periods remove the
+  union of their dates.
+- **Ranking.** The remaining values are sorted from the highest stage to the lowest, and each is given the Weibull plotting position: the value of
+  rank i (1 for the highest) among n values is equaled or exceeded 100 × i / (n + 1) percent of the time. The curve therefore never reaches exactly
+  0% or 100%; with ten years of daily values, the highest stage plots at about 0.03%.
+- **Normal pool.** The normal pool is the stage at 50% exceedance, interpolated linearly between the two curve points on either side of 50%. When
+  the curve does not span 50%, or has no usable data, the Dam Data normal pool stands in, with the warning given at the top of this page.
+- **Extrapolation.** When the Flood Hazard curve reaches above the highest observed stage, DST adds one point at the Flood Hazard curve's highest
+  stage, at an exceedance of that stage's AEP × 100 / 365.25 percent, and draws the dashed line to it from the top of the observed curve. The point
+  is added when the curve is read; it is not saved with the record, so it follows changes to the Flood Hazard curve.
 
 ## User Defined
 
@@ -203,7 +259,8 @@ range of seismic hazard. The chart plots the elevation as the relationship.
       title: (
         <>
           The user pastes two columns, date and stage, into <strong>Pasted data</strong>, separated by a comma or tab. ISO (YYYY-MM-DD) and US
-          (M/D/YYYY) dates are accepted, with an optional time of day. A header row is skipped.
+          (M/D/YYYY) dates are accepted, with an optional time of day. A space also works as the separator on rows without a time of day. A header row
+          is skipped, and lines starting with # are ignored.
         </>
       ),
     },
@@ -212,7 +269,7 @@ range of seismic hazard. The chart plots the elevation as the relationship.
         <>
           The <strong>Summary</strong> shows the number of ordinates, the time range and what happens on import. A record with several readings on
           some days is averaged to one value per day ("Aggregated to daily mean"). DST lists the lines it cannot read, for example "Line 3:
-          '13/45/2001' is not a recognized date."
+          "13/45/2001" is not a recognized date."
         </>
       ),
     },
@@ -225,6 +282,14 @@ range of seismic hazard. The chart plots the elevation as the relationship.
     },
   ]}
 />
+
+The dialog checks the paste as it is typed or pasted. Each line it cannot read is listed under a red heading such as "3 issues found", with the
+line number and the token that could not be read in double quotes: a date it does not recognize, a stage that "is not a number", or a line that
+"expected a date and a value". The list shows the first 10 issues and then "…and [n] more." **Import** stays unavailable, and the **Summary** is
+hidden, while any line has an issue, so the user corrects or removes those lines in **Pasted data** first. When some days have more than one reading,
+an amber notice, "Multiple readings per day — will be averaged on import", says so before the import. A paste with more values than DST accepts
+shows "Dataset too large to import", with the number of values and the maximum, and **Import** stays unavailable; the notice suggests reducing the
+dataset, or processing it outside DST and entering the finished curve with **Stage–duration relationship**.
 
 Once a record is in place, the panel shows **Data uploaded on:** and the date, a **Pasted data source** information icon, **Clear data** ("Remove the
 pasted time series and trim ranges"), which asks for confirmation in the **Clear user-defined time series?** dialog, and **Replace data**, which
