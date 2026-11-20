@@ -1,0 +1,149 @@
+---
+title: 'Seismic Hazard'
+---
+
+import Figure from '@site/src/components/Figure';
+import FigReference from '@site/src/components/FigureReference';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/dst" linkTitle="Dam Screening Tool" document="web-applications/dst/users-guide" />
+
+# Seismic Hazard
+
+The Seismic Hazard page (**Hazards > Seismic Hazard**) holds one or more seismic hazard curves: the annual exceedance probability of each level of
+ground motion. <FigReference figKey="dst-users-guide-fig-seismic-hazard-dst-based" /> shows the page with DST-based curves, and
+
+<TableReference tableKey="dst-users-guide-table-hazards-seismic-hazard-regions" /> describes each numbered region.
+
+<Figure
+  figKey="dst-users-guide-fig-seismic-hazard-dst-based"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/seismic-hazard-dst-based.png"
+  alt="The Seismic Hazard page of a Thistlewood screening in DST Based mode. In the gray toolbar at the top right, DST Based is selected beside User Defined. Below it, a status line reads 'Last fetched: Nov 19, 2026' with a help icon, and a Re-fetch button sits at the right. On the left, the Chart Filters panel carries the note 'These filters only control data visualization for this page. They do not select hazard curves for any seismic potential failure modes.' and three drop-downs: Site Classes set to BC, Source Components set to Total, and Intensity Measure Types (IMTs) set to PGA. Below it, the Summary Table for Common Return Periods has the columns Return Period (yr) and 'PGA, Total, Class BC', with the rows 145 0.007, 225 0.010, 475 0.018, 975 0.029, 2,475 0.049 and 10,000 0.103. On the right, a chart plots Annual Exceedance Probability from 1.00E-01 to 1.00E-06 on a log scale against Ground Motion (g) from 0 to 1.0, with one curve and dashed horizontal lines labeled 145, 225, 475, 975, 2,475 and 10,000 yr; the legend reads 'PGA, Total, Class BC'. Along the bottom, the collapsed summary tray reads Seismic hazard summary with the status No justification yet. Numbered callouts 1 to 6 mark the source control, the status line, Re-fetch, the Chart Filters panel, the return period table and the chart."
+  caption="The Seismic Hazard page with DST-based curves from USGS."
+  width="100%"
+/>
+
+<TableVertical
+  tableKey="dst-users-guide-table-hazards-seismic-hazard-regions"
+  colWidths={['5ch', '22ch', 'minmax(30ch, 1fr)']}
+  alt="Description of each numbered region of the Seismic Hazard page"
+  caption="Seismic Hazard page regions"
+  headers={[[{ value: '#' }, { value: 'Region' }, { value: 'Description' }]]}
+  columns={[
+    ['1', '2', '3', '4', '5', '6'],
+    ['Source', 'Fetch status', 'Re-fetch', 'Filters', 'Return period table', 'Chart'],
+    [
+      'DST Based or User Defined.',
+      'The date of the last fetch and the data source details.',
+      'Fetches the USGS curves again.',
+      'Choose which curves the table and chart show.',
+      'The ground motion of each curve at common return periods.',
+      'The hazard curves.',
+    ],
+  ]}
+/>
+
+## Source
+
+**DST Based** fetches the curves from the USGS dynamic seismic hazard web service for the dam's coordinates on the Dam Data page. It is available
+when the coordinates lie in a region the USGS models cover; otherwise it is unavailable, with the tooltip "Coordinates are outside supported USGS
+model regions. Use User Defined mode." A screening opens in DST Based mode where it is available. **User Defined** takes curves the user enters.
+
+## DST Based
+
+Before the first fetch the page reads "No seismic hazard data fetched yet" with **Fetch USGS data** ("Pull Dynamic Seismic Hazard Curves from USGS
+in the background."). While the fetch runs, the page reads "Fetching Seismic Hazard Data…" with a progress bar and the site class being queried; the
+page cannot be verified until a fetch succeeds. A failed fetch shows **USGS fetch failed**: "The last fetch did not complete. Re-fetch to try again or switch to
+User Defined to load data.", with a **Re-fetch** button ("Retry the USGS fetch in the background.") that opens the same **Re-fetch from USGS?**
+confirmation described below. When USGS has no data for the coordinates, the page reads "No Dynamic Seismic Hazard data is available for the specified
+coordinates."
+
+Once the curves are in place, the status line reads **Last fetched:** and the date, and its information icon, **USGS Data Source**, lists the **NSHM Model**,
+the **Coordinates** and the **Service**, with a **Dam location** map. **Re-fetch** opens the **Re-fetch from USGS?** dialog: re-fetching replaces the current curves with a fresh pull
+for the dam's current coordinates. When the dam's coordinates change after a fetch, the saved curves no longer match and the page must be fetched
+again before it can be verified.
+
+Under **Chart Filters**, the filters **Site Classes**, **Source Components** and **Intensity Measure Types (IMTs)** each choose one or more values. They control only what the
+page displays: "These filters only control data visualization for this page. They do not select hazard curves for any seismic potential failure
+modes." The table **Summary Table for Common Return Periods** lists, for each plotted curve, the ground motion at return periods of 145, 225, 475, 975, 2,475 and 10,000 years. The
+chart plots **Annual Exceedance Probability** against **Ground Motion (g)**.
+
+## User Defined
+
+In User Defined mode the user enters each curve. A row of chips above the table lists the curves; selecting a chip selects that curve, and the chart
+plots every curve with the selected one emphasized (<FigReference figKey="dst-users-guide-fig-seismic-hazard-user-defined" />). A chip without a
+justification is marked. Under the curve table, the **Summary Table for Common Return Periods** lists the ground motion of each curve
+at the same return periods as in DST Based mode.
+
+<Figure
+  figKey="dst-users-guide-fig-seismic-hazard-user-defined"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/seismic-hazard-user-defined.png"
+  alt="The body of the Seismic Hazard page in User Defined mode. Across the top are the curve chips Site-Specific PSHA, selected, and Alternative PSHA, marked with an orange dot, each with a menu button, then an Add curve button, and at the far right a Justification chip with a check mark. On the left, the selected curve's table has the columns Annual Exceedance Probability and Ground Motion (g) and four rows: 1.00E-02 0.1, 2.00E-03 0.25, 4.00E-04 0.45 and 1.00E-04 0.7. Below it, the Summary Table for Common Return Periods lists both curves at return periods of 145 to 10,000 years, for example 0.243 and 0.292 at 475 years, with dashes at 10,000 years. On the right, a chart plots Annual Exceedance Probability against Ground Motion (g), with the Site-Specific PSHA curve as a solid blue line, the Alternative PSHA curve as a dashed tan line, dashed return-period lines, and a legend."
+  caption="User-defined seismic hazard curves."
+  width="100%"
+/>
+
+- **Add curve** opens the **Add hazard curve** dialog with **Name**, **Description** and **Justification**; **Add** adds the curve.
+- The menu on a chip offers **Edit**, which opens the same fields in **Edit hazard curve**, and **Delete**, when there is more than one curve.
+  **Delete curve** in the confirmation removes the curve and its points permanently.
+- **Add justification** (or **Justification**) beside the chips edits the selected curve's justification.
+
+<TableReference tableKey="dst-users-guide-table-hazards-seismic-hazard-inputs" /> lists the inputs of a user-defined curve. The curve table works like
+the other tables in DST (see [Tables](./040-working-in-dst.mdx#tables)).
+
+<TableVertical
+  tableKey="dst-users-guide-table-hazards-seismic-hazard-inputs"
+  colWidths={['24ch', '10ch', '14ch', 'minmax(30ch, 1fr)']}
+  alt="Inputs of a user-defined seismic hazard curve with their units, whether each is required, and a description"
+  caption="User-defined seismic hazard curve inputs"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Name', 'Description', 'Justification', 'Annual Exceedance Probability', 'Ground Motion (g)'],
+    ['—', '—', '—', '—', 'g'],
+    ['Required', 'Optional', 'Required', 'Required', 'Required'],
+    [
+      'Up to 200 characters, for example "Site-Specific PSHA".',
+      'Up to 200 characters, shown above the curve table.',
+      'Up to 4,000 characters: the source of the curve and any judgment applied.',
+      'Between 0 and 1, in scientific notation, decreasing down the table. At least two complete rows per curve.',
+      'Zero or greater, increasing down the table.',
+    ],
+  ]}
+/>
+
+At least one curve is required, and a screening holds at most 20. <TableReference tableKey="dst-users-guide-table-hazards-seismic-hazard-messages" />
+lists the page messages for the curves; each begins with the curve's label.
+
+<TableVertical
+  tableKey="dst-users-guide-table-hazards-seismic-hazard-messages"
+  colWidths={['16ch', 'minmax(30ch, 1fr)']}
+  alt="Page messages of the Seismic Hazard page in User Defined mode and the severity of each"
+  caption="Seismic Hazard page messages"
+  headers={[[{ value: 'Severity' }, { value: 'Message' }]]}
+  columns={[
+    ['Required input', 'Required input', 'Required input', 'Required input', 'Error', 'Error', 'Error', 'Error', 'Warning'],
+    [
+      'At least one hazard curve is required when using User Defined mode.',
+      '[Curve]: Curve name is required.',
+      '[Curve]: At least two complete data points (Ground Motion and AEP) are required.',
+      '[Curve]: Each data point must include both a Ground Motion and an AEP value.',
+      '[Curve]: Ground Motion must be in increasing order. Value at row [n] ([value]) is not greater than the previous row ([value]).',
+      '[Curve]: AEP must be in decreasing order. AEP at row [n] ([value]) is not less than the previous row ([value]).',
+      '[Curve]: Invalid Ground Motion at row [n]: [value]. Value cannot be negative.',
+      '[Curve]: Invalid AEP at row [n]: [value]. Value must be between 0 and 1.',
+      "[Curve]: AEP value [value] at row [n] is below the chart's minimum display threshold. The point will snap to 1.00E-16 on the chart.",
+    ],
+  ]}
+/>
+
+The Submission Readiness page lists a curve without a justification as "Seismic Hazard: write a justification for the user-defined curve
+'[name]' (on the Seismic Hazard page)."
+
+## Seismic hazard summary
+
+The summary tray, **Seismic hazard summary**, holds, in DST Based mode, the optional section **Basis of the DST based seismic hazard**: "Anything a
+reviewer should know about the USGS hazard curves, such as the site class chosen and why." In User Defined mode each curve carries its own
+justification instead. The tray ends with the page's supporting documents (see
+[Supporting Documents](./150-documents.mdx#supporting-documents)).

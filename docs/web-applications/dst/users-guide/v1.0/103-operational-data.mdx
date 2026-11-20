@@ -1,0 +1,194 @@
+---
+title: 'Operational Data'
+---
+
+import Link from '@docusaurus/Link';
+import Figure from '@site/src/components/Figure';
+import FigReference from '@site/src/components/FigureReference';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/dst" linkTitle="Dam Screening Tool" document="web-applications/dst/users-guide" />
+
+# Operational Data
+
+The Operational Data page holds the reservoir's operating relationships: stage-storage, stage-outflow and tailwater. The user reaches it from
+**Screening Information > Operational Data**. No curve on the page is required for submission. The Consequences module uses the stage-storage and stage-outflow
+curves for 1D reservoir routing, and a tailwater relationship is needed when a concrete gravity or RCC dam is evaluated for sliding stability.
+
+<FigReference figKey="dst-users-guide-fig-operational-data-stage-storage" /> shows the page, and
+<TableReference tableKey="dst-users-guide-table-screening-information-operational-data-regions" /> describes each numbered region.
+
+<Figure
+  figKey="dst-users-guide-fig-operational-data-stage-storage"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/operational-data-stage-storage.png"
+  alt="The Operational Data page of Thistlewood Dam Screening with the Stage-Storage card selected. Across the top are three relationship cards, Stage-Storage (selected), Stage-Outflow and Tailwater, each with an icon, a one-line description and a question-mark button. Below, on the left, a two-column table headed Stage (ft-NAVD88) and Storage (ac-ft) lists the curve from 726.90 ft and 0.0 ac-ft upward, with its toolbar above it and the tip 'drag to select; paste grows table if needed' below. On the right, a chart plots stage on the vertical axis against storage on the horizontal axis, with dotted horizontal reference lines labeled Top of dam, Normal pool and Spillway crest, and black diamond markers on the curve for the Dam Data storage values; the curve rises to about 44,000 ac-ft at El. 822, above the Top of dam line. A collapsed Operational data summary strip with the status '3 notes' runs along the bottom. Numbered callouts 1 through 6 mark the relationship cards, a question-mark button, the table toolbar, the table, a reference line and a Dam Data marker."
+  caption="The Operational Data page, Stage-Storage relationship."
+  width="100%"
+/>
+
+<TableVertical
+  tableKey="dst-users-guide-table-screening-information-operational-data-regions"
+  colWidths={['5ch', '22ch', 'minmax(30ch, 1fr)']}
+  alt="Description of each numbered region of the Operational Data page"
+  caption="Operational Data page regions"
+  headers={[[{ value: '#' }, { value: 'Region' }, { value: 'Description' }]]}
+  columns={[
+    ['1', '2', '3', '4', '5', '6'],
+    ['Relationship cards', 'Definition', 'Table toolbar', 'Curve table', 'Reference line', 'Dam Data marker'],
+    [
+      'Choose which relationship the page shows. The selected card is highlighted.',
+      'Explains the relationship, what uses it and when it is required.',
+      <>
+        Row and selection commands (see <Link to="/docs/web-applications/dst/users-guide/v1.0/working-in-dst#tables">Tables</Link>).
+      </>,
+      'The entered points of the selected relationship, lowest stage first.',
+      'A key elevation from the Dam Data page: normal pool, spillway crest (when the dam has a spillway) or top of dam.',
+      'Stage-Storage only: a Dam Data elevation that has a storage value, plotted at that storage as a black diamond. Resting the pointer on it names the level followed by "(Dam Data)".',
+    ],
+  ]}
+/>
+
+The page opens on the Stage-Storage card. A link from another page can open it on the Stage-Outflow or Tailwater card. Each relationship is entered in a
+table with at least two rows, which works like the other DST tables (see [Tables](./040-working-in-dst.mdx#tables)); its chart beside the table
+updates as the rows save, and resting the pointer on the chart shows the values at that point. Entries save automatically, and any change clears
+the page's verification and can clear the verification of failure mode locations that use the curves.
+
+## Stage-Storage
+
+The **Stage-Storage** card holds the reservoir storage volume as a function of stage
+(<TableReference tableKey="dst-users-guide-table-screening-information-operational-data-storage" />). The chart plots storage on the horizontal axis
+and stage on the vertical axis, with the Dam Data storage values as markers for comparison.
+
+<TableVertical
+  tableKey="dst-users-guide-table-screening-information-operational-data-storage"
+  colWidths={['24ch', '10ch', '14ch', 'minmax(30ch, 1fr)']}
+  alt="Columns of the Stage-Storage table on the Operational Data page"
+  caption="Stage-Storage columns"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Stage', 'Storage'],
+    ['ft or m, on the screening datum', 'ac-ft or m³'],
+    [
+      'Conditional: when 1D reservoir routing is performed in the Consequences module',
+      'Conditional: when 1D reservoir routing is performed in the Consequences module',
+    ],
+    [
+      'Reservoir stage, two decimal places. Each row must be higher than the row above it.',
+      'Storage at that stage, one decimal place. Cannot be negative.',
+    ],
+  ]}
+/>
+
+## Stage-Outflow
+
+The **Stage-Outflow** card holds the total project outflow as a function of stage
+(<TableReference tableKey="dst-users-guide-table-screening-information-operational-data-outflow" />): the combined discharge from all project
+outlets, such as spillways and outlet works. A note above the table reads "Enter the combined discharge from all project outlets. Do not include
+overtopping flows over the dam crest. Start at the lowest outlet's invert with zero outflow, and carry the curve up to the top of dam." The chart plots outflow on the horizontal axis and
+stage on the vertical axis, with the Dam Data reference lines.
+
+<TableVertical
+  tableKey="dst-users-guide-table-screening-information-operational-data-outflow"
+  colWidths={['24ch', '10ch', '14ch', 'minmax(30ch, 1fr)']}
+  alt="Columns of the Stage-Outflow table on the Operational Data page"
+  caption="Stage-Outflow columns"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Stage', 'Outflow'],
+    ['ft or m, on the screening datum', 'cfs or m³/s'],
+    [
+      'Conditional: when 1D reservoir routing is performed in the Consequences module, or when tailwater uses the Rating Curve method',
+      'Conditional: when 1D reservoir routing is performed in the Consequences module, or when tailwater uses the Rating Curve method',
+    ],
+    [
+      'Reservoir stage, two decimal places. Each row must be higher than the row above it.',
+      'Total outflow at that stage, one decimal place. Cannot be negative. Also used by the Rating Curve tailwater method to find the tailwater for a headwater.',
+    ],
+  ]}
+/>
+
+## Tailwater
+
+The **Tailwater** card defines the tailwater relationship by one of two methods, chosen with the **Rating Curve** and **Direct HW/TW** buttons above
+the table (<FigReference figKey="dst-users-guide-fig-operational-data-tailwater" />). Only one method is active at a time; DST keeps the data of the
+other method when the user switches. If no rows are entered for the selected method, no tailwater is assumed.
+
+<Figure
+  figKey="dst-users-guide-fig-operational-data-tailwater"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/operational-data-tailwater.png"
+  alt="The Tailwater card of the Operational Data page of Thistlewood Dam Screening. Above the content, the Rating Curve method button is selected beside Direct HW/TW. On the left, a table headed Discharge (cfs) and Tailwater (ft-NAVD88) lists the rating curve from 0.0 cfs at 725.00 ft to 135,000.0 cfs at 750.00 ft. On the right, the chart shows the Derived HW/TW view, chosen with a Rating Curve / Derived HW/TW control at its upper right corner, plotting a solid Headwater line and a dashed Tailwater curve against headwater elevation, with a legend below. The tailwater stays nearly flat, between about 729 and 733 ft, up to a headwater of about 790 ft, then rises to about 750 ft at a headwater of 822 ft."
+  caption="The Tailwater relationship by the Rating Curve method, with the derived headwater-tailwater curve."
+  width="80%"
+/>
+
+- **Rating Curve** (the default) — tailwater elevation as a function of total project discharge. DST combines it with the Stage-Outflow curve to find
+  the tailwater for any headwater, so it needs at least two valid points in the Stage-Outflow curve. Beyond its last point, tailwater stays at the last
+  entered value. The chart's corner control switches between **Rating Curve**, the entered curve, and **Derived HW/TW**, the headwater and tailwater
+  curves DST derives from the two relationships.
+- **Direct HW/TW** — tailwater elevation entered directly as a function of headwater elevation. The chart plots a **Headwater** line, one to one with
+  the horizontal axis, and the **Tailwater** curve.
+
+<TableReference tableKey="dst-users-guide-table-screening-information-operational-data-tailwater" /> describes the columns of both tables.
+
+<TableVertical
+  tableKey="dst-users-guide-table-screening-information-operational-data-tailwater"
+  colWidths={['24ch', '10ch', '14ch', 'minmax(30ch, 1fr)']}
+  alt="Columns of the tailwater tables on the Operational Data page"
+  caption="Tailwater columns"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Discharge (Rating Curve)', 'Tailwater (Rating Curve)', 'Headwater (Direct HW/TW)', 'Tailwater (Direct HW/TW)'],
+    ['cfs or m³/s', 'ft or m, on the screening datum', 'ft or m, on the screening datum', 'ft or m, on the screening datum'],
+    ['Optional', 'Optional', 'Optional', 'Optional'],
+    [
+      'Total project discharge, one decimal place. Zero or greater; no value may appear twice.',
+      'Tailwater elevation at that discharge, two decimal places. Must not decrease as discharge increases.',
+      'Headwater elevation, two decimal places. Each row must be higher than the row above it.',
+      'Tailwater elevation at that headwater, two decimal places. May be any value on the datum.',
+    ],
+  ]}
+/>
+
+## Operational data summary
+
+The **Operational data summary** tray at the bottom of the page holds a notes box for each relationship and the page's supporting documents (see
+[Summary Tray](./040-working-in-dst.mdx#summary-tray)). Its status counts the notes written, for example "1 note", or reads "No notes yet".
+
+- **Stage-Storage**, **Stage-Outflow** and **Tailwater** sections, each **Optional**, hold a notes box for the source of the relationship and anything
+  a reviewer should know. The Tailwater notes belong to the method selected, Rating Curve or Direct HW/TW. Notes save when the user leaves the box.
+- **Supporting documents** links files from the screening's Documents to this page (see
+  [Supporting Documents](./150-documents.mdx#supporting-documents)).
+
+## Operational data messages
+
+The page messages button reports the problems DST finds in the curves (see [Page Messages](./040-working-in-dst.mdx#page-messages)), and the cell that
+causes an error is tinted red. Errors name the curve, the value and the row; the examples below show the pattern, with "Stage-Storage",
+"Stage-Outflow" or "Headwater/Tailwater" as the curve name and Stage or Headwater as the column. The required input appears only while the
+Stage-Outflow card is selected, when the Stage-Outflow curve has fewer than two valid points or has an error. When the Rating Curve method has rows
+but the Stage-Outflow curve cannot support it, the warning appears instead, whichever card is selected.
+
+<TableReference tableKey="dst-users-guide-table-screening-information-operational-data-messages" /> lists the messages.
+
+<TableVertical
+  tableKey="dst-users-guide-table-screening-information-operational-data-messages"
+  colWidths={['16ch', 'minmax(30ch, 1fr)']}
+  alt="Errors, warnings and required inputs reported on the Operational Data page"
+  caption="Operational Data page messages"
+  headers={[[{ value: 'Severity' }, { value: 'Message' }]]}
+  columns={[
+    ['Error', 'Error', 'Error', 'Error', 'Error', 'Required input', 'Warning'],
+    [
+      'Stage-Storage: Stage must be in increasing order. Stage at row 3 (1201.00) is not greater than the previous row (1205.00).',
+      'Stage-Outflow: invalid Outflow -10. Value cannot be negative.',
+      'Tailwater rating curve: discharge must be finite and non-negative.',
+      'Duplicate discharge value 500.00 cfs in the tailwater rating curve.',
+      'Tailwater elevation must not decrease as discharge increases (row 4).',
+      'Enter at least two valid points in the Stage-Outflow curve.',
+      'Enter at least two valid points in the Stage-Outflow curve to use the tailwater rating curve.',
+    ],
+  ]}
+/>
+
+No curve is required for submission: the Operational Data page is Ready on the Submission Readiness page once it is verified.
