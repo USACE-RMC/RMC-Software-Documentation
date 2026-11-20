@@ -7,6 +7,9 @@ import FigReference from '@site/src/components/FigureReference';
 import NavContainer from '@site/src/components/NavContainer';
 import TableReference from '@site/src/components/TableReference';
 import TableVertical from '@site/src/components/TableVertical';
+import Video from '@site/src/components/Video';
+import VideoReference from '@site/src/components/VideoReference';
+import { MEDIA_WIDTH } from './_media-width.js';
 
 <NavContainer link="/web-applications/dst" linkTitle="Dam Screening Tool" document="web-applications/dst/users-guide" />
 
@@ -24,7 +27,7 @@ plan settings, and the analysis's results are one flood map per loading level.
   src="figures/web-applications/dst/users-guide/v1.0/figures/inundation-analysis-page.png"
   alt="The Inundation Analysis page of Thistlewood Dam Screening. The Analysis Configuration panel at the upper left shows the analysis tiles Non-Failure, Prior to Overtopping (shortened) and Overtopping, selected, each with a green status dot, and an Add analysis tile. Below them, the list Overtopping Boundary Conditions holds Thistlewood Dam (selected) and Platte River below Thistlewood Dam, and the expanded Overtopping Simulation band reads Complete, with the loading levels 812 (Top of dam), 814, 817 and 822 each Computed. The map shows the maximum depth grid of loading level 817 below the dam. At the right, the Dam Centerline Boundary Conditions panel is headed Thistlewood Dam (Overtopping) with a Results button, and shows Boundary Condition Type 1D Reservoir and the tabs Reservoir (selected), Inflow and Breach, each tab after the first with a check mark. The Reservoir tab reads 'The reservoir releases water through the Stage-Outflow curve from Operational Data (16 points).' with a Storage & outflow curves button, above a table of Level, Initial WSE and Release at start for each loading level. Numbered callouts mark: 1, the analysis tiles; 2, the boundary-condition list; 3, the simulation band; 4, the boundary conditions panel; and 5, the Depth over time at a point tool in the map toolbar."
   caption="The Inundation Analysis page with the dam boundary conditions open."
-  width="100%"
+  width={MEDIA_WIDTH}
 />
 
 <TableVertical
@@ -207,12 +210,183 @@ every loading level.
 - **Coastline.** **Boundary** is **None** or **Hydrograph**, a stage series applied along the model area edge between the ends of the coastline.
   Stages may be negative.
 
-### Hydrographs
+## Hydrographs
 
-**Hydrograph Type** is **Trapezoidal** (the default) or **Tabular**. A trapezoidal hydrograph has, for each loading level, a **Base** value, a **Base
-Time** (hrs), a **Peak** value and a **Peak Time** (hrs): it rises from base to peak, holds the peak and returns to base by the base time, so the Peak
-Time must not exceed the Base Time. A tabular hydrograph has a tab for each loading level with **Time (hr)** and **Value** columns and at least two
-rows. Values are flows, or stages for a coastline. A chart plots one series per loading level.
+A hydrograph is a series of values over time. In an inundation analysis it is the water entering the model at a boundary: a flow in cubic feet
+per second (or cubic meters per second) against hours from the start of the simulation, or, at a coastline, a water surface elevation. Four
+boundary conditions take one, and all four use the same editor:
+
+- The **Inflow** tab of a dam's **1D Reservoir** boundary condition, the flood flowing into the reservoir. This is the most common use, and the
+  rest of this section describes it.
+- A dam's **Hydrograph** boundary condition, a breach outflow applied directly to the 2D mesh (see [Dam](#dam)).
+- A river's **Upstream Boundary**, the flow entering the model area along the river.
+- A coastline's **Boundary**, a stage series along the model area edge.
+
+### What the inflow hydrograph does
+
+Each loading level of an analysis represents the reservoir reaching one pool elevation, and its inflow hydrograph is the flood that takes it there.
+For each loading level, HEC-RAS starts the reservoir at its **Initial WSE** on the Reservoir tab and routes the inflow hydrograph into it:
+
+- The reservoir rises while the inflow exceeds the outflow, by the volumes in the Stage-Storage curve on the Operational Data page (see
+  [Operational Data](./103-operational-data.mdx)).
+- It releases water through the Stage-Outflow curve, when the screening has one, and over the dam crest once the pool is above the top of dam.
+- The highest pool the routing reaches is the **Max pool** in the dam results (see [Dam results](#dam-results)). It is set by the hydrograph's peak
+  and its volume together, not by the peak alone.
+- A breach with an **Elevation** trigger starts when the pool reaches the trigger value, so the hydrograph also decides when, and whether, the dam
+  breaches.
+
+The hydrograph also sets the length of the simulation. The simulation runs from time zero to the end of the longest hydrograph (or of the breach,
+if it ends later), plus the **Run time after inflow ends** in Edit Analysis (see [Edit Analysis](#edit-analysis)), which gives the flood time to
+travel through the model area. Simulation details reports the resulting window, for example "Simulation window 01Dec2099 0000 to 02Dec2099 0200
+(longest hydrograph or breach 20 h + travel time 6 h)".
+
+Without an inflow hydrograph the reservoir can only fall from its Initial WSE. A breach whose trigger elevation is above the Initial WSE then never
+starts, and the run warns that the reservoir "never rises that far and the dam does not breach in this simulation." With an inflow and a
+Stage-Outflow curve, DST estimates the highest pool before the run, by level-pool routing, and gives the same warning when that estimate stays below
+the trigger. Either way the run goes ahead, because a level at which the dam holds can be intended.
+
+### The Inflow tab
+
+The **Inflow Hydrograph** check box turns the inflow on for every loading level of the analysis; cleared, the tab reads "No inflow hydrograph is
+defined for this boundary condition, click the checkbox to define one." Once it is checked, **Hydrograph Type** chooses how the hydrograph is
+entered, **Trapezoidal** (the default) or **Tabular**, for all of the analysis's loading levels at once. The chart plots one line per loading level,
+Flow against Time (hrs), and follows the values as they are entered. <FigReference figKey="dst-users-guide-fig-inundation-analysis-inflow-tabular" />
+shows the tab with tabular hydrographs, and <TableReference tableKey="dst-users-guide-table-consequences-inflow-regions" /> describes each numbered
+region.
+
+<Figure
+  figKey="dst-users-guide-fig-inundation-analysis-inflow-tabular"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/inundation-analysis-inflow-tabular.png"
+  alt="The Inflow tab of the Thistlewood Dam boundary conditions in the Overtopping analysis, with the tabs Reservoir, Inflow (selected) and Breach across the top and a check mark after Inflow and Breach. The Inflow Hydrograph check box is checked and Hydrograph Type reads Tabular. A chart of Flow (cfs) from 0 to 300,000 against Time (hrs) from 0 to 20 shows four bell-shaped curves, labeled 812 ft, 814 ft, 817 ft and 822 ft, that start near 2,500 cfs, rise from about hour 3 to peaks of roughly 120,000, 137,000, 172,000 and 261,000 cfs a little after hour 9, and fall slowly toward hour 20. Below the chart are the loading-level tabs 812 (selected), 814, 817 and 822, and a table with the columns Time (hr) and Value (cfs) whose first rows read 0.00 and 2481.24, 0.50 and 2481.24, 1.00 and 2483.89, 1.50 and 2518.32, 2.00 and 2657.02, 2.50 and 3047.93, and 3.00 and 5403.43, with row buttons above it and the line 'Tip: drag to select; paste grows table if needed.' below. Numbered callouts mark: 1, the Inflow Hydrograph check box; 2, Hydrograph Type; 3, the chart; 4, the loading-level tabs; and 5, the time-value table."
+  caption="The Inflow tab with a tabular hydrograph for each loading level."
+  width={MEDIA_WIDTH}
+/>
+
+<TableVertical
+  tableKey="dst-users-guide-table-consequences-inflow-regions"
+  colWidths={['5ch', '22ch', 'minmax(30ch, 1fr)']}
+  alt="Description of each numbered region of the Inflow tab"
+  caption="Inflow tab regions"
+  headers={[[{ value: '#' }, { value: 'Region' }, { value: 'Description' }]]}
+  columns={[
+    ['1', '2', '3', '4', '5'],
+    ['Inflow Hydrograph', 'Hydrograph Type', 'Chart', 'Loading-level tabs', 'Time-value table'],
+    [
+      'Turns the reservoir inflow on or off for every loading level of the analysis.',
+      'Trapezoidal or Tabular, for every loading level of the analysis.',
+      'One line per loading level. Resting the pointer on the chart shows every line’s flow at that time, and selecting a level in the key hides or shows its line.',
+      'Tabular only: chooses the loading level whose table is shown.',
+      'Tabular only: the time and flow pairs of the selected loading level. A trapezoidal hydrograph has one table row per loading level instead.',
+    ],
+  ]}
+/>
+
+Switching **Hydrograph Type** keeps the values of the other type, so switching back restores them; only the selected type is plotted and sent to
+HEC-RAS. <VideoReference videoKey="dst-users-guide-video-inflow-hydrograph-type" /> shows a switch.
+
+<Video
+  videoKey="dst-users-guide-video-inflow-hydrograph-type"
+  src="/videos/web-applications/dst/users-guide/v1.0/inflow-hydrograph-type.mp4"
+  caption="Switching the inflow hydrograph between Tabular and Trapezoidal."
+  width={MEDIA_WIDTH}
+/>
+
+### Trapezoidal hydrographs
+
+A trapezoidal hydrograph is the simplest flood shape: a straight rise from a base flow to a peak flow, a flat top where the peak is held, and a
+straight fall back to the base flow. Plotted against time it is a trapezoid, which gives the type its name. It takes four values for each loading
+level, in a table with one row per level (<TableReference tableKey="dst-users-guide-table-consequences-trapezoidal-hydrograph" />).
+
+<TableVertical
+  tableKey="dst-users-guide-table-consequences-trapezoidal-hydrograph"
+  colWidths={['22ch', '14ch', '12ch', 'minmax(30ch, 1fr)']}
+  alt="Columns of the trapezoidal hydrograph table"
+  caption="Trapezoidal hydrograph values"
+  headers={[[{ value: 'Column' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Loading Level', 'Base', 'Base Time', 'Peak', 'Peak Time'],
+    ['ft or m, datum', 'cfs or cms', 'hrs', 'cfs or cms', 'hrs'],
+    ['Read-only', 'Required', 'Required', 'Required', 'Required'],
+    [
+      'The loading level the row applies to.',
+      'The flow at the start and at the end of the hydrograph.',
+      'The total length of the hydrograph, from time zero to the end of the fall. Must be greater than zero.',
+      'The highest flow, held across the flat top.',
+      'How long the peak is held. Must not be more than the Base Time.',
+    ],
+  ]}
+/>
+
+DST builds the shape from these four values. The rise and the fall take equal times, each half of what is left after the peak is held:
+
+- From hour 0 the flow rises in a straight line from **Base** to **Peak** over (Base Time − Peak Time) ÷ 2 hours.
+- It holds at **Peak** for **Peak Time** hours.
+- It falls in a straight line back to **Base**, reaching it at **Base Time**, where the hydrograph ends.
+
+For example, a Base of 2,500 cfs, a Base Time of 20 hrs, a Peak of 150,000 cfs and a Peak Time of 4 hrs rises from 2,500 to 150,000 cfs over the
+first 8 hours, holds 150,000 cfs from hour 8 to hour 12, and falls back to 2,500 cfs at hour 20. A Peak Time of 0 makes a triangle, and a Peak equal
+to the Base makes a constant inflow for the whole Base Time. A Peak Time greater than the Base Time is marked in red with "Peak Time must be less than
+or equal to Base Time."; that level is left off the chart, and the run will not start until it is corrected.
+
+<FigReference figKey="dst-users-guide-fig-inundation-analysis-inflow-trapezoidal" /> shows trapezoidal hydrographs, and
+<VideoReference videoKey="dst-users-guide-video-inflow-trapezoid-edit" /> shows the chart following edits to a peak and its duration.
+
+<Figure
+  figKey="dst-users-guide-fig-inundation-analysis-inflow-trapezoidal"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/inundation-analysis-inflow-trapezoidal.png"
+  alt="The Inflow tab of a 1D Reservoir boundary condition with trapezoidal hydrographs. The tabs Reservoir, Inflow (selected) and Breach run across the top. The Inflow Hydrograph check box is checked and Hydrograph Type reads Trapezoidal. A chart of Flow (cfs) from 0 to 300,000 against Time (hrs) from 0 to 20 shows four trapezoids, labeled 812 ft, 814 ft, 817 ft and 822 ft: each rises in a straight line from near zero at hour 0 to its peak at hour 8, stays flat until hour 12, and falls in a straight line to near zero at hour 20, with peaks of 120,000, 140,000, 175,000 and 260,000 cfs. Below the chart, a table with the columns Loading Level (ft-NAVD88), Base (cfs), Base Time (hrs), Peak (cfs) and Peak Time (hrs) has one row per loading level: 812.00, 814.00, 817.00 and 822.00 (grayed), each with a Base of 2470.00, a Base Time of 20.00 and a Peak Time of 4.00, and Peaks of 120000.00, 140000.00, 175000.00 and 260000.00. Numbered callouts mark: 1, the Inflow Hydrograph check box; 2, Hydrograph Type; 3, the chart; and 4, the trapezoidal hydrograph table."
+  caption="The Inflow tab with a trapezoidal hydrograph for each loading level."
+  width={MEDIA_WIDTH}
+/>
+
+<Video
+  videoKey="dst-users-guide-video-inflow-trapezoid-edit"
+  src="/videos/web-applications/dst/users-guide/v1.0/inflow-trapezoid-edit.mp4"
+  caption="Editing the peak and peak time of a trapezoidal hydrograph."
+  width={MEDIA_WIDTH}
+/>
+
+A trapezoidal hydrograph suits a first pass, when no flood hydrograph is available yet, and a steady inflow, such as a normal-pool level where the
+reservoir only passes its usual release. Its straight limbs and flat top are not the shape of a real flood, so the timing of the pool and of the
+breach is approximate.
+
+### Tabular hydrographs
+
+A tabular hydrograph is any shape entered point by point. The loading-level tabs above the table choose the level, and each level has its own
+**Time (hr)** and **Value** columns. Times are hours from the start of the simulation and need not be evenly spaced; HEC-RAS interpolates between
+them. A hydrograph needs at least two rows, and neither its times nor its flows may be negative. The table works like any DST table: rows can be
+added, inserted and deleted, and time and flow pairs copied from a spreadsheet can be pasted in, which grows the table as needed (see
+[Tables](./040-working-in-dst.mdx#tables)).
+
+A tabular hydrograph suits a flood hydrograph from another source: the outflow of a hydrologic model such as HEC-HMS, an inflow design flood, a
+recorded flood, or a synthetic storm hydrograph scaled to each loading level. The hydrographs in
+
+<FigReference figKey="dst-users-guide-fig-inundation-analysis-inflow-tabular" /> are of the last kind: one 20-hour storm hydrograph, scaled for each
+loading level.
+
+### How the hydrograph reaches HEC-RAS
+
+DST sends the inflow hydrograph to HEC-RAS as the flow into the reservoir's storage area, with a 5-minute hydrograph interval. A trapezoidal
+hydrograph goes as its four values and a tabular one as its points; nothing is smoothed or extended. The hydrograph ends at its last time, and the
+simulation then continues for the **Run time after inflow ends**.
+
+Before a run starts, DST checks each loading level's hydrograph and stops the run with the reason when it is incomplete: a trapezoidal hydrograph
+without all four values ("It needs base and peak values and durations."), a peak held longer than the base duration, or a tabular hydrograph with
+fewer than two points or with negative times or flows.
+
+### Shaping an inflow hydrograph
+
+- **Start at the reservoir's release.** Begin the hydrograph at the flow the reservoir releases at its Initial WSE, the **Release at start** on the
+  Reservoir tab, so that the pool holds steady until the flood arrives.
+- **Make the pool reach the loading level.** A loading level stands for the reservoir at that pool elevation, so shape each level's hydrograph so
+  that the routed pool peaks at, or just above, the loading level. After a run, compare the **Max pool** in the dam results with the loading level,
+  and scale the hydrograph up or down and run again if they differ.
+- **Reach the breach trigger.** For a level whose breach starts on an Elevation trigger, the pool must reach the trigger value. Heed the warning
+  when DST estimates that it will not.
+- **Keep it no longer than needed.** The run time grows with the simulation window, and so with the hydrograph's length. End the hydrograph once
+  the pool has peaked and the flow has receded, and let the **Run time after inflow ends** carry the flood through the model area.
+- **Use one shape across the levels.** Scaling one hydrograph shape to each loading level keeps the levels comparable, so that the differences
+  in their results come from the size of the flood rather than its shape.
 
 ## Running an analysis
 
