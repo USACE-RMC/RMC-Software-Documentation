@@ -59,7 +59,8 @@ the change makes the results of a failure mode page out of date, DST clears thos
 
 When another user saves Dam Information while the editor is open, the status reads "Dam Information changed in another session. Your drawing is
 kept — Save applies it to the latest version; Cancel discards it." If another user deletes the section, the editor closes with the notice "The cross
-section you were editing was deleted, so its editor closed and its unsaved changes were discarded."
+section you were editing was deleted, so its editor closed." When the editor held unsaved changes, the notice reads instead "The cross section you
+were editing was deleted, so its editor closed and its unsaved changes were discarded."
 
 ### Unsaved changes
 
@@ -68,7 +69,7 @@ saved." **Save** saves the section and closes the editor, **Discard** closes it 
 editing conflict, the dialog explains instead that Save applies the drawing to the latest version and Discard drops it.
 
 Leaving the Dam Information page with an unsaved section opens the **Unsaved Cross Section Changes** dialog: "You have unsaved cross-section edits.
-If you leave this page, your changes will be lost." **Stay** keeps the page open and **Leave Page** discards the changes.
+If you leave this page, your changes will be lost." Its buttons are described in [Saving](./04-working-in-dst.mdx#saving).
 
 ## The Drawing Canvas
 
@@ -147,7 +148,7 @@ Points are the corners of every zone, outline and berm. One point can belong to 
 - **Reading coordinates.** Resting the pointer on a point shows its coordinates, for example "X 120.00 · Y 1,050.00".
 
 DST refuses an edit that would break the drawing, such as a move that makes two zones overlap or a deletion that leaves a zone with fewer than three
-points, and shows the reason in an amber note at the top of the canvas, for example "This edit would delete "Zone 2". Delete the component itself if
+points, and shows the reason in an amber note at the top of the canvas, for example "This edit would delete 'Zone 2'. Delete the component itself if
 that is the intent." A section holds at most 200 points.
 
 ### Selecting points
@@ -228,8 +229,9 @@ fails these limits is refused with a notice, such as "That image is larger than 
 Once an image is in place, the top of the tab holds these controls:
 
 - **Show** hides or shows the image.
-- **Flip** mirrors the image left to right, for a drawing with upstream on the right. It is unavailable when the image is calibrated from three known
-  points, which sets the orientation itself.
+- **Flip** mirrors the image left to right, for a drawing with upstream on the right. It is unavailable while the image is hidden, and when the image
+  is calibrated from three known points, which sets the orientation itself; its tooltip then reads "Three-point calibration sets the orientation
+  automatically."
 - **Replace image**, **Replace with a pasted screenshot** and **Remove image and calibration** (the icon buttons).
 
 While a shown image is not yet calibrated, the drawing tools are unavailable, and the Body and Berm tabs read "Drawing tools are disabled until the
@@ -367,7 +369,7 @@ lists it with the other inputs of the embankment editor.
   caption="Embankment editor inputs"
   headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
   columns={[
-    ['Foundation', 'Points', 'Zone Name', 'Zone material', 'Berm Material'],
+    ['Foundation', 'Points', 'Zone Name', 'Zone Material', 'Berm Material'],
     ['—', 'ft', '—', '—', '—'],
     [
       'Required',
@@ -602,7 +604,8 @@ The **Drain** tab defines an optional drain, at most one per cross section. **To
 
 The **Forces** tab lists optional applied forces. **Add force** adds a row, numbered **F1**, **F2** and so on. In each row the crosshair button
 waits for a click on the canvas at the force's application point, on or off the structure; a click on a point uses it. The row then shows the
-point's coordinates. The × button removes the force. With no forces, the tab explains these steps.
+point's coordinates. The trash icon (**Remove force**) removes the force; while a point is being placed, × (**Cancel placing**) stops
+placing it. A section holds at most 100 forces. With no forces, the tab explains these steps.
 
 <TableReference tableKey="dst-users-guide-table-cross-section-editors-concrete-inputs" /> lists the inputs of every concrete editor tab.
 
@@ -663,7 +666,7 @@ point's coordinates. The × button removes the force. With no forces, the tab ex
       'Overflow (Gated) only. The weight of the gate. A warning reports it while empty.',
       'The top and bottom points of the drain, placed on the canvas. Once a drain is started, a warning reports a missing point.',
       'The drain-to-drain spacing along the dam axis. Once a drain is started, a warning reports it while empty.',
-      'A label for the force.',
+      'A label for the force, up to 200 characters.',
       'A point on the canvas, on or off the structure.',
       'Greater than zero, in pounds per foot of monolith length along the dam axis.',
       'From 0 to 360. 0° points up, increasing clockwise.',
@@ -694,6 +697,9 @@ Messages for a component name it, for example "The weir region has not been defi
       'Error',
       'Error',
       'Error',
+      'Error',
+      'Error',
+      'Error',
       'Warning',
       'Warning',
       'Warning',
@@ -713,6 +719,9 @@ Messages for a component name it, for example "The weir region has not been defi
       'The base of the section must be a flat horizontal line — the heel and toe must share one elevation, with no base point between them above it.',
       'Force magnitude must be greater than zero.',
       'Direction of application must be between 0 and 360 degrees.',
+      "The force's application point is missing an X or Y value.",
+      'The trunnion point is missing an X or Y value.',
+      'The drain [top or bottom] point is missing an X or Y value.',
       'Gate radius must be greater than zero. / Top-of-gate elevation must be above the sill-contact elevation.',
       'The gate arc cannot reach the [sill-contact or top-of-gate] elevation — check the radius and trunnion position.',
       'The [component] region has not been defined yet.',
@@ -736,7 +745,7 @@ The **Import points** dialog adds points from a block of coordinates copied from
 
 The user pastes the block into **Pasted coordinates**: two values per line, X then Y, separated by a tab, a comma or spaces. A header row is skipped,
 blank lines and lines beginning with # are ignored, and coordinates are rounded to 0.01. A pasted point at the coordinates of an existing point uses
-that point instead of adding a second one. A line DST cannot read is listed under "N issues found", for example "Line 4: expected two values (X and
+that point instead of adding a second one. DST lists each line it cannot read under "N issues found", for example "Line 4: expected two values (X and
 Y), found 3.", and **Import** stays unavailable until every line reads. The section must still hold no more than 200 points after the import.
 
 - **In the embankment editor**, the dialog reads, for example, "12 points will be imported." The imported points are free points; the user then

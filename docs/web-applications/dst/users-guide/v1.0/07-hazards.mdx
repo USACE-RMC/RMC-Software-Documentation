@@ -15,14 +15,15 @@ import TableVertical from '@site/src/components/TableVertical';
 
 The Hazards module holds the loading the screening is evaluated against. Its three pages are Flood Hazard, the annual exceedance probability of
 each reservoir stage; Stage Duration, the share of time the reservoir sits at or above each stage; and Seismic Hazard, the annual exceedance
-probability of each level of ground motion. The failure mode pages, Consequences and Risk Analysis read their loading from these pages: the flood
-loaded failure modes from Flood Hazard, and the seismic failure modes from Seismic Hazard and Stage Duration, which also supplies the normal pool
+probability of each level of ground motion. The failure mode pages, Consequences and Risk Analysis read their loading from these pages: the flood-loaded
+failure modes from Flood Hazard, and the seismic failure modes from Seismic Hazard and Stage Duration, which also supplies the normal pool
 elevation.
 
 Each page has its own verification badge, and changing an input clears its verification (see
 [Human Verification](./04-working-in-dst.mdx#human-verification)). When a change makes the results of a later page out of date, DST clears those
 results and says so (see [Automatic Calculation](./04-working-in-dst.mdx#automatic-calculation)). Each page also has a summary tray at the bottom
-for its justification and supporting documents (see [Summary Tray](./04-working-in-dst.mdx#summary-tray)).
+for its justification and supporting documents (see [Summary Tray](./04-working-in-dst.mdx#summary-tray) and
+[Supporting Documents](./06-documents.mdx#supporting-documents)).
 
 ## Flood Hazard
 
@@ -114,7 +115,8 @@ error is highlighted in the table (see [Page Messages](./04-working-in-dst.mdx#p
 
 The summary tray, **Flood hazard summary**, holds one required section, **Basis of the flood hazard curve**: "The source study or analysis, how the
 upper tail was extended, and any judgment applied." The tray status reads "No justification yet" until the user enters it, and "Justification on
-file" afterwards. The tray ends with the page's supporting documents.
+file" afterwards. The tray ends with the page's supporting documents (see
+[Supporting Documents](./06-documents.mdx#supporting-documents)).
 
 ## Stage Duration
 
@@ -130,7 +132,7 @@ Data normal pool ([elevation]) is used instead."
 <Figure
   figKey="dst-users-guide-fig-stage-duration-dst-based"
   src="figures/web-applications/dst/users-guide/v1.0/figures/stage-duration-dst-based.png"
-  alt="The Stage Duration page of the Blue Marsh Dam User's Guide Example screening in DST Based mode. A gray toolbar across the top holds a segmented control with DST Based, selected, and User Defined. Below it, a status line reads Last fetched with a date, beside an information icon for the CWMS data source and the inline datum status, and a Re-fetch button sits at the right. Two charts sit side by side: on the left, Stage time series, a line of daily reservoir stage over the period of record with a trim button and a download button; on the right, Stage–duration curve, stage against exceedance percent with a download button. Below the curve chart a line states whether the curve was extrapolated. At the bottom right, a Trimmed periods list with an Add range button. A collapsed summary tray titled Stage duration summary runs along the bottom. Numbered callouts 1 to 7 mark the source control, the fetch status line, Re-fetch, the time series chart, the curve chart, the Trimmed periods list and the summary tray."
+  alt="The Stage Duration page of the Blue Marsh Dam User's Guide Example screening in DST Based mode. A gray toolbar across the top holds a segmented control with DST Based, selected, and User Defined. Below it, a status line reads Last fetched with a date, beside an information icon for the CWMS data source and the inline datum status, and a Re-fetch button sits at the right. Two charts sit side by side: on the left, Stage time series, a line of daily reservoir stage over the period of record with a trim button and a download button; on the right, Stage–duration curve, stage against exceedance percent with a download button. Below the curve chart a line states whether the curve was extrapolated. At the bottom right is a Trimmed periods list with an Add range button. A collapsed summary tray titled Stage duration summary runs along the bottom. Numbered callouts 1 to 7 mark the source control, the fetch status line, Re-fetch, the time series chart, the curve chart, the Trimmed periods list and the summary tray."
   caption="The Stage Duration page with a DST-based curve from CWMS."
   width="100%"
 />
@@ -179,15 +181,18 @@ Defined Stage Duration method." (<FigReference figKey="dst-users-guide-fig-stage
 In DST Based mode, DST fetches the dam's reservoir stage record from its data source and derives the stage–duration curve from it. The page shows
 one of these states:
 
-- **Not yet fetched.** "Start the initial reservoir-data fetch for this dam, or switch to User Defined to load stage data." with a **Fetch reservoir
-  data** button.
+- **No reservoir data fetched yet.** "Start the initial reservoir-data fetch for this dam, or switch to User Defined to load stage data." with a
+  **Fetch reservoir data** button.
+- **No DST Based data available.** "This dam has no reservoir data source assigned. Switch to User Defined to load stage data.", shown when the
+  page is in DST Based mode but DST holds no source for the dam.
 - **Fetching.** "Fetching reservoir data…" with "Pulling stage time series from CWMS (3 of 12 year-chunks complete)." and a progress bar (RISE
   counts pages). The fetch runs in the background; the page updates as it progresses. The page cannot be verified, and its justifications cannot be
   edited, until the fetch finishes.
-- **Fetch failed.** "The last fetch did not complete. Re-fetch to try again or switch to User Defined to load data." with a **Re-fetch** button.
-- **No data from the source.** "No stage time-series data is available for this dam from its reservoir data source." with a link to the **User
-  Defined Stage Duration** method.
-- **Source unavailable.** "The assigned reservoir data source is currently unavailable. Administrators can review the global assignment; no action
+- **CWMS fetch failed** (or **RISE fetch failed**). "The last fetch did not complete. Re-fetch to try again or switch to User Defined to load data." with a **Re-fetch** button.
+- **No reservoir data available.** "No stage time-series data is available for this dam from its reservoir data source. You can reach out to the
+  dam owner to obtain stage data, then enter it using the User Defined Stage Duration method.", where **User Defined Stage Duration** switches the
+  page to User Defined mode.
+- **Reservoir data source under administrator review.** "The assigned reservoir data source is currently unavailable. Administrators can review the global assignment; no action
   is required from you."
 - **Fetched.** The status line, the two charts and the trimmed periods, as in <FigReference figKey="dst-users-guide-fig-stage-duration-dst-based" />.
 
@@ -273,18 +278,18 @@ In User Defined mode, three cards choose how the user supplies the relationship:
   caption="User Defined stage duration inputs"
   headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
   columns={[
-    ['Normal Pool Elevation', 'Override justification', 'Pasted data', 'Stage', 'Exceedance %'],
+    ['Normal pool elevation', 'Override justification', 'Pasted data', 'Stage', 'Exceedance %'],
     ['ft', '—', 'date, ft', 'ft', '%'],
     [
       'Conditional: Normal pool elevation',
-      'Conditional: when the elevation differs from Dam Data',
+      'Conditional: when the user enters an elevation',
       'Conditional: Stage time series',
       'Conditional: Stage–duration relationship',
       'Conditional: Stage–duration relationship',
     ],
     [
       'Follows the Dam Data normal pool unless the user enters another value. A badge shows whether the value is from Dam Data or entered here; its reset button returns it to Dam Data.',
-      'Shown when the user enters an elevation of their own: "Explain why the normal pool differs from Dam Data."',
+      'Shown, and required, whenever the user enters an elevation of their own, even one equal to Dam Data: "Explain why the normal pool differs from Dam Data ([elevation] ft-[datum])." A missing one is listed on the Submission Readiness page as "Stage Duration: write a justification for the manual normal pool elevation (on the Stage Duration page)."',
       'A date and a stage on each line, pasted in the Paste stage time series dialog. Up to 500,000 values.',
       'The stage, decreasing down the table. At least two complete rows.',
       'The percent of time the stage is equaled or exceeded, between 0 and 100 and increasing down the table.',
@@ -312,7 +317,7 @@ range of seismic hazard. The chart plots the elevation as the relationship.
       title: (
         <>
           The <strong>Summary</strong> shows the number of ordinates, the time range and what happens on import. A record with several readings on
-          some days is averaged to one value per day ("Aggregated to daily mean"). Lines DST cannot read are listed, for example "Line 3: "13/45/2001"
+          some days is averaged to one value per day ("Aggregated to daily mean"). DST lists the lines it cannot read, for example "Line 3: '13/45/2001'
           is not a recognized date."
         </>
       ),
@@ -335,8 +340,8 @@ lists its page messages.
 <TableVertical
   tableKey="dst-users-guide-table-hazards-stage-duration-messages"
   colWidths={['16ch', 'minmax(30ch, 1fr)']}
-  alt="Page messages of the stage-duration relationship table and the severity of each"
-  caption="Stage-duration relationship messages"
+  alt="Page messages of the stage–duration relationship table and the severity of each"
+  caption="Stage–duration relationship messages"
   headers={[[{ value: 'Severity' }, { value: 'Message' }]]}
   columns={[
     ['Required input', 'Required input', 'Error', 'Error', 'Error'],
@@ -352,14 +357,17 @@ lists its page messages.
 
 ### Stage duration summary
 
-The summary tray, **Stage duration summary**, shows the justification for the active method:
+The summary tray, **Stage duration summary**, shows the justification for the active method. Before any reservoir data has been fetched in DST
+Based mode, it shows only the section **Stage duration justification**: "No justification is needed until reservoir data has been fetched."
 
 - **Basis of the DST based stage duration** (optional) in DST Based mode.
 - **User time series**, **User duration curve** or **Single normal pool elevation** (required) for the User Defined method in use.
-- **Trimmed periods**: one justification for each trimmed period that removes records. Each is required.
+- **Trimmed periods**: one justification for each trimmed period that removes records. Each is required. When no period is trimmed, the section
+  reads "No periods are trimmed, so no justification is needed."; when the trimmed periods remove no records, it reads "The trimmed periods remove
+  no records, so no justification is needed."
 
 Its status reads, for example, "1 trimmed period needs justification" in amber, "No justification yet", "Justification on file" or "No justification
-needed". A missing required justification is listed on the Submission Readiness page, for example "Stage Duration: write a justification for the
+needed". The Submission Readiness page lists a missing required justification, for example "Stage Duration: write a justification for the
 user time series (on the Stage Duration page)."
 
 ## Seismic Hazard
@@ -371,7 +379,7 @@ ground motion. <FigReference figKey="dst-users-guide-fig-seismic-hazard-dst-base
 <Figure
   figKey="dst-users-guide-fig-seismic-hazard-dst-based"
   src="figures/web-applications/dst/users-guide/v1.0/figures/seismic-hazard-dst-based.png"
-  alt="The Seismic Hazard page of Thistlewood Dam Screening in DST Based mode. A gray toolbar across the top holds a segmented control with DST Based, selected, and User Defined. Below it, a status line reads Last fetched with a date, beside an information icon for the USGS data source, and a Re-fetch button sits at the right. On the left are three filter drop-downs, Site Classes, Source Components and Intensity Measure Types (IMTs), with a note that the filters only control the display, and below them a return period table with rows for 145, 225, 475, 975, 2475 and 10000 years and a column of ground motions for each curve. On the right is a chart of the hazard curves, annual exceedance probability against ground motion in g, one colored curve per site class. A collapsed summary tray titled Seismic hazard summary runs along the bottom. Numbered callouts 1 to 6 mark the source control, the fetch status line, Re-fetch, the filters, the return period table and the chart."
+  alt="The Seismic Hazard page of Thistlewood Dam Screening in DST Based mode. A gray toolbar across the top holds a segmented control with DST Based, selected, and User Defined. Below it, a status line reads Last fetched with a date, beside an information icon for the USGS data source, and a Re-fetch button sits at the right. On the left are three filter drop-downs, Site Classes, Source Components and Intensity Measure Types (IMTs), with a note that the filters only control the display, and below them a return period table with rows for 145, 225, 475, 975, 2,475 and 10,000 years and a column of ground motions for each curve. On the right is a chart of the hazard curves, annual exceedance probability against ground motion in g, one colored curve per site class. A collapsed summary tray titled Seismic hazard summary runs along the bottom. Numbered callouts 1 to 6 mark the source control, the fetch status line, Re-fetch, the filters, the return period table and the chart."
   caption="The Seismic Hazard page with DST-based curves from USGS."
   width="100%"
 />
@@ -406,25 +414,27 @@ model regions. Use User Defined mode." A screening opens in DST Based mode where
 
 Before the first fetch the page reads "No seismic hazard data fetched yet" with **Fetch USGS data** ("Pull Dynamic Seismic Hazard Curves from USGS
 in the background."). While the fetch runs, the page reads "Fetching Seismic Hazard Data…" with a progress bar and the site class being queried; the
-page cannot be verified until a fetch succeeds. A failed fetch reads "The last fetch did not complete. Re-fetch to try again or switch to User
-Defined to load data." When USGS has no data for the coordinates, the page reads "No Dynamic Seismic Hazard data is available for the specified
+page cannot be verified until a fetch succeeds. A failed fetch shows **USGS fetch failed**: "The last fetch did not complete. Re-fetch to try again or switch to
+User Defined to load data.", with a **Re-fetch** button ("Retry the USGS fetch in the background.") that opens the same **Re-fetch from USGS?**
+confirmation described below. When USGS has no data for the coordinates, the page reads "No Dynamic Seismic Hazard data is available for the specified
 coordinates."
 
-Once the curves are in place, the status line reads **Last fetched:** and the date, and its information icon, **USGS Data Source**, shows the dam
-coordinates, the service and a map. **Re-fetch** opens the **Re-fetch from USGS?** dialog: re-fetching replaces the current curves with a fresh pull
+Once the curves are in place, the status line reads **Last fetched:** and the date, and its information icon, **USGS Data Source**, lists the **NSHM Model**,
+the **Coordinates** and the **Service**, with a **Dam location** map. **Re-fetch** opens the **Re-fetch from USGS?** dialog: re-fetching replaces the current curves with a fresh pull
 for the dam's current coordinates. When the dam's coordinates change after a fetch, the saved curves no longer match and the page must be fetched
 again before it can be verified.
 
-The filters **Site Classes**, **Source Components** and **Intensity Measure Types (IMTs)** each choose one or more values. They control only what the
+Under **Chart Filters**, the filters **Site Classes**, **Source Components** and **Intensity Measure Types (IMTs)** each choose one or more values. They control only what the
 page displays: "These filters only control data visualization for this page. They do not select hazard curves for any seismic potential failure
-modes." The return period table lists, for each plotted curve, the ground motion at return periods of 145, 225, 475, 975, 2475 and 10000 years. The
+modes." The table **Summary Table for Common Return Periods** lists, for each plotted curve, the ground motion at return periods of 145, 225, 475, 975, 2,475 and 10,000 years. The
 chart plots **Annual Exceedance Probability** against **Ground Motion (g)**.
 
 ### User Defined
 
 In User Defined mode the user enters each curve. A row of chips above the table lists the curves; selecting a chip selects that curve, and the chart
 plots every curve with the selected one emphasized (<FigReference figKey="dst-users-guide-fig-seismic-hazard-user-defined" />). A chip without a
-justification is marked.
+justification is marked. Under the curve table, the **Summary Table for Common Return Periods** lists the ground motion of each curve
+at the same return periods as in DST Based mode.
 
 <Figure
   figKey="dst-users-guide-fig-seismic-hazard-user-defined"
@@ -487,11 +497,12 @@ lists the page messages for the curves; each begins with the curve's label.
   ]}
 />
 
-A curve without a justification is listed on the Submission Readiness page as "Seismic Hazard: write a justification for the user-defined curve
-"[name]" (on the Seismic Hazard page)."
+The Submission Readiness page lists a curve without a justification as "Seismic Hazard: write a justification for the user-defined curve
+'[name]' (on the Seismic Hazard page)."
 
 ### Seismic hazard summary
 
 The summary tray, **Seismic hazard summary**, holds, in DST Based mode, the optional section **Basis of the DST based seismic hazard**: "Anything a
 reviewer should know about the USGS hazard curves, such as the site class chosen and why." In User Defined mode each curve carries its own
-justification instead. The tray ends with the page's supporting documents.
+justification instead. The tray ends with the page's supporting documents (see
+[Supporting Documents](./06-documents.mdx#supporting-documents)).
