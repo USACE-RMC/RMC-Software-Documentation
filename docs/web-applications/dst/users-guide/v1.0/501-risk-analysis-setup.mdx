@@ -56,6 +56,19 @@ The **Non-failure consequences** row names the non-failure function chosen on th
 does not fail and applies to every failure mode. It is read-only here; **Change on Results Data** opens that page. With no non-failure function, the
 row reads "None selected: taken as zero", and the background consequences are taken as zero.
 
+The row reads the same way in two other cases:
+
+- When the chosen non-failure function has no results to send yet, the row reads "[name]: nothing to send yet, taken as zero", and the background
+  consequences are again taken as zero until the function's results are complete.
+- When no non-failure function is chosen, the link reads **Select one on Results Data** in place of **Change on Results Data**, and opens the same
+  page.
+
+When the Consequences module is not available to the screening, the row reads "Consequences module required".
+
+The info button beside **Non-failure consequences** opens "How the non-failure consequences are used". The non-failure function serves two
+purposes: it provides the non-failure consequences for the background flood risk, and it is compared with each failure mode's function to find the
+excess life loss and excess damages used in the excess EALL and EAD.
+
 ## The setup table
 
 The setup table has one row per failure mode, with a row beneath it for each of its locations, and a **Total** row at the bottom.
@@ -84,6 +97,29 @@ each failure mode; it saves when chosen (see [Saving](./040-working-in-dst.mdx#s
     ],
   ]}
 />
+
+The **Response** column shows the state of each row's system response curve:
+
+- **Defined** means the row has an active system response curve. Selecting it opens a **System Response Preview** below it (or above it, when the
+  window has no room below), subtitled with the row's name and the curve's source ("DST curve" or "User-defined curve"). The preview plots the
+  curve's probability against the failure mode's loading, such as headwater elevation, and its **Linear** and **Log** buttons switch the
+  probability axis between a linear and a logarithmic scale.
+  Selecting **Defined** again, selecting anywhere outside the preview, or pressing Escape closes it.
+- **Composite** appears on the row of a failure mode with locations. The failure mode's response is a composite of its locations: for each partition
+  of the hazard, the highest system response of any location. The composite is valid while all the locations share one consequence function, which
+  they do because the function is chosen once, on the failure mode row.
+- **Evaluate →** appears when no system response curve is defined yet, and opens the Failure Mode Evaluation page (see
+  [Failure Mode Evaluation](./340-failure-mode-evaluation.mdx)).
+
+The **Consequence Function** drop-down lists the failure functions from the Results Data page, in that page's order. It reads differently in a few
+cases:
+
+- When the Results Data page has no consequence functions yet, the drop-down reads **None available** and is unavailable; its tooltip reads "No
+  consequence functions yet: set them up on Results Data".
+- A function with nothing to send yet is listed but cannot be chosen. A row already assigned such a function shows its name in gray.
+- A location row shows its failure mode's function as text, with the tooltip "Shared by all locations; select the consequence function on the
+  failure-mode row".
+- When the Consequences module is not available to the screening, the column reads "Consequences module required".
 
 The failure mode rows show marginal risk. The **Total** row is the system-combined (adjusted) result, computed once every row is complete. An
 incomplete row has an amber edge, and the page messages give the reason, such as "no consequence function" or "no active system response curve".

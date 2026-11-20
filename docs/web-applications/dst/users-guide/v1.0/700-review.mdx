@@ -212,6 +212,10 @@ lists them.
 
 When no comment matches, the table reads "No comments match the current filters."
 
+In the **Reviewer** filter, the review leads and then the other reviewers are each listed in alphabetical order. The filter is shown only when the
+level has reviewers. **Sub-category** lists the pages of the chosen category, and stays unavailable for a category without pages, such as Documents
+or General.
+
 ### The comment table
 
 The comment table lists the level's comments for the current review cycle. Its columns are **#** (the comment number, with a red icon for a
@@ -274,6 +278,14 @@ Only the Facilitator or an administrator assigns the review lead, on the Screeni
 **Export**, available to everyone who can open the level, opens the **Export Comments** dialog. The user checks the levels to include, or
 **Select all**, and selects **Export N Levels** to download the comments as an Excel workbook (.xlsx).
 
+The dialog lists every level of the screening with its phase badge, and starts with the level on screen checked. **Export N Levels** stays
+unavailable until at least one level is checked. The workbook has one worksheet per level, in level order, named for the level. Each row is a
+comment of the current review cycle, with the columns **Comment #**, **Category**, **Commenter**, **Comment Text**, **Critical** (Yes or No),
+**Status**, **Disposition**, **Response Text** and **Backcheck Text**. The last three hold the latest team response and the latest backcheck reply,
+so earlier replies in a thread are not exported, and neither are the archived comments of earlier cycles. The file is named for the screening, the
+level (when one level is exported) and the date, with the spaces in the names replaced by hyphens, for example
+`Screening-Name_Level-1_comments_2026-11-20.xlsx`.
+
 **Import**, available to the level's reviewers during the review and resolution periods, adds many comments at once. The **Import Comments** dialog
 offers two sources:
 
@@ -307,6 +319,21 @@ offers two sources:
     },
   ]}
 />
+
+DST checks every row against the same rules, when the rows are read and again after each edit in the preview:
+
+- **Category** must name one of the seven modules or General, in any capitalization. Otherwise the row has the error 'Invalid category: "[value]".'
+- **Sub-category** is optional. When given, it must name a page of the row's category, or the row has the error '"[page]" is not a sub-category of
+  [category].'
+- **Comment** is required ("Comment text is required.") and holds at most 5,000 characters ("Comment text exceeds the 5000-character limit.").
+- **Critical** takes Yes or No. A blank cell is taken as No with the warning "Critical defaulted to No.", and any other value is taken as No with the
+  warning 'Unrecognized critical value: "[value]". Defaulted to No.'
+
+Rows with warnings are imported; rows with errors must be fixed or deleted first. A header row is recognized when its first row has Category and
+Comment headings, and the columns are then read by their headings rather than by their order. Blank rows are skipped. An import holds at most 5,000
+rows, and DST refuses the whole import when any cell starts with "=", with the message "Row N: cell values starting with '=' are not allowed." A file
+that is not a readable workbook gives "The file could not be read as an Excel workbook. Upload a .xlsx file based on the import template." Only the
+first worksheet of an uploaded workbook is read.
 
 Imported comments count as the reviewer's participation, like comments added one at a time. A reviewer who has submitted No Comments must revert it
 before importing.
@@ -455,7 +482,8 @@ During the backcheck period, each reviewer checks the team's responses to the re
   width="50%"
 />
 
-The reviewer chooses one of three actions:
+The form's reply box is labeled **Your response (optional to close, required to return the comment to the team)**, and reads "Reply to the team's
+response..." while it is empty. The reviewer chooses one of three actions:
 
 - **Close without response** closes the comment. The thread ends with a **Closed without response** entry.
 - **Close with response** records the text in the reply box as a Backcheck reply and closes the comment.

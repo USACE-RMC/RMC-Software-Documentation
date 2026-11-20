@@ -403,8 +403,11 @@ as the run starts.
 
 The **[analysis] Simulation** band under the boundary conditions shows the run's status: Waiting for a model server, Sending files, Queued, Building
 model, Running (with a percentage), Complete, Failed, Cancelled, Timed out or Lost. Its rows show each loading level, as Computed, Did not compute,
-Not run or Not verified, and its icons open the dam results, open **Simulation details**, and download the HEC-RAS project. When inputs change after
-a run, the status shows a warning: "Inputs have changed since this simulation ran. The depth grids show the earlier inputs; run the analysis again to
+Not run or Not verified, and its icons open the dam results, open **Simulation details**, and download the HEC-RAS project. After a level computes,
+its row reads "Preparing map" while its maximum depth grid is made, or "Preparing animation" while its depth over time waits for the terrain's
+elevation tiles. Until the project files are saved, the download icon is replaced by a pending icon that reads "The HEC-RAS project is being saved.
+It can be downloaded once it is." When the run has map results, a hint points to the legend, for example "Turn on depth grids and depth over
+time under Inundation Results in the map legend." When inputs change after a run, the status shows a warning: "Inputs have changed since this simulation ran. The depth grids show the earlier inputs; run the analysis again to
 update them."
 
 <FigReference figKey="dst-users-guide-fig-inundation-analysis-simulation-details" /> shows the details of a completed simulation.
@@ -428,9 +431,76 @@ The legend's **Inundation Results** group lists, for each analysis and loading l
 model**. Turning on **Depth over time** shows a player with **Play**, **Pause**, the previous and next outputs, a **Simulation time** slider, a speed
 in simulation hours per second, **Loop** and a blend toggle. Each frame is the water surface at one mapping output time.
 
+### Reading values at the pointer
+
+While **Identify features** is on, a card follows the pointer over the map and reads the value under it of every visible result layer, in legend
+order. Each row names the analysis and loading level ("[analysis] › [loading level]") and the layer, with its value:
+
+- A **Maximum depth** layer gives the deepest water at that point.
+- A **Depth over time** layer gives the depth at the player's current time, so the value changes as the animation plays or the slider moves.
+- While the terrain is shown, a row gives the ground elevation, headed with the terrain's name.
+
+A depth layer reads "Dry" where the ground stayed dry, and the terrain reads "No data" outside its coverage. When the map is zoomed out past the
+grid's own detail, values are read from coarser overview tiles and marked approximate with "≈". An amber dot before a row marks a result that is out
+of date.
+
+### The depth player
+
+The player plays every **Depth over time** layer that is turned on, on one shared clock, so loading levels shown together stay in step. The controls
+are:
+
+- **Previous output** and **Next output**, which pause the player and step to the output before or after the one shown.
+- **Play** and **Pause**.
+- The **Simulation time** slider, with the elapsed time beside it. Dragging it pauses the player.
+- The speed, in simulation hours played per real second: 0.25, 0.5, 1, 2 (the default), 4 or 8 h/s.
+- **Loop**, which starts again from the beginning when playback reaches the end.
+- **Blend between outputs**. On, the map blends smoothly between output times. Off (the default), the map steps from one output to the next, as RAS
+  Mapper does, and the slider snaps to the output times.
+
+Playback runs from the first change in any of the series shown to the last output of the longest. A line under the controls reads "Output [N] of
+[M]", followed by the number of loading levels when more than one plays. When an animation cannot be loaded, the player says so with **Retry**.
+The player's time and settings are kept for the session and reset when the page is reloaded.
+
+The information icon explains that **Maximum depth** is the deepest water over every computation step, while each frame is only the water surface at
+one mapping output time. A Maximum depth layer can therefore be deeper than any frame of the animation.
+
+<VideoReference videoKey="dst-users-guide-video-inundation-analysis-depth-player" /> shows the Depth over time layer of one loading level played at 4
+h/s, with the flood moving down the valley.
+
+<Video
+  videoKey="dst-users-guide-video-inundation-analysis-depth-player"
+  src="/videos/web-applications/dst/users-guide/v1.0/inundation-analysis-depth-player.mp4"
+  caption="Playing the depth animation of a loading level."
+  width={MEDIA_WIDTH}
+/>
+
+### Depth over time at a point
+
 **Depth over time at a point** in the toolbar reads the depths at a point selected on the map. Its panel plots depth over time for each loading
 level of the chosen **Analysis**, with an **Arrival depth** (0.5 ft by default) and a table of when each level reaches that depth, its peak depth and
 time, and how long it stays that deep. **Download CSV** saves the depths.
+
+The panel sits over the right of the map, so the next point can be selected on the map without closing it. It starts on the analysis selected on the
+page; picking another **Analysis** in the panel holds until a different analysis is selected on the page. In a metric screening the **Arrival depth**
+starts at 0.15 m.
+
+The table has one row per loading level, with the columns **Reaches [depth]**, **Peak depth**, **Peak at**, **[depth] or deeper for** and **Back
+under [depth]**, where [depth] is the arrival depth. Each row's check box puts that level on the plot or takes it off, and the check box in the
+heading plots every level or takes them all off. A row's own button plots only that level, and selecting it again plots every level again. With one
+level plotted, the plot labels its peak.
+
+The plot shows a guide line at the arrival depth and, under it, the note "One value every [interval], the analysis's mapping output interval.", since
+depths are read from the mapping outputs. Resting the pointer on the plot reads each plotted level's depth at that time (see
+[Charts](./040-working-in-dst.mdx#charts)). The plot and panel give these messages in place of the plot:
+
+- "This point is outside the model area."
+- "No loading level has a depth to plot here.", when no level has a depth at the point.
+- "Tick a loading level to plot it.", when every level has been taken off the plot.
+- "[analysis] has no results yet. Run it to read depths here." or "[analysis] is being simulated. Its depths can be read once the run finishes."
+
+When the inputs have changed since the run, an amber note reads "Inputs changed since this simulation ran. Run the analysis again to update its
+results." The copy button copies the plotted levels' depths for pasting into a spreadsheet, and **Download CSV** saves them as a file; both take
+only the levels on the plot.
 
 ## Dam results
 
@@ -439,6 +509,30 @@ conditions. It lists, for each loading level, when overtopping and the breach st
 time, the maximum pool and tailwater, and the water released. A time plot, **Outflow through the dam**, shows the outflow
 series the run kept, such as the flow through the breach, and the pool and tailwater, with **Flow**, **Elevation** and **Both**, **Event** and **Whole simulation**, and **Compare levels**;
 a cross-section of the breach follows the time bar. The table copies to the clipboard and downloads as CSV.
+
+Selecting a row of the table picks the loading level the plot shows. The plot's controls are:
+
+- **Event** (the default) or **Whole simulation**. **Event** frames the stretch of the simulation that holds the flood at the dam, from where the
+  outflow first rises to where it has receded, widened to take in the breach. It shows the whole simulation when the event is most of it.
+- **Flow**, **Elevation** or **Both**: the outflow, the water levels, or both on two scales, flow on the left and elevation on the right. When the
+  run kept only the outflow at the dam, **Elevation** and **Both** are unavailable, with the reason "This run kept only the outflow at the dam. Run
+  the analysis again for its water levels."
+- **Compare levels**, which draws every computed loading level in its own color. It is unavailable when fewer than two levels computed.
+- The copy button and **Download CSV**, which take the dam's results of the level shown, or of every level while levels are compared.
+
+On **Flow**, the outflow of a single level is split into the parts the run kept, stacked under the total: **Through the breach**, **Overtopping
+beside the breach**, **Through the spillways and outlet works** and **Other outflow**. The peak is labeled with its flow and time, for example "Peak
+313.5K cfs · T+11 h 26 min". On **Elevation**, the plot draws the **Pool (headwater)**, the **Tailwater** and the **Breach bottom**, with a dashed
+**Top of dam** line. Vertical markers show when the breach starts (**Breach starts**) and, dashed, when it is fully formed (**Fully formed**).
+Resting the pointer on the plot lists the flow, its parts and the water levels at that time (see [Charts](./040-working-in-dst.mdx#charts)).
+
+A dam whose boundary condition is a **Hydrograph** has no reservoir or breach of its own, so its plot and table use its own names: **Flow entering
+the model** for the flow, **Stage** for the water level, and **Max stage at the dam** in the table.
+
+The time bar under the plot has a play button and a **Time in the simulation** slider. Playing or dragging moves the plot's cursor, the breach
+cross-section and the readings beside it through the simulation. The dialog keeps its own time, so playing it does not move the depth player on the
+map. Below the plot, a line gives the level's verification and volume error and how much water left the model area. Once that level's **Water
+leaving the model** layer is ready, the line ends with **Show where on the map**, which turns the layer on and closes the dialog.
 
 <FigReference figKey="dst-users-guide-fig-inundation-analysis-dam-results" /> shows the dam results of an analysis with a piping breach.
 
@@ -451,3 +545,13 @@ a cross-section of the breach follows the time bar. The table copies to the clip
 />
 
 Changing an input after a run does not clear its results; the analysis is marked out of date until it is run again.
+
+<VideoReference videoKey="dst-users-guide-video-inundation-analysis-dam-results" /> shows the dam results plot switched between **Elevation**,
+**Both** and **Flow**, and **Compare levels** turned on.
+
+<Video
+  videoKey="dst-users-guide-video-inundation-analysis-dam-results"
+  src="/videos/web-applications/dst/users-guide/v1.0/inundation-analysis-dam-results.mp4"
+  caption="Switching the dam results plot between flow and elevation views."
+  width={MEDIA_WIDTH}
+/>

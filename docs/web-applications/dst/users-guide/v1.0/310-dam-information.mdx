@@ -184,6 +184,11 @@ unavailable ("Material limit reached. Delete a material to add another."). **Rem
 confirmation, which warns "This action cannot be undone."; the table always keeps at least one embankment material, and the Conduit Filter row
 cannot be deleted. A badge beside a row's label counts its errors.
 
+Deleting a material does not delete what was drawn in it. In every embankment cross section, the zones and the seepage berm that used the material
+lose their material, and so does the core material the embankment generator remembers for the section. The zones then read **Unassigned** on the
+editor's Body tab, the section asks again for "Assign a material to this zone." or "Assign a material to the seepage berm.", and its card shows the
+type **Earth Embankment** until every zone has a material again. To restore the section, the user assigns another material in the editor and saves.
+
 The page messages for the table include "Add at least one embankment material.", "Select the material type for [material].", "Indicate whether
 [material] contains dispersive soils." (required inputs) and "[material]: gradation is marked available but no gradation rows have been entered." (a
 warning).
@@ -203,6 +208,8 @@ dialog's title lists the gradation's messages: the errors "[material] ([coarse o
 zero." and "[material] ([coarse or fine] gradation): percent passing at row [n] must be between 0 and 100.", and the warnings "[material] ([coarse
 or fine] gradation): particle sizes are not in decreasing order — check the curve." and "[material] ([coarse or fine] gradation): percent passing
 increases as particle size decreases — check the curve." The × closes the dialog.
+
+Each band holds up to 500 rows. A gradation with a longer table is not saved, and DST reports "A gradation table can hold at most 500 rows."
 
 <Figure
   figKey="dst-users-guide-fig-dam-information-gradation"
@@ -290,13 +297,52 @@ characters, which saves when the user leaves it. A named section needs its dam t
 
 The menu at the right of a card header offers:
 
-- **Copy** adds a copy of the section.
+- **Copy** adds a copy of the section. The copy is named after the section with " (Copy)" added and is placed last in its group. It carries the
+  section's drawing, description and crest justification, and its reference image together with the image's calibration, so tracing can continue on
+  the copy without calibrating again.
 - **Copy at new base elevation**, for an embankment section with zones, opens a dialog that copies the section cut off at a new, higher base. The user
   enters **New base elevation** (the hint gives the allowed range, "Above [x] and below [y] ft") and a **Name**, which defaults to the section name
   followed by "@ El." and the elevation. A preview shows the original and the copy, with the new **Height** and **Base width** beside their former
   values, and **Review before creating** lists anything DST changed, such as a seepage berm that was not carried over. **Create** adds the copy;
   **Create and edit** adds it and opens its editor; **Cancel** closes the dialog.
 - **Delete** opens the **Delete Cross Section** confirmation: "Are you sure you want to delete [name]? This action cannot be undone."
+
+A screening holds at most 100 cross sections; a copy beyond that is refused with "A screening can hold at most 100 cross sections."
+
+### Copying at a new base elevation
+
+**Copy at new base elevation** makes a shorter copy of a section already drawn, with its base raised, for a station where the foundation stands
+higher. DST cuts every zone of the source at the new base and keeps what lies above it; a zone whose base is already above the new
+base is kept as it is. A drain or filter layer that runs along the old base is raised with the base, so the copy keeps its drainage at its foundation.
+The source section is not changed, and the copy is placed right after it.
+
+DST builds the preview when the user leaves the **New base elevation** box. The preview draws the copy over the original, and it zooms and pans
+like the embankment generator's preview (see [Generating a simple embankment](./311-cross-section-editors.mdx#generating-a-simple-embankment)).
+The **Name** holds up to 200 characters; clearing it restores the default name. The copy does not carry the source's reference image.
+
+DST refuses a copy it cannot make, and shows the reason under the **New base elevation** box:
+
+- "Draw this cross section before copying it at a new base elevation." when the section has no zones.
+- "Assign a material to every zone before copying this cross section at a new base elevation."
+- "Fix this cross section so its zones form one closed shape before copying it at a new base elevation."
+- "Enter a base elevation above [x] and below [y]." for an elevation outside the allowed range.
+- "This cross section can't be copied at El. [x]: "[zone]" would surround another zone."
+- "This cross section could not be cut cleanly at El. [x]. Copy it and edit the copy instead."
+- "The copy would need more than 200 points or 20 zones. Copy the section and edit it instead."
+
+A copy DST can make may still need a look. **Review before creating** lists each change DST made to the drawing:
+
+- "The seepage berm was not carried over. Draw it again if it applies at this location."
+- ""[zone]" is entirely below the new base and was removed."
+- "Only a sliver of "[zone]" was left above the new base, so it was merged into the zone next to it."
+- "Only a sliver of "[zone]" is left above the new base. Check whether to keep it." The sliver is kept.
+- ""[zone]" was cut into [n] separate pieces." Each piece becomes its own zone, named "[zone] (1)", "[zone] (2)" and so on, with the zone's
+  material.
+- "A small piece of "[zone]" was cut off from the rest of the section by the new base and was removed."
+- "Part of [drain] along the base was trimmed where it meets the outside of the new section (about [n]% of it). Check its ends."
+
+The notices are advice, not errors: **Create** and **Create and edit** stay available once the preview matches the entered elevation and the copy has
+a name, and the copy can be corrected in its editor afterward.
 
 ### Reference images
 
@@ -342,3 +388,20 @@ the user enters. Messages about the abutments appear in a note at the top of the
 The information icons on the fields describe how potential failure mode PFM-02 uses the slopes. The section's messages are "Provide the [left or right] abutment top
 slope.", "Provide the slope below Bench [n] on the [side] abutment." (required inputs), and "The [side] abutment top slope must be greater than 0 and
 no more than 90 degrees." and "The slope below Bench [n] on the [side] abutment must be greater than 0 and no more than 90 degrees." (errors).
+
+### PFM-02 locations
+
+The abutment slopes also decide where PFM-02 is evaluated. Each saved change to the section brings the PFM-02 locations into line with the slopes and
+benches (see [Location and Cross Section](./352-pfm-02.mdx#location-and-cross-section)):
+
+- **Abutments.** An abutment whose top slope is between 15° and 65° is a location, **Left Abutment** or **Right Abutment**. When its top slope
+  moves outside that range, DST deletes the location with its inputs and results.
+- **Benches.** Every bench is a location, for example **Left Abutment Bench 1**, whatever the top slope. DST matches bench locations to benches by
+  number, so deleting a bench deletes the location of that side's last bench, with its inputs and results. The benches below a deleted bench move up
+  a number and take over the locations of their new numbers, with the inputs entered there; after deleting any bench but the last, the user reviews
+  those locations.
+- **Cutoff walls.** When the cutoff or seepage barrier wall is marked **At crest** and Failure Mode Screening question 7a says it ties into an
+  abutment, DST hides that abutment's locations instead of deleting them. They return, with their inputs, when the tie is removed.
+
+DST adds new locations only while PFM-02 is selected for evaluation. When no abutment or bench yields a location, PFM-02 keeps a single location,
+**Location 1**, that the team describes itself.

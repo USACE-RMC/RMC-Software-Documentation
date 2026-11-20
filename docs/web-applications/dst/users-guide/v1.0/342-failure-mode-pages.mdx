@@ -189,6 +189,29 @@ appears in DST Based SRP mode on pages without an event tree.
   ]}
 />
 
+## Calculation
+
+DST runs a location's calculation on the System Response service whenever the page opens or an input changes and the inputs are complete. While it
+runs, the System Response chart shows a placeholder curve (see [System Response](./343-system-response.mdx)), and the results arrive in the table
+and chart when it finishes. An edit made during a run supersedes it: DST drops the older run's results and calculates again.
+
+Each user runs one calculation at a time, across every failure mode page. With two failure mode pages open at once, the second calculation waits
+for the first, and DST retries a calculation that still cannot start once before giving up. If it gives up, a warning notice reads "Too many
+requests. Please wait and try again." The inputs are unaffected, and closing the other failure mode pages lets the next calculation run.
+
+A calculation that runs into trouble reports it in the page messages. Besides any error the System Response service itself returns, the messages
+are:
+
+- "Calculation produced invalid (non-finite) values and could not be completed. If this persists, contact support with the screening identifier."
+  (error)
+- "The calculation service could not run this failure mode with the current inputs. This is a problem in the DST, not in your entries. Contact
+  support with the screening identifier." (error)
+- "[n] degenerate values or confidence-bound substitutions were encountered. Results may be less reliable than usual." (warning; the results are
+  still shown)
+
+When the System Response service cannot be reached, the System Response section shows a notice in place of the results (see
+[Calculation currency](./343-system-response.mdx#calculation-currency)).
+
 ## Verifying a location
 
 A member of the screening team verifies each location on its own failure mode page with the verification badge at the right of the sub-navigation bar (see

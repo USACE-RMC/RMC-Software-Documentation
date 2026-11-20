@@ -7,6 +7,8 @@ import FigReference from '@site/src/components/FigureReference';
 import NavContainer from '@site/src/components/NavContainer';
 import TableReference from '@site/src/components/TableReference';
 import TableVertical from '@site/src/components/TableVertical';
+import Video from '@site/src/components/Video';
+import VideoReference from '@site/src/components/VideoReference';
 import { MEDIA_WIDTH } from './_media-width.js';
 
 <NavContainer link="/web-applications/dst" linkTitle="Dam Screening Tool" document="web-applications/dst/users-guide" />
@@ -57,3 +59,57 @@ shared with the Results Data page and reset when the page is reloaded.
   with the outflow plot, peak outflow and hazard occurrence.
 - **Structures**, a tray at the bottom, lists the 20 wet structures ranked by the **Order by** measure. Selecting a row moves the map to it, and
   **All structures (.csv)** downloads every wet structure.
+
+<VideoReference videoKey="dst-users-guide-video-results-map-levels" /> shows the loading level changed, then **Colour structures by** switched between
+Maximum depth, Arrival after the breach and Mean life loss, with the legend and the structures following.
+
+<Video
+  videoKey="dst-users-guide-video-results-map-levels"
+  src="/videos/web-applications/dst/users-guide/v1.0/results-map-levels.mp4"
+  caption="Changing the loading level and the structure coloring on the Results Map."
+  width={MEDIA_WIDTH}
+/>
+
+## Structure classes
+
+Each **Colour structures by** measure has fixed classes, so the same color means the same thing at every loading level and in every screening. The
+legend lists them worst first, with the number of structures in each, and on the map the structures of the worse classes are drawn on top of the
+others. The classes are:
+
+- **Mean life loss**: 1 or more lives, 0.1 to 1, 0.01 to 0.1, and Under 0.01.
+- **Arrival after the breach**: Before the breach, Within 30 min, 30 min to 1 h, 1 to 2 h, 2 to 4 h, and After 4 h.
+- **Population at risk**: 10 or more people, 5 to 10, 2 to 5, and Under 2.
+- **Depth × velocity**: 50 ft²/s or more, 20 to 50, 7 to 20, and Under 7.
+- **Maximum depth**: 15 ft or more, 6 to 15 ft, 2 to 6 ft, and Under 2 ft, drawn in the blues of the depth grid.
+- **Mean damage**: $1M or more, $250k to $1M, $50k to $250k, and Under $50k.
+- **Collapse share**: In half the iterations or more, 10% to 50%, Under 10%, and Never, which is drawn in neutral gray.
+
+Each class takes its lower bound and runs up to the next class's, so a mean life loss of exactly 1 is in "1 or more lives". Below the classes, the
+legend adds a row for the structures with nothing to class: "No arrival time" for **Arrival after the breach**, and "No value" for the other
+measures. When **Wet structures only** is off, a last row, "Stayed dry", counts the structures the water did not reach, which are drawn in gray.
+If the structure inventory has changed since the level ran, the dry structures cannot be drawn, and the legend says so.
+
+## Arrival times
+
+Arrival times count from the breach start of the loading level. At a level without a breach start, they count from when the first structure got
+wet, and the legend notes "Times after the first structure wet: this level has no breach start."
+
+An arrival time can be negative. A structure that the water reached before the breach started, for example from the inflow or from overtopping
+before the breach, falls in the **Before the breach** class. The structure panel gives its time as, for example, "51 min before the breach", and the
+tray's **Water arrives** column as a negative time such as "−51 min". Times counted from the first structure wet are never negative.
+
+## Structures tray
+
+The tray at the bottom of the map is headed **Structures** with the function and loading level, for example "Structures · Overtopping, 817 ft".
+Opening it slides it up over the map. Its **Order by** picks the measure the list is ranked by, and changes **Colour structures by** to match; the
+line beside it says what the list holds, for example "The 20 of 34 wet structures with the highest mean life loss, as the map colours them." The
+list's columns are **Structure**, **Occupancy**, **Mean life loss**, **Fatality rate**, **Population**, **Maximum depth**, **Depth × velocity**,
+**Water arrives**, **Collapsed** and **Mean damage**. Selecting a row closes the tray and shows the structure on the map.
+
+When the level's structures cannot be listed, the tray says why, for example:
+
+- "Entered as tables, so it has no structures to list.", for a function entered by hand on the Results Data page.
+- "This analysis has no loading levels yet."
+- "This loading level has no result yet, so it has no structures to list."
+- "Reading this level's structures…", while they load.
+- "No structure got wet at this level."

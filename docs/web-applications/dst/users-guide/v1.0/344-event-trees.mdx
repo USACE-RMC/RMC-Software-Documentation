@@ -75,6 +75,10 @@ failure mode and cannot be edited or deleted. To add a stage for every node:
   ]}
 />
 
+The **Zero point** column chooses one stage. Choosing the lowest stage stores no stage at all: the zero point then follows whichever stage is
+lowest, so adding a stage below it moves the zero point down to the new stage. Choosing any other stage fixes the zero point there. Deleting the
+added stage that holds the zero point returns the zero point to the lowest stage.
+
 An added stage's elevation and description stay editable in place. The trash icon deletes it ("Delete this stage and its entered values"). A stage
 added from a node's panel applies to that node only (see [Nodes](#nodes)).
 
@@ -156,6 +160,11 @@ stages**, marked **Pool independent**. <TableReference tableKey="dst-users-guide
 **Add stage to this node** adds a stage that only this node uses; the user enters it in the same way as an added stage (see [Stages](#stages)) and appears
 in the Stages table as **Added, Node N only**. Its trash icon deletes it with its value. Pool-independent nodes have no such button.
 
+The slider and the **Probability** box set the same value in two ways. The slider moves between its seven stops only, from 0.001 to 0.999, and a
+value set with it saves at once. The box takes any value from 0 to 1. A typed value between two stops places the slider's handle between them, at
+a position interpolated on a probit scale, the standard normal quantile of the probability; a typed value below 0.001 or above 0.999 places
+the handle at the end of the slider. An empty box leaves the slider without a handle.
+
 **Previous node** and **Next node** step through the nodes, starting with those shared by every pathway and then following each pathway, and wrap
 around at the ends. A node's probabilities should stay the same or increase from one stage to the next (see
 [Event tree messages](#event-tree-messages)).
@@ -195,6 +204,22 @@ a probability at every stage above the zero point and the stages and probabiliti
 - **Chart.** The curves plotted against **Pool Elevation (ft)** on a logarithmic probability axis, with the same zoom, reset and download controls as
   the other SRP charts (see [SRP charts](./343-system-response.mdx#srp-charts)).
 
+### How the total is calculated
+
+DST calculates each stage above the zero point from the node probabilities at that stage:
+
+- **Branch.** Each branch follows one pathway from the flood to breach. Its value is the product, over the pathway's steps, of P for each step
+  that takes the node's Yes outcome and 1 − P for each step that takes its No outcome, where P is the node's probability at the stage.
+- **Total.** The **Total SRP** is the sum of the branches.
+- **Floor.** A branch or a total below 1E-16 is raised to 1E-16, and every stage at or below the zero point is 1E-16 throughout.
+
+For example, take a tree with two pathways through Nodes 1, 2 and 3, one taking Node 3's Yes outcome and the other its No outcome. With Node 1 at
+0.1, Node 2 at 0.5 and Node 3 at 0.2 at a stage, Branch a is 0.1 × 0.5 × 0.2 = 0.01, Branch b is 0.1 × 0.5 × 0.8 = 0.04, and the total is 0.05.
+
+A node has no value of its own at a stage added for another node only. There DST interpolates the node's probability between its own stages,
+linearly in elevation and in the logarithm of the probability (semi-log), starting from 1E-16 at the zero point. Above the node's highest stage the
+value is held at that stage's probability.
+
 The total becomes the location's active SRP in **Event tree** mode (see [Active SRP](./343-system-response.mdx#active-srp)). Event-tree pages have no nodal revisions; the team enters the node
 probabilities directly.
 
@@ -228,3 +253,9 @@ sources.
 
 When the total system response decreases, the results still show on the page, but the location has no active SRP for the Risk Analysis
 module.
+
+On the event-tree pages that read a cross section, DST checks the **Cross Section** chosen in the toolbar when it saves, and refuses a choice that
+does not suit the failure mode: "Choose an earth embankment cross section for this failure mode.", "Choose a concrete cross section for this failure
+mode." or "Choose a gated concrete cross section for this failure mode.", depending on the failure mode. A section deleted in another session reads
+"The selected cross section no longer exists. Reload the page and choose another." A section that no longer suits the failure mode but was already
+selected stays selected (see [The page toolbar](./342-failure-mode-pages.mdx#the-page-toolbar)).

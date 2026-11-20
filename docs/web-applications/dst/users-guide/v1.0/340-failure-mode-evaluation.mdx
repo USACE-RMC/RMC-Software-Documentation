@@ -8,6 +8,8 @@ import FigReference from '@site/src/components/FigureReference';
 import NavContainer from '@site/src/components/NavContainer';
 import TableReference from '@site/src/components/TableReference';
 import TableVertical from '@site/src/components/TableVertical';
+import Video from '@site/src/components/Video';
+import VideoReference from '@site/src/components/VideoReference';
 import { MEDIA_WIDTH } from './_media-width.js';
 
 <NavContainer link="/web-applications/dst" linkTitle="Dam Screening Tool" document="web-applications/dst/users-guide" />
@@ -149,3 +151,25 @@ chart's upper right corner.
 **Linear** and **Log**, in the chart's upper right corner, switch the **Probability** axis between a linear and a logarithmic scale; DST picks
 the scale that suits the curves when the page opens. The chart zooms and resets in the same way as the SRP charts on each failure mode page (see
 [SRP charts](./343-system-response.mdx#srp-charts)).
+
+DST chooses the scale from the probabilities of the curves, ignoring zeros:
+
+- **Log** when the largest probability is 0.01 or less, so that every curve is low.
+- **Log** when two or more probabilities are below 0.01 and the largest is at least 100 times the smallest, so that low curves would otherwise
+  flatten against the axis beside high ones.
+- **Linear** otherwise, and when no curve has a probability above zero.
+
+Selecting **Linear** or **Log** overrides DST's choice until the page reloads. The logarithmic axis stops at 1E-06. A point below it, such as a
+probability of 1.00E-16, is drawn on the bottom edge of the plot, and a small triangle in the curve's color at the bottom edge marks its
+headwater. Resting the pointer on the chart lists each shown curve's probability at that headwater, highest first, at its true value rather than
+the floor. Other chart behaviors are described in [Charts](./040-working-in-dst.mdx#charts).
+
+<VideoReference videoKey="dst-users-guide-video-failure-mode-evaluation-curves" /> shows the preview switched between **Linear** and **Log**, then the
+**Curves** list used to hide every curve, show two, and show all again.
+
+<Video
+  videoKey="dst-users-guide-video-failure-mode-evaluation-curves"
+  src="/videos/web-applications/dst/users-guide/v1.0/failure-mode-evaluation-curves.mp4"
+  caption="Changing the scale and the curves shown in the System Response Preview."
+  width={MEDIA_WIDTH}
+/>

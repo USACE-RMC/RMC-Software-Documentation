@@ -8,6 +8,8 @@ import NavContainer from '@site/src/components/NavContainer';
 import ProcessList from '@site/src/components/ProcessList';
 import TableReference from '@site/src/components/TableReference';
 import TableVertical from '@site/src/components/TableVertical';
+import Video from '@site/src/components/Video';
+import VideoReference from '@site/src/components/VideoReference';
 import { MEDIA_WIDTH } from './_media-width.js';
 
 <NavContainer link="/web-applications/dst" linkTitle="Dam Screening Tool" document="web-applications/dst/users-guide" />
@@ -53,6 +55,11 @@ and the forces, stays in the editor until the user selects **Save**. Two things 
 
 - **Save** stores the section. While the save is in progress the button shows a spinner.
 - **Cancel** ("Discard the changes since the last save") returns the section to its last saved state.
+
+The editors keep no history of edits, so there is no undo or redo, and Ctrl+Z does nothing on the canvas. Cancel is the only way back, and it
+discards every change since the last save at once. Within a drawing tool, Backspace removes the last point of an outline still being drawn, and
+Escape or **Cancel** on a pending card (such as **New zone** or **Split**) drops the result before it is applied. Saving after each change worth
+keeping makes Cancel a short step back.
 
 Saving a section clears the verification of the Dam Information page (see [Human Verification](./040-working-in-dst.mdx#human-verification)). When
 the change makes the results of a failure mode page out of date, DST clears those results and says so in a notice (see
@@ -129,6 +136,16 @@ A section with no geometry opens with a box titled **Define the cross-section** 
 The mouse wheel zooms in and out about the pointer. Dragging on empty canvas, or dragging with the middle mouse button anywhere, pans the view.
 **Re-center** fits the view to the drawing. When a drawing first arrives on an empty canvas, for example from the generator or an import, DST fits
 the view to it; later edits never move the view.
+
+<VideoReference videoKey="dst-users-guide-video-cross-section-editor-canvas" /> shows the canvas zoomed with the wheel and panned by dragging, a zone
+selected in the Zones list, the view re-centered, and a Shift+drag selection of points.
+
+<Video
+  videoKey="dst-users-guide-video-cross-section-editor-canvas"
+  src="/videos/web-applications/dst/users-guide/v1.0/cross-section-editor-canvas.mp4"
+  caption="Zooming, panning and selecting on the embankment editor canvas."
+  width={MEDIA_WIDTH}
+/>
 
 ### Placing and moving points
 
@@ -229,6 +246,9 @@ Once an image is in place, the top of the tab holds these controls:
   automatically."
 - **Replace image**, **Replace with a pasted screenshot** and **Remove image and calibration** (the icon buttons).
 
+**Show**, **Flip** and the **Opacity** slider in the status bar are stored with the image and its calibration, so they save at once like the image
+itself and need no Save. The image reopens shown or hidden, flipped and faded as the user left it.
+
 While a shown image is not yet calibrated, the drawing tools are unavailable, and the Body and Berm tabs read "Drawing tools are disabled until the
 visible reference image is calibrated. Finish calibration on the Image tab, or hide or remove the image." Clicks on the canvas place calibration
 marks instead of points.
@@ -238,6 +258,10 @@ under the choice names the next step, for example "Start with Level — mark two
 reads "Calibrated — …" when calibration is complete. Each step has a **Place** button, which becomes **Move** once the mark is placed; while a step
 waits for a click on the image, its button reads **Cancel**, and a note over the canvas says what to click. After each mark the panel moves on to the
 next step. Escape pauses calibration.
+
+When the marks cannot define a transformation, for example when two marks sit on the same spot or a dimension has no length, the guidance line
+turns red and reads "Calibration failed — check for coincident marks or a zero-length dimension." While the image is shown, the drawing tools stay
+unavailable, as for an image not yet calibrated, until a mark is moved or a length corrected.
 
 <Figure
   figKey="dst-users-guide-fig-dam-information-image-calibration"
@@ -399,6 +423,19 @@ The Body tab's toolbar holds three tools. Selecting an active tool again, or pre
 While a tool is active, a note at the top of the canvas describes the next click, for example "Click points in order; click the first point to close
 the zone". A drawing holds at most 20 zones and berms.
 
+A tool refuses a result that would break the drawing, and the note at the top of the canvas gives the reason. The outline being drawn stays in
+place, so the user can move on with another click, Backspace, or Escape. The reasons include:
+
+- **Draw zone.** "Draw a simple zone with at least three unique points.", "This outline matches zones that already exist — nothing new would be
+  created.", "A zone fully inside another zone would create a hole. Connect the new zone to an existing boundary.", "This outline would leave an
+  enclosed zone as a hole. Connect it to the new zone’s boundary, or delete it first." and "Outline clicks landed on the same point. Zoom in or turn
+  off Snap to place distinct points."
+- **Split.** "Draw one non-self-crossing split from one body boundary to another without following a boundary.", "A split may cross each zone only
+  once." and "The path does not cut a body zone."
+- **Merge.** "Zones must share a full edge to merge.", "A shared merge edge may belong to only two zones.", "The merge would create multiple cycles
+  or a hole." and "The merged zone would overlap another body zone."
+- **Draw zone** and **Draw berm**, at the limit of 20 zones and berms: "A drawing may contain at most 20 rings."
+
 ### Berm tab
 
 The **Berm** tab holds the seepage berm, a separate component downstream of the embankment toe. Its toolbar shows **Draw berm**, or **Redraw berm**
@@ -467,6 +504,17 @@ with the drawing and closes the dialog; the drawing is then edited and saved lik
 crest and each slope chain before generating the drawing." (or, for Zoned, "Complete the crest, the core and each slope chain on the Embankment and
 Core tabs before generating the drawing."). A core that does not fit reads "The core does not fit inside the embankment. Keep its top at or below the
 crest, and run both core faces down to the base or neither." **Cancel** closes the dialog without a drawing.
+
+Until the inputs describe a shape, the preview reads "Enter the crest and slopes, or the core, to see a preview." Once drawn, the preview can be
+examined more closely without changing the inputs. The same controls work in the preview of **Copy at new base elevation** (see
+[Copying at a new base elevation](./310-dam-information.mdx#copying-at-a-new-base-elevation)):
+
+- The mouse wheel zooms about the pointer, and dragging pans; the line under the preview reads "Scroll to zoom · Drag to pan".
+- With the preview focused, + and − zoom about its center, and the arrow keys pan it.
+- **Fit to section** (the crosshair) returns the preview to the whole section.
+
+Each slope table, on either tab, holds up to 50 rows. A drawing generated from a longer table is refused at Save with "A slope chain can hold at most
+50 segments."
 
 ### Starting over
 

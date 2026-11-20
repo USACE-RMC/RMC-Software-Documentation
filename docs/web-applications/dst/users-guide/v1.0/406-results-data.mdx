@@ -54,6 +54,21 @@ is a failure function. **Add function** adds a function entered as tables, with 
 Non-failure); such a function can be renamed or deleted from its card. **Download all (.csv)** saves every function's table as the risk analysis
 receives it.
 
+### Failure and non-failure roles
+
+An analysis's role starts from its breach settings on the Inundation Analysis page: it is a failure function if any of its loading levels has a
+breach turned on, and a non-failure function otherwise. An analysis in which some levels have the breach on and others have it off is a failure
+function, and the levels with it off are left out, with the note "Some loading levels have a breach turned on and others have it off; those with it
+off are left out."
+
+There is one way for the dam not to fail, so at most one function is the non-failure function, the baseline every failure function is paired with.
+Until one is chosen, DST proposes the first function, in the order of the cards, whose role is non-failure. Selecting another function's **Non-fail**
+button makes it the non-failure function ("Make [name] the non-failure function. Only one function can be non-failure.") and makes every other
+function a failure function, whatever its breach settings.
+
+When two functions share a name, the later ones are numbered, for example "Overtopping (2)", so that each table the risk analysis receives has a
+name of its own. The first function of a name keeps it.
+
 ## Graphs and tables
 
 **Graphs** shows the function's **Life loss** and **Economic damages** against stage: life loss as a box per loading level with its mean, damages as
@@ -63,7 +78,8 @@ held beyond its lowest and highest stages.
 **Tables** lists the rows the risk analysis receives. <TableReference tableKey="dst-users-guide-table-consequences-function-rows" /> lists the
 columns. DST's rows, from the loading levels, are gray and read-only. User-defined rows can be added, pasted and edited like any DST table (see
 [Tables](./040-working-in-dst.mdx#tables)); they sort by stage and save as they are entered, and a user row at a level's stage is sent in place of the
-level's. Changes are not saved while any cell is in error.
+level's. Changes are not saved while any cell is in error. A paste that would cover a DST row is cancelled whole, with "Paste cancelled: it would
+go over a DST row. Paste into user-defined rows, or add a row to paste into."
 
 <TableVertical
   tableKey="dst-users-guide-table-consequences-function-rows"
@@ -84,6 +100,24 @@ level's. Changes are not saved while any cell is in error.
     ],
   ]}
 />
+
+### Carrying a function across the hazard curve
+
+The risk analysis needs each table to cover the whole range of stages of the flood hazard curve, but a function's points are only its loading levels
+with a current result and its user-defined rows. DST adds rows at the ends of each table to carry it across the curve, and updates them as the rows
+are entered. They show as **DST, held below**, **DST, held above** or **DST, zero below** in the **Source** column. The rules are:
+
+- A failure function holds its lowest point's value down to the curve's lowest stage, and its highest point's value up to the curve's highest
+  stage. The notes say so, for example "Held at 0.57 below 812 ft, down to 790.6 ft."
+- The non-failure function is zero below its lowest point ("Zero below [stage]."): zero at the curve's lowest stage and just below
+  the point, then its points, and its highest point's value held above them.
+- A table with one point goes as that value at every stage: "One current level, so it would go as a constant: [value] lives at every stage."
+- A table with no point, beside one that has some, goes as zero at every stage: "The [table] table has no point, so it goes as zero at every stage."
+- A function with no point at all reads "No loading level has a current result, so there is nothing to send.", or for a function entered by hand,
+  "No row is entered yet, so there is nothing to send."
+
+Without a usable hazard curve there is no range to cover, so each table holds only its own points, and nothing is sent to the risk analysis until
+there is a curve. A point outside the curve's range is noted, for example "[stage] is outside the hazard curve ([lowest] to [highest])."
 
 ## Loading level summary and plots
 

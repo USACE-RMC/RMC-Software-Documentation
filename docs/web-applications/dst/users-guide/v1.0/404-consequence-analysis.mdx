@@ -81,12 +81,30 @@ A loading level that cannot run shows "Blocked:" with the reason, such as "Inund
 below the table draws the outflow of each ticked level, with a solid line at its hazard occurrence and a dashed line at its non-failure hazard
 occurrence. A time set by hand can be dragged along the plot.
 
+A choice that the inundation results cannot support is unavailable, and resting the pointer on it gives the reason. In the **All levels** row,
+**Breach start** is unavailable with "No loading level of this analysis has a breach turned on.", and **Overtopping start** with "The dam did not
+overtop at any loading level of this analysis." A level's **Plot** box is unavailable with "No dam outflow was kept with the inundation run of this
+loading level. Run it again to keep one.", or, once eight levels are ticked, "Up to 8 loading levels can be plotted at once."
+
 ## Set the advanced notice
 
 The advanced notice is how long before the hazard occurs the threat is identified: **Delayed** (−2 to 0 h), **Very short** (0–2 h), **Short**
 (2–4 h), **Moderate** (4–8 h), **Long** (8–24 h) or **Very long** (24–48 h). It has no default, and an analysis cannot run until it is chosen. It is
-set for each analysis, and **Set by loading level** sets a level differently. When a zone exists, the zone has one notice for every analysis. **Add the
-basis** records why the notice was chosen, up to 2000 characters.
+set for each analysis, and **Set by loading level** sets a level differently. **Add the basis** records why the notice was chosen, up to 2000
+characters.
+
+Beside each choice, a sentence says what the notice means against the hazard occurrence it counts from, for example "Identified 4 to 8 hours before
+the breach starts." A **Delayed** notice reads "up to 2 hours after", and the hazard is named as "the breach starts", "the dam starts overtopping" or
+"the first structure gets wet". A loading level set on its own reads "Set for this level:" before its sentence; the others read "Same as the
+analysis".
+
+When the screening has a non-failure hazard zone, the zone has a row of its own in this step, marked **Every analysis**. Its notice is optional:
+
+- Until one is chosen, the zone takes each analysis's notice, and the row reads "Not chosen: the zone takes each analysis's notice below until it
+  is." Each analysis's notice then also applies to the zone ("Also for the non-failure hazard zone.").
+- Once one is chosen, it applies in the zone for every analysis and loading level, and each analysis's notice covers only the rest of the model
+  area ("For the rest of the model area."). **Use each analysis's notice** clears the zone's choice and returns to the first case.
+- When no loading level has the zone turned on, the row reads "Not in use: no loading level has the zone turned on."
 
 ## Run
 
@@ -103,6 +121,18 @@ The consequence simulations, like the flood simulations, start only when the use
 None of these asks for confirmation. The panel lists each level's mean life loss, with warning and evacuation, or its status:
 Not run, Queued, Simulating, Writing results, Failed, Cancelled, Could not start, or the reason it is blocked. A result marked **Out of date** was
 simulated with inputs that have since changed.
+
+The full list of a level's statuses, in the order a run goes through them, is:
+
+- **Not run**, or **Waiting on inputs** while the panel reads "Cannot run yet" because an input is missing.
+- **Starting**, while the inputs are sent to the simulation service.
+- **Waiting for a model server**, until a model server is free, then **Queued**.
+- **Preparing**, **Simulating** (with a percentage) and **Writing results**, the phases of the LifeSim run.
+- **Cancelling**, after a cancel, until the run stops at the engine's next check, within a few seconds.
+- **Reading results**, while the finished run's numbers are read from its result file.
+- The mean life loss, once the result is read.
+- **Result not read**, when the run completed but its result could not be read.
+- **Failed**, **Cancelled** or **Could not start**. The details of a run that ran out of time read "Timed out."
 
 Selecting a level's status opens its details: the run's status and timing, any errors and warnings, the result over its 1,000 iterations (mean,
 median, 5th to 95th percentile and range of life loss, the mean population at risk and the mean damages), and the hazard and notice it ran with.

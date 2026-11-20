@@ -77,6 +77,20 @@ Every system response chart works the same way:
 - **Copy SRP curve data for spreadsheets** copies the curve values to the clipboard, and **Download SRP curves as a CSV file** downloads them. Both
   appear only when the results are current.
 
+### The SRP CSV file
+
+The downloaded file opens with comment lines, each starting with "#", that record where the curves came from:
+
+- the title, such as "PFM-02 CLE due to Cross Valley Differential Settlement — System Response Curves";
+- "[dam] · Screening [number] · [location] · Generated [date and time] UTC";
+- "SRP mode: DST (calculated)" or "SRP mode: User Defined";
+- "Nodal revisions applied: yes" or "no";
+- "Last calculated: [date and time] UTC", when DST has calculated the location; and, on some failure modes, lines on the inputs behind the curves.
+
+Two tables follow, separated by a blank line: the calculated curves, such as one column per node beside the total, and the active SRP
+curve, headed, for example, "Active SRP curve (DST) — the curve risk calculations consume" (or "(User Defined)"), which is the curve passed to
+the Risk Analysis module. Times are in UTC.
+
 ## Nodal tables
 
 A system response is built from a sequence of nodes, each the probability of one event in the failure mode. The SRP table summarizes the total at
@@ -136,6 +150,35 @@ the dialog's title explains how the eight headwaters are chosen.
 The chart and the
 Revised Estimate column of the SRP table update as the user types, and the revisions save shortly after each change. Revisions do not recalculate the
 system response; DST combines the revised nodes into the Revised Estimate curve, which becomes the active SRP.
+
+In the node's chart, a probability of 1 lies on the top edge of the plot, where its line is hard to see. A small triangle in the curve's color at
+the top edge marks each headwater at which the DST Estimate or the Revised Estimate reaches 1.
+
+### Node headwaters
+
+DST picks the eight headwaters with the Ramer–Douglas–Peucker algorithm, which keeps the points that best preserve the shape of the overall system
+response curve, so that a few points can stand for the full curve. The points are picked on the overall curve and shared by every node, so each
+node's table starts at the same headwaters. A headwater edited in a node's table changes it for that node only.
+
+DST does not save a revision that breaks these rules, and reports why:
+
+- "Node [node] needs at least 2 headwater values to interpolate an SRP curve."
+- "Node [node] headwaters must be strictly increasing; [x] at position [n] is not greater than the previous value [y]."
+- "Node [node] revised probabilities must be between 0 and 1."
+
+### How the Revised Estimate is combined
+
+The Revised Estimate scales the DST Estimate by how far each revised node departs from DST's value for it:
+
+- **Ratio at each node headwater.** For each revised node, DST divides the revised estimate by the DST estimate at each of the node's headwaters.
+  A blank revised cell, or a DST estimate of zero, gives a ratio of 1, which leaves the node as DST estimated it there.
+- **Between headwaters.** The ratio is interpolated linearly between the node's headwaters and held at the end values beyond the first and last.
+  A node that does not vary with headwater has one ratio for all pools.
+- **Total.** At each headwater of the curve, the Revised Estimate is the DST Estimate multiplied by the ratio of every revised node, and never less
+  than 1E-16.
+
+For example, where the DST Estimate is 1.0E-03, revising one node from 0.50 to 0.25 gives a Revised Estimate of 5.0E-04. Revising a second node
+from 0.80 to 0.40 at the same headwater halves it again, to 2.5E-04. Unrevised nodes do not change the result.
 
 Three buttons undo revisions, each after a confirmation dialog whose **Continue and revert** button proceeds:
 
