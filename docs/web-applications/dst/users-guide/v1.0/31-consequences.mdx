@@ -1,0 +1,751 @@
+---
+title: 'Consequences'
+---
+
+import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/dst" linkTitle="Dam Screening Tool" document="web-applications/dst/users-guide" />
+
+# Consequences
+
+The Consequences module estimates what happens downstream when the dam fails, and when it does not. The screening team builds a two-dimensional
+hydraulic model of the area below the dam, simulates the flood at each loading level with HEC-RAS, and then simulates life loss and economic damages
+in each flood with LifeSim. The results become the consequence functions that the Risk Analysis module combines with the hazard and system
+response (see [Chapter 32, Risk Analysis](./32-risk-analysis.mdx)).
+
+The module has six pages, reached from **Consequences** in the module navigation, in the order the work is done:
+
+- **Inundation Geometry** builds the hydraulic model: its area, dam, rivers, terrain, land cover and mesh.
+- **Inundation Analysis** sets the loading levels, boundary conditions and breach of each analysis, and runs the flood simulations.
+- **Consequence Data** holds the structure inventory, the Emergency Response ratings and an optional non-failure hazard zone.
+- **Consequence Analysis** sets when each hazard occurs and how much notice people have, and runs the consequence simulations.
+- **Results Map** shows the consequences of one loading level on the map, structure by structure.
+- **Results Data** shows each consequence function as graphs and tables and holds functions entered by hand.
+
+None of these pages is verified. Their inputs are read-only to users who are not on the screening team and while the screening's inputs are locked
+(see [Input Lock](./04-working-in-dst.mdx#input-lock)). The methods behind the simulations are described in the HEC-RAS and LifeSim documentation
+and in the DST Technical Reference Manual.
+
+## Inundation Geometry
+
+The Inundation Geometry page, at **Consequences > Inundation Geometry**, defines the hydraulic model: the area it covers, the dam, the rivers and
+other lines that shape the mesh, the terrain and land cover, and the computational mesh built from them.
+
+:::caution[Screenshot pending]
+
+An orientation figure of the Inundation Geometry page (shot `dst-users-guide-fig-inundation-geometry-page`, file `inundation-geometry-page.png`)
+will be added here, with a table of its numbered regions.
+
+:::
+
+The page is a map with these regions:
+
+- **Model Configuration**, a panel at the upper left. It starts collapsed as a column of add buttons; expanded, it shows the add buttons, a **Search
+  features…** box and a tree of the model's features.
+- **The map toolbar**, at the upper right (see [The map](#the-map)).
+- **[Feature] Properties**, a panel at the right that opens when a feature is selected or created.
+- **The legend**, opened with the toolbar's layers button, which lists the map layers in groups that can be turned on and off.
+
+### The map
+
+Every page of the Consequences module except Consequence Analysis and Results Data is a map. The toolbar at the upper right changes the map style,
+identifies the features under the pointer (**Identify features**), measures distances, zooms in, out and to all layers, resets the bearing to north
+and exaggerates the terrain. When a feature that can be edited is selected, the toolbar adds **Edit selected feature**, and while editing, **Save
+edits**, **Cancel edits (Escape)** and **Add points**. The strip under the left panel shows the pointer's longitude, latitude and zoom, and hints for
+the current tool, such as "Click a feature to select".
+
+The legend groups the layers as **Inundation Geometry**, **Consequence Data**, **Inundation Results** and **Reference Layers**, which include USGS
+rivers and lakes and the levees of the National Levee Database. DST remembers which layers are on for each page during the session. Below zoom 13 the
+map shows a sample of the structures; zooming in shows every one.
+
+### Model Configuration panel
+
+The add buttons, in order, are **Dam Centerline**, **Model Area**, **River Centerline**, **Coastline**, **Breakline**, **Refinement Region**,
+**Terrain** and **Land Cover**, followed by **Mesh**. A screening has one model area, one dam centerline, one terrain and one land cover; once one
+exists, its button replaces it ("Replace the …").
+
+The tree lists **Model Geometry**, with the mesh status, the mesh button and a download button, and under it the Dam Centerline, Model Area,
+**River Centerlines**, **Coastlines**, **Breaklines** and **Refinement Regions**, then **Terrains** and **Land Covers**, each with a count. Each row
+has a download button. An amber warning icon marks a feature whose settings are incomplete or invalid; resting the pointer on it gives the reason.
+
+### Adding a line or area
+
+The model area, dam centerline, river centerlines, coastlines, breaklines and refinement regions are added through one dialog, titled with the
+feature's name:
+
+<ProcessList
+  items={[
+    { title: <>The user selects the feature's add button and enters its fields (listed in the sections below).</> },
+    {
+      title: (
+        <>
+          Optionally, the user selects <strong>Import Geometry from File</strong> to read the outline from a GeoJSON (.geojson, .json) or KML (.kml)
+          file. A river can instead be picked with <strong>Pick a River on the Map</strong>, and a breakline with <strong>Pick a Levee on the Map</strong>{' '}
+          or <strong>Pick a Road on the Map</strong>. A preview sketches the new feature over the existing model in gray.
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          The user selects <strong>Create</strong> (or <strong>Replace</strong>). When no geometry was given, DST creates the feature and starts the
+          map's drawing tool for it at once.
+        </>
+      ),
+    },
+  ]}
+/>
+
+A picked river comes from USGS NHDPlus V2, and only its stretch through the model area, upstream to downstream, is kept. A picked levee comes from the
+USACE National Levee Database, and a picked road from OpenStreetMap (motorway, trunk, primary or secondary roads). Picking needs a model area. With
+the reference layers on, selecting a river or levee on the map also offers **Import as River Centerline** or **Import as Breakline**. Before the line
+is added, a preview shows its length and any notes, such as "It was trimmed at the dam: only the stretch downstream of the dam is kept.", with
+**Pick Again** and **Use This River**, **Use This Levee** or **Use This Road**.
+
+### Model area
+
+The model area is the polygon the mesh covers. <TableReference tableKey="dst-users-guide-table-consequences-model-area" /> lists its fields.
+
+<TableVertical
+  tableKey="dst-users-guide-table-consequences-model-area"
+  colWidths={['24ch', '10ch', '14ch', 'minmax(30ch, 1fr)']}
+  alt="Model area fields"
+  caption="Model area fields"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Name', 'Cell Size', 'Area summary'],
+    ['—', 'ft or m', '—'],
+    ['Required', 'Required', 'Read-only'],
+    [
+      'A descriptive name for the model area.',
+      'The computational mesh cell size, from 30 to 2000. Defaults to 2,000 when left blank in the add dialog.',
+      'The Area, the estimated number of cells (Est. Cells) and a recommended cell size (Rec. Cell Size) scaled from the area.',
+    ],
+  ]}
+/>
+
+### Dam centerline
+
+The dam centerline is the line along the crest of the dam where the breach or dam hydrograph enters the mesh.
+<TableReference tableKey="dst-users-guide-table-consequences-dam-centerline" /> lists its fields.
+
+<TableVertical
+  tableKey="dst-users-guide-table-consequences-dam-centerline"
+  colWidths={['24ch', '10ch', '14ch', 'minmax(30ch, 1fr)']}
+  alt="Dam centerline fields"
+  caption="Dam centerline fields"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Name', 'Top of Dam Elevation', 'Top of dam justification', 'Cell Size near Dam', 'Cells Away from Dam', 'Centerline summary', 'Mesh near the dam'],
+    ['—', 'ft or m, screening datum', '—', 'ft', '—', '—', '—'],
+    ['Required', 'Required', 'Conditional: when the top of dam is entered here', 'Optional', 'Optional', 'Read-only', 'Read-only'],
+    [
+      'A descriptive name for the dam centerline.',
+      'Follows the dam crest elevation on the Dam Data page (tagged Auto) until a different value is entered (tagged Manual). The reset button returns it to Dam Data. Must be greater than zero.',
+      'Explains why the top of dam differs from the Dam Data dam crest. A Manual value without it leaves the page Incomplete on Submission Readiness.',
+      'The side of the square cells built along the dam. Blank applies no refinement near the dam.',
+      'How many rows of square cells the mesh builds out from the dam, from 1 to 200. Defaults to 2.',
+      'Length, estimated square cells and vertices.',
+      'After a mesh is computed: the share of rectangular cells, the smallest cell, the 95th percentile face angle and whether the square cell rows were built.',
+    ],
+  ]}
+/>
+
+### River centerlines
+
+A river centerline is meshed as one row of rectangular cells along the river. A river that enters the model area from outside can take an inflow on
+the Inundation Analysis page. <TableReference tableKey="dst-users-guide-table-consequences-river" /> lists its fields.
+
+<TableVertical
+  tableKey="dst-users-guide-table-consequences-river"
+  colWidths={['24ch', '10ch', '14ch', 'minmax(30ch, 1fr)']}
+  alt="River centerline fields"
+  caption="River centerline fields"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Name', 'Bankfull Width', "Manning's n", 'River Cell Size', 'Centerline summary'],
+    ['—', 'ft', '—', 'ft', '—'],
+    ['Required', 'Required', 'Required', 'Optional', 'Read-only'],
+    [
+      'A descriptive name for the river centerline.',
+      'The width of the river at its bankfull stage. Defaults to 50. Must be greater than zero.',
+      'The roughness of the river channel. Defaults to 0.035. Must be greater than zero; values above 1 are flagged as atypical.',
+      'The cell length along the river. Blank uses three times the bankfull width.',
+      'Length, estimated cells and vertices.',
+    ],
+  ]}
+/>
+
+### Coastlines, breaklines and refinement regions
+
+A coastline is a line along the model area's edge where a stage boundary can be applied. A breakline aligns the mesh with a sharp change in
+elevation, such as a levee, embankment or road. A refinement region is a polygon meshed at a smaller cell size.
+<TableReference tableKey="dst-users-guide-table-consequences-refinement" /> lists their fields.
+
+<TableVertical
+  tableKey="dst-users-guide-table-consequences-refinement"
+  colWidths={['28ch', '10ch', '14ch', 'minmax(30ch, 1fr)']}
+  alt="Coastline, breakline and refinement region fields"
+  caption="Coastline, breakline and refinement region fields"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Name', 'Cell Size near Coastline, Cell Size near Breakline', 'Cell Size (refinement region)', 'Summary'],
+    ['—', 'ft', 'ft', '—'],
+    ['Required', 'Optional', 'Optional', 'Read-only'],
+    [
+      'A descriptive name for the feature.',
+      'The mesh cell size next to the line. Blank applies no refinement.',
+      'The mesh cell size inside the region. Blank uses the model area cell size.',
+      'Length or area, estimated cells and vertices.',
+    ],
+  ]}
+/>
+
+### Terrain
+
+The terrain supplies the ground elevations of the mesh. **Terrain** opens the **Add Terrain** dialog, with two tabs:
+
+- **OpenTopography** downloads a terrain for the model geometry with a 660 ft (200 m) buffer. The **Dataset** is one of Copernicus 30m (COP30, the
+  default) or 90m (COP90), SRTM 30m (SRTMGL1) or 90m (SRTMGL3), or USGS 1m, 10m or 30m (3DEP, United States only). A **Download Area** preview shows
+  the rectangles to be requested. One download covers at most 4° of latitude or longitude, 1.5 billion cells and 40 requests. **Download** starts it,
+  and it continues after the dialog closes.
+- **Upload File** reads a GeoTIFF (.tif, .tiff) digital elevation model up to 11 GB, chosen with **Select GeoTIFF File**. **Elevation Units**
+  (Meters or Feet) is required; meters are converted to feet.
+
+**Name** is optional in both; a blank name is generated. While the terrain processes, its row shows a spinner, and DST reports "Terrain "[name]" is
+ready!" when it finishes. Its properties panel shows its name, source, resolution, elevation units, dataset, import date and bounding box, and warns
+when the model geometry extends past the terrain.
+
+### Land cover
+
+The land cover sets the roughness (Manning's n) of the floodplain. **Land Cover** opens the **Add Land Cover** dialog, with two tabs:
+
+- **NLCD** downloads the National Land Cover Database for the model geometry with a 660 ft buffer. **NLCD Year** is **Latest available** (the
+  default) or a release from 2021 back to 2001.
+- **Upload File** reads a GeoTIFF of whole-number land cover classes. NLCD codes keep their NLCD names and Manning's n; any other code becomes
+  "Class N" with n = 0.06 until it is set.
+
+The properties panel shows the land cover's source, year, resolution and bounding box, and **Edit Manning's n…** opens the **Manning's n by Land
+Cover Class** dialog. It lists each class's **Code**, **Land Cover Class**, **Default n** and **Manning's n**, which is editable, greater than 0 and
+at most 1. **Reset to defaults** restores the defaults and **Save** keeps the changes. Changing a value marks existing simulation results as out of
+date. Where the model extends past the land cover, the mesh uses a Manning's n of 0.06.
+
+### Computational mesh
+
+**Mesh** computes the computational mesh from the model geometry, and selecting it again while the mesh computes cancels it. The status under
+Model Geometry reads "Queued…", a percentage, "[N] cells", "[N] cells · [K] warnings", "Failed", "Cancelled" or "Not computed". A mesh needs a model
+area with a drawn boundary.
+
+When the mesh fails or has warnings, the **Mesh failed** or **Mesh warnings** card opens at the top of the map. It lists each message from the
+mesher with **Show on Map**, which outlines and zooms to the problem. DST does not recompute the mesh when the geometry changes; the mesh must be
+recomputed after the geometry or the dam's settings change.
+
+### Editing, saving and downloading geometry
+
+The fields in a properties panel save when the user leaves the field (see [Saving](./04-working-in-dst.mdx#saving)). Outlines are edited
+explicitly: **Edit Geometry** in the properties panel, or **Edit selected feature** in the toolbar, starts an edit, and **Save** or **Cancel** ends
+it; Escape cancels. Switching features with unsaved edits asks "Discard Unsaved Changes?" (**Keep Editing** or **Discard Changes**), and leaving the
+page asks for confirmation (**Stay** or **Leave Page**). The trash icon in the properties panel deletes a feature after confirmation.
+
+Each feature downloads as GeoJSON from its tree row or panel, and the terrain and land cover as their files. The Model Geometry download saves all
+the geometry as one GeoJSON file, with the mesh (.h5, .hdf) once it is computed.
+
+Changes to the geometry, terrain, land cover or mesh do not clear later results. Inundation and consequence results that depend on them are marked
+out of date instead, and are replaced by running them again.
+
+## Inundation Analysis
+
+The Inundation Analysis page, at **Consequences > Inundation Analysis**, defines and runs the flood simulations. An analysis is a named set of
+loading levels, which are reservoir water-surface elevations. Each loading level is simulated in HEC-RAS with the analysis's boundary conditions and
+plan settings, and the analysis's results are one flood map per loading level.
+
+:::caution[Screenshot pending]
+
+An orientation figure of the Inundation Analysis page (shot `dst-users-guide-fig-inundation-analysis-page`, file `inundation-analysis-page.png`)
+will be added here, with a table of its numbered regions.
+
+:::
+
+The page is a map (see [The map](#the-map)) with these regions:
+
+- **Analysis Configuration**, a panel at the upper left, with a tile for each analysis, the boundary conditions of the selected analysis, and its
+  simulation status.
+- **[Feature] Boundary Conditions**, a panel at the right that opens when a dam, model area, river or coastline is selected on the map or in the
+  list. The geometry itself is read-only on this page.
+- The **Depth over time at a point** tool in the map toolbar, and the results layers in the legend.
+
+### Analyses
+
+Each analysis is a tile in the Analysis Configuration panel; selecting a tile makes it the active analysis. The icons on a tile are **Edit
+analysis**, **Run the simulation**, **Copy analysis** and **Delete analysis**. A status dot shows the last simulation: green "Simulated.", amber
+"Inputs have changed since the last simulation.", or red when the last simulation did not complete or could not start.
+
+**Add analysis** creates an analysis named "Set N" and opens its **Edit Analysis** dialog. **Copy analysis** copies the plan settings, loading levels
+and boundary conditions into "[name] (Copy)". **Delete analysis** asks for confirmation; it deletes the analysis and all of its loading levels, and
+cancels a simulation that is running.
+
+### Edit Analysis
+
+The **Edit Analysis** dialog holds the analysis name, its plan settings and its loading levels, and saves them with **Save**; **Cancel** discards
+the changes. <TableReference tableKey="dst-users-guide-table-consequences-plan-settings" /> lists its fields.
+
+<TableVertical
+  tableKey="dst-users-guide-table-consequences-plan-settings"
+  colWidths={['28ch', '10ch', '14ch', 'minmax(30ch, 1fr)']}
+  alt="Edit Analysis dialog fields: name and plan settings"
+  caption="Analysis name and plan settings"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    [
+      'Analysis Name',
+      'Run time after inflow ends',
+      'Equation set',
+      'Computation time step',
+      'Mapping Interval',
+      'Adjust time step automatically (Courant)',
+      'Maximum Courant number',
+    ],
+    ['—', 'hrs', '—', 's or min', 'min', '—', '—'],
+    ['Required', 'Optional', 'Required', 'Required', 'Required', 'Optional', 'Conditional: when the time step is adjusted automatically'],
+    [
+      'A descriptive name, up to 200 characters, unique in the screening.',
+      'How long the model keeps running after the last inflow ends, in whole hours from 0 to 8760. Blank estimates it from the terrain and land cover.',
+      'Diffusion wave (faster), the default, or Full momentum, SWE-ELM (slower).',
+      '1, 2, 3, 5, 10, 15, 20 or 30 seconds (the default), or 1 minute.',
+      'How often the model saves a snapshot of the flood: 5, 10 (the default), 15 or 30 minutes.',
+      'Lets HEC-RAS lengthen and shorten the step from the computation time step. Off by default.',
+      '1, 2, 3 (the default) or 5. The lower limit is a third of it.',
+    ],
+  ]}
+/>
+
+The **Loading Level** table lists the analysis's loading levels, one row each, with the columns **Loading Level** (the pool elevation, a positive
+number, unique in the analysis) and an optional **Label** of up to 100 characters. Rows sort by loading level and are added, pasted and deleted like
+any DST table (see [Tables](./04-working-in-dst.mdx#tables)). A new loading level copies the boundary conditions of the lowest existing level, without
+its per-level values, and starts its reservoir at the loading level. Removing a loading level deletes its results and its consequence runs.
+
+### Boundary conditions
+
+The panel below the tiles lists the features that can take a boundary condition in the active analysis: the dam centerline, the model area, the
+rivers that enter the model area, and the coastlines. Selecting one opens its boundary conditions at the right, under the heading "[feature]
+([analysis])". Settings apply to every loading level of the analysis, except the values entered in tables with one row per loading level. The
+boundary conditions save as they are entered; there is no Save button.
+
+#### Dam
+
+**Boundary Condition Type** is **None** (the default), **Hydrograph** or **1D Reservoir**:
+
+- **Hydrograph** applies a dam-breach hydrograph directly to the 2D mesh. Its location is set with **Latitude** and **Longitude**, or with the
+  crosshair button and a click on the dam centerline, and **Width** is the breach width over which it enters the mesh. **Hydrograph Type** and its
+  tables are described in [Hydrographs](#hydrographs).
+- **1D Reservoir** routes an inflow through a reservoir and a breach, on three tabs: **Reservoir**, **Inflow** and **Breach**.
+
+The **Reservoir** tab states how the reservoir releases water: through the Stage-Outflow curve on the Operational Data page, or, without one, only
+over the dam crest. **Storage & outflow curves** shows the Operational Data curves the reservoir uses, read-only, with a link to edit them there. Its
+table gives, for each loading level, the **Initial WSE** (the reservoir level at the start of the simulation, defaulting to the loading level) and,
+when the outlet curve is in use, the **Release at start**. A red message explains any problem in the Stage-Outflow curve that stops a run.
+
+The **Inflow** tab's **Inflow Hydrograph** check box routes an inflow hydrograph into the reservoir (see [Hydrographs](#hydrographs)). The **Breach**
+tab's **Breach** check box turns the breach on.
+
+#### Breach
+
+The breach fields appear on the Breach tab once **Breach** is checked. <TableReference tableKey="dst-users-guide-table-consequences-breach" /> lists
+them. **Breach Method** decides where the breach geometry comes from: **User Defined** takes the development time, bottom width and side slopes for
+each loading level, and **FEMA Defaults** calculates them from the dam type, height and length (FEMA P-946, Table 9.3) for every loading level.
+Values entered under User Defined are kept while FEMA Defaults is selected.
+
+<TableVertical
+  tableKey="dst-users-guide-table-consequences-breach"
+  colWidths={['28ch', '12ch', '16ch', 'minmax(30ch, 1fr)']}
+  alt="Breach fields of a 1D reservoir boundary condition"
+  caption="Breach fields"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    [
+      'Breach Method',
+      'Failure Mode',
+      'Breach Latitude, Breach Longitude',
+      'Dam Type',
+      'Dam Height, Dam Length',
+      'Trigger Type',
+      'Weir Coefficient',
+      'Bottom Elevation',
+      'Initial Piping Elevation',
+      'Trigger Value (per level)',
+      'Development (per level)',
+      'Bottom Width (per level)',
+      'Side Slopes (per level)',
+    ],
+    ['—', '—', 'degrees', '—', 'ft or m', '—', '—', 'ft or m, datum', 'ft or m, datum', 'ft or m, or hrs', 'hrs', 'ft or m', 'H:V'],
+    [
+      'Required',
+      'Required',
+      'Required',
+      'Conditional: FEMA Defaults',
+      'Read-only',
+      'Required',
+      'Required',
+      'Required',
+      'Conditional: Piping',
+      'Required',
+      'Required',
+      'Required',
+      'Required',
+    ],
+    [
+      'User Defined or FEMA Defaults.',
+      'Overtopping, or Piping, which starts a pipe at the Initial Piping Elevation.',
+      'The breach location on the dam centerline (WGS84). The crosshair button sets it with a click on the map.',
+      'One of the screening\'s dam types. Defaults to the primary dam type.',
+      'From Screening Information.',
+      'Elevation (the breach starts when the reservoir reaches the trigger value) or Time (the trigger value in hours after the simulation starts).',
+      'For flow through the breach. Must be greater than zero. Defaults to 3.',
+      'The bottom of the fully formed breach. Must be below the top of dam.',
+      'The center of the pipe when the failure starts. Blank uses the bottom elevation plus 1. Must be at or above the bottom elevation and below the top of dam.',
+      'The elevation or time that starts the breach at each loading level.',
+      'The time for the breach to form fully. Read-only under FEMA Defaults.',
+      'The width of the breach bottom. Read-only under FEMA Defaults.',
+      'The breach side slopes. Read-only under FEMA Defaults.',
+    ],
+  ]}
+/>
+
+The **Breach Geometry** plot draws the terrain along the dam, the dam crest, the breach location and each loading level's breach trapezoid, and the
+initial pipe for a piping failure. Under User Defined, the calculator icon opens the **Breach Calculator**, which estimates the breach with the
+**MacDonald-Langridge-Monopolis** or the **Xu & Zhang / Von Thun** method from the failure mode, the top of dam, breach bottom and pool elevations,
+the pool volume at failure, and the method's own dam inputs. **Calculate** shows the **Calculator Results**, and **Apply Results** writes them to
+every loading level.
+
+#### Model area, rivers and coastlines
+
+- **Model area.** **Normal Depth Slope** (default 0.001, greater than 0 and at most 1) is the outflow boundary that lets water leave the model area
+  around its perimeter. The table's **Initial water level** for each loading level is left blank; the simulation service cannot yet start a 2D area
+  wet, and a run with a value refuses to start.
+- **River.** **Upstream Boundary** is **None** or **Hydrograph**, an inflow series for the river. A river that crosses the dam takes its flow from
+  the dam, and a river that starts inside the model area cannot take an inflow.
+- **Coastline.** **Boundary** is **None** or **Hydrograph**, a stage series applied along the model area edge between the ends of the coastline.
+  Stages may be negative.
+
+#### Hydrographs
+
+**Hydrograph Type** is **Trapezoidal** (the default) or **Tabular**. A trapezoidal hydrograph has, for each loading level, a **Base** value, a **Base
+Time** (hrs), a **Peak** value and a **Peak Time** (hrs): it rises from base to peak, holds the peak and returns to base by the base time, so the Peak
+Time must not exceed the Base Time. A tabular hydrograph has a tab for each loading level with **Time (hr)** and **Value** columns and at least two
+rows. Values are flows, or stages for a coastline. A chart plots one series per loading level.
+
+### Running an analysis
+
+The flood simulations are one of the two places in DST where the user starts a calculation (see
+[Automatic Calculation](./04-working-in-dst.mdx#automatic-calculation)); nothing runs on its own. Each analysis tile has a play button, **Run the
+simulation** (**Run the simulation again** once it has run), which simulates every loading level of that analysis. The button is unavailable, with
+the reason, when the analysis has no loading levels ("Add a loading level to run the analysis") or when simulations are not available. While the
+run is in progress the button becomes a spinner; selecting it cancels the run ("[status]. Click to cancel."). There is no separate retry: a failed
+or cancelled analysis is run again with the same button.
+
+Before starting, DST checks the model and refuses to start with the reasons when, for example, the mesh is not computed, there is no terrain or land
+cover, no inflow is defined, or a breach is incomplete. Warnings that do not stop the run, such as a breach the reservoir never reaches, are reported
+as the run starts.
+
+The **[analysis] Simulation** band under the boundary conditions shows the run's status: Waiting for a model server, Sending files, Queued, Building
+model, Running (with a percentage), Complete, Failed, Cancelled, Timed out or Lost. Its rows show each loading level, as Computed, Did not compute,
+Not run or Not verified, and its icons open the dam results, open **Simulation details**, and download the HEC-RAS project. When inputs change after
+a run, the status shows a warning: "Inputs have changed since this simulation ran. The depth grids show the earlier inputs; run the analysis again to
+update them."
+
+:::caution[Screenshot pending]
+
+A figure of the simulation details dialog (shot `dst-users-guide-fig-inundation-analysis-simulation-details`, file
+`inundation-analysis-simulation-details.png`) will be added here.
+
+:::
+
+**Simulation details** opens a dialog with the run's status, timing and HEC-RAS version; any reasons it could not start, errors, warnings and
+values built differently from what was asked; a **Loading levels** table with each level's result, volume error, largest cell error, water that left
+the model area and compute time; and folded sections for how the model was built and the console output. **Download HEC-RAS project** saves the
+project, results and logs as a zip file.
+
+### Results on the map
+
+The legend's **Inundation Results** group lists, for each analysis and loading level, **Maximum depth**, **Depth over time** and **Water leaving the
+model**. Turning on **Depth over time** shows a player with **Play**, **Pause**, the previous and next outputs, a **Simulation time** slider, a speed
+in simulation hours per second, **Loop** and a blend toggle. Each frame is the water surface at one mapping output time.
+
+**Depth over time at a point** in the toolbar reads the depths at a point selected on the map. Its panel plots depth over time for each loading
+level of the chosen **Analysis**, with an **Arrival depth** (0.5 ft by default) and a table of when each level reaches that depth, its peak depth and
+time, and how long it stays that deep. **Download CSV** saves the depths.
+
+### Dam results
+
+The dam results dialog, **[analysis] Results**, opens from the chart icon in the simulation band or the **Results** button on the dam's boundary
+conditions. It lists, for each loading level, when overtopping and the breach started, when the breach was fully formed, the peak outflow and its
+time, the maximum pool and tailwater, and the water released. A time plot shows the outflow through the breach, beside it and through the spillways
+and outlet works, and the pool and tailwater, with **Flow**, **Elevation** and **Both**, **Event** and **Whole simulation**, and **Compare levels**;
+a cross-section of the breach follows the time bar. The table copies to the clipboard and downloads as CSV.
+
+:::caution[Screenshot pending]
+
+A figure of the dam results dialog (shot `dst-users-guide-fig-inundation-analysis-dam-results`, file `inundation-analysis-dam-results.png`) will be
+added here.
+
+:::
+
+Changing an input after a run does not clear its results; the analysis is marked out of date until it is run again.
+
+## Consequence Data
+
+The Consequence Data page, at **Consequences > Consequence Data**, holds the inputs of the consequence simulations: the structure inventory, the
+Emergency Response ratings of the model area, and an optional non-failure hazard zone.
+
+:::caution[Screenshot pending]
+
+An orientation figure of the Consequence Data page (shot `dst-users-guide-fig-consequence-data-page`, file `consequence-data-page.png`) will be added
+here, with a table of its numbered regions.
+
+:::
+
+The page is a map (see [The map](#the-map)). The **Consequence Data** panel at the upper left has two add buttons, **Structures** and **Non-Failure
+Zone**, and lists the structure inventory, **Emergency Response** and **Non-Failure Hazard Zone**. Selecting an item opens its properties at the
+right. A row marked incomplete gives the reason, for example "Incomplete: Draw its outline on the map, or delete it."
+
+### Structure inventory
+
+**Structures** opens the **Add Structure Inventory** dialog, with two tabs:
+
+- **National Structure Inventory** downloads the USACE National Structure Inventory (NSI) structures inside the model area. It needs a model area.
+- **Upload File** reads a GeoJSON FeatureCollection of points with NSI attribute names, up to 2 GB, chosen with **Select GeoJSON File**.
+
+**Name** is optional; a blank name is generated. Replacing an inventory deletes the old one and any map edits to its structures once the new one is
+read. DST reports "Structure inventory "[name]" is ready ([N] structures)." when it finishes.
+
+The inventory's properties panel shows its **Name**, its details (source, file, import date, number of structures and the structures edited since
+the import, listed by **View Edits**), and two cards:
+
+- **LifeSim checks** counts the structures with a problem, such as "Outside the Emergency Response area", "Missing population", "Missing occupancy
+  type", "Missing foundation height" or "More people than the occupancy holds". **Show** colors those structures and zooms to them. These are
+  warnings; they do not stop a run, though LifeSim leaves out structures outside the Emergency Response area.
+- **Summary** gives the day and night population, under 65 and 65 and over, the total value, and the structures counted by a characteristic chosen
+  in **Structures by** (damage category by default).
+
+### Editing structures
+
+**Edit Structures**, or **Edit selected feature** in the toolbar, edits the inventory's structures on the map: moving points, adding points with
+**Add points**, and changing a point's attributes in the panel at the right. **Undo** reverses the last change, and **Save** or **Cancel** ends the
+edit. A new point starts with the nearest structure's attributes. <TableReference tableKey="dst-users-guide-table-consequences-structure" /> lists a
+structure's fields.
+
+<TableVertical
+  tableKey="dst-users-guide-table-consequences-structure"
+  colWidths={['24ch', '10ch', '14ch', 'minmax(30ch, 1fr)']}
+  alt="Structure fields edited on the map"
+  caption="Structure fields"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Occupancy type', 'Construction type', 'Stories', 'Foundation type', 'Foundation height', 'Population', 'Values'],
+    ['—', '—', '—', '—', 'ft', 'people', '$'],
+    ['Required', 'Required', 'Required', 'Optional', 'Required', 'Required', 'Required'],
+    [
+      'The occupancy class, which also sets the damage category.',
+      'Manufactured, Masonry, Steel or Wood.',
+      'A whole number from 1 to 200.',
+      'Basement, Crawlspace, Fill, Pile, Pier, Slab or Solid wall, or Not given.',
+      'From 0 to 50.',
+      'Day, under 65; Day, 65 and over; Night, under 65; and Night, 65 and over. Whole numbers from 0 to 100,000.',
+      'Structure, Contents and Vehicles, each 0 or more.',
+    ],
+  ]}
+/>
+
+### Emergency Response
+
+The Emergency Response rates how well the people in the model area would be warned and would evacuate. It always exists, and its area is the model
+area. <TableReference tableKey="dst-users-guide-table-consequences-emergency-response" /> lists its fields. The ratings save when chosen, and the
+notes when the user leaves the box.
+
+<TableVertical
+  tableKey="dst-users-guide-table-consequences-emergency-response"
+  colWidths={['28ch', '10ch', '14ch', 'minmax(30ch, 1fr)']}
+  alt="Emergency Response fields"
+  caption="Emergency Response fields"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Unknown', 'Evacuation planning', 'Flood risk awareness', 'Warning speed', 'How the ratings were chosen'],
+    ['—', '—', '—', '—', '—'],
+    ['Optional', 'Conditional: unless Unknown', 'Conditional: unless Unknown', 'Conditional: unless Unknown', 'Optional'],
+    [
+      'Turned on when the warning and evacuation conditions cannot be determined; LifeSim then uses its curves for unknown conditions, and the three ratings are unavailable.',
+      'Flood-specific plan, All-hazards plan or No current plan.',
+      'High, Moderate or Low.',
+      'Fast, Moderate or Slow.',
+      'What the ratings are based on, up to 4000 characters.',
+    ],
+  ]}
+/>
+
+### Non-failure hazard zone
+
+The non-failure hazard zone is the part of the model area that floods even if the dam does not fail. On the Consequence Analysis page it gets its own
+hazard occurrence and advanced notice. A screening has at most one. **Non-Failure Zone** opens the **Add Non-Failure Hazard Zone** dialog, with three
+tabs:
+
+- **Draw on Map**: **Start Drawing**, then a click at each corner; a double-click or Enter finishes.
+- **Import a File**: a GeoJSON file of polygons in longitude and latitude (WGS 84), up to 50 MB and 200,000 points. All its polygons become one zone.
+- **Inundation Result**: the wet cells of one **Loading level**'s maximum depth grid, widened by a **Buffer distance** (100 ft by default, from 0 to
+  5,000 ft) and cut to the model area.
+
+The zone's properties panel shows its area and source. **Edit Geometry** reshapes an outline of one piece without holes; any other outline is changed
+by replacing the zone. Deleting the zone also removes its hazard occurrence and advanced notice.
+
+## Consequence Analysis
+
+The Consequence Analysis page, at **Consequences > Consequence Analysis**, sets when the hazard occurs and how much notice people have at each loading
+level, and runs a LifeSim simulation for each loading level of each analysis. It lists every analysis from the Inundation Analysis page; with none, it
+reads "Nothing to run yet" and links to **Open Inundation Analysis**.
+
+:::caution[Screenshot pending]
+
+An orientation figure of the Consequence Analysis page (shot `dst-users-guide-fig-consequence-analysis-page`, file `consequence-analysis-page.png`)
+will be added here, with a table of its numbered regions.
+
+:::
+
+The page has three steps: **Confirm when the hazard occurs** and **Set the advanced notice** on the left, and **Run** on the right. Settings save
+as they are chosen; typed times and text save when the user leaves the field (see [Saving](./04-working-in-dst.mdx#saving)).
+
+### Confirm when the hazard occurs
+
+Each analysis is a card that opens to list its loading levels, with an **All levels** row that sets every level at once.
+<TableReference tableKey="dst-users-guide-table-consequences-hazard" /> lists the columns.
+
+<TableVertical
+  tableKey="dst-users-guide-table-consequences-hazard"
+  colWidths={['28ch', '10ch', '16ch', 'minmax(30ch, 1fr)']}
+  alt="Columns of the hazard occurrence table on Consequence Analysis"
+  caption="Hazard occurrence inputs"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Hazard occurrence', 'Set by hand time', 'Non-failure', 'Non-failure hazard occurrence', 'Plot'],
+    ['—', 'h, min', '—', '—', '—'],
+    ['Required', 'Conditional: Set by hand', 'Conditional: a zone exists', 'Conditional: Non-failure on', 'Optional'],
+    [
+      'Breach start, Overtopping start, First structure wet or Set by hand. Defaults to Breach start, or First structure wet when no level has a breach. A choice the run cannot support is unavailable, with the reason.',
+      'T+ hours (0 to 8760) and minutes (0 to 59) after the inundation simulation starts.',
+      'Turns the non-failure hazard zone on at the loading levels where it exists.',
+      'When the hazard occurs in the zone. Starts on First structure wet.',
+      'Shows the level\'s dam outflow on the plot, up to eight levels. Not saved.',
+    ],
+  ]}
+/>
+
+A loading level that cannot run shows "Blocked:" with the reason, such as "Inundation not run" or "Inundation out of date". The **Dam outflow** plot
+below the table draws the outflow of each ticked level, with a solid line at its hazard occurrence and a dashed line at its non-failure hazard
+occurrence. A time set by hand can be dragged along the plot.
+
+### Set the advanced notice
+
+The advanced notice is how long before the hazard occurs the threat is identified: **Delayed** (−2 to 0 h), **Very short** (0–2 h), **Short**
+(2–4 h), **Moderate** (4–8 h), **Long** (8–24 h) or **Very long** (24–48 h). It has no default, and an analysis cannot run until it is chosen. It is
+set for each analysis, and **Set by loading level** sets a level differently. When a zone exists, the zone has one notice for every analysis. **Add the
+basis** records why the notice was chosen, up to 2000 characters.
+
+### Run
+
+The **Run** panel states how many loading levels are ready to run, and what keeps the others from running, with a link to the page that fixes it.
+The consequence simulations, like the flood simulations, start only when the user starts them. The run controls are:
+
+- **Run all** (**Run all [N]** when some levels are ready), at the top of the panel, runs every ready loading level that has no current result. It is
+  unavailable when no level is ready, or when every ready level is already running or current.
+- **Run**, **Run 1 level** or **Run [N] levels**, beside each analysis, runs that analysis's ready levels.
+- The play button beside each loading level runs that level again, whatever its status.
+- **Cancel** or **Cancel [N]** cancels the runs in progress, at the top or beside an analysis, and the stop button beside a level cancels that
+  level.
+
+None of these asks for confirmation. The panel lists each level's mean life loss, with warning and evacuation, or its status:
+Not run, Queued, Simulating, Writing results, Failed, Cancelled, Could not start, or the reason it is blocked. A result marked **Out of date** was
+simulated with inputs that have since changed.
+
+Selecting a level's status opens its details: the run's status and timing, any errors and warnings, the result over its 1,000 iterations (mean,
+median, 5th to 95th percentile and range of life loss, the mean population at risk and the mean damages), and the hazard and notice it ran with.
+
+## Results Map
+
+The Results Map page, at **Consequences > Results Map**, shows the consequences of one loading level on the map. It is view-only; its choices are
+shared with the Results Data page and reset when the page is reloaded.
+
+:::caution[Screenshot pending]
+
+An orientation figure of the Results Map page (shot `dst-users-guide-fig-results-map-page`, file `results-map-page.png`) will be added here, with a
+table of its numbered regions.
+
+:::
+
+- **Consequence Results**, the panel at the upper left, has a card for each consequence function, marked Failure or Non-fail, and a **Loading level**
+  picker showing each level's stage and life loss or status. The picked level's maximum depth grid is drawn on the map.
+- **Colour structures by** colors the structures by **Mean life loss** (the default), **Arrival after the breach**, **Population at risk**,
+  **Depth × velocity**, **Maximum depth**, **Mean damage** or **Collapse share**, in the classes the legend shows. **Wet structures only** (on by
+  default) hides the structures that stay dry.
+- Selecting a structure opens its panel: its occupancy and construction, its life loss, population, fatality rate, collapse share, depth, depth ×
+  velocity, arrival time and damage at the level, and a table of its results across the function's levels. Selecting the dam opens the dam panel,
+  with the outflow plot, peak outflow and hazard occurrence.
+- **Structures**, a tray at the bottom, lists the 20 wet structures ranked by the **Order by** measure. Selecting a row moves the map to it, and
+  **All structures (.csv)** downloads every wet structure.
+
+## Results Data
+
+The Results Data page, at **Consequences > Results Data**, shows each consequence function as the tables the risk analysis receives, and holds
+functions entered by hand. Each analysis becomes a consequence function once its loading levels are simulated.
+
+:::caution[Screenshot pending]
+
+An orientation figure of the Results Data page (shot `dst-users-guide-fig-results-data-page`, file `results-data-page.png`) will be added here, with a
+table of its numbered regions.
+
+:::
+
+### Consequence functions
+
+A card at the top represents each function. One function can be the non-failure function, chosen with its **Non-fail** button; every other function
+is a failure function. **Add function** adds a function entered as tables, with a **Name** (up to 100 characters, unique) and a **Role** (Failure or
+Non-failure); such a function can be renamed or deleted from its card. **Download all (.csv)** saves every function's table as the risk analysis
+receives it.
+
+### Graphs and tables
+
+**Graphs** shows the function's **Life loss** and **Economic damages** against stage: life loss as a box per loading level with its mean, damages as
+bars by damage category. Notes below say which levels are left out and why, such as a level that is out of date or not run, and how the function is
+held beyond its lowest and highest stages.
+
+**Tables** lists the rows the risk analysis receives. <TableReference tableKey="dst-users-guide-table-consequences-function-rows" /> lists the
+columns. DST's rows, from the loading levels, are gray and read-only. User-defined rows can be added, pasted and edited like any DST table (see
+[Tables](./04-working-in-dst.mdx#tables)); they sort by stage and save as they are entered, and a user row at a level's stage is sent in place of the
+level's. Changes are not saved while any cell is in error.
+
+<TableVertical
+  tableKey="dst-users-guide-table-consequences-function-rows"
+  colWidths={['28ch', '10ch', '14ch', 'minmax(30ch, 1fr)']}
+  alt="Columns of a consequence function table"
+  caption="Consequence function table columns"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Stage', 'Life loss', 'Economic damages', 'Highest fatality rate', 'Source'],
+    ['ft or m', 'lives', 'USD', '%', '—'],
+    ['Required', 'Conditional: one value per row', 'Conditional: one value per row', 'Optional', 'Read-only'],
+    [
+      'The reservoir stage the row applies to. One row per stage.',
+      'Mean life loss, zero or more. A row needs a life loss, damages or fatality rate.',
+      'Mean economic damages, zero or more.',
+      'From 0 to 100. Kept in DST for individual risk; the risk analysis tables do not receive it.',
+      'DST for a loading level (with notes such as out of date or held below), or User defined.',
+    ],
+  ]}
+/>
+
+### Loading level summary and plots
+
+For a function from an analysis, the **Loading level** selector picks one level. **Summary** shows its mean life loss and 5–95% range, mean damages,
+population at risk, life loss ÷ population at risk, first water and the share warned and leaving, the inputs it **Ran with**, and its **Damages by
+category**. **Plots** shows life loss across the iterations, life loss by the time of day, when people left before the water arrived, and the warning
+and evacuation steps from population at risk to lives lost.
