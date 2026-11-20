@@ -39,7 +39,7 @@ are described in [Chapter 3, Getting Started](./03-getting-started.mdx#managing-
     [
       'Submits the screening for review. Assigns the review lead of each level and adds or removes reviewers. Responds to comments for the screening team, and submits the team\'s responses for backcheck.',
       'Responds to comments for the screening team.',
-      'Is assigned to one review level. Adds comments, or submits No Comments, during the level\'s review period. Edits and deletes the reviewer\'s own comments during the review period. Closes or returns the reviewer\'s own comments during backcheck.',
+      'Is assigned to one review level. Adds comments during the level\'s review period, and imports comments or submits No Comments during its review or resolution period. Edits and deletes the reviewer\'s own comments during the review period. Closes or returns the reviewer\'s own comments during backcheck.',
       'A reviewer marked (Lead) on the level. Does everything a reviewer does, and also ends the review period, adds or removes reviewers, marks reviewers Unresponsive, closes or backchecks other reviewers\' comments, and approves or rejects the level.',
       'Reads the review levels and their comments.',
     ],
@@ -50,7 +50,7 @@ Everyone assigned to a screening can open the Review module and read every level
 inputs are read-only to them. Selecting **Review** in the module navigation opens a different page for each role:
 
 - A reviewer on a level that is in progress opens that level's page directly.
-- Before submission, the Facilitator and Team Members open the **Submission Readiness** page.
+- Before submission, the Facilitator, Team Members and administrators open the **Submission Readiness** page.
 - Everyone else opens the **Review Levels** page.
 
 ## The Review Lifecycle
@@ -98,7 +98,7 @@ The Review Levels page lists every review level of the screening, in order, and 
 <Figure
   figKey="dst-users-guide-fig-review-levels-page"
   src="figures/web-applications/dst/users-guide/v1.0/figures/review-levels-page.png"
-  alt="The Review Levels page of a copy of the Thistlewood Dam screening, signed in as the Level 1 review lead. The sub-navigation bar shows the Review module with the pages Submission Readiness and Review Levels, with Review Levels selected. Below it, a section headed Review Levels holds two cards. The first card reads Level 1, with a blue Review Period badge and the text '2 reviewers', and an End Review Period button with a red square icon at its right. The second card reads Level 2, with a gray Pending badge and '1 reviewer'. Numbered callouts mark: 1, the sub-navigation pages; 2, the Level 1 card name; 3, its phase badge; 4, its reviewer count; and 5, the End Review Period button."
+  alt="The Review Levels page of a copy of Thistlewood Dam Screening, signed in as the Level 1 review lead. The sub-navigation bar shows the Review module with the pages Submission Readiness and Review Levels, with Review Levels selected. Below it, a section headed Review Levels holds two cards. The first card reads Level 1, with a blue Review Period badge and the text '2 reviewers', and an End Review Period button with a red square icon at its right. The second card reads Level 2, with a gray Pending badge and '1 reviewer'. Numbered callouts mark: 1, the sub-navigation pages; 2, the Level 1 card name; 3, its phase badge; 4, its reviewer count; and 5, the End Review Period button."
   caption="The Review Levels page during the first level's review period."
   width="100%"
 />
@@ -129,13 +129,17 @@ configured. Go to Screening Management to add levels."
 
 Selecting a level on the Review Levels page opens the level's page, which holds the level's comments and the controls for its current phase. The
 sub-navigation shows a breadcrumb such as **Review Levels › Level 1**; selecting **Review Levels** returns to the list.
+
+While the screening needs a Facilitator, the review actions pause: **End Review Period**, **Reject**, **Submit for Backcheck** and the Official
+Review Decision panel are hidden, and the review team cannot be changed ("This screening needs a facilitator. Its review team can't be changed
+until one is assigned."). They return once a Facilitator is assigned.
 <FigReference figKey="dst-users-guide-fig-review-level-comments" /> shows a level during its review period, as its review lead sees it, and
 <TableReference tableKey="dst-users-guide-table-review-level-regions" /> describes each numbered region.
 
 <Figure
   figKey="dst-users-guide-fig-review-level-comments"
   src="figures/web-applications/dst/users-guide/v1.0/figures/review-level-comments.png"
-  alt="The Level 1 page of a copy of the Thistlewood Dam screening during its review period, signed in as the Level 1 review lead. The sub-navigation shows the breadcrumb Review Levels, an arrow, and Level 1. The heading Level 1 is followed by four count pills: 4 total, 4 open, 1 critical in red, and 0 closed. At the right are the buttons End Review Period and Reject, a divider, then Import, Export and Review Team (1/2). Below is a row of filter drop-downs labeled Status, Category, Sub-category, Reviewer, Criticality and Per page. The comment table has the columns #, Category, Sub-category, Author, Comment and Status and lists four comments, all with a blue Open badge; comment 2 has a red critical icon beside its number. A pagination control sits below the table, and the round Add a review comment button sits at the lower right. Numbered callouts mark: 1, the level heading; 2, the count pills; 3, End Review Period and Reject; 4, Import and Export; 5, Review Team; 6, the filters; 7, the comment table; and 8, the Add a review comment button."
+  alt="The Level 1 page of a copy of Thistlewood Dam Screening during its review period, signed in as the Level 1 review lead. The sub-navigation shows the breadcrumb Review Levels, an arrow, and Level 1. The heading Level 1 is followed by four count pills: 4 total, 4 open, 1 critical in red, and 0 closed. At the right are the buttons End Review Period and Reject, a divider, then Import, Export and Review Team (1/2). Below is a row of filter drop-downs labeled Status, Category, Sub-category, Reviewer, Criticality and Per page. The comment table has the columns #, Category, Sub-category, Author, Comment and Status and lists four comments, all with a blue Open badge; comment 2 has a red critical icon beside its number. A pagination control sits below the table, and the round Add a review comment button sits at the lower right. Numbered callouts mark: 1, the level heading; 2, the count pills; 3, End Review Period and Reject; 4, Import and Export; 5, Review Team; 6, the filters; 7, the comment table; and 8, the Add a review comment button."
   caption="A review level during its review period, seen by the review lead."
   width="100%"
 />
@@ -231,24 +235,26 @@ Cycles)** section below the table.
 
 ### The review team
 
-**Review Team**, shown to the Facilitator and the level's review lead, opens a dialog listing the level's reviewers, review lead first and marked
+**Review Team**, shown to the Facilitator, administrators and the level's review lead, opens a dialog listing the level's reviewers, review lead first and marked
 **(Lead)**. During and after the review period, each reviewer has a participation status:
 
 - **Pending**: the reviewer has not yet commented or submitted No Comments.
 - **Participated**: the reviewer has commented or submitted No Comments. The review lead is counted as Participated when the review period ends.
 - **Unresponsive**: the reviewer did not participate.
 
-The button itself shows the count, for example **Review Team (1/2)** for one participant of two reviewers. The dialog's controls depend on the phase:
+Once the review period starts, the button shows the participation count, for example **Review Team (1/2)** for one participant of two
+reviewers; on a Pending level it shows the number of reviewers, such as **Review Team (2)**. The dialog's controls depend on the phase:
 
 - **Adding and removing reviewers.** While the level is Pending or in its review period, a search box adds a reviewer, and the trash icon beside a
-  reviewer removes the reviewer. Reviewers added during the review period are notified and can comment at once. The review lead cannot be removed,
-  and a reviewer who has commented in the current cycle cannot be removed; resting the pointer on the trash icon gives the reason. During resolution
+  reviewer removes the reviewer. Reviewers added during the review period are notified and can comment at once. The review lead has no trash icon.
+  A reviewer who has commented in the current cycle cannot be removed; that reviewer's trash icon is unavailable, with the reason "This reviewer
+  has comments in this review cycle and can't be removed." During resolution
   and backcheck the team cannot be changed.
 - **Marking Unresponsive.** During the active phases the review lead can select **Mark Unresponsive** beside a Pending reviewer, enter a
   **Justification (required)** and select **Confirm**. **Remove Unresponsive** reverses it, except during backcheck. When the review lead ends the
   review period, every reviewer still Pending is marked Unresponsive.
 
-Only the Facilitator assigns the review lead, on the Screening Management page.
+Only the Facilitator or an administrator assigns the review lead, on the Screening Management page.
 
 ### Importing and exporting comments
 
@@ -278,7 +284,14 @@ offers two sources:
         </>
       ),
     },
-    { title: <>The reviewer selects <strong>Import N Comments</strong>. DST reports "N comments imported successfully".</> },
+    {
+      title: (
+        <>
+          The reviewer selects <strong>Import N Comments</strong>. The dialog's <strong>Import Complete</strong> step shows "N comments imported
+          successfully", and <strong>Close</strong> closes it.
+        </>
+      ),
+    },
   ]}
 />
 
@@ -330,6 +343,9 @@ screening**, which adds Category and Sub-category filters and shows each comment
 Selecting a comment opens it in the comment panel over the current page.
 
 ### No Comments
+
+Reviewers add comments with **Add a review comment** only during the review period. During the resolution period a reviewer can still import
+comments or submit No Comments from the level's page (see [Importing and exporting comments](#importing-and-exporting-comments)).
 
 A reviewer with nothing to raise selects **No Comments** on the level's page. The "Submit 'No Comments'" dialog explains that the reviewer is attesting
 to having no comments for the level and will not be able to add regular comments without reverting the entry; **Submit No Comments** confirms. The
@@ -466,10 +482,11 @@ When the review lead opens a level in its backcheck period, an **Official Review
 
 **Approve** is available only when all three criteria are met:
 
-- "All reviewers accounted for", that is, no reviewer is still Pending.
-- "All N comments closed", or "No comments were submitted".
+- "All reviewers accounted for (N participated or marked unresponsive)". While a reviewer is still Pending it reads "N of M reviewers have not
+  participated".
+- "All N comments closed", or "No comments were submitted". While comments are open it reads "N comments remain open or awaiting backcheck".
 - "Screening passes Submission Readiness". If it does not, the panel reads "The screening no longer passes Submission Readiness — the facilitator must
-  re-verify the affected pages".
+  re-verify the affected pages". Until the readiness check loads, it reads "Submission Readiness not yet confirmed".
 
 Selecting **Approve** opens the **Approve Review** dialog with an attestation: "I affirm that I have reviewed all submitted comments and their
 responses, and that this review has met its criteria." **Approve Review** confirms. For a level other than the last, the next level's review period
@@ -477,7 +494,8 @@ starts at once and its reviewers are notified.
 
 :::caution
 
-An approval cannot be retracted. Approving the final level permanently marks the screening as Complete, and its inputs and results stay locked.
+The approval of a level cannot be retracted. Approving the final level permanently marks the screening as Complete, and its inputs and results stay
+locked. The one exception is a Senior Oversight Group decision (see [National Review Levels](#national-review-levels)).
 
 :::
 
@@ -511,4 +529,6 @@ national levels differ:
   a recommendation entered by the SOG Executive Recorder. When the National Cadre voted unanimously for DSAC 4 or 5, the SOG instead acknowledges
   the review with **Acknowledge SOG Review**.
 
-Accepting or acknowledging the SOG review marks the screening Complete.
+Accepting or acknowledging the SOG review marks the screening Complete. The SOG Chair or Vice Chair can retract an accepted decision with
+**Retract Decision**, a **Retraction justification (required)** and **Confirm Retraction**; the SOG level returns to Pending and the screening to
+Under Review.
