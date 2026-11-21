@@ -1,0 +1,568 @@
+---
+title: 'Inundation Analysis'
+---
+
+import Figure from '@site/src/components/Figure';
+import FigReference from '@site/src/components/FigureReference';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+import Video from '@site/src/components/Video';
+import VideoReference from '@site/src/components/VideoReference';
+import { MEDIA_WIDTH } from './_media-width.js';
+
+<NavContainer link="/web-applications/dst" linkTitle="Dam Screening Tool" document="web-applications/dst/users-guide" />
+
+# Inundation Analysis
+
+The Inundation Analysis page, at **Consequences > Inundation Analysis**, defines and runs the flood simulations. An analysis is a named set of
+loading levels, which are reservoir water-surface elevations. Each loading level is simulated in HEC-RAS with the analysis's boundary conditions and
+plan settings, and the analysis's results are one flood map per loading level.
+
+<FigReference figKey="dst-users-guide-fig-inundation-analysis-page" /> shows the page with an analysis's dam boundary conditions open, and
+<TableReference tableKey="dst-users-guide-table-consequences-inundation-analysis-regions" /> describes each numbered region.
+
+<Figure
+  figKey="dst-users-guide-fig-inundation-analysis-page"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/inundation-analysis-page.png"
+  alt="The Inundation Analysis page of Thistlewood Dam Screening. The Analysis Configuration panel at the upper left shows the analysis tiles Non-Failure, Prior to Overtopping (shortened) and Overtopping, selected, each with a green status dot, and an Add analysis tile. Below them, the list Overtopping Boundary Conditions holds Thistlewood Dam (selected) and Platte River below Thistlewood Dam, and the expanded Overtopping Simulation band reads Complete, with the loading levels 812 (Top of dam), 814, 817 and 822 each Computed. The map shows the maximum depth grid of loading level 817 below the dam. At the right, the Dam Centerline Boundary Conditions panel is headed Thistlewood Dam (Overtopping) with a Results button, and shows Boundary Condition Type 1D Reservoir and the tabs Reservoir (selected), Inflow and Breach, each tab after the first with a check mark. The Reservoir tab reads 'The reservoir releases water through the Stage-Outflow curve from Operational Data (16 points).' with a Storage & outflow curves button, above a table of Level, Initial WSE and Release at start for each loading level. Numbered callouts mark: 1, the analysis tiles; 2, the boundary-condition list; 3, the simulation band; 4, the boundary conditions panel; and 5, the Depth over time at a point tool in the map toolbar."
+  caption="The Inundation Analysis page with the dam boundary conditions open."
+  width={MEDIA_WIDTH}
+/>
+
+<TableVertical
+  tableKey="dst-users-guide-table-consequences-inundation-analysis-regions"
+  colWidths={['5ch', '22ch', 'minmax(30ch, 1fr)']}
+  alt="Description of each numbered region of the Inundation Analysis page"
+  caption="Inundation Analysis page regions"
+  headers={[[{ value: '#' }, { value: 'Region' }, { value: 'Description' }]]}
+  columns={[
+    ['1', '2', '3', '4', '5'],
+    ['Analysis tiles', 'Boundary-condition list', 'Simulation band', 'Boundary conditions panel', 'Depth over time at a point'],
+    [
+      'One tile per analysis, with its status dot and its Edit, Run, Copy and Delete icons, and the Add analysis tile.',
+      'The features of the active analysis that take a boundary condition.',
+      "The active analysis's run status, with a row per loading level and the icons for results, details and download.",
+      "The selected feature's boundary conditions in the active analysis.",
+      'Reads the depths over time at a point selected on the map.',
+    ],
+  ]}
+/>
+
+The page is a map (see [The map](./401-inundation-geometry.mdx#the-map)) with these regions:
+
+- **Analysis Configuration**, a panel at the upper left, with a tile for each analysis, the boundary conditions of the selected analysis, and its
+  simulation status.
+- **[Feature] Boundary Conditions**, a panel at the right that opens when a dam, model area, river or coastline is selected on the map or in the
+  list. The geometry itself is read-only on this page.
+- The **Depth over time at a point** tool in the map toolbar, and the results layers in the legend.
+
+## Analyses
+
+Each analysis is a tile in the Analysis Configuration panel; selecting a tile makes it the active analysis. The icons on a tile are **Edit
+analysis**, **Run the simulation**, **Copy analysis** and **Delete analysis**. A status dot shows the last simulation: green "Simulated.", amber
+"Inputs have changed since the last simulation.", or red when the last simulation did not complete or could not start.
+
+**Add analysis** creates an analysis named "Set N" and opens its **Edit Analysis** dialog. **Copy analysis** copies the plan settings, loading levels
+and boundary conditions into "[name] (Copy)". **Delete analysis** asks for confirmation; it deletes the analysis and all of its loading levels, and
+cancels a simulation that is running.
+
+## Edit Analysis
+
+The **Edit Analysis** dialog holds the analysis name, its plan settings and its loading levels, and saves them with **Save**; **Cancel** discards
+the changes. <TableReference tableKey="dst-users-guide-table-consequences-plan-settings" /> lists its fields.
+
+<TableVertical
+  tableKey="dst-users-guide-table-consequences-plan-settings"
+  colWidths={['28ch', '10ch', '14ch', 'minmax(30ch, 1fr)']}
+  alt="Edit Analysis dialog fields: name and plan settings"
+  caption="Analysis name and plan settings"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    [
+      'Analysis Name',
+      'Run time after inflow ends',
+      'Equation set',
+      'Computation time step',
+      'Mapping Interval',
+      'Adjust time step automatically (Courant)',
+      'Maximum Courant number',
+    ],
+    ['—', 'hrs', '—', 's or min', 'min', '—', '—'],
+    ['Required', 'Optional', 'Required', 'Required', 'Required', 'Optional', 'Conditional: when the time step is adjusted automatically'],
+    [
+      'A descriptive name, up to 200 characters, unique in the screening.',
+      'How long the model keeps running after the last inflow ends, in whole hours from 0 to 8760. Blank estimates it from the terrain and land cover.',
+      'Diffusion wave (faster), the default, or Full momentum, SWE-ELM (slower).',
+      '1, 2, 3, 5, 10, 15, 20 or 30 seconds (the default), or 1 minute.',
+      'How often the model saves a snapshot of the flood: 5, 10 (the default), 15 or 30 minutes.',
+      'Lets HEC-RAS lengthen and shorten the step from the computation time step. Off by default.',
+      '1, 2, 3 (the default) or 5. The lower limit is a third of it.',
+    ],
+  ]}
+/>
+
+The **Loading Level** table lists the analysis's loading levels, one row each, with the columns **Loading Level** (the pool elevation, a positive
+number, unique in the analysis) and an optional **Label** of up to 100 characters. Rows sort by loading level and are added, pasted and deleted like
+any DST table (see [Tables](./040-working-in-dst.mdx#tables)). A new loading level copies the boundary conditions of the lowest existing level, without
+its per-level values, and starts its reservoir at the loading level. Removing a loading level deletes its results and its consequence runs.
+
+## Boundary conditions
+
+The panel below the tiles lists the features that can take a boundary condition in the active analysis: the dam centerline, the model area, the
+rivers that enter the model area, and the coastlines. Selecting one opens its boundary conditions at the right, under the heading "[feature]
+([analysis])". Settings apply to every loading level of the analysis, except the values entered in tables with one row per loading level. The
+boundary conditions save as they are entered; there is no Save button.
+
+### Dam
+
+**Boundary Condition Type** is **None** (the default), **Hydrograph** or **1D Reservoir**:
+
+- **Hydrograph** applies a dam-breach hydrograph directly to the 2D mesh. Its location is set with **Latitude** and **Longitude**, or with the
+  crosshair button and a click on the dam centerline, and **Width** is the breach width over which it enters the mesh. **Hydrograph Type** and its
+  tables are described in [Hydrographs](#hydrographs).
+- **1D Reservoir** routes an inflow through a reservoir and a breach, on three tabs: **Reservoir**, **Inflow** and **Breach**.
+
+The **Reservoir** tab states how the reservoir releases water: through the Stage-Outflow curve on the Operational Data page, or, without one, only
+over the dam crest. **Storage & outflow curves** shows the Operational Data curves the reservoir uses, read-only, with a link to edit them there. Its
+table gives, for each loading level, the **Initial WSE** (the reservoir level at the start of the simulation, defaulting to the loading level) and,
+when the outlet curve is in use, the **Release at start**. A red message explains any problem in the Stage-Outflow curve that stops a run.
+
+The **Inflow** tab's **Inflow Hydrograph** check box routes an inflow hydrograph into the reservoir (see [Hydrographs](#hydrographs)). The **Breach**
+tab's **Breach** check box turns the breach on.
+
+### Breach
+
+The breach fields appear on the Breach tab once **Breach** is checked. <TableReference tableKey="dst-users-guide-table-consequences-breach" /> lists
+them. **Breach Method** decides where the breach geometry comes from: **User Defined** takes the development time, bottom width and side slopes for
+each loading level, and **FEMA Defaults** calculates them from the dam type, height and length (FEMA P-946, Table 9.3) for every loading level.
+Values entered under User Defined are kept while FEMA Defaults is selected.
+
+<TableVertical
+  tableKey="dst-users-guide-table-consequences-breach"
+  colWidths={['28ch', '12ch', '16ch', 'minmax(30ch, 1fr)']}
+  alt="Breach fields of a 1D reservoir boundary condition"
+  caption="Breach fields"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    [
+      'Breach Method',
+      'Failure Mode',
+      'Breach Latitude, Breach Longitude',
+      'Dam Type',
+      'Dam Height, Dam Length',
+      'Trigger Type',
+      'Weir Coefficient',
+      'Bottom Elevation',
+      'Initial Piping Elevation',
+      'Trigger Value (per level)',
+      'Development (per level)',
+      'Bottom Width (per level)',
+      'Side Slopes (per level)',
+    ],
+    ['—', '—', 'degrees', '—', 'ft or m', '—', '—', 'ft or m, datum', 'ft or m, datum', 'ft or m, or hrs', 'hrs', 'ft or m', 'H:V'],
+    [
+      'Required',
+      'Required',
+      'Required',
+      'Conditional: FEMA Defaults',
+      'Read-only',
+      'Required',
+      'Required',
+      'Required',
+      'Conditional: Piping',
+      'Required',
+      'Required',
+      'Required',
+      'Required',
+    ],
+    [
+      'User Defined or FEMA Defaults.',
+      'Overtopping, or Piping, which starts a pipe at the Initial Piping Elevation.',
+      'The breach location on the dam centerline (WGS84). The crosshair button sets it with a click on the map.',
+      "One of the screening's dam types. Defaults to the primary dam type.",
+      'From Screening Information.',
+      'Elevation (the breach starts when the reservoir reaches the trigger value) or Time (the trigger value in hours after the simulation starts).',
+      'For flow through the breach. Must be greater than zero. Defaults to 3.',
+      'The bottom of the fully formed breach. Must be below the top of dam.',
+      'The center of the pipe when the failure starts. Blank uses the bottom elevation plus 1. Must be at or above the bottom elevation and below the top of dam.',
+      'The elevation or time that starts the breach at each loading level.',
+      'The time for the breach to form fully. Read-only under FEMA Defaults.',
+      'The width of the breach bottom. Read-only under FEMA Defaults.',
+      'The breach side slopes. Read-only under FEMA Defaults.',
+    ],
+  ]}
+/>
+
+The **Breach Geometry** plot draws the terrain along the dam, the dam crest, the breach location and each loading level's breach trapezoid, and the
+initial pipe for a piping failure. Under User Defined, the calculator icon opens the **Breach Calculator**, which estimates the breach with the
+**MacDonald-Langridge-Monopolis** or the **Xu & Zhang / Von Thun** method from the failure mode, the top of dam, breach bottom and pool elevations,
+the pool volume at failure, and the method's own dam inputs. **Calculate** shows the **Calculator Results**, and **Apply Results** writes them to
+every loading level.
+
+### Model area, rivers and coastlines
+
+- **Model area.** **Normal Depth Slope** (default 0.001, greater than 0 and at most 1) is the outflow boundary that lets water leave the model area
+  around its perimeter. The table's **Initial water level** for each loading level is left blank; the simulation service cannot yet start a 2D area
+  wet, and a run with a value refuses to start.
+- **River.** **Upstream Boundary** is **None** or **Hydrograph**, an inflow series for the river. A river that crosses the dam takes its flow from
+  the dam, and a river that starts inside the model area cannot take an inflow.
+- **Coastline.** **Boundary** is **None** or **Hydrograph**, a stage series applied along the model area edge between the ends of the coastline.
+  Stages may be negative.
+
+## Hydrographs
+
+A hydrograph is a series of values over time. In an inundation analysis it is the water entering the model at a boundary: a flow in cubic feet
+per second (or cubic meters per second) against hours from the start of the simulation, or, at a coastline, a water surface elevation. Four
+boundary conditions take one, and all four use the same editor:
+
+- The **Inflow** tab of a dam's **1D Reservoir** boundary condition, the flood flowing into the reservoir. This is the most common use, and the
+  rest of this section describes it.
+- A dam's **Hydrograph** boundary condition, a breach outflow applied directly to the 2D mesh (see [Dam](#dam)).
+- A river's **Upstream Boundary**, the flow entering the model area along the river.
+- A coastline's **Boundary**, a stage series along the model area edge.
+
+### What the inflow hydrograph does
+
+Each loading level of an analysis represents the reservoir reaching one pool elevation, and its inflow hydrograph is the flood that takes it there.
+For each loading level, HEC-RAS starts the reservoir at its **Initial WSE** on the Reservoir tab and routes the inflow hydrograph into it:
+
+- The reservoir rises while the inflow exceeds the outflow, by the volumes in the Stage-Storage curve on the Operational Data page (see
+  [Operational Data](./103-operational-data.mdx)).
+- It releases water through the Stage-Outflow curve, when the screening has one, and over the dam crest once the pool is above the top of dam.
+- The highest pool the routing reaches is the **Max pool** in the dam results (see [Dam results](#dam-results)). It is set by the hydrograph's peak
+  and its volume together, not by the peak alone.
+- A breach with an **Elevation** trigger starts when the pool reaches the trigger value, so the hydrograph also decides when, and whether, the dam
+  breaches.
+
+The hydrograph also sets the length of the simulation. The simulation runs from time zero to the end of the longest hydrograph (or of the breach,
+if it ends later), plus the **Run time after inflow ends** in Edit Analysis (see [Edit Analysis](#edit-analysis)), which gives the flood time to
+travel through the model area. Simulation details reports the resulting window, for example "Simulation window 01Dec2099 0000 to 02Dec2099 0200
+(longest hydrograph or breach 20 h + travel time 6 h)".
+
+Without an inflow hydrograph the reservoir can only fall from its Initial WSE. A breach whose trigger elevation is above the Initial WSE then never
+starts, and the run warns that the reservoir "never rises that far and the dam does not breach in this simulation." With an inflow and a
+Stage-Outflow curve, DST estimates the highest pool before the run, by level-pool routing, and gives the same warning when that estimate stays below
+the trigger. Either way the run goes ahead, because a level at which the dam holds can be intended.
+
+### The Inflow tab
+
+The **Inflow Hydrograph** check box turns the inflow on for every loading level of the analysis; cleared, the tab reads "No inflow hydrograph is
+defined for this boundary condition, click the checkbox to define one." Once it is checked, **Hydrograph Type** chooses how the hydrograph is
+entered, **Trapezoidal** (the default) or **Tabular**, for all of the analysis's loading levels at once. The chart plots one line per loading level,
+Flow against Time (hrs), and follows the values as they are entered. <FigReference figKey="dst-users-guide-fig-inundation-analysis-inflow-tabular" />
+shows the tab with tabular hydrographs, and <TableReference tableKey="dst-users-guide-table-consequences-inflow-regions" /> describes each numbered
+region.
+
+<Figure
+  figKey="dst-users-guide-fig-inundation-analysis-inflow-tabular"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/inundation-analysis-inflow-tabular.png"
+  alt="The Inflow tab of the Thistlewood Dam boundary conditions in the Overtopping analysis, with the tabs Reservoir, Inflow (selected) and Breach across the top and a check mark after Inflow and Breach. The Inflow Hydrograph check box is checked and Hydrograph Type reads Tabular. A chart of Flow (cfs) from 0 to 300,000 against Time (hrs) from 0 to 20 shows four bell-shaped curves, labeled 812 ft, 814 ft, 817 ft and 822 ft, that start near 2,500 cfs, rise from about hour 3 to peaks of roughly 120,000, 137,000, 172,000 and 261,000 cfs a little after hour 9, and fall slowly toward hour 20. Below the chart are the loading-level tabs 812 (selected), 814, 817 and 822, and a table with the columns Time (hr) and Value (cfs) whose first rows read 0.00 and 2481.24, 0.50 and 2481.24, 1.00 and 2483.89, 1.50 and 2518.32, 2.00 and 2657.02, 2.50 and 3047.93, and 3.00 and 5403.43, with row buttons above it and the line 'Tip: drag to select; paste grows table if needed.' below. Numbered callouts mark: 1, the Inflow Hydrograph check box; 2, Hydrograph Type; 3, the chart; 4, the loading-level tabs; and 5, the time-value table."
+  caption="The Inflow tab with a tabular hydrograph for each loading level."
+  width={MEDIA_WIDTH}
+/>
+
+<TableVertical
+  tableKey="dst-users-guide-table-consequences-inflow-regions"
+  colWidths={['5ch', '22ch', 'minmax(30ch, 1fr)']}
+  alt="Description of each numbered region of the Inflow tab"
+  caption="Inflow tab regions"
+  headers={[[{ value: '#' }, { value: 'Region' }, { value: 'Description' }]]}
+  columns={[
+    ['1', '2', '3', '4', '5'],
+    ['Inflow Hydrograph', 'Hydrograph Type', 'Chart', 'Loading-level tabs', 'Time-value table'],
+    [
+      'Turns the reservoir inflow on or off for every loading level of the analysis.',
+      'Trapezoidal or Tabular, for every loading level of the analysis.',
+      'One line per loading level. Resting the pointer on the chart shows every line’s flow at that time, and selecting a level in the key hides or shows its line.',
+      'Tabular only: chooses the loading level whose table is shown.',
+      'Tabular only: the time and flow pairs of the selected loading level. A trapezoidal hydrograph has one table row per loading level instead.',
+    ],
+  ]}
+/>
+
+Switching **Hydrograph Type** keeps the values of the other type, so switching back restores them; only the selected type is plotted and sent to
+HEC-RAS. <VideoReference videoKey="dst-users-guide-video-inflow-hydrograph-type" /> shows a switch.
+
+<Video
+  videoKey="dst-users-guide-video-inflow-hydrograph-type"
+  src="/videos/web-applications/dst/users-guide/v1.0/inflow-hydrograph-type.mp4"
+  caption="Switching the inflow hydrograph between Tabular and Trapezoidal."
+  width={MEDIA_WIDTH}
+/>
+
+### Trapezoidal hydrographs
+
+A trapezoidal hydrograph is the simplest flood shape: a straight rise from a base flow to a peak flow, a flat top where the peak is held, and a
+straight fall back to the base flow. Plotted against time it is a trapezoid, which gives the type its name. It takes four values for each loading
+level, in a table with one row per level (<TableReference tableKey="dst-users-guide-table-consequences-trapezoidal-hydrograph" />).
+
+<TableVertical
+  tableKey="dst-users-guide-table-consequences-trapezoidal-hydrograph"
+  colWidths={['22ch', '14ch', '12ch', 'minmax(30ch, 1fr)']}
+  alt="Columns of the trapezoidal hydrograph table"
+  caption="Trapezoidal hydrograph values"
+  headers={[[{ value: 'Column' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Loading Level', 'Base', 'Base Time', 'Peak', 'Peak Time'],
+    ['ft or m, datum', 'cfs or cms', 'hrs', 'cfs or cms', 'hrs'],
+    ['Read-only', 'Required', 'Required', 'Required', 'Required'],
+    [
+      'The loading level the row applies to.',
+      'The flow at the start and at the end of the hydrograph.',
+      'The total length of the hydrograph, from time zero to the end of the fall. Must be greater than zero.',
+      'The highest flow, held across the flat top.',
+      'How long the peak is held. Must not be more than the Base Time.',
+    ],
+  ]}
+/>
+
+DST builds the shape from these four values. The rise and the fall take equal times, each half of what is left after the peak is held:
+
+- From hour 0 the flow rises in a straight line from **Base** to **Peak** over (Base Time − Peak Time) ÷ 2 hours.
+- It holds at **Peak** for **Peak Time** hours.
+- It falls in a straight line back to **Base**, reaching it at **Base Time**, where the hydrograph ends.
+
+For example, a Base of 2,500 cfs, a Base Time of 20 hrs, a Peak of 150,000 cfs and a Peak Time of 4 hrs rises from 2,500 to 150,000 cfs over the
+first 8 hours, holds 150,000 cfs from hour 8 to hour 12, and falls back to 2,500 cfs at hour 20. A Peak Time of 0 makes a triangle, and a Peak equal
+to the Base makes a constant inflow for the whole Base Time. A Peak Time greater than the Base Time is marked in red with "Peak Time must be less than
+or equal to Base Time."; that level is left off the chart, and the run will not start until it is corrected.
+
+<FigReference figKey="dst-users-guide-fig-inundation-analysis-inflow-trapezoidal" /> shows trapezoidal hydrographs, and
+<VideoReference videoKey="dst-users-guide-video-inflow-trapezoid-edit" /> shows the chart following edits to a peak and its duration.
+
+<Figure
+  figKey="dst-users-guide-fig-inundation-analysis-inflow-trapezoidal"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/inundation-analysis-inflow-trapezoidal.png"
+  alt="The Inflow tab of a 1D Reservoir boundary condition with trapezoidal hydrographs. The tabs Reservoir, Inflow (selected) and Breach run across the top. The Inflow Hydrograph check box is checked and Hydrograph Type reads Trapezoidal. A chart of Flow (cfs) from 0 to 300,000 against Time (hrs) from 0 to 20 shows four trapezoids, labeled 812 ft, 814 ft, 817 ft and 822 ft: each rises in a straight line from near zero at hour 0 to its peak at hour 8, stays flat until hour 12, and falls in a straight line to near zero at hour 20, with peaks of 120,000, 140,000, 175,000 and 260,000 cfs. Below the chart, a table with the columns Loading Level (ft-NAVD88), Base (cfs), Base Time (hrs), Peak (cfs) and Peak Time (hrs) has one row per loading level: 812.00, 814.00, 817.00 and 822.00 (grayed), each with a Base of 2470.00, a Base Time of 20.00 and a Peak Time of 4.00, and Peaks of 120000.00, 140000.00, 175000.00 and 260000.00. Numbered callouts mark: 1, the Inflow Hydrograph check box; 2, Hydrograph Type; 3, the chart; and 4, the trapezoidal hydrograph table."
+  caption="The Inflow tab with a trapezoidal hydrograph for each loading level."
+  width={MEDIA_WIDTH}
+/>
+
+<Video
+  videoKey="dst-users-guide-video-inflow-trapezoid-edit"
+  src="/videos/web-applications/dst/users-guide/v1.0/inflow-trapezoid-edit.mp4"
+  caption="Editing the peak and peak time of a trapezoidal hydrograph."
+  width={MEDIA_WIDTH}
+/>
+
+A trapezoidal hydrograph suits a first pass, when no flood hydrograph is available yet, and a steady inflow, such as a normal-pool level where the
+reservoir only passes its usual release. Its straight limbs and flat top are not the shape of a real flood, so the timing of the pool and of the
+breach is approximate.
+
+### Tabular hydrographs
+
+A tabular hydrograph is any shape entered point by point. The loading-level tabs above the table choose the level, and each level has its own
+**Time (hr)** and **Value** columns. Times are hours from the start of the simulation and need not be evenly spaced; HEC-RAS interpolates between
+them. A hydrograph needs at least two rows, and neither its times nor its flows may be negative. The table works like any DST table: rows can be
+added, inserted and deleted, and time and flow pairs copied from a spreadsheet can be pasted in, which grows the table as needed (see
+[Tables](./040-working-in-dst.mdx#tables)).
+
+A tabular hydrograph suits a flood hydrograph from another source: the outflow of a hydrologic model such as HEC-HMS, an inflow design flood, a
+recorded flood, or a synthetic storm hydrograph scaled to each loading level. The hydrographs in
+
+<FigReference figKey="dst-users-guide-fig-inundation-analysis-inflow-tabular" /> are of the last kind: one 20-hour storm hydrograph, scaled for each
+loading level.
+
+### How the hydrograph reaches HEC-RAS
+
+DST sends the inflow hydrograph to HEC-RAS as the flow into the reservoir's storage area, with a 5-minute hydrograph interval. A trapezoidal
+hydrograph goes as its four values and a tabular one as its points; nothing is smoothed or extended. The hydrograph ends at its last time, and the
+simulation then continues for the **Run time after inflow ends**.
+
+Before a run starts, DST checks each loading level's hydrograph and stops the run with the reason when it is incomplete: a trapezoidal hydrograph
+without all four values ("It needs base and peak values and durations."), a peak held longer than the base duration, or a tabular hydrograph with
+fewer than two points or with negative times or flows.
+
+### Shaping an inflow hydrograph
+
+- **Start at the reservoir's release.** Begin the hydrograph at the flow the reservoir releases at its Initial WSE, the **Release at start** on the
+  Reservoir tab, so that the pool holds steady until the flood arrives.
+- **Make the pool reach the loading level.** A loading level stands for the reservoir at that pool elevation, so shape each level's hydrograph so
+  that the routed pool peaks at, or just above, the loading level. After a run, compare the **Max pool** in the dam results with the loading level,
+  and scale the hydrograph up or down and run again if they differ.
+- **Reach the breach trigger.** For a level whose breach starts on an Elevation trigger, the pool must reach the trigger value. Heed the warning
+  when DST estimates that it will not.
+- **Keep it no longer than needed.** The run time grows with the simulation window, and so with the hydrograph's length. End the hydrograph once
+  the pool has peaked and the flow has receded, and let the **Run time after inflow ends** carry the flood through the model area.
+- **Use one shape across the levels.** Scaling one hydrograph shape to each loading level keeps the levels comparable, so that the differences
+  in their results come from the size of the flood rather than its shape.
+
+## Running an analysis
+
+The flood simulations are one of the two places in DST where the user starts a calculation (see
+[Automatic Calculation](./040-working-in-dst.mdx#automatic-calculation)); nothing runs on its own. Each analysis tile has a play button, **Run the
+simulation** (**Run the simulation again** once it has run), which simulates every loading level of that analysis. The button is unavailable, with
+the reason, when the analysis has no loading levels ("Add a loading level to run the analysis") or when simulations are not available. While the
+run is in progress the button becomes a spinner; selecting it cancels the run ("[status]. Click to cancel."). There is no separate retry: a failed
+or cancelled analysis is run again with the same button.
+
+Before starting, DST checks the model and refuses to start with the reasons when, for example, the mesh is not computed, there is no terrain or land
+cover, no inflow is defined, or a breach is incomplete. Warnings that do not stop the run, such as a breach the reservoir never reaches, are reported
+as the run starts.
+
+The **[analysis] Simulation** band under the boundary conditions shows the run's status: Waiting for a model server, Sending files, Queued, Building
+model, Running (with a percentage), Complete, Failed, Cancelled, Timed out or Lost. Its rows show each loading level, as Computed, Did not compute,
+Not run or Not verified, and its icons open the dam results, open **Simulation details**, and download the HEC-RAS project. After a level computes,
+its row reads "Preparing map" while its maximum depth grid is made, or "Preparing animation" while its depth over time waits for the terrain's
+elevation tiles. Until the project files are saved, the download icon is replaced by a pending icon that reads "The HEC-RAS project is being saved.
+It can be downloaded once it is." When the run has map results, a hint points to the legend, for example "Turn on depth grids and depth over
+time under Inundation Results in the map legend." When inputs change after a run, the status shows a warning: "Inputs have changed since this simulation ran. The depth grids show the earlier inputs; run the analysis again to
+update them."
+
+<FigReference figKey="dst-users-guide-fig-inundation-analysis-simulation-details" /> shows the details of a completed simulation.
+
+<Figure
+  figKey="dst-users-guide-fig-inundation-analysis-simulation-details"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/inundation-analysis-simulation-details.png"
+  alt="The Overtopping Simulation details dialog. A Complete pill is followed by 'Ran 1:56 PM to 2:07 PM (12 min)' and HEC-RAS 7.00.0001. The Loading levels table lists 812 (Top of dam), 814, 817 and 822, each Verified, with volume errors of 0.03 to 0.56%, a largest cell error of 0.002 ft, 95 to 96% of the water leaving the model area at up to 267,777 to 434,039 cfs, and compute times of 2 to 3 min. The How the model was built section is expanded and lists 17 notes, among them the reservoir's stage-storage and stage-outflow curves from Operational Data, the mesh of 10,697 cells, a travel time of 6 h, and three notes for all loading levels: a simulation window of 01Dec2099 0000 to 02Dec2099 0200 (longest hydrograph or breach 20 h plus travel time 6 h), the dam's starting release of 2,470 cfs at level 790, and a diffusion-wave computation interval of 5SEC with a 10MIN mapping interval. A folded Console output section follows. The buttons are Download HEC-RAS project and Close."
+  caption="The simulation details of a completed analysis."
+  width="70%"
+/>
+
+**Simulation details** opens a dialog with the run's status, timing and HEC-RAS version; any reasons it could not start, errors, warnings and
+values built differently from what was asked; a **Loading levels** table with each level's result, volume error, largest cell error, water that left
+the model area and compute time; and folded sections for how the model was built and the console output. **Download HEC-RAS project** saves the
+project, results and logs as a zip file.
+
+## Results on the map
+
+The legend's **Inundation Results** group lists, for each analysis and loading level, **Maximum depth**, **Depth over time** and **Water leaving the
+model**. Turning on **Depth over time** shows a player with **Play**, **Pause**, the previous and next outputs, a **Simulation time** slider, a speed
+in simulation hours per second, **Loop** and a blend toggle. Each frame is the water surface at one mapping output time.
+
+### Reading values at the pointer
+
+While **Identify features** is on, a card follows the pointer over the map and reads the value under it of every visible result layer, in legend
+order. Each row names the analysis and loading level ("[analysis] › [loading level]") and the layer, with its value:
+
+- A **Maximum depth** layer gives the deepest water at that point.
+- A **Depth over time** layer gives the depth at the player's current time, so the value changes as the animation plays or the slider moves.
+- While the terrain is shown, a row gives the ground elevation, headed with the terrain's name.
+
+A depth layer reads "Dry" where the ground stayed dry, and the terrain reads "No data" outside its coverage. When the map is zoomed out past the
+grid's own detail, values are read from coarser overview tiles and marked approximate with "≈". An amber dot before a row marks a result that is out
+of date.
+
+### The depth player
+
+The player plays every **Depth over time** layer that is turned on, on one shared clock, so loading levels shown together stay in step. The controls
+are:
+
+- **Previous output** and **Next output**, which pause the player and step to the output before or after the one shown.
+- **Play** and **Pause**.
+- The **Simulation time** slider, with the elapsed time beside it. Dragging it pauses the player.
+- The speed, in simulation hours played per real second: 0.25, 0.5, 1, 2 (the default), 4 or 8 h/s.
+- **Loop**, which starts again from the beginning when playback reaches the end.
+- **Blend between outputs**. On, the map blends smoothly between output times. Off (the default), the map steps from one output to the next, as RAS
+  Mapper does, and the slider snaps to the output times.
+
+Playback runs from the first change in any of the series shown to the last output of the longest. A line under the controls reads "Output [N] of
+[M]", followed by the number of loading levels when more than one plays. When an animation cannot be loaded, the player says so with **Retry**.
+The player's time and settings are kept for the session and reset when the page is reloaded.
+
+The information icon explains that **Maximum depth** is the deepest water over every computation step, while each frame is only the water surface at
+one mapping output time. A Maximum depth layer can therefore be deeper than any frame of the animation.
+
+<VideoReference videoKey="dst-users-guide-video-inundation-analysis-depth-player" /> shows the Depth over time layer of one loading level played at 4
+h/s, with the flood moving down the valley.
+
+<Video
+  videoKey="dst-users-guide-video-inundation-analysis-depth-player"
+  src="/videos/web-applications/dst/users-guide/v1.0/inundation-analysis-depth-player.mp4"
+  caption="Playing the depth animation of a loading level."
+  width={MEDIA_WIDTH}
+/>
+
+### Depth over time at a point
+
+**Depth over time at a point** in the toolbar reads the depths at a point selected on the map. Its panel plots depth over time for each loading
+level of the chosen **Analysis**, with an **Arrival depth** (0.5 ft by default) and a table of when each level reaches that depth, its peak depth and
+time, and how long it stays that deep. **Download CSV** saves the depths.
+
+The panel sits over the right of the map, so the next point can be selected on the map without closing it. It starts on the analysis selected on the
+page; picking another **Analysis** in the panel holds until a different analysis is selected on the page. In a metric screening the **Arrival depth**
+starts at 0.15 m.
+
+The table has one row per loading level, with the columns **Reaches [depth]**, **Peak depth**, **Peak at**, **[depth] or deeper for** and **Back
+under [depth]**, where [depth] is the arrival depth. Each row's check box puts that level on the plot or takes it off, and the check box in the
+heading plots every level or takes them all off. A row's own button plots only that level, and selecting it again plots every level again. With one
+level plotted, the plot labels its peak.
+
+The plot shows a guide line at the arrival depth and, under it, the note "One value every [interval], the analysis's mapping output interval.", since
+depths are read from the mapping outputs. Resting the pointer on the plot reads each plotted level's depth at that time (see
+[Charts](./040-working-in-dst.mdx#charts)). The plot and panel give these messages in place of the plot:
+
+- "This point is outside the model area."
+- "No loading level has a depth to plot here.", when no level has a depth at the point.
+- "Tick a loading level to plot it.", when every level has been taken off the plot.
+- "[analysis] has no results yet. Run it to read depths here." or "[analysis] is being simulated. Its depths can be read once the run finishes."
+
+When the inputs have changed since the run, an amber note reads "Inputs changed since this simulation ran. Run the analysis again to update its
+results." The copy button copies the plotted levels' depths for pasting into a spreadsheet, and **Download CSV** saves them as a file; both take
+only the levels on the plot.
+
+<VideoReference videoKey="dst-users-guide-video-inundation-analysis-depth-at-point" /> shows the tool used on a point in the river channel: the panel
+plots each loading level's depth over time and lists when each reaches the arrival depth, two levels are unticked to leave the others, and the arrival
+depth is raised to 2 ft, which redraws the dashed line and recalculates the table.
+
+<Video
+  videoKey="dst-users-guide-video-inundation-analysis-depth-at-point"
+  src="/videos/web-applications/dst/users-guide/v1.0/inundation-analysis-depth-at-point.mp4"
+  caption="Reading the depth over time at a point."
+  width={MEDIA_WIDTH}
+/>
+
+## Dam results
+
+The dam results dialog, **[analysis] Results**, opens from the chart icon in the simulation band or the **Results** button on the dam's boundary
+conditions. It lists, for each loading level, when overtopping and the breach started, when the breach was fully formed, the peak outflow and its
+time, the maximum pool and tailwater, and the water released. A time plot, **Outflow through the dam**, shows the outflow
+series the run kept, such as the flow through the breach, and the pool and tailwater, with **Flow**, **Elevation** and **Both**, **Event** and **Whole simulation**, and **Compare levels**;
+a cross-section of the breach follows the time bar. The table copies to the clipboard and downloads as CSV.
+
+Selecting a row of the table picks the loading level the plot shows. The plot's controls are:
+
+- **Event** (the default) or **Whole simulation**. **Event** frames the stretch of the simulation that holds the flood at the dam, from where the
+  outflow first rises to where it has receded, widened to take in the breach. It shows the whole simulation when the event is most of it.
+- **Flow**, **Elevation** or **Both**: the outflow, the water levels, or both on two scales, flow on the left and elevation on the right. When the
+  run kept only the outflow at the dam, **Elevation** and **Both** are unavailable, with the reason "This run kept only the outflow at the dam. Run
+  the analysis again for its water levels."
+- **Compare levels**, which draws every computed loading level in its own color. It is unavailable when fewer than two levels computed.
+- The copy button and **Download CSV**, which take the dam's results of the level shown, or of every level while levels are compared.
+
+On **Flow**, the outflow of a single level is split into the parts the run kept, stacked under the total: **Through the breach**, **Overtopping
+beside the breach**, **Through the spillways and outlet works** and **Other outflow**. The peak is labeled with its flow and time, for example "Peak
+313.5K cfs · T+11 h 26 min". On **Elevation**, the plot draws the **Pool (headwater)**, the **Tailwater** and the **Breach bottom**, with a dashed
+**Top of dam** line. Vertical markers show when the breach starts (**Breach starts**) and, dashed, when it is fully formed (**Fully formed**).
+Resting the pointer on the plot lists the flow, its parts and the water levels at that time (see [Charts](./040-working-in-dst.mdx#charts)).
+
+A dam whose boundary condition is a **Hydrograph** has no reservoir or breach of its own, so its plot and table use its own names: **Flow entering
+the model** for the flow, **Stage** for the water level, and **Max stage at the dam** in the table.
+
+The time bar under the plot has a play button and a **Time in the simulation** slider. Playing or dragging moves the plot's cursor, the breach
+cross-section and the readings beside it through the simulation. The dialog keeps its own time, so playing it does not move the depth player on the
+map. Below the plot, a line gives the level's verification and volume error and how much water left the model area. Once that level's **Water
+leaving the model** layer is ready, the line ends with **Show where on the map**, which turns the layer on and closes the dialog.
+
+<FigReference figKey="dst-users-guide-fig-inundation-analysis-dam-results" /> shows the dam results of an analysis with a piping breach.
+
+<Figure
+  figKey="dst-users-guide-fig-inundation-analysis-dam-results"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/inundation-analysis-dam-results.png"
+  alt="The Prior to Overtopping Results dialog. A table has the columns Loading level, Overtopping starts, Breach starts, Fully formed, Peak outflow, Peak at, Max pool, Max tailwater and Water released, with rows for 790 ft (Normal pool), 795, 800, 805, 810 and 812 ft (Top of dam); every row reads Did not overtop under Overtopping starts, and the peak outflows rise from 86,250 cfs at 790 ft to 313,454 cfs at 812 ft. The selected 812 ft row shows the breach starting at T+10 h 38 min, fully formed and peaking at 313,454 cfs at T+11 h 26 min, a maximum pool of 811.6 ft, a maximum tailwater of 778.6 ft and 102,969 acre-ft released (855%). Below are the toggles Event (selected) and Whole simulation, Flow (selected), Elevation and Both, and Compare levels (off). A stacked plot titled Outflow through the dam shows the flow through the spillways and outlet works rising to about 95,000 cfs, then the breach flow after the Breach starts and Fully formed markers, with the peak labeled 'Peak 313.5K cfs · T+11 h 26 min'. Beside the plot, a cross-section of the dam at T+4 h 34 min shows the pool at 791.9 ft and the tailwater at 742.0 ft, headed 'Final breach: 140 ft wide, bottom 740.0 ft', above a list of readings at that time. A time slider with a play button sits under the plot. A footer line reports 812 ft as Verified, with a volume error of 0.04% and 95% of the water leaving the model area at up to 228,947 cfs, and a Show where on the map link."
+  caption="The dam results of an analysis."
+  width="70%"
+/>
+
+Changing an input after a run does not clear its results; the analysis is marked out of date until it is run again.
+
+<VideoReference videoKey="dst-users-guide-video-inundation-analysis-dam-results" /> shows the dam results plot switched between **Elevation**,
+**Both** and **Flow**, and **Compare levels** turned on.
+
+<Video
+  videoKey="dst-users-guide-video-inundation-analysis-dam-results"
+  src="/videos/web-applications/dst/users-guide/v1.0/inundation-analysis-dam-results.mp4"
+  caption="Switching the dam results plot between flow and elevation views."
+  width={MEDIA_WIDTH}
+/>
