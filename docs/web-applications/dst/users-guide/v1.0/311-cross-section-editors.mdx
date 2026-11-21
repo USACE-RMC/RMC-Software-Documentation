@@ -79,6 +79,104 @@ editing conflict, the dialog explains instead that Save applies the drawing to t
 Leaving the Dam Information page with an unsaved section opens the **Unsaved Cross Section Changes** dialog: "You have unsaved cross-section edits.
 If you leave this page, your changes will be lost." Its buttons are described in [Saving](./040-working-in-dst.mdx#saving).
 
+## Ways to Build an Embankment Section
+
+The embankment editor offers four ways to start a drawing, one for each kind of source the user may have. Each starts from the **Define the
+cross-section** box on an empty canvas (see [Starting a drawing](#starting-a-drawing)), and each ends in the same place: a set of points joined
+into zones, each zone with a material. From there every drawing is refined, and saved, with the same tools.
+<TableReference tableKey="dst-users-guide-table-cross-section-editors-methods" /> compares the four.
+
+<TableVertical
+  tableKey="dst-users-guide-table-cross-section-editors-methods"
+  colWidths={['22ch', 'minmax(24ch, 1fr)', 'minmax(30ch, 1fr)']}
+  alt="The four ways to start an embankment cross section, the source each suits, and what each produces"
+  caption="Ways to start an embankment section"
+  headers={[[{ value: 'Method' }, { value: 'Best when the user has' }, { value: 'What it produces' }]]}
+  columns={[
+    ['Simple embankment', 'Upload or paste a drawing', 'Paste coordinates', 'Blank canvas'],
+    [
+      'The crest elevation and width and the slopes of each face, for example from a design summary or the NID.',
+      'A drawing, scan or screenshot of the section with at least one known length or a few points of known coordinates.',
+      'Surveyed or digitized X, Y coordinates in a spreadsheet or text file.',
+      'A sketch or a few known dimensions and nothing to import.',
+    ],
+    [
+      <>
+        A finished drawing in one step: one zone (Homogeneous) or a shell and a core (Zoned), with their materials (see{' '}
+        <a href="#generating-a-simple-embankment">Generating a simple embankment</a>).
+      </>,
+      <>
+        A reference image under the canvas. Once calibrated, the user traces the zones by clicking on the image (see{' '}
+        <a href="#reference-images">Reference Images</a>).
+      </>,
+      <>
+        Free points at the exact coordinates, which the user then joins into zones with <strong>Draw zone</strong> (see{' '}
+        <a href="#import-points">Import Points</a>).
+      </>,
+      <>
+        Nothing until the user clicks. Clicks place points, and <strong>Draw zone</strong> joins them into zones (see{' '}
+        <a href="#drawing-on-a-blank-canvas">Drawing on a blank canvas</a>).
+      </>,
+    ],
+  ]}
+/>
+
+Whichever way a drawing starts, building the rest of the section follows the same steps:
+
+<ProcessList
+  items={[
+    {
+      title: (
+        <>
+          <strong>Outline the body.</strong> Generate it, trace it, or join points into a first zone that covers the whole embankment.
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          <strong>Divide it into zones.</strong> Draw an internal zone, such as a core or a filter, over the body; DST cuts it out of the zones it
+          covers. Or split a zone along a line, and merge zones that should be one (see{' '}
+          <a href="#drawing-splitting-and-merging-zones">Drawing, splitting and merging zones</a>).
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          <strong>Assign materials.</strong> Give each zone a material from the Materials section of the Dam Information page, either as the zone is
+          drawn or afterward (see <a href="#assigning-materials">Assigning materials</a>).
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          <strong>Add a seepage berm</strong>, if the section has one, on the Berm tab (see <a href="#berm-tab">Berm tab</a>).
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          <strong>Check the crest and toe points and the messages.</strong> Review the US Crest, DS Crest, US Toe and DS Toe labels and the issue chip,
+          and adjust points as needed (see <a href="#placing-and-moving-points">Placing and moving points</a>).
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          <strong>Save.</strong> Nothing in the drawing is stored until the user selects <strong>Save</strong>.
+        </>
+      ),
+    },
+  ]}
+/>
+
+The methods also combine. For example, the user can generate a simple embankment and then draw its core by hand, or paste the outer coordinates
+and trace the internal zones from a reference image.
+
 ## The Drawing Canvas
 
 Both editors draw on the same canvas, a grid in the section's elevation units with **Upstream** labeled at the left and **Downstream** at the right.
@@ -158,6 +256,24 @@ Points are the corners of every zone, outline and berm. One point can belong to 
 - **Moving.** Dragging a point moves it. When the pointer comes within reach of another point while dragging, the moved point jumps onto it, and
   releasing there merges the two points into one. Escape during a drag returns the point to where it started.
 - **Reading coordinates.** Resting the pointer on a point shows its coordinates, for example "X 120.00 · Y 1,050.00".
+- **Typing exact coordinates.** A right-click on a point opens the point editor, where **X** and **Y** take exact values (see
+  [Point and region menus](#point-and-region-menus)).
+
+A click inside a zone also places a free point; it does not select the zone. To select a zone, the user selects its row in the **Zones** list, or
+right-clicks inside it and selects **Select zone**.
+
+<VideoReference videoKey="dst-users-guide-video-cross-section-edit-points" /> shows a generated embankment being edited.
+- The bench point on the downstream face is dragged to a new position, which changes both slopes beside it.
+- A point is added on the upstream face by clicking the edge.
+- That point's elevation is typed in the point editor.
+- The point is then removed with **Delete point**.
+
+<Video
+  videoKey="dst-users-guide-video-cross-section-edit-points"
+  src="/videos/web-applications/dst/users-guide/v1.0/cross-section-edit-points.mp4"
+  caption="Moving, inserting, typing and deleting points."
+  width={MEDIA_WIDTH}
+/>
 
 DST refuses an edit that would break the drawing, such as a move that makes two zones overlap or a deletion that leaves a zone with fewer than three
 points, and shows the reason in an amber note at the top of the canvas, for example "This edit would delete 'Zone 2'. Delete the component itself if
@@ -271,9 +387,22 @@ unavailable, as for an image not yet calibrated, until a mark is moved or a leng
   width={MEDIA_WIDTH}
 />
 
+<VideoReference videoKey="dst-users-guide-video-cross-section-paste-drawing" /> starts a new section from a screenshot.
+- The user selects **Upload or paste a drawing**; the next step offers **Upload a file** and **Paste a screenshot**.
+- **Paste a screenshot** places the drawing on the clipboard under the canvas.
+- The editor switches to the **Image** tab, where the first calibration step, **Level**, is already waiting for its first mark.
+
+<Video
+  videoKey="dst-users-guide-video-cross-section-paste-drawing"
+  src="/videos/web-applications/dst/users-guide/v1.0/cross-section-paste-drawing.mp4"
+  caption="Starting a section by pasting a screenshot of its drawing."
+  width={MEDIA_WIDTH}
+/>
+
 ### Calibrating by scale and datum
 
-The **Scale + datum** method sets the horizontal and vertical scales separately, so a stretched scan calibrates correctly.
+The **Scale + datum** method sets the horizontal and vertical scales separately, so a stretched scan calibrates correctly. When a step is complete,
+DST moves on to the next one and waits for its first mark, so the user can go from mark to mark without selecting **Place** each time.
 
 <ProcessList
   items={[
@@ -321,11 +450,69 @@ The **Scale + datum** method sets the horizontal and vertical scales separately,
 The datum points fix the drawing in place; the tooltips on **Datum X** and **Datum Y** note that accuracy is highest at the datum. If the two marks
 of D1 sit almost directly above one another, or the two marks of D2 at almost the same height, the guidance line turns red and says so.
 
+<VideoReference videoKey="dst-users-guide-video-cross-section-calibrate-scale" /> calibrates a pasted drawing by scale and datum from start to
+finish:
+- **Level** is marked along the base dimension line.
+- **D1** is marked on the 492.5 ft base dimension, and **D2** on the 85 ft height bar, each with its length typed in.
+- **Datum X** is marked at the upstream toe, at X 0.
+- **Datum Y** is marked at the upstream end of the crest, at elevation 812.
+
+The guidance line reads "Calibrated — 1 px = 0.721 ft (H) · 0.726 ft (V)". **Re-center** then shows the drawing in place under the grid, with the
+axes in feet and elevation.
+
+<Video
+  videoKey="dst-users-guide-video-cross-section-calibrate-scale"
+  src="/videos/web-applications/dst/users-guide/v1.0/cross-section-calibrate-scale.mp4"
+  caption="Calibrating a reference image by scale and datum."
+  width={MEDIA_WIDTH}
+/>
+
 ### Calibrating by known points
 
 The **Known points** method uses up to three points whose coordinates can be read off the drawing, labeled **A**, **B** and **C**. For each, the
 user places the mark on the image and enters its **X** and **Y**. Two points, A and B, calibrate the image; the guidance then reads "Calibrated
-from A and B. Add C to correct skew or stretch, or start tracing." A third point, C, corrects skew and stretch as well.
+from A and B. Add C to correct skew or stretch, or start tracing." A third point, C, corrects skew and stretch as well. C is optional, so DST does
+not wait for it; the user selects its **Place** button first. With all three, the guidance reads "Calibrated — full affine from A, B, C. Trace the
+section by clicking."
+
+Points far apart give the best result. A and B work well at the two toes or at the ends of the base, and C at a crest corner, well off the line
+through A and B.
+
+<VideoReference videoKey="dst-users-guide-video-cross-section-calibrate-points" /> switches the same drawing to **Known points** and calibrates
+it from three corners:
+- **A** at the upstream toe (0, 727).
+- **B** at the downstream toe of the body (492.5, 727).
+- **C** at the upstream end of the crest (255, 812).
+
+<Video
+  videoKey="dst-users-guide-video-cross-section-calibrate-points"
+  src="/videos/web-applications/dst/users-guide/v1.0/cross-section-calibrate-points.mp4"
+  caption="Calibrating a reference image from three known points."
+  width={MEDIA_WIDTH}
+/>
+
+### Tracing the image
+
+Once the image is calibrated, the drawing tools return and the user traces the section by clicking on the features of the image. Each click lands
+at the X and elevation under the pointer.
+- Snap is off by default while an image is shown, so a click lands where the drawing shows the corner, not at the nearest grid point.
+- The pointer coordinates in the status bar confirm the position before each click.
+- The usual approach is to trace the outer outline first as one zone, then draw each internal zone over it, which cuts it out of the outline (see
+  [Drawing, splitting and merging zones](#drawing-splitting-and-merging-zones)).
+- Lowering **Opacity**, or turning **Show** off on the Image tab, makes the traced zones easier to check against the drawing.
+
+<VideoReference videoKey="dst-users-guide-video-cross-section-trace" /> traces the calibrated drawing:
+- The outer outline is traced through the two toes and the crest corners and named **Shell**, with an upstream shell material.
+- The core is drawn over it from the crest to the base and given the clay core material. DST cuts the core out of the shell, which leaves two
+  pieces of Shell, one on each side.
+- **Save** stores the drawing.
+
+<Video
+  videoKey="dst-users-guide-video-cross-section-trace"
+  src="/videos/web-applications/dst/users-guide/v1.0/cross-section-trace.mp4"
+  caption="Tracing a calibrated reference image into zones and saving."
+  width={MEDIA_WIDTH}
+/>
 
 ## The Embankment Editor
 
@@ -403,6 +590,26 @@ and its material, or **Unassigned** in amber. Selecting a row or a zone on the c
 Zone Material** and **Delete selected zone** ("Remove the zone — its points stay in the drawing"). With no zones, the tab reads "No zones yet. Place
 points on the canvas, then connect them with Draw zone in the toolbar."
 
+### Drawing on a blank canvas
+
+**Blank canvas** starts a section with nothing but the grid. The user places the corners of the section with clicks, then joins them into a zone
+with **Draw zone**. With Snap on, each click lands on the nearest grid point; the grid spacing in the status bar, such as "Grid: 2 ft", gets finer
+as the view is zoomed in. Where an exact position matters, the user places a point near it and types the coordinates in the point editor. When a
+typed point leaves the view, **Re-center** brings the drawing back.
+
+<VideoReference videoKey="dst-users-guide-video-cross-section-blank-canvas" /> builds a small embankment on a blank canvas:
+- The first point is placed and given an elevation of 740 in the point editor, and **Re-center** brings it into view.
+- The other crest point and the two toe points are placed with clicks.
+- **Draw zone** joins the four points in order, and a click on the first point closes the zone.
+- In the **New zone** card the zone is named **Embankment**, given a material, and applied.
+
+<Video
+  videoKey="dst-users-guide-video-cross-section-blank-canvas"
+  src="/videos/web-applications/dst/users-guide/v1.0/cross-section-blank-canvas.mp4"
+  caption="Placing points on a blank canvas and joining them into a zone."
+  width={MEDIA_WIDTH}
+/>
+
 ### Drawing, splitting and merging zones
 
 The Body tab's toolbar holds three tools. Selecting an active tool again, or pressing Escape, cancels it.
@@ -422,6 +629,64 @@ The Body tab's toolbar holds three tools. Selecting an active tool again, or pre
 
 While a tool is active, a note at the top of the canvas describes the next click, for example "Click points in order; click the first point to close
 the zone". A drawing holds at most 20 zones and berms.
+
+Drawing a zone over existing zones is the quickest way to add an internal zone such as a core, a filter or a drain. The user outlines the internal
+zone with its edges on the outer boundary, and DST cuts it out of the zones it covers. When the cut divides a zone into separate pieces, each piece
+becomes its own zone and keeps the original name and material. The **New zone** card says so, for example "The new zone is cut out of 1 existing
+zone. 2 remainder pieces keep the original name and material."
+
+<VideoReference videoKey="dst-users-guide-video-cross-section-draw-core" /> draws a core in a generated homogeneous embankment.
+- **Draw zone** starts on the crest and runs down to two points on the base.
+- A click on the first point closes the outline.
+- The zone is named **Core** and given the clay core material.
+- The single Embankment zone becomes two Embankment zones, one on each side of the core.
+
+<Video
+  videoKey="dst-users-guide-video-cross-section-draw-core"
+  src="/videos/web-applications/dst/users-guide/v1.0/cross-section-draw-core.mp4"
+  caption="Drawing a core over an existing zone."
+  width={MEDIA_WIDTH}
+/>
+
+Split works the other way: it divides one zone along a line, and both parts keep the zone's name and material until the user changes them. The cut
+ends as soon as it reaches a boundary, and the **Split** card appears.
+
+<VideoReference videoKey="dst-users-guide-video-cross-section-split-assign" /> splits a homogeneous embankment and reassigns the parts:
+- The cut runs from the crest to the base, and **Apply split** divides the embankment.
+- The downstream part is selected in the Zones list, renamed **Downstream Shell** and given the downstream shell material.
+- The upstream part is renamed **Upstream Shell**.
+
+<Video
+  videoKey="dst-users-guide-video-cross-section-split-assign"
+  src="/videos/web-applications/dst/users-guide/v1.0/cross-section-split-assign.mp4"
+  caption="Splitting a zone and assigning the parts their own names and materials."
+  width={MEDIA_WIDTH}
+/>
+
+<VideoReference videoKey="dst-users-guide-video-cross-section-merge" /> merges two zones back into one:
+- **Upstream Shell** is selected, then **Merge**, then a click inside **Downstream Shell**.
+- The **Merge** card lists both zones, and the user selects **Downstream Shell** as the one whose name and material the merged zone keeps.
+- **Apply merge** removes the shared boundary.
+
+<Video
+  videoKey="dst-users-guide-video-cross-section-merge"
+  src="/videos/web-applications/dst/users-guide/v1.0/cross-section-merge.mp4"
+  caption="Merging two adjacent zones."
+  width={MEDIA_WIDTH}
+/>
+
+### Assigning materials
+
+Every zone needs a material, and the zone list shows **Unassigned** in amber, with the message "Assign a material to this zone.", until it has one.
+Materials come from the Materials section of the Dam Information page, so they must be defined there first (see
+[Materials](./310-dam-information.mdx#materials)). A zone gets its material in one of these ways:
+- **When it is drawn.** The **New zone** card has **Zone Name** and **Material**, and **Apply zone** applies both. **Skip assignment** adds the
+  zone without them.
+- **Afterward.** Selecting the zone, in the **Zones** list or with **Select zone** on its right-click menu, shows **Selected Zone Name** and
+  **Selected Zone Material**. A change shows on the drawing at once and is stored with the rest of the section at **Save**.
+- **By inheritance.** The parts of a split zone, and the pieces left when a new zone cuts one in two, keep the original zone's material. A merged
+  zone keeps the material of the zone chosen in the **Merge** card.
+- **From the generator.** **Generate drawing** assigns the Embankment Material, and for a zoned section the Core Material.
 
 A tool refuses a result that would break the drawing, and the note at the top of the canvas gives the reason. The outline being drawn stays in
 place, so the user can move on with another click, Backspace, or Escape. The reasons include:
@@ -444,6 +709,22 @@ are unchanged. Assign one main embankment material to the berm.", with **Berm Ma
 
 The tab shows **Berm Material** for an existing berm, or "No berm yet — use Draw berm in the canvas toolbar." Under **Derived berm measures** it
 shows the read-only **Berm Length** and **Berm Toe Elevation** that DST measures from the drawing.
+
+The berm usually shares points with the downstream face and the downstream toe, so it sits against the embankment without overlapping it.
+
+<VideoReference videoKey="dst-users-guide-video-cross-section-berm" /> adds a seepage berm to a generated embankment:
+- On the **Berm** tab, **Draw berm** starts at a point on the downstream face.
+- The outline runs out along the berm crest, down to its toe, and back to the embankment's downstream toe.
+- A click on the first point closes it.
+- The **Seepage berm** card assigns the berm fill material, and **Apply berm** adds the berm.
+- **Derived berm measures** then shows its length and toe elevation.
+
+<Video
+  videoKey="dst-users-guide-video-cross-section-berm"
+  src="/videos/web-applications/dst/users-guide/v1.0/cross-section-berm.mp4"
+  caption="Drawing a seepage berm and assigning its material."
+  width={MEDIA_WIDTH}
+/>
 
 ### Crest and toe points
 
@@ -499,8 +780,36 @@ left redraws as the user enters values. <TableReference tableKey="dst-users-guid
   ]}
 />
 
-The slope tables work like the other tables in DST (see [Tables](./040-working-in-dst.mdx#tables)). **Generate drawing** replaces the empty canvas
-with the drawing and closes the dialog; the drawing is then edited and saved like any other. If an input is missing, the dialog says "Complete the
+The slope tables work like the other tables in DST (see [Tables](./040-working-in-dst.mdx#tables)). A face with more than one slope, such as a
+face with a bench, takes one row per slope: Tab from the last cell of a table adds a row, whose Top is the Bottom of the row above. **Generate
+drawing** replaces the empty canvas with the drawing and closes the dialog; the drawing is then edited and saved like any other.
+- A **Homogeneous** drawing is one zone named **Embankment**, with the Embankment Material.
+- A **Zoned** drawing is a **Core** zone, with the Core Material, inside a **Shell** zone with the Embankment Material.
+
+<VideoReference videoKey="dst-users-guide-video-cross-section-generator" /> generates a homogeneous embankment:
+- The crest width is 25 ft, with the crest elevation taken from Dam Data.
+- The upstream face is one slope of 3H:1V to the base at elevation 727.
+- The downstream face is 2.5H:1V down to elevation 770, then 3H:1V to the base.
+- The preview redraws as each value is entered, and **Generate drawing** places the drawing on the canvas.
+
+<Video
+  videoKey="dst-users-guide-video-cross-section-generator"
+  src="/videos/web-applications/dst/users-guide/v1.0/cross-section-generator.mp4"
+  caption="Generating a homogeneous embankment from its crest and slopes."
+  width={MEDIA_WIDTH}
+/>
+
+<VideoReference videoKey="dst-users-guide-video-cross-section-generator-zoned" /> turns the same inputs into a zoned embankment:
+- **Zoned** is selected, which makes the **Core** tab available.
+- The core is given a top at elevation 807, a 10 ft top width, the clay core material, and faces of 0.5H:1V down to the base.
+- The preview draws the core inside the shell, and **Generate drawing** creates the Shell and Core zones.
+
+<Video
+  videoKey="dst-users-guide-video-cross-section-generator-zoned"
+  src="/videos/web-applications/dst/users-guide/v1.0/cross-section-generator-zoned.mp4"
+  caption="Adding a core to the generator inputs for a zoned embankment."
+  width={MEDIA_WIDTH}
+/> If an input is missing, the dialog says "Complete the
 crest and each slope chain before generating the drawing." (or, for Zoned, "Complete the crest, the core and each slope chain on the Embankment and
 Core tabs before generating the drawing."). A core that does not fit reads "The core does not fit inside the embankment. Keep its top at or below the
 crest, and run both core faces down to the base or neither." **Cancel** closes the dialog without a drawing.
@@ -797,6 +1106,19 @@ Y), found 3.", and **Import** stays unavailable until every line reads. The sect
 
 **Import** adds the points and closes the dialog; the import, like any other edit, waits for **Save**. Closing the dialog without **Import** adds
 nothing.
+
+<VideoReference videoKey="dst-users-guide-video-cross-section-paste-coordinates" /> starts an embankment section from pasted coordinates:
+- **Paste coordinates** opens the dialog, and a block copied from a spreadsheet is pasted with Ctrl+V. The block has a header row and five X, Y
+  pairs: the toes, the two ends of the crest and a bench point.
+- The dialog reads "5 points will be imported", and **Import** places the five points and fits the view to them.
+- **Draw zone** then joins them in order into a zone named **Embankment**, with a material.
+
+<Video
+  videoKey="dst-users-guide-video-cross-section-paste-coordinates"
+  src="/videos/web-applications/dst/users-guide/v1.0/cross-section-paste-coordinates.mp4"
+  caption="Pasting coordinates and joining the imported points into a zone."
+  width={MEDIA_WIDTH}
+/>
 
 <Figure
   figKey="dst-users-guide-fig-dam-information-import-points"
