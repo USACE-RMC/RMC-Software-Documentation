@@ -13,8 +13,9 @@ import { MEDIA_WIDTH } from './_media-width.js';
 
 # Consequence Data
 
-The Consequence Data page, at **Consequences > Consequence Data**, holds the inputs of the consequence simulations: the structure inventory, the
-Emergency Response ratings of the model area, and an optional non-failure hazard zone.
+Use the Consequence Data page, at **Consequences > Consequence Data**, to add the structure inventory, rate the Emergency Response of the model area
+and, optionally, mark a non-failure hazard zone. The consequence simulations on the Consequence Analysis page need a structure inventory and a rated
+(or Unknown) Emergency Response.
 
 <FigReference figKey="dst-users-guide-fig-consequence-data-page" /> shows the page with the structure inventory selected, and
 <TableReference tableKey="dst-users-guide-table-consequences-consequence-data-regions" /> describes each numbered region.
@@ -22,7 +23,7 @@ Emergency Response ratings of the model area, and an optional non-failure hazard
 <Figure
   figKey="dst-users-guide-fig-consequence-data-page"
   src="figures/web-applications/dst/users-guide/v1.0/figures/consequence-data-page.png"
-  alt="The Consequence Data page of Thistlewood Dam Screening. The panel at the upper left has the buttons Structures and Non-Failure Zone and lists the structure inventory NSI, Platte River valley (selected), Emergency Response and Non-Failure Hazard Zone. The map shows structure points in the valley below the dam, inside the non-failure hazard zone outlined in orange and the model area outlined in purple. At the right, the Structure Inventory Properties panel shows the name; details with the source NSI, downloaded on Nov 19 2026 by Jordan Hale, 152 structures, edited 'Not since the import'; a LifeSim checks card reading 'No problems found in 152 structures.'; a Summary card with a day population of 80, a night population of 167, a total value of 82,515 thousand dollars, and structures by damage category (Residential 60, Commercial 86, Industrial 0, Public 6); and an Edit Structures button. Numbered callouts mark: 1, the Structures and Non-Failure Zone buttons; 2, the item list; 3, the structure points; and 4, the properties panel."
+  alt="The Consequence Data page with the structure inventory selected. The panel lists the buttons Structures and Non-Failure Zone and the items NSI, Platte River valley (selected), Emergency Response and Non-Failure Hazard Zone. The map shows structure points in the valley below the dam, inside the outlined non-failure hazard zone and model area. The Structure Inventory Properties panel shows the source NSI, 152 structures, edited 'Not since the import'; a LifeSim checks card reading 'No problems found in 152 structures.'; a Summary card with a day population of 80, a night population of 167 and structures by damage category; and an Edit Structures button. Numbered callouts mark: 1, the Structures and Non-Failure Zone buttons; 2, the item list; 3, the structure points; and 4, the properties panel."
   caption="The Consequence Data page with the structure inventory selected."
   width={MEDIA_WIDTH}
 />
@@ -45,43 +46,41 @@ Emergency Response ratings of the model area, and an optional non-failure hazard
   ]}
 />
 
-The page is a map (see [The map](./401-inundation-geometry.mdx#the-map)). The **Consequence Data** panel at the upper left has two add buttons, **Structures** and **Non-Failure
-Zone**, and lists the structure inventory, **Emergency Response** and **Non-Failure Hazard Zone**. Selecting an item opens its properties at the
-right. A row marked incomplete gives the reason, for example "Incomplete: Draw its outline on the map, or delete it."
+The page is a map (see [The map](./401-inundation-geometry.mdx#the-map)). An item marked incomplete in the list gives the reason, for example
+"Incomplete: Draw its outline on the map, or delete it."
 
 ## Structure inventory
 
 **Structures** opens the **Add Structure Inventory** dialog, with two tabs:
 
-- **National Structure Inventory** downloads the USACE National Structure Inventory (NSI) structures inside the model area. It needs a model area.
+- **National Structure Inventory** downloads the USACE National Structure Inventory (NSI) structures inside the model area. It needs a model area
+  with a drawn outline.
 - **Upload File** reads a GeoJSON FeatureCollection of points with NSI attribute names, up to 2 GB, chosen with **Select GeoJSON File**.
 
-When the National Structure Inventory service is down or degraded, the **National Structure Inventory** tab shows the outage's site alert messages at
-the top (see [Site alerts](./040-working-in-dst.mdx#site-alerts)). The callout is a warning; it does not stop the download.
+**Name** is optional; a blank name is generated. DST reports "Structure inventory "[name]" is ready ([N] structures)." when it finishes.
 
-**Name** is optional; a blank name is generated. Replacing an inventory deletes the old one and any map edits to its structures once the new one is
-read. DST reports "Structure inventory "[name]" is ready ([N] structures)." when it finishes.
+:::caution
 
-The inventory's properties panel shows its **Name**, its details (source, file, import date, number of structures and the structures edited since
-the import, listed by **View Edits**), and two cards:
+Replacing an inventory deletes the old one, with any map edits to its structures, once the new one is read.
+
+:::
+
+The inventory's properties panel shows its details (source, file, import date, number of structures and the structures edited since the import,
+listed by **View Edits**), and two cards:
 
 - **LifeSim checks** counts the structures with a problem, such as "Outside the Emergency Response area", "Missing population", "Missing occupancy
-  type", "Missing foundation height" or "More people than the occupancy holds". **Show** colors those structures and zooms to them. These are
-  warnings; they do not stop a run, though LifeSim leaves out structures outside the Emergency Response area.
-
-  **Show** switches the structure layer's **Color by** to **LifeSim data checks**, turns the structure layer back on if it was off, and zooms to the
-  structures with that problem. The choice stays in effect on every page of the module until another **Color by** is chosen in the legend or the
-  page is reloaded (see [Structure symbology](./401-inundation-geometry.mdx#structure-symbology)).
-
+  type", "Missing foundation height" or "More people than the occupancy holds". **Show** colors those structures by **LifeSim data checks** and zooms
+  to them (see [Structure symbology](./401-inundation-geometry.mdx#structure-symbology)). These checks are warnings and do not stop a run, but
+  LifeSim leaves out structures outside the Emergency Response area.
 - **Summary** gives the day and night population, under 65 and 65 and over, the total value, and the structures counted by a characteristic chosen
   in **Structures by** (damage category by default).
 
 ## Editing structures
 
-**Edit Structures**, or **Edit selected feature** in the toolbar, edits the inventory's structures on the map: moving points, adding points with
-**Add points**, and changing a point's attributes in the panel at the right. **Undo** reverses the last change, and **Save** or **Cancel** ends the
-edit. A new point starts with the nearest structure's attributes. <TableReference tableKey="dst-users-guide-table-consequences-structure" /> lists a
-structure's fields.
+Use **Edit Structures**, or **Edit selected feature** in the map toolbar, to correct the inventory on the map: move points, add points with **Add
+points**, and change a point's attributes in the panel. **Undo** reverses the last change, and **Save** or **Cancel** ends the edit. A new point
+starts with the nearest structure's attributes. <TableReference tableKey="dst-users-guide-table-consequences-structure" /> lists a structure's
+fields.
 
 <TableVertical
   tableKey="dst-users-guide-table-consequences-structure"
@@ -138,35 +137,37 @@ hazard occurrence and advanced notice. A screening has at most one. **Non-Failur
 tabs:
 
 - **Draw on Map**: **Start Drawing**, then a click at each corner; a double-click or Enter finishes.
-- **Import a File**: a GeoJSON file of polygons in longitude and latitude (WGS 84), up to 50 MB and 200,000 points. All its polygons become one zone.
+- **Import a File**: a GeoJSON file of Polygon or MultiPolygon features in longitude and latitude (WGS84), up to 50 MB and 200,000 points. All its
+  polygons become one zone, and overlapping polygons are merged. An outline with more than 5,000 points is simplified when it is saved.
 - **Inundation Result**: the wet cells of one **Loading level**'s maximum depth grid, widened by a **Buffer distance** (100 ft by default, from 0 to
-  5,000 ft) and cut to the model area.
+  5,000 ft; 30 m by default in a metric screening, up to 1,524 m) and cut to the model area.
 
-### Importing a zone
+:::tip
 
-The **Import a File** tab reads Polygon and MultiPolygon features. Every polygon in the file becomes part of the one zone, and polygons that overlap
-are merged. DST checks the file before it is saved and refuses it, with the reason, when it cannot be used:
+A zone that matches the area a non-failure flood reaches comes from running a non-failure analysis on the Inundation Analysis page first, then
+making the zone from one of its loading levels on the **Inundation Result** tab.
 
-- A file over 50 MB: "The file is [size], larger than the 50.0 MB that can be imported. Simplify its outline and import it again."
-- A file whose polygons have more than 200,000 points: "The file's polygons have [N] points, more than the 200,000 that can be imported. Simplify
-  the file and import it again."
-- A file that cannot be read: "The file couldn't be read."
+:::
 
-Once the file is read, notes under the box describe what it holds. An outline with more than 5,000 points is simplified when it is saved.
-
-### Making a zone from an inundation result
-
-The **Inundation Result** tab outlines the cells that get wet in one loading level's maximum depth grid, such as a non-failure analysis's. DST then:
-
-- widens the outline by the **Buffer distance** (30 m by default in a metric screening, up to 1,524 m), which merges pieces that come to overlap;
-- cuts off anything outside the model area;
-- simplifies the outline to at most 5,000 points. For a very ragged wet area this also fills in its smallest holes and leaves out its smallest
-  separate pieces.
-
-After the zone is made, a message says what was done, for example "The part outside the model area was cut off.", "The outline was simplified from
-[N] to [M] points.", "[N] holes smaller than [area] were filled in." and "[N] separate pieces smaller than [area] were left out." Areas are given in
-acres or square feet, or in hectares or square meters in a metric screening. When no loading level has a maximum depth grid yet, the tab reads
-"No loading level has a finished maximum depth grid yet. Run an analysis on the Inundation Analysis tab first."
+After a zone is made from an inundation result, a message says what was done, for example "The part outside the model area was cut off.", "The
+outline was simplified from [N] to [M] points.", "[N] holes smaller than [area] were filled in." and "[N] separate pieces smaller than [area] were
+left out."
 
 The zone's properties panel shows its area and source. **Edit Geometry** reshapes an outline of one piece without holes; any other outline is changed
 by replacing the zone. Deleting the zone also removes its hazard occurrence and advanced notice.
+
+## Common problems
+
+- **The NSI download is unavailable.** The tab reads "No model areas with geometry found. Draw or upload at least one model area polygon before
+  downloading structures from NSI." The user draws the model area on the Inundation Geometry page first.
+- **An inventory fails to load.** DST reports "The NSI download failed." or "The structure inventory upload failed.", with the reason. The user checks that an
+  uploaded file is a GeoJSON FeatureCollection of points with NSI attribute names, and tries again. When the National Structure Inventory service is
+  down or degraded, the tab shows the outage's site alert (see [Site alerts](./040-working-in-dst.mdx#site-alerts)); the download can still be
+  started, but may fail until the service recovers.
+- **A zone file is refused.** The **Import a File** tab gives the reason: "The file is [size], larger than the 50.0 MB that can be imported.
+  Simplify its outline and import it again.", "The file's polygons have [N] points, more than the 200,000 that can be imported. Simplify the file and
+  import it again." or "The file couldn't be read."
+- **The Inundation Result tab has nothing to use.** It reads "No loading level has a finished maximum depth grid yet. Run an analysis on the
+  Inundation Analysis tab first."
+- **Structures are left out of the simulation.** LifeSim leaves out structures outside the Emergency Response area. **Show** on the **LifeSim checks**
+  card finds them; the user then moves them or enlarges the model area.

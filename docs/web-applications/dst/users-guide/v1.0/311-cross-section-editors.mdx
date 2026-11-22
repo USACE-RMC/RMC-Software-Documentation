@@ -16,74 +16,66 @@ import { MEDIA_WIDTH } from './_media-width.js';
 
 # Cross-Section Editors
 
-The cross-section editors define the geometry of each embankment and concrete cross section listed on the Dam Information page. The embankment
-editor draws the zones of an earth or rockfill section and its seepage berm; the concrete editor draws the outline of a concrete monolith, or the
-weir and pier of a gated overflow section, with its gate, drain and applied forces. Both editors share the same drawing canvas, the same reference
-image tools and the same Save and Cancel controls. The failure mode pages read each section's geometry, materials and derived crest, toe and slope
-measures from what the user saves here.
+Use the cross-section editors to draw the geometry of each embankment and concrete cross section listed on the Dam Information page. The
+embankment editor draws the zones of an earth or rockfill section and its seepage berm. The concrete editor draws the outline of a concrete
+monolith, or the weir and pier of a gated overflow section, with its gate, drain and applied forces. The failure mode pages read each section's
+geometry, materials and derived crest, toe and slope measures from what the user saves here.
 
-This page describes the editors and the gestures used on their canvas. The list of cross sections, and the card each section has on the Dam
-Information page, are described in [Cross Sections](./310-dam-information.mdx#cross-sections). Named cross sections have no editor.
+The list of cross sections and each section's card are described in [Cross Sections](./310-dam-information.mdx#cross-sections). Named cross
+sections have no editor.
 
 ## Opening an Editor
 
-Selecting the drawing on an embankment or concrete cross section's card opens its editor over the Dam Information page. A section added with
-**Add Earth Section** or **Add Concrete Section** opens its editor at once. The editor fills the screen: its title bar holds the section's name and
-status, the canvas takes the left side and a panel of the section's properties takes the right.
+Selecting the drawing on an embankment or concrete cross section's card opens its editor. A section added with **Add Earth Section** or **Add
+Concrete Section** opens its editor at once. The editor's title bar shows:
 
-- **Name.** The section's name, or "Unnamed cross section" when it has none. **Edit name** (the pencil) or a double-click on the name makes it
-  editable; Enter or leaving the box keeps the new name, and Escape restores the previous one. A name holds up to 200 characters. The name saves at
-  once, without Save.
-- **Issue chip.** A pill such as **3 issues** that counts the section's messages. It is red when any of them is an error and amber otherwise, and it
-  disappears when the section has no messages. Selecting it lists every message, errors first. DST checks the drawing again after each completed
-  gesture, so the chip updates as the user works.
-- **Status.** **Unsaved changes**, with an amber dot, while the section holds edits not yet saved. The same place shows an edit DST refused and the
-  editing conflict notice described in [Saving and Canceling](#saving-and-canceling).
+- **Name.** The section's name, or "Unnamed cross section". **Edit name** (the pencil), or a double-click on the name, makes it editable; Enter or
+  leaving the box keeps the new name, and Escape restores the previous one. A name holds up to 200 characters and saves at once, without Save.
+- **Issue chip.** A count such as **3 issues**: red when any message is an error, amber otherwise. Selecting it lists every message, errors first.
+  DST checks the drawing again after each completed gesture.
+- **Status.** **Unsaved changes** while the section holds edits not yet saved. The same place shows an edit DST refused and the editing conflict
+  notice (see [Common Problems](#common-problems)).
 
-The × at the top right, Escape, or a selection outside the editor closes it. Users who cannot edit the screening, and every user while its inputs are
-locked (see [Input Lock](./040-working-in-dst.mdx#input-lock)), open the editors read-only: they can view the drawing, select points and read their
-coordinates, but the tools, panels and Save are unavailable.
+The ×, Escape, or a selection outside the editor closes it. Users who cannot edit the screening, and every user while its inputs are locked (see
+[Input Lock](./040-working-in-dst.mdx#input-lock)), open the editors read-only: they can view the drawing and read point coordinates, but the tools,
+panels and Save are unavailable.
 
 ## Saving and Canceling
 
-The cross-section editors are the one place in DST where edits wait for the user to save them. Every change to a section's geometry and its
-settings in the editor, such as points, zones and their materials, the seepage berm, the foundation, the concrete section type, the gate, the drain
-and the forces, stays in the editor until the user selects **Save**. Two things save at once instead: the section's name and its reference image (see
-[Reference Images](#reference-images)).
+The cross-section editors are the one place in DST where edits wait for the user to save them. Every change to the drawing and the section's
+settings, such as points, zones and their materials, the seepage berm, the foundation, the concrete section type, the gate, the drain and the
+forces, stays in the editor until the user selects **Save**. The section's name and its reference image (see [Reference Images](#reference-images))
+save at once instead.
 
-**Save** and **Cancel** appear at the right end of the toolbar above the canvas as soon as the section has unsaved changes:
+**Save** and **Cancel** appear in the toolbar as soon as the section has unsaved changes. **Save** stores the section. **Cancel** ("Discard the
+changes since the last save") returns the section to its last saved state.
 
-- **Save** stores the section. While the save is in progress the button shows a spinner.
-- **Cancel** ("Discard the changes since the last save") returns the section to its last saved state.
+The editors have no undo or redo, and Ctrl+Z does nothing on the canvas. Cancel discards every change since the last save at once. Within a drawing
+tool, Backspace removes the last point of an outline still being drawn, and Escape or **Cancel** on a pending card (such as **New zone** or
+**Split**) drops the result before it is applied.
 
-The editors keep no history of edits, so there is no undo or redo, and Ctrl+Z does nothing on the canvas. Cancel is the only way back, and it
-discards every change since the last save at once. Within a drawing tool, Backspace removes the last point of an outline still being drawn, and
-Escape or **Cancel** on a pending card (such as **New zone** or **Split**) drops the result before it is applied. Saving after each change worth
-keeping makes Cancel a short step back.
+:::tip
+
+Saving after each change worth keeping makes **Cancel** a short step back.
+
+:::
 
 Saving a section clears the verification of the Dam Information page (see [Human Verification](./040-working-in-dst.mdx#human-verification)). When
-the change makes the results of a failure mode page out of date, DST clears those results and says so in a notice (see
+the change makes a failure mode page's results out of date, DST clears those results and says so in a notice (see
 [Automatic Calculation](./040-working-in-dst.mdx#automatic-calculation)).
-
-When another user saves Dam Information while the editor is open, the status reads "Dam Information changed in another session. Your drawing is
-kept — Save applies it to the latest version; Cancel discards it." If another user deletes the section, the editor closes with the notice "The cross
-section you were editing was deleted, so its editor closed." When the editor held unsaved changes, the notice reads instead "The cross section you
-were editing was deleted, so its editor closed and its unsaved changes were discarded."
 
 ### Unsaved changes
 
-Closing an editor that holds unsaved changes opens the **Unsaved changes** dialog, which reads "This cross section has changes that have not been
-saved." **Save** saves the section and closes the editor, **Discard** closes it without saving, and **Keep editing** returns to the editor. After an
-editing conflict, the dialog explains instead that Save applies the drawing to the latest version and Discard drops it.
+Closing an editor that holds unsaved changes opens the **Unsaved changes** dialog: "This cross section has changes that have not been saved."
+**Save** saves the section and closes the editor, **Discard** closes it without saving, and **Keep editing** returns to the editor.
 
 Leaving the Dam Information page with an unsaved section opens the **Unsaved Cross Section Changes** dialog: "You have unsaved cross-section edits.
 If you leave this page, your changes will be lost." Its buttons are described in [Saving](./040-working-in-dst.mdx#saving).
 
 ## Ways to Build an Embankment Section
 
-The embankment editor offers four ways to start a drawing, one for each kind of source the user may have. Each starts from the **Define the
-cross-section** box on an empty canvas (see [Starting a drawing](#starting-a-drawing)), and each ends in the same place: a set of points joined
-into zones, each zone with a material. From there every drawing is refined, and saved, with the same tools.
+The embankment editor offers four ways to start a drawing, one for each kind of source. Each starts from the **Define the cross-section** box on an
+empty canvas (see [Starting a drawing](#starting-a-drawing)) and ends with points joined into zones, each with a material.
 <TableReference tableKey="dst-users-guide-table-cross-section-editors-methods" /> compares the four.
 
 <TableVertical
@@ -121,7 +113,7 @@ into zones, each zone with a material. From there every drawing is refined, and 
   ]}
 />
 
-Whichever way a drawing starts, building the rest of the section follows the same steps:
+Whichever way a drawing starts, the rest of the section follows the same steps:
 
 <ProcessList
   items={[
@@ -144,15 +136,15 @@ Whichever way a drawing starts, building the rest of the section follows the sam
     {
       title: (
         <>
-          <strong>Assign materials.</strong> Give each zone a material from the Materials section of the Dam Information page, either as the zone is
-          drawn or afterward (see <a href="#assigning-materials">Assigning materials</a>).
+          <strong>Assign materials.</strong> Give each zone a material from the Materials section of the Dam Information page, as the zone is drawn
+          or afterward (see <a href="#assigning-materials">Assigning materials</a>).
         </>
       ),
     },
     {
       title: (
         <>
-          <strong>Add a seepage berm</strong>, if the section has one, on the Berm tab (see <a href="#berm-tab">Berm tab</a>).
+          <strong>Add a seepage berm</strong>, if the section has one (see <a href="#berm-tab">Berm tab</a>).
         </>
       ),
     },
@@ -179,44 +171,41 @@ and trace the internal zones from a reference image.
 
 ## The Drawing Canvas
 
-Both editors draw on the same canvas, a grid in the section's elevation units with **Upstream** labeled at the left and **Downstream** at the right.
-The canvas draws each section's crest width and elevation, its height, and its base width and elevation beside the drawing.
-
-<TableReference tableKey="dst-users-guide-table-cross-section-editors-canvas-controls" /> lists the controls around the canvas.
+Both editors draw on the same canvas, a grid in the section's elevation units with **Upstream** and **Downstream** labeled. The canvas shows each
+section's crest width and elevation, its height, and its base width and elevation.
+<TableReference tableKey="dst-users-guide-table-cross-section-editors-canvas-controls" /> lists the canvas controls.
 
 <TableVertical
   tableKey="dst-users-guide-table-cross-section-editors-canvas-controls"
   colWidths={['24ch', 'minmax(30ch, 1fr)']}
-  alt="The controls on and around the cross-section drawing canvas and what each does"
+  alt="The controls of the cross-section drawing canvas and what each does"
   caption="Canvas controls"
   headers={[[{ value: 'Control' }, { value: 'Description' }]]}
   columns={[
     ['Re-center (crosshair)', 'Import points (clipboard)', 'Export points (download)', 'Grid', 'Snap', 'Opacity', 'Pointer coordinates'],
     [
-      'At the top right of the canvas. Fits the view to the defined points ("Re-center on defined points").',
+      'Fits the view to the defined points ("Re-center on defined points").',
       <>
-        Below the re-center button, for users who can edit. Opens the <strong>Import points</strong> dialog (see{' '}
-        <a href="#import-points">Import Points</a>).
+        Opens the <strong>Import points</strong> dialog, for users who can edit (see <a href="#import-points">Import Points</a>).
       </>,
-      'Downloads the points as a CSV file, grouped by zone in the embankment editor and by region in the concrete editor. With points selected, it exports only the selected points.',
-      'The left of the status bar under the canvas shows the grid spacing, for example "Grid: 5 ft". The spacing changes with the zoom. While no reference image is shown, the bar also reads "Scroll to zoom · Drag to pan · Shift+drag to select".',
-      'A toggle in the status bar. When on, new and moved points land on the grid; when off, they land at the pointer position rounded to 0.01. Snap is on by default, and off by default while a reference image is shown.',
-      'A slider in the status bar, shown with a reference image, that sets the image opacity from 10% to 100% in steps of 5%.',
-      'The right of the status bar shows the X and Y coordinates under the pointer.',
+      'Downloads the points as a CSV file named for the section, in blocks by zone (embankment) or by region (concrete), with the units. With points selected, it exports only those points.',
+      'The status bar shows the grid spacing, for example "Grid: 5 ft", which changes with the zoom.',
+      'When on, new and moved points land on the grid; when off, they land at the pointer position rounded to 0.01. On by default, and off by default while a reference image is shown.',
+      'Shown with a reference image. Sets the image opacity from 10% to 100% in steps of 5%.',
+      'The X and Y coordinates under the pointer, in the status bar.',
     ],
   ]}
 />
 
 ### Starting a drawing
 
-A section with no geometry opens with a box titled **Define the cross-section** over the empty canvas
-(<FigReference figKey="dst-users-guide-fig-dam-information-section-start" />). Each card in the box is a way to start:
+A section with no geometry opens with the **Define the cross-section** box over the empty canvas
+(<FigReference figKey="dst-users-guide-fig-dam-information-section-start" />). Each card is a way to start:
 
-- **Simple embankment** ("Enter crest and slopes."), in the embankment editor only, opens the generator described in
-  [Generating a simple embankment](#generating-a-simple-embankment).
-- **Upload or paste a drawing** ("File or screenshot.") opens a second step, **Add a drawing**, with **Upload a file** (a PNG or JPEG image) and
-  **Paste a screenshot** (from the clipboard). Ctrl+V anywhere in the editor also pastes an image while the section has none. **Back** returns to
-  the first step. The image becomes the section's reference image (see [Reference Images](#reference-images)).
+- **Simple embankment** ("Enter crest and slopes."), in the embankment editor only, opens the generator (see
+  [Generating a simple embankment](#generating-a-simple-embankment)).
+- **Upload or paste a drawing** ("File or screenshot.") offers **Upload a file** (a PNG or JPEG image) and **Paste a screenshot** (from the
+  clipboard); **Back** returns to the first step. The image becomes the section's reference image (see [Reference Images](#reference-images)).
 - **Paste coordinates** ("X, Y pairs from a table.") opens the **Import points** dialog (see [Import Points](#import-points)).
 - **Blank canvas** ("Click to place points.") closes the box so that clicks on the canvas place points. In the concrete editor it also starts the
   outline of the section's main component (see [Outline tabs](#outline-tabs)).
@@ -224,16 +213,21 @@ A section with no geometry opens with a box titled **Define the cross-section** 
 <Figure
   figKey="dst-users-guide-fig-dam-information-section-start"
   src="figures/web-applications/dst/users-guide/v1.0/figures/dam-information-section-start.png"
-  alt="The empty canvas of a new embankment cross section: a dotted grid with axes, labeled Upstream at the top left and Downstream at the top right, with three icon buttons at the top right. A box in the center headed 'Define the cross-section' holds four cards in two rows: Simple embankment, 'Enter crest and slopes.'; Upload or paste a drawing, 'File or screenshot.'; Paste coordinates, 'X, Y pairs from a table.'; and Blank canvas, 'Click to place points.' The status bar under the canvas reads 'Grid: 2 ft · Scroll to zoom · Drag to pan · Shift+drag to select', with the Snap toggle on."
+  alt="The empty canvas of a new embankment cross section with the box 'Define the cross-section' and its four cards: Simple embankment, 'Enter crest and slopes.'; Upload or paste a drawing, 'File or screenshot.'; Paste coordinates, 'X, Y pairs from a table.'; and Blank canvas, 'Click to place points.' The status bar reads 'Grid: 2 ft · Scroll to zoom · Drag to pan · Shift+drag to select', with Snap on."
   caption="The starting choices on the canvas of a new embankment cross section."
   width="70%"
 />
 
+:::tip
+
+Ctrl+V anywhere in the editor pastes a screenshot from the clipboard as the reference image while the section has none.
+
+:::
+
 ### Moving around the canvas
 
-The mouse wheel zooms in and out about the pointer. Dragging on empty canvas, or dragging with the middle mouse button anywhere, pans the view.
-**Re-center** fits the view to the drawing. When a drawing first arrives on an empty canvas, for example from the generator or an import, DST fits
-the view to it; later edits never move the view.
+The mouse wheel zooms about the pointer. Dragging on empty canvas, or dragging with the middle mouse button anywhere, pans the view. **Re-center**
+fits the view to the drawing. DST also fits the view when a drawing first arrives on an empty canvas, for example from the generator or an import.
 
 <VideoReference videoKey="dst-users-guide-video-cross-section-editor-canvas" /> shows the canvas zoomed with the wheel and panned by dragging, a zone
 selected in the Zones list, the view re-centered, and a Shift+drag selection of points.
@@ -249,18 +243,17 @@ selected in the Zones list, the view re-centered, and a Shift+drag selection of 
 
 Points are the corners of every zone, outline and berm. One point can belong to several zones, so a boundary shared by two zones is drawn once.
 
-- **Placing.** With no drawing tool active, a click on empty canvas places a free point. A click on a point that already exists at the same
-  coordinates selects that point instead of placing a second one.
-- **Inserting on an edge.** When the pointer rests on the edge of a zone or outline, the pointer changes to a copy cursor and a faint point shows
-  where it will land. A click there adds a point on the edge, shared by every zone that uses that edge.
-- **Moving.** Dragging a point moves it. When the pointer comes within reach of another point while dragging, the moved point jumps onto it, and
-  releasing there merges the two points into one. Escape during a drag returns the point to where it started.
+- **Placing.** With no drawing tool active, a click on empty canvas places a free point. A click on an existing point selects it instead.
+- **Inserting on an edge.** When the pointer rests on the edge of a zone or outline, a faint point shows where a new point will land. A click adds
+  it to the edge, shared by every zone that uses that edge.
+- **Moving.** Dragging a point moves it. Dropping it on another point merges the two into one. Escape during a drag returns the point to where it
+  started.
 - **Reading coordinates.** Resting the pointer on a point shows its coordinates, for example "X 120.00 · Y 1,050.00".
 - **Typing exact coordinates.** A right-click on a point opens the point editor, where **X** and **Y** take exact values (see
   [Point and region menus](#point-and-region-menus)).
 
-A click inside a zone also places a free point; it does not select the zone. To select a zone, the user selects its row in the **Zones** list, or
-right-clicks inside it and selects **Select zone**.
+A click inside a zone places a free point; it does not select the zone. To select a zone, the user selects its row in the **Zones** list, or
+right-clicks inside it and selects **Select zone**. A section holds at most 200 points.
 
 <VideoReference videoKey="dst-users-guide-video-cross-section-edit-points" /> shows a generated embankment being edited.
 - The bench point on the downstream face is dragged to a new position, which changes both slopes beside it.
@@ -275,45 +268,40 @@ right-clicks inside it and selects **Select zone**.
   width={MEDIA_WIDTH}
 />
 
-DST refuses an edit that would break the drawing, such as a move that makes two zones overlap or a deletion that leaves a zone with fewer than three
-points, and shows the reason in an amber note at the top of the canvas, for example "This edit would delete 'Zone 2'. Delete the component itself if
-that is the intent." A section holds at most 200 points.
-
 ### Selecting points
 
-A click on a point selects it. Ctrl+click adds a point to the selection or removes it. Holding Shift and dragging draws a selection rectangle; the
-points inside it are selected when the button is released. When two or more points are selected, a chip at the top of the canvas reads, for example,
-"4 selected · 18 unselected", with a **Delete** button that deletes the selected points. Escape, or a click outside the canvas, clears the
-selection.
+A click on a point selects it, and Ctrl+click adds it to the selection or removes it. Shift+drag draws a selection rectangle and selects the points
+inside it. With two or more points selected, a chip reads, for example, "4 selected · 18 unselected", with a **Delete** button that deletes them.
+Escape, or a click outside the canvas, clears the selection.
 
 ### Point and region menus
 
-A right-click on a point opens the point editor (<FigReference figKey="dst-users-guide-fig-dam-information-point-menu" />). On a touch screen,
-pressing and holding a point for half a second opens it. The editor is headed **Point**, in some cases followed by a role the point holds, such
-as **Heel**. Its **X** and **Y** boxes take exact coordinates to 0.01; a value applies when the user leaves the box or presses Enter. Below them are the
-point's actions:
+A right-click on a point opens the point editor (<FigReference figKey="dst-users-guide-fig-dam-information-point-menu" />); on a touch screen, a
+press and hold on the point opens it. The editor is headed **Point**, sometimes followed by a role the point holds, such as **Heel**. Its **X** and
+**Y** boxes take exact coordinates to 0.01; a value applies when the user leaves the box or presses Enter. Its actions are:
 
 - **Use as upstream crest**, **Use as downstream crest**, **Use as upstream toe** and **Use as downstream toe**, in the embankment editor, for the
   roles the point is eligible for (see [Crest and toe points](#crest-and-toe-points)).
 - **Add to Monolith outline** (or the Weir or Pier outline), in the concrete editor, for each outline the point is not yet part of.
 - **Delete point**.
 
-A right-click inside a zone opens a menu headed by the zone's name and its number of points, with **Select zone**, **Merge with adjacent zone** and
-**Delete zone**. Inside the seepage berm the menu offers **Select berm** and **Delete berm**, and inside a concrete outline it offers **Delete
-region**. Escape or a click elsewhere closes a menu. Users who cannot edit see the point's coordinates in the menu and no actions.
+A right-click inside a zone opens a menu with **Select zone**, **Merge with adjacent zone** and **Delete zone**. Inside the seepage berm it offers
+**Select berm** and **Delete berm**, and inside a concrete outline **Delete region**. Users who cannot edit see the point's coordinates and no
+actions.
 
 <Figure
   figKey="dst-users-guide-fig-dam-information-point-menu"
   src="figures/web-applications/dst/users-guide/v1.0/figures/dam-information-point-menu.png"
-  alt="Part of the embankment editor canvas around the upstream crest of a zoned embankment, under the readout 'Crest 25.00 ft · El 812.00'. The US Crest point has a selection ring, and the point editor beside it is headed Point, with an X box holding 260.00 and a Y box holding 812.00, and the actions 'Use as upstream crest' and 'Delete point'."
+  alt="The point editor open on the US Crest point of a zoned embankment, headed Point, with X 260.00 and Y 812.00 and the actions 'Use as upstream crest' and 'Delete point'."
   caption="The point editor, opened on a crest point."
   width="50%"
 />
 
 ### Keyboard controls
 
-The canvas is a single stop in the Tab order. <TableReference tableKey="dst-users-guide-table-cross-section-editors-keys" /> lists the keys it
-accepts. A key typed into a box on the canvas, such as a coordinate box, goes to that box instead.
+The canvas takes keys once it has focus: the user selects it or moves to it with Tab.
+<TableReference tableKey="dst-users-guide-table-cross-section-editors-keys" /> lists the keys. A key typed into a box on the canvas, such as a
+coordinate box, goes to that box instead.
 
 <TableVertical
   tableKey="dst-users-guide-table-cross-section-editors-keys"
@@ -336,53 +324,34 @@ accepts. A key typed into a box on the canvas, such as a coordinate box, goes to
   ]}
 />
 
-### Exporting points
-
-**Export points** downloads a CSV file named for the section. The file lists the X and Y coordinates of each point in blocks, one block per zone
-or outline, and states the units. With points selected, the file holds only those points.
-
 ## Reference Images
 
-A reference image is a drawing or screenshot of the cross section placed under the canvas so the user can trace it. The image is a drafting aid: it
-saves with the screening as soon as it is added or changed, never needs Save, and adding, changing or removing it does not clear the page's
-verification. Each section holds at most one image. The image controls are on the **Image** tab of the editor's right panel
+Use a reference image to trace a drawing or screenshot of the cross section. The image saves with the screening as soon as it is added or changed,
+never needs Save, and does not clear the page's verification. Each section holds one image. The image controls are on the **Image** tab
 (<FigReference figKey="dst-users-guide-fig-dam-information-image-calibration" />).
 
 ### Adding an image
 
-With no image, the **Image** tab shows **Reference Image**, the note "Saved with the screening", and the buttons **Upload image** and **Paste
-screenshot**. The image must be a PNG or JPEG file of 10 MB or less, no more than 16,384 pixels on a side and 40,000,000 pixels in all. A file that
-fails these limits is refused with a notice, such as "That image is larger than 10 MB — downscale it and try again."
+With no image, the **Image** tab offers **Upload image** and **Paste screenshot**. The image must be a PNG or JPEG file of 10 MB or less, no more
+than 16,384 pixels on a side and 40,000,000 pixels in all. Once an image is in place, the tab offers:
 
-Once an image is in place, the top of the tab holds these controls:
+- **Show**, which hides or shows the image.
+- **Flip**, which mirrors the image left to right, for a drawing with upstream on the right. It is unavailable while the image is hidden or
+  calibrated from three known points, which sets the orientation itself.
+- **Replace image**, **Replace with a pasted screenshot** and **Remove image and calibration**.
 
-- **Show** hides or shows the image.
-- **Flip** mirrors the image left to right, for a drawing with upstream on the right. It is unavailable while the image is hidden, and when the image
-  is calibrated from three known points, which sets the orientation itself; its tooltip then reads "Three-point calibration sets the orientation
-  automatically."
-- **Replace image**, **Replace with a pasted screenshot** and **Remove image and calibration** (the icon buttons).
+**Show**, **Flip** and **Opacity** save at once with the image, so it reopens as the user left it.
 
-**Show**, **Flip** and the **Opacity** slider in the status bar are stored with the image and its calibration, so they save at once like the image
-itself and need no Save. The image reopens shown or hidden, flipped and faded as the user left it.
-
-While a shown image is not yet calibrated, the drawing tools are unavailable, and the Body and Berm tabs read "Drawing tools are disabled until the
-visible reference image is calibrated. Finish calibration on the Image tab, or hide or remove the image." Clicks on the canvas place calibration
-marks instead of points.
-
-**Calibrate by** chooses the calibration method: **Scale + datum** or **Known points**. DST keeps the entries of both methods. A line of guidance
-under the choice names the next step, for example "Start with Level — mark two points along something horizontal (base, water line, crest).", and
-reads "Calibrated — …" when calibration is complete. Each step has a **Place** button, which becomes **Move** once the mark is placed; while a step
-waits for a click on the image, its button reads **Cancel**, and a note over the canvas says what to click. After each mark the panel moves on to the
-next step. Escape pauses calibration.
-
-When the marks cannot define a transformation, for example when two marks sit on the same spot or a dimension has no length, the guidance line
-turns red and reads "Calibration failed — check for coincident marks or a zero-length dimension." While the image is shown, the drawing tools stay
-unavailable, as for an image not yet calibrated, until a mark is moved or a length corrected.
+A shown image must be calibrated before drawing: until then the drawing tools are unavailable and clicks on the canvas place calibration marks.
+**Calibrate by** chooses **Scale + datum** or **Known points**; DST keeps the entries of both. A guidance line under the choice names the next step,
+for example "Start with Level — mark two points along something horizontal (base, water line, crest).", and reads "Calibrated — …" when
+calibration is complete. Each step has a **Place** button, which becomes **Move** once the mark is placed and **Cancel** while it waits for a click.
+Escape pauses calibration.
 
 <Figure
   figKey="dst-users-guide-fig-dam-information-image-calibration"
   src="figures/web-applications/dst/users-guide/v1.0/figures/dam-information-image-calibration.png"
-  alt="The embankment editor for a new, unnamed earth section with the Image tab selected. The title bar shows 'Unnamed cross section' and an amber '3 issues' chip, and the toolbar reads 'Image layer — calibration controls are in the side panel'. Under the canvas grid lies a reference drawing of a zoned embankment with a 25 ft crest at El 812, an 85 ft height, a 492.5 ft base and a 125 ft berm. Magenta calibration marks are drawn over it: Level and D1: 492.5 along the base, D2: 85 beside the height, Datum X at the upstream toe and Datum Y at the crest. On the right, the Reference Image panel has Show on, Flip off, and the replace, paste and delete icon buttons. Calibrate by is set to Scale + datum, and a green line reads 'Calibrated — 1 px = 0.721 ft (H) · 0.726 ft (V). Verify the Y datum elevation, then trace by clicking.' Below it, the rows Level ('corrects 0.0°'), D1 (H) with Length 492.50, D2 (V) with Length 85.00, Datum X with X 0.00 and Datum Y with Y 812.00 each show a green check and a Move button. The status bar shows Grid 10 ft, Snap off and Opacity 100%."
+  alt="The embankment editor with the Image tab selected and a drawing of a zoned embankment under the canvas grid, with calibration marks Level and D1: 492.5 along the base, D2: 85 beside the height, Datum X at the upstream toe and Datum Y at the crest. The Reference Image panel has Show on, Flip off and Calibrate by set to Scale + datum, with the line 'Calibrated — 1 px = 0.721 ft (H) · 0.726 ft (V). Verify the Y datum elevation, then trace by clicking.' The rows Level, D1 (H) with Length 492.50, D2 (V) with Length 85.00, Datum X with X 0.00 and Datum Y with Y 812.00 each show a check and a Move button."
   caption="A reference image calibrated by scale and datum."
   width={MEDIA_WIDTH}
 />
@@ -401,8 +370,8 @@ unavailable, as for an image not yet calibrated, until a mark is moved or a leng
 
 ### Calibrating by scale and datum
 
-The **Scale + datum** method sets the horizontal and vertical scales separately, so a stretched scan calibrates correctly. When a step is complete,
-DST moves on to the next one and waits for its first mark, so the user can go from mark to mark without selecting **Place** each time.
+**Scale + datum** sets the horizontal and vertical scales separately, so a stretched scan calibrates correctly. When a step is complete, DST moves
+to the next one and waits for its first mark.
 
 <ProcessList
   items={[
@@ -410,7 +379,7 @@ DST moves on to the next one and waits for its first mark, so the user can go fr
       title: (
         <>
           <strong>Level.</strong> The user places the two ends of a line that is horizontal on the structure, such as the base, a water line or the
-          crest. DST rotates the image so the line reads horizontal. The longer the line, the better.
+          crest. DST rotates the image so the line reads horizontal. A longer line gives a better result.
         </>
       ),
     },
@@ -447,8 +416,7 @@ DST moves on to the next one and waits for its first mark, so the user can go fr
   ]}
 />
 
-The datum points fix the drawing in place; the tooltips on **Datum X** and **Datum Y** note that accuracy is highest at the datum. If the two marks
-of D1 sit almost directly above one another, or the two marks of D2 at almost the same height, the guidance line turns red and says so.
+Accuracy is highest near the datum points.
 
 <VideoReference videoKey="dst-users-guide-video-cross-section-calibrate-scale" /> calibrates a pasted drawing by scale and datum from start to
 finish:
@@ -457,8 +425,7 @@ finish:
 - **Datum X** is marked at the upstream toe, at X 0.
 - **Datum Y** is marked at the upstream end of the crest, at elevation 812.
 
-The guidance line reads "Calibrated — 1 px = 0.721 ft (H) · 0.726 ft (V)". **Re-center** then shows the drawing in place under the grid, with the
-axes in feet and elevation.
+The guidance line reads "Calibrated — 1 px = 0.721 ft (H) · 0.726 ft (V)". **Re-center** then shows the drawing in place under the grid.
 
 <Video
   videoKey="dst-users-guide-video-cross-section-calibrate-scale"
@@ -469,14 +436,12 @@ axes in feet and elevation.
 
 ### Calibrating by known points
 
-The **Known points** method uses up to three points whose coordinates can be read off the drawing, labeled **A**, **B** and **C**. For each, the
-user places the mark on the image and enters its **X** and **Y**. Two points, A and B, calibrate the image; the guidance then reads "Calibrated
-from A and B. Add C to correct skew or stretch, or start tracing." A third point, C, corrects skew and stretch as well. C is optional, so DST does
-not wait for it; the user selects its **Place** button first. With all three, the guidance reads "Calibrated — full affine from A, B, C. Trace the
-section by clicking."
+**Known points** uses up to three points whose coordinates can be read off the drawing, labeled **A**, **B** and **C**. For each, the user places
+the mark on the image and enters its **X** and **Y**. A and B calibrate the image; the guidance then reads "Calibrated from A and B. Add C to
+correct skew or stretch, or start tracing." C is optional and also corrects skew and stretch; the user selects its **Place** button to add it.
+With all three, the guidance reads "Calibrated — full affine from A, B, C. Trace the section by clicking."
 
-Points far apart give the best result. A and B work well at the two toes or at the ends of the base, and C at a crest corner, well off the line
-through A and B.
+Points far apart give the best result: A and B at the two toes or the ends of the base, and C at a crest corner, well off the line through A and B.
 
 <VideoReference videoKey="dst-users-guide-video-cross-section-calibrate-points" /> switches the same drawing to **Known points** and calibrates
 it from three corners:
@@ -493,13 +458,12 @@ it from three corners:
 
 ### Tracing the image
 
-Once the image is calibrated, the drawing tools return and the user traces the section by clicking on the features of the image. Each click lands
-at the X and elevation under the pointer.
+Once the image is calibrated, the drawing tools return and the user traces the section by clicking on the features of the image.
 - Snap is off by default while an image is shown, so a click lands where the drawing shows the corner, not at the nearest grid point.
 - The pointer coordinates in the status bar confirm the position before each click.
-- The usual approach is to trace the outer outline first as one zone, then draw each internal zone over it, which cuts it out of the outline (see
+- Tracing the outer outline first as one zone, then drawing each internal zone over it, cuts the internal zones out of the outline (see
   [Drawing, splitting and merging zones](#drawing-splitting-and-merging-zones)).
-- Lowering **Opacity**, or turning **Show** off on the Image tab, makes the traced zones easier to check against the drawing.
+- Lowering **Opacity**, or turning **Show** off, makes the traced zones easier to check against the drawing.
 
 <VideoReference videoKey="dst-users-guide-video-cross-section-trace" /> traces the calibrated drawing:
 - The outer outline is traced through the two toes and the crest corners and named **Shell**, with an upstream shell material.
@@ -516,15 +480,14 @@ at the X and elevation under the pointer.
 
 ## The Embankment Editor
 
-The embankment editor defines an earth or rockfill cross section as a set of zones, each with one material, plus an optional seepage berm.
-
+Use the embankment editor to define an earth or rockfill cross section as a set of zones, each with one material, plus an optional seepage berm.
 <FigReference figKey="dst-users-guide-fig-dam-information-embankment-editor" /> shows the editor, and
 <TableReference tableKey="dst-users-guide-table-cross-section-editors-embankment-regions" /> describes each numbered region.
 
 <Figure
   figKey="dst-users-guide-fig-dam-information-embankment-editor"
   src="figures/web-applications/dst/users-guide/v1.0/figures/dam-information-embankment-editor.png"
-  alt="The embankment editor open over the Dam Information page for the zoned section Maximum Section, Sta 6+50. The title bar shows the name with a pencil button and the amber status 'Unsaved changes'. The toolbar above the canvas holds Draw zone, Split and Merge at the left and Save, Cancel and Start over at the right. The canvas shows the section with the zones Upstream Shell, Core, Chimney Filter and Downstream Shell filled in their material colors, a seepage berm at the downstream toe with one moved point ringed, the labels US Toe, US Crest, DS Crest and DS Toe, the slopes 3.00H:1V and 2.50H:1V, and the dimensions 'Crest 25.00 ft · El 812.00', 'Height 85.00 ft' and 'Base 492.50 ft · El 727.00'. Three icon buttons sit at the top right of the canvas, and the status bar reads 'Grid: 10 ft · Scroll to zoom · Drag to pan · Shift+drag to select' with Snap on. The right panel shows Foundation, Required, set to Soil Foundation; the tabs Body, Berm and Image with Body selected; a Zones list of Upstream Shell, Core (selected), Chimney Filter, Blanket Drain and Downstream Shell with their materials; and Selected Zone Name 'Core', Selected Zone Material 'Material 01 — Clay core' and a Delete selected zone button. Numbered callouts 1 to 9 mark the name, the status, the drawing tools, Save and Cancel, Start over, Foundation, the canvas buttons, the component tabs and the status bar."
+  alt="The embankment editor for the zoned section Maximum Section, Sta 6+50, with the status 'Unsaved changes'. The canvas shows the zones Upstream Shell, Core, Chimney Filter, a blanket drain and Downstream Shell, a seepage berm at the downstream toe, the labels US Toe, US Crest, DS Crest and DS Toe, the slopes 3.00H:1V and 2.50H:1V, and 'Crest 25.00 ft · El 812.00', 'Height 85.00 ft' and 'Base 492.50 ft · El 727.00'. The panel shows Foundation set to Soil Foundation, the Body tab with the Zones list and Core selected, with Selected Zone Material 'Material 01 — Clay core'. Numbered callouts 1 to 9 mark the name, the status, the drawing tools, Save and Cancel, Start over, Foundation, the canvas buttons, the component tabs and the status bar."
   caption="The embankment editor."
   width={MEDIA_WIDTH}
 />
@@ -542,8 +505,8 @@ The embankment editor defines an earth or rockfill cross section as a set of zon
       <>
         The section name; <strong>Edit name</strong> renames it (see <a href="#opening-an-editor">Opening an Editor</a>).
       </>,
-      'Unsaved changes, a refused edit, or an editing conflict. When the section has messages, the issue chip sits between the name and the status.',
-      'The tools of the selected tab: Draw zone, Split and Merge on the Body tab; Draw berm and Delete berm on the Berm tab.',
+      'Unsaved changes, a refused edit or an editing conflict, with the issue chip when the section has messages.',
+      'Draw zone, Split and Merge on the Body tab; Draw berm and Delete berm on the Berm tab.',
       <>
         Save or discard the section's changes (see <a href="#saving-and-canceling">Saving and Canceling</a>).
       </>,
@@ -552,7 +515,7 @@ The embankment editor defines an earth or rockfill cross section as a set of zon
       </>,
       'The foundation condition of the section.',
       'Re-center, Import points and Export points.',
-      'Body, Berm and Image, each with its own panel below.',
+      'Body, Berm and Image.',
       'Grid spacing, Snap, Opacity and the pointer coordinates.',
     ],
   ]}
@@ -585,17 +548,16 @@ lists it with the other inputs of the embankment editor.
 
 ### Body tab
 
-The **Body** tab lists the section's zones under **Zones**. Each row shows the zone's color swatch, which matches its fill on the canvas, its name,
-and its material, or **Unassigned** in amber. Selecting a row or a zone on the canvas selects the zone and shows **Selected Zone Name**, **Selected
-Zone Material** and **Delete selected zone** ("Remove the zone — its points stay in the drawing"). With no zones, the tab reads "No zones yet. Place
-points on the canvas, then connect them with Draw zone in the toolbar."
+The **Body** tab lists the section's zones under **Zones**, each with its name and its material, or **Unassigned**. Selecting a row selects the
+zone and shows **Selected Zone Name**, **Selected Zone Material** and **Delete selected zone** ("Remove the zone — its points stay in the
+drawing"). With no zones, the tab reads "No zones yet. Place points on the canvas, then connect them with Draw zone in the toolbar."
 
 ### Drawing on a blank canvas
 
 **Blank canvas** starts a section with nothing but the grid. The user places the corners of the section with clicks, then joins them into a zone
-with **Draw zone**. With Snap on, each click lands on the nearest grid point; the grid spacing in the status bar, such as "Grid: 2 ft", gets finer
-as the view is zoomed in. Where an exact position matters, the user places a point near it and types the coordinates in the point editor. When a
-typed point leaves the view, **Re-center** brings the drawing back.
+with **Draw zone**. With Snap on, each click lands on the nearest grid point, and the grid gets finer as the view is zoomed in. Where an exact
+position matters, the user places a point near it and types the coordinates in the point editor. When a typed point leaves the view, **Re-center**
+brings the drawing back.
 
 <VideoReference videoKey="dst-users-guide-video-cross-section-blank-canvas" /> builds a small embankment on a blank canvas:
 - The first point is placed and given an elevation of 740 in the point editor, and **Re-center** brings it into view.
@@ -612,27 +574,25 @@ typed point leaves the view, **Re-center** brings the drawing back.
 
 ### Drawing, splitting and merging zones
 
-The Body tab's toolbar holds three tools. Selecting an active tool again, or pressing Escape, cancels it.
+The Body tab has three tools. Selecting an active tool again, or pressing Escape, cancels it. While a tool is active, a note over the canvas
+describes the next click, for example "Click points in order; click the first point to close the zone".
 
-- **Draw zone** ("Draw a zone outline — click points in order, click the first point to close"). The button reads **Drawing** while active. The user
-  clicks the zone's corners in order; a click on an existing point uses that point. A click on the first point, or Enter after three or more
-  points, closes the zone, and Backspace removes the last point. A zone drawn over existing zones is cut out of them. When the zone closes, the right
-  panel shows a **New zone** card that says how the new zone affects existing zones, for example "The new zone is cut out of 2 existing zones.", with
-  **Zone Name** and **Material** boxes and the buttons **Cancel**, **Skip assignment** (adds the zone without a name or material) and **Apply
+- **Draw zone** ("Draw a zone outline — click points in order, click the first point to close"). The user clicks the zone's corners in order; a
+  click on an existing point uses that point. A click on the first point, or Enter after three or more points, closes the zone, and Backspace
+  removes the last point. The **New zone** card then says how the new zone affects existing zones, for example "The new zone is cut out of 2
+  existing zones.", with **Zone Name**, **Material**, **Cancel**, **Skip assignment** (adds the zone without a name or material) and **Apply
   zone**.
-- **Split** ("Cut zones in two along a line drawn between boundary points"), available once a zone exists. The user starts the cut on a zone
-  boundary, adds any corner points, and ends on a boundary; Enter ends the cut after two or more points. The **Split** card reads, for example, "1
-  zone will be split into 2 zones. Names and material assignments are inherited.", with **Cancel** and **Apply split**.
-- **Merge** ("Combine two zones that share an edge"), available once a zone is selected. The user selects a zone, then **Merge**, then the adjacent
-  zone. The two must share a full edge. The **Merge** card lists both zones, and the user chooses the one that keeps its name and material, then
-  selects **Apply merge** or **Cancel**.
+- **Split** ("Cut zones in two along a line drawn between boundary points"). The user starts the cut on a zone boundary, adds any corner points,
+  and ends on a boundary; Enter ends the cut after two or more points. The **Split** card reads, for example, "1 zone will be split into 2 zones.
+  Names and material assignments are inherited.", with **Cancel** and **Apply split**.
+- **Merge** ("Combine two zones that share an edge"). The user selects a zone, then **Merge**, then the adjacent zone. The two must share a full
+  edge. In the **Merge** card the user chooses the zone that keeps its name and material, then selects **Apply merge** or **Cancel**.
 
-While a tool is active, a note at the top of the canvas describes the next click, for example "Click points in order; click the first point to close
-the zone". A drawing holds at most 20 zones and berms.
+A drawing holds at most 20 zones and berms.
 
 Drawing a zone over existing zones is the quickest way to add an internal zone such as a core, a filter or a drain. The user outlines the internal
 zone with its edges on the outer boundary, and DST cuts it out of the zones it covers. When the cut divides a zone into separate pieces, each piece
-becomes its own zone and keeps the original name and material. The **New zone** card says so, for example "The new zone is cut out of 1 existing
+becomes its own zone with the original name and material, and the **New zone** card says so, for example "The new zone is cut out of 1 existing
 zone. 2 remainder pieces keep the original name and material."
 
 <VideoReference videoKey="dst-users-guide-video-cross-section-draw-core" /> draws a core in a generated homogeneous embankment.
@@ -648,8 +608,8 @@ zone. 2 remainder pieces keep the original name and material."
   width={MEDIA_WIDTH}
 />
 
-Split works the other way: it divides one zone along a line, and both parts keep the zone's name and material until the user changes them. The cut
-ends as soon as it reaches a boundary, and the **Split** card appears.
+Split divides one zone along a line, and both parts keep the zone's name and material until the user changes them. The cut ends as soon as it
+reaches a boundary, and the **Split** card appears.
 
 <VideoReference videoKey="dst-users-guide-video-cross-section-split-assign" /> splits a homogeneous embankment and reassigns the parts:
 - The cut runs from the crest to the base, and **Apply split** divides the embankment.
@@ -677,40 +637,25 @@ ends as soon as it reaches a boundary, and the **Split** card appears.
 
 ### Assigning materials
 
-Every zone needs a material, and the zone list shows **Unassigned** in amber, with the message "Assign a material to this zone.", until it has one.
-Materials come from the Materials section of the Dam Information page, so they must be defined there first (see
-[Materials](./310-dam-information.mdx#materials)). A zone gets its material in one of these ways:
-- **When it is drawn.** The **New zone** card has **Zone Name** and **Material**, and **Apply zone** applies both. **Skip assignment** adds the
-  zone without them.
+Every zone needs a material; until it has one, the zone list shows **Unassigned** and the message "Assign a material to this zone." Materials come
+from the Materials section of the Dam Information page, so they must be defined there first (see [Materials](./310-dam-information.mdx#materials)).
+A zone gets its material in one of these ways:
+- **When it is drawn.** The **New zone** card has **Zone Name** and **Material**, and **Apply zone** applies both.
 - **Afterward.** Selecting the zone, in the **Zones** list or with **Select zone** on its right-click menu, shows **Selected Zone Name** and
-  **Selected Zone Material**. A change shows on the drawing at once and is stored with the rest of the section at **Save**.
+  **Selected Zone Material**. The change is stored with the rest of the section at **Save**.
 - **By inheritance.** The parts of a split zone, and the pieces left when a new zone cuts one in two, keep the original zone's material. A merged
   zone keeps the material of the zone chosen in the **Merge** card.
 - **From the generator.** **Generate drawing** assigns the Embankment Material, and for a zoned section the Core Material.
 
-A tool refuses a result that would break the drawing, and the note at the top of the canvas gives the reason. The outline being drawn stays in
-place, so the user can move on with another click, Backspace, or Escape. The reasons include:
-
-- **Draw zone.** "Draw a simple zone with at least three unique points.", "This outline matches zones that already exist — nothing new would be
-  created.", "A zone fully inside another zone would create a hole. Connect the new zone to an existing boundary.", "This outline would leave an
-  enclosed zone as a hole. Connect it to the new zone’s boundary, or delete it first." and "Outline clicks landed on the same point. Zoom in or turn
-  off Snap to place distinct points."
-- **Split.** "Draw one non-self-crossing split from one body boundary to another without following a boundary.", "A split may cross each zone only
-  once." and "The path does not cut a body zone."
-- **Merge.** "Zones must share a full edge to merge.", "A shared merge edge may belong to only two zones.", "The merge would create multiple cycles
-  or a hole." and "The merged zone would overlap another body zone."
-- **Draw zone** and **Draw berm**, at the limit of 20 zones and berms: "A drawing may contain at most 20 rings."
-
 ### Berm tab
 
-The **Berm** tab holds the seepage berm, a separate component downstream of the embankment toe. Its toolbar shows **Draw berm**, or **Redraw berm**
-once a berm exists, and **Delete berm**. The berm is drawn the same way as a zone. When it closes, the **Seepage berm** card reads "The body zones
-are unchanged. Assign one main embankment material to the berm.", with **Berm Material**, **Cancel**, **Skip assignment** and **Apply berm**.
+Use the **Berm** tab to add a seepage berm, a separate component downstream of the embankment toe. The tab offers **Draw berm** (or **Redraw berm**
+once a berm exists) and **Delete berm**. The berm is drawn the same way as a zone, usually sharing points with the downstream face and the
+downstream toe so that it sits against the embankment without overlapping it. When it closes, the **Seepage berm** card reads "The body zones are
+unchanged. Assign one main embankment material to the berm.", with **Berm Material**, **Cancel**, **Skip assignment** and **Apply berm**.
 
-The tab shows **Berm Material** for an existing berm, or "No berm yet — use Draw berm in the canvas toolbar." Under **Derived berm measures** it
-shows the read-only **Berm Length** and **Berm Toe Elevation** that DST measures from the drawing.
-
-The berm usually shares points with the downstream face and the downstream toe, so it sits against the embankment without overlapping it.
+With a berm, the tab shows **Berm Material** and, under **Derived berm measures**, the read-only **Berm Length** and **Berm Toe Elevation** that DST
+measures from the drawing. Without one, it reads "No berm yet — use Draw berm in the canvas toolbar."
 
 <VideoReference videoKey="dst-users-guide-video-cross-section-berm" /> adds a seepage berm to a generated embankment:
 - On the **Berm** tab, **Draw berm** starts at a point on the downstream face.
@@ -728,22 +673,22 @@ The berm usually shares points with the downstream face and the downstream toe, 
 
 ### Crest and toe points
 
-DST finds the upstream and downstream crest points and toe points of the embankment from its outline and marks them on the canvas as **US Crest**,
-**DS Crest**, **US Toe** and **DS Toe**. When DST cannot tell which point is which, the section shows the warning "The crest or toe boundary is
-ambiguous — review the resolved semantic points." The user fixes a role by opening the point editor on the right point and selecting, for example,
-**Use as upstream crest**. Only points eligible for a role offer it.
+DST finds the crest and toe points of the embankment from its outline and labels them **US Crest**, **DS Crest**, **US Toe** and **DS Toe**. When
+DST cannot tell which point is which, the section shows the warning "The crest or toe boundary is ambiguous — review the resolved semantic points."
+To set a role, the user opens the point editor on the right point and selects, for example, **Use as upstream crest**. Only points eligible for a
+role offer it.
 
 ### Generating a simple embankment
 
 **Simple embankment** on an empty canvas opens the **Generate embankment drawing** dialog
 (<FigReference figKey="dst-users-guide-fig-dam-information-embankment-generator" />), which builds a starting drawing from the crest and the face
-slopes. **Homogeneous** builds a single zone; **Zoned** adds a core and enables the **Core** tab ("Choose Zoned to add a core."). A preview at the
-left redraws as the user enters values. <TableReference tableKey="dst-users-guide-table-cross-section-editors-generator-inputs" /> lists the inputs.
+slopes. **Homogeneous** builds a single zone; **Zoned** adds a core and enables the **Core** tab ("Choose Zoned to add a core."). A preview redraws
+as the user enters values. <TableReference tableKey="dst-users-guide-table-cross-section-editors-generator-inputs" /> lists the inputs.
 
 <Figure
   figKey="dst-users-guide-fig-dam-information-embankment-generator"
   src="figures/web-applications/dst/users-guide/v1.0/figures/dam-information-embankment-generator.png"
-  alt="The Generate embankment drawing dialog. At the top, the segmented control has Zoned selected over Homogeneous, beside the tabs Embankment, selected, and Core. On the left are Crest Elevation (ft-NAVD88) 812.00 with the note 'From Dam Data.', Crest Width (ft) 20.00, Embankment Material 'Material 01 — Clay core', and two tables, Upstream Face and Downstream Face, with the columns Top (ft), Bottom (ft) and Slope (H:1V): the upstream row runs from 812.00 to 752.00 at 3.00 and the downstream row from 812.00 to 752.00 at 2.50. On the right, the preview draws an embankment with a core inside it, labeled 'Crest 20.00 ft · El 812.00', 'Height 60.00 ft' and 'Base 350.00 ft · El 752.00'. At the bottom, the note 'Generate a clean starting drawing, then refine points and zone assignments on the canvas.' sits beside the Cancel and Generate drawing buttons."
+  alt="The Generate embankment drawing dialog with Zoned selected and the Embankment tab open: Crest Elevation 812.00 with the note 'From Dam Data.', Crest Width 20.00, Embankment Material 'Material 01 — Clay core', and the Upstream Face table from 812.00 to 752.00 at 3.00 H:1V and the Downstream Face table from 812.00 to 752.00 at 2.50 H:1V. The preview draws the embankment with a core, labeled 'Crest 20.00 ft · El 812.00', 'Height 60.00 ft' and 'Base 350.00 ft · El 752.00'. The Cancel and Generate drawing buttons close the dialog."
   caption="The Generate embankment drawing dialog with a zoned embankment."
   width={MEDIA_WIDTH}
 />
@@ -771,7 +716,7 @@ left redraws as the user enters values. <TableReference tableKey="dst-users-guid
       'Defaults to the dam crest elevation on the Dam Data page; the note under the box reads "From Dam Data." or gives the Dam Data value when the two differ.',
       'The width of the crest.',
       'The material assigned to the embankment zone.',
-      'One table per face, a row per slope segment from the crest down: Top (read-only, the bottom of the row above, or the crest), Bottom and Slope (H:1V).',
+      'One table per face, a row per slope segment from the crest down: Top (read-only, the bottom of the row above, or the crest), Bottom and Slope (H:1V). Up to 50 rows.',
       'The top of the core, at or below the crest. Core tab.',
       'The width of the top of the core. Core tab.',
       'The material assigned to the core. Core tab.',
@@ -780,11 +725,16 @@ left redraws as the user enters values. <TableReference tableKey="dst-users-guid
   ]}
 />
 
-The slope tables work like the other tables in DST (see [Tables](./040-working-in-dst.mdx#tables)). A face with more than one slope, such as a
-face with a bench, takes one row per slope: Tab from the last cell of a table adds a row, whose Top is the Bottom of the row above. **Generate
-drawing** replaces the empty canvas with the drawing and closes the dialog; the drawing is then edited and saved like any other.
+A face with more than one slope, such as a face with a bench, takes one row per slope. Tab from the last cell of a table adds a row, whose Top is
+the Bottom of the row above (see [Tables](./040-working-in-dst.mdx#tables)). **Generate drawing** places the drawing on the canvas and closes the
+dialog; the drawing is then edited and saved like any other. **Cancel** closes the dialog without a drawing.
 - A **Homogeneous** drawing is one zone named **Embankment**, with the Embankment Material.
 - A **Zoned** drawing is a **Core** zone, with the Core Material, inside a **Shell** zone with the Embankment Material.
+
+Until the inputs describe a shape, the preview reads "Enter the crest and slopes, or the core, to see a preview." The mouse wheel zooms the preview
+and dragging pans it; with the preview focused, + and − zoom and the arrow keys pan. **Fit to section** returns it to the whole section. The same
+controls work in the preview of **Copy at new base elevation** (see
+[Copying at a new base elevation](./310-dam-information.mdx#copying-at-a-new-base-elevation)).
 
 <VideoReference videoKey="dst-users-guide-video-cross-section-generator" /> generates a homogeneous embankment:
 - The crest width is 25 ft, with the crest elevation taken from Dam Data.
@@ -809,21 +759,7 @@ drawing** replaces the empty canvas with the drawing and closes the dialog; the 
   src="/videos/web-applications/dst/users-guide/v1.0/cross-section-generator-zoned.mp4"
   caption="Adding a core to the generator inputs for a zoned embankment."
   width={MEDIA_WIDTH}
-/> If an input is missing, the dialog says "Complete the
-crest and each slope chain before generating the drawing." (or, for Zoned, "Complete the crest, the core and each slope chain on the Embankment and
-Core tabs before generating the drawing."). A core that does not fit reads "The core does not fit inside the embankment. Keep its top at or below the
-crest, and run both core faces down to the base or neither." **Cancel** closes the dialog without a drawing.
-
-Until the inputs describe a shape, the preview reads "Enter the crest and slopes, or the core, to see a preview." Once drawn, the preview can be
-examined more closely without changing the inputs. The same controls work in the preview of **Copy at new base elevation** (see
-[Copying at a new base elevation](./310-dam-information.mdx#copying-at-a-new-base-elevation)):
-
-- The mouse wheel zooms about the pointer, and dragging pans; the line under the preview reads "Scroll to zoom · Drag to pan".
-- With the preview focused, + and − zoom about its center, and the arrow keys pan it.
-- **Fit to section** (the crosshair) returns the preview to the whole section.
-
-Each slope table, on either tab, holds up to 50 rows. A drawing generated from a longer table is refused at Save with "A slope chain can hold at most
-50 segments."
+/>
 
 ### Starting over
 
@@ -874,15 +810,15 @@ those specific to the embankment editor.
 
 ## The Concrete Editor
 
-The concrete editor defines a concrete gravity or roller-compacted concrete cross section as one or two outlines, with an optional drain and
+Use the concrete editor to define a concrete gravity or roller-compacted concrete cross section as one or two outlines, with an optional drain and
 applied forces, and a Tainter gate for a gated overflow section. <FigReference figKey="dst-users-guide-fig-dam-information-concrete-editor" />
-shows the editor, and <TableReference tableKey="dst-users-guide-table-cross-section-editors-concrete-regions" /> describes each numbered region. Its
-toolbar holds only **Save** and **Cancel**; the tools of each component are on the component's tab.
+shows the editor, and <TableReference tableKey="dst-users-guide-table-cross-section-editors-concrete-regions" /> describes each numbered region. The
+tools of each component are on the component's tab.
 
 <Figure
   figKey="dst-users-guide-fig-dam-information-concrete-editor"
   src="figures/web-applications/dst/users-guide/v1.0/figures/dam-information-concrete-editor.png"
-  alt="The concrete editor for a new, unnamed concrete section. The title bar shows 'Unnamed cross section' with a pencil button and an amber '1 issue' chip. Below it, Section Type offers Overflow (Gated), Overflow (Ungated) and Non-Overflow, with Non-Overflow selected. The canvas shows a monolith outline with a vertical upstream face and a sloping downstream face, labeled US Crest and DS Crest at the top, El 100.00, Heel and Toe at the base, 'Base 90.00 ft · El 0.00' and 'Structural height 100.00 ft', with Upstream and Downstream at the top corners, three icon buttons at the top right, and the status bar 'Grid: 5 ft' with Snap on. The right panel has the tabs Monolith, selected, Drain, Forces and Image. It shows 'Monolith Region', '4 points', a Redefine by clicking button and a trash icon; the note on editing the outline; Width, into page (ft) 50.00; and the rows 'Upstream end of crest: (0.00, 100.00)' and 'Downstream end of crest: (20.00, 100.00)', each with Change and ×. Numbered callouts 1 to 6 mark the name and issue chip, the Section Type control, the canvas, the component tabs, the outline status and its buttons, and the crest-end rows."
+  alt="The concrete editor for a new, unnamed concrete section with a '1 issue' chip and Section Type set to Non-Overflow. The canvas shows a monolith outline labeled US Crest and DS Crest at El 100.00, Heel and Toe at the base, 'Base 90.00 ft · El 0.00' and 'Structural height 100.00 ft'. The Monolith tab shows 'Monolith Region', '4 points', Redefine by clicking, Width, into page 50.00, and 'Upstream end of crest: (0.00, 100.00)' and 'Downstream end of crest: (20.00, 100.00)', each with Change and ×. Numbered callouts 1 to 6 mark the name and issue chip, Section Type, the canvas, the component tabs, the outline status and its buttons, and the crest-end rows."
   caption="The concrete editor with a non-overflow section."
   width={MEDIA_WIDTH}
 />
@@ -904,7 +840,7 @@ toolbar holds only **Save** and **Cancel**; the tools of each component are on t
       <>
         The drawing (see <a href="#the-drawing-canvas">The Drawing Canvas</a>).
       </>,
-      'One tab per component, plus Drain, Forces and Image.',
+      'One tab per outline, plus Drain, Forces and Image.',
       'The status of the selected outline and the buttons that define or delete it.',
       'The points that bound the crest of the outline.',
     ],
@@ -917,43 +853,40 @@ toolbar holds only **Save** and **Cancel**; the tools of each component are on t
 non-overflow section has one outline, the **Monolith**, and the tabs **Monolith**, **Drain**, **Forces** and **Image**. A gated overflow section has
 two outlines, the **Weir** and the **Pier**, and the tabs **Weir**, **Pier**, **Gate**, **Drain**, **Forces** and **Image**. Changing the section type
 keeps the section's points and other entries: leaving the gated type turns the weir back into a monolith and keeps the pier and gate entries in case
-the user returns to it. The section card on the Dam Information page names the type, for example **Concrete Non-Overflow**.
+the user returns to it.
 
 ### Outline tabs
 
-The **Monolith**, **Weir** and **Pier** tabs each define one outline. The tab shows the outline's status, its number of points or **Not defined**, and
-these controls:
+The **Monolith**, **Weir** and **Pier** tabs each define one outline, with its number of points or **Not defined**:
 
-- **Define by clicking**, or **Redefine by clicking** once the outline exists, starts the outline. The user clicks its corners in order; a click on
-  empty canvas places a new point and a click on a point uses it. A click on the first point closes the outline, as does **Finish region** after three
-  or more points. Backspace undoes the last point, and Escape or **Cancel** stops without changing the outline. The note over the canvas repeats these
-  rules.
+- **Define by clicking** (or **Redefine by clicking**) starts the outline. The user clicks its corners in order; a click on empty canvas places a
+  new point and a click on a point uses it. A click on the first point, or **Finish region** after three or more points, closes the outline.
+  Backspace undoes the last point, and Escape or **Cancel** stops without changing the outline.
 - The trash icon ("Delete region (points are kept)") deletes the outline and leaves its points on the canvas.
-- **Width, into page** is the width of the component measured along the dam axis.
-- **Upstream end of crest** and **Downstream end of crest**, on the Monolith and Weir tabs, show the coordinates of the points that bound the crest.
-  **Pick** (or **Change**) waits for a click on a point of the outline, and × clears the choice.
+- **Width, into page** is the width of the component along the dam axis.
+- **Upstream end of crest** and **Downstream end of crest**, on the Monolith and Weir tabs, show the points that bound the crest. **Pick** (or
+  **Change**) waits for a click on a point of the outline, and × clears the choice.
 
-The tab also reads "Edit the outline on the canvas — drag points to move them, right-click a point to type exact coordinates or delete it, click an
-edge to add a point on it." DST marks the **Heel**, **Toe** and crest points on the canvas. The base of the section must be flat: the heel and toe
-must share one elevation, with no base point between them above it.
+An outline is edited like a zone: drag points to move them, right-click a point to type exact coordinates or delete it, and click an edge to add a
+point. DST labels the **Heel**, **Toe** and crest points. The base must be flat: the heel and toe share one elevation, with no base point between
+them above it.
 
 ### Gate tab
 
-The **Gate** tab, on a gated overflow section, defines the **Tainter Gate**. Its heading's tooltip explains that the gate face is drawn as a circular
-arc about the trunnion between the sill-contact and top-of-gate elevations. **Trunnion** shows the trunnion point's coordinates; **Place trunnion**
-(or **Move trunnion**) waits for a click on the canvas, which places a new point or uses an existing one, and **Cancel placement** stops.
+The **Gate** tab, on a gated overflow section, defines the **Tainter Gate**, whose face is drawn as a circular arc about the trunnion between the
+sill-contact and top-of-gate elevations. **Place trunnion** (or **Move trunnion**) waits for a click on the canvas, which places a new point or uses
+an existing one; **Cancel placement** stops. The gate's other inputs are listed below.
 
 ### Drain tab
 
-The **Drain** tab defines an optional drain, at most one per cross section. **Top** and **Bottom** each show a point's coordinates with a **Place**
-(or **Move**) button that waits for a click on the canvas. **Clear drain** removes the drain.
+The **Drain** tab defines an optional drain, one per cross section. **Top** and **Bottom** each have a **Place** (or **Move**) button that waits for
+a click on the canvas. **Clear drain** removes the drain.
 
 ### Forces tab
 
-The **Forces** tab lists optional applied forces. **Add force** adds a row, numbered **F1**, **F2** and so on. In each row the crosshair button
-waits for a click on the canvas at the force's application point, on or off the structure; a click on a point uses it. The row then shows the
-point's coordinates. The trash icon (**Remove force**) removes the force; while a point is being placed, × (**Cancel placing**) stops
-placing it. A section holds at most 100 forces. With no forces, the tab explains these steps.
+The **Forces** tab lists optional applied forces, up to 100. **Add force** adds a row, numbered **F1**, **F2** and so on. In each row the
+crosshair button waits for a click at the force's application point, on or off the structure; a click on a point uses it. **Remove force** (the
+trash icon) removes the force, and **Cancel placing** (×) stops placing a point.
 
 <TableReference tableKey="dst-users-guide-table-cross-section-editors-concrete-inputs" /> lists the inputs of every concrete editor tab.
 
@@ -1087,24 +1020,22 @@ Messages for a component name it, for example "The weir region has not been defi
 
 ## Import Points
 
-The **Import points** dialog adds points from a block of coordinates copied from a spreadsheet, a CSV file or any two-column text
+Use the **Import points** dialog to add points from coordinates copied from a spreadsheet, a CSV file or any two-column text
 (<FigReference figKey="dst-users-guide-fig-dam-information-import-points" />). It opens from **Paste coordinates** on an empty canvas or from the
 **Import points** button on the canvas.
 
 The user pastes the block into **Pasted coordinates**: two values per line, X then Y, separated by a tab, a comma or spaces. A header row is skipped,
 blank lines and lines beginning with # are ignored, and coordinates are rounded to 0.01. A pasted point at the coordinates of an existing point uses
-that point instead of adding a second one. DST lists each line it cannot read under "N issues found", for example "Line 4: expected two values (X and
-Y), found 3.", and **Import** stays unavailable until every line reads. The section must still hold no more than 200 points after the import.
+that point instead of adding a second one.
 
 - **In the embankment editor**, the dialog reads, for example, "12 points will be imported." The imported points are free points; the user then
   draws zones through them with **Draw zone**.
-- **In the concrete editor**, the dialog adds two choices. **Connect as** is **None — just add points** or an outline, such as **Monolith outline**,
-  and connects the points in paste order; a closing point repeated at the end is folded into the outline. When that outline already exists, a note
-  explains that the import replaces its point order and keeps its points. **Replace all existing points** removes every existing point first, and
-  everything that refers to those points. A **Summary** lists the **Rows**, the **New points**, the **Matched existing points (reused)** and, when
-  connecting, the number of vertices in the outline. "Too many points" appears when the import would exceed 200 points.
+- **In the concrete editor**, **Connect as** is **None — just add points** or an outline, such as **Monolith outline**, which connects the points in
+  paste order; a closing point repeated at the end is folded into the outline. Importing into an outline that already exists replaces its point
+  order and keeps its points. **Replace all existing points** removes every existing point first, and everything that refers to those points. A
+  **Summary** lists the **Rows**, the **New points**, the **Matched existing points (reused)** and, when connecting, the outline's vertices.
 
-**Import** adds the points and closes the dialog; the import, like any other edit, waits for **Save**. Closing the dialog without **Import** adds
+**Import** adds the points and closes the dialog; like any other edit, the import waits for **Save**. Closing the dialog without **Import** adds
 nothing.
 
 <VideoReference videoKey="dst-users-guide-video-cross-section-paste-coordinates" /> starts an embankment section from pasted coordinates:
@@ -1123,7 +1054,79 @@ nothing.
 <Figure
   figKey="dst-users-guide-fig-dam-information-import-points"
   src="figures/web-applications/dst/users-guide/v1.0/figures/dam-information-import-points.png"
-  alt="The Import points dialog in the concrete editor. A note explains pasting two columns, X and Y (ft). The Pasted coordinates box holds six lines: 0 0, 0 100, 15 100, 20 95, 90 0 and 0 0. Connect as is set to Monolith outline, and the Replace all existing points check box is cleared, with the note 'removes 4 points and clears anything referencing them'. The Summary panel lists Rows 6, New points 2, Matched existing points (reused) 3 and Monolith outline '5 vertices, in paste order'. An amber note reads 'The Monolith outline is already defined. Importing replaces its point order with the paste order. The points themselves are kept.' An Accepted format panel describes the format, and the Cancel and Import buttons sit at the bottom."
+  alt="The Import points dialog in the concrete editor. Pasted coordinates holds six lines: 0 0, 0 100, 15 100, 20 95, 90 0 and 0 0. Connect as is set to Monolith outline, and Replace all existing points is cleared, with the note 'removes 4 points and clears anything referencing them'. The Summary lists Rows 6, New points 2, Matched existing points (reused) 3 and Monolith outline '5 vertices, in paste order'. A note reads 'The Monolith outline is already defined. Importing replaces its point order with the paste order. The points themselves are kept.' with the Cancel and Import buttons."
   caption="The Import points dialog in the concrete editor."
   width="70%"
 />
+
+## Common Problems
+
+### The tools, panels and Save are unavailable
+
+The user cannot edit the screening, or its inputs are locked (see [Input Lock](./040-working-in-dst.mdx#input-lock)). The editor opens read-only.
+
+### "Drawing tools are disabled until the visible reference image is calibrated."
+
+A reference image is shown but not calibrated, and clicks on the canvas place calibration marks. The full message reads "Drawing tools are disabled
+until the visible reference image is calibrated. Finish calibration on the Image tab, or hide or remove the image." The user completes the
+calibration steps (see [Calibrating by scale and datum](#calibrating-by-scale-and-datum)), or turns **Show** off, or removes the image.
+
+### "Calibration failed — check for coincident marks or a zero-length dimension."
+
+The marks cannot define a scale, for example because two marks sit on the same spot or a dimension has a length of zero. The drawing tools stay
+unavailable while the image is shown. The user selects **Move** on the mark at fault, or corrects the **Length**. The guidance line also reports
+when the two marks of D1 sit almost directly above one another, or the two marks of D2 at almost the same height; the user moves one mark of that
+dimension further along it.
+
+### An image is refused
+
+DST refuses an image with a notice:
+- "Only PNG or JPEG images can be used as a digitizing reference." The user saves the drawing as a PNG or JPEG file.
+- "That image is larger than 10 MB — downscale it and try again." The user reduces the image size.
+- "The clipboard has no image. Copy a screenshot first." The user copies the screenshot again, then selects **Paste screenshot**.
+- "This browser cannot read images from the clipboard here. Press Ctrl+V instead." or "Could not read the clipboard. Allow clipboard access, or
+  press Ctrl+V." The user presses Ctrl+V in the editor, or allows clipboard access when the browser asks.
+
+### An edit is refused
+
+DST refuses an edit that would break the drawing and gives the reason in a note at the top of the canvas, for example "This edit would delete
+'Zone 2'. Delete the component itself if that is the intent." The outline being drawn stays in place, so the user can continue with another click,
+Backspace or Escape. The reasons include:
+
+- **Draw zone.** "Draw a simple zone with at least three unique points.", "This outline matches zones that already exist — nothing new would be
+  created.", "A zone fully inside another zone would create a hole. Connect the new zone to an existing boundary.", "This outline would leave an
+  enclosed zone as a hole. Connect it to the new zone’s boundary, or delete it first." and "Outline clicks landed on the same point. Zoom in or turn
+  off Snap to place distinct points."
+- **Split.** "Draw one non-self-crossing split from one body boundary to another without following a boundary.", "A split may cross each zone only
+  once." and "The path does not cut a body zone."
+- **Merge.** "Select a zone before starting a merge.", "Zones must share a full edge to merge.", "A shared merge edge may belong to only two
+  zones.", "The merge would create multiple cycles or a hole." and "The merged zone would overlap another body zone."
+- **Draw zone** and **Draw berm**, at the limit of 20 zones and berms: "A drawing may contain at most 20 rings."
+
+### The generator does not create a drawing
+
+**Generate drawing** reports what is missing:
+- "Complete the crest and each slope chain before generating the drawing." (or, for Zoned, "Complete the crest, the core and each slope chain on
+  the Embankment and Core tabs before generating the drawing."). The user fills in the crest and the last Bottom and Slope of each face table.
+- "The core does not fit inside the embankment. Keep its top at or below the crest, and run both core faces down to the base or neither."
+- At Save, a slope table of more than 50 rows is refused with "A slope chain can hold at most 50 segments."
+
+### Import is unavailable
+
+The dialog lists each line it cannot read under "[n] issues found", for example "Line 4: expected two values (X and Y), found 3.", and **Import**
+stays unavailable until every line reads. In the concrete editor, "Too many points" means the import would take the section past 200 points; the
+user removes rows or selects **Replace all existing points**.
+
+### "A cross section can hold at most 200 points."
+
+DST refuses to save a section with more than 200 points. The user deletes points that do not change the shape, such as extra points along a
+straight edge, then saves again.
+
+### Another user changed or deleted the section
+
+When another user saves Dam Information while the editor is open, the status reads "Dam Information changed in another session. Your drawing is
+kept — Save applies it to the latest version; Cancel discards it." The **Unsaved changes** dialog then says that Save applies the drawing to the
+latest version and Discard drops it.
+
+If another user deletes the section, the editor closes with "The cross section you were editing was deleted, so its editor closed.", or, with
+unsaved changes, "The cross section you were editing was deleted, so its editor closed and its unsaved changes were discarded."

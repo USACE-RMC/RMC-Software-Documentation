@@ -5,6 +5,7 @@ title: 'System Response'
 import Figure from '@site/src/components/Figure';
 import FigReference from '@site/src/components/FigureReference';
 import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
 import TableReference from '@site/src/components/TableReference';
 import TableVertical from '@site/src/components/TableVertical';
 import Video from '@site/src/components/Video';
@@ -15,8 +16,10 @@ import { MEDIA_WIDTH } from './_media-width.js';
 
 # System Response
 
-The **System Response** section shows the location's SRP: the probability of the failure mode's system response at each headwater elevation (or at
-each overtopping depth, on PFM-01). DST calculates it automatically once the characterization is complete.
+Use the **System Response** section of a failure mode page to read the location's system response probability (SRP), export it, revise individual
+nodes, or enter the curve directly. The SRP is the probability of the failure mode's system response at each headwater elevation (or at each
+overtopping depth, on PFM-01). DST calculates it automatically once the characterization is complete. [Common problems](#common-problems) at the end
+of this page covers results that do not show, revisions that disappear and warnings on a user-defined SRP.
 
 <FigReference figKey="dst-users-guide-fig-failure-mode-evaluation-system-response" /> shows a calculated system response, and
 <TableReference tableKey="dst-users-guide-table-failure-mode-evaluation-system-response-regions" /> describes each numbered region.
@@ -24,7 +27,7 @@ each overtopping depth, on PFM-01). DST calculates it automatically once the cha
 <Figure
   figKey="dst-users-guide-fig-failure-mode-evaluation-system-response"
   src="figures/web-applications/dst/users-guide/v1.0/figures/failure-mode-evaluation-system-response.png"
-  alt="The System Response section of a PFM-01 location. At the top is the box Max overtopping depth evaluated (ft) reading 10.00 with an Auto badge. On the left is a table with the columns Overtopping Depth (ft) and System Response Probability and eight rows, from 0.00 at 0.00E+00 through 0.82 at 0.00E+00, 1.02 at 1.00E-02, 1.84 at 5.30E-01, 2.24 at 6.91E-01, 3.27 at 8.84E-01 and 5.31 at 9.84E-01 to 10.00 at 1.00E+00. On the right is a chart of System Response Probability from 0 to 1 against Overtopping Depth (ft) from 0 to 10, with a DST Estimate curve that stays at zero to about 1 ft, rises steeply to about 0.9 at 3 ft and approaches 1. Copy and download buttons sit in the chart's upper right corner. Below is the collapsed heading Nodal System Response. Numbered callouts 1 through 4 mark the table, the chart, the copy and download buttons and the Nodal System Response heading."
+  alt="The System Response section of a PFM-01 location. The box Max overtopping depth evaluated (ft) reads 10.00 with an Auto badge. A table of Overtopping Depth (ft) and System Response Probability has eight rows, from 0.00 at 0.00E+00 through 1.02 at 1.00E-02, 1.84 at 5.30E-01 and 3.27 at 8.84E-01 to 10.00 at 1.00E+00. A chart plots the DST Estimate curve, which stays at zero to about 1 ft, rises steeply to about 0.9 at 3 ft and approaches 1. Below is the collapsed heading Nodal System Response. Callouts 1 through 4 mark the table, the chart, the copy and download buttons and the Nodal System Response heading."
   caption="The System Response section of a failure mode page."
   width={MEDIA_WIDTH}
 />
@@ -53,8 +56,8 @@ each overtopping depth, on PFM-01). DST calculates it automatically once the cha
   ]}
 />
 
-While the system response recalculates, the chart shows a placeholder curve. Some pages show an input above the table that sets the range of the curve, such
-as the maximum depth evaluated; each failure mode's page in this guide describes it.
+While the system response recalculates, the chart shows a placeholder curve. Some pages show an input above the table that sets the range of the
+curve, such as the maximum depth evaluated; each failure mode's page in this guide describes it.
 
 ## Active SRP
 
@@ -62,18 +65,19 @@ The SRP mode in the toolbar chooses the location's active SRP: the curve DST pas
 Preview.
 
 - **DST Based SRP** (**Event tree** on the event-tree pages): the curve DST calculates from the page's inputs, including any nodal revisions.
-- **User Defined SRP** (**User defined**): a curve the user enters in a table (see [User-defined SRP](#user-defined-srp)). The page
-  replaces its characterization and system response sections with the table and its chart.
+- **User Defined SRP** (**User defined**): a curve the user enters in a table (see [User-defined SRP](#user-defined-srp)). The page replaces its
+  characterization and system response sections with the table and its chart.
 
-DST keeps both curves. Switching the mode back restores the inputs, results and revisions of the other mode. Switching the mode clears the location's
-verification. In DST Based SRP mode, the active SRP is ready only when the results are current (see [Calculation currency](#calculation-currency)).
+DST keeps both curves, so switching the mode back restores the inputs, results and revisions of the other mode. Switching the mode clears the
+location's verification. In DST Based SRP mode, the active SRP is ready only when the results are current (see
+[Calculation currency](#calculation-currency)).
 
 ## SRP charts
 
 Every system response chart works the same way:
 
-- The legend inside the plot names each curve: **DST Estimate**, and **Revised Estimate** once a node is revised. Pages with more than one pathway
-  plot one curve per pathway, such as **Toe Pathway** and **Daylight Pathway**.
+- The legend names each curve: **DST Estimate**, and **Revised Estimate** once a node is revised. Pages with more than one pathway plot one curve
+  per pathway, such as **Toe Pathway** and **Daylight Pathway**.
 - Resting the pointer on a curve shows its values at that point.
 - The mouse wheel, or a pinch on a touch screen, zooms the chart; dragging pans it. **Reset zoom** restores the full view.
 - **Copy SRP curve data for spreadsheets** copies the curve values to the clipboard, and **Download SRP curves as a CSV file** downloads them. Both
@@ -81,51 +85,43 @@ Every system response chart works the same way:
 
 ### The SRP CSV file
 
-The downloaded file opens with comment lines, each starting with "#", that record where the curves came from:
-
-- the title, such as "PFM-02 CLE due to Cross Valley Differential Settlement — System Response Curves";
-- "[dam] · Screening [number] · [location] · Generated [date and time] UTC";
-- "SRP mode: DST (calculated)" or "SRP mode: User Defined";
-- "Nodal revisions applied: yes" or "no";
-- "Last calculated: [date and time] UTC", when DST has calculated the location; and, on some failure modes, lines on the inputs behind the curves.
-
-Two tables follow, separated by a blank line: the calculated curves, such as one column per node beside the total, and the active SRP
-curve, headed, for example, "Active SRP curve (DST) — the curve risk calculations consume" (or "(User Defined)"), which is the curve passed to
-the Risk Analysis module. Times are in UTC.
+The downloaded file opens with comment lines, each starting with "#", that record the failure mode, the dam, screening and location, the date and
+time generated, the SRP mode ("SRP mode: DST (calculated)" or "SRP mode: User Defined"), whether nodal revisions were applied, and when DST last
+calculated the location. Two tables follow: the calculated curves, such as one column per node beside the total, and the active SRP curve, headed,
+for example, "Active SRP curve (DST) — the curve risk calculations consume", which is the curve passed to the Risk Analysis module. Times are in
+UTC.
 
 ## Nodal tables
 
 A system response is built from a sequence of nodes, each the probability of one event in the failure mode. The SRP table summarizes the total at
-up to eight headwaters, which DST chooses to preserve the shape of the full curve; a curve with few distinct points has fewer rows. The table has the
-columns **Headwater Elevation (ft)** (or the page's horizontal axis) and **System Response Probability**. Once a node is revised, the second column
-becomes **DST Estimate** and **Revised Estimate**, and the cells of revised rows are tinted. The table is read-only; the Revised Estimate column fills
-from the nodal revisions.
+up to eight headwaters that DST chooses to preserve the shape of the full curve. Once a node is revised, the probability column becomes **DST
+Estimate** and **Revised Estimate**, and the revised rows are highlighted. The table is read-only; the Revised Estimate column fills from the nodal
+revisions.
 
-Below the table, **Nodal System Response** opens to show one card per node. Each card names its node and what it represents, shows its probability
-range across the eight headwaters (or its single probability, for a node that does not vary with headwater), and carries a **DST** tag, or a
-**Revised** tag once the node is revised. A revised card also reads **Needs justification** or **Justification provided**.
+Below the table, **Nodal System Response** opens to show one card per node. Each card names its node, shows its probability range across the
+headwaters (or its single probability, for a node that does not vary with headwater), and carries a **DST** tag, or a **Revised** tag once the node
+is revised. A revised card also reads **Needs justification** or **Justification provided**.
 
 <FigReference figKey="dst-users-guide-fig-failure-mode-evaluation-nodal-cards" /> shows the node cards.
 
 <Figure
   figKey="dst-users-guide-fig-failure-mode-evaluation-nodal-cards"
   src="figures/web-applications/dst/users-guide/v1.0/figures/failure-mode-evaluation-nodal-cards.png"
-  alt="The Nodal System Response section, expanded, with five node cards in a row, each with a gray DST tag: Node 1, Unsuccessful Intervention, Probability 1.00E+00; Node 2, Slope Protection Failure, Probability Range 0.00E+00 – 1.00E+00; Node 3, Initiation, 1.00E+00; Node 4, Continuation, 1.00E+00; and Node 5, Breach, Probability Range 0.00E+00 – 1.00E+00."
+  alt="The Nodal System Response section, open, with five node cards, each tagged DST: Node 1, Unsuccessful Intervention, Probability 1.00E+00; Node 2, Slope Protection Failure, Probability Range 0.00E+00 – 1.00E+00; Node 3, Initiation, 1.00E+00; Node 4, Continuation, 1.00E+00; and Node 5, Breach, Probability Range 0.00E+00 – 1.00E+00."
   caption="The node cards of the Nodal System Response section."
   width={MEDIA_WIDTH}
 />
 
 ## Nodal revisions
 
-A nodal revision replaces DST's estimate for a node with the team's own, at some or all of the headwaters. Selecting a node card opens the node's
-dialog (<FigReference figKey="dst-users-guide-fig-failure-mode-evaluation-nodal-detail" />), with the node's table on the left and its chart on the
-right; <TableReference tableKey="dst-users-guide-table-failure-mode-evaluation-nodal-inputs" /> describes its inputs. The information icon beside
-the dialog's title explains how the eight headwaters are chosen.
+Use a nodal revision to replace DST's estimate for a node with the team's own, at some or all of the headwaters. Selecting a node card opens the
+node's dialog (<FigReference figKey="dst-users-guide-fig-failure-mode-evaluation-nodal-detail" />), and
+<TableReference tableKey="dst-users-guide-table-failure-mode-evaluation-nodal-inputs" /> describes its inputs.
 
 <Figure
   figKey="dst-users-guide-fig-failure-mode-evaluation-nodal-detail"
   src="figures/web-applications/dst/users-guide/v1.0/figures/failure-mode-evaluation-nodal-detail.png"
-  alt="The dialog 'Node 2 - Slope Protection Failure' with an information icon and a close button. On the left is a table with the columns Overtopping Depth (ft), DST Estimate and Revised Estimate: the DST estimate is 0.00E+00 at 0.00 and 1.00E+00 at every depth from 0.82 to 10.00, and the Revised Estimate cells are empty. Below is the Justification for Revision box with the placeholder 'Why this node differs from the DST estimate' and the count 0 / 4000. On the right is a chart of Nodal Probability against Overtopping Depth (ft) with a DST Estimate line that steps from 0 to 1 at about 0.8 ft."
+  alt="The dialog 'Node 2 - Slope Protection Failure'. A table has the columns Overtopping Depth (ft), DST Estimate and Revised Estimate: the DST estimate is 0.00E+00 at 0.00 and 1.00E+00 at every depth from 0.82 to 10.00, and the Revised Estimate cells are empty. Below is the Justification for Revision box, empty, with the count 0 / 4000. A chart plots Nodal Probability against Overtopping Depth (ft), with a DST Estimate line that steps from 0 to 1 at about 0.8 ft."
   caption="The dialog of a node."
   width={MEDIA_WIDTH}
 />
@@ -141,46 +137,38 @@ the dialog's title explains how the eight headwaters are chosen.
     ['ft', '—', '—', '—'],
     ['Optional', 'Read-only', 'Optional', 'Conditional: while the node is revised'],
     [
-      'The eight headwaters at which the node is tabulated. Editable; values must increase down the table. An edited headwater is tinted. A node that does not vary with headwater shows All Pools.',
-      "DST's estimate at each headwater, in scientific notation.",
+      'The headwaters at which the node is tabulated. Editable for this node only; values must increase down the table. A node that does not vary with headwater shows All Pools.',
+      "DST's estimate at each headwater.",
       "The team's estimate, from 0 to 1. Blank by default. Once one cell holds a value, the other cells show the DST estimate in gray italics until they are changed.",
-      'Why the node differs from the DST estimate. Saves when the user leaves the box; also entered in the Failure mode summary.',
+      'Why the node differs from the DST estimate, up to 4,000 characters. Saves when the user leaves the box; also entered in the Failure mode summary.',
     ],
   ]}
 />
 
-The chart and the
-Revised Estimate column of the SRP table update as the user types, and the revisions save shortly after each change. Revisions do not recalculate the
-system response; DST combines the revised nodes into the Revised Estimate curve, which becomes the active SRP.
+To revise a node:
 
-In the node's chart, a probability of 1 lies on the top edge of the plot, where its line is hard to see. A small triangle in the curve's color at
-the top edge marks each headwater at which the DST Estimate or the Revised Estimate reaches 1.
+<ProcessList
+  items={[
+    { title: <>The user opens <strong>Nodal System Response</strong> below the SRP table and selects the node's card.</> },
+    { title: <>In the dialog, the user enters the team's estimates in the <strong>Revised Estimate</strong> column at one or more headwaters.</> },
+    { title: <>The user enters the reason in <strong>Justification for Revision</strong> and closes the dialog.</> },
+  ]}
+/>
 
-### Node headwaters
-
-DST picks the eight headwaters with the Ramer–Douglas–Peucker algorithm, which keeps the points that best preserve the shape of the overall system
-response curve, so that a few points can stand for the full curve. The points are picked on the overall curve and shared by every node, so each
-node's table starts at the same headwaters. A headwater edited in a node's table changes it for that node only.
-
-DST does not save a revision that breaks these rules, and reports why:
-
-- "Node [node] needs at least 2 headwater values to interpolate an SRP curve."
-- "Node [node] headwaters must be strictly increasing; [x] at position [n] is not greater than the previous value [y]."
-- "Node [node] revised probabilities must be between 0 and 1."
+The node's chart and the Revised Estimate column of the SRP table update as the user types, and the revisions save shortly after each change.
+Revisions do not recalculate the system response; DST combines the revised nodes into the Revised Estimate curve, which becomes the active SRP. In
+the node's chart, a small triangle at the top edge marks each headwater at which a curve reaches 1.
 
 ### How the Revised Estimate is combined
 
-The Revised Estimate scales the DST Estimate by how far each revised node departs from DST's value for it:
-
-- **Ratio at each node headwater.** For each revised node, DST divides the revised estimate by the DST estimate at each of the node's headwaters.
-  A blank revised cell, or a DST estimate of zero, gives a ratio of 1, which leaves the node as DST estimated it there.
-- **Between headwaters.** The ratio is interpolated linearly between the node's headwaters and held at the end values beyond the first and last.
-  A node that does not vary with headwater has one ratio for all pools.
-- **Total.** At each headwater of the curve, the Revised Estimate is the DST Estimate multiplied by the ratio of every revised node, and never less
-  than 1E-16.
+At each headwater, the Revised Estimate is the DST Estimate multiplied by the ratio of revised to DST estimate of every revised node, and never less
+than 1E-16. Between a node's headwaters the ratio is interpolated linearly, and beyond the first and last it is held at the end values. A blank
+revised cell, or a DST estimate of zero, leaves the node as DST estimated it there.
 
 For example, where the DST Estimate is 1.0E-03, revising one node from 0.50 to 0.25 gives a Revised Estimate of 5.0E-04. Revising a second node
-from 0.80 to 0.40 at the same headwater halves it again, to 2.5E-04. Unrevised nodes do not change the result.
+from 0.80 to 0.40 at the same headwater halves it again, to 2.5E-04.
+
+### Reverting revisions
 
 Three buttons undo revisions, each after a confirmation dialog whose **Continue and revert** button proceeds:
 
@@ -201,57 +189,53 @@ the table returns to the DST values.
 
 :::caution
 
-Nodal revisions belong to the calculated results. When an input on this page or another page changes and the system response recalculates, DST clears the location's
-nodal revisions together with its results and verification. DST reports a change on another page in a notice; one example reads "Dam Information,
-Operational Data or Failure Mode Screening inputs changed since these results were calculated. The results, nodal adjustments, and SRP
-verification were cleared; the analysis will recalculate automatically." The first sentence differs between failure modes. The justifications of revised nodes are kept.
+Nodal revisions belong to the calculated results. When an input on this page or another page changes and the system response recalculates, DST
+clears the location's nodal revisions together with its results and verification. The justifications of revised nodes are kept.
 
 :::
 
 ## Calculation currency
 
 DST records which version of the System Response calculation produced each result. When stored results cannot be confirmed as current, the System
-Response section shows a notice in place of the results; DST withholds the chart and the copy and download buttons; and the location's status is not
-Defined. <TableReference tableKey="dst-users-guide-table-failure-mode-evaluation-currency" /> lists the notices.
+Response section shows a notice in place of the results, the chart and the copy and download buttons are withheld, and the location's status is
+not Defined. <TableReference tableKey="dst-users-guide-table-failure-mode-evaluation-currency" /> lists the notices and what to do.
 
 <TableVertical
   tableKey="dst-users-guide-table-failure-mode-evaluation-currency"
-  colWidths={['28ch', 'minmax(30ch, 1fr)']}
-  alt="The calculation currency notices of the System Response section and when each appears"
+  colWidths={['minmax(30ch, 1fr)', '30ch']}
+  alt="The calculation currency notices of the System Response section and what to do about each"
   caption="Calculation currency notices"
-  headers={[[{ value: 'When' }, { value: 'Notice' }]]}
+  headers={[[{ value: 'Notice' }, { value: 'What to do' }]]}
   columns={[
     [
-      'Results from an older model version',
-      'Results from an older model version, not refreshed automatically',
-      'Results with no recorded version',
-      'Results with no recorded version, not refreshed automatically',
-      'Results missing newer detail',
-      'Calculation service unreachable',
-      'Calculation service reports no version',
-    ],
-    [
       'These System-Response results were produced by an older model version. DST is refreshing them before they can be used.',
-      'These System-Response results were produced by an older model version. They must be recalculated before they can be used.',
       'These stored results do not record which System-Response model version produced them, so they cannot be shown as current. DST is recalculating them.',
-      'These stored results do not record which System-Response model version produced them, so they cannot be shown as current. They must be recalculated before they can be used.',
       'These stored results predate detail System-Response now reports. DST is recalculating them.',
+      'These System-Response results were produced by an older model version. They must be recalculated before they can be used.',
+      'These stored results do not record which System-Response model version produced them, so they cannot be shown as current. They must be recalculated before they can be used.',
       'Results will display once the calculation service is reachable.',
       'Results will display once the calculation service reports a version for this model.',
+    ],
+    [
+      'None. The notice clears when DST has refreshed the results.',
+      'None. The notice clears when DST has recalculated the results.',
+      'None. The notice clears when DST has recalculated the results.',
+      'DST cannot recalculate with the current inputs. The user resolves the required inputs and errors in the page messages, and DST recalculates.',
+      'DST cannot recalculate with the current inputs. The user resolves the required inputs and errors in the page messages, and DST recalculates.',
+      'None. The results show once the calculation service is reachable.',
+      'None. The results show once the calculation service reports a version.',
     ],
   ]}
 />
 
-When DST refreshes the results, the notice clears on its own. When results were cleared while no one had the page open, the page shows the reason in
-a notice when it next opens, and recalculates. Out-of-date results cannot be verified or exported, and they keep the screening from being submitted
-(see [Submission Readiness](./040-working-in-dst.mdx#submission-readiness)).
+Out-of-date results cannot be verified or exported, and they keep the screening from being submitted (see
+[Submission Readiness](./040-working-in-dst.mdx#submission-readiness)).
 
 ## User-defined SRP
 
-In **User Defined SRP** mode the page shows a table of points and a chart of the curve they define. The user enters the curve directly, or pastes it
-from a spreadsheet (see [Tables](./040-working-in-dst.mdx#tables)).
-
-<TableReference tableKey="dst-users-guide-table-failure-mode-evaluation-user-srp-inputs" /> describes the table's columns.
+Use **User Defined SRP** to enter the location's curve directly instead of using DST's calculation. In this mode the page shows a table of points
+and a chart of the curve they define. <TableReference tableKey="dst-users-guide-table-failure-mode-evaluation-user-srp-inputs" /> describes the
+table's columns.
 
 <TableVertical
   tableKey="dst-users-guide-table-failure-mode-evaluation-user-srp-inputs"
@@ -270,8 +254,53 @@ from a spreadsheet (see [Tables](./040-working-in-dst.mdx#tables)).
   ]}
 />
 
-The table starts with two rows. Until it holds values the chart reads "Enter values in the table to plot the system response curve." The table saves
-shortly after each change and becomes the active SRP. DST reports these warnings in the page messages: "SRP curve is empty."; a first headwater above
-the lowest hazard headwater, suggesting a point at or below it with probability 0; a probability that decreases between two points ("SRP curves
-should be monotonically non-decreasing."); a probability below 0 or above 1 ("Probabilities must be between 0 and 1."); and headwaters that are not
-strictly increasing.
+The table starts with two rows. Until it holds values, the chart reads "Enter values in the table to plot the system response curve." The table
+saves shortly after each change, and the curve becomes the active SRP. The table works like the other tables in DST (see
+[Tables](./040-working-in-dst.mdx#tables)).
+
+:::tip
+
+A curve kept in a spreadsheet pastes straight into the table: the user copies the two columns, selects the first cell and pastes, and the table
+adds rows as needed. Pressing Tab in the last cell also adds a row.
+
+:::
+
+## Common problems
+
+These problems apply to the System Response section of every failure mode page. For a system response that does not calculate at all, see
+[The system response does not calculate](./342-failure-mode-pages.mdx#the-system-response-does-not-calculate).
+
+### A notice shows in place of the results
+
+The stored results cannot be confirmed as current. The notice says whether DST is recalculating on its own or the results must be recalculated;
+[Calculation currency](#calculation-currency) lists each notice and what to do. Until the results are current, the location is not Defined and
+cannot be verified.
+
+### The nodal revisions disappeared
+
+An input on the page, or on a page the location reads, changed, and DST recalculated the system response. Recalculation clears the nodal revisions
+with the results and the verification; the justifications are kept. The team enters the revisions again against the new DST estimates.
+
+### A nodal revision is not saved
+
+DST does not save a revision that breaks these rules, and reports why:
+
+- "Node [node] needs at least 2 headwater values to interpolate an SRP curve."
+- "Node [node] headwaters must be strictly increasing; [x] at position [n] is not greater than the previous value [y]." The user corrects the
+  headwater, or selects **Revert to DST Headwaters**.
+- "Node [node] revised probabilities must be between 0 and 1."
+
+### The copy and download buttons are missing
+
+They appear only when the results are current. The user waits for the calculation to finish, or resolves the notice shown in place of the results.
+
+### Warnings on a user-defined SRP
+
+DST reports these warnings in the page messages; the curve is still saved:
+
+- "SRP curve is empty." The table holds no points.
+- "First headwater ([x] ft) is above the minimum hazard headwater ([y] ft). Consider adding a point at or below the minimum headwater with
+  probability 0."
+- "Probability decreases from [p] at HW=[x] to [q] at HW=[y]. SRP curves should be monotonically non-decreasing."
+- "Probability [p] at HW=[x] is negative. Probabilities must be between 0 and 1." or "... exceeds 1. Probabilities must be between 0 and 1."
+- "Headwater values are not strictly increasing. HW=[x] at index [n] is not greater than HW=[y]."

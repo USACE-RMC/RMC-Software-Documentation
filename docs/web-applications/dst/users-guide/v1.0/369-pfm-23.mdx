@@ -6,6 +6,7 @@ import Link from '@docusaurus/Link';
 import Figure from '@site/src/components/Figure';
 import FigReference from '@site/src/components/FigureReference';
 import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
 import TableReference from '@site/src/components/TableReference';
 import TableVertical from '@site/src/components/TableVertical';
 import { MEDIA_WIDTH } from './_media-width.js';
@@ -14,11 +15,48 @@ import { MEDIA_WIDTH } from './_media-width.js';
 
 # PFM-23: Monolith Instability due to Energy Dissipator Failure
 
-Potential failure mode 23 (PFM-23), Monolith Instability due to Energy Dissipator Failure, is instability of a concrete monolith after flow that is not adequately dissipated in the energy dissipator erodes the material downstream of it and a headcut progresses upstream under the energy dissipator and the upstream slabs. The loading is the reservoir pool, evaluated at stages from the spillway crest through the top of gates to the top of dam.
+Use this page to estimate the system response probability (SRP) of potential failure mode 23 (PFM-23), Monolith Instability due to Energy
+Dissipator Failure, at one location with an event tree. PFM-23 is instability of a concrete monolith after flow that is not adequately dissipated in
+the energy dissipator erodes the material downstream of it and a headcut progresses upstream under the energy dissipator and the upstream slabs. The
+loading is the reservoir pool, evaluated at stages from the spillway crest through the top of gates to the top of dam.
 
-[Event Trees](./344-event-trees.mdx) describes the parts of the page that every failure mode page shares.
+The user opens a PFM-23 location from **Response > Failure Mode Evaluation** (see [Opening a location](./341-locations.mdx#opening-a-location)).
+[Event Trees](./344-event-trees.mdx) describes the parts that every event-tree page shares, and
+[Failure Mode Pages](./342-failure-mode-pages.mdx) the parts that every failure mode page shares. To evaluate a location:
 
-The user opens the page by selecting a PFM-23 location on the Failure Mode Evaluation page (see [Opening a location](./341-locations.mdx#opening-a-location)).
+<ProcessList
+  items={[
+    {
+      title: (
+        <>
+          The user chooses the concrete cross section in <strong>Cross Section</strong> (see <a href="#location-and-cross-section">Location and Cross Section</a>).
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          The user checks the default stages in <strong>Stages to evaluate</strong> and adds stages where needed (see <a href="#stages-to-evaluate">Stages to Evaluate</a>).
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          The user selects each node in <strong>Event tree evaluation</strong>, sets its probability at each stage and enters its estimate rationale (see{' '}
+          <a href="#event-tree-evaluation">Event Tree Evaluation</a>).
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          The user reviews the results in <strong>System Response</strong> and verifies the location with the verification badge.
+        </>
+      ),
+    },
+  ]}
+/>
 
 <FigReference figKey="dst-users-guide-fig-pfm-23-page" /> shows the page, and <TableReference tableKey="dst-users-guide-table-pfm-23-regions" />
 describes each numbered region.
@@ -26,7 +64,7 @@ describes each numbered region.
 <Figure
   figKey="dst-users-guide-fig-pfm-23-page"
   src="figures/web-applications/dst/users-guide/v1.0/figures/pfm-23-page.png"
-  alt="The PFM-23 page for the location Stilling Basin, Spillway Section of Thistlewood Dam. Across the top are the site header and the module navigation with Response selected. The sub-navigation bar lists Dam Information, Failure Mode Screening, Failure Mode Selection and Failure Mode Evaluation, followed by the underlined breadcrumb 'PFM-23 · Stilling Basin, Spillway Section'; at its right are the page messages button with zero counts and an amber Unverified badge. Below are the heading '23 - Monolith Instability due to Energy Dissipator Failure' and a gray toolbar with the Location box showing 'Stilling Basin, Spillway Section', the Cross Section drop-down showing 'Spillway Section' and, at the right, the SRP mode control with Event tree selected. Section 1, Stages to evaluate, lists Spillway Crest at 777.00 (zero point), Top of Gates at 791.00 and Top of Dam at 812.00 under the columns Zero point, Elevation (ft-NAVD88), Stage and Source, with an Add stage button. Section 2, Event tree evaluation, reads '6 of 7 nodes complete' and shows the tree from a Flood marker through Inadequate Energy Dissipation, Erosion Initiation, Energy Dissipator Destabilization, Upstream Slab Destabilization, Unsuccessful Intervention, Shear Failure and Breach to a red end marker; every node has a green check except Node 7, which is amber, and Node 2 is selected. The top of Node 2's panel shows below the tree, and the collapsed Failure mode summary tray is at the bottom. Numbered callouts mark: 1 Breadcrumb, 2 Page messages, 3 Verification badge, 4 Page heading, 5 Location, 6 Cross Section, 7 SRP mode, 8 Stages to evaluate, 9 Event tree evaluation."
+  alt="The PFM-23 page for the location Stilling Basin, Spillway Section, with the cross section Spillway Section, Event tree mode and an Unverified badge. Stages to evaluate lists Spillway Crest at 777.00 as the zero point, Top of Gates at 791.00 and Top of Dam at 812.00. Event tree evaluation reads '6 of 7 nodes complete' and shows a single path through Inadequate Energy Dissipation, Erosion Initiation, Energy Dissipator Destabilization, Upstream Slab Destabilization, Unsuccessful Intervention, Shear Failure and Breach. Node 7 is incomplete and Node 2 is selected. Numbered callouts mark: 1 Breadcrumb, 2 Page messages, 3 Verification badge, 4 Page heading, 5 Location, 6 Cross Section, 7 SRP mode, 8 Stages to evaluate, 9 Event tree evaluation."
   caption="The PFM-23 page."
   width={MEDIA_WIDTH}
 />
@@ -51,45 +89,34 @@ describes each numbered region.
       'Event tree evaluation',
     ],
     [
-      'The failure mode and location, which read "PFM-23 · [location name]".',
+      'The failure mode and location: "PFM-23 · [location name]".',
       <>
         The location's required inputs, warnings and errors (see <a href="#page-messages">Page Messages</a>).
       </>,
       <>
-        Shows whether the location's SRP is verified, and verifies it (see{' '}
+        Shows and sets the location's verification (see{' '}
         <Link to="/docs/web-applications/dst/users-guide/v1.0/failure-mode-pages#verifying-a-location">Verifying a location</Link>).
       </>,
-      'The failure mode number and name, which read "23 - Monolith Instability due to Energy Dissipator Failure".',
+      '"23 - Monolith Instability due to Energy Dissipator Failure".',
+      'The location\'s name.',
+      'The concrete cross section the location reads.',
       <>
-        The location's name (see <a href="#location-and-cross-section">Location and Cross Section</a>).
+        <strong>Event tree</strong> or <strong>User defined</strong>.
       </>,
-      <>
-        The cross section the location reads (see <a href="#location-and-cross-section">Location and Cross Section</a>).
-      </>,
-      <>
-        <strong>Event tree</strong> or <strong>User defined</strong> (see <a href="#location-and-cross-section">Location and Cross Section</a>).
-      </>,
-      <>
-        The elevations at which the event tree is evaluated (see <a href="#stages-to-evaluate">Stages to Evaluate</a>).
-      </>,
-      <>
-        The event tree, its progress count and the selected node's panel (see <a href="#event-tree-evaluation">Event Tree Evaluation</a>).
-      </>,
+      'The pool elevations at which DST evaluates the event tree.',
+      'The event tree, its progress count and the selected node\'s panel.',
     ],
   ]}
 />
 
 Inputs on this page save automatically (see [Saving](./040-working-in-dst.mdx#saving)), and the results recalculate automatically when an input changes (see
 [Automatic Calculation](./040-working-in-dst.mdx#automatic-calculation)). Any change on the page clears the location's verification (see
-[Verifying a location](./342-failure-mode-pages.mdx#verifying-a-location)). In Event tree mode, DST refuses to verify a location that has no system response yet, with
-the message "The event tree has no system response yet. Complete every node's probabilities and resolve the errors on this page, then verify."
+[Verifying a location](./342-failure-mode-pages.mdx#verifying-a-location)).
 
 ## Location and Cross Section
 
-The gray toolbar under the page heading names the location, selects the cross section it reads and sets the SRP mode.
-
-<TableReference tableKey="dst-users-guide-table-pfm-23-toolbar-inputs" /> describes each field, and [The page
-toolbar](./342-failure-mode-pages.mdx#the-page-toolbar) describes the toolbar itself.
+The toolbar under the page heading names the location, selects the cross section and sets the SRP mode.
+<TableReference tableKey="dst-users-guide-table-pfm-23-toolbar-inputs" /> describes each field (see also [The page toolbar](./342-failure-mode-pages.mdx#the-page-toolbar)).
 
 <TableVertical
   tableKey="dst-users-guide-table-pfm-23-toolbar-inputs"
@@ -102,32 +129,24 @@ toolbar](./342-failure-mode-pages.mdx#the-page-toolbar) describes the toolbar it
     ['—', '—', '—'],
     ['Optional', 'Conditional: required when the dam has a gated concrete cross section', 'Required'],
     [
-      'The location\'s name. DST names the first location "Location 1". A blank name is not saved; the location keeps its last saved name. The name appears in the breadcrumb and on the Failure Mode Evaluation page.',
-      'One of the dam\'s concrete cross sections from the Dam Information page. When the section has a gate, its closed gate top is the Top of Gates stage. The drop-down reads "No usable cross sections" when the dam has none.',
-      'Event tree (the default) or User defined. Event tree evaluates the location on the PFM-23 event tree; User defined replaces the event tree with an entered SRP curve.',
+      'The location\'s name. Default "Location 1" for the first location. A blank name is not saved; the location keeps its last saved name.',
+      'One of the dam\'s concrete cross sections from the Dam Information page. When the section has a gate, the top of its closed gate sets the Top of Gates stage; choosing another section moves that stage. The top of dam does not come from this section.',
+      'Event tree (the default) evaluates the location on the PFM-23 event tree. User defined replaces the event tree with an entered SRP curve.',
     ],
   ]}
 />
 
-PFM-23 reads the top of gates from one concrete cross section. The **Cross Section** drop-down lists the dam's concrete cross sections on the Dam Information page (see [Dam Information](./310-dam-information.mdx)). The top of the selected section's closed gate becomes the Top
-of Gates stage, and choosing a different section moves that stage. When no section is selected, the section has no gate, or the gate has
-no closed top elevation, DST places the Top of Gates stage a third of the way from the spillway crest to the top of dam. The top of dam does not come
-from the selected section; it is the lowest crest across the dam's earth embankment and non-overflow concrete cross sections.
+When no section is selected, the section has no gate, or the gate has no closed top elevation, DST places the Top of Gates stage a third of the way from the spillway
+crest to the top of dam.
 
-When the selected section is deleted on the Dam Information page, DST removes it from the location. The Top of Gates stage then falls back to a third
-of the way from the spillway crest to the top of dam, the page shows "Select a cross section for this location." if the dam has another gated concrete
-section, and the location's verification clears.
-
-Each location of PFM-23 has its own cross section, stages, node probabilities and results. PFM-23 has no limit on the number of
-locations, and a copied location keeps the cross section, stages, node probabilities and rationales of the location it copies
-(see [Locations](./341-locations.mdx) and [Copying a location](./341-locations.mdx#copying-a-location)).
+Each PFM-23 location has its own cross section, stages, node probabilities and results, and PFM-23 has no limit on the number of locations. A copied
+location keeps the cross section, stages, node probabilities and rationales of the original (see [Copying a location](./341-locations.mdx#copying-a-location)).
 
 ## Stages to Evaluate
 
-The **Stages to evaluate** section lists the pool elevations at which DST evaluates the PFM-23 event tree, lowest first. PFM-23 has
-three default stages, which DST places from other pages. <TableReference tableKey="dst-users-guide-table-pfm-23-default-stages" /> lists them with the
-text of their **Source** column. The user cannot edit a default stage's elevation on this page. When its source is missing, the stage's elevation reads
-"Source missing" and the page messages name the input to complete (see [Page Messages](#page-messages)).
+The **Stages to evaluate** section lists the pool elevations at which DST evaluates the PFM-23 event tree, lowest first. DST places the three default
+stages in <TableReference tableKey="dst-users-guide-table-pfm-23-default-stages" /> from other pages. To change a default stage's elevation, the user
+changes the value on its source page, then selects **Move stage to** in the notice that appears on this page. [Stages](./344-event-trees.mdx#stages) describes the zero point and adding, editing and deleting stages.
 
 <TableVertical
   tableKey="dst-users-guide-table-pfm-23-default-stages"
@@ -139,37 +158,35 @@ text of their **Source** column. The user cannot edit a default stage's elevatio
     ['Spillway Crest', 'Top of Gates', 'Top of Dam'],
     ['Spillway crest, Dam Data', 'Top of gates from the cross section, or crest plus a third to top of dam', 'Top of dam, cross section or Dam Data'],
     [
-      'The spillway crest elevation in the Key Elevations & Storage section of the Dam Data page.',
-      'The top of the closed gate in the gated cross section selected in the toolbar. Without a gated section, or when the gate has no closed top elevation, DST places it a third of the way from the spillway crest to the top of dam.',
+      'The spillway crest elevation in the Key Elevations &amp; Storage section of the Dam Data page.',
+      'The top of the closed gate in the cross section selected in the toolbar. Without a section, without a gate, or when the gate has no closed top elevation, a third of the way from the spillway crest to the top of dam.',
       "The lowest crest drawn across the dam's earth embankment and non-overflow concrete cross sections on the Dam Information page, or the dam crest elevation from Dam Data when none of them has a drawn crest.",
     ],
   ]}
 />
 
-The [Event Trees](./344-event-trees.mdx) page describes the zero point, which defaults to the lowest stage, and adding, editing and deleting stages (see [Stages](./344-event-trees.mdx#stages)).
-
 ## Event Tree Evaluation
 
-The **Event tree evaluation** section shows the PFM-23 event tree and, below it, the panel of the selected node. Its header counts the complete nodes
-out of 7. <FigReference figKey="dst-users-guide-fig-pfm-23-event-tree" /> shows the tree with Node 2 selected.
+The **Event tree evaluation** section shows the PFM-23 event tree and the panel of the selected node. Its header counts the complete nodes out of 7.
+<FigReference figKey="dst-users-guide-fig-pfm-23-event-tree" /> shows the tree with Node 2 selected.
 
 <Figure
   figKey="dst-users-guide-fig-pfm-23-event-tree"
   src="figures/web-applications/dst/users-guide/v1.0/figures/pfm-23-event-tree.png"
-  alt="The Event tree evaluation section of the PFM-23 page, reading '6 of 7 nodes complete'. The tree runs from a Flood marker through Inadequate Energy Dissipation, Erosion Initiation, Energy Dissipator Destabilization, Upstream Slab Destabilization, Unsuccessful Intervention, Shear Failure and Breach to a red end marker. Every node has a green check except Node 7, which is amber, and Node 2 has a dark selection ring. The panel below has the heading 'Node 2 – Erosion Initiation' and the question 'Erosion of material downstream of the energy dissipator initiates?'. Its rows give Spillway Crest at 777.00 disabled, Top of Gates at 791.00 as 0.200 and Top of Dam at 812.00 as 0.600, each with a slider on the Virtually Impossible to Virtually Certain scale. Below are the Add stage to this node button, the Estimate rationale editor marked Required holding the team's text, and the Previous node and Next node buttons."
+  alt="The PFM-23 event tree reading '6 of 7 nodes complete', a single path through Inadequate Energy Dissipation, Erosion Initiation, Energy Dissipator Destabilization, Upstream Slab Destabilization, Unsuccessful Intervention, Shear Failure and Breach. Every node shows a check mark except Node 7, which is incomplete. The panel for 'Node 2 – Erosion Initiation' asks 'Erosion of material downstream of the energy dissipator initiates?' and gives Spillway Crest at 777.00 disabled, Top of Gates at 791.00 as 0.200 and Top of Dam at 812.00 as 0.600, each with a slider from Virtually Impossible to Virtually Certain. Below are Add stage to this node, the required Estimate rationale, and Previous node and Next node."
   caption="The PFM-23 event tree with Node 2 selected."
   width={MEDIA_WIDTH}
 />
 
-PFM-23 has seven nodes. <TableReference tableKey="dst-users-guide-table-pfm-23-nodes" /> lists each node as numbered in the tree and whether it takes
-one probability at each stage or one for all stages, with the question its panel shows under the node title. Every PFM-23 node takes a probability at each stage.
+PFM-23 has seven nodes on a single path to breach, listed in <TableReference tableKey="dst-users-guide-table-pfm-23-nodes" /> with the question each
+panel asks. Every node takes a probability at each stage.
 
 <TableVertical
   tableKey="dst-users-guide-table-pfm-23-nodes"
-  colWidths={['7ch', '24ch', '18ch', 'minmax(30ch, 1fr)']}
+  colWidths={['7ch', '24ch', 'minmax(30ch, 1fr)']}
   alt="The nodes of the PFM-23 event tree and their questions"
   caption="PFM-23 event tree nodes"
-  headers={[[{ value: 'Node' }, { value: 'Title' }, { value: 'Probabilities' }, { value: 'Question' }]]}
+  headers={[[{ value: 'Node' }, { value: 'Title' }, { value: 'Question' }]]}
   columns={[
     ['1', '2', '3', '4', '5', '6', '7'],
     [
@@ -180,15 +197,6 @@ one probability at each stage or one for all stages, with the question its panel
       'Unsuccessful Intervention',
       'Shear Failure',
       'Breach',
-    ],
-    [
-      'One at each stage',
-      'One at each stage',
-      'One at each stage',
-      'One at each stage',
-      'One at each stage',
-      'One at each stage',
-      'One at each stage',
     ],
     [
       'The hydraulic energy is not adequately dissipated within the energy dissipator?',
@@ -202,15 +210,14 @@ one probability at each stage or one for all stages, with the question its panel
   ]}
 />
 
-The [Event Trees](./344-event-trees.mdx) page describes the node panel, the probability slider, the estimate rationale, node colors and moving between nodes (see
-[Event tree diagram](./344-event-trees.mdx#event-tree-diagram) and [Nodes](./344-event-trees.mdx#nodes)). The **Failure mode summary** tray repeats every node's probabilities
-in its Node probabilities section (see [Failure mode summary](./342-failure-mode-pages.mdx#failure-mode-summary)).
+[Nodes](./344-event-trees.mdx#nodes) describes entering probabilities and rationales and moving between nodes. The **Failure mode summary** tray
+repeats every node's probabilities (see [Failure mode summary](./342-failure-mode-pages.mdx#failure-mode-summary)).
 
 ## System Response
 
-The **System Response** section shows the location's SRP at each stage in a table and a chart. <TableReference tableKey="dst-users-guide-table-pfm-23-results" /> describes
-the PFM-23 table's columns, and the chart plots the Total SRP against Pool Elevation (ft).
-The [Event Trees](./344-event-trees.mdx) page describes when the results appear, the chart and its download (see [Event tree system response](./344-event-trees.mdx#event-tree-system-response)).
+The **System Response** section shows the location's SRP at each stage in a table, described in
+<TableReference tableKey="dst-users-guide-table-pfm-23-results" />, and a chart of the Total SRP against Pool Elevation (ft) (see
+[Event tree system response](./344-event-trees.mdx#event-tree-system-response)).
 
 <TableVertical
   tableKey="dst-users-guide-table-pfm-23-results"
@@ -226,36 +233,46 @@ The [Event Trees](./344-event-trees.mdx) page describes when the results appear,
 
 ## User-Defined SRP
 
-With **User defined** selected in the toolbar, the page replaces Stages to evaluate, Event tree evaluation and System Response with a table of
-**Pool Elevation (ft)** and **Probability** pairs and its chart, and the entered curve becomes the location's SRP. DST keeps the stages, node
-probabilities and rationales, and shows them again when the user selects **Event tree** (see [User-defined SRP](./343-system-response.mdx#user-defined-srp)).
+With **User defined** selected in the toolbar, the user enters the SRP curve as **Pool Elevation (ft)** and **Probability** pairs in place of the
+event tree. DST keeps the stages, node probabilities and rationales, and shows them again when the user selects **Event tree** (see
+[User-defined SRP](./343-system-response.mdx#user-defined-srp)).
 
 ## Page Messages
 
 The page messages button lists the location's required inputs, warnings and errors (see [Page Messages](./040-working-in-dst.mdx#page-messages)).
-
-<TableReference tableKey="dst-users-guide-table-pfm-23-messages" /> lists the messages that come from the PFM-23 stage sources and cross section, and
-The [Event Trees](./344-event-trees.mdx) page lists the messages that every event-tree page shows (see [Event tree
-messages](./344-event-trees.mdx#event-tree-messages)). Text in square brackets stands for the value shown. "Select a cross section for this location."
-appears only when the dam has at least one gated concrete cross section. The dam crest message appears when no earth embankment or non-overflow
-concrete cross section has a drawn crest and Dam Data has no dam crest elevation.
+<TableReference tableKey="dst-users-guide-table-pfm-23-messages" /> lists the messages about the PFM-23 stage sources and cross section, with the fix
+for each; [Event tree messages](./344-event-trees.mdx#event-tree-messages) lists the messages every event-tree page shows. Text in square brackets
+stands for the value shown.
 
 <TableVertical
   tableKey="dst-users-guide-table-pfm-23-messages"
-  colWidths={['16ch', 'minmax(30ch, 1fr)']}
-  alt="Messages the PFM-23 page shows about its stage sources and cross section, with their severity"
+  colWidths={['14ch', 'minmax(30ch, 1fr)', 'minmax(24ch, 1fr)']}
+  alt="Messages the PFM-23 page shows about its stage sources and cross section, with their severity and fix"
   caption="PFM-23 page messages"
-  headers={[[{ value: 'Severity' }, { value: 'Message' }]]}
+  headers={[[{ value: 'Severity' }, { value: 'Message' }, { value: 'Fix' }]]}
   columns={[
     ['Required input', 'Required input', 'Required input', 'Error'],
     [
-      'Enter the spillway crest elevation in the Key Elevations & Storage section of the Dam Data page.',
+      'Enter the spillway crest elevation in the Key Elevations &amp; Storage section of the Dam Data page.',
       'Select a cross section for this location.',
-      'Enter the dam crest elevation in the Key Elevations & Storage section of the Dam Data page so the top of dam can be derived.',
+      'Enter the dam crest elevation in the Key Elevations &amp; Storage section of the Dam Data page so the top of dam can be derived.',
       'The spillway crest ([elevation]) must be below the top of dam ([elevation]).',
+    ],
+    [
+      'Enter the value on the Dam Data page.',
+      'Shown when the dam has a gated concrete cross section. Choose a section in <strong>Cross Section</strong>.',
+      'Shown when no earth embankment or non-overflow concrete cross section has a drawn crest. Enter the dam crest on the Dam Data page, or draw a section crest on the Dam Information page.',
+      'Correct the spillway crest on the Dam Data page, or the dam crest or cross section crests that set the top of dam.',
     ],
   ]}
 />
 
-In Event tree mode, Submission Readiness lists each PFM-23 location that has nodes without probabilities or rationales (see
-[Submission readiness](./342-failure-mode-pages.mdx#submission-readiness)).
+## Common problems
+
+Problems every event-tree page shares, such as "No system response curve yet", a stage that reads Source missing, a default stage that
+cannot be edited or a refused cross section, are described in [Common problems](./344-event-trees.mdx#common-problems) on the Event Trees
+page. Problems every failure mode page shares, such as no usable cross sections or a deleted cross section, are described in
+[Common problems](./342-failure-mode-pages.mdx#common-problems) on the Failure Mode Pages page. This page adds its own.
+
+**The Top of Gates stage is not at the gate top.** No section is selected, the selected section has no gate, or the gate has no closed top
+elevation. The user chooses the gated section, or completes the gate on the Dam Information page.
