@@ -61,6 +61,11 @@ fill wet of optimum).
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the no-formal-compaction category is worded "No formal
+compaction or poor compaction [very thick lifts, no moisture control]" (now in the manual). The
+document gives no layer thickness or water-content ranges and no rule for fill that matches no
+category.
+
 ---
 
 ## IN-04 — Definition — `03-input-parameters.mdx`
@@ -105,6 +110,13 @@ engineering-judgment attribution.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the method is stated to be adapted from Fell et al.
+(2024). The more-likely (3) and much-more-likely (4) scores for the slope and finish of the wall
+and for concrete buttresses in Table 6.11 were combined into one category scored 3.5 (now in the
+manual); the compaction categories are attributed to Table 6.4, with the first two combined and
+assigned a flaw-continuity probability of 0.1 (see CLE Common Methods IN-04). The risk factors
+3, 2, 1 are not given.
+
 ---
 
 ## IN-07 — Engineering Basis — `04-flaw-assessment.mdx`
@@ -120,6 +132,14 @@ Absent.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): unknown wall-fill compaction is assumed to be hand
+compaction in thick layers dry of optimum (LF = 3), which matches the model (now in the
+manual). The document also says an unknown wall slope is assumed vertical "(LF=3)" and an
+unknown buttress is assumed to exist "(LF = 2)", but the model scores a vertical face 3.5 and a
+buttress present 3.5, so those two statements conflict with the model (Unknown slope 3, Unknown
+buttress 2) and were not adopted. The general screening policy is that an Unknown selection
+assumes conservative conditions.
+
 ---
 
 ## IN-08 — Engineering Basis — `04-flaw-assessment.mdx`
@@ -132,6 +152,11 @@ the engineering-judgment attribution, and why the curve extends to 24 when the l
 sum is 22.5.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the document states only that the flaw probabilities
+are adapted from Fell et al. (2024) and that the above-pool-of-record probabilities are used at
+every headwater; it gives no table or figure number for this curve and does not explain why it
+extends to a weighted sum of 24.
 
 ---
 
@@ -147,7 +172,10 @@ pool of record, and the engineering basis for applying the above-pool-of-record 
 **Proposed (unconfirmed):** A conservative screening simplification that removes the pool of record
 as an input; past performance can be credited in a detailed analysis.
 
-**Answer:**
+**Answer:** Yes. The curve applied is the one Fell et al. (2024) assign to pool levels above the pool
+of record, used at every headwater as a conservative screening simplification, so no credit is
+taken for past performance up to the pool of record; past performance can be credited in a
+detailed analysis. (from Oct 2025 methodology document)
 
 ---
 
@@ -167,5 +195,10 @@ conservative. The foot is the unconservative location for the upstream cutoff-wa
 since a cutoff whose top reaches the foot is credited even where the zone extends above it.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the document places the base of the flaw at the base
+elevation of the wall or cliff, confirming the placement without a basis. Its statement that
+observed leakage sets the base of the flaw to the leakage exit elevation does not apply to this
+model (the base of the flaw is unchanged under the override) and was not adopted.
 
 ---
