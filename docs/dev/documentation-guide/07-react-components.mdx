@@ -3743,6 +3743,70 @@ import VersionSelector from '@site/src/components/VersionSelector';
 
 ## Specialized Components
 
+### Tooltip (`data-tooltip`)
+
+**Purpose:** A short hover label on any element, with the same dark box, arrow and animation as the DST application.
+
+**When to use:**
+
+- Naming an icon or a numbered marker without adding text to the page
+- A one-line hint on a button or a short term
+
+Don&#x27;t put information the reader needs only in a tooltip: phones show it only after a tap, and printed pages never show it.
+
+**Import:** none. The tooltip is a site-wide client module (`src/clientModules/tooltip.js`), so any element in MDX or in a
+component gets one by setting the `data-tooltip` attribute.
+
+**Usage:**
+
+```jsx
+<button data-tooltip="Save changes">Save</button>
+
+<span data-tooltip="Average annualized life loss" tabIndex={0}>AALL</span>
+
+<button data-tooltip="Opens the settings panel" data-tooltip-position="bottom">⚙</button>
+
+<span data-tooltip={'First line\nSecond line'} tabIndex={0}>Two lines</span>
+```
+
+Try it: hover or tap <span data-tooltip="Average annualized life loss" tabIndex={0} style={{ textDecoration: 'underline dotted', cursor: 'help' }}>AALL</span> or <span data-tooltip="Shown below the target" data-tooltip-position="bottom" tabIndex={0} style={{ textDecoration: 'underline dotted', cursor: 'help' }}>this one</span>.
+
+**Attributes:**
+
+<TableVerticalNoRef
+  alt="Table: Tooltip attributes"
+  headers={[[{ value: 'Attribute' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['<code>data-tooltip</code>', '<code>data-tooltip-position</code>', '<code>data-tooltip-max-width</code>', '<code>data-tooltip-anchor</code>'],
+    ['Yes', 'No', 'No', 'No'],
+    [
+      'The text. Use <code>\n</code> inside a JSX string (<code>{&#x27;a\nb&#x27;}</code>) for separate lines, which are left-aligned',
+      '<code>top</code> (default), <code>bottom</code>, <code>left</code> or <code>right</code>. Flips to the opposite side when there is no room',
+      'Maximum width in pixels; default 280',
+      'Set on a child of a tall target to aim the arrow at that child instead of the target&#x27;s centre',
+    ],
+  ]}
+/>
+
+**Behavior:**
+
+- Shows after a 50 ms hover, on keyboard focus, or on a tap; hides when the pointer leaves, focus moves, a tap lands elsewhere,
+  the reader clicks or presses <kbd>Esc</kbd>.
+- Overlays the page only: it is `position: fixed` and ignores the pointer, so nothing moves when it appears.
+- Stays inside the window, and the arrow stays aimed at the target when the box is pushed in from an edge.
+- Works inside the enlarged-figure view (it is placed in the open dialog) and follows the target on scroll.
+- The box is dark in both site themes. With reduced motion turned on, it appears without the slide and fade.
+- While shown, it describes the target for screen readers (`aria-describedby`).
+
+**Notes:**
+
+- Make a non-interactive target focusable with `tabIndex={0}` so keyboard readers can reach the tooltip. Buttons and links
+  already are.
+- Don&#x27;t also give the element a `title`: the browser would show its own tooltip on top.
+- An icon-only button still needs an `aria-label`; the tooltip is a visual label, not the accessible name.
+
+---
+
 ### EventTree
 
 **Purpose:** Displays an event tree image with an optional download link to the associated spreadsheet. Used extensively in the Typical Event Tree Database.
