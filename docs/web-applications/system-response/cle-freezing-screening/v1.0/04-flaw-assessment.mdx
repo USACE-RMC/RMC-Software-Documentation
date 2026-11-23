@@ -4,6 +4,7 @@ title: Flaw Assessment
 
 import Citation from '@site/src/components/Citation';
 import CitationFootnote from '@site/src/components/CitationFootnote';
+import DocLink from '@site/src/components/DocLink';
 import Equation from '@site/src/components/Equation';
 import EquationReference from '@site/src/components/EquationReference';
 import NavContainer from '@site/src/components/NavContainer';
@@ -16,9 +17,9 @@ import TableVertical from '@site/src/components/TableVertical';
 
 Node 1 of the event tree is the probability $P_{flaw}$ that a continuous transverse frost crack exists across the crest. The flaw assessment also
 produces the one flaw quantity the downstream nodes use — the bottom-of-crack elevation $z_{bc}$, below which water cannot enter the crack — and a
-crack width reported for reference. The assessment follows the risk-factor and likelihood-factor scoring of Fell et al. (2024) <Citation citationKey="Fell2024" />,
+crack width reported for reference. The assessment follows the risk-factor and likelihood-factor scoring of <Citation citationKey="Fell2024" form="narrative" />,
 in the form shared by the CLE screening family and documented in
-[Flaw Conventions](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#risk-factor-and-likelihood-factor-scoring).
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="flaw-conventions" anchor="risk-factor-and-likelihood-factor-scoring">Flaw Conventions</DocLink>.
 It proceeds in five steps:
 
 1. Score the three site factors — climate, crest soil, and surface cover — each with a likelihood factor.
@@ -28,17 +29,22 @@ It proceeds in five steps:
 5. Take the crack depth from the climate and the bottom of the crack from the crest elevation less that depth; take the crack width from the
    weighted sum.
 
-A preliminary check precedes the scoring: when every listed crest soil is one that cannot frost-crack, the mechanism does not apply and the
-assessment ends there (see [Inapplicable Mechanism](#inapplicable-mechanism)).
+A preliminary check precedes the scoring.
+
+:::note[Availability]
+When every listed crest soil is one that cannot frost-crack, the mechanism does not apply and the assessment ends at the preliminary check (see
+[Inapplicable Mechanism](#inapplicable-mechanism)).
+:::
 
 ## Factor Scores
 
 Each factor $j$ carries a risk factor $RF_j$, its weight, and a likelihood factor $LF_j$, its score for the site on a scale on which 1 is the least
 likely condition for a frost crack and 4 the most likely (<TableReference tableKey="cle-freezing-screening-table-4" />). The likelihood-factor
-tables follow Fell et al. (2024) <Citation citationKey="Fell2024" />.
+tables follow <Citation citationKey="Fell2024" form="narrative" />.
 
 <TableVertical
   tableKey="cle-freezing-screening-table-4"
+  widthMode="auto"
   alt="Frost-cracking flaw factors and their risk factors"
   caption="Frost-cracking flaw factors."
   colAlign={['left', 'center', 'center', 'left']}
@@ -63,6 +69,7 @@ The climate likelihood factor and the crack depth both come from the freeze-dura
 
 <TableVertical
   tableKey="cle-freezing-screening-table-5"
+  widthMode="auto"
   alt="Climate likelihood factor and crack depth by freeze-duration climate category"
   caption="Climate likelihood factor and crack depth by freeze-duration climate category."
   colAlign={['left', 'center', 'center']}
@@ -86,6 +93,7 @@ Each crest soil class that can frost-crack maps to a crest-soil likelihood facto
 
 <TableVertical
   tableKey="cle-freezing-screening-table-6"
+  widthMode="auto"
   alt="Crest-soil likelihood factor by USCS classification"
   caption="Crest-soil likelihood factor by crest soil classification."
   colAlign={['left', 'left', 'center']}
@@ -140,6 +148,7 @@ category scores 1.
 
 <TableVertical
   tableKey="cle-freezing-screening-table-7"
+  widthMode="auto"
   alt="Surface-cover likelihood factor"
   caption="Surface-cover likelihood factor."
   colAlign={['left', 'center']}
@@ -153,7 +162,7 @@ category scores 1.
 ## Weighted Sum
 
 The three scores combine into the weighted sum of
-[Flaw Conventions](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#weighted-sum):
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="flaw-conventions" anchor="weighted-sum">Flaw Conventions</DocLink>:
 
 <Equation
   equationKey="cle-freezing-screening-eq-2"
@@ -171,7 +180,7 @@ silt (MH) crest, and no road or pathway. Because the climate carries the largest
 The weighted sum is converted to the raw flaw probability $P_{raw}$ by the curve tabulated in
 <TableReference tableKey="cle-freezing-screening-table-8" />. Between tabulated points, the logarithm of the probability is interpolated linearly in
 the weighted sum, as described in
-[Flaw Probability from the Weighted Sum](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#flaw-probability-from-the-weighted-sum)
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="flaw-conventions" anchor="flaw-probability-from-the-weighted-sum">Flaw Probability from the Weighted Sum</DocLink>
 of the CLE Common Methods manual. A weighted sum above 24 cannot occur, so the curve's upper end is the largest attainable value.
 
 <TableVertical
@@ -193,8 +202,12 @@ The model applies a lower threshold of 13:
   equation="P_{raw}(\Sigma) = \begin{cases} 0 & \Sigma < 13 \\[4pt] \text{log-linear interpolation of the tabulated curve} & 13 \le \Sigma \le 24 \end{cases}"
 />
 
-A weighted sum of exactly 13 takes the first tabulated value, 0.001; only a sum strictly below 13 gives zero. With a weighted sum of 14, for
-example, the raw probability is one third of the way from 0.001 to 0.01 on a logarithmic scale, $10^{-3 + 1/3} \approx 2.15 \times 10^{-3}$.
+A weighted sum of exactly 13 takes the first tabulated value, 0.001; only a sum strictly below 13 gives zero.
+
+:::note[Example]
+With a weighted sum of 14, the raw probability is one third of the way from 0.001 to 0.01 on a logarithmic scale,
+$10^{-3 + 1/3} \approx 2.15 \times 10^{-3}$.
+:::
 
 The threshold can be reached only in the two mildest climates:
 
@@ -227,17 +240,17 @@ probability, never less than a negligibly small value:
 />
 
 where $\varepsilon$ is the negligibly small probability the CLE family uses in place of zero (see
-[SRP Computation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#srp-computation)). The override takes
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="event-tree" anchor="srp-computation">SRP Computation</DocLink>). The override takes
 precedence over the lower threshold: an observed continuous frost crack has a flaw probability of 1.0 even where the weighted sum is below 13. It
 sets Node 1 only — the crack depth and every downstream node are evaluated as usual — and it applies only when the mechanism applies, as described
-in [Observation Overrides](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#observation-overrides).
+in <DocLink doc="web-applications/system-response/cle-common-methods-screening" page="flaw-conventions" anchor="observation-overrides">Observation Overrides</DocLink>.
 
 ## Inapplicable Mechanism
 
 The six clean and nearly clean sand and gravel classes — SP-SM, SW, SP, GP-GM, GW, and GP, the classes with less than 12 percent fines — do not
 frost-crack and are not scored. A listed class of this group is set aside, and the remaining listed classes govern by
 <EquationReference equationKey="cle-freezing-screening-eq-1" />. When every listed class belongs to this group, the mechanism does not apply, as
-described in [Inapplicable Mechanism](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#inapplicable-mechanism):
+described in <DocLink doc="web-applications/system-response/cle-common-methods-screening" page="flaw-conventions" anchor="inapplicable-mechanism">Inapplicable Mechanism</DocLink>:
 
 - the flaw probability is the negligible value $\varepsilon$, and no weighted sum is formed;
 - the observation override is not consulted, since observed cracking in such a crest cannot be frost cracking;
@@ -276,8 +289,8 @@ extend. Confirm or replace.
 
 ## Bottom-of-Crack Elevation
 
-The bottom-of-crack elevation $z_{bc}$ is the crest elevation $z_c$ less the crack depth $d_c$, by Equation 5 in the
-[Crest-Crack Models: Bottom of the Crack](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#crest-crack-models-bottom-of-the-crack)
+The bottom-of-crack elevation $z_{bc}$ is the crest elevation $z_c$ less the crack depth $d_c$, by <EquationReference doc="web-applications/system-response/cle-common-methods-screening" page="flaw-conventions" equationKey="cle-common-methods-screening-eq-5" fallback="Equation 5" /> in the
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="flaw-conventions" anchor="crest-crack-models-bottom-of-the-crack">Crest-Crack Models: Bottom of the Crack</DocLink>
 section of the CLE Common Methods manual. Initiation is possible only at pool levels above $z_{bc}$ (see
 [Event Tree](./05-event-tree.mdx#node-2-initiation)). When the mechanism applies, the bottom of the crack is computed this way whatever the flaw
 probability, including when the override applies or the weighted sum is below the threshold. When it does not apply, the crack depth is zero and
@@ -286,7 +299,7 @@ the bottom of the crack is the crest elevation (see [Inapplicable Mechanism](#in
 ## Crack Width
 
 The model also reports a crack width $w_c$, interpolated linearly (not logarithmically) in the weighted sum between the points of
-<TableReference tableKey="cle-freezing-screening-table-9" />, following the crack-width relationship of Fell et al. (2024) <Citation citationKey="Fell2024" />.
+<TableReference tableKey="cle-freezing-screening-table-9" />, following the crack-width relationship of <Citation citationKey="Fell2024" form="narrative" />.
 A weighted sum at or below 12 gives zero width, and a sum of 24 gives the largest width, 20 mm. With a
 weighted sum of 14, for example, the crack width is 3 mm.
 
