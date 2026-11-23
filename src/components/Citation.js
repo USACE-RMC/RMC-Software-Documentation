@@ -2,6 +2,7 @@ import { useLocation } from '@docusaurus/router';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import { useReportId } from '../contexts/ReportIdContext';
+import citationLabels from '../data/citationLabels';
 import '../css/custom.css';
 
 /* -------------------- tiny store (per-doc citations) -------------------- */
@@ -65,7 +66,14 @@ export function useUsedCitations(docId) {
 
 /* ------------------------------ component ------------------------------- */
 
-const Citation = ({ citationKey }) => {
+/**
+ * <Citation citationKey="vanBeek2011" />                      -> [3]   (author writes "(van Beek et al., 2011)" before it)
+ * <Citation citationKey="vanBeek2011" form="parenthetical" /> -> (van Beek et al., 2011) [3]
+ * <Citation citationKey="vanBeek2011" form="narrative" />     -> van Beek et al. (2011) [3]
+ * With `form`, the author-year text comes from the document's bib.json (via src/data/citationLabels.js),
+ * so it is in the static HTML and always matches the bibliography.
+ */
+const Citation = ({ citationKey, form }) => {
   const [citationNumber, setCitationNumber] = useState('?');
   const [citationData, setCitationData] = useState(null);
   const location = useLocation();
@@ -76,6 +84,11 @@ const Citation = ({ citationKey }) => {
   const countersBase = useBaseUrl('counters/');
 
   const reportPath = pathname.replace(docsBase, bibsBase).replace(/\/[^/]*$/, '');
+  const docKey = pathname.startsWith(docsBase) ? pathname.slice(docsBase.length).replace(/\/[^/]*$/, '') : '';
+  const label = form ? citationLabels?.[docKey]?.[citationKey] : null;
+  if (form && !label && typeof window === 'undefined') {
+    console.warn(`[citation] No bib.json entry "${citationKey}" for ${docKey || pathname}; author-year text not shown.`);
+  }
   const bibFilePath = `${reportPath}/bib.json`;
   const countersFilePath = reportId ? `${countersBase}${reportId}.json` : null;
 
@@ -126,8 +139,12 @@ const Citation = ({ citationKey }) => {
     return () => removeCitation(pathname, citationKey);
   }, [pathname, citationKey]);
 
+  const lead =
+    label && form === 'narrative' ? `${label.authors} (${label.year}) ` : label && form ? `(${label.authors}, ${label.year}) ` : '';
+
   return (
     <span className="font-usace text-[inherit]">
+      {lead}
       <a
         href={`#footnote-${citationKey}`}
         className="citation-link text-ifm-link no-underline hover:text-ifm-link-hover"

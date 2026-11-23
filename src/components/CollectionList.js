@@ -1,4 +1,6 @@
-import { useId, useMemo, useState } from 'react';
+import { useLocation } from '@docusaurus/router';
+import useBrokenLinks from '@docusaurus/useBrokenLinks';
+import { useEffect, useId, useMemo, useState } from 'react';
 
 /**
  * CollectionList
@@ -9,6 +11,10 @@ import { useId, useMemo, useState } from 'react';
  * - { title: ReactNode, child?: ReactNode | Array<ReactNode | string | { title: ReactNode, child?: ... }> }
  *
  * Aliases for back-compat: { content, details, children } normalize into `child`.
+ *
+ * Linking to one item: give an item an `id`, or give the list an `anchorPrefix` (e.g. "problem")
+ * so every item with a plain-text title gets "<prefix>-<title-slug>". A link to "#that-id" scrolls to
+ * the item and opens it.
  */
 export default function CollectionList({
   title,
@@ -18,10 +24,13 @@ export default function CollectionList({
   numberStyle = 'decimal',
   defaultOpen = 'none', // 'none' | 'first' | 'all' | number[] (indices)
   showExpandAll = false,
+  anchorPrefix, // optional: auto-id items as `${anchorPrefix}-${slug(title)}`
 
   /* ── STACK styles ─────────────────────────────────── */
   boxExpandableClass = 'bg-surface-card border border-border-color border-l-[3px] border-l-ifm-primary rounded-lg px-3 py-2.5 hover:border-l-ifm-primary-dark hover:shadow-sm transition',
   boxStaticClass = 'bg-surface-card border border-border-color rounded-lg px-3 py-2.5',
+  // Static item in a list that also has expandable items: keeps the accent bar so the list looks even.
+  boxStaticMixedClass = 'bg-surface-card border border-border-color border-l-[3px] border-l-ifm-primary rounded-lg px-3 py-2.5',
   badgeClass = 'bg-ifm-primary rounded-full shadow text-caption font-usace text-font-color-inverse',
   fontClass = 'font-usace text-normal text-font-color',
   panelClass = 'prose max-w-none rounded-b-lg border-t border-border-color bg-surface-panel text-font-color mt-3 px-3 py-2.5',
@@ -38,6 +47,7 @@ export default function CollectionList({
   gridColsOverrideClass = '',
   gridTileExpandableClass = 'bg-surface-card border border-border-color border-t-[3px] border-t-ifm-primary rounded-lg px-3 py-2.5 hover:border-t-ifm-primary-dark hover:shadow-sm transition',
   gridTileStaticClass = 'bg-surface-card border border-border-color rounded-lg px-3 py-2.5',
+  gridTileStaticMixedClass = 'bg-surface-card border border-border-color border-t-[3px] border-t-ifm-primary rounded-lg px-3 py-2.5',
 
   gridHeaderButtonClass = 'grid w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ifm-primary/40 rounded-md grid-cols-[1fr_auto_1fr] items-center',
   gridHeaderDisabledClass = 'grid w-full grid-cols-[1fr_auto_1fr] items-center',
@@ -78,6 +88,35 @@ export default function CollectionList({
   }, [withFlags, defaultOpen]);
 
   const [open, setOpen] = useState(initial);
+
+  // Anchor ids per item (explicit item.id wins; otherwise anchorPrefix + slug of a text title).
+  const anchorIds = useMemo(
+    () =>
+      withFlags.map((it) => {
+        if (it.id) return String(it.id);
+        if (anchorPrefix && (typeof it.title === 'string' || typeof it.title === 'number')) {
+          const slug = slugify(String(it.title));
+          return slug ? `${anchorPrefix}-${slug}` : null;
+        }
+        return null;
+      }),
+    [withFlags, anchorPrefix],
+  );
+  const brokenLinks = useBrokenLinks();
+  anchorIds.forEach((aid) => aid && brokenLinks.collectAnchor(aid));
+
+  // Open (and scroll to) the item the URL hash points at, on load and on in-page navigation.
+  const { hash } = useLocation();
+  useEffect(() => {
+    if (!hash) return;
+    const target = decodeURIComponent(hash.slice(1));
+    const idx = anchorIds.indexOf(target);
+    if (idx < 0) return;
+    if (withFlags[idx]?._expandable) setOpen((prev) => (prev.includes(idx) ? prev : [...prev, idx]));
+    const el = typeof document !== 'undefined' ? document.getElementById(target) : null;
+    if (el) requestAnimationFrame(() => el.scrollIntoView({ block: 'start' }));
+  }, [hash, anchorIds, withFlags]);
+  const hasMixed = withFlags.some((it) => it._expandable) && withFlags.some((it) => !it._expandable);
   const toggle = (idx) =>
     setOpen((prev) => (prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]));
 
@@ -151,9 +190,11 @@ export default function CollectionList({
             );
 
             return (
-              <div key={i} className="list-none" role="listitem">
+              <div key={i} id={anchorIds[i] || undefined} className="list-none scroll-mt-20" role="listitem">
                 <div
-                  className={`not-prose min-w-0 ${hasDetails ? gridTileExpandableClass : gridTileStaticClass}`}
+                  className={`not-prose min-w-0 ${
+                    hasDetails ? gridTileExpandableClass : hasMixed ? gridTileStaticMixedClass : gridTileStaticClass
+                  }`}
                 >
                   {hasDetails ? (
                     <button
@@ -235,8 +276,8 @@ export default function CollectionList({
             );
 
             return (
-              <li key={i} className={`relative ${gapClass} list-none`}>
-                <div className={`${hasDetails ? boxExpandableClass : boxStaticClass}`}>
+              <li key={i} id={anchorIds[i] || undefined} className={`relative ${gapClass} list-none scroll-mt-20`}>
+                <div className={`${hasDetails ? boxExpandableClass : hasMixed ? boxStaticMixedClass : boxStaticClass}`}>
                   {hasDetails ? (
                     <button
                       id={headerId}
@@ -339,13 +380,23 @@ function normalizeNode(it) {
     return { title: String(it) };
   }
   const title = it?.title ?? '';
+  const id = it?.id;
   const rawChild = it?.child ?? it?.content ?? it?.details ?? it?.children;
   if (Array.isArray(rawChild)) {
-    return { title, childList: rawChild.map(normalizeNode) };
+    return { title, id, childList: rawChild.map(normalizeNode) };
   } else if (rawChild !== undefined && rawChild !== null) {
-    return { title, childPanel: rawChild };
+    return { title, id, childPanel: rawChild };
   }
-  return { title };
+  return { title, id };
+}
+function slugify(text) {
+  return text
+    .toLowerCase()
+    .replace(/<[^>]*>/g, '')
+    .replace(/[‘’“”"'`]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80);
 }
 function hasContent(c) {
   if (c == null) return false;

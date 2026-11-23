@@ -4,6 +4,9 @@ const { imageSize } = require('image-size');
 
 const staticDir = path.join(__dirname, '..', 'static');
 const figuresDir = path.join(staticDir, 'figures');
+// Video posters (e.g. static/videos/.../clip-poster.jpg) are included so the Video component can
+// find a clip's poster automatically and reserve its aspect ratio before the video loads.
+const videosDir = path.join(staticDir, 'videos');
 const outputFile = path.join(__dirname, '..', 'src', 'imageDimensions.js');
 
 const IMAGE_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp']);
@@ -24,6 +27,7 @@ function collectImages(dir, results = []) {
 
 // Main
 const images = collectImages(figuresDir);
+if (fs.existsSync(videosDir)) collectImages(videosDir, images);
 const dimensions = {};
 let successCount = 0;
 let errorCount = 0;
