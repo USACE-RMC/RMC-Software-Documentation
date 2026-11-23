@@ -20,6 +20,8 @@ measured net evaporation instead).
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the document gives the same four climate descriptions and states that they were correlated with ranges of net evaporation, so that a site described by climate takes the net-evaporation range of its category. It does not cite a Fell et al. (2024) table for the descriptions and gives no rule for a site that falls between or within two of them. Left open.
+
 ---
 
 ## IN-02 — Definition — `03-input-parameters.mdx`
@@ -67,6 +69,8 @@ categories, or the engineering-judgment attribution, and why the 1500 mm transit
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the document states that the climate descriptions "were correlated with ranges of net evaporation" as part of adapting Fell et al. (2024), which suggests the bands are a model adaptation rather than a published table, but it gives neither the band boundaries nor the reason for the abrupt step at 1500 mm. Left open.
+
 ---
 
 ## IN-05 — Engineering Basis — `04-flaw-probability.mdx`
@@ -93,6 +97,8 @@ CH 4.
 attribution for any adapted value, in particular the gravel-road score of 2.5.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the document answers the gravel-road score: Fell et al. (2024, Table 5.8) gives a neutral (LF = 2) and a more likely (LF = 3) category for crest zoning and surface layer over the core, which the model combines into one category with LF = 2.5 (this basis has been added to the Surface layer section; the code agrees, DesiccationFlawData.cs:52-60). It does not identify the tables for the risk factors, the climate scores, or the crest-soil scores. Left open for those.
 
 ---
 
@@ -144,6 +150,8 @@ attribution, for each adaptation.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the document confirms that the crack depths are assigned "considering Tables 5.10 through 5.13" of Fell et al. (2024), using the net-evaporation range of the selected climate category, but gives no detail of how the source tables were mapped onto the soil-score columns or the two surface rows, whether central or upper values were taken, or the source of the zero gravel-roadway depths. Left open.
+
 ---
 
 ## IN-10 — Engineering Basis — `05-crack-depth.mdx`
@@ -174,6 +182,8 @@ net-evaporation bands.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the document describes the reverse direction: the climate categories were correlated with net-evaporation ranges, and the range for the selected climate is used to assign the crack depth from Tables 5.10 to 5.13 of Fell et al. (2024). That implies the crack depth is keyed to net evaporation through the climate bands, consistent with the model, but it does not say whether the source tables are themselves organized by net evaporation, and it does not describe interpolating between categories within the transition bands. Left open.
+
 ---
 
 ## IN-12 — Applicability — `05-crack-depth.mdx`
@@ -202,5 +212,7 @@ particular the temperate climate default — or a statement that both selections
 supplied and the defaults are not to be relied on.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the document states that when the net evaporation is not supplied, the climate must be described by one of the four categories; it provides no default climate. The model's temperate default (DesiccationConfig.cs:60) is therefore not supported by the document, which is consistent with stating that the climate selection is always to be supplied. It is silent on the surface-layer default. Left open.
 
 ---
