@@ -3,9 +3,10 @@ import useBrokenLinks from '@docusaurus/useBrokenLinks';
 import { useEffect, useState } from 'react';
 import { useReportId } from '../contexts/ReportIdContext'; // Import the context hook to retrieve the reportId
 import imageDimensions from '../imageDimensions';
+import ZoomableImage from './ZoomableImage';
 import '../css/custom.css';
 
-const Figure = ({ figKey, src, alt, caption, width = '80%', background = 'filled', id }) => {
+const Figure = ({ figKey, src, alt, caption, width = '80%', background = 'filled', id, zoom = true }) => {
   const [figInfo, setFigInfo] = useState(null);
   const reportId = useReportId(); // Get the reportId from the context
   const imgUrl = useBaseUrl(src);
@@ -55,12 +56,22 @@ const Figure = ({ figKey, src, alt, caption, width = '80%', background = 'filled
   }, [reportId, figKey, countersBase]);
 
   const imgBgClass = background === 'transparent' ? '' : 'bg-surface-page dark:bg-white';
+  const figureLabel = figInfo ? `Figure ${figInfo.figNumber}` : 'Figure';
 
   return (
     <figure id={figureId} className="my-[1em] ml-0 mr-auto w-full justify-items-start border-y border-border-color py-5">
-      <img src={imgUrl} alt={alt} className={`block h-auto ${imgBgClass}`} style={{ maxWidth: width }} width={dims?.width} height={dims?.height} />
+      <ZoomableImage
+        src={imgUrl}
+        alt={alt}
+        className={`block h-auto ${imgBgClass}`}
+        style={{ maxWidth: width }}
+        width={dims?.width}
+        height={dims?.height}
+        caption={`${figureLabel}: ${caption}`}
+        enabled={zoom}
+      />
       <figcaption className="mt-[1em] max-w-full text-left font-usace text-caption italic text-gray-500 dark:text-gray-400">
-        {figInfo ? `Figure ${figInfo.figNumber}` : 'Figure'}: {caption}
+        {figureLabel}: {caption}
       </figcaption>
     </figure>
   );
