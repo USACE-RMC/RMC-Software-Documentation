@@ -2,6 +2,8 @@
 title: Initiation
 ---
 
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
 import Equation from '@site/src/components/Equation';
 import EquationReference from '@site/src/components/EquationReference';
 import NavContainer from '@site/src/components/NavContainer';
@@ -38,6 +40,14 @@ The gate makes the crack depth the controlling quantity of the crest-crack model
 the SRP steps from negligible to its full value. Above $z_{bc}$, the SRP of a crest-crack model varies with pool level only through the
 continuation, roof-support, and flow-limitation nodes (see [Failure Pathway and Progression](./07-failure-pathway-and-progression.mdx)).
 
+In a transverse crack at the crest, the hydraulic shear stresses are highest at the downstream end of the crack, where they typically exceed the
+critical shear stress of most embankment soils. As erosion proceeds there, the downstream end of the crack widens and the water surface in that
+part of the crack falls, so that the uneroded crack just upstream becomes the new hydraulic control. Erosion is therefore likely to advance
+upstream by progressive erosion and headcutting unless swelling closes the upstream end of the crack, a filter arrests the erosion, or the pool
+falls far enough to bring the shear stresses below their critical values. A filter, transition, or rockfill zone downstream of a cracked core can
+also control the exit, changing the flow profile in the crack and reducing the shear stresses relative to a free exit. The gate takes no credit
+for that reduction, which is conservative.
+
 :::warning[INPUT NEEDED IN-06 — Engineering Basis]
 The initiation probability of 1.0 applied once the pool rises above the bottom of an open crest crack
 (<EquationReference equationKey="cle-common-screening-eq-8" />) requires an engineering basis to state here. The model records two different
@@ -65,6 +75,16 @@ each screening-level choice.
 
 ### Governing relationships
 
+The hydraulic shear stress on the walls of a crack or pipe follows from a balance between the driving force of the flow and the frictional
+resistance of the walls (Wan and Fell, 2004) <Citation citationKey="WanFell2004" />:
+
+<Equation equationKey="cle-common-screening-eq-16" equation="\tau = \rho_w\, g\, \frac{\Delta H}{L}\, \frac{A}{P_w} = \gamma_w\, i\, \frac{A}{P_w}" />
+
+where $\rho_w$ is the density of water, $g$ the acceleration due to gravity, $\Delta H$ the net head across the opening, $L$ the length over which
+that head is lost, $A$ the average cross-sectional area of the flow, and $P_w$ the average wetted perimeter. The relationship assumes a cross
+section that is uniform from upstream to downstream, steady uniform flow, linear head loss along the opening, and uniform frictional resistance on
+its walls that equals the driving force. For a cylindrical pipe of diameter $D$ flowing full, $A/P_w = D/4$.
+
 The pipe invert is the base-of-flaw elevation $z_f$ resolved by the flaw assessment
 (see [Flaw Conventions](./05-flaw-conventions.mdx#compaction-models-base-of-the-flaw)). At each pool level $h$ with tailwater $h_t$, the upstream
 and downstream heads above the invert are each limited to be no less than zero:
@@ -76,7 +96,7 @@ and downstream heads above the invert are each limited to be no less than zero:
 
 where $L$ is the seepage path length and $i$ the average hydraulic gradient along the pipe. A pool at or below the invert gives no flow and no
 initiation; a tailwater below the invert, or no tailwater, gives no submergence. The hydraulic shear stress on the wall of a cylindrical pipe
-carrying this gradient is, as derived in the toolbox manual's
+carrying this gradient is therefore, as derived in the toolbox manual's
 [Hydraulic Shear Stress](/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/cylindrical-pipe#hydraulic-shear-stress)
 section,
 
@@ -122,6 +142,11 @@ section directs the estimation of a site-specific critical shear stress to the
 [Erodibility Parameters](/docs/toolbox-technical-manuals/internal-erosion-suite/erodibility-parameters/v1.0/preface) toolbox; a site-specific
 distribution supplied by the user replaces the default.
 
+The default ranges are critical shear stress estimates for non-dispersive soils from Fell et al. (2024) <Citation citationKey="Fell2024" />,
+which relates the critical shear stress to the soil description and a representative erosion rate index. Fell et al. (2024) gives no values for
+silty gravel (GM) or clayey gravel (GC); their ranges are engineering-judgment estimates set relative to the published values for the other
+classes.
+
 <TableVertical
   tableKey="cle-common-screening-table-11"
   alt="Default critical shear stress range by soil classification"
@@ -150,15 +175,6 @@ distribution supplied by the user replaces the default.
 The six clean and nearly clean sand and gravel classes — SP-SM, SW, SP, GP-GM, GW, and GP, the classes with less than 12 percent fines — have
 no entry: the compaction models do not accept them as the core soil classification. The silty classes SM, GM, and ML, which can also be
 non-plastic, are accepted.
-
-:::warning[INPUT NEEDED IN-07 — Engineering Basis]
-The default critical shear stress ranges of <TableReference tableKey="cle-common-screening-table-11" /> require a literature source or an
-engineering-judgment attribution. Provide the full bibliographic details of the source table (for example, the erodibility data set or
-correlation the ranges are taken from) so that it can be added to the bibliography.
-
-Proposed (unconfirmed): the tabulated values are conversions of round values in pascals — 1, 2, 4, 5, 10, 20, 25, and 50 Pa — which suggests
-a source table published in SI units. Confirm or replace.
-:::
 
 :::warning[INPUT NEEDED IN-08 — Decision]
 Two entries of <TableReference tableKey="cle-common-screening-table-11" /> do not follow the pascal conversion of the rest of the table: the low
@@ -192,7 +208,8 @@ The toolbox manual's
 section directs the estimation of an initial opening to the
 Concentrated Leak Erosion (Cracking)
 toolbox and, because the initial diameter is very difficult to predict, recommends sensitivity analysis; a site-specific distribution supplied by
-the user replaces the default.
+the user replaces the default. Each model's range is informed by the guidance of Fell et al. (2024) <Citation citationKey="Fell2024" /> for
+its mechanism.
 
 <TableVertical
   tableKey="cle-common-screening-table-12"
@@ -232,3 +249,5 @@ Relative to the toolbox method, the compaction models:
 
 The toolbox's further results — the critical pipe diameter, the headwater level for initiation, and the steady flow through the pipe — do not
 enter the event tree.
+
+<CitationFootnote />

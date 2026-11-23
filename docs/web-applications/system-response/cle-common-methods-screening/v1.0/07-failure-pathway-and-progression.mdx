@@ -39,6 +39,12 @@ description, and the material lists — as documented in [Common Input Parameter
 
 *Question:* Does an unfiltered seepage exit exist that allows erosion to continue?
 
+Once initiated, erosion continues unless the eroding forces are reduced or the passage of the eroded particles is impeded. Continuation therefore
+turns mainly on the filter compatibility of the zones and layers that the eroded core soil meets. In a modern embankment, filters prevent the
+migration of fines between zones and protect against leakage through cracks. In an existing embankment without modern filters, continuation
+depends on the compatibility of the core with the transition or shell materials downstream of it; where several zones grade from finer to
+coarser, each zone must be filter-compatible with the one before it, so the evaluation can be a multi-step process.
+
 Where a filter intercepts the pathway, the probability that erosion continues past it, $P_{ce}$, is evaluated by the shared continuation method
 from the filter and base-soil description. The method, its alternative evaluation routes, and its basis are documented in the Continuation (Filter
 Evaluation) Screening Technical Reference Manual; it draws on the toolbox methods of the
@@ -76,9 +82,16 @@ crack over the filter, where nothing filters the exit; below the filter's top, a
 
 *Question:* Does a continuous stable roof form over the enlarging pipe, so that it stays open?
 
+Two conditions chiefly decide whether soil can hold a stable roof and sidewalls over a pipe through the embankment: a fines content of at least
+15 percent, whatever the plasticity of the fines, or an embedded structure — a conduit, a spillway wall, or another feature — that can support a
+roof. An embankment core usually satisfies the first, since it typically consists of impervious or semi-impervious soil with sufficient fines.
+Table 13.1 of Fell et al. (2024) <Citation citationKey="Fell2024" /> gives guidance on a soil's ability to hold a roof based on its
+classification, fines content, plasticity of fines, and moisture condition; the screening models simplify that guidance to the soil
+classification alone.
+
 Each soil classification on the pathway maps to a roof-support probability per <TableReference tableKey="cle-common-screening-table-13" />,
-following Fell et al. (2024) <Citation citationKey="Fell2024" />. Every material along the pathway must hold a roof for the pipe to progress, so
-the least capable material governs and the node takes the minimum across the listed materials:
+following Table 13.1 of Fell et al. (2024) <Citation citationKey="Fell2024" />. Every material along the pathway must hold a roof for the pipe to
+progress, so the least capable material governs and the node takes the minimum across the listed materials:
 
 <Equation equationKey="cle-common-screening-eq-14" equation="P_{roof} = \min_{m \in \mathcal{M}} P_{roof}(m)" />
 
@@ -88,6 +101,8 @@ where $\mathcal{M}$ is the material set that applies:
   pathway), and the full-pathway materials above it (and at every pool level when no filter is present). Roof support can therefore change where
   the pool crosses $z_{tf}$, in step with continuation.
 - **Compaction models** — the embankment materials the pipe passes through, at every pool level.
+
+The node takes no credit for swelling of the soil closing the crack and stopping erosion, which is conservative.
 
 <TableVertical
   tableKey="cle-common-screening-table-13"
@@ -122,8 +137,19 @@ where $\mathcal{M}$ is the material set that applies:
 
 *Question:* Does the enlarging pipe remain unfilled, rather than being filled and healed by material carried in from upstream?
 
-The probability $P_{nf}$ depends only on the embankment type, per <TableReference tableKey="cle-common-screening-table-14" />, following Fell
-et al. (2024) <Citation citationKey="Fell2024" />. It is the same at every pool level for both groups.
+Crack filling requires a granular zone upstream of the core whose particles are small enough to be carried by the water flowing into the crack or
+pipe, and a downstream filter, transition, or rockfill zone able to act as a filter for those particles and for the core. When the pipe has
+progressed through the core, an upstream zone that cannot itself hold a roof can collapse into it, and the washed-in particles then build a filter
+against the downstream zone. The washed-in material is most useful where the core lacks the sand-sized particles needed for it to be filter
+compatible with the downstream zone on its own. Crack filling is therefore possible only in central-core and sloping-core earth and rockfill
+embankments, and its effectiveness depends on the compatibility of the upstream granular material with the downstream filter or transition, and
+of that zone, with the washed-in particles, with the core.
+
+The probability $P_{nf}$ that crack filling does not stop the erosion depends only on the embankment type, per
+<TableReference tableKey="cle-common-screening-table-14" />, following Table 13.2 of Fell et al. (2024) <Citation citationKey="Fell2024" />.
+Homogeneous and zoned earthfill embankments have no upstream zone able to fill the pipe, so no credit is taken and $P_{nf} = 1.0$; a central-core
+earth and rockfill embankment is credited with a one-in-two chance that crack filling arrests the erosion, so $P_{nf} = 0.5$. The node is the
+same at every pool level for both groups.
 
 <TableVertical
   tableKey="cle-common-screening-table-14"
@@ -137,24 +163,19 @@ et al. (2024) <Citation citationKey="Fell2024" />. It is the same at every pool 
   ]}
 />
 
-:::warning[INPUT NEEDED IN-13 — Definition]
-Confirm the physical meaning of the values in <TableReference tableKey="cle-common-screening-table-14" />. The model's source table is described
-as giving the probability of crack filling, while the event-tree node multiplies the tabulated value directly as the probability of no crack
-filling. The two readings agree only for the central-core earth and rockfill value of 0.5; for the earthfill types, a tabulated 1.0 read as the
-probability of crack filling would mean certain healing. State which reading the source table supports, cite its table number in Fell et al.
-(2024).
-
-Proposed (unconfirmed): the tabulated value is the probability that crack filling does not stop the erosion — an earthfill embankment has no
-upstream zone of material able to wash into and fill the pipe, so no credit is taken, while the upstream zone of a central-core earth and
-rockfill embankment is credited with a one-in-two chance of filling it. Confirm or replace.
-:::
-
 ## Node 6: Progression — No Flow Limitation
 
 *Question:* Does the flow into the enlarging pipe remain unrestricted by upstream seepage-limiting elements?
 
-Each upstream element maps to a probability of no flow limitation per <TableReference tableKey="cle-common-screening-table-15" />, following Fell
-et al. (2024) <Citation citationKey="Fell2024" />. An upstream facing element and a wall
+A constriction along the leakage path can limit the flow from the reservoir enough to keep the hydraulic shear stresses below the values needed
+to detach soil, arresting erosion before it progresses to breach. The constriction must itself be stable and have openings small enough to limit
+the flow. Examples are concrete or sheet pile walls within the embankment — a modern concrete wall is the most effective, while a steel sheet pile
+wall may be less effective where driving conditions or construction were poor — and concrete or steel membranes, soil-cement slope protection,
+geomembranes, or other linings on the upstream face.
+
+Each upstream element maps to a probability of no flow limitation per <TableReference tableKey="cle-common-screening-table-15" />, following Table
+13.3 of Fell et al. (2024) <Citation citationKey="Fell2024" />. The upstream facing elements — a concrete slab, soil-cement wave protection, a
+geomembrane, or another lining — share one probability, so the kind of facing is not distinguished. An upstream facing element and a wall
 are separate barriers that the flow passes in turn, so when both apply the node is the product of the facing element's probability and the
 wall's. When more than one wall type is listed, the walls describe the single barrier located by the top-of-wall elevation, so the most effective
 wall governs rather than the walls compounding. An element that is absent, or that does not apply, contributes 1.0: with one applicable element

@@ -37,6 +37,12 @@ Fell et al. (2024) that defines them.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the categories are taken from Table 13.3 of Fell et al.
+(2024), which the document lists as upstream concrete slab, soil-cement wave protection, sheet
+pile wall, modern cutoff wall, non-cementitious walls, soil-cement-bentonite wall, and column
+wall, but the document does not define "modern cutoff wall" or "non-cementitious wall"; confirm
+that Table 13.3 defines them.
+
 ---
 
 ## IN-03 — Engineering Basis — `05-flaw-conventions.mdx`
@@ -70,6 +76,14 @@ models.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): for the core and wall or cliff compaction mechanisms, the
+document describes the continuity of the flaw as taken from the Compaction Method categories of
+Fell et al. (2024) Table 6.4, with "the first two categories ... combined into a single
+category and assigned probability of 0.1 for the continuity of the flaw". This suggests Table
+6.4 as the source and "continuity of the flaw" as the meaning, but the stated 0.1 for the
+combined first two categories does not clearly map onto the model's curve (0.1 only at
+likelihood factor 4), so it is left open.
+
 ---
 
 ## IN-05 — Engineering Basis — `05-flaw-conventions.mdx`
@@ -85,6 +99,10 @@ the embankment experiences, so that initiation is evaluated above normal pool wh
 frequent.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the document applies the same convention (base of flaw
+one third of the height between normal pool and the crest, for core compaction and for the
+abutment case) but gives no basis for it.
 
 ---
 
@@ -106,6 +124,18 @@ posture under which a site needing a lower value adjusts the SRP.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the document states that, "as demonstrated by Peirson et
+al. (2023)", the highest shear stresses in a transverse crest crack occur at its downstream end
+and typically exceed the critical shear stress of most embankment soils, and then adopts
+initiation of 1.0 as its own assumption. This reads as the code's attribution (a screening
+convention, supported by but not an explicit finding of the paper). However, the document's
+reference list has no 2023 Peirson entry; its only Peirson entry is Peirson, W. L., and Fell,
+R. (2024), "Pressurised flow in cracks in embankment dam cores," European Journal of
+Environmental and Civil Engineering 29(6), 1076-1080, doi:10.1080/19648189.2024.2428253.
+Confirm whether that paper is the intended source before it is cited. The physical description
+(downstream-end stresses, headcutting, neglected exit control) was adopted into
+06-initiation.mdx without a citation.
+
 ---
 
 ## IN-07 — Engineering Basis — `06-initiation.mdx`
@@ -121,7 +151,10 @@ engineering-judgment attribution.
 **Proposed (unconfirmed):** The values are conversions of round values in pascals (1, 2, 4, 5,
 10, 20, 25, 50 Pa), suggesting a source table published in SI units.
 
-**Answer:**
+**Answer:** The ranges are Fell et al. (2024) critical shear stress estimates for
+non-dispersive soils, based on the soil description and a representative erosion rate index; GM
+and GC are not in Fell et al. (2024) and were estimated by judgment relative to the published
+values (from Oct 2025 methodology document).
 
 ---
 
@@ -134,6 +167,11 @@ value 0.418 lb/ft² (20 Pa = 0.4177 lb/ft²).
 **Needed:** Whether these values are intended as printed or should match the converted values.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): GM and GC are the two classes the document says were
+estimated relative to the published Fell et al. (2024) values rather than taken from them,
+which may explain why their off-pattern values (GM low 0.021, GC high 0.418) depart from the
+pascal conversion; the document does not say whether the values are intended as printed.
 
 ---
 
@@ -167,6 +205,10 @@ values.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the document states that a triangular distribution is
+applied to the critical shear stress range (and to the initial pipe diameter where it varies)
+but gives no basis.
+
 ---
 
 ## IN-11 — Engineering Basis — `06-initiation.mdx`
@@ -180,6 +222,12 @@ range is larger than the core range and why the wall or cliff range has its most
 its low value.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the document gives the same ranges (core 2-3-5 mm,
+conduit 5-10-12.5 mm, wall or cliff 5-5-10 mm, foundation or abutment 2-3-5 mm) and says the
+initial pipe diameter "is also informed by Fell et al. (2024) depending on the CLE mechanism"
+(this attribution was added to 06-initiation.mdx), but it does not explain the differences
+between the ranges.
 
 ---
 
@@ -215,7 +263,10 @@ erosion — an earthfill embankment has no upstream zone of material able to fil
 credit is taken, while the upstream zone of a central-core earth and rockfill embankment is
 credited with a one-in-two chance of filling it.
 
-**Answer:**
+**Answer:** The tabulated value is the probability of no crack filling: 1.0 for homogeneous and
+zoned earthfill embankments (no upstream zone able to fill the pipe) and 0.5 for central-core
+earth and rockfill embankments; the table is Fell et al. (2024) Table 13.2, as cited in the
+model source (from Oct 2025 methodology document).
 
 ---
 
@@ -231,6 +282,11 @@ every pool level; (3) the conduit compaction model takes no flow-limitation cred
 flow-limitation probabilities) or the engineering-judgment attribution.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the document identifies Table 13.3 of Fell et al. (2024)
+as the source of the flow-limitation probabilities (now cited in
+07-failure-pathway-and-progression.mdx). It predates the combination and gating conventions (it
+describes a single selected element), so it gives no basis for items (1) to (3).
 
 ---
 
