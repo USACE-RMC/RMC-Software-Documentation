@@ -404,8 +404,9 @@ const docs = [
     category: 'web-applications',
     software: 'system-response',
     doc_location: 'web-applications/system-response/cle-desiccation-screening',
-    doc_name: 'CLE Desiccation Screening Technical Reference Manual',
-    active: false,
+    doc_name: 'Concentrated Leak Erosion Desiccation Screening Technical Reference Manual',
+    sidebar_label: 'Concentrated Leak Erosion Desiccation Screening',
+    active: true,
     draft: true,
   },
   {
