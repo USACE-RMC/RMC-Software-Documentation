@@ -5,6 +5,7 @@ title: Model Overview
 import Citation from '@site/src/components/Citation';
 import CitationFootnote from '@site/src/components/CitationFootnote';
 import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
 import TableReference from '@site/src/components/TableReference';
 import TableVertical from '@site/src/components/TableVertical';
 
@@ -14,7 +15,7 @@ import TableVertical from '@site/src/components/TableVertical';
 
 ## Purpose
 
-The CLE core compaction screening model computes a system response curve for concentrated leak erosion through a continuous zone of poorly
+The concentrated leak erosion (CLE) core compaction screening model computes a system response curve for concentrated leak erosion through a continuous zone of poorly
 compacted soil within the embankment core, as a function of headwater elevation. The system response probability (SRP) at each headwater level is
 the conditional probability of breach of the embankment by concentrated leak erosion along such a zone, given that pool level.
 
@@ -37,7 +38,7 @@ Methods manual):
   potential core compaction concern are flagged for further analysis.
 - **Reducing input burden** — A qualitative core compaction category and the dimensions of the embankment section stand in for a detailed review of
   construction records, and default distributions cover the critical shear stress of the core soil and the initial diameter of the flaw. Where the
-  compaction of the core is not known, the user selects Unknown rather than guessing.
+  compaction of the core is not known, the category is entered as Unknown rather than guessed.
 
 The model is not intended for detailed or semi-quantitative risk assessments. For those, the concentrated leak erosion toolbox methods and the
 internal-erosion probability methods of Fell et al. (2024) <Citation citationKey="Fell2024" /> provide the complete methodologies (see
@@ -47,21 +48,32 @@ internal-erosion probability methods of Fell et al. (2024) <Citation citationKey
 
 The model executes three stages:
 
-1. **Flaw assessment** — The model scores three factors: the core compaction category, the continuity of the embankment section (its base width and
-   its width-to-height ratio), and borrow variability, which is fixed. The weighted sum of the scores is converted to a raw flaw probability, which
-   is multiplied by a flaw-continuity probability keyed to the compaction category. The base of the flaw is placed one third of the way from the
-   normal pool to the crest. An observation of embankment leakage or wet spots replaces both results: the flaw probability becomes 1.0 and the base
-   of the flaw becomes the observed elevation. The flaw probability is the same at every pool level (see [Flaw Assessment](./04-flaw-assessment.mdx)).
+<ProcessList
+  items={[
+    {
+      title: 'Flaw assessment',
+      child: [
+        'The model scores three factors: the core compaction category, the geometry of the embankment section (its base width and its width-to-height ratio), and borrow variability, which is fixed. The weighted sum of the scores is converted to a raw flaw probability, which is multiplied by a flaw-continuity probability keyed to the compaction category. The base of the flaw is placed one third of the way from the normal pool to the crest. An observation of embankment leakage or wet spots replaces both results: the flaw probability becomes 1.0 and the base of the flaw becomes the observed elevation. The flaw probability is the same at every pool level.',
+      ],
+    },
+    {
+      title: 'Pathway resolution',
+      child: [
+        'The flaw is at one elevation, so the failure pathway is fixed. Supplying, or omitting, the filter and base-soil description states whether a filter intercepts the pathway, and the embankment materials the pipe passes through and the upstream seepage-limiting elements present are listed. A wall whose top is below the base of the flaw is set aside.',
+      ],
+    },
+    {
+      title: 'Event-tree assembly',
+      child: [
+        'At each headwater level, the model multiplies the probabilities of the eight CLE event-tree nodes to produce the SRP. Initiation is evaluated by a Monte Carlo cylindrical-pipe analysis of the hydraulic shear stress at the base of the flaw and is the only node that varies with pool level; the other seven nodes are each one value.',
+      ],
+    },
+  ]}
+/>
 
-2. **Pathway resolution** — The flaw is at one elevation, so the failure pathway is fixed: the user states whether a filter intercepts it by
-   supplying, or omitting, the filter and base-soil description, and lists the embankment materials the pipe passes through and the upstream
-   seepage-limiting elements present. A wall whose top is below the base of the flaw is set aside (see [Event Tree](./05-event-tree.mdx)).
+[Flaw Assessment](./04-flaw-assessment.mdx) documents the first stage, and [Event Tree](./05-event-tree.mdx) documents the second and third.
 
-3. **Event-tree assembly** — At each headwater level, the model multiplies the probabilities of the eight CLE event-tree nodes to produce the SRP.
-   Initiation is evaluated by a Monte Carlo cylindrical-pipe analysis of the hydraulic shear stress at the base of the flaw and is the only node that
-   varies with pool level; the other seven nodes are each one value (see [Event Tree](./05-event-tree.mdx)).
-
-## Physics Basis
+## Technical Basis
 
 The model combines the following engineering methods:
 
@@ -114,7 +126,7 @@ compaction flaw.
   ]}
 />
 
-## Relationship to the Common Methods and Toolbox Models
+## Relationship to the Shared Methods
 
 The core compaction model is one of the four compaction models of the CLE family (see
 [The Two Model Groups](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#the-two-model-groups) in the CLE

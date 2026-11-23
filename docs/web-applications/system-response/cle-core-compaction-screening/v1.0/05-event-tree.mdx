@@ -2,7 +2,6 @@
 title: Event Tree
 ---
 
-import Equation from '@site/src/components/Equation';
 import NavContainer from '@site/src/components/NavContainer';
 import TableReference from '@site/src/components/TableReference';
 import TableVertical from '@site/src/components/TableVertical';
@@ -11,7 +10,7 @@ import TableVertical from '@site/src/components/TableVertical';
 
 # Event Tree
 
-The core compaction model computes the SRP at each headwater level from the eight-node event tree shared by the CLE family. The structure of the
+The concentrated leak erosion (CLE) core compaction model computes the system response probability (SRP) at each headwater level from the eight-node event tree shared by the CLE family. The structure of the
 tree, how it relates to the concentrated leak erosion trees of the Typical Event Tree Database, the headwater grid on which it is evaluated, and the
 general form of each node are documented in the
 [Event Tree](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree) chapter of the CLE Common Methods manual. This
@@ -19,29 +18,40 @@ chapter states how the core compaction model populates each node.
 
 ## Node Summary
 
-<TableReference tableKey="cle-core-compaction-screening-table-8" /> summarizes the nodes. Only initiation varies with pool level: the flaw is at
+<TableReference tableKey="cle-core-compaction-screening-table-10" /> summarizes the nodes. Only initiation varies with pool level: the flaw is at
 one elevation, so the filter it meets, the materials it passes through, and the walls that reach it are the same at every pool level (see
 [Pool Dependence](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#pool-dependence) in the CLE Common Methods
 manual).
 
 <TableVertical
-  tableKey="cle-core-compaction-screening-table-8"
+  tableKey="cle-core-compaction-screening-table-10"
   alt="Event-tree nodes of the core compaction model"
   caption="Event-tree nodes of the core compaction model."
-  colAlign={['center', 'left', 'left', 'center']}
-  headers={[[{ value: 'Node' }, { value: 'Name' }, { value: 'Source in This Model' }, { value: 'Varies with Pool' }]]}
+  colAlign={['center', 'left', 'center', 'center', 'left']}
+  headers={[[{ value: 'Node' }, { value: 'Event' }, { value: 'Probability' }, { value: 'Pool-Dependent' }, { value: 'Source' }]]}
   columns={[
     ['1', '2', '3', '4', '5', '6', '7', '8'],
     [
       'Flaw',
       'Initiation',
       'Continuation',
-      'Progression: Roof Support',
-      'Progression: No Crack Filling',
-      'Progression: No Flow Limitation',
-      'Unsuccessful Intervention',
+      'Progression — roof support',
+      'Progression — no crack filling',
+      'Progression — no flow limitation',
+      'Unsuccessful intervention',
       'Breach',
     ],
+    [
+      'P<sub>flaw</sub>',
+      'P<sub>init</sub>(h)',
+      'P<sub>cont</sub>',
+      'P<sub>roof</sub>',
+      'P<sub>nf</sub>',
+      'P<sub>nl</sub>',
+      'P<sub>int</sub>',
+      'P<sub>br</sub>',
+    ],
+    ['No', 'Yes', 'No', 'No', 'No', 'No', 'No', 'No'],
     [
       'Core compaction flaw assessment',
       'Cylindrical-pipe Monte Carlo analysis at the base of the flaw',
@@ -52,7 +62,6 @@ manual).
       'User-specified (default 1.0)',
       'User-specified (default 1.0)',
     ],
-    ['No', 'Yes', 'No', 'No', 'No', 'No', 'No', 'No'],
   ]}
 />
 
@@ -80,14 +89,14 @@ The core compaction model supplies the analysis with:
 - **The embankment section** — the core section when one is supplied, otherwise the shell section, from which the seepage path length is measured
   as a horizontal line at the invert (see
   [Seepage Path Length](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#seepage-path-length) in the CLE Common
-  Methods manual), unless the user supplies a seepage path length.
+  Methods manual), unless a seepage path length is supplied.
 - **The critical shear stress** — a triangular distribution over the range for the core soil classification (see
   [Critical Shear Stress](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#critical-shear-stress) in the CLE
-  Common Methods manual), unless the user supplies a distribution.
-- **The initial pipe diameter** — a triangular distribution with a low value of 2 mm, a most likely value of 3 mm, and a high value of 5 mm, the
-  range the model shares with the foundation or abutment compaction model (see
-  [Initial Pipe Diameter](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#initial-pipe-diameter) in the CLE
-  Common Methods manual), unless the user supplies a distribution.
+  Common Methods manual), unless a distribution is supplied.
+- **The initial pipe diameter** — this model's default triangular distribution, with a low value of 2 mm, a most likely value of 3 mm, and a
+  high value of 5 mm, listed in
+  [Initial Pipe Diameter](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#initial-pipe-diameter)
+  in the CLE Common Methods manual, unless a distribution is supplied.
 - **The headwater and tailwater series** — evaluated on the headwater grid described in
   [Headwater Grid](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#headwater-grid) in the CLE Common Methods
   manual.
@@ -106,28 +115,24 @@ from the information supplied and takes the governing result, as documented in
 [Method Selection and Governing Base Soil](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/method-selection-and-governing-base-soil)
 in the Continuation (Filter Evaluation) Screening manual. The model's use of it is documented in
 [Node 3: Continuation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-3-continuation)
-in the CLE Common Methods manual. The core compaction model applies it as follows:
-
-<Equation
-  equationKey="cle-core-compaction-screening-eq-7"
-  equation="P_{cont} = \begin{cases} P_{ce} & \text{filter and base-soil inputs are supplied} \\[4pt] 1.0 & \text{otherwise} \end{cases}"
-/>
-
-where $P_{ce}$ is the probability of continuing erosion from the continuation method. Supplying the filter and base-soil description is how the
-user states that a filter intercepts the pathway; the model has no separate filter-presence selection and does not compare the filter with the
-base of the flaw or with any other elevation. Because the base of the flaw is fixed, $P_{cont}$ is one value at every pool level. The
+in the CLE Common Methods manual. The core compaction model applies the compaction-model form of the node documented there: the continuation
+probability $P_{cont}$ is the probability of continuing erosion $P_{ce}$, the node result of the Continuation (Filter Evaluation) Screening model
+(written $P_{cont}$ in that manual), when the filter and base-soil inputs are supplied, and 1.0 otherwise (see
+[Node Result](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/output-and-interpretation#node-result)
+in that manual). Supplying the filter and base-soil description is how a filter intercepting the pathway is stated; the model has
+no separate filter-presence selection and does not compare the filter with the base of the flaw or with any other elevation. Because the base of the flaw is fixed, $P_{cont}$ is one value at every pool level. The
 continuation method is not evaluated when no filter inputs are supplied.
 
-The user resolves the filter question at the base of the flaw $z_f$, whichever way it is set. A filter whose top lies below $z_f$ — the
+The filter question is resolved at the base of the flaw $z_f$, whichever way it is set. A filter whose top lies below $z_f$ — the
 heuristic elevation or the observed leakage elevation $z_{lk}$ — does not intercept the pathway at the flaw elevation and should not be supplied.
-For example, when the base of the flaw comes from the normal-pool heuristic, its elevation is $z_{np} + (z_c - z_{np})/3$ (see
-[Flaw Assessment](./04-flaw-assessment.mdx#base-of-the-flaw)), and only a filter whose top reaches that elevation should be supplied.
+For example, when the base of the flaw comes from the normal-pool heuristic, only a filter whose top reaches one third of the way from the normal
+pool to the crest should be supplied (see [Flaw Assessment](./04-flaw-assessment.mdx#base-of-flaw-elevation)).
 
 ## Node 4: Progression — Roof Support
 
 *Question:* Does a continuous stable roof form over the enlarging pipe, so that it stays open?
 
-$P_{roof}$ is the minimum of the roof-support probabilities of the embankment materials the user lists, from the table in
+$P_{roof}$ is the minimum of the roof-support probabilities of the listed embankment materials, from the table in
 [Node 4: Progression — Roof Support](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-4-progression--roof-support)
 in the CLE Common Methods manual. At least one material must be listed. The same value applies at every pool level.
 
@@ -161,20 +166,15 @@ elevation, since that is then the base of the flaw. Either way, one value applie
 
 *Questions:* Do detection and intervention fail (Node 7)? Does an uncontrolled release of impounded water occur (Node 8)?
 
-$P_{int}$ and $P_{br}$ are the user-specified values, each defaulting to 1.0, applied at every pool level (see
+$P_{int}$ and $P_{br}$ are the user-specified values, applied at every pool level (see
 [Nodes 7 and 8](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#nodes-7-and-8-unsuccessful-intervention-and-breach)
 in the CLE Common Methods manual).
 
 ## SRP Computation
 
-The SRP at each pool level $h$ is the product of the eight node probabilities, of which only initiation depends on $h$:
-
-<Equation
-  equationKey="cle-core-compaction-screening-eq-8"
-  equation="\mathrm{SRP}(h) = P_{flaw} \times P_{init}(h) \times P_{cont} \times P_{roof} \times P_{nf} \times P_{nl} \times P_{int} \times P_{br}"
-/>
-
-A product smaller than a negligibly small value, including a product of zero, is reported as that value instead (see
-[SRP Computation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#srp-computation) in the CLE Common Methods
-manual). The SRP takes this value at every pool level at or below the base of the flaw, where initiation is zero, and at every pool level when the
-core is well compacted and no observation override applies, because its flaw probability is smaller still.
+The SRP at each pool level $h$ is the product of the eight node probabilities, as documented in
+[SRP Computation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#srp-computation)
+in the CLE Common Methods manual. In this model only the initiation probability $P_{init}(h)$ depends on $h$. A product smaller than a negligibly
+small value, including a product of zero, is reported as that value instead. The SRP takes this value at every pool level at or below the base of
+the flaw, where initiation is zero, and at every pool level when the core is well compacted and no observation override applies, because its flaw
+probability is smaller still.
