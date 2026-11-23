@@ -18,20 +18,26 @@ import { useEffect, useMemo, useRef, useState } from 'react';
  *     panel?: ReactNode,   // (alias)
  *     childPanel?: ReactNode, // (alias)
  *     freeform?: ReactNode | ReactNode[], // freeform content under the step (indented, not numbered)
+ *     result?: ReactNode, // what the reader sees after the step; shown as "Result: ..." under it
  *   }
+ *
+ * variant="steps" is a compact layout for short, imperative instructions
+ * ("Select Save.") with an optional `result` line per step.
  */
 export default function ProcessList({
   items = [],
   startAt = 1,
   indentPx = 0,
   maxIndentPx,
-  bubbleSizePx = 28,
+  variant = 'default', // 'default' | 'steps'
+  bubbleSizePx: bubbleSizeProp,
   bubbleGapPx = 10,
+  resultLabel = 'Result:',
   numberStyle = 'bubble', // 'bubble' | 'plain' | 'chevron'
   nowrap = false,
 
   // Tailwind class props (overridable)
-  boxClass = 'bg-background-color py-1.5',
+  boxClass: boxClassProp,
   badgeClass = 'bg-ifm-primary rounded-full shadow text-caption font-usace text-font-color-inverse',
   childBadgeClass = 'border border-ifm-primary text-caption font-usace text-ifm-primary bg-transparent rounded-full',
   gapClass = '!mb-0',
@@ -48,7 +54,11 @@ export default function ProcessList({
 
   // Freeform layout
   freeBlockClass = 'prose max-w-none',
+  resultClass = 'mt-0.5 font-usace text-[0.9em] leading-[1.45] text-font-color opacity-80',
 }) {
+  const compact = variant === 'steps';
+  const bubbleSizePx = bubbleSizeProp ?? (compact ? 24 : 28);
+  const boxClass = boxClassProp ?? (compact ? 'bg-background-color py-0.5' : 'bg-background-color py-1.5');
   const rootRef = useRef(null);
   const [containerW, setContainerW] = useState(0);
   const [openIdx, setOpenIdx] = useState(-1);
@@ -97,7 +107,7 @@ export default function ProcessList({
             alignItems: 'start',
             whiteSpace: nowrap ? 'nowrap' : 'normal',
             overflowX: nowrap ? 'auto' : 'visible',
-            minHeight: Math.max(bubbleSizePx + 8, 36),
+            minHeight: compact ? bubbleSizePx + 4 : Math.max(bubbleSizePx + 8, 36),
             boxSizing: 'border-box',
             maxWidth: '100%',
             minWidth: 0,
@@ -107,9 +117,10 @@ export default function ProcessList({
           const hasChildPanel = !!node.childPanel;
           const hasChildList = Array.isArray(node.childList) && node.childList.length > 0;
           const hasFreeform = Array.isArray(node.freeform) && node.freeform.length > 0;
+          const hasResult = node.result !== undefined && node.result !== null && node.result !== '';
 
           return (
-            <li key={i} className={`relative ${gapClass}`}>
+            <li key={i} className={`relative ${gapClass}${compact ? ' pb-1.5' : ''}`}>
               {/* Step header row */}
               <div className={`relative ${boxClass}`} style={headerGrid}>
                 {numberStyle === 'plain' ? (
@@ -167,10 +178,17 @@ export default function ProcessList({
                   </span>
                 )}
                 <span aria-hidden="true" />
-                <span className={`${fontClass} ${lineHeightClass} min-w-0 break-words`} title={String(title)}>
+                <span className={`${fontClass} ${lineHeightClass} min-w-0 break-words`} title={typeof title === 'string' ? title : undefined}>
                   {title}
                 </span>
               </div>
+
+              {/* Result line */}
+              {hasResult && (
+                <div className={resultClass} style={{ marginLeft: ml + bubbleSizePx + bubbleGapPx }}>
+                  <strong>{resultLabel}</strong> {node.result}
+                </div>
+              )}
 
               {/* Details panel (explicit only via details/panel/childPanel) */}
               {hasChildPanel && (
@@ -334,7 +352,7 @@ function ChildGroup({
                 </span>
               )}
               <span aria-hidden="true" />
-              <span className={`${fontClass} ${lineHeightClass} min-w-0 break-words`} title={String(child.title)}>
+              <span className={`${fontClass} ${lineHeightClass} min-w-0 break-words`} title={typeof child.title === 'string' ? child.title : undefined}>
                 {child.title}
               </span>
             </div>
@@ -459,6 +477,7 @@ function normalizeNode(it) {
   const rawDetails = it?.details ?? it?.panel ?? it?.childPanel;
 
   const out = { title };
+  if (it?.result !== undefined && it?.result !== null) out.result = it.result;
 
   // details panel only if explicitly provided
   if (rawDetails !== undefined && rawDetails !== null) {
