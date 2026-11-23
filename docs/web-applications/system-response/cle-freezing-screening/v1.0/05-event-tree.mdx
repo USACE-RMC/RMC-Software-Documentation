@@ -2,7 +2,6 @@
 title: Event Tree
 ---
 
-import Equation from '@site/src/components/Equation';
 import NavContainer from '@site/src/components/NavContainer';
 import TableReference from '@site/src/components/TableReference';
 import TableVertical from '@site/src/components/TableVertical';
@@ -11,45 +10,59 @@ import TableVertical from '@site/src/components/TableVertical';
 
 # Event Tree
 
-The model computes the SRP at each headwater level from the eight-node event tree shared by the CLE screening family, documented in
-[Event Tree](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree) of the common methods manual. As a crest-crack
-model, it evaluates initiation, continuation, roof support, and flow limitation at each pool level, and takes the flaw, crack-filling,
-intervention, and breach probabilities as the same at every pool level (see
-[Pool Dependence](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#pool-dependence)). The tree is evaluated at
-every supplied headwater value and at intermediate levels between them, as described in
+The model computes the system response probability (SRP) at each headwater level from the eight-node event tree shared by the concentrated leak
+erosion (CLE) screening models, documented in the
+[Event Tree](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree)
+chapter of the CLE Common Methods manual. As a crest-crack model, it evaluates initiation, continuation, roof support, and flow limitation at each
+pool level, and takes the flaw, crack-filling, intervention, and breach probabilities as the same at every pool level (see
+[Pool Dependence](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#pool-dependence)).
+The tree is evaluated at every supplied headwater value and at intermediate levels between them, as described in
 [Headwater Grid](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#headwater-grid).
-<TableReference tableKey="cle-freezing-screening-table-10" /> summarizes how this model populates each node; the sections that follow give the
-detail.
+
+## Node Summary
+
+<TableReference tableKey="cle-freezing-screening-table-10" /> lists the eight nodes, the probability each contributes, whether it varies with the
+pool level, and where its method is documented.
 
 <TableVertical
   tableKey="cle-freezing-screening-table-10"
-  alt="CLE freezing screening event-tree nodes"
-  caption="Event-tree nodes of the CLE freezing screening model."
-  colAlign={['center']}
-  headers={[[{ value: 'Node' }, { value: 'Name' }, { value: 'Source in This Model' }, { value: 'Varies with Pool' }]]}
+  alt="Event-tree nodes of the freezing model"
+  caption="Event-tree nodes of the freezing model."
+  colAlign={['center', 'left', 'center', 'center', 'left']}
+  headers={[[{ value: 'Node' }, { value: 'Event' }, { value: 'Probability' }, { value: 'Pool-Dependent?' }, { value: 'Source' }]]}
   columns={[
     ['1', '2', '3', '4', '5', '6', '7', '8'],
     [
       'Flaw',
       'Initiation',
       'Continuation',
-      'Progression: Roof Support',
-      'Progression: No Crack Filling',
-      'Progression: No Flow Limitation',
+      'Progression — Roof Support',
+      'Progression — No Crack Filling',
+      'Progression — No Flow Limitation',
       'Unsuccessful Intervention',
       'Breach',
     ],
     [
-      'Frost-cracking flaw assessment',
-      'Certain above the bottom of the crack; zero at or below',
-      'Continuation method at or below the filter top; 1.0 above',
-      'Minimum over the material set for the pool level',
-      'By embankment type',
-      'Facing element times the governing wall, where the wall top is at or above the pool level',
-      'User-specified (default 1.0)',
-      'User-specified (default 1.0)',
+      '<i>P</i><sub>flaw</sub>',
+      '<i>P</i><sub>init</sub>(<i>h</i>)',
+      '<i>P</i><sub>cont</sub>(<i>h</i>)',
+      '<i>P</i><sub>roof</sub>(<i>h</i>)',
+      '<i>P</i><sub>nf</sub>',
+      '<i>P</i><sub>nl</sub>(<i>h</i>)',
+      '<i>P</i><sub>int</sub>',
+      '<i>P</i><sub>br</sub>',
     ],
     ['No', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'No', 'No'],
+    [
+      'Flaw assessment of this manual: scored flaw probability, or 1.0 when cracking is observed',
+      'CLE Common Methods: headwater gate at the bottom of the crack',
+      'CLE Common Methods: crest-crack pathway convention, with the continuation method at or below the filter top',
+      'CLE Common Methods: minimum over the below-filter or full-pathway materials',
+      'CLE Common Methods: by embankment type',
+      'CLE Common Methods: facing element times the governing wall, with walls only at or below their top',
+      'Input (default 1.0)',
+      'Input (default 1.0)',
+    ],
   ]}
 />
 
@@ -58,72 +71,55 @@ detail.
 *Question:* Does a continuous transverse frost crack exist across the crest?
 
 $P_{flaw}$ is the result of the frost-cracking flaw assessment documented in [Flaw Assessment](./04-flaw-assessment.mdx): the scored probability
-from the climate, the crest soil, and the surface cover, or 1.0 when continuous frost cracking has been observed. It is the same at every pool level.
+from the climate, the crest soil, and the surface cover, or 1.0 when continuous frost cracking has been observed. It is the same at every pool
+level.
 
 ## Node 2: Initiation
 
-*Question:* Once water can enter the crack, does erosion of its walls begin?
+*Question:* Is the hydraulic shear stress on the walls of the crack large enough to initiate concentrated leak erosion?
 
-Initiation is the headwater gate of the crest-crack models, documented in
-[Crest-Crack Models: Headwater Gate](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#crest-crack-models-headwater-gate),
-applied at the bottom of the frost crack $z_{bc}$ from [Flaw Assessment](./04-flaw-assessment.mdx#crack-depth-and-bottom-of-the-crack):
-
-<Equation
-  equationKey="cle-freezing-screening-eq-6"
-  equation="P_{init}(h) = \begin{cases} 1.0 & \text{the mechanism applies and } h > z_{bc} \\[4pt] 0 & \text{otherwise} \end{cases}"
-/>
-
-where $h$ is the headwater elevation. Initiation is zero at a pool exactly at the bottom of the crack, and zero at every pool level when the
-mechanism does not apply. No shear stress is computed and tailwater plays no part. Because the crack depth is set by the climate alone, the climate
-category fixes the pool level at which the SRP can first rise: 6 ft below the crest for the longest freeze duration, and 1 ft below the crest for an
-above-freezing climate.
-
-The physical basis for the gate, which is why erosion that starts at the downstream end of an open crest crack advances upstream, is described in the
-[Crest-Crack Models: Headwater Gate](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#crest-crack-models-headwater-gate) section of the CLE Common Methods manual.
+The model applies the headwater gate of the crest-crack models (Equation 8 in the
+[Crest-Crack Models: Headwater Gate](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#crest-crack-models-headwater-gate)
+section of the CLE Common Methods manual) at the bottom-of-crack elevation $z_{bc}$ of
+[Flaw Assessment](./04-flaw-assessment.mdx#bottom-of-crack-elevation): initiation is 1.0 at pool levels above $z_{bc}$ and zero at or below it.
+When the mechanism does not apply, initiation is zero at every pool level, as that section states. No shear stress is computed and tailwater
+plays no part. Because the crack depth is set by the climate alone, the climate category fixes the pool level at which the SRP can first rise: 6
+ft below the crest for the longest freeze duration, and 1 ft below the crest for an above-freezing climate.
 
 ## Node 3: Continuation
 
-*Question:* Does an unfiltered seepage exit allow erosion to continue?
+*Question:* Does an unfiltered seepage exit exist that allows erosion to continue?
 
-Continuation follows the crest-crack pathway rule of
+Continuation follows the crest-crack pathway convention (Equation 14 in the
 [Node 3: Continuation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-3-continuation)
-in the common methods manual:
-
-<Equation
-  equationKey="cle-freezing-screening-eq-7"
-  equation="P_{cont}(h) = \begin{cases} P_{ce} & \text{a filter is present and } \bigl(h \le z_{tf} \text{ or the filter caps the pathway}\bigr) \\[4pt] 1.0 & \text{otherwise} \end{cases}"
-/>
-
-where $z_{tf}$ is the top-of-filter elevation and $P_{ce}$ is the probability of continuing erosion past the filter. $P_{ce}$ is evaluated once,
-from the filter and base-soil description, by the shared continuation method; with several base soils it is the largest of their pair
-probabilities, as described in
+section of the CLE Common Methods manual). Where a filter is present, the node takes the probability of continuing erosion $P_{ce}$, the node
+result of the Continuation (Filter Evaluation) Screening model (written $P_{cont}$ in that manual; see its
+[Node Result](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/output-and-interpretation#node-result)
+section), at pool levels at or below the top-of-filter elevation $z_{tf}$, and at every pool level when the filter caps the pathway (its top
+reaches the crest and no full-pathway roof materials are given); above $z_{tf}$ it is 1.0. $P_{ce}$ is evaluated once, from the filter and
+base-soil description; with several base soils it is the largest of their pair probabilities, as described in
 [Governing Base Soil](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/method-selection-and-governing-base-soil#governing-base-soil)
-of the continuation manual. The filter caps the pathway when its top reaches the crest and no full-pathway roof materials are given. With no filter
-on the pathway, the continuation method is not evaluated and $P_{cont} = 1.0$ at every pool level.
+in the Continuation (Filter Evaluation) Screening manual. With no filter on the pathway, the continuation method is not evaluated and
+$P_{cont} = 1.0$ at every pool level.
 
 ## Node 4: Progression — Roof Support
 
 *Question:* Does a continuous stable roof form over the enlarging pipe, so that it stays open?
 
-Roof support is the minimum roof-support probability across the material set that governs at the pool level, per
-[Node 4: Progression — Roof Support](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-4-progression--roof-support):
-
-<Equation
-  equationKey="cle-freezing-screening-eq-8"
-  equation="P_{roof}(h) = \begin{cases} \min_{m \in \mathcal{M}_{bf}} P_{roof}(m) & \text{a filter is present and } \bigl(h \le z_{tf} \text{ or the filter caps the pathway}\bigr) \\[4pt] \min_{m \in \mathcal{M}_{fp}} P_{roof}(m) & \text{otherwise} \end{cases}"
-/>
-
-where $\mathcal{M}_{bf}$ is the set of below-filter roof materials and $\mathcal{M}_{fp}$ the set of full-pathway roof materials. Roof support shares
-its gate with continuation, so both nodes switch together where the pool crosses the top of the filter. The roof-material lists are separate from the
-crest soil classifications of the flaw assessment.
+Roof support is the minimum roof-support probability across the material set that governs at the pool level (Equation 15 in the
+[Node 4: Progression — Roof Support](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-4-progression--roof-support)
+section of the CLE Common Methods manual): the below-filter roof materials at pool levels at or below $z_{tf}$, and at every pool level when the
+filter caps the pathway; the full-pathway roof materials above $z_{tf}$, and at every pool level when no filter is present. Roof support shares
+its gate with continuation, so both nodes switch together where the pool crosses the top of the filter. The roof-material lists are separate from
+the crest soil classifications of the flaw assessment.
 
 ## Node 5: Progression — No Crack Filling
 
-*Question:* Does the enlarging pipe remain unfilled by material carried in from upstream?
+*Question:* Does the enlarging pipe remain unfilled, rather than being filled and healed by material carried in from upstream?
 
 $P_{nf}$ is taken from the embankment type per
-[Node 5: Progression — No Crack Filling](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-5-progression--no-crack-filling).
-It is the same at every pool level.
+[Node 5: Progression — No Crack Filling](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-5-progression--no-crack-filling)
+in the CLE Common Methods manual. It is the same at every pool level.
 
 ## Node 6: Progression — No Flow Limitation
 
@@ -132,30 +128,29 @@ It is the same at every pool level.
 $P_{nl}$ is the probability of no flow limitation of the upstream facing element times that of the governing wall (the most effective of the walls
 listed), counting only the elements that reach the pool level; an element that is absent or does not reach it contributes 1.0, so $P_{nl}$ is 1.0
 when none is listed, per
-[Node 6: Progression — No Flow Limitation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-6-progression--no-flow-limitation).
-When a top-of-wall elevation $z_{tw}$ is supplied, the walls apply at pool levels at or below $z_{tw}$; above it the walls drop out and
-only an upstream facing element, if one is listed, still applies (otherwise $P_{nl} = 1.0$), as described in
+[Node 6: Progression — No Flow Limitation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-6-progression--no-flow-limitation)
+in the CLE Common Methods manual. When a top-of-wall elevation $z_{tw}$ is supplied, the walls apply at pool levels at or below $z_{tw}$; above
+it the walls drop out and only an upstream facing element, if one is listed, still applies (otherwise $P_{nl} = 1.0$), as described in
 [Walls That Stop Below the Crest](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#walls-that-stop-below-the-crest).
 
 ## Nodes 7 and 8: Unsuccessful Intervention and Breach
 
-*Questions:* Do detection and intervention fail? Does an uncontrolled release of the impounded water occur?
+*Questions:* Do detection and intervention fail (Node 7)? Does an uncontrolled release of impounded water occur (Node 8)?
 
-$P_{int}$ and $P_{br}$ are the user-specified probabilities, each one value applied at every pool level and each defaulting to 1.0.
+Both nodes are the shared intervention and breach inputs, documented with their defaults in the
+[Nodes 7 and 8](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#nodes-7-and-8-unsuccessful-intervention-and-breach)
+section of the CLE Common Methods manual. The model applies them without change.
 
 ## SRP Computation
 
-The SRP at each pool level is the product of the eight node probabilities:
+The SRP at each headwater (pool) elevation $h$ is the product of the eight node probabilities, by Equation 1 in the
+[SRP Computation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#srp-computation)
+section of the CLE Common Methods manual. In this model $P_{init}$, $P_{cont}$, $P_{roof}$, and $P_{nl}$ vary with $h$, and the other nodes are
+the same at every pool level.
 
-<Equation
-  equationKey="cle-freezing-screening-eq-9"
-  equation="\mathrm{SRP}(h) = P_{flaw} \times P_{init}(h) \times P_{cont}(h) \times P_{roof}(h) \times P_{nf} \times P_{nl}(h) \times P_{int} \times P_{br}"
-/>
-
-Where the product is zero — at and below the bottom of the crack, or where a user-supplied intervention or breach probability is zero — the SRP is
-reported as the negligibly small value the CLE family uses in place of zero (see
-[SRP Computation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#srp-computation)). Above the bottom of the
-crack, initiation is 1.0 and the SRP is the product of the remaining nodes at that pool level.
+Where the product is zero — at and below the bottom of the crack, or where an intervention or breach probability is zero — the SRP is reported
+as the negligibly small value the CLE family uses in place of zero. Above the bottom of the crack, initiation is 1.0 and the SRP is the product of
+the remaining nodes at that pool level.
 
 ## Worked Example
 
@@ -166,7 +161,7 @@ upstream element. Intervention and breach take their defaults.
 
 <TableVertical
   tableKey="cle-freezing-screening-table-11"
-  alt="Worked example of the CLE freezing event tree"
+  alt="Worked example of the freezing event tree"
   caption="Worked example: temperate climate, SM crest, paved surface, modern cutoff wall."
   colAlign={['left', 'left', 'center']}
   headers={[[{ value: 'Quantity' }, { value: 'Basis' }, { value: 'Value' }]]}
@@ -217,7 +212,7 @@ upstream element. Intervention and breach take their defaults.
 />
 
 The SRP is negligible at pool levels up to and including 263 ft and $1.831 \times 10^{-6}$ at every pool level above it, a single step at the
-bottom of the crack. The cutoff wall governs the result there, reducing it by three orders of magnitude; were the wall's top below the crest but above
-the bottom of the crack, the curve would step up by a factor of 1,000 where the pool rises above the top of the wall. Had an upstream facing element, with a probability of
-no flow limitation of 0.5, also been present, it would multiply the wall's value: $P_{nl} = 0.5 \times 0.001 = 0.0005$ and an SRP of
-$9.16 \times 10^{-7}$ above the bottom of the crack, and 0.5 alone above the top of a wall that stops below the crest.
+bottom of the crack. The cutoff wall governs the result there, reducing it by three orders of magnitude; were the wall's top below the crest but
+above the bottom of the crack, the curve would step up by a factor of 1,000 where the pool rises above the top of the wall. Had an upstream facing
+element, with a probability of no flow limitation of 0.5, also been present, it would multiply the wall's value:
+$P_{nl} = 0.5 \times 0.001 = 0.0005$ and an SRP of $9.16 \times 10^{-7}$ above the bottom of the crack, and 0.5 alone above the top of a wall that stops below the crest.

@@ -5,6 +5,7 @@ title: Model Overview
 import Citation from '@site/src/components/Citation';
 import CitationFootnote from '@site/src/components/CitationFootnote';
 import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
 import TableReference from '@site/src/components/TableReference';
 import TableVertical from '@site/src/components/TableVertical';
 
@@ -54,27 +55,38 @@ toolbox provide the complete methodologies (see [Comparison with Detailed Models
 ## How the Model Works
 
 The model executes the three stages common to the CLE screening family (see the
-[Model Overview](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#how-the-model-works) of the common
-methods manual):
+[Model Overview](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#how-the-model-works) of the CLE Common Methods manual):
 
-1. **Flaw assessment** — The model scores the freeze-duration climate, the most crack-susceptible soil the crack crosses at the crest, and the
-   surface cover over the core with risk-factor and likelihood-factor weighting, and converts the weighted sum to the probability of a continuous
-   frost crack. An observation of continuous frost cracking overrides the score to certainty. The climate category also sets the crack depth, and
-   the bottom of the crack is the crest elevation less that depth. When every listed crest soil is one that cannot frost-crack, the mechanism does
-   not apply and no crack forms (see [Flaw Assessment](./04-flaw-assessment.mdx)).
+<ProcessList
+  items={[
+    {
+      title: 'Flaw assessment',
+      child: [
+        'The model scores the freeze-duration climate, the most crack-susceptible soil the crack crosses at the crest, and the surface cover over the core with risk-factor and likelihood-factor weighting, and converts the weighted sum to the probability of a continuous frost crack. An observation of continuous frost cracking overrides the score to certainty. The climate category also sets the crack depth, and the bottom of the crack is the crest elevation less that depth. When every listed crest soil is one that cannot frost-crack, the mechanism does not apply and no crack forms.',
+      ],
+    },
+    {
+      title: 'Pathway description',
+      child: [
+        'The model takes the failure pathway as supplied: the top of the first filter the crack meets, if any, the filter and base-soil description, the soils that must hold a roof over the enlarging pipe below and above the top of the filter, the embankment type, and the upstream seepage-limiting elements with the top of any wall.',
+      ],
+    },
+    {
+      title: 'Event-tree assembly',
+      child: [
+        'At each headwater level, the model composes the eight CLE event-tree node probabilities and multiplies them to produce the SRP. Initiation is zero at or below the bottom of the crack and certain above it; continuation, roof support, and flow limitation are each evaluated for the pathway that governs at that pool level.',
+      ],
+    },
+  ]}
+/>
 
-2. **Pathway resolution** — The model takes the failure pathway as supplied: the top of the first filter the crack meets, if any, the filter and
-   base-soil description, the soils that must hold a roof over the enlarging pipe below and above the filter's top, the embankment type, and the
-   upstream seepage-limiting elements with the top of any wall (see [Input Parameters](./03-input-parameters.mdx#inputs-shared-with-the-cle-family)).
-
-3. **Event-tree assembly** — At each headwater level, the model composes the eight CLE event-tree node probabilities and multiplies them to produce
-   the SRP. Initiation is zero at or below the bottom of the crack and certain above it; continuation, roof support, and flow limitation are each
-   evaluated for the pathway that governs at that pool level (see [Event Tree](./05-event-tree.mdx)).
+The three stages are documented in [Flaw Assessment](./04-flaw-assessment.mdx), [Shared Inputs](./03-input-parameters.mdx#shared-inputs), and
+[Event Tree](./05-event-tree.mdx).
 
 Every node is deterministic except continuation, which the shared continuation method evaluates by Monte Carlo simulation when it assesses a
 filter from the soil classifications of the base and filter soils.
 
-## Physics Basis
+## Technical Basis
 
 The model combines the following engineering methods:
 
@@ -82,7 +94,7 @@ The model combines the following engineering methods:
   weighted by a risk factor and the weighted sum is mapped to a probability <Citation citationKey="Fell2024" />, as documented for the CLE family
   in [Flaw Conventions](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#risk-factor-and-likelihood-factor-scoring)
 - **A climate-dependent crack depth** that places the bottom of the frost crack below the crest (see
-  [Flaw Assessment](./04-flaw-assessment.mdx#crack-depth-and-bottom-of-the-crack))
+  [Flaw Assessment](./04-flaw-assessment.mdx#crack-depth))
 - **A headwater gate at the bottom of the open crack** for initiation, as documented for the crest-crack models in
   [Initiation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#crest-crack-models-headwater-gate)
 - **Filter evaluation, roof-support, crack-filling, and flow-limitation probabilities** for continuation and progression, applied through the
@@ -129,10 +141,10 @@ of its walls. <TableReference tableKey="cle-freezing-screening-table-1" /> summa
 
 The model is one of the four crest-crack models of the CLE screening family (see
 [The Two Model Groups](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#the-two-model-groups) in the
-common methods manual). Everything after the flaw assessment is common to those models: the event-tree structure, the headwater gate for
+CLE Common Methods manual). Everything after the flaw assessment is common to those models: the event-tree structure, the headwater gate for
 initiation, the crest-crack pathway rules for continuation and roof support, the crack-filling and flow-limitation tables, and the form of the
 results. This manual documents the frost-cracking flaw assessment in full and, for every other node, states what this model supplies and links the
-chapter of the common methods manual that documents the method. The continuation node hands the filter evaluation to the shared continuation method,
+chapter of the CLE Common Methods manual that documents the method. The continuation node hands the filter evaluation to the shared continuation method,
 which combines its results across the base soils the filter protects as described in
 [Method Selection and Governing Base Soil](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/method-selection-and-governing-base-soil).
 The model uses no toolbox method.

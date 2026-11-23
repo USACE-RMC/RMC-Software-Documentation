@@ -50,12 +50,11 @@ Note (Oct 2025 methodology document): the document uses the same four freeze-dur
 
 ## IN-03 — Engineering Basis — `04-flaw-assessment.mdx`
 
-**Regarding:** The core-material likelihood factor of 3 assigned to an Unknown crest soil (no
+**Regarding:** The crest-soil likelihood factor of 3 assigned to an Unknown crest soil (no
 class listed). The value is below the 4 of GC and MH and the 3.5 of CL-ML, so an Unknown crest
 scores lower than a crest known to be of any of those classes.
 
-**Needed:** Whether Unknown is a category of the Fell et al. (2024) core-material table or a
-screening choice; if the latter, the engineering-judgment attribution.
+**Needed:** The crest-soil likelihood factor of 3 assigned to an unknown crest soil (no class listed) requires an engineering basis. State whether Unknown is a category of the source table of Fell et al. (2024) or a screening choice, and if the latter, provide the engineering-judgment attribution and state why an intermediate rather than the most crack-prone score is adopted for an unknown soil at the screening level. The value lies below the scores of GC and MH (4) and CL-ML (3.5), so an unknown crest soil scores lower than a crest known to be of any of those classes.
 
 **Proposed (unconfirmed):** An intermediate value representing the most common fine-grained
 crest soils (SM, GM, ML, SC, CL all score 3).
@@ -88,10 +87,9 @@ frost-crack — set aside when other classes are listed, and making the mechanis
 (no crack, negligible SRP, observation override not consulted) when they are the only classes
 listed — while the silty classes SM, GM, and ML, which can also be non-plastic, are scored.
 
-**Needed:** Literature source or engineering-judgment attribution.
+**Needed:** The treatment of SP-SM, SW, SP, GP-GM, GW, and GP as crest soils in which the mechanism cannot open a crack — set aside when other classes are listed, and making the mechanism inapplicable when they are the only classes listed — requires an engineering basis, including why the silty classes SM, GM, and ML, which can also be non-plastic, are scored. Provide the literature source or the engineering-judgment attribution.
 
-**Proposed (unconfirmed):** A cohesionless soil cannot sustain an open frost crack, so these
-classes are absent from the Fell et al. (2024) core-material table.
+**Proposed (unconfirmed):** Clean and nearly clean sands and gravels, with less than 12 percent fines, are cohesionless and cannot sustain an open crack, so a crest built only of them cannot develop the crack. Confirm or replace.
 
 **Answer:**
 
@@ -107,7 +105,7 @@ of the crack 6, 4, 2, or 1 m below the crest — about 3.3 times too deep.
 in SI units should proceed, so the limitation can be stated. (The family-level question is
 marker IN-01 of the CLE Common Methods manual.)
 
-**Answer:**
+**Answer:** Consolidated into CLE Common Methods IN-01 (unit system of the CLE family).
 
 ---
 
