@@ -12,6 +12,29 @@
   contain: inline-size;
 }
 
+/* Scroll cue: src/clientModules/tableScrollCue.js sets data-scroll-left / data-scroll-right
+   when a table is wider than its column. The hidden side fades out. */
+.table-scroller[data-scroll-right] {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent);
+}
+.table-scroller[data-scroll-left] {
+  -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(to left, #000 calc(100% - 40px), transparent);
+}
+.table-scroller[data-scroll-left][data-scroll-right] {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+}
+
+/* On narrow screens, also say so after the caption. */
+@media (max-width: 996px) {
+  .table-container[data-scroll-right] > .table-cap::after {
+    content: 'Scroll sideways for more →';
+    @apply ml-2 inline-block whitespace-nowrap not-italic text-footnote text-ifm-primary;
+  }
+}
+
 .table-base {
   @apply mt-[10px] w-full table-fixed border-collapse;
   width: var(--table-width, 100%);

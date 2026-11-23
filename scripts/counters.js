@@ -96,7 +96,7 @@ function processReport(reportPath, reportId) {
 
     // Regex for figures — match both self-closing <Figure ... /> and
     // open+close <Figure ...></Figure> (or <GIF>) tag forms
-    for (const match of content.matchAll(/<(Figure|GIF)\s+([\s\S]*?)(?:\/>|><\/\1>)/g)) {
+    for (const match of content.matchAll(/<(Figure|GIF|AnnotatedFigure)\s+([\s\S]*?)(?:\/>|><\/\1>)/g)) {
       const attrs = match[2];
       const figKey = attrs.match(/figKey="([^"]+)"/)?.[1];
       if (!figKey) continue;
@@ -113,10 +113,12 @@ function processReport(reportPath, reportId) {
     }
 
     // Regex for tables — uses [\s\S] to match across newlines in multiline JSX
+    // AnnotatedFigure renders its own regions table. Its tableKey must sit inside its own tag (before
+    // the closing "/>" line), so a figure without a table never claims the next table's key.
     for (const match of content.matchAll(
-      /<(?:TableHorizontal|TableVertical)\s[\s\S]*?tableKey="([^"]+)"/g,
+      /<(?:TableHorizontal|TableVertical)\s[\s\S]*?tableKey="([^"]+)"|<AnnotatedFigure\b(?:(?!\n\/>)[\s\S])*?tableKey="([^"]+)"/g,
     )) {
-      const tableKey = match[1];
+      const tableKey = match[1] || match[2];
       counters.tables[tableKey] = {
         tableNumber: fmt(tableCount++),
         parentDocId: reportId,

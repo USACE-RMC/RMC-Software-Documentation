@@ -1,47 +1,58 @@
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useReportId } from '../contexts/ReportIdContext';
 import '../css/custom.css';
 
-const VideoReference = ({ videoKey }) => {
+// strip ".mdx" and any leading "digits-" prefix (e.g., "040-working-in-dst" -> "working-in-dst")
+const toDocSlug = (docId = '') => docId.replace(/\.mdx$/i, '').replace(/^\d{1,3}-/, '');
+
+// "Video N" as a link to the video, on the same page or another page of the same document.
+const VideoReference = ({ videoKey, suffix }) => {
   const [videoInfo, setVideoInfo] = useState(null);
-  const reportId = useReportId(); // Get the reportId from the context
+  const reportId = useReportId();
   const countersBase = useBaseUrl('counters/');
+  const docsRouteBase = useBaseUrl('docs');
 
   useEffect(() => {
-    if (!reportId) return; // If reportId is not available, don't fetch
-
+    if (!reportId) return;
     const jsonPath = `${countersBase}${reportId}.json`;
-
-    const loadCounters = async () => {
+    (async () => {
       try {
         const response = await fetch(jsonPath);
         if (!response.ok) throw new Error(`Failed to load ${jsonPath}`);
-
         const data = await response.json();
-
-        // Now we need to find the figure with the matching videoKey
-        let foundVideo = null;
-        if (data?.videos?.[videoKey]) {
-          foundVideo = data.videos[videoKey];
-        }
-
-        if (foundVideo) {
-          setVideoInfo(foundVideo);
-        } else {
-          console.warn(`Video key "${videoKey}" not found in ${jsonPath}`);
-        }
+        const found = data?.videos?.[videoKey] ?? null;
+        if (found) setVideoInfo(found);
+        else console.warn(`Video key "${videoKey}" not found in ${jsonPath}`);
       } catch (error) {
         console.error('Error loading counters:', error);
       }
-    };
+    })();
+  }, [reportId, videoKey, countersBase]);
 
-    loadCounters();
-  }, [videoKey, countersBase]); // Re-fetch if figKey changes
+  const docSlug = useMemo(() => toDocSlug(videoInfo?.docId), [videoInfo?.docId]);
 
-  if (!videoInfo) return <span>Loading...</span>;
+  const targetDocPath = useMemo(() => {
+    if (!videoInfo?.parentDocPath || !docSlug) return '';
+    return `${docsRouteBase}/${videoInfo.parentDocPath}/${docSlug}`;
+  }, [videoInfo?.parentDocPath, docSlug, docsRouteBase]);
 
-  return <span className="font-usace text-normal whitespace-nowrap">Video {videoInfo.videoNumber}</span>;
+  const isSamePage = useMemo(() => {
+    const normalize = (p) => (p?.endsWith('/') ? p.slice(0, -1) : p || '');
+    const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
+    return targetDocPath && normalize(currentPath) === normalize(targetDocPath);
+  }, [targetDocPath]);
+
+  if (!videoInfo) return <span className="whitespace-nowrap font-usace text-normal">Video</span>;
+
+  const href = isSamePage || !targetDocPath ? `#${videoKey}` : `${targetDocPath}#${videoKey}`;
+
+  return (
+    <a href={href} className="whitespace-nowrap font-usace text-normal" title={`Jump to Video ${videoInfo.videoNumber}`}>
+      Video {videoInfo.videoNumber}
+      {suffix ? ` ${suffix}` : ''}
+    </a>
+  );
 };
 
 export default VideoReference;
