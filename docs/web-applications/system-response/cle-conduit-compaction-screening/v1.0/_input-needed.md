@@ -2,8 +2,9 @@
 
 Answer inline and return this file (or paste its contents into the conversation). Leave an
 Answer blank to keep that marker in place. Do not renumber — the IDs tie each entry to its
-admonition in the document. IN-06 and IN-12 repeat questions also open in the CLE Common
-Methods manual (its IN-11 and IN-14 item 3); answer them once for both documents.
+admonition in the document. IN-06 and IN-12 asked questions owned by the CLE Common Methods
+manual; they are consolidated there (its IN-11 and IN-14) and their admonitions have been removed
+from this manual.
 
 ---
 
@@ -105,12 +106,12 @@ the downstream portion of the conduit), or whether those are intended to be left
 ## IN-06 — Engineering Basis — `03-input-parameters.mdx`
 
 **Regarding:** The default initial pipe diameter (triangular: low 5 mm, most likely 10 mm,
-high 12.5 mm), larger than the core compaction model's default (2, 3, 5 mm).
+high 12.5 mm).
 
-**Needed:** Literature source or engineering-judgment attribution, including why the conduit
-range is larger. Same question as CLE Common Methods IN-11.
+**Needed:** Literature source or engineering-judgment attribution. Same question as CLE Common
+Methods IN-11.
 
-**Answer:**
+**Answer:** Consolidated into CLE Common Methods IN-11 (default initial pipe diameter ranges).
 
 Note (Oct 2025 methodology document): the document gives the same ranges (core 2-3-5 mm,
 conduit 5-10-12.5 mm, wall or cliff 5-5-10 mm, foundation or abutment 2-3-5 mm) and says the
@@ -128,8 +129,7 @@ and the absence of a flaw-continuity stage in this model.
 
 **Needed:** The table of Fell et al. (2024) that gives the factors and weights for poor
 compaction adjacent to a conduit, or the engineering-judgment attribution; and the basis for
-applying no flaw-continuity stage, where the core, wall or cliff, and foundation or abutment
-compaction models apply one.
+applying no flaw-continuity stage (see the CLE Common Methods Flaw-Continuity Stage section).
 
 **Answer:**
 
@@ -206,8 +206,8 @@ points and does not define "pool of record plus 20 percent".
 ## IN-11 — Engineering Basis — `04-flaw-assessment.mdx`
 
 **Regarding:** (1) Placing the flaw at the bottom of the conduit rather than at its haunches or
-springline; (2) keeping it there when leakage is observed, where the core compaction model
-moves its flaw to the observed leakage elevation.
+springline; (2) keeping it there when leakage is observed, whatever the elevation at which the
+leakage emerges.
 
 **Needed:** Literature source or engineering-judgment attribution.
 
@@ -237,7 +237,7 @@ Methods IN-14 item (3).
 **Proposed (unconfirmed):** An upstream facing or cutoff wall does not reliably seal the zone
 around a conduit that passes through or beneath it, so no credit is taken (conservative).
 
-**Answer:**
+**Answer:** Consolidated into CLE Common Methods IN-14 (flow-limitation conventions, item 3).
 
 Note (Oct 2025 methodology document): the document identifies Table 13.3 of Fell et al. (2024)
 as the source of the flow-limitation probabilities. It predates the combination and gating

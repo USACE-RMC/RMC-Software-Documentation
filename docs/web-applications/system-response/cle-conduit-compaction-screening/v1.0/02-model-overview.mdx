@@ -5,6 +5,7 @@ title: Model Overview
 import Citation from '@site/src/components/Citation';
 import CitationFootnote from '@site/src/components/CitationFootnote';
 import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
 import TableReference from '@site/src/components/TableReference';
 import TableVertical from '@site/src/components/TableVertical';
 
@@ -14,7 +15,7 @@ import TableVertical from '@site/src/components/TableVertical';
 
 ## Purpose
 
-The conduit compaction screening model computes a system response curve for concentrated leak erosion through poorly compacted earthfill adjacent
+The concentrated leak erosion (CLE) conduit compaction screening model computes a system response curve for concentrated leak erosion through poorly compacted earthfill adjacent
 to a conduit, as a function of headwater elevation. The system response probability (SRP) at each headwater level is the conditional probability
 of breach of the embankment by concentrated leak erosion along the conduit, given that pool level.
 
@@ -44,20 +45,32 @@ The model executes the three stages common to the CLE screening models
 (see [How the Model Works](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#how-the-model-works) in the
 CLE Common Methods manual), with these conduit-specific elements:
 
-1. **Flaw assessment** — Four conduit factors (the conduit type and surround, cutoff collars, the compaction of the fill adjacent to the conduit,
-   and the conduit trench details) are each scored with a likelihood factor, weighted, and summed, and the weighted sum is converted to a flaw
-   probability. An observation of leakage adjacent to the conduit sets the flaw probability to 1.0. The flaw elevation is the bottom of the
-   conduit, which the user supplies (see [Flaw Assessment](./04-flaw-assessment.mdx)).
+<ProcessList
+  items={[
+    {
+      title: 'Flaw assessment',
+      child: [
+        'Four conduit factors (the conduit type and surround, cutoff collars, the compaction of the fill adjacent to the conduit, and the conduit trench details) are each scored with a likelihood factor, weighted, and summed, and the weighted sum is converted to a flaw probability. An observation of leakage adjacent to the conduit sets the flaw probability to 1.0. The flaw elevation is the supplied bottom-of-conduit elevation.',
+      ],
+    },
+    {
+      title: 'Pathway resolution',
+      child: [
+        'The failure pathway runs through the embankment at the bottom of the conduit. The inputs state whether a diaphragm filter surrounds the conduit and list the soils the pipe passes through. The model has no upstream seepage-limiting elements to resolve.',
+      ],
+    },
+    {
+      title: 'Event-tree assembly',
+      child: [
+        'At each headwater level, the model multiplies the eight node probabilities. Initiation is evaluated by Monte Carlo simulation of a cylindrical pipe at the bottom of the conduit, continuation is evaluated by the shared continuation method only when a diaphragm filter is present, and the flow-limitation node is held at 1.0.',
+      ],
+    },
+  ]}
+/>
 
-2. **Pathway resolution** — The failure pathway runs through the embankment at the bottom of the conduit. The user states whether a diaphragm
-   filter surrounds the conduit, and lists the soils the pipe passes through. The model has no upstream seepage-limiting elements to resolve (see
-   [Event Tree](./05-event-tree.mdx)).
+[Flaw Assessment](./04-flaw-assessment.mdx) documents the first stage, and [Event Tree](./05-event-tree.mdx) documents the second and third.
 
-3. **Event-tree assembly** — At each headwater level, the model multiplies the eight node probabilities. Initiation is evaluated by Monte Carlo
-   simulation of a cylindrical pipe at the bottom of the conduit, continuation is evaluated by the shared continuation method only when a diaphragm
-   filter is present, and the flow-limitation node is held at 1.0 (see [Event Tree](./05-event-tree.mdx)).
-
-## Physics Basis
+## Technical Basis
 
 The model combines the following engineering methods:
 
@@ -122,31 +135,27 @@ section of the CLE Common Methods manual.
   ]}
 />
 
-## Relationship to the Shared CLE Methods
+## Relationship to the Shared Methods
 
 The model is one of the four compaction models of the CLE family (see
-[The Two Model Groups](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#the-two-model-groups) in the CLE
-Common Methods manual). It shares with the other three the cylindrical-pipe initiation analysis, the critical shear stress table, and the rule
-that every node except initiation is the same at every pool level. It differs from them in three ways:
+[The Two Model Groups](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#the-two-model-groups)
+in the CLE Common Methods manual). It takes from that manual the event tree and the SRP product, the risk-factor and likelihood-factor scoring, the
+cylindrical-pipe initiation analysis with its critical shear stress table, the progression tables, and the rule that every node except initiation
+is the same at every pool level, and it takes the filter evaluation of Node 3 from the
+[Continuation (Filter Evaluation) Screening](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/preface)
+manual. Within that shared framework, the choices specific to this model are:
 
-- **Four flaw factors, weighted 3, 2, 2, and 2,** where the other compaction models score three, and **no flaw-continuity stage**: the scored
-  probability is the flaw probability.
-- **A directly supplied flaw elevation**, the bottom of the conduit. The core compaction model and the abutment case of the foundation and
-  abutment compaction model place the flaw by a normal-pool heuristic, the foundation case of that model takes the embankment-foundation contact
-  elevation directly, and the wall and cliff compaction model takes the crest elevation minus the wall or cliff height.
-- **No flow-limitation node input**: Node 6 is fixed at 1.0, so no upstream cutoff or facing reduces the SRP.
+- **Four flaw factors, weighted 3, 2, 2, and 2, and no flaw-continuity stage** — the raw flaw probability is the flaw probability (see
+  [Flaw Assessment](./04-flaw-assessment.mdx)).
+- **A directly supplied flaw elevation** — the bottom of the conduit, which the leakage observation does not change (see
+  [Base-of-Flaw Elevation](./04-flaw-assessment.mdx#base-of-flaw-elevation)).
+- **A diaphragm-filter statement** — whether a diaphragm filter surrounds the conduit gates continuation, and the continuation inputs are ignored
+  when no diaphragm filter is stated (see [Input Parameters](./03-input-parameters.mdx#diaphragm-filter)).
+- **No flow-limitation node input** — Node 6 is fixed at 1.0, so no upstream cutoff or facing reduces the SRP (see
+  [Event Tree](./05-event-tree.mdx#node-6-progression--no-flow-limitation)).
+- **Its own default initial pipe diameter range** (see [Event Tree](./05-event-tree.mdx#node-2-initiation)).
 
-Two further features are shared with only some of the other compaction models. The observation override leaves the flaw elevation unchanged, as
-in the wall and cliff compaction model; the core compaction model's observation also relocates the flaw, and the foundation and abutment
-compaction model has no observation override. Like the wall and cliff and the foundation and abutment compaction models, the model gates
-continuation on an explicit yes-or-no answer about the filter and ignores the continuation inputs when the answer is no; the core compaction model
-instead evaluates continuation whenever a filter description is supplied. The form of the filter, a diaphragm around the conduit, is specific to
-this model.
-
-It also carries its own default initial pipe diameter range, larger than that of the core compaction model (see
-[Event Tree](./05-event-tree.mdx#node-2-initiation)).
-
-## Relationship to the Typical Event Tree
+### Relationship to the Typical Event Tree
 
 The [embedded-structure](/docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.5/Concentrated-Leak-Erosion#along-embedded-structure)
 tree of the Typical Event Tree Database, written for a crack along a structure such as a conduit, carries eight events that correspond to those of
