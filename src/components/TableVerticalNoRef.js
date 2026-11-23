@@ -1,32 +1,21 @@
 import React from "react";
 import "../css/custom.css";
 import "../css/tables.css";
+import { autoColumnMins, buildWidthVars, widthModeVars } from "./tableLayout";
 
-const TableVerticalNoRef = ({ headers = [], columns = [], fullWidth = true, alt, colWidths, colAlign, widthMode = "full" }) => {
+const TableVerticalNoRef = ({ headers = [], columns = [], fullWidth = true, alt, colWidths, colAlign, widthMode = "full", minWidth }) => {
   const renderHTML = (content) => ({ __html: content });
 
   const colCount = columns.length ?? 0;
   const rowCount = columns.length > 0 ? columns[0].length : 0;
 
   // Build CSS variables for widths and alignment from props (if provided)
-  const styleVars = {};
-  if (Array.isArray(colWidths)) {
-    for (let i = 0; i < Math.min(colWidths.length, colCount); i++) {
-      const v = colWidths[i];
-      styleVars[`--c${i + 1}`] = typeof v === "number" ? `${v}ch` : v;
-    }
-  }
+  const styleVars = { ...buildWidthVars({ colWidths, colCount, minWidth, widthMode }), ...widthModeVars(widthMode) };
+  const autoMins = widthMode === "auto" ? autoColumnMins(columns) : [];
   if (Array.isArray(colAlign)) {
     for (let i = 0; i < Math.min(colAlign.length, colCount); i++) {
       styleVars[`--a${i + 1}`] = colAlign[i];
     }
-  }
-  // Compute per-table min-width from column count
-  styleVars["--table-min-width"] = `${Math.max(colCount * 120, 300)}px`;
-
-  if (widthMode === "intrinsic") {
-    styleVars["--table-width"] = "max-content";
-    styleVars["--table-display"] = "inline-table";
   }
 
   // For header alignment with colSpan: use the alignment of the first covered column
@@ -93,7 +82,7 @@ const TableVerticalNoRef = ({ headers = [], columns = [], fullWidth = true, alt,
                       rowSpan={rowSpan > 1 ? rowSpan : undefined}
                       colSpan={colSpan > 1 ? colSpan : undefined}
                       className="table-body-cell"
-                      style={{ textAlign: `var(--a${colIndex + 1}, left)` }}
+                      style={{ textAlign: `var(--a${colIndex + 1}, left)`, minWidth: autoMins[colIndex] }}
                     >
                       {value}
                     </td>
@@ -101,7 +90,7 @@ const TableVerticalNoRef = ({ headers = [], columns = [], fullWidth = true, alt,
                 }
 
                 return (
-                  <td key={cellKey} className="table-body-cell" style={{ textAlign: `var(--a${colIndex + 1}, left)` }} dangerouslySetInnerHTML={typeof raw === "string" ? renderHTML(raw) : undefined}>
+                  <td key={cellKey} className="table-body-cell" style={{ textAlign: `var(--a${colIndex + 1}, left)`, minWidth: autoMins[colIndex] }} dangerouslySetInnerHTML={typeof raw === "string" ? renderHTML(raw) : undefined}>
                     {typeof raw === "string" ? undefined : raw}
                   </td>
                 );

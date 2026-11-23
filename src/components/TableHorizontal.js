@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useReportId } from '../contexts/ReportIdContext';
 import '../css/custom.css';
 import '../css/tables.css';
+import { autoColumnMins, buildWidthVars, widthModeVars } from './tableLayout';
 
 const TableHorizontal = ({
   tableKey,
@@ -16,7 +17,8 @@ const TableHorizontal = ({
   headerAlign, // ["left"|"center"|"right", ...] for HEADER cells per column (optional; falls back to colAlign)
   colVAlign, // ["top"|"middle"|"bottom", ...] for BODY cells per column
   headerVAlign, // ["top"|"middle"|"bottom", ...] for HEADER cells (optional)
-  widthMode = 'full', // "full" | "intrinsic"
+  widthMode = 'full', // "full" | "intrinsic" | "auto"
+  minWidth, // optional table minimum width before it scrolls (number => px)
   footnotes, // Array<string | React.ReactNode>
   id,
 }) => {
@@ -53,13 +55,10 @@ const TableHorizontal = ({
   const columnCount = 1 + (rows?.[0]?.length ?? 0);
 
   // Build CSS variables for widths & alignments
-  const styleVars = {};
-  if (Array.isArray(colWidths)) {
-    for (let i = 0; i < Math.min(colWidths.length, columnCount); i++) {
-      const v = colWidths[i];
-      styleVars[`--c${i + 1}`] = typeof v === 'number' ? `${v}ch` : v;
-    }
-  }
+  const styleVars = { ...buildWidthVars({ colWidths, colCount: columnCount, minWidth, widthMode }), ...widthModeVars(widthMode) };
+  // Columns as arrays of cells (first = row headers) for the auto-mode minimum widths
+  const autoMins =
+    widthMode === 'auto' ? autoColumnMins([headers || [], ...Array.from({ length: columnCount - 1 }, (_, c) => (rows || []).map((r) => r?.[c]))]) : [];
   if (Array.isArray(colAlign)) {
     for (let i = 0; i < Math.min(colAlign.length, columnCount); i++) {
       styleVars[`--a${i + 1}`] = colAlign[i]; // body horizontal align
@@ -81,14 +80,6 @@ const TableHorizontal = ({
     }
   }
 
-  // Compute per-table min-width from column count
-  styleVars['--table-min-width'] = `${Math.max(columnCount * 120, 300)}px`;
-
-  // width mode: full (default) or intrinsic shrink-wrap
-  if (widthMode === 'intrinsic') {
-    styleVars['--table-width'] = 'max-content';
-    styleVars['--table-display'] = 'inline-table';
-  }
 
   return (
     <div id={tableId} className="table-container" data-anchor="true">
@@ -117,6 +108,7 @@ const TableHorizontal = ({
                   style={{
                     textAlign: 'var(--ha1, var(--a1, center))',
                     verticalAlign: 'var(--hv1, middle)',
+                    minWidth: autoMins[0],
                   }}
                   dangerouslySetInnerHTML={
                     typeof header === 'string' ? renderHTML(header) : undefined
@@ -134,6 +126,7 @@ const TableHorizontal = ({
                       style={{
                         textAlign: `var(--a${colIndex}, center)`,
                         verticalAlign: `var(--v${colIndex}, middle)`,
+                        minWidth: autoMins[colIndex - 1],
                       }}
                       dangerouslySetInnerHTML={
                         typeof cell === 'string' ? renderHTML(cell) : undefined
