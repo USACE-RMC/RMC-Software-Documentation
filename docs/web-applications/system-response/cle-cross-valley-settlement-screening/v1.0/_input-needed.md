@@ -8,15 +8,15 @@ admonition in the document.
 
 ## IN-01 — Definition — `03-input-parameters.mdx`
 
-**Regarding:** Definition of the dam height H and the maximum post-construction settlement s.
+**Regarding:** Definition of the dam height Hd and the maximum post-construction settlement s.
 
-**Needed:** The dam height $H$ and the maximum post-construction settlement $s$ (see [Settlement](#settlement)) enter the flaw assessment through the ratio $s/H$ (the dam height also sets the relative step height and bounds a measured crack depth), and neither is defined beyond its name. State how each is to be measured: for $H$, whether it is the maximum height of the embankment at the deepest section of the valley, measured from the crest to the lowest foundation contact or to the original ground surface; and for $s$, whether it is the largest crest settlement measured along the crest since the end of construction, and whether it includes settlement of the foundation.
+**Needed:** The dam height $H_d$ and the maximum post-construction settlement $s$, which form the normalized settlement $s/H_d$, are not defined beyond their names. State (1) how $H_d$ is measured — for example, whether it is the maximum height of the embankment at the deepest section of the valley or the height of the embankment at the section being evaluated, and whether it is measured from the crest to the lowest foundation contact or to the original ground surface; and (2) how $s$ is measured — whether it is the largest crest settlement along the crest or the settlement at the section being evaluated, over what period it is taken (for example, from the end of construction to the time of the assessment, or the expected long-term settlement), and whether it includes settlement of the foundation.
 
-**Proposed (unconfirmed):** $H$ is the maximum embankment height at the deepest section, and $s$ is the largest crest settlement observed since the end of construction, both from survey records. Confirm or replace.
+**Proposed (unconfirmed):** $H_d$ is the maximum embankment height at the deepest section, and $s$ is the largest crest settlement observed since the end of construction, both from survey records. Confirm or replace.
 
 **Answer:**
 
-Note (Oct 2025 methodology document): the document defines $s$ only as the maximum post-construction settlement, and forms $s/H$ with the single dam height entered for the dam as a whole rather than a height specific to the section analyzed. It gives no measurement definition for either quantity (the reference surface for $H$, the location along the crest or the time period for $s$, or the treatment of foundation settlement). Left open; the same note is recorded in both settlement manuals.
+Note (Oct 2025 methodology document): the document defines $s$ only as the maximum post-construction settlement, and forms $s/H_d$ with the single dam height entered for the dam as a whole rather than a height specific to the section analyzed. It gives no measurement definition for either quantity (the reference surface for $H_d$, the location along the crest or the time period for $s$, or the treatment of foundation settlement). Left open; the same note is recorded in both settlement manuals.
 
 ---
 
@@ -24,7 +24,7 @@ Note (Oct 2025 methodology document): the document defines $s$ only as the maxim
 
 **Regarding:** Definition and measurement of the abutment slope, which abutment to analyze, and the basis for analyzing one abutment.
 
-**Needed:** The abutment slope $\theta$ is not defined beyond its name and unit. State how it is measured — for example, the angle of the abutment surface from the horizontal in the cross-valley profile beneath the crest, taken over what height — and which abutment the user should analyze when the two differ (for example, the steeper, or each in turn as separate analyses). Also state the engineering basis for describing the crack with one abutment per analysis (Assumption 3 in `06-assumptions-and-limitations.mdx`).
+**Needed:** The abutment slope $\beta_a$ is not defined beyond its name and unit. State how it is measured — for example, the angle of the abutment surface from the horizontal in the cross-valley profile beneath the crest, taken over what height — and which abutment is to be analyzed when the two differ (for example, the steeper, or each in turn as separate analyses). Also state the engineering basis for describing the crack with one abutment per analysis (Assumption 3 in `06-assumptions-and-limitations.mdx`).
 
 **Proposed (unconfirmed):** the angle from the horizontal of the abutment surface in the longitudinal profile along the dam axis, with the steeper abutment analyzed, or each abutment analyzed separately. Confirm or replace.
 
@@ -36,7 +36,7 @@ Note (Oct 2025 methodology document): the document defines $s$ only as the maxim
 
 **Regarding:** Definition and measurement of the abutment step height h1.
 
-**Needed:** The abutment step height $h_1$ is not defined beyond its name. State how the step and its height are to be identified in the abutment profile, including the reference from which $h_1$ is measured (for example, the height of the step above the valley floor, or the height of the near-vertical face of the step), so that $h_1/H$ is consistent with the tabulated relative step heights of 0.6, 0.8, and 0.9.
+**Needed:** The abutment step height $h_1$ is not defined beyond its name. State how the step and its height are to be identified in the abutment profile, including the reference from which $h_1$ is measured (for example, the height of the step above the valley floor, or the height of the near-vertical face of the step), so that $h_1/H_d$ is consistent with the tabulated relative step heights of 0.6, 0.8, and 0.9.
 
 **Answer:**
 
@@ -58,7 +58,7 @@ Note (Oct 2025 methodology document): the document defines $s$ only as the maxim
 
 **Regarding:** Default normalized settlement from the year of construction (0.5% before 1950; 0.25% in 1950 or later).
 
-**Needed:** The default normalized settlement assigned from the year of construction (<EquationReference equationKey="cle-cross-valley-screening-eq-2" />: 0.5 percent of the dam height for a dam completed before 1950, 0.25 percent for a dam completed in 1950 or later) requires an engineering basis. Provide the literature source for the two values and for the 1950 boundary, or the engineering-judgment attribution to state here.
+**Needed:** The default normalized settlement used when no settlement is supplied (<EquationReference equationKey="cle-cross-valley-settlement-screening-eq-2" />: 0.5 percent of the dam height for a dam completed before 1950, and 0.25 percent for a dam completed in 1950 or later) requires an engineering basis. Provide the literature source for the two values and for the 1950 boundary (with full bibliographic details if it is not Fell et al. (2024), and the table or section if it is), or the engineering-judgment attribution to state here.
 
 **Proposed (unconfirmed):** dams built before about 1950 were generally compacted less thoroughly than later dams and settled more after construction, so the older dams take the larger default. Confirm or replace.
 
@@ -82,31 +82,31 @@ Note (Oct 2025 methodology document): the document states the same two defaults 
 
 **Regarding:** Source of the no-step strain tables and their bilinear interpolation.
 
-**Needed:** The strain tables for an abutment without a step (<TableReference tableKey="cle-cross-valley-screening-table-5" /> and <TableReference tableKey="cle-cross-valley-screening-table-6" />) require a literature source, and the bilinear interpolation between their tabulated values (<EquationReference equationKey="cle-cross-valley-screening-eq-3" />) requires a basis. Provide the source (author, year, title, publisher or report number, and the figure or table digitized), or the engineering-judgment attribution, and state whether the source presents the relationship as curves that are to be interpolated linearly in both settlement and slope.
+**Needed:** The strain tables for an abutment without a step (<TableReference tableKey="cle-cross-valley-settlement-screening-table-6" /> and <TableReference tableKey="cle-cross-valley-settlement-screening-table-7" />) require a literature source, and the bilinear interpolation between their tabulated values (<EquationReference equationKey="cle-cross-valley-settlement-screening-eq-3" />) requires a basis. Provide the source (author, year, title, publisher or report number, and the figure or table digitized), or the engineering-judgment attribution, and state whether the source presents the relationship as curves that are to be interpolated linearly in both settlement and slope.
 
 **Answer:**
 
-Note (Oct 2025 methodology document): the document attributes the method — localized tensile strain at the crest from the abutment geometry and the normalized settlement $s/H$, then the flaw probability from that strain — to Fell et al. (2024) (UNICIV Report No. R470, already in the bibliography), and this attribution has been added to the manual text. It does not identify the table or figure digitized, the interpolation basis, or the rounding of the no-step values. Left open for those details.
+Note (Oct 2025 methodology document): the document attributes the method — localized tensile strain at the crest from the abutment geometry and the normalized settlement $s/H_d$, then the flaw probability from that strain — to Fell et al. (2024) (UNICIV Report No. R470, already in the bibliography), and this attribution has been added to the manual text. It does not identify the table or figure digitized, the interpolation basis, or the rounding of the no-step values. Left open for those details.
 
 ---
 
 ## IN-08 — Engineering Basis — `04-flaw-assessment.mdx`
 
-**Regarding:** Source of the with-step strain tables (h1/H = 0.6, 0.8, 0.9) and the interpolation over h1/H.
+**Regarding:** Source of the with-step strain tables (h1/Hd = 0.6, 0.8, 0.9) and the interpolation over h1/Hd.
 
-**Needed:** The strain tables for an abutment with a step (<TableReference tableKey="cle-cross-valley-screening-table-7" /> to <TableReference tableKey="cle-cross-valley-screening-table-9" />) require a literature source, and the linear interpolation over the relative step height (<EquationReference equationKey="cle-cross-valley-screening-eq-4" />) requires a basis. Provide the source (author, year, title, publisher or report number, and the figure or table digitized) or the engineering-judgment attribution, and confirm that the tables for relative step heights of 0.6 and 0.8 are intended to differ only at zero settlement.
+**Needed:** The strain tables for an abutment with a step (<TableReference tableKey="cle-cross-valley-settlement-screening-table-8" /> to <TableReference tableKey="cle-cross-valley-settlement-screening-table-10" />) require a literature source, and the linear interpolation over the relative step height (<EquationReference equationKey="cle-cross-valley-settlement-screening-eq-4" />) requires a basis. Provide the source (author, year, title, publisher or report number, and the figure or table digitized) or the engineering-judgment attribution, and confirm that the tables for relative step heights of 0.6 and 0.8 are intended to differ only at zero settlement.
 
 **Answer:**
 
-Note (Oct 2025 methodology document): the document lists the presence and height of an abutment step as an input to the Fell et al. (2024) cross-valley method but does not identify the step tables, the relative step heights 0.6, 0.8, and 0.9, the interpolation over $h_1/H$, or why the tables for 0.6 and 0.8 differ only at zero settlement. Left open.
+Note (Oct 2025 methodology document): the document lists the presence and height of an abutment step as an input to the Fell et al. (2024) cross-valley method but does not identify the step tables, the relative step heights 0.6, 0.8, and 0.9, the interpolation over $h_1/H_d$, or why the tables for 0.6 and 0.8 differ only at zero settlement. Left open.
 
 ---
 
 ## IN-09 — Engineering Basis — `04-flaw-assessment.mdx`
 
-**Regarding:** Zero-strain point at h1/H = 0.4 and how a small step should be entered.
+**Regarding:** Zero-strain point at h1/Hd = 0.4 and how a small step should be entered.
 
-**Needed:** The zero-strain point at a relative step height of 0.4 (<EquationReference equationKey="cle-cross-valley-screening-eq-4" />) requires an engineering basis, and its consequence requires a decision. With it, a step with $h_1/H \le 0.4$ — including an entered step height of zero — gives zero strain, the smallest flaw probability, and a negligible crack, while the same abutment entered with no step can give a substantial strain; a step between 0.4 and 0.6 is interpolated toward zero. State the basis for the point, and state how a user should enter an abutment with a small step (for example, describe no step when $h_1/H \le 0.4$, or take the larger of the step and no-step strains).
+**Needed:** The zero-strain point at a relative step height of 0.4 (<EquationReference equationKey="cle-cross-valley-settlement-screening-eq-4" />) requires an engineering basis, and its consequence requires a decision. With it, a step with $h_1/H_d \le 0.4$ — including an entered step height of zero — gives zero strain, the smallest flaw probability, and a negligible crack, while the same abutment entered with no step can give a substantial strain; a step between 0.4 and 0.6 is interpolated toward zero. State the basis for the point, and state how an abutment with a small step is to be entered (for example, describe no step when $h_1/H_d \le 0.4$, or take the larger of the step and no-step strains).
 
 **Proposed (unconfirmed):** small steps contribute no strain in addition to the baseline abutment geometry, so the point was intended to represent "no added strain" rather than "no strain." Confirm or replace.
 
@@ -118,7 +118,7 @@ Note (Oct 2025 methodology document): the document lists the presence and height
 
 **Regarding:** Source of the strain-to-flaw-probability relationship, its added end point, log-linear interpolation, and floor.
 
-**Needed:** The flaw probability relationship of <TableReference tableKey="cle-cross-valley-screening-table-10" /> requires a literature source, including (1) the tabulated probabilities from a strain of 0.0005 to 0.03, (2) the added point at a strain of 0.0443 with a probability of 1.0, which extends the relationship beyond its last value of 0.1, (3) the interpolation of the logarithm of probability linearly in strain (<EquationReference equationKey="cle-cross-valley-screening-eq-5" />), and (4) the floor of $5 \times 10^{-5}$ held for every smaller strain, including zero strain. Provide the source (author, year, title, publisher or report number, and the figure or table) or the engineering-judgment attribution for each.
+**Needed:** The flaw probability relationship of <TableReference tableKey="cle-cross-valley-settlement-screening-table-11" /> requires a literature source, including (1) the tabulated probabilities from a strain of 0.0005 to 0.03, (2) the added point at a strain of 0.0443 with a probability of 1.0, which extends the relationship beyond its last value of 0.1, (3) the interpolation of the logarithm of probability linearly in strain (<EquationReference equationKey="cle-cross-valley-settlement-screening-eq-5" />), and (4) the floor of $5 \times 10^{-5}$ held for every smaller strain, including zero strain. Provide the source (author, year, title, publisher or report number, and the figure or table) or the engineering-judgment attribution for each.
 
 **Answer:**
 
@@ -142,7 +142,7 @@ Note (Oct 2025 methodology document): the document attributes the strain-to-flaw
 
 **Regarding:** Source of the strain-to-crack-width relationship.
 
-**Needed:** The crack-width relationship of <TableReference tableKey="cle-cross-valley-screening-table-11" /> requires a literature source, including its linear interpolation (<EquationReference equationKey="cle-cross-valley-screening-eq-7" />), the negligible width at a strain of 0.0005 and below, and the width held at 75 mm for every strain above 0.025. Note that the width relationship ends at a strain of 0.025 while the flaw probability relationship continues to 0.0443. Provide the source (author, year, title, publisher or report number, and the figure or table) or the engineering-judgment attribution.
+**Needed:** The crack-width relationship of <TableReference tableKey="cle-cross-valley-settlement-screening-table-12" /> requires a literature source, including its linear interpolation (<EquationReference equationKey="cle-cross-valley-settlement-screening-eq-7" />), the negligible width at a strain of 0.0005 and below, and the width held at 75 mm for every strain above 0.025. Note that the width relationship ends at a strain of 0.025 while the flaw probability relationship continues to 0.0443. Provide the source (author, year, title, publisher or report number, and the figure or table) or the engineering-judgment attribution.
 
 **Answer:**
 
@@ -152,7 +152,7 @@ Note (Oct 2025 methodology document): the document attributes the strain-to-flaw
 
 **Regarding:** Bibliographic details of Pierson (2023), the crack width-depth relationship.
 
-**Needed:** The crack-depth relationship (<EquationReference equationKey="cle-cross-valley-screening-eq-8" />) is attributed to Pierson (2023), whose bibliographic details are not recorded. Provide the full reference — authors, year, title, journal or publisher, and report number — so that it can be added to the bibliography and cited here, and confirm that the published form gives the depth in feet as $d_c = (W/1000)(250 - 1.33\,W)/0.3048$ with the width in millimeters.
+**Needed:** The crack-depth relationship (<EquationReference equationKey="cle-cross-valley-settlement-screening-eq-8" />) is attributed to Pierson (2023), whose bibliographic details are not recorded. If Pierson (2023) is to be cited, provide its full bibliographic details (authors, title, publisher or journal, and report number) so that it can be added to the bibliography. Also confirm that the published form gives the depth in feet as $d_c = (w_c/1000)(250 - 1.33\,w_c)/0.3048$ with the width in millimeters.
 
 **Answer:**
 
@@ -178,6 +178,6 @@ Note (Oct 2025 methodology document): the document cites "Peirson et al. (2023)"
 
 **Answer:**
 
-Note (Oct 2025 methodology document): the document states that where $s/H$ or the strain exceeds the limits of Fell et al. (2024), the relationships are extrapolated to expand the published range. The current model does not extrapolate the strain tables: it holds the end value for settlement, slope, and relative step height (CrossValleySettleFlawModel.cs:168-170 and the clamped Bilinear lookups), and extends only the strain-to-probability relationship (the 0.0443 point). The document conflicts with the code on this point. Left open.
+Note (Oct 2025 methodology document): the document states that where $s/H_d$ or the strain exceeds the limits of Fell et al. (2024), the relationships are extrapolated to expand the published range. The current model does not extrapolate the strain tables: it holds the end value for settlement, slope, and relative step height (CrossValleySettleFlawModel.cs:168-170 and the clamped Bilinear lookups), and extends only the strain-to-probability relationship (the 0.0443 point). The document conflicts with the code on this point. Left open.
 
 ---

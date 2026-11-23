@@ -2,7 +2,6 @@
 title: Event Tree
 ---
 
-import Equation from '@site/src/components/Equation';
 import NavContainer from '@site/src/components/NavContainer';
 import TableReference from '@site/src/components/TableReference';
 import TableVertical from '@site/src/components/TableVertical';
@@ -11,133 +10,148 @@ import TableVertical from '@site/src/components/TableVertical';
 
 # Event Tree
 
-The model evaluates the eight-node event tree shared by the CLE screening models at each pool level and multiplies the node probabilities to give
-the SRP. The tree, its node questions, and the reasons for its structure are documented in the
-[Event Tree](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree) chapter of the common methods manual. This
-chapter states how each node is populated for cross-valley settlement. Every node follows the common treatment of the crest-crack models; the
-model adds no node and changes no node rule. A measured crack depth, when entered, changes only how the flaw assessment sets the bottom of
-the crack (see [Measured Crack Depth](./04-flaw-assessment.mdx#measured-crack-depth)).
+The model evaluates the eight-node event tree shared by the concentrated leak erosion (CLE) screening models at each pool level and multiplies
+the node probabilities to give the system response probability (SRP). The tree, its node questions, and the reasons for its structure are
+documented in the
+[Event Tree](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree)
+chapter of the CLE Common Methods manual. This chapter states how each node is populated for cross-valley settlement. Every node follows the
+common treatment of the crest-crack models; the model adds no node and changes no node rule. A measured crack depth, when entered, changes only
+how the flaw assessment sets the bottom of the crack (see [Measured Crack Depth](./04-flaw-assessment.mdx#measured-crack-depth)).
 
 ## Node Summary
 
+<TableReference tableKey="cle-cross-valley-settlement-screening-table-14" /> lists the eight nodes, the probability each contributes, whether it
+varies with the pool level, and where its method is documented.
+
 <TableVertical
-  tableKey="cle-cross-valley-screening-table-13"
+  tableKey="cle-cross-valley-settlement-screening-table-14"
   alt="Event-tree nodes of the cross-valley settlement model"
-  caption="Event-tree nodes of the cross-valley settlement model and how each is populated."
-  colAlign={['center']}
-  headers={[[{ value: 'Node' }, { value: 'Name' }, { value: 'Probability in This Model' }]]}
+  caption="Event-tree nodes of the cross-valley settlement model."
+  colAlign={['center', 'left', 'center', 'center', 'left']}
+  headers={[[{ value: 'Node' }, { value: 'Event' }, { value: 'Probability' }, { value: 'Pool-Dependent?' }, { value: 'Source' }]]}
   columns={[
     ['1', '2', '3', '4', '5', '6', '7', '8'],
     [
       'Flaw',
       'Initiation',
       'Continuation',
-      'Progression: Roof Support',
-      'Progression: No Crack Filling',
-      'Progression: No Flow Limitation',
+      'Progression — Roof Support',
+      'Progression — No Crack Filling',
+      'Progression — No Flow Limitation',
       'Unsuccessful Intervention',
       'Breach',
     ],
     [
-      'Settlement-based flaw probability, or 1.0 when cracking is observed',
-      '1.0 above the bottom of the crack; zero at or below it',
-      'Continuation method at or below the filter top; 1.0 above it or with no filter',
-      'Minimum over the below-filter or full-pathway materials, by pool level',
-      'By embankment type',
-      'Facing element times the governing wall; walls only at or below their top',
-      'User-specified (default 1.0)',
-      'User-specified (default 1.0)',
+      '<i>P</i><sub>flaw</sub>',
+      '<i>P</i><sub>init</sub>(<i>h</i>)',
+      '<i>P</i><sub>cont</sub>(<i>h</i>)',
+      '<i>P</i><sub>roof</sub>(<i>h</i>)',
+      '<i>P</i><sub>nf</sub>',
+      '<i>P</i><sub>nl</sub>(<i>h</i>)',
+      '<i>P</i><sub>int</sub>',
+      '<i>P</i><sub>br</sub>',
+    ],
+    ['No', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'No', 'No'],
+    [
+      'Flaw assessment of this manual: settlement-based flaw probability, or 1.0 when cracking is observed',
+      'CLE Common Methods: headwater gate at the bottom of the crack',
+      'CLE Common Methods: crest-crack pathway convention, with the continuation method at or below the filter top',
+      'CLE Common Methods: minimum over the below-filter or full-pathway materials',
+      'CLE Common Methods: by embankment type',
+      'CLE Common Methods: facing element times the governing wall, with walls only at or below their top',
+      'Input (default 1.0)',
+      'Input (default 1.0)',
     ],
   ]}
 />
 
-### Node 1: Flaw
+## Node 1: Flaw
+
+*Question:* Does a continuous transverse crack caused by cross-valley differential settlement exist through the embankment?
 
 $P_{flaw}$ is the result of the flaw assessment, $P_{raw}$ from the localized tensile strain or 1.0 when continuous transverse cracking has
 been observed, whether or not its depth was measured (see [Flaw Assessment](./04-flaw-assessment.mdx#flaw-probability)). It is the same at every
 pool level.
 
-### Node 2: Initiation
+## Node 2: Initiation
 
-Initiation is the headwater gate of the crest-crack models at the bottom-of-crack elevation $z_{bc}$ from the flaw assessment: zero while the pool
-is at or below $z_{bc}$, and 1.0 once it rises above it (see
+*Question:* Is the hydraulic shear stress on the walls of the crack large enough to initiate concentrated leak erosion?
+
+The model applies the headwater gate of the crest-crack models (Equation 8 in the
 [Crest-Crack Models: Headwater Gate](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#crest-crack-models-headwater-gate)
-in the common methods manual). Tailwater takes no part. Because $z_{bc}$ is the crest elevation less the crack depth, the crack depth sets the pool
-level at which the SRP rises from negligible. When a measured crack depth is entered, $z_{bc}$ is the crest elevation less the measured depth (see
+section of the CLE Common Methods manual) at the bottom-of-crack elevation $z_{bc}$ from the flaw assessment. Tailwater takes no part. Because
+$z_{bc}$ is the crest elevation less the crack depth, the crack depth sets the pool level at which the SRP rises from negligible. When a measured
+crack depth is entered, $z_{bc}$ is the crest elevation less the measured depth (see
 [Measured Crack Depth](./04-flaw-assessment.mdx#measured-crack-depth)), and the gate is otherwise unchanged. Otherwise the settlement and
-abutment inputs set the crack depth: between strains of 0.0005 and 0.025 (0.05 and 2.5 percent), a larger strain gives a
-wider and deeper crack and so a lower pool level at which the SRP rises; at or below 0.0005 the crack width is negligible and the bottom of the
-crack stays at the crest; above 0.025 the crack width holds at 75 mm, and the crack depth and that pool level
-no longer change (see [Crack Width](./04-flaw-assessment.mdx#crack-width)).
+abutment inputs set the crack depth: between strains of 0.0005 and 0.025 (0.05 and 2.5 percent), a larger strain gives a wider and deeper crack
+and so a lower pool level at which the SRP rises; at or below 0.0005 the crack width is negligible and the bottom of the crack stays at the crest;
+above 0.025 the crack width holds at 75 mm, and the crack depth and that pool level no longer change (see
+[Crack Width](./04-flaw-assessment.mdx#crack-width)).
 
-The physical basis for the gate, which is why erosion that starts at the downstream end of an open crest crack advances upstream, is described in the
-[Crest-Crack Models: Headwater Gate](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#crest-crack-models-headwater-gate) section of the CLE Common Methods manual.
+## Node 3: Continuation
 
-### Node 3: Continuation
+*Question:* Does an unfiltered seepage exit exist that allows erosion to continue?
 
-Where a filter intersects the pathway along the crack, the probability of continuing erosion $P_{ce}$ is evaluated by the shared continuation
-method from the filter and base-soil description (see
-[Method Selection and Governing Base Soil](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/method-selection-and-governing-base-soil)
-in the continuation manual). It applies at pool levels at or below the top-of-filter elevation $z_{tf}$, and at every pool level when the filter
-caps the pathway; above the filter's top, and at every pool level when no filter intersects the pathway, continuation is 1.0 (see
+Continuation follows the crest-crack pathway convention (Equation 14 in the
 [Node 3: Continuation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-3-continuation)
-in the common methods manual).
+section of the CLE Common Methods manual). Where a filter intersects the pathway along the crack, the node takes the probability of continuing erosion
+$P_{ce}$, the node result of the Continuation (Filter Evaluation) Screening model (written $P_{cont}$ in that manual; see its
+[Node Result](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/output-and-interpretation#node-result)
+section), evaluated from the filter and base-soil description (see
+[Method Selection and Governing Base Soil](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/method-selection-and-governing-base-soil)
+in the Continuation (Filter Evaluation) Screening manual). It applies at pool levels at or below the top-of-filter elevation $z_{tf}$, and at
+every pool level when the filter caps the pathway; above the filter's top, and at every pool level when no filter intersects the pathway,
+continuation is 1.0.
 
-### Node 4: Progression — Roof Support
+## Node 4: Progression — Roof Support
+
+*Question:* Does a continuous stable roof form over the enlarging pipe, so that it stays open?
 
 Roof support is the minimum roof-support probability over the below-filter materials at pool levels at or below $z_{tf}$, and over the
 full-pathway materials above it or with no filter (see
-[Node 4: Progression — Roof Support](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-4-progression--roof-support)).
-The below-filter materials are those on the pathway from the upstream face to the filter at the bottom-of-crack elevation computed in
-[Flaw Assessment](./04-flaw-assessment.mdx#crack-depth-and-bottom-of-crack-elevation), or set by a measured crack depth (see
-[Measured Crack Depth](./04-flaw-assessment.mdx#measured-crack-depth)).
+[Node 4: Progression — Roof Support](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-4-progression--roof-support)
+in the CLE Common Methods manual). The below-filter materials are those on the pathway from the upstream face to the filter at the
+bottom-of-crack elevation computed in [Flaw Assessment](./04-flaw-assessment.mdx#bottom-of-crack-elevation), or set by a
+measured crack depth (see [Measured Crack Depth](./04-flaw-assessment.mdx#measured-crack-depth)).
 
-### Node 5: Progression — No Crack Filling
+## Node 5: Progression — No Crack Filling
+
+*Question:* Does the enlarging pipe remain unfilled, rather than being filled and healed by material carried in from upstream?
 
 The probability of no crack filling is set by the embankment type and is the same at every pool level (see
-[Node 5: Progression — No Crack Filling](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-5-progression--no-crack-filling)).
+[Node 5: Progression — No Crack Filling](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-5-progression--no-crack-filling)
+in the CLE Common Methods manual).
 
-### Node 6: Progression — No Flow Limitation
+## Node 6: Progression — No Flow Limitation
+
+*Question:* Does the flow into the enlarging pipe remain unrestricted by upstream seepage-limiting elements?
 
 The probability of no flow limitation is the probability of the upstream facing element times that of the governing wall, the most effective of
 the walls listed; an element that is absent contributes 1.0. When a top-of-wall elevation $z_{tw}$ is given, the walls apply only at pool levels
 at or below it, and only the upstream facing element applies above it (see
-[Walls That Stop Below the Crest](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#walls-that-stop-below-the-crest)).
+[Walls That Stop Below the Crest](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#walls-that-stop-below-the-crest)
+in the CLE Common Methods manual).
 
-### Nodes 7 and 8: Unsuccessful Intervention and Breach
+## Nodes 7 and 8: Unsuccessful Intervention and Breach
 
-The user-specified probabilities $P_{int}$ and $P_{br}$, each one value at every pool level, defaulting to 1.0 (see
-[Nodes 7 and 8](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#nodes-7-and-8-unsuccessful-intervention-and-breach)).
+*Questions:* Do detection and intervention fail (Node 7)? Does an uncontrolled release of impounded water occur (Node 8)?
+
+Both nodes are the shared intervention and breach inputs, documented with their defaults in the
+[Nodes 7 and 8](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#nodes-7-and-8-unsuccessful-intervention-and-breach)
+section of the CLE Common Methods manual. The model applies them without change.
 
 ## SRP Computation
 
-The SRP at each headwater (pool) elevation $h$ — not to be confused with the abutment step height $h_1$ — is the product of the eight node probabilities, as in the common methods manual's
-[SRP Computation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#srp-computation):
+The SRP at each headwater (pool) elevation $h$ is the product of the eight node probabilities, by Equation 1 in the
+[SRP Computation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#srp-computation)
+section of the CLE Common Methods manual. The headwater elevation $h$ is not to be confused with the abutment step height $h_1$. In this model
+$P_{init}$, $P_{cont}$, $P_{roof}$, and $P_{nl}$ vary with $h$, and the other nodes are the same at every pool level.
 
-<Equation
-  equationKey="cle-cross-valley-screening-eq-10"
-  equation="\mathrm{SRP}(h) = P_{flaw} \times P_{init}(h) \times P_{cont}(h) \times P_{roof}(h) \times P_{nf} \times P_{nl}(h) \times P_{int} \times P_{br}"
-/>
-
-where:
-
-- $P_{flaw}$ is the flaw probability of Node 1;
-- $P_{init}(h)$ is the initiation probability of Node 2;
-- $P_{cont}(h)$ is the continuation probability of Node 3: the probability of continuing erosion $P_{ce}$ from the shared continuation method at
-  pool levels at or below $z_{tf}$ (at every pool level when the filter caps the pathway), and 1.0 above $z_{tf}$ or when no filter intersects the
-  pathway;
-- $P_{roof}(h)$ is the roof-support probability of Node 4;
-- $P_{nf}$ is the probability of no crack filling of Node 5;
-- $P_{nl}(h)$ is the probability of no flow limitation of Node 6;
-- $P_{int}$ and $P_{br}$ are the probabilities of unsuccessful intervention and of breach of Nodes 7 and 8.
-
-$P_{init}$, $P_{cont}$, $P_{roof}$, and $P_{nl}$ are evaluated at $h$, and the other nodes are the same at every pool level. Where the product is
-zero — for example at and below the bottom of the crack, or wherever a user-specified intervention or breach probability or the continuation
-probability is zero — the SRP is reported as a negligibly small value. The tree is evaluated on the headwater
-grid of the common methods
-([Headwater Grid](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#headwater-grid)): every supplied headwater
-value and additional levels between them. The bottom of the crack is not inserted into the grid, so the rise of the curve is located to within
-one grid interval; supplying headwater values at $z_{bc}$ and just above it places the rise exactly.
+Where the product is zero — for example at and below the bottom of the crack, or wherever an intervention or breach probability or the
+continuation probability is zero — the SRP is reported as a negligibly small value. The tree is evaluated on the headwater grid of the CLE Common Methods manual
+([Headwater Grid](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#headwater-grid)):
+every supplied headwater value and additional levels between them. The bottom of the crack is not inserted into the grid, so the rise of the
+curve is located to within one grid interval; supplying headwater values at $z_{bc}$ and just above it places the rise exactly.
 
 ## Elevations Where the Curve Changes
 
@@ -148,7 +162,8 @@ $z_{tw}$. Because initiation is zero at and below $z_{bc}$, a filter or wall top
   filter's top, so continuation is 1.0 and the full-pathway roof materials govern there. The filter then has no effect on the SRP.
 - **A filter top above $z_{bc}$** — between $z_{bc}$ and $z_{tf}$ the below-filter pathway governs, with continuation $P_{ce}$; above $z_{tf}$ the
   full pathway governs. The curve can jump up or down at $z_{tf}$, depending on $P_{ce}$ and the two roof-support minimums (see
-  [Node 3: Continuation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-3-continuation)).
+  [Node 3: Continuation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-3-continuation)
+  in the CLE Common Methods manual).
 - **A wall top at or below $z_{bc}$** — the walls never apply at a pool level where initiation is non-zero, so only the upstream facing element,
   if present, limits flow.
 - **A wall top above $z_{bc}$** — between $z_{bc}$ and $z_{tw}$ the governing wall multiplies the upstream facing element's probability, if a
@@ -163,10 +178,10 @@ $z_{bc}$ across a filter or wall top and so change which of these cases applies.
 The dam of the flaw-assessment [worked example](./04-flaw-assessment.mdx#worked-example) has a flaw probability of 0.00614 and a bottom of the
 crack at elevation 240.0 ft. Take it as a homogeneous earthfill embankment of silty sand (SM) with no filter on the pathway, no upstream
 seepage-limiting element, and the default intervention and breach probabilities
-(<TableReference tableKey="cle-cross-valley-screening-table-14" />).
+(<TableReference tableKey="cle-cross-valley-settlement-screening-table-15" />).
 
 <TableVertical
-  tableKey="cle-cross-valley-screening-table-14"
+  tableKey="cle-cross-valley-settlement-screening-table-15"
   alt="Worked example of the event tree"
   caption="Worked example of the event tree, for pools above and at or below the bottom of the crack."
   colAlign={['left', 'center', 'center']}
