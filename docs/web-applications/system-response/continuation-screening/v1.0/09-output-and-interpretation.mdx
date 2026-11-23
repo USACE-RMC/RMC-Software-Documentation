@@ -11,7 +11,11 @@ import NavContainer from '@site/src/components/NavContainer';
 The model produces one probability of continuing erosion for the continuation node, the method and base soil that produced it, and the result of
 each base soil pair. None of the results depends on the pool level.
 
-## Node Result
+## Results
+
+The results are the node result and the result of each base soil pair.
+
+### Node Result
 
 - **Probability of continuing erosion** $P_{cont}$ — the continuation-node probability: the largest of the pair probabilities
   (see [Method Selection and Governing Base Soil](./04-method-selection-and-governing-base-soil.mdx)).
@@ -21,7 +25,7 @@ each base soil pair. None of the results depends on the pool level.
 
 The governing pair's details, listed under Pair Results, also describe the node result.
 
-## Pair Results
+### Pair Results
 
 For each base soil, in the order entered:
 
@@ -34,7 +38,10 @@ How the regrading characteristics and the particle sizes used by each method are
 [Gradation Method](./07-gradation-method.mdx#step-2-base-soil-regrading-characteristics) and
 [Soil Classification Method](./06-soil-classification-method.mdx#input-resolution).
 
-## Reading the Result
+## Interpreting the System Response Curve
+
+The model produces no curve: its node result applies at every pool level, so the calling screening model's system response curve carries
+it as a constant factor. Reading the node result means identifying the method and the base soil that govern it.
 
 **Which method governs.** The governing method shows how much information stands behind $P_{cont}$. A result from the gradation method rests on
 measured gradations of both materials; a result from the soil classification method rests on classification ranges for at least one of them; a
@@ -60,7 +67,9 @@ no-erosion limit. It is sensitive to the classification and category ranges: a f
 limits of a fine-grained base soil gives a result of 1.0 (see [Soil Classification Method](./06-soil-classification-method.mdx)). Because every
 failing realization counts as continuing erosion, the result does not credit a filter that seals after some erosion.
 
-**Reasonableness checks.**
+## Checking the Result
+
+The following checks apply to a result:
 
 - A gradation-method result of zero alongside a supplied filter segregation adjustment does not show that the adjusted filter gradation
   satisfied the criterion. When the original gradation passes and the adjusted one fails, the Foster and Fell evaluation runs on the original
@@ -71,7 +80,7 @@ failing realization counts as continuing erosion, the result does not credit a f
 - A large difference between pairs using different methods can reflect the methods rather than the soils; supplying gradations for the
   less-characterized base soils puts the pairs on a common footing.
 
-## Screening Versus Detailed Analysis
+## Screening versus Detailed Analysis
 
 The model gives a screening-level estimate. Its no-information default and its governing-pair rule resolve incomplete information in the
 direction of continuing erosion, but several of its defaults can lower the result (see [Intended Use](./02-model-overview.mdx#intended-use)). It fixes or derives steps that a

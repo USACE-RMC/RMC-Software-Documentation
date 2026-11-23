@@ -2,9 +2,11 @@
 title: Model Overview
 ---
 
+import Link from '@docusaurus/Link';
 import Citation from '@site/src/components/Citation';
 import CitationFootnote from '@site/src/components/CitationFootnote';
 import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
 import TableReference from '@site/src/components/TableReference';
 import TableVertical from '@site/src/components/TableVertical';
 
@@ -57,36 +59,74 @@ control over every step that the screening model fixes or derives automatically 
 
 The model executes three stages:
 
-1. **Method selection for each base soil** — Each base soil that the filter must protect is paired with the filter, and each pair is assigned the
-   most informative method its inputs support: the gradation method when both the base soil and the filter have gradation envelopes, the soil
-   classification method when the base soil's particle sizes and the filter's particle size can each be resolved from a classification, a
-   category, or a single gradation, and the year-of-construction method otherwise. With none of these inputs, the pair takes $P_{cont} = 1.0$
-   (see [Method Selection and Governing Base Soil](./04-method-selection-and-governing-base-soil.mdx)).
+<ProcessList
+  items={[
+    {
+      title: 'Method selection for each base soil',
+      child: [
+        <>
+          Each base soil that the filter must protect is paired with the filter, and each pair is assigned the most informative method its
+          inputs support: the gradation method when both the base soil and the filter have gradation envelopes, the soil classification method
+          when the base soil's particle sizes and the filter's particle size can each be resolved from a classification, a category, or a single
+          gradation, and the year-of-construction method otherwise. With none of these inputs, the pair takes <i>P</i><sub>cont</sub> = 1.0 (see{' '}
+          <Link to="/docs/web-applications/system-response/continuation-screening/v1.0/method-selection-and-governing-base-soil">Method Selection and Governing Base Soil</Link>).
+        </>,
+      ],
+    },
+    {
+      title: 'Probability of continuing erosion for each pair',
+      child: [
+        {
+          title: (
+            <>
+              The <strong>year-of-construction method</strong> assigns a probability from the period in which the embankment was built (see{' '}
+              <Link to="/docs/web-applications/system-response/continuation-screening/v1.0/year-of-construction-method">Year-of-Construction Method</Link>).
+            </>
+          ),
+        },
+        {
+          title: (
+            <>
+              The <strong>soil classification method</strong> compares the filter's <i>D</i><sub>15</sub> with the maximum <i>D</i><sub>15</sub> allowed by the no-erosion
+              particle retention criterion over Monte Carlo realizations of the particle sizes, and reports the fraction of realizations in which
+              the filter is too coarse (see <Link to="/docs/web-applications/system-response/continuation-screening/v1.0/soil-classification-method">Soil Classification Method</Link>).
+            </>
+          ),
+        },
+        {
+          title: (
+            <>
+              The <strong>gradation method</strong> runs the full filter evaluation on the gradation envelopes — base-soil regrading, the particle
+              retention check, and the Foster and Fell erosion-boundary evaluation — and combines the probabilities of excessive and continuing
+              erosion (see <Link to="/docs/web-applications/system-response/continuation-screening/v1.0/gradation-method">Gradation Method</Link>).
+            </>
+          ),
+        },
+      ],
+    },
+    {
+      title: 'Governing base soil',
+      child: [
+        <>
+          The node probability is the largest <i>P</i><sub>cont</sub> among the pairs, because the filter must stop erosion of every base soil it protects
+          (see <Link to="/docs/web-applications/system-response/continuation-screening/v1.0/method-selection-and-governing-base-soil#governing-base-soil">Method Selection and Governing Base Soil</Link>).
+        </>,
+      ],
+    },
+  ]}
+/>
 
-2. **Probability of continuing erosion for each pair** — The selected method computes $P_{cont}$ for the pair:
-   - The **year-of-construction method** assigns a probability from the period in which the embankment was built
-     (see [Year-of-Construction Method](./05-year-of-construction-method.mdx)).
-   - The **soil classification method** compares the filter's $D_{15}$ with the maximum $D_{15}$ allowed by the no-erosion particle retention
-     criterion over Monte Carlo realizations of the particle sizes, and reports the fraction of realizations in which the filter is too coarse
-     (see [Soil Classification Method](./06-soil-classification-method.mdx)).
-   - The **gradation method** runs the full filter evaluation on the gradation envelopes — base-soil regrading, the particle retention check, and
-     the Foster and Fell erosion-boundary evaluation — and combines the probabilities of excessive and continuing erosion
-     (see [Gradation Method](./07-gradation-method.mdx)).
+## Technical Basis
 
-3. **Governing base soil** — The node probability is the largest $P_{cont}$ among the pairs, because the filter must stop erosion of every base
-   soil it protects (see [Method Selection and Governing Base Soil](./04-method-selection-and-governing-base-soil.mdx)).
-
-## Engineering Basis
-
-The model combines the following engineering methods:
+The model combines the following established engineering methods:
 
 - **The no-erosion particle retention criterion** for filters, which relates the maximum allowable filter $D_{15}$ to the base soil's $D_{85}$
-  and fines content by base soil category, with stricter limits for dispersive soils <Citation citationKey="FEMA2011" /> <Citation citationKey="Sherard1984" />. The soil classification method evaluates it over ranges of particle sizes, and the gradation method
+  and fines content by base soil category, with stricter limits for dispersive soils (FEMA, 2011) <Citation citationKey="FEMA2011" /> (Sherard et al., 1984) <Citation citationKey="Sherard1984" />. The soil classification method evaluates it over ranges of particle sizes, and the gradation method
   evaluates it on the gradation envelopes.
 - **Mathematical regrading of the base soil** to remove the gravel and gap-graded coarse fractions that provide no retention capability for the
-  finer fraction <Citation citationKey="Sherard1989" />, with broadly graded soils identified by the coefficients of uniformity and curvature <Citation citationKey="ASTM2487" />.
+  finer fraction (Sherard and Dunnigan, 1989) <Citation citationKey="Sherard1989" />, with broadly graded soils identified by the coefficients of uniformity and curvature (ASTM International, 2017) <Citation citationKey="ASTM2487" />.
 - **The Foster and Fell erosion boundaries** for filters coarser than the no-erosion criterion, which divide the range of filter $D_{15}$ into
-  no-erosion, some-erosion, excessive-erosion, and continuing-erosion zones from continuing erosion filter tests <Citation citationKey="FosterFell2001" />, with representative base soil gradations selected and weighted from the gradation envelope <Citation citationKey="Toolbox2008" />.
+  no-erosion, some-erosion, excessive-erosion, and continuing-erosion zones from continuing erosion filter tests (Foster and Fell, 2001) <Citation citationKey="FosterFell2001" />, with representative base soil gradations selected and weighted from the gradation envelope (Fell et al., 2008) <Citation citationKey="Toolbox2008" />.
 - **A year-of-construction prior** for embankments with no filter or base soil information beyond the construction period (the basis of the
   assigned values is requested at marker IN-04 in [Year-of-Construction Method](./05-year-of-construction-method.mdx)).
 
