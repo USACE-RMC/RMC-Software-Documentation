@@ -22,6 +22,8 @@ top-of-cliff elevation. A reference to the defining sketch is ideal.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the document describes the flaw inputs as the cross-valley profile beneath the embankment (the wall or cliff height and the bench width at its base), the normalized settlement, and "the slope of the abutment under the embankment core", and states that a bench width left blank is taken as no bench (the model requires the bench width, with zero meaning no bench; WallCliffSettleFlawConfig.cs:51-54). It gives no sketch and does not answer items (1) to (4). Left open.
+
 ---
 
 ## IN-02 — Definition — `03-input-parameters.mdx`
@@ -35,6 +37,8 @@ along the crest, and over what period it is taken (end of construction to the as
 expected long-term settlement).
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the document defines $s$ only as the maximum post-construction settlement, and forms $s/H$ with the single dam height entered for the dam as a whole rather than a height specific to the section analyzed. It gives no measurement definition for either quantity (the reference surface for $H$, the location along the crest or the time period for $s$, or the treatment of foundation settlement). Left open; the same note is recorded in both settlement manuals.
 
 ---
 
@@ -67,6 +71,8 @@ settlements of embankments built before and after the general adoption of contro
 of earthfill, with older, less well compacted embankments settling more.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the document states the same two defaults — a normalized settlement of 0.50 percent for dams constructed before 1950 and 0.25 percent for dams constructed after 1950 — and applies them to both settlement mechanisms (cross-valley differential settlement and settlement adjacent to a wall or cliff). It gives no literature source or engineering basis for the values or for the 1950 boundary, and its wording ("after 1950") leaves a dam completed in 1950 unassigned, where the model classes 1950 with the later dams (CrossValleySettleConstants.cs:35-57; WallCliffSettleConstants.cs:19-41). Left open; the same note is recorded in both settlement manuals.
 
 ---
 
@@ -129,6 +135,8 @@ the wall or cliff is not used to override the scored probability, and what a use
 observed such a crack should do.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the document gives an observation override (flaw probability 1.0 for observed continuous crest cracking) for cross-valley settlement, desiccation, and freezing, but none for settlement adjacent to a wall or cliff, which agrees with the model. Its screening logic routes observed transverse crest cracking whose cause is settlement, or is unknown, to the cross-valley settlement mechanism only. It states no engineering basis for the omission and no instruction for an observed crack at a wall or cliff. Left open.
 
 ---
 
