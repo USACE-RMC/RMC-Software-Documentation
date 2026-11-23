@@ -1,0 +1,152 @@
+---
+title: Input Parameters
+---
+
+import DocLink from '@site/src/components/DocLink';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-freezing-screening" />
+
+# Input Parameters
+
+The model takes two groups of inputs. The **frost-cracking inputs** describe the flaw: the freeze-duration climate, the soils the crack would cross
+at the crest, the surface cover over the core, and whether continuous frost cracking has been observed. The **shared inputs** — hydraulic loading,
+the crest elevation and embankment type, the failure-pathway inputs, the upstream seepage-limiting elements, and the intervention and breach
+probabilities — are common to the CLE screening family and are documented in
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="input-parameters">Common Input Parameters</DocLink> of the CLE Common Methods
+manual; this chapter states only how this model uses them. The model takes no critical shear stress, initial opening, seepage path length, or
+embankment cross-section input, because its initiation node involves no shear stress analysis.
+
+<TableReference tableKey="cle-freezing-screening-table-2" /> lists the frost-cracking inputs; each is described in the sections that follow.
+
+<TableVertical
+  tableKey="cle-freezing-screening-table-2"
+  widthMode="auto"
+  alt="Frost-cracking inputs"
+  caption="Frost-cracking inputs."
+  headers={[[{ value: 'Input' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Default' }, { value: 'Description' }]]}
+  columns={[
+    ['Freeze-duration climate', 'Crest soil classifications', 'Surface cover over the core', 'Continuous frost cracking observed'],
+    ['—', '—', '—', '—'],
+    ['—', '—', '—', '—'],
+    ['Required', 'None listed (Unknown)', 'Required', 'No'],
+    ['One of four categories', 'Any of the fifteen USCS classes, or none', 'One of three categories', 'Yes or no'],
+  ]}
+/>
+
+## Unit System
+
+The model takes a unit system input, US customary (the default) or SI. All elevations and lengths are entered in the length unit of that system
+(feet or meters) and share one vertical datum. No formula changes with the unit system, and quantities with fixed units are stated in those
+units regardless of the unit system: the tabulated crack depths are in feet and the crack width is in millimeters. The crack depth is subtracted
+from the crest elevation without conversion (see [Flaw Assessment](./04-flaw-assessment.mdx#crack-depth)), so the bottom-of-crack elevation is
+correct only when elevations are in feet. The intended unit of the CLE family is an open question recorded, with the shared datum convention, in
+the
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="input-parameters" anchor="unit-system">Unit System</DocLink>
+section of the CLE Common Methods manual.
+
+## Freeze-Duration Climate
+
+The climate category describes the duration of below-freezing conditions at the site. It sets the climate likelihood factor, the most heavily
+weighted of the three flaw factors, and the depth of the crack (see [Flaw Assessment](./04-flaw-assessment.mdx#climate)). The choices are:
+
+- **Sub-arctic or alpine, below freezing three months or more** — the longest freeze duration; the most likely condition for a frost crack and the
+  deepest crack.
+- **Sub-arctic or alpine, below freezing one to three months**
+- **Temperate, below freezing up to a month**
+- **Above freezing, except possibly overnight for a couple of days** — the least likely condition and the shallowest crack.
+
+The climate has no Unknown category; one of the four must be selected.
+
+:::warning[INPUT NEEDED IN-02 — Definition]
+The quantity against which "below freezing" and its duration are judged is not stated — for example the mean daily air temperature, the daily
+minimum, or the ground temperature at the crest — nor how the duration is counted (continuous period or cumulative days in a typical or a severe
+winter). State the criterion to apply to place a site in one of the four climate categories, citing the source of the categories in
+Fell et al. (2024) if they are defined there.
+:::
+
+## Crest Soil Classifications
+
+The crest soil classifications are the soil classes, in the Unified Soil Classification System (USCS), of every material other than drain or filter
+material that the crack would cross at the crest. Each is one of the fifteen USCS classes listed in
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="failure-pathway-and-progression" anchor="node-4-progression--roof-support">Failure Pathway and Progression</DocLink>
+of the CLE Common Methods manual; other classes, such as organic soils, peat, or dual classes other than SP-SM, GP-GM, and CL-ML, are not accepted. They
+set the crest-soil likelihood factor (see
+[Flaw Assessment](./04-flaw-assessment.mdx#crest-soil)). This list is separate from the roof-support material lists of the failure pathway: it
+describes where the crack forms, not the soils that must hold a roof over the enlarging pipe.
+
+- **Several classes listed** — the class with the highest likelihood factor governs.
+- **No classes listed** — the crest soils are taken as Unknown, which carries an intermediate likelihood factor.
+- **Clean or nearly clean sands and gravels** — the classes SP-SM, SW, SP, GP-GM, GW, and GP, with less than 12 percent fines, may be listed but
+  are not scored. When every listed class is one of these, the mechanism does not apply: no crack forms and the SRP is negligible at every pool
+  level (see [Flaw Assessment](./04-flaw-assessment.mdx#inapplicable-mechanism)).
+
+## Surface Cover over the Core
+
+The surface cover over the core at the crest sets the surface-cover likelihood factor, the least heavily weighted of the three flaw factors (see
+[Flaw Assessment](./04-flaw-assessment.mdx#surface-cover)). The choices are:
+
+- **Paved** — a concrete or sealed roadway or pathway over the core; the least likely condition for a frost crack.
+- **Gravel road**
+- **No road or pathway** — the most likely condition for a frost crack.
+
+## Continuous Frost Cracking Observed
+
+The observation is answered yes only when all three of the following hold: transverse cracking has been observed at the crest, the cracking is
+judged to have been caused by freezing, and it is judged to be continuous across the crest. A yes sets the flaw probability to 1.0 whatever the
+factors score (see [Flaw Assessment](./04-flaw-assessment.mdx#observation-override)). It does not change the crack depth, and it has no effect when
+the mechanism does not apply. The default, no, leaves the flaw probability to the scored factors.
+
+## Shared Inputs
+
+<TableReference tableKey="cle-freezing-screening-table-3" /> lists the shared input groups and how this model uses each. The quantities, their
+valid ranges, and their defaults are given in the linked sections of the CLE Common Methods manual.
+
+<TableVertical
+  tableKey="cle-freezing-screening-table-3"
+  widthMode="auto"
+  alt="Shared CLE inputs and their use in the freezing model"
+  caption="Shared CLE inputs and their use in the CLE freezing screening model."
+  headers={[[{ value: 'Input Group' }, { value: 'Use in This Model' }]]}
+  columns={[
+    [
+      'Hydraulic loading',
+      'Crest elevation',
+      'Embankment type',
+      'Failure-pathway inputs',
+      'Upstream seepage-limiting elements',
+      'Intervention and breach',
+      'Embankment cross-section and initiation materials',
+    ],
+    [
+      'Headwater series required; tailwater is reported but not used',
+      'Required; the crack depth is measured down from it',
+      'Required; sets the crack-filling probability',
+      'Crest-crack form: top of filter and two roof-material lists',
+      'Optional; walls apply only at pools at or below the top of the wall',
+      'Single values at every pool level, defaulting to 1.0',
+      'Not used',
+    ],
+  ]}
+/>
+
+- **Hydraulic loading** — the headwater series and optional tailwater series of
+  <DocLink doc="web-applications/system-response/cle-common-methods-screening" page="input-parameters" anchor="hydraulic-loading">Hydraulic Loading</DocLink>. The headwater
+  series needs at least two distinct values. Tailwater does not enter any node of this model; it is carried through to the results only.
+- **Crest elevation** — the top of the embankment, from
+  <DocLink doc="web-applications/system-response/cle-common-methods-screening" page="input-parameters" anchor="embankment-description">Embankment Description</DocLink>. The
+  bottom of the crack is the crest elevation less the crack depth, and it must be on the same datum as the headwater series.
+- **Embankment type** — homogeneous earthfill, zoned earthfill, or central-core earth and rockfill, from the same section. It sets Node 5, the
+  probability of no crack filling.
+- **Failure-pathway inputs** — the crest-crack form of
+  <DocLink doc="web-applications/system-response/cle-common-methods-screening" page="input-parameters" anchor="failure-pathway-inputs">Failure-Pathway Inputs</DocLink>: the
+  top-of-filter elevation (blank when no filter intersects the pathway), the continuation inputs and the below-filter roof materials (both required
+  when a filter is present and omitted otherwise), and the full-pathway roof materials (required unless the filter's top reaches the crest).
+- **Upstream seepage-limiting elements** — any of the six element types of
+  <DocLink doc="web-applications/system-response/cle-common-methods-screening" page="input-parameters" anchor="upstream-seepage-limiting-elements">Upstream Seepage-Limiting Elements</DocLink>,
+  with the top-of-wall elevation when a wall stops below the crest.
+- **Intervention and breach** — the probabilities of unsuccessful intervention and of breach of
+  <DocLink doc="web-applications/system-response/cle-common-methods-screening" page="input-parameters" anchor="intervention-and-breach">Intervention and Breach</DocLink>.
+
