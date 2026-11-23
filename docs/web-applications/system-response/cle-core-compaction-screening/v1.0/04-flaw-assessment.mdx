@@ -1,0 +1,264 @@
+---
+title: Flaw Assessment
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import DocLink from '@site/src/components/DocLink';
+import Equation from '@site/src/components/Equation';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-core-compaction-screening" />
+
+# Flaw Assessment
+
+Node 1 of the concentrated leak erosion (CLE) event tree is the probability $P_{flaw}$ that a continuous zone of poorly compacted soil exists
+through the embankment core. The flaw assessment also fixes the base-of-flaw elevation $z_f$, which sets the pipe invert of the initiation analysis
+(Node 2) and is the elevation the top of any upstream wall is compared with (Node 6); the other nodes do not use it. The assessment is
+deterministic and does not depend on pool level, so $P_{flaw}$ and $z_f$ are the same at every headwater.
+
+The assessment follows the conventions shared by the CLE family, documented in the
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="flaw-conventions">Flaw Conventions</DocLink>
+chapter of the CLE Common Methods manual. It runs in two stages:
+
+1. **Scoring** — three factors are scored and combined into a weighted sum, which is converted to a raw flaw probability $P_{raw}$.
+2. **Flaw continuity** — $P_{raw}$ is multiplied by a flaw-continuity probability $P_{cf}$ keyed to the compaction score, giving $P_{flaw}$.
+
+An observation of embankment leakage or wet spots overrides both stages and the base-of-flaw heuristic (see
+[Observation Override](#observation-override)).
+
+## Factor Scores
+
+The model scores the three factors of <TableReference tableKey="cle-core-compaction-screening-table-5" /> by the risk-factor and likelihood-factor
+scheme of <Citation citationKey="Fell2024" form="narrative" />, described in
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="flaw-conventions" anchor="risk-factor-and-likelihood-factor-scoring">Risk-Factor and Likelihood-Factor Scoring</DocLink>
+in the CLE Common Methods manual. Each factor $j$ carries a risk factor $RF_j$, its weight, and a likelihood factor $LF_j$ on a scale on which 1 is
+the least likely condition for a flaw and 4 the most likely.
+
+<TableVertical
+  tableKey="cle-core-compaction-screening-table-5"
+  alt="Factors of the core compaction flaw assessment"
+  caption="Factors of the core compaction flaw assessment."
+  widthMode="auto"
+  colAlign={['left', 'center', 'left']}
+  headers={[[{ value: 'Factor' }, { value: 'Risk Factor' }, { value: 'Likelihood Factor From' }]]}
+  columns={[
+    ['Core compaction', 'Section geometry', 'Borrow variability'],
+    ['3', '2', '1'],
+    ['The core compaction category', 'The base width and width-to-height ratio of the section', 'A fixed value of 2.5'],
+  ]}
+/>
+
+:::warning[INPUT NEEDED IN-03 — Engineering Basis]
+The choice of the three factors and their risk factors (core compaction 3, section geometry 2, borrow variability 1) requires an engineering basis.
+Provide the table of Fell et al. (2024) from which the factors and weights are taken, or the engineering-judgment attribution to state here.
+:::
+
+### Compaction Factor
+
+The likelihood factor of the core compaction factor, $LF_{comp}$, is set by the core compaction category
+(<TableReference tableKey="cle-core-compaction-screening-table-6" />). The table also gives the flaw-continuity probability $P_{cf}$ that the same
+score selects in the second stage (see [Flaw-Continuity Stage](#flaw-continuity-stage)).
+
+<TableVertical
+  tableKey="cle-core-compaction-screening-table-6"
+  alt="Compaction likelihood factor and flaw-continuity probability by core compaction category"
+  caption="Compaction likelihood factor and flaw-continuity probability by core compaction category."
+  widthMode="auto"
+  colAlign={['left', 'center', 'center']}
+  headers={[[{ value: 'Core Compaction Category' }, { value: 'LF<sub>comp</sub>' }, { value: 'Flaw-Continuity Probability' }]]}
+  columns={[
+    ['Well compacted', 'Poorly compacted', 'Very poorly compacted', 'Unknown'],
+    ['1', '3', '4', '3.5'],
+    ['Negligible', '1 × 10<sup>-3</sup>', '1 × 10<sup>-1</sup>', '1 × 10<sup>-2</sup>'],
+  ]}
+/>
+
+No category carries a likelihood factor of 2. The Unknown category scores 3.5, between Poorly compacted and Very poorly compacted, so an Unknown
+category gives a higher flaw probability than Poorly compacted.
+
+:::warning[INPUT NEEDED IN-04 — Engineering Basis]
+The compaction likelihood factors of <TableReference tableKey="cle-core-compaction-screening-table-6" /> (Well compacted 1, Poorly compacted 3,
+Very poorly compacted 4, Unknown 3.5) require an engineering basis. State the source of the values, why no category scores 2, and why Unknown is
+scored at 3.5 — above Poorly compacted — rather than at a central value. Provide the table of Fell et al. (2024) they are taken from, or the
+engineering-judgment attribution.
+
+Proposed (unconfirmed): Unknown is scored toward the poorly compacted end of the scale as a conservative screening posture, so that a core whose
+compaction cannot be judged is not credited as better compacted than the evidence supports. Confirm or replace.
+:::
+
+### Section Geometry Factor
+
+The section geometry factor scores the dimensions of the embankment section through which a poorly compacted zone would have to run.
+
+The likelihood factor $LF_{geom}$ of the section geometry factor is the larger of two banded scores, one of the base width $W$ and one of the
+width-to-height ratio $W/H_s$:
+
+<Equation
+  equationKey="cle-core-compaction-screening-eq-1"
+  equation="LF_W = \begin{cases} 1 & W > 50 \\ 2 & 30 < W \le 50 \\ 3 & 15 < W \le 30 \\ 4 & W \le 15 \end{cases} \qquad LF_{W/H} = \begin{cases} 1 & W/H_s > 2 \\ 2 & 0.75 < W/H_s \le 2 \\ 3 & 0.25 < W/H_s \le 0.75 \\ 4 & W/H_s \le 0.25 \end{cases}"
+/>
+
+<Equation equationKey="cle-core-compaction-screening-eq-2" equation="LF_{geom} = \max\left(LF_W,\ LF_{W/H}\right)" />
+
+where $LF_W$ is the base-width score, $LF_{W/H}$ is the width-to-height score, $W$ is the base width of the embankment section, and $H_s$ is the
+height of the section, both in the length unit of the elevations. $W$ and $H_s$ are derived from the core section when one is supplied, otherwise
+from the shell section, as described in
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="flaw-conventions" anchor="section-geometry-used-in-scoring">Section Geometry Used in Scoring</DocLink>
+in the CLE Common Methods manual, unless the flaw base width and flaw height are supplied in their place (see
+[Input Parameters](./03-input-parameters.mdx#flaw-factor-selections)). <TableReference tableKey="cle-core-compaction-screening-table-7" /> lists
+the bands.
+
+<TableVertical
+  tableKey="cle-core-compaction-screening-table-7"
+  alt="Section geometry likelihood factor bands"
+  caption="Section geometry likelihood factor bands; the larger of the two scores governs."
+  colAlign={['center', 'center', 'center']}
+  headers={[[{ value: 'Likelihood Factor' }, { value: 'Base Width W' }, { value: 'Width-to-Height Ratio W/H<sub>s</sub>' }]]}
+  columns={[
+    ['1', '2', '3', '4'],
+    ['Greater than 50', 'Greater than 30, up to 50', 'Greater than 15, up to 30', '15 or less'],
+    ['Greater than 2', 'Greater than 0.75, up to 2', 'Greater than 0.25, up to 0.75', '0.25 or less'],
+  ]}
+/>
+
+Taking the larger of the two scores means that either a narrow section or a slender one is enough to make a continuous flaw more likely: a section
+scores 1 only when it is both wider than 50 and more than twice as wide as it is high. A value exactly on a band boundary takes the higher
+likelihood factor of the narrower band; for example, a base width of exactly 50 scores 2, and a ratio of exactly 2 scores 2. The base-width
+boundaries are applied to the base width as entered, with no unit conversion (see [Unit System](./03-input-parameters.mdx#unit-system)).
+
+:::warning[INPUT NEEDED IN-05 — Engineering Basis]
+The section geometry bands of <TableReference tableKey="cle-core-compaction-screening-table-7" /> (base width boundaries 50, 30, and 15;
+width-to-height ratio boundaries 2, 0.75, and 0.25) and the rule that the larger of the two scores governs require an engineering basis. Provide
+the source table of Fell et al. (2024) or the engineering-judgment attribution.
+:::
+
+### Borrow Variability Factor
+
+The borrow variability factor represents the two construction conditions of the poor-compaction method of
+<Citation citationKey="Fell2024" form="narrative" /> that the model does not take as inputs: the variability of the borrow area material placed in the core and the
+quality of site supervision during placement. A variable borrow source can leave zones of soil that is more erodible or harder to compact, and weak
+supervision allows such zones and poorly compacted layers to go uncorrected. Rather than require a judgment of either condition, the model assumes
+borrow area variability between minor and variable and site supervision between good and moderate, and assigns the factor a fixed likelihood factor
+$LF_{var} = 2.5$, midway between the neutral score of 2 and the more-likely score of 3. It is not an input and does not vary between sites.
+
+## Weighted Sum
+
+The three scores combine into the weighted sum described in
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="flaw-conventions" anchor="weighted-sum">Weighted Sum</DocLink>
+in the CLE Common Methods manual, which for the core compaction factors is:
+
+<Equation equationKey="cle-core-compaction-screening-eq-3" equation="\Sigma = 3\,LF_{comp} + 2\,LF_{geom} + 1\,LF_{var}" />
+
+where $\Sigma$ is the weighted sum, $LF_{comp}$ is the likelihood factor of the core compaction category, $LF_{geom}$ is the likelihood factor of
+the section geometry, and $LF_{var} = 2.5$ is the likelihood factor of borrow variability, all dimensionless. The weighted sum ranges from 7.5 (well
+compacted, section geometry score 1) to 22.5 (very poorly compacted, section geometry score 4).
+
+## Raw Flaw Probability
+
+The raw flaw probability $P_{raw}$ is interpolated from <TableReference tableKey="cle-core-compaction-screening-table-8" />, linearly in the
+logarithm of the probability between tabulated points, as described in
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="flaw-conventions" anchor="flaw-probability-from-the-weighted-sum">Flaw Probability from the Weighted Sum</DocLink>
+in the CLE Common Methods manual.
+
+<TableVertical
+  tableKey="cle-core-compaction-screening-table-8"
+  alt="Raw flaw probability by weighted sum"
+  caption="Raw flaw probability by weighted sum."
+  colAlign={['center', 'center']}
+  headers={[[{ value: 'Weighted Sum' }, { value: 'Raw Flaw Probability' }]]}
+  columns={[
+    ['6', '9', '11', '13', '18', '24'],
+    ['Negligible', '1 × 10<sup>-4</sup>', '5 × 10<sup>-4</sup>', '2 × 10<sup>-3</sup>', '4 × 10<sup>-2</sup>', '5 × 10<sup>-1</sup>'],
+  ]}
+/>
+
+Every attainable weighted sum lies inside the tabulated range, so the end values are never held. Because the lowest point carries a negligible
+probability, the raw probability falls steeply below a weighted sum of 9; at the lowest attainable sum of 7.5 it is several orders of magnitude
+below 1 × 10<sup>-4</sup>. That range matters only for a well-compacted core, whose flaw probability is negligible after the flaw-continuity stage
+in any case. The model applies no lower threshold and no incompatible-condition factor, so no score forces $P_{raw}$ to zero.
+
+:::warning[INPUT NEEDED IN-07 — Engineering Basis]
+The tabulated raw flaw probabilities of <TableReference tableKey="cle-core-compaction-screening-table-8" /> (weighted sum 6, 9, 11, 13, 18, 24 →
+negligible, 1 × 10<sup>-4</sup>, 5 × 10<sup>-4</sup>, 2 × 10<sup>-3</sup>, 4 × 10<sup>-2</sup>, 5 × 10<sup>-1</sup>) require an engineering
+basis. Provide the figure or table of Fell et al. (2024) from which they are taken, or the engineering-judgment attribution, including the basis for
+anchoring the curve at a negligible probability at a weighted sum of 6, below the lowest attainable sum of 7.5.
+:::
+
+## Flaw-Continuity Stage
+
+The second stage multiplies the raw flaw probability by the flaw-continuity probability $P_{cf}$, read log-linearly from the shared
+flaw-continuity curve at the compaction likelihood factor $LF_{comp}$, as documented in
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="flaw-conventions" anchor="flaw-continuity-stage">Flaw-Continuity Stage</DocLink>
+in the CLE Common Methods manual. The value for each category is listed in
+<TableReference tableKey="cle-core-compaction-screening-table-6" />. The Unknown score of 3.5 is interpolated between the points at 3 and 4,
+giving 1 × 10<sup>-2</sup>. The point of the curve at a score of 2 (1 × 10<sup>-4</sup>) is not used by this model, because no category scores 2.
+
+The compaction category therefore enters the flaw probability twice: through its weight of 3 in the weighted sum, and again through $P_{cf}$. The
+section geometry enters only through the weighted sum.
+
+Because borrow variability is fixed, the flaw probability depends only on the compaction category and the section geometry score.
+<TableReference tableKey="cle-core-compaction-screening-table-9" /> lists every combination.
+
+<TableVertical
+  tableKey="cle-core-compaction-screening-table-9"
+  alt="Flaw probability by core compaction category and section geometry likelihood factor"
+  caption="Flaw probability by core compaction category and section geometry likelihood factor."
+  colAlign={['left', 'center', 'center', 'center', 'center']}
+  headers={[[{ value: 'Core Compaction Category' }, { value: 'LF<sub>geom</sub> = 1' }, { value: 'LF<sub>geom</sub> = 2' }, { value: 'LF<sub>geom</sub> = 3' }, { value: 'LF<sub>geom</sub> = 4' }]]}
+  columns={[
+    ['Well compacted', 'Poorly compacted', 'Very poorly compacted', 'Unknown'],
+    ['Negligible', '2.7 × 10<sup>-6</sup>', '1.6 × 10<sup>-3</sup>', '6.6 × 10<sup>-5</sup>'],
+    ['Negligible', '8.9 × 10<sup>-6</sup>', '4.9 × 10<sup>-3</sup>', '2.2 × 10<sup>-4</sup>'],
+    ['Negligible', '3.0 × 10<sup>-5</sup>', '1.1 × 10<sup>-2</sup>', '6.1 × 10<sup>-4</sup>'],
+    ['Negligible', '7.5 × 10<sup>-5</sup>', '2.7 × 10<sup>-2</sup>', '1.4 × 10<sup>-3</sup>'],
+  ]}
+/>
+
+A well-compacted core has a negligible flaw probability whatever the section geometry, because its flaw-continuity probability is negligible. For
+the other categories, each step in the section geometry score raises the flaw probability by a factor of about 2 to 3.5, while moving from Poorly
+compacted to Very poorly compacted raises it by a factor of about 350 to 600, with Unknown in between.
+
+## Observation Override
+
+When leakage through the embankment, or wet spots, are reported as observed exiting the downstream face, the flaw is taken as demonstrated:
+
+<Equation equationKey="cle-core-compaction-screening-eq-4" equation="P_{flaw} = 1.0, \qquad z_f = z_{lk}" />
+
+where $z_{lk}$ is the elevation at which the observed leakage exits the downstream face (ft or m). The base of the flaw is set equal to this exit
+elevation, so the pipe of the initiation analysis is placed horizontally at the exit from the upstream face to the downstream face. Where the flaw
+reaches the exit by a sloping path, the pipe therefore lies at the exit elevation rather than at the elevation of the flaw within the core (see
+[Assumptions and Limitations](./06-assumptions-and-limitations.mdx#flaw-assessment)). The override replaces the scored probability and the
+normal-pool heuristic together, as described for this model in
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="flaw-conventions" anchor="observation-overrides">Observation Overrides</DocLink>
+in the CLE Common Methods manual. If a compaction category is supplied with the observation, the factors are still scored and reported, but they do
+not affect the result; without a category, no scores are reported. The override sets only Node 1 and the flaw elevation: every downstream node is
+evaluated as usual at the observed elevation.
+
+## Base-of-Flaw Elevation
+
+Without an observation, the base of the flaw $z_f$ is placed by the normal-pool heuristic documented in
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="flaw-conventions" anchor="compaction-models-base-of-the-flaw">Compaction Models: Base of the Flaw</DocLink>
+in the CLE Common Methods manual: one third of the way from the normal pool elevation $z_{np}$ to the crest elevation $z_c$. The upper reference is
+always the crest of the embankment, even when a core section with a lower top is supplied.
+
+Whichever way it is resolved, the base of the flaw is the invert of the pipe in the initiation analysis and must lie within the embankment section
+used for initiation: at or below the top of that section (the core top when a core section is supplied, otherwise the crest), at or above the lowest
+segment bottom of each face, and at a positive elevation. An analysis whose base of the flaw falls outside these limits — for example, a core top
+below the heuristic elevation — is not evaluated, because its inputs are inconsistent.
+
+## Worked Example
+
+An embankment section with a base width of 350 ft and a height of 60 ft (from its base at elevation 205 ft to a crest at elevation 265 ft), a core
+of Unknown compaction, and a normal pool at elevation 235 ft scores as follows:
+
+- $W = 350$ is greater than 50, so $LF_W = 1$; $W/H_s = 5.83$ is greater than 2, so $LF_{W/H} = 1$; hence $LF_{geom} = 1$.
+- Unknown compaction gives $LF_{comp} = 3.5$.
+- $\Sigma = 3 \times 3.5 + 2 \times 1 + 2.5 = 15$.
+- Between the tabulated points at 13 and 18, $P_{raw} = 2 \times 10^{-3} \times (20)^{0.4} \approx 6.6 \times 10^{-3}$.
+- $P_{cf}(3.5) = 1 \times 10^{-2}$, so $P_{flaw} \approx 6.6 \times 10^{-5}$.
+- The base of the flaw is $z_f = 235 + (265 - 235)/3 = 245$ ft.
+
+<CitationFootnote />

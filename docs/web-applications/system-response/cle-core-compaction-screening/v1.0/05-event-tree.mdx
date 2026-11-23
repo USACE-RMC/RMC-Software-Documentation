@@ -1,0 +1,182 @@
+---
+title: Event Tree
+---
+
+import DocLink from '@site/src/components/DocLink';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-core-compaction-screening" />
+
+# Event Tree
+
+The concentrated leak erosion (CLE) core compaction model computes the system response probability (SRP) at each headwater level from the eight-node event tree shared by the CLE family. The structure of the
+tree, how it relates to the concentrated leak erosion trees of the Typical Event Tree Database, the headwater grid on which it is evaluated, and the
+general form of each node are documented in the
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="event-tree">Event Tree</DocLink> chapter of the CLE Common Methods manual. This
+chapter states how the core compaction model populates each node.
+
+## Node Summary
+
+<TableReference tableKey="cle-core-compaction-screening-table-10" /> summarizes the nodes. Only initiation varies with pool level: the flaw is at
+one elevation, so the filter it meets, the materials it passes through, and the walls that reach it are the same at every pool level (see
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="event-tree" anchor="pool-dependence">Pool Dependence</DocLink> in the CLE Common Methods
+manual).
+
+<TableVertical
+  tableKey="cle-core-compaction-screening-table-10"
+  alt="Event-tree nodes of the core compaction model"
+  caption="Event-tree nodes of the core compaction model."
+  widthMode="auto"
+  colAlign={['center', 'left', 'center', 'center', 'left']}
+  headers={[[{ value: 'Node' }, { value: 'Event' }, { value: 'Probability' }, { value: 'Pool-Dependent' }, { value: 'Source' }]]}
+  columns={[
+    ['1', '2', '3', '4', '5', '6', '7', '8'],
+    [
+      'Flaw',
+      'Initiation',
+      'Continuation',
+      'Progression — roof support',
+      'Progression — no crack filling',
+      'Progression — no flow limitation',
+      'Unsuccessful intervention',
+      'Breach',
+    ],
+    [
+      'P<sub>flaw</sub>',
+      'P<sub>init</sub>(h)',
+      'P<sub>cont</sub>',
+      'P<sub>roof</sub>',
+      'P<sub>nf</sub>',
+      'P<sub>nl</sub>',
+      'P<sub>int</sub>',
+      'P<sub>br</sub>',
+    ],
+    ['No', 'Yes', 'No', 'No', 'No', 'No', 'No', 'No'],
+    [
+      'Core compaction flaw assessment',
+      'Cylindrical-pipe Monte Carlo analysis at the base of the flaw',
+      'Continuation method when filter inputs are supplied; else 1.0',
+      'Minimum over the embankment materials',
+      'By embankment type',
+      'Facing element times the governing wall, where the wall reaches the base of the flaw',
+      'User-specified (default 1.0)',
+      'User-specified (default 1.0)',
+    ],
+  ]}
+/>
+
+## Node 1: Flaw
+
+*Question:* Does a continuous zone of poorly compacted soil exist through the embankment core?
+
+$P_{flaw}$ and the base-of-flaw elevation $z_f$ come from the flaw assessment documented in [Flaw Assessment](./04-flaw-assessment.mdx).
+
+## Node 2: Initiation
+
+*Question:* At each pool level, does the flow through a pipe of initial diameter $D$ at the base of the flaw exert a hydraulic shear
+stress on the pipe wall that exceeds the critical shear stress $\tau_c$ of the core soil?
+
+The model hands this question to the cylindrical-pipe initiation analysis, documented for the compaction models in
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="initiation" anchor="delegated-method-cylindrical-pipe-initiation">Delegated Method: Cylindrical Pipe Initiation</DocLink>
+in the CLE Common Methods manual, with its theory in the
+[Cylindrical Pipe](/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/cylindrical-pipe) chapter of the
+Concentrated Leak Erosion Initiation manual. The analysis compares the two stresses over Monte Carlo realizations of $\tau_c$ and $D$, and the
+initiation probability $P_{init}(h)$ at each pool level is the fraction of realizations in which the hydraulic shear stress exceeds $\tau_c$.
+
+The core compaction model supplies the analysis with:
+
+- **The pipe invert** — the base of the flaw $z_f$ from the flaw assessment: the normal-pool heuristic, or the observed leakage elevation.
+- **The embankment section** — the core section when one is supplied, otherwise the shell section, from which the seepage path length is measured
+  as a horizontal line at the invert (see
+  <DocLink doc="web-applications/system-response/cle-common-methods-screening" page="initiation" anchor="seepage-path-length">Seepage Path Length</DocLink> in the CLE Common
+  Methods manual), unless a seepage path length is supplied.
+- **The critical shear stress** — a triangular distribution over the range for the core soil classification (see
+  <DocLink doc="web-applications/system-response/cle-common-methods-screening" page="initiation" anchor="critical-shear-stress">Critical Shear Stress</DocLink> in the CLE
+  Common Methods manual), unless a distribution is supplied.
+- **The initial pipe diameter** — this model's default triangular distribution, with a low value of 2 mm, a most likely value of 3 mm, and a
+  high value of 5 mm, listed in
+  <DocLink doc="web-applications/system-response/cle-common-methods-screening" page="initiation" anchor="initial-pipe-diameter">Initial Pipe Diameter</DocLink>
+  in the CLE Common Methods manual, unless a distribution is supplied.
+- **The headwater and tailwater series** — evaluated on the headwater grid described in
+  <DocLink doc="web-applications/system-response/cle-common-methods-screening" page="event-tree" anchor="headwater-grid">Headwater Grid</DocLink> in the CLE Common Methods
+  manual.
+
+The model makes no adjustment to the analysis beyond the screening-level choices common to the compaction models (see
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="initiation" anchor="screening-level-adjustments">Screening-Level Adjustments</DocLink> in
+the CLE Common Methods manual). Because the pipe invert is at the base of the flaw, initiation is zero at every pool level at or below $z_f$.
+
+## Node 3: Continuation
+
+*Question:* Does a filter intercepting the failure pathway at the base of the flaw fail to stop the erosion, so that the eroded soil
+leaves the embankment through an unfiltered exit?
+
+Where a filter intercepts the pathway, the model hands this question to the shared continuation method, which selects a method for each base soil
+from the information supplied and takes the governing result, as documented in
+<DocLink doc="web-applications/system-response/continuation-screening" page="method-selection-and-governing-base-soil">Method Selection and Governing Base Soil</DocLink>
+in the Continuation (Filter Evaluation) Screening manual. The model's use of it is documented in
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="failure-pathway-and-progression" anchor="node-3-continuation">Node 3: Continuation</DocLink>
+in the CLE Common Methods manual. The core compaction model applies the compaction-model form of the node documented there: the continuation
+probability $P_{cont}$ is the probability of continuing erosion $P_{ce}$, the node result of the Continuation (Filter Evaluation) Screening model
+(written $P_{cont}$ in that manual), when the filter and base-soil inputs are supplied, and 1.0 otherwise (see
+<DocLink doc="web-applications/system-response/continuation-screening" page="output-and-interpretation" anchor="node-result">Node Result</DocLink>
+in that manual). Supplying the filter and base-soil description is how a filter intercepting the pathway is stated; the model has
+no separate filter-presence selection and does not compare the filter with the base of the flaw or with any other elevation. Because the base of the flaw is fixed, $P_{cont}$ is one value at every pool level. The
+continuation method is not evaluated when no filter inputs are supplied.
+
+The filter question is resolved at the base of the flaw $z_f$, whichever way it is set. A filter whose top lies below $z_f$ — the
+heuristic elevation or the observed leakage elevation $z_{lk}$ — does not intercept the pathway at the flaw elevation and should not be supplied.
+For example, when the base of the flaw comes from the normal-pool heuristic, only a filter whose top reaches one third of the way from the normal
+pool to the crest should be supplied (see [Flaw Assessment](./04-flaw-assessment.mdx#base-of-flaw-elevation)).
+
+## Node 4: Progression — Roof Support
+
+*Question:* Does a continuous stable roof form over the enlarging pipe, so that it stays open?
+
+$P_{roof}$ is the minimum of the roof-support probabilities of the listed embankment materials, from the table in
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="failure-pathway-and-progression" anchor="node-4-progression--roof-support">Node 4: Progression — Roof Support</DocLink>
+in the CLE Common Methods manual. At least one material must be listed. The same value applies at every pool level.
+
+## Node 5: Progression — No Crack Filling
+
+*Question:* Does the enlarging pipe remain unfilled by material carried in from upstream?
+
+$P_{nf}$ is set by the embankment type, from the table in
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="failure-pathway-and-progression" anchor="node-5-progression--no-crack-filling">Node 5: Progression — No Crack Filling</DocLink>
+in the CLE Common Methods manual. The embankment type has no other effect in this model.
+
+## Node 6: Progression — No Flow Limitation
+
+*Question:* Does the flow into the enlarging pipe remain unrestricted by upstream seepage-limiting elements?
+
+$P_{nl}$ is the probability of no flow limitation of the upstream facing element times that of the governing wall (the most effective of the
+walls listed), where an element that is absent or does not apply contributes 1.0, so that $P_{nl}$ is 1.0 when none is listed. The values come
+from the table in
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="failure-pathway-and-progression" anchor="node-6-progression--no-flow-limitation">Node 6: Progression — No Flow Limitation</DocLink>
+in the CLE Common Methods manual. When a top-of-wall elevation $z_{tw}$ is supplied, the walls are judged once against the base of the flaw, as
+described in
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="failure-pathway-and-progression" anchor="walls-that-stop-below-the-crest">Walls That Stop Below the Crest</DocLink>:
+
+- $z_{tw} \ge z_f$ — the wall reaches the flaw, and every listed element applies.
+- $z_{tw} < z_f$ — the walls drop out, and only the upstream facing element, if listed, applies.
+
+With no top-of-wall elevation, every listed element applies. Under an observation override, the comparison is made against the observed leakage
+elevation, since that is then the base of the flaw. Either way, one value applies at every pool level.
+
+## Nodes 7 and 8: Unsuccessful Intervention and Breach
+
+*Questions:* Do detection and intervention fail (Node 7)? Does an uncontrolled release of impounded water occur (Node 8)?
+
+$P_{int}$ and $P_{br}$ are the user-specified values, applied at every pool level (see
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="event-tree" anchor="nodes-7-and-8-unsuccessful-intervention-and-breach">Nodes 7 and 8</DocLink>
+in the CLE Common Methods manual).
+
+## SRP Computation
+
+The SRP at each pool level $h$ is the product of the eight node probabilities, as documented in
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="event-tree" anchor="srp-computation">SRP Computation</DocLink>
+in the CLE Common Methods manual. In this model only the initiation probability $P_{init}(h)$ depends on $h$. A product smaller than a negligibly
+small value, including a product of zero, is reported as that value instead. The SRP takes this value at every pool level at or below the base of
+the flaw, where initiation is zero, and at every pool level when the core is well compacted and no observation override applies, because its flaw
+probability is smaller still.
