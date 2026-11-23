@@ -23,11 +23,11 @@ layer there. This chapter documents each resolution rule in calculation order.
 
 Two reference elevations define the downstream boundary of the head computations:
 
-- **Toe reference elevation** $E_{toe,ref}$ — the controlling ground surface at the downstream limit of the embankment section. When a seepage
+- **Toe reference elevation** $z_{toe,ref}$ — the controlling ground surface at the downstream limit of the embankment section. When a seepage
   berm is present and its toe ground-surface elevation is specified, the berm toe controls; otherwise the downstream embankment toe controls
   (the ground beneath a berm is then assumed flat, so the berm toe shares the embankment toe elevation).
 
-- **Daylight reference elevation** $E_{day,ref}$ — the controlling ground surface at the downstream termination of the confining layer, where
+- **Daylight reference elevation** $z_{day,ref}$ — the controlling ground surface at the downstream termination of the confining layer, where
   the foundation sand daylights. When the daylight ground-surface elevation is supplied, it controls; otherwise the daylight exit is assumed to
   share the toe reference elevation. The daylight ground may sit above or below the embankment toe. One exception applies: when the daylighting
   exit is the berm toe itself — a berm that reaches or clears a confirmed layer's downstream extent, overlies a confirmed layer of unknown
@@ -47,16 +47,13 @@ exists — the tailwater series was omitted, or an individual stage has no tailw
 elevation. The net driving head is then:
 
 <Equation
-  equationKey="bep-screening-eq-4"
-  equation="H(h) = \begin{cases} 0 & h < E_{ref} \\[4pt] \max\bigl(h - \max(t,\, E_{ref}),\; 0\bigr) & h \geq E_{ref} \end{cases}"
+  equationKey="backward-erosion-piping-screening-eq-4"
+  equation="\Delta H(h) = \begin{cases} 0 & h < z_{ref} \\[4pt] \max\bigl(h - \max(h_t,\, z_{ref}),\; 0\bigr) & h \geq z_{ref} \end{cases}"
 />
 
-where:
-
-> $h$ = headwater elevation  
-> $t$ = tailwater elevation at that pool level (where one exists)  
-> $E_{ref}$ = the applicable reference elevation ($E_{day,ref}$ for the blowout, heave, and daylight-progression analyses; $E_{toe,ref}$ for  
-> the toe-progression analysis)
+where $\Delta H(h)$ is the net driving head (ft); $h$ is the headwater elevation (ft); $h_t$ is the tailwater elevation at that pool level,
+where one exists (ft); and $z_{ref}$ is the applicable reference elevation (ft): $z_{day,ref}$ for the blowout, heave, and
+daylight-progression analyses, and $z_{toe,ref}$ for the toe-progression analysis.
 
 A pool at or below the exit reference elevation produces zero net driving head: no seepage flows out of that exit, so the progression analysis
 along that pathway is not loaded. Zero driving head does not by itself mean zero load on the confining layer. Where the daylight ground sits
@@ -70,7 +67,7 @@ control level (and so slightly understates the net head); the effect is bounded 
 
 ## Seepage Path Components
 
-Blanket theory idealizes the seepage path in three segments <Citation citationKey="USACE1956" />: the upstream entry length $L_1$ through or
+Blanket theory idealizes the seepage path in three segments (USACE, 1956) <Citation citationKey="USACE1956" />: the upstream entry length $L_1$ through or
 beneath the upstream top stratum, the path $L_2$ beneath the embankment, and the downstream path $L_3$ from the embankment toe to the seepage
 exit. The screening model resolves each from the site inputs.
 
@@ -105,11 +102,11 @@ extends the downstream path instead.
 ### Downstream Path Length L₃
 
 The downstream path length $L_3$ — from the embankment toe to the seepage exit — is resolved from the berm and confining-layer inputs
-(<TableReference tableKey="bep-screening-table-19" />). A supplied downstream extent enters as its single value; the default for no berm with an
+(<TableReference tableKey="backward-erosion-piping-screening-table-17" />). A supplied downstream extent enters as its single value; the default for no berm with an
 unknown extent or unknown layer presence is the only downstream-path characterization carried as a distribution.
 
 <TableVertical
-  tableKey="bep-screening-table-19"
+  tableKey="backward-erosion-piping-screening-table-17"
   alt="Downstream seepage path resolution"
   caption="Resolution of the downstream seepage path length L₃."
   colWidths={[30, 'minmax(30ch, 1fr)']}
@@ -150,7 +147,7 @@ The blowout and heave analyses run under one of two blanket-theory configuration
   Selected whenever the upstream path length is credited ($L_1 > 0$): an engineered upstream blanket is present, or the confining layer is
   confirmed, impervious, not Very Thin, and has a supplied upstream extension length. The total seepage path is:
 
-  <Equation equationKey="bep-screening-eq-5" equation="L_{total} = L_1 + L_2 + L_3" />
+  <Equation equationKey="backward-erosion-piping-screening-eq-5" equation="L_{total} = L_1 + L_2 + L_3" />
 
 - **Blanket Theory Case 4** — no riverside top stratum, impervious landside top stratum only (see
   [Blanket Theory Case 4](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-initiation/v1.0/blanket-theory-case-4)
@@ -158,9 +155,9 @@ The blowout and heave analyses run under one of two blanket-theory configuration
   Selected otherwise. With an open seepage entrance, the effective entry length is approximated from the foundation thickness
   (Brandon et al., 2018) <Citation citationKey="Brandon2018" />:
 
-  <Equation equationKey="bep-screening-eq-6" equation="L_{total} = 0.43\,d + L_2 + L_3" />
+  <Equation equationKey="backward-erosion-piping-screening-eq-6" equation="L_{total} = 0.43\,d + L_2 + L_3" />
 
-where $d$ is the sampled foundation sand thickness. A confirmed Very Thin layer is credited with $L_1 = 0$ per the crediting rules above, so it
+where $d$ is the sampled foundation sand thickness (ft). A confirmed Very Thin layer is credited with $L_1 = 0$ per the crediting rules above, so it
 routes to Case 4 and retains the open-entrance length $0.43\,d$; crediting neither an upstream path nor an entrance length would understate the
 head loss upstream of the embankment.
 
@@ -173,14 +170,11 @@ through-layer defect and blowout mechanisms are retained (see [Event Tree](./06-
 the first exposed ground beyond the berm:
 
 <Equation
-  equationKey="bep-screening-eq-7"
+  equationKey="backward-erosion-piping-screening-eq-7"
   equation="x = L_b"
 />
 
-where:
-
-> $x$ = distance of the exit evaluation point downstream of the embankment toe  
-> $L_b$ = berm length
+where $x$ is the distance of the exit evaluation point downstream of the embankment toe (ft) and $L_b$ is the berm length (ft).
 
 The confining layer then extends $L_3 - x$ beyond the evaluation point, and the excess head available there follows the linear blanket-theory
 head profile, reduced by the factor $(L_3 - x)/L_3$ relative to the toe (see [Head Beneath the Confining Layer](#head-beneath-the-confining-layer)).
@@ -194,39 +188,38 @@ layer less the head of the water standing on the layer there. The two heads are 
 the layer exits at the daylighting exit, so the exit level is
 
 <Equation
-  equationKey="bep-screening-eq-24"
-  equation="E = \max(t,\, E_{day,ref}) \qquad T = \max(t,\, E_{check})"
+  equationKey="backward-erosion-piping-screening-eq-8"
+  equation="z_{ex} = \max(h_t,\, z_{day,ref}) \qquad T = \max(h_t,\, z_{chk})"
 />
 
-where:
-
-> $E$ = exit level, the control level at the daylighting exit  
-> $T$ = level of the water standing on the confining layer at the exit evaluation point  
-> $E_{check}$ = ground surface at the exit evaluation point: $E_{toe,ref}$ (the berm-toe ground when a berm is present)
+where $z_{ex}$ is the exit level, the control level at the daylighting exit (ft); $T$ is the level of the water standing on the confining
+layer at the exit evaluation point (ft); and $z_{chk}$ is the ground surface at the exit evaluation point, equal to $z_{toe,ref}$ (the berm-toe
+ground when a berm is present) (ft).
 
 The head in the sand beneath the layer at the evaluation point combines the exit level with the share of the driving head that remains after
-the head loss along the path upstream of that point <Citation citationKey="USACE1956" />:
+the head loss along the path upstream of that point (USACE, 1956) <Citation citationKey="USACE1956" />:
 
 <Equation
-  equationKey="bep-screening-eq-25"
-  equation="h_{under} = \min(h,\, E) + \max(h - E,\, 0)\,\frac{L_3 - x}{L_{total}}"
+  equationKey="backward-erosion-piping-screening-eq-9"
+  equation="h_{under} = \min(h,\, z_{ex}) + \max(h - z_{ex},\, 0)\,\frac{L_3 - x}{L_{total}}"
 />
 
 and the net head across the layer is
 
-<Equation equationKey="bep-screening-eq-26" equation="h_{net} = h_{under} - T" />
+<Equation equationKey="backward-erosion-piping-screening-eq-10" equation="h_{net} = h_{under} - T" />
 
-where $L_{total}$ is the total seepage path of the selected configuration (<EquationReference equationKey="bep-screening-eq-5" /> or
-<EquationReference equationKey="bep-screening-eq-6" />), evaluated per Monte Carlo realization, and $x$ is the evaluation-point distance of
-<EquationReference equationKey="bep-screening-eq-7" />. A distance $x$ at or beyond $L_3$ leaves no head from flow at the evaluation point.
+where $h_{under}$ is the head in the foundation sand beneath the layer at the evaluation point (ft), $h_{net}$ is the net head across the
+layer (ft), $L_{total}$ is the total seepage path of the selected configuration (<EquationReference equationKey="backward-erosion-piping-screening-eq-5" /> or
+<EquationReference equationKey="backward-erosion-piping-screening-eq-6" />), evaluated per Monte Carlo realization, and $x$ is the evaluation-point distance of
+<EquationReference equationKey="backward-erosion-piping-screening-eq-7" />. A distance $x$ at or beyond $L_3$ leaves no head from flow at the evaluation point.
 
-The first term covers two loading states. When the pool stands above the exit level, seepage flows and $\min(h, E) = E$: the head beneath the
+The first term covers two loading states. When the pool stands above the exit level, seepage flows and $\min(h, z_{ex}) = z_{ex}$: the head beneath the
 layer is the exit level plus the remaining share of the driving head. When the pool stands at or below the exit level, no seepage flows, the
 second term vanishes, and the foundation sand fills to pool level, so $h_{under} = h$. A daylight ground above the toe therefore adds the
 difference between the two ground surfaces to the uplift at the toe, and a daylight ground below the toe reduces it. Where the daylight ground
-equals the toe ground, <EquationReference equationKey="bep-screening-eq-26" /> reduces to the excess head of the blanket-theory toe solution.
+equals the toe ground, <EquationReference equationKey="backward-erosion-piping-screening-eq-10" /> reduces to the excess head of the blanket-theory toe solution.
 
-The blowout analysis compares the upward gradient $h_{net}/z_{bl}$ with the critical gradient of the confining layer, and the heave analysis
+The blowout analysis compares the upward gradient $h_{net}/d_{bl}$, where $d_{bl}$ is the confining-layer thickness, with the critical gradient of the confining layer, and the heave analysis
 with the critical gradient of the foundation sand (see [Delegated Methods](./07-delegated-methods.mdx)). A realization with no positive net head
 does not fail.
 
@@ -234,11 +227,12 @@ does not fail.
 
 The Schmertmann progression analysis uses the full geometric path from the upstream limit of the seepage barrier to the exit under evaluation:
 
-<Equation equationKey="bep-screening-eq-8" equation="L_{prog,toe} = L_1 + L_2 + L_b" />
+<Equation equationKey="backward-erosion-piping-screening-eq-11" equation="L_{prog,toe} = L_1 + L_2 + L_b" />
 
-<Equation equationKey="bep-screening-eq-9" equation="L_{prog,day} = L_1 + L_2 + L_3" />
+<Equation equationKey="backward-erosion-piping-screening-eq-12" equation="L_{prog,day} = L_1 + L_2 + L_3" />
 
-where the berm length $L_b$ is included only when a berm is present. $L_3$ in the daylight path is sampled per Monte Carlo realization only
+where $L_{prog,toe}$ and $L_{prog,day}$ are the toe and daylight progression path lengths (ft), and the berm length $L_b$ is included only
+when a berm is present. $L_3$ in the daylight path is sampled per Monte Carlo realization only
 when no berm is present and the downstream extent or the layer's presence is unknown (the one-to-five-embankment-height default); otherwise it
 enters as a single value. A longer path reduces the average applied gradient. When the presence is Unknown and a berm is present, $L_3 = L_b$,
 so the two progression paths are equal.

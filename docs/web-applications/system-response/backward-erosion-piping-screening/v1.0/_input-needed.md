@@ -92,32 +92,32 @@ recorded.
 
 ## IN-05 — Engineering Basis — `03-input-parameters.mdx`
 
-**Regarding:** Default foundation-sand saturated unit weight (normal: mean 122.0 pcf,
-standard deviation 3.0 pcf).
+**Regarding:** Default foundation-sand saturated unit weight (normal: mean 122.0 lb/ft³,
+standard deviation 3.0 lb/ft³).
 
 **Needed:** Literature citation or engineering-judgment attribution.
 
 **Proposed (unconfirmed):** Typical of loose to medium-dense saturated alluvial sand.
 
-**Answer:** Lambe and Whitman (1969) give about 111–130 pcf for clean sands, Budhu (2011)
-115–127 pcf, Das (2010) about 112–125 pcf, and EM 1110-1-1905 design examples 120–130 pcf; a
-normal distribution with mean 122 pcf and SD 3 pcf (95% range about 117–127 pcf) represents
+**Answer:** Lambe and Whitman (1969) give about 111–130 lb/ft³ for clean sands, Budhu (2011)
+115–127 lb/ft³, Das (2010) about 112–125 lb/ft³, and EM 1110-1-1905 design examples 120–130 lb/ft³; a
+normal distribution with mean 122 lb/ft³ and SD 3 lb/ft³ (95% range about 117–127 lb/ft³) represents
 fine to medium uniform sands in loose to dense states. (from Oct 2025 methodology document)
 
 ---
 
 ## IN-06 — Engineering Basis — `03-input-parameters.mdx`
 
-**Regarding:** Default confining-layer saturated unit weight (normal: mean 118.0 pcf,
-standard deviation 3.0 pcf).
+**Regarding:** Default confining-layer saturated unit weight (normal: mean 118.0 lb/ft³,
+standard deviation 3.0 lb/ft³).
 
 **Needed:** Literature citation or engineering-judgment attribution.
 
-**Answer:** Lambe and Whitman (1969) and Das (2010) give about 95–125 pcf for clays, Budhu
-(2011) 100–125 pcf for fine-grained soils, EM 1110-2-2504 implies about 97–128 pcf and EM
-1110-1-1905 examples use 100–120 pcf; values below about 100–105 pcf were avoided as
-unrealistically low, and a normal distribution with mean 118 pcf and SD 3 pcf (95% range
-about 113–123 pcf) covers fine-grained confining layers at the screening level. (from Oct
+**Answer:** Lambe and Whitman (1969) and Das (2010) give about 95–125 lb/ft³ for clays, Budhu
+(2011) 100–125 lb/ft³ for fine-grained soils, EM 1110-2-2504 implies about 97–128 lb/ft³ and EM
+1110-1-1905 examples use 100–120 lb/ft³; values below about 100–105 lb/ft³ were avoided as
+unrealistically low, and a normal distribution with mean 118 lb/ft³ and SD 3 lb/ft³ (95% range
+about 113–123 lb/ft³) covers fine-grained confining layers at the screening level. (from Oct
 2025 methodology document)
 
 ---

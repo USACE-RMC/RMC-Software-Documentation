@@ -10,24 +10,24 @@ import NavContainer from '@site/src/components/NavContainer';
 
 # Assumptions and Limitations
 
-The BEP screening model applies deliberate simplifications relative to the full toolbox models. They reduce input requirements and are designed
-to avoid false negatives at the screening level. Each assumption below states its engineering basis, its effect on results, and the conditions
-under which it may not hold. Where an engineering basis is still awaiting confirmation, the assumption cross-references the input marker at its
-primary location in this document.
+The backward erosion piping (BEP) screening model applies deliberate simplifications relative to the full toolbox models. They reduce input
+requirements and are designed to avoid false negatives at the screening level. Each assumption below states its engineering basis, its effect on
+results, and the conditions under which it may not hold. Where an engineering basis is still awaiting confirmation, the assumption cross-references
+the input marker at its primary location in this document.
 
 ## Seepage Geometry and Hydraulics
 
 1. **The site is idealized as one of two blanket-theory configurations, Case 2 or Case 4.** The configuration is selected from the upstream
    seepage barrier (see [Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx)).
    - *Engineering basis:* Screening design decision (engineering judgment): the two cases bracket the screening-relevant configurations — an
-     upstream barrier either exists or does not — and automatic selection removes a choice from the user.
+     upstream barrier either exists or does not — and automatic selection removes a choice from the inputs.
    - *Effect on results:* Sites whose stratigraphy matches other blanket-theory cases (semi-pervious strata, more complex layering) are
      approximated by the nearer of the two configurations.
    - *When it may not hold:* Sites with well-characterized semi-pervious strata or geometries that need Cases 1, 3, or 5 through 8; the
      toolbox models apply directly to such sites.
 2. **The downstream confining layer carries a linear head profile.** The excess head above the exit level decays from its value at the toe
    to zero at the layer's downstream termination.
-   - *Engineering basis:* Blanket theory <Citation citationKey="USACE1956" />. The landside layer is analyzed as an impervious top stratum
+   - *Engineering basis:* Blanket theory (USACE, 1956) <Citation citationKey="USACE1956" />. The landside layer is analyzed as an impervious top stratum
      whatever permeability is selected; the permeability selection affects only the upstream credit.
    - *Effect on results:* Exit heads are reduced by the path-length ratio, which is less conservative than an infinite-blanket idealization.
    - *When it may not hold:* Blankets with strong lateral heterogeneity, or relief wells and toe drains that alter the head profile. A
@@ -44,7 +44,7 @@ primary location in this document.
    carry no uncertainty; the default range for an unknown downstream extent is the only seepage-path length treated as a distribution.
    - *Engineering basis:* Screening design decision (engineering judgment): a known length is a geometric site measurement entered as one
      value, and uncertainty about an unknown downstream extent is represented by the wide default range instead.
-   - *Effect on results:* The SRP reflects the entered path lengths exactly; uncertainty in a measured length does not spread the result.
+   - *Effect on results:* The system response probability (SRP) reflects the entered path lengths exactly; uncertainty in a measured length does not spread the result.
    - *When it may not hold:* Sites where a supplied seepage-path length is both highly uncertain and influential; the analyst then brackets
      that uncertainty by running the analysis at candidate lengths.
 5. **The downstream control level is interpolated linearly between successive supplied headwater values.** The control level is the higher of the tailwater
@@ -125,12 +125,12 @@ primary location in this document.
       BEP Progression manual notes that $C_Z$ is approximately 1 when the ratio of piping-layer depth to pipe radius exceeds about 80 (see
       [Field Horizontal Critical Gradient](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/schmertmann#field-horizontal-critical-gradient)).
     - *When it may not hold:* A higher-permeability stratum (for example, coarse sand or gravel) beneath a thin piping sand.
-14. **An Unknown fines content is taken as 0%, and the fines correction is a step at 5% fines.** The correction factor is 1.0 below 5% fines and
-    1.4 at or above 5%.
-    - *Engineering basis:* Taking an Unknown fines content as 0% is a conservative screening posture (engineering judgment): it forgoes the higher fines correction, which would raise the resistance to progression. Step form: basis
+14. **An Unknown fines content is taken as 0 percent, and the fines correction is a step at 5 percent fines.** The correction factor is 1.0
+    below 5 percent fines and 1.4 at or above 5 percent.
+    - *Engineering basis:* Taking an Unknown fines content as 0 percent is a conservative screening posture (engineering judgment): it forgoes the higher fines correction, which would raise the resistance to progression. Step form: basis
       requested — see marker IN-16 in [Delegated Methods](./07-delegated-methods.mdx).
-    - *Effect on results:* Sands with real fines content receive less progression resistance than the method would assign unless the 5% or
-      more category is selected.
+    - *Effect on results:* Sands with real fines content receive less progression resistance than the method would assign unless the "5% or
+      more" category is selected.
     - *When it may not hold:* Sands with significant fines where gradation data is available, where the analyst selects the matching fines
       category.
 15. **The progression probability is non-decreasing with pool level.**
@@ -146,13 +146,20 @@ example, the pipe-path inclination relationship of the Schmertmann method) with 
 attribution, and confirm or replace the 10° threshold.
 :::
 
+## Flaw
+
+16. **The flaw probability is independent of pool level.**
+    - *Engineering basis:* Definitional: the flaw is a geologic condition whose existence does not depend on the pool.
+    - *Effect on results:* The same flaw probability scales the SRP at every pool level.
+    - *When it may not hold:* Pool-dependent flaw mechanisms (for example, first-filling collapse features) are outside the model.
+
 ## Exit Datum and Exit Type
 
 17. **The blowout and heave net head combines the daylight exit level with the ground at the evaluation point.** The seepage beneath the
     layer exits at the daylight reference elevation, which sets the driving head; the net head across the layer is measured against the water
     standing on the layer at the toe or berm toe. A pool below the exit level drives no seepage and fills the sand to pool level (see
     [Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx#head-beneath-the-confining-layer)).
-    - *Engineering basis:* Blanket theory <Citation citationKey="USACE1956" /> for the head remaining beneath the layer, with hydrostatic
+    - *Engineering basis:* Blanket theory (USACE, 1956) <Citation citationKey="USACE1956" /> for the head remaining beneath the layer, with hydrostatic
       conditions where no seepage flows. Two-dimensional steady-state seepage models of representative sections, with 10 ft of foundation sand,
       reproduced the resulting net head at the toe to within about 0.25 ft across configurations with the daylight ground above, at, and below
       the toe.
@@ -176,13 +183,6 @@ Assumption 18: under a layer of unknown presence, the toe exit is treated as pla
 hole-type treatment ($C_{3d} = 0.5$) applied to a confirmed layer. Provide the engineering basis or judgment attribution for this choice, or
 confirm whether a possibly present layer should take the hole-type factor.
 :::
-
-## Flaw
-
-16. **The flaw probability is independent of pool level.**
-    - *Engineering basis:* Definitional: the flaw is a geologic condition whose existence does not depend on the pool.
-    - *Effect on results:* The same flaw probability scales the SRP at every pool level.
-    - *When it may not hold:* Pool-dependent flaw mechanisms (for example, first-filling collapse features) are outside the model.
 
 ## Foundation Cutoffs
 
