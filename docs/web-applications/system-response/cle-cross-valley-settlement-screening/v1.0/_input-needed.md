@@ -16,6 +16,8 @@ admonition in the document.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the document defines $s$ only as the maximum post-construction settlement, and forms $s/H$ with the single dam height entered for the dam as a whole rather than a height specific to the section analyzed. It gives no measurement definition for either quantity (the reference surface for $H$, the location along the crest or the time period for $s$, or the treatment of foundation settlement). Left open; the same note is recorded in both settlement manuals.
+
 ---
 
 ## IN-02 — Definition — `03-input-parameters.mdx`
@@ -62,6 +64,8 @@ admonition in the document.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the document states the same two defaults — a normalized settlement of 0.50 percent for dams constructed before 1950 and 0.25 percent for dams constructed after 1950 — and applies them to both settlement mechanisms (cross-valley differential settlement and settlement adjacent to a wall or cliff). It gives no literature source or engineering basis for the values or for the 1950 boundary, and its wording ("after 1950") leaves a dam completed in 1950 unassigned, where the model classes 1950 with the later dams (CrossValleySettleConstants.cs:35-57; WallCliffSettleConstants.cs:19-41). Left open; the same note is recorded in both settlement manuals.
+
 ---
 
 ## IN-06 — Definition — `04-flaw-assessment.mdx`
@@ -82,6 +86,8 @@ admonition in the document.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the document attributes the method — localized tensile strain at the crest from the abutment geometry and the normalized settlement $s/H$, then the flaw probability from that strain — to Fell et al. (2024) (UNICIV Report No. R470, already in the bibliography), and this attribution has been added to the manual text. It does not identify the table or figure digitized, the interpolation basis, or the rounding of the no-step values. Left open for those details.
+
 ---
 
 ## IN-08 — Engineering Basis — `04-flaw-assessment.mdx`
@@ -91,6 +97,8 @@ admonition in the document.
 **Needed:** The strain tables for an abutment with a step (<TableReference tableKey="cle-cross-valley-screening-table-7" /> to <TableReference tableKey="cle-cross-valley-screening-table-9" />) require a literature source, and the linear interpolation over the relative step height (<EquationReference equationKey="cle-cross-valley-screening-eq-4" />) requires a basis. Provide the source (author, year, title, publisher or report number, and the figure or table digitized) or the engineering-judgment attribution, and confirm that the tables for relative step heights of 0.6 and 0.8 are intended to differ only at zero settlement.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the document lists the presence and height of an abutment step as an input to the Fell et al. (2024) cross-valley method but does not identify the step tables, the relative step heights 0.6, 0.8, and 0.9, the interpolation over $h_1/H$, or why the tables for 0.6 and 0.8 differ only at zero settlement. Left open.
 
 ---
 
@@ -114,6 +122,8 @@ admonition in the document.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the document attributes the strain-to-flaw-probability relationship to Fell et al. (2024) and states that where the strain exceeds the published limits the relationship is extrapolated beyond the published range. That is consistent with the added point at a strain of 0.0443 being a model extension rather than a published value (CrossValleySettleFlawData.cs:142-147), but the document gives no table number, no basis for the 0.0443 point or the log-linear interpolation, and no statement of the $5 \times 10^{-5}$ floor. Left open.
+
 ---
 
 ## IN-11 — Engineering Basis — `04-flaw-assessment.mdx`
@@ -124,7 +134,7 @@ admonition in the document.
 
 **Proposed (unconfirmed):** a conservative screening choice, since a crack that existed would likely have revealed itself at pools already experienced, so the above-record set represents the untested condition. Confirm or replace.
 
-**Answer:**
+**Answer:** The model conservatively uses the Fell et al. (2024) probabilities for a pool above the period of record at every pool level, regardless of headwater elevation; the at-or-below set is not offered at the screening level (from Oct 2025 methodology document).
 
 ---
 
@@ -146,6 +156,8 @@ admonition in the document.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the document cites "Peirson et al. (2023)" only for the hydraulic stresses in transverse crest cracks (the basis of the certain initiation of a crest crack), and its reference list gives the matching work as Peirson, W. L., and Fell, R. (2024), "Pressurised flow in cracks in embankment dam cores," European Journal of Environmental and Civil Engineering, 29(6), 1076-1080, doi:10.1080/19648189.2024.2428253. It does not mention the crack width-depth relationship, so it does not establish whether the "Pierson (2023)" of the model is the same work (note also the spelling Peirson/Pierson). Left open.
+
 ---
 
 ## IN-14 — Applicability — `04-flaw-assessment.mdx`
@@ -165,5 +177,7 @@ admonition in the document.
 **Needed:** State the range of abutment slopes, normalized settlements, and relative step heights over which the model is applicable. Beyond the tabulated range the model holds the end value rather than extrapolating, so a slope steeper than 60 degrees or a normalized settlement above 2.5 percent (2 percent with a step) is assessed as if it were at the end of the table, which may understate the strain. State whether such inputs are outside the intended use of the model, or whether holding the end value is an accepted screening treatment.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the document states that where $s/H$ or the strain exceeds the limits of Fell et al. (2024), the relationships are extrapolated to expand the published range. The current model does not extrapolate the strain tables: it holds the end value for settlement, slope, and relative step height (CrossValleySettleFlawModel.cs:168-170 and the clamped Bilinear lookups), and extends only the strain-to-probability relationship (the 0.0443 point). The document conflicts with the code on this point. Left open.
 
 ---
