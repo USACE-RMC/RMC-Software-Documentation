@@ -1,5 +1,5 @@
 ---
-title: Flaw Probability
+title: Flaw Assessment
 ---
 
 import Citation from '@site/src/components/Citation';
@@ -11,7 +11,7 @@ import TableVertical from '@site/src/components/TableVertical';
 
 <NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-desiccation-screening" />
 
-# Flaw Probability
+# Flaw Assessment
 
 Node 1 of the event tree is the probability $P_{flaw}$ that a continuous transverse desiccation crack exists across the crest. The model estimates
 it by the risk-factor and likelihood-factor scoring of Fell et al. (2024) <Citation citationKey="Fell2024" />, which seven of the CLE
@@ -21,7 +21,7 @@ of the CLE Common Methods manual. This chapter documents the desiccation-specifi
 curve that converts the weighted sum to a probability, the lower threshold, the observation override, and the case in which the mechanism does not
 apply. The scored probability is used directly; the model applies no flaw-continuity stage.
 
-## Factors
+## Factor Scores
 
 The model scores three factors, each on a likelihood scale on which 1 is the least likely condition for a continuous desiccation crack and 4 the
 most likely (<TableReference tableKey="cle-desiccation-screening-table-3" />).
@@ -45,19 +45,19 @@ particular change can still move it less than a change of another factor: going 
 6 added by going from a temperate to an arid climate. The climate likelihood factor can take any value between 1 and 4 when it is interpolated
 from a measured net evaporation; the other two take only the tabulated values.
 
-### Surface layer
+### Surface Layer
 
-The surface-layer likelihood factor $LF_s$ is 1 for a paved crest, 2.5 for a gravel road, and 4 for a crest with no road or pathway (see
+The surface-layer likelihood factor $LF_{surf}$ is 1 for a paved crest, 2.5 for a gravel road, and 4 for a crest with no road or pathway (see
 [Input Parameters](./03-input-parameters.mdx#surface-layer-over-the-core)). The scores are adapted from the crest zoning and surface layer factor
 of Fell et al. (2024, Table 5.8) <Citation citationKey="Fell2024" />, whose neutral (likelihood factor 2) and more likely (likelihood factor 3)
 categories are combined into the single gravel-road category, scored at their mean of 2.5.
 
 ### Climate
 
-When no net evaporation is supplied, the climate likelihood factor $LF_{cl}$ is 4 for an arid climate, 3 for a monsoonal climate, 2 for a seasonal
+When no net evaporation is supplied, the climate likelihood factor $LF_{clim}$ is 4 for an arid climate, 3 for a monsoonal climate, 2 for a seasonal
 climate, and 1 for a temperate climate (see [Input Parameters](./03-input-parameters.mdx#climate)).
 
-When a measured average annual net evaporation $E_n$ is supplied, $LF_{cl}$ is interpolated linearly in $E_n$ between the points of
+When a measured average annual net evaporation $E_n$ is supplied, $LF_{clim}$ is interpolated linearly in $E_n$ between the points of
 <TableReference tableKey="cle-desiccation-screening-table-4" />, and takes the end value beyond the tabulated range.
 
 <TableVertical
@@ -75,10 +75,10 @@ When a measured average annual net evaporation $E_n$ is supplied, $LF_{cl}$ is i
 
 The result is a stepped relationship with short transitions:
 
-- $LF_{cl} = 1$ for a net evaporation of 425 mm or less.
-- $LF_{cl}$ rises linearly from 1 to 2 between 425 and 450 mm, and is 2 from 450 to 900 mm.
-- $LF_{cl}$ rises linearly from 2 to 3 between 900 and 925 mm, and is 3 from 925 to 1500 mm.
-- $LF_{cl}$ steps from 3 to 4 at 1500 mm and is 4 above it.
+- $LF_{clim} = 1$ for a net evaporation of 425 mm or less.
+- $LF_{clim}$ rises linearly from 1 to 2 between 425 and 450 mm, and is 2 from 450 to 900 mm.
+- $LF_{clim}$ rises linearly from 2 to 3 between 900 and 925 mm, and is 3 from 925 to 1500 mm.
+- $LF_{clim}$ steps from 3 to 4 at 1500 mm and is 4 above it.
 
 A net evaporation within one of the two short transitions therefore gives a fractional climate score, for example 1.5 at 437.5 mm.
 
@@ -90,11 +90,13 @@ the end values held below 175 mm and above 2000 mm, and the equivalence of each 
 1500 mm is abrupt while the other two are gradual.
 :::
 
-### Crest soil
+### Crest Soil
 
 Each listed crest soil class is scored per <TableReference tableKey="cle-desiccation-screening-table-5" />. The soil likelihood factor $LF_{cs}$
-is the highest score among the scored classes in the list, so the most crack-prone soil the crack would cross governs. When the list is empty — the
-crest soils are unknown — $LF_{cs} = 2$.
+is the highest score among the scored classes in the list, so the most crack-prone soil the crack would cross governs.
+
+When no class is listed, the crest soil is unknown. An unknown crest soil scores 2, the score the model assigns when no crest soil class is
+listed; the basis of the value is requested at marker IN-05.
 
 <TableVertical
   tableKey="cle-desiccation-screening-table-5"
@@ -125,12 +127,12 @@ scored classes they are passed over; when they are the only classes listed, the 
 [Inapplicable Mechanism](#inapplicable-mechanism)).
 
 :::warning[INPUT NEEDED IN-05 — Engineering Basis]
-The Unknown crest-soil score of 2 requires an engineering basis. It is the score of a silty or lean clay and lies below the scores of a
-high-plasticity silt (3) and a fat clay (4), so an unknown crest soil is scored as less crack-prone than a known fat clay core; the same score also
-selects the crack depths of <TableReference tableKey="cle-desiccation-screening-table-8" /> and
-<TableReference tableKey="cle-desiccation-screening-table-11" /> in [Crack Depth](./05-crack-depth.mdx). Cite the
-source of the value, or provide the engineering-judgment attribution, and state why an intermediate rather than the most crack-prone score is
-adopted for an unknown soil at the screening level.
+The crest-soil likelihood factor of 2 assigned to an unknown crest soil (no class listed) requires an engineering basis. State whether Unknown is
+a category of the source table of Fell et al. (2024) or a screening choice, and if the latter, provide the engineering-judgment attribution and
+state why an intermediate rather than the most crack-prone score is adopted for an unknown soil at the screening level. The value lies below the
+scores of MH (3) and CH (4), so an unknown crest soil scores lower than a crest known to be of any of those classes. The same score also selects
+the crack depths of <TableReference tableKey="cle-desiccation-screening-table-8" /> and
+<TableReference tableKey="cle-desiccation-screening-table-9" /> in [Crack Depth](./05-crack-depth.mdx).
 :::
 
 :::warning[INPUT NEEDED IN-06 — Engineering Basis]
@@ -143,19 +145,20 @@ engineering-judgment attribution for any value that is adapted rather than taken
 ## Weighted Sum
 
 The three scores combine into the weighted sum of the common scheme (see
-[Weighted sum](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#weighted-sum) in the CLE Common Methods
+[Weighted Sum](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#weighted-sum) in the CLE Common Methods
 manual), here
 
-<Equation equationKey="cle-desiccation-screening-eq-1" equation="\Sigma = 3\,LF_s + 2\,LF_{cl} + 1\,LF_{cs}" />
+<Equation equationKey="cle-desiccation-screening-eq-1" equation="\Sigma = 3\,LF_{surf} + 2\,LF_{clim} + 1\,LF_{cs}" />
 
-The weighted sum ranges from 6 (paved crest, temperate climate, least crack-prone soil) to 24 (no road or pathway, arid climate, fat clay). A
+where $\Sigma$ is the weighted sum, and $LF_{surf}$, $LF_{clim}$, and $LF_{cs}$ are the likelihood factors of the surface layer, the climate,
+and the crest soil. The weighted sum ranges from 6 (paved crest, temperate climate, least crack-prone soil) to 24 (no road or pathway, arid climate, fat clay). A
 paved crest limits it to at most 15.
 
-## Flaw Probability from the Weighted Sum
+## Raw Flaw Probability
 
 The weighted sum is converted to the raw flaw probability $P_{raw}$ by interpolating the logarithm of the probability linearly between the points
 of <TableReference tableKey="cle-desiccation-screening-table-6" />, as described in
-[Flaw probability from the weighted sum](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#flaw-probability-from-the-weighted-sum)
+[Flaw Probability from the Weighted Sum](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#flaw-probability-from-the-weighted-sum)
 of the CLE Common Methods manual. A weighted sum above 24 cannot occur, so the upper end of the curve is reached only at the most adverse
 combination of all three factors.
 
@@ -171,19 +174,19 @@ combination of all three factors.
   ]}
 />
 
-### Lower threshold
+### Lower Threshold
 
 A weighted sum below 13 gives a raw flaw probability of zero; a weighted sum of exactly 13 takes the first tabulated value, 1 × 10<sup>-3</sup>.
 This is the lower-threshold rule of the common scheme (see
-[Flaw probability from the weighted sum](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#flaw-probability-from-the-weighted-sum)).
+[Flaw Probability from the Weighted Sum](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#flaw-probability-from-the-weighted-sum)).
 No single factor score forces the probability to zero on its own. Apart from the inapplicable-mechanism rule — every listed crest soil a clean or
 nearly clean sand or gravel (see [Inapplicable Mechanism](#inapplicable-mechanism)), which also sets the raw flaw probability to zero — the
 threshold is the only rule that does. Whether a crest reaches the threshold depends first on its surface layer:
 
-- **On a paved crest**, the weighted sum is 13 or more only when $2\,LF_{cl} + LF_{cs} \ge 10$ — for example, an arid climate with a soil scored 2
+- **On a paved crest**, the weighted sum is 13 or more only when $2\,LF_{clim} + LF_{cs} \ge 10$ — for example, an arid climate with a soil scored 2
   or more (including an unknown soil, scored 2), or a monsoonal climate with a fat clay. A paved crest in an arid climate with a soil scored 1 has a
   weighted sum of 12 and falls below the threshold. A paved crest in a seasonal or temperate climate always falls below the threshold.
-- **On a gravel road**, the weighted sum is below 13 only when $2\,LF_{cl} + LF_{cs} < 5.5$. With the climate given as a category, these are a
+- **On a gravel road**, the weighted sum is below 13 only when $2\,LF_{clim} + LF_{cs} < 5.5$. With the climate given as a category, these are a
   temperate climate with a soil scored 1, 2, or 3 (sums of 10.5, 11.5, and 12.5) and a seasonal climate with a soil scored 1 (a sum of 12.5). A
   measured net evaporation within the 425 to 450 mm or the 900 to 925 mm transition gives a fractional climate score, and some of those values also
   fall below 13; the general condition governs.
@@ -231,16 +234,15 @@ CLE Common Methods manual):
 - the crack depth is zero, so the bottom of the crack is at the crest, and initiation is zero at every pool level.
 
 The SRP is then negligible at every pool level. An empty list is not this case: it states that the crest soils are unknown and is scored as
-described under [Crest soil](#crest-soil).
+described under [Crest Soil](#crest-soil).
 
 :::warning[INPUT NEEDED IN-08 — Engineering Basis]
-The treatment of the six classes SP-SM, SW, SP, GP-GM, GW, and GP as soils in which desiccation cracking does not occur — passed over when listed
-with other soils, and making the mechanism inapplicable when listed alone — requires an engineering basis. Provide the literature source or the
-engineering-judgment attribution, and state whether the silty classes SM, GM, and ML, which can also be non-plastic, are deliberately retained
-with the lowest score.
+The treatment of SP-SM, SW, SP, GP-GM, GW, and GP as crest soils in which the mechanism cannot open a crack — set aside when other classes are
+listed, and making the mechanism inapplicable when they are the only classes listed — requires an engineering basis, including why the silty
+classes SM, GM, and ML, which can also be non-plastic, are scored. Provide the literature source or the engineering-judgment attribution.
 
-Proposed (unconfirmed): clean and nearly clean sands and gravels, with less than 12 percent fines, have too little plasticity to shrink on drying
-and hold open a crack, so a crest built only of them cannot develop a desiccation crack. Confirm or replace.
+Proposed (unconfirmed): clean and nearly clean sands and gravels, with less than 12 percent fines, are cohesionless and cannot sustain an open
+crack, so a crest built only of them cannot develop the crack. Confirm or replace.
 :::
 
 ## Worked Examples
@@ -253,7 +255,7 @@ observation reported.
   alt="Worked examples of the desiccation flaw probability"
   caption="Worked examples of the desiccation flaw probability."
   colAlign={['left', 'center', 'center', 'center']}
-  headers={[[{ value: 'Crest' }, { value: 'LF<sub>s</sub>, LF<sub>cl</sub>, LF<sub>cs</sub>' }, { value: 'Σ' }, { value: 'P<sub>flaw</sub>' }]]}
+  headers={[[{ value: 'Crest' }, { value: 'LF<sub>surf</sub>, LF<sub>clim</sub>, LF<sub>cs</sub>' }, { value: 'Σ' }, { value: 'P<sub>flaw</sub>' }]]}
   columns={[
     ['Gravel road, seasonal, CL', 'Paved, arid, CH', 'No road or pathway, arid, CH', 'Gravel road, temperate, ML'],
     ['2.5, 2, 2', '1, 4, 4', '4, 4, 4', '2.5, 1, 1'],

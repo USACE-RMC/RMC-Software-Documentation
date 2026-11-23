@@ -5,6 +5,7 @@ title: Model Overview
 import Citation from '@site/src/components/Citation';
 import CitationFootnote from '@site/src/components/CitationFootnote';
 import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
 import TableReference from '@site/src/components/TableReference';
 import TableVertical from '@site/src/components/TableVertical';
 
@@ -47,42 +48,52 @@ The model executes the three stages common to the CLE screening models
 (see [How the Model Works](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/model-overview#how-the-model-works) in the CLE
 Common Methods manual), with a desiccation-specific flaw assessment:
 
-1. **Flaw assessment** — The model scores three site factors on a likelihood scale of 1 to 4: the surface layer over the core, the climate (or
-   the measured net evaporation), and the plasticity of the soils the crack would cross. The weighted sum of the scores is converted to the
-   probability that a continuous desiccation crack exists. A weighted sum below 13 gives a zero probability, and a report that continuous transverse
-   cracking caused by desiccation has been observed sets the probability to 1.0 (see [Flaw Probability](./04-flaw-probability.mdx)). From the same
-   descriptions the model takes a tabulated crack depth and computes the bottom-of-crack elevation (see [Crack Depth](./05-crack-depth.mdx)).
+<ProcessList
+  items={[
+    {
+      title: 'Flaw assessment',
+      child: [
+        'The model scores three site factors on a likelihood scale of 1 to 4: the surface layer over the core, the climate (or the measured net evaporation), and the plasticity of the soils the crack would cross. The weighted sum of the scores is converted to the probability that a continuous desiccation crack exists. A weighted sum below 13 gives a zero probability, and a report that continuous transverse cracking caused by desiccation has been observed sets the probability to 1.0. From the same descriptions the model takes a tabulated crack depth and computes the bottom-of-crack elevation.',
+      ],
+    },
+    {
+      title: 'Pathway description',
+      child: [
+        'From the description of the embankment along the crack, the model takes the top of the first filter the failure pathway meets, the soils along the pathway, the embankment type, and the upstream seepage-limiting elements, following the conventions for cracks open at the crest.',
+      ],
+    },
+    {
+      title: 'Event-tree assembly',
+      child: [
+        'At each headwater level the model multiplies the eight node probabilities. When the mechanism applies, initiation is certain once the pool rises above the bottom of the crack and zero at or below it; when every listed crest soil is a clean or nearly clean sand or gravel, it is zero at every pool level. Continuation, roof support, and flow limitation follow the pool level relative to the top of the filter and the top of any upstream wall.',
+      ],
+    },
+  ]}
+/>
 
-2. **Pathway resolution** — From the user's description of the embankment along the crack, the model takes the top of the first filter the
-   failure pathway meets, the soils along the pathway, the embankment type, and the upstream seepage-limiting elements, following the conventions
-   for cracks open at the crest
-   (see [The Failure Pathway](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#the-failure-pathway)
-   in the CLE Common Methods manual).
-
-3. **Event-tree assembly** — At each headwater level the model multiplies the eight node probabilities. When the mechanism applies, initiation is
-   certain once the pool rises above the bottom of the crack and zero at or below it; when every listed crest soil is a clean or nearly clean sand
-   or gravel, it is zero at every pool level; continuation, roof support, and flow limitation follow the pool level relative to the top
-   of the filter and the top of any upstream wall (see [Event Tree](./06-event-tree.mdx)).
+The three stages are documented in [Flaw Assessment](./04-flaw-probability.mdx) and [Crack Depth](./05-crack-depth.mdx), in
+[The Failure Pathway](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#the-failure-pathway)
+section of the CLE Common Methods manual, and in [Event Tree](./06-event-tree.mdx).
 
 Every node is evaluated directly from the inputs and tabulated values. The model performs no Monte Carlo simulation of its own; the continuation
 node is the only one that may be a Monte Carlo estimate, when the shared continuation method evaluates the filter by sampling
 (see [Event Tree](./06-event-tree.mdx#node-3-continuation)).
 
-## Physics Basis
+## Technical Basis
 
 The model combines the following engineering methods:
 
 - **Risk-factor and likelihood-factor scoring** for the probability of a continuous flaw, in which each site factor is assigned a likelihood
-  factor, weighted by a risk factor, and the weighted sum is mapped to a flaw probability <Citation citationKey="Fell2024" /> (see
+  factor, weighted by a risk factor, and the weighted sum is mapped to a flaw probability, following Fell et al. (2024) <Citation citationKey="Fell2024" /> (see
   [Risk-Factor and Likelihood-Factor Scoring](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#risk-factor-and-likelihood-factor-scoring)
   in the CLE Common Methods manual). The desiccation factors express that a crack is more likely where the crest is unprotected, the climate is
-  drier, and the soil is more plastic (see [Flaw Probability](./04-flaw-probability.mdx)).
+  drier, and the soil is more plastic (see [Flaw Assessment](./04-flaw-probability.mdx)).
 - **Tabulated desiccation crack depths** by climate, soil, and surface layer, adapted from Fell et al. (2024) <Citation citationKey="Fell2024" />
   (see [Crack Depth](./05-crack-depth.mdx)).
 - **The headwater gate at the bottom of an open crest crack** for initiation, as documented in
   [Crest-Crack Models: Headwater Gate](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#crest-crack-models-headwater-gate)
   in the CLE Common Methods manual.
-- **Tabulated roof-support, crack-filling, and flow-limitation probabilities** for the progression nodes <Citation citationKey="Fell2024" />, and
+- **Tabulated roof-support, crack-filling, and flow-limitation probabilities** for the progression nodes, following Fell et al. (2024) <Citation citationKey="Fell2024" />, and
   **filter evaluation** for the continuation node through the shared continuation method, both applied as documented in
   [Failure Pathway and Progression](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression) in
   the CLE Common Methods manual.
@@ -120,7 +131,7 @@ crest. <TableReference tableKey="cle-desiccation-screening-table-1" /> summarize
 The screening model does not estimate the width of the crack. Crack width enters a detailed shear stress analysis of initiation, but the screening
 model's initiation gate depends only on the bottom-of-crack elevation, so no width is needed.
 
-## Place Among the CLE Screening Models
+## Relationship to the Shared Methods
 
 The desiccation model is one of the four crest-crack models of the CLE family, together with cross-valley differential settlement, differential
 settlement adjacent to a wall or cliff, and frost cracking (see
@@ -132,5 +143,9 @@ gate, the pool-dependent failure-pathway gates, and the form of its results. It 
 - Its crack depth comes from a table by climate, soil, and surface layer rather than from the settlement of the embankment.
 - It is one of the two models, with frost cracking, that apply a lower threshold to the weighted sum and that treat the mechanism as inapplicable
   when every crest soil is a clean or nearly clean sand or gravel.
+
+The continuation node is evaluated by the shared continuation method of the
+[Continuation (Filter Evaluation) Screening](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/model-overview)
+manual, the one calculation the model delegates; the model calls no toolbox method.
 
 <CitationFootnote />

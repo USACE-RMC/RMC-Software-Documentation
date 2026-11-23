@@ -52,7 +52,7 @@ working in SI units.
 **Proposed (unconfirmed):** The model is intended for elevations in feet; a user working in SI
 converts the elevations to feet before running it.
 
-**Answer:**
+**Answer:** Consolidated into CLE Common Methods IN-01 (unit system of the CLE family).
 
 ---
 
@@ -78,9 +78,7 @@ Note (Oct 2025 methodology document): the document states that the climate descr
 **Regarding:** The Unknown crest-soil likelihood factor of 2 (the score of a silty or lean
 clay, below high-plasticity silt 3 and fat clay 4). It also selects the crack-depth column.
 
-**Needed:** The source of the value or the engineering-judgment attribution, and why an
-intermediate rather than the most crack-prone score is adopted for an unknown soil at the
-screening level.
+**Needed:** The crest-soil likelihood factor of 2 assigned to an unknown crest soil (no class listed) requires an engineering basis. State whether Unknown is a category of the source table of Fell et al. (2024) or a screening choice, and if the latter, provide the engineering-judgment attribution and state why an intermediate rather than the most crack-prone score is adopted for an unknown soil at the screening level. The value lies below the scores of MH (3) and CH (4), so an unknown crest soil scores lower than a crest known to be of any of those classes. The same score also selects the crack depths of Table 8 and Table 9 in Crack Depth.
 
 **Answer:**
 
@@ -124,12 +122,9 @@ does not occur (passed over when listed with other soils; the mechanism is inapp
 they are listed alone), while the silty classes SM, GM, and ML, which can also be non-plastic,
 are retained with the lowest score.
 
-**Needed:** The literature source or engineering-judgment attribution, and confirmation that
-retaining SM, GM, and ML is deliberate.
+**Needed:** The treatment of SP-SM, SW, SP, GP-GM, GW, and GP as crest soils in which the mechanism cannot open a crack — set aside when other classes are listed, and making the mechanism inapplicable when they are the only classes listed — requires an engineering basis, including why the silty classes SM, GM, and ML, which can also be non-plastic, are scored. Provide the literature source or the engineering-judgment attribution.
 
-**Proposed (unconfirmed):** Clean and nearly clean sands and gravels, with less than 12 percent
-fines, have too little plasticity to shrink on drying and hold open a crack, so a crest built
-only of them cannot develop a desiccation crack.
+**Proposed (unconfirmed):** Clean and nearly clean sands and gravels, with less than 12 percent fines, are cohesionless and cannot sustain an open crack, so a crest built only of them cannot develop the crack. Confirm or replace.
 
 **Answer:**
 
