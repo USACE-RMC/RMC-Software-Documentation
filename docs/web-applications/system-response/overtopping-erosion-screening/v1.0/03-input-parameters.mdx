@@ -78,6 +78,9 @@ The user selects one of the following classifications, each defined by Unified S
 - **Very Resistant** — CH.
 - **Custom** — no default distributions; the user supplies distributions for all three properties (see Site-Specific Material Distributions below).
 
+Because the model represents the embankment as a single material (Assumption 1 in [Chapter 7](./07-assumptions-and-limitations.mdx)), the selected classification should be the one
+that controls erosion of the downstream face, normally that of the downstream shell material.
+
 For the five standard classifications, $k_d$ and $\tau_c$ follow PERT (Program Evaluation and Review Technique) distributions defined by a minimum, most likely (mode) and maximum value, and $n$
 follows a Uniform distribution between a minimum and a maximum. The mapping of soil types to erodibility categories and the $k_d$ and $\tau_c$
 ranges follow the published erodibility charts and soil erodibility testing <Citation citationKey="Briaud2019" /> <Citation citationKey="Hanson2011" /> <Citation citationKey="Wibowo2018" />.
@@ -217,7 +220,7 @@ with no recommended default.
   caption="Hydraulic and erosion parameters."
   headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
   columns={[
-    ['Broad-crested weir coefficient', 'Darcy-Weisbach friction factor', 'Erosion exponent'],
+    ['Broad-crested weir coefficient', 'Fanning friction factor', 'Erosion exponent'],
     ['<i>C</i><sub>d</sub>', '<i>f</i>', 'α'],
     ['ft<sup>1/2</sup>/s or m<sup>1/2</sup>/s', '—', '—'],
     ['&gt; 0', '&gt; 0', '&gt; 0'],
@@ -228,8 +231,9 @@ with no recommended default.
 - **Broad-crested weir coefficient** $C_d$ — converts overtopping depth to peak unit discharge ([Chapter 4](./04-hydrograph-generation.mdx)). The default of 3.0 is a US Customary
   value and is not converted when SI units are selected; an SI analysis should supply a coefficient in SI units (3.0 in US Customary units
   corresponds to about 1.66 in SI units).
-- **Darcy-Weisbach friction factor** $f$ — the friction factor of flow over the grass-covered slope, used to compute the critical discharge and the
-  erosional limit volume in the grass cover removal phase ([Chapter 5](./05-erosion-model.mdx)).
+- **Fanning friction factor** $f$ — the friction factor of flow over the grass-covered slope, used to compute the critical discharge and the
+  erosional limit volume in the grass cover removal phase ([Chapter 5](./05-erosion-model.mdx)). The grass cover equations follow the Fanning form of
+  Hughes and Thornton (2015) <Citation citationKey="Hughes2015" />.
 - **Erosion exponent** $\alpha$ — the exponent of the excess shear stress erosion equation ([Chapter 5](./05-erosion-model.mdx)). The default of 1.0 gives a linear relationship
   between excess shear stress and erosion rate (Assumption 8 in [Chapter 7](./07-assumptions-and-limitations.mdx)).
 
@@ -241,7 +245,7 @@ Proposed (unconfirmed): a typical broad-crested weir coefficient for flow over a
 :::
 
 :::warning[INPUT NEEDED IN-07 — Engineering Basis]
-The default Darcy-Weisbach friction factor $f$ = 0.015 for flow over the grass cover has no stated engineering basis. Provide the literature source (with
+The default Fanning friction factor $f$ = 0.015 for flow over the grass cover has no stated engineering basis. Provide the literature source (with
 full bibliographic details) or the engineering-judgment attribution.
 
 Proposed (unconfirmed): the friction factor used with the CIRIA-based grass cover method of Hughes and Thornton (2015).
@@ -283,7 +287,9 @@ The three sampled material properties are correlated ([Chapter 6](./06-monte-car
   ]}
 />
 
-- A negative $\rho_{k_d,\tau_c}$ means that soils with a higher erodibility coefficient tend to have a lower critical shear stress.
+- A negative $\rho_{k_d,\tau_c}$ means that soils with a higher erodibility coefficient tend to have a lower critical shear stress, consistent
+  with the inverse relationship between the two parameters observed in in-situ jet tests on cohesive streambeds (Hanson and Simon, 2001)
+  <Citation citationKey="Hanson2001" />.
 - A negative $\rho_{\tau_c,n}$ means that soils with a higher critical shear stress tend to have a lower surface roughness.
 - The correlation of $k_d$ and $n$ is not specified separately. It is the product of the two specified correlations,
   $\rho_{k_d,n} = \rho_{k_d,\tau_c} \cdot \rho_{\tau_c,n}$, which is 0.12 with the defaults (Assumption 11 in [Chapter 7](./07-assumptions-and-limitations.mdx)).

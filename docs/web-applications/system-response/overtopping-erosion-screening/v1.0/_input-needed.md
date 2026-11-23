@@ -20,6 +20,8 @@ Service, WinDAM C software and user's manual, release year of the version used f
 
 **Answer:**
 
+Note (Oct 2025 methodology document): The Oct 2025 document cites only Natural Resources Conservation Service (2011), WinDAM B Earthen Embankment Overtopping Software Workshop (Denver, CO, October 26–27, 2011), as the source of two breach-sequence figures. It gives no bibliographic details for WinDAM C, DLBreach or EMBREA.
+
 ---
 
 ## IN-02 — Decision — `03-input-parameters.mdx`
@@ -31,6 +33,8 @@ current model does not use it in any calculation.
 results (as written), or describe an intended role.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): The document lists five inputs (crest width, downstream slope, downstream slope protection, downstream shell material and the overtopping hydrograph); embankment height is not among them. This is consistent with height having no effect on results, but the document does not say how to present a required input that the model does not use.
 
 ---
 
@@ -44,6 +48,8 @@ Very Erodible, 0.030–0.045 Erodible, 0.035–0.045 Moderately Resistant, 0.035
 engineering-judgment attribution.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): The document tabulates the same Manning's n ranges and the Uniform distribution, attributing all the default distributions only generally to "sources such as Ali (2021) and Hanson (2001)." It gives no specific source for the roughness ranges. The Ali et al. (2021) paper in its reference list concerns observed internal erosion processes, not overtopping erodibility.
 
 ---
 
@@ -61,6 +67,8 @@ Geotechnical and Geoenvironmental Engineering, 134(10).
 
 **Answer:**
 
+Note (Oct 2025 methodology document): The document tabulates the same classification and the same kd and τc ranges, and attributes them to "empirical relationships published by sources such as Ali (2021) and Hanson (2001)." It does not cite Briaud. The Ali et al. (2021) reference (Transactions of the ASABE 64(2):745–760) concerns internal erosion processes and appears mis-cited. The defining publication remains unconfirmed.
+
 ---
 
 ## IN-05 — Engineering Basis — `03-input-parameters.mdx`
@@ -72,6 +80,8 @@ that the base duration should be presented as a required site-specific input wit
 default.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): The document calls the reference duration at 0.5 ft "user-defined" and gives no default or basis for 4.0 hours.
 
 ---
 
@@ -87,6 +97,8 @@ crest in US Customary units.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): The document states only that Cd is "typically ≈ 3.0", with no source.
+
 ---
 
 ## IN-07 — Engineering Basis — `03-input-parameters.mdx`
@@ -99,6 +111,8 @@ crest in US Customary units.
 Hughes and Thornton (2015).
 
 **Answer:**
+
+Note (Oct 2025 methodology document): The document names the factor the Fanning friction factor (see IN-18) but gives no value or source for the 0.015 default.
 
 ---
 
@@ -130,6 +144,8 @@ Processes 15:23–38 (listed in the previous bibliography but never cited).
 
 **Answer:**
 
+Note (Oct 2025 methodology document): The document gives the same values (−0.6 and −0.2) and says that "correlations observed in empirical data are preserved," with no source for either value. The manual now cites Hanson and Simon (2001) for the qualitative inverse kd–τc relationship only. The numerical values remain unsourced.
+
 ---
 
 ## IN-10 — Engineering Basis — `04-hydrograph-generation.mdx`
@@ -144,6 +160,8 @@ with small storage short, sharply peaked events (removed from Chapter 7 pending 
 
 **Answer:**
 
+Note (Oct 2025 methodology document): The document uses the same 0.5 ft reference depth but an exponent of 1/1.6, which conflicts with the model's 1/1.8 (Constants.cs:65). It gives no source for either the exponent or the reference depth.
+
 ---
 
 ## IN-11 — Engineering Basis — `04-hydrograph-generation.mdx`
@@ -154,6 +172,8 @@ that gives the curve the volume of a triangular hydrograph of base t_H (the fact
 **Needed:** Literature source or engineering-judgment attribution for each.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): The document describes a gamma-shaped unit discharge hydrograph with shape parameter 3.5 and a scale set to match the scaled duration, but gives no source for the form, the shape parameter or the factor of 2.
 
 ---
 
@@ -168,6 +188,8 @@ the stated effect on results.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): The document does not discuss truncation of the hydrograph at t_H.
+
 ---
 
 ## IN-13 — Engineering Basis — `05-erosion-model.mdx`
@@ -179,6 +201,8 @@ upstream edge of the crest.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): The document states the same criterion (the perpendicular distance from the downstream slope to a parallel line through the upstream crest, "the depth of erosion required to initiate a breach"), with no source.
+
 ---
 
 ## IN-14 — Engineering Basis — `05-erosion-model.mdx`
@@ -188,6 +212,8 @@ upstream edge of the crest.
 **Needed:** Literature source or engineering-judgment attribution.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): The document's critical erosion depth has no minimum. The 2.0 ft (0.6 m) floor was added to the model later (Constants.cs:68, OvertoppingModel.cs:75), and the document provides no basis for it.
 
 ---
 
@@ -218,6 +244,8 @@ erosion-phase equations; if so, provide its basis and attribution.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): The document lists homogeneous embankment, uniform surface erosion, grass as the only protection and steady uniform (normal-depth) flow as limitations of the model, without attribution. Its equations also use S (vertical/horizontal) for the erosion phase and sinθ for the grass cover phase, matching the model, but do not explain the difference. The manual adopts its statements on zoned or stratified embankments, local features that intensify erosion, and the conservative tendency of the normal-depth assumption.
+
 ---
 
 ## IN-17 — Bibliography — `07-assumptions-and-limitations.mdx`
@@ -242,7 +270,7 @@ friction factor; with the Darcy-Weisbach factor the denominator would be 8 g sin
 **Needed:** Which friction factor is meant, checked against Hughes and Thornton (2015), so that the
 name, the default of 0.015 (IN-07) and the equations agree.
 
-**Answer:**
+**Answer:** The friction factor is the Fanning friction factor, consistent with the equation form the model evaluates (2 g sinθ in the denominator of q_c and VET_c) and with Hughes and Thornton (2015); the manual now names it the Fanning friction factor, and the 0.015 default remains open under IN-07 (from Oct 2025 methodology document).
 
 ---
 
@@ -258,6 +286,8 @@ should check whether both unit systems give the same grass cover threshold.
 consistent units, and confirmation of the US Customary and SI conversions.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): The document describes G_F only as the "erosional limit for grass (i.e., grass failure)", with no units or conversion.
 
 ---
 
@@ -292,6 +322,6 @@ process mentions headcut breach only in passing and does not support it.
 
 **Needed:** A literature source with full bibliographic details for `bib.json`.
 
-**Answer:**
+**Answer:** Hanson, G.J., Temple, D.M., Hunt, S.L. and Cook, K.R. (2005), "Evaluating overtopping protection for earthen embankments," Transactions of the ASABE 48(5):1783–1794, which describes overtopping erosion as proceeding by progressive surface erosion or by headcut formation and upstream migration; Chapter 7 now states the two processes with this citation and the NRCS (2011) breach-sequence figures (from Oct 2025 methodology document).
 
 ---

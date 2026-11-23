@@ -4,6 +4,8 @@ title: Assumptions and Limitations
 
 import Citation from '@site/src/components/Citation';
 import CitationFootnote from '@site/src/components/CitationFootnote';
+import Figure from '@site/src/components/Figure';
+import FigReference from '@site/src/components/FigureReference';
 import NavContainer from '@site/src/components/NavContainer';
 
 <NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/overtopping-erosion-screening" />
@@ -30,7 +32,8 @@ intended. If it is not, the model owner should review the erosion-phase equation
    - *Engineering basis:* Engineering judgment adopted for screening-level use (attribution pending, IN-16).
    - *Effect on results:* Results reflect one material and one slope; the influence of a core, shells or slope changes on erosion is not captured.
    - *When it may not hold:* Zoned embankments (for example, a clay core with granular shells), embankments with downstream berms or benches, and
-     embankments whose slope varies along the downstream face.
+     embankments whose slope varies along the downstream face. Contrasts in erodibility coefficient or critical shear stress between zones or
+     strata are not represented, so results for zoned or highly stratified embankments call for engineering judgment.
 2. **Erosion removes material uniformly over the whole downstream face.** The face retreats parallel to itself (surface erosion); headcut formation,
    migration and deepening are not modeled.
    - *Engineering basis:* Engineering judgment adopted for screening-level use (attribution pending, IN-16).
@@ -38,7 +41,9 @@ intended. If it is not, the model owner should review the erosion-phase equation
      erosion concentrates at a headcut or in localized scour channels. Where that mechanism governs, the model is unconservative: it can understate
      the breach probability.
    - *When it may not hold:* Sites where headcut erosion is the dominant mechanism; a headcut concentrates erosion and can advance through the
-     embankment faster than uniform surface erosion.
+     embankment faster than uniform surface erosion. Local variations in soil strength, vegetation density or flow concentration are also not
+     represented, nor are geometric features that intensify local erosion, such as knickpoints (changes in slope or grade), protrusions into the flow
+     (for example, utility poles or piezometer casings) and bare spots in the grass cover.
 3. **Breach occurs when the retreating face reaches the upstream edge of the crest.** The critical erosion depth is the perpendicular distance from
    the downstream face to the upstream crest edge, with a minimum of 2.0 ft (0.6 m) ([Chapter 5](./05-erosion-model.mdx)).
    - *Engineering basis:* See IN-13 and IN-14 in [Chapter 5](./05-erosion-model.mdx).
@@ -109,7 +114,9 @@ intended. If it is not, the model owner should review the erosion-phase equation
     - *Engineering basis:* Engineering judgment adopted for screening-level use (attribution pending, IN-16).
     - *Effect on results:* The applied shear stress follows the discharge directly, without the development length or acceleration of flow down the
       face.
-    - *When it may not hold:* Short or steep downstream faces on which the flow does not reach normal depth.
+    - *When it may not hold:* Short or steep downstream faces on which the flow does not reach normal depth. Where the flow on the face is still
+      accelerating and non-uniform, the normal-depth assumption tends to overstate the applied shear stress, so the erosion estimate tends to be
+      conservative.
 13. **The erosion phase uses the slope gradient in place of the sine of the slope angle.** Manning's equation and the applied shear stress use
     $S = 1/Z = \tan\theta$, while the grass cover phase uses $\sin\theta$ ([Chapter 5](./05-erosion-model.mdx)).
     - *Engineering basis:* Pending. Whether the use of the gradient in the erosion phase is intended, and its basis, are open questions (IN-16).
@@ -135,9 +142,35 @@ plausible for the reservoir and adjust the base duration if they are not.
 
 ## Uniform Erosion
 
-The uniform erosion assumption (Assumption 2) is a fundamental simplification. Overtopping erosion of embankment dams often proceeds by headcut
-formation and migration: a steep scarp forms on the downstream face and advances upstream through the embankment (source pending, IN-22). Detailed software such as WinDAM C
-(USDA NRCS) models the headcut mechanism; this screening model does not, and its breach timing can therefore differ from that of a headcut model.
+The uniform erosion assumption (Assumption 2) is a fundamental simplification. Overtopping erosion of an embankment proceeds by two primary
+processes (Hanson et al., 2005) <Citation citationKey="Hanson2005" />. In progressive surface erosion, soil particles are removed and transported along
+the downstream face, typically forming a broad, flattening zone that advances upstream and may ultimately breach the crest
+(<FigReference figKey="overtopping-screening-fig-breach-cohesionless" />). In headcut erosion, a localized overfall, or headcut, forms on the
+downstream face and migrates upstream, and it can deepen rapidly and advance toward the crest
+(<FigReference figKey="overtopping-screening-fig-breach-cohesive" />). Both breach sequences are from the Natural Resources Conservation Service
+(NRCS, 2011) <Citation citationKey="NRCS2011" />.
+
+<Figure
+  figKey="overtopping-screening-fig-breach-cohesionless"
+  src="/figures/web-applications/system-response/overtopping-erosion-screening/v1.0/figures/overtopping-breach-cohesionless-surface-erosion.png"
+  alt="Embankment cross section with numbered successive erosion surfaces 1 through 7 that flatten the downstream face and advance upstream through the crest."
+  caption="Overtopping erosion and breaching of a cohesionless soil embankment by progressive surface erosion (NRCS, 2011)."
+/>
+
+<Figure
+  figKey="overtopping-screening-fig-breach-cohesive"
+  src="/figures/web-applications/system-response/overtopping-erosion-screening/v1.0/figures/overtopping-breach-cohesive-headcut-erosion.png"
+  alt="Embankment cross section with numbered successive near-vertical headcut faces 1 through 7 that migrate upstream from the downstream toe through the crest."
+  caption="Overtopping erosion and breaching of a cohesive soil embankment by headcut erosion (NRCS, 2011)."
+/>
+
+The model represents overtopping with a conceptual surface erosion model: it computes the cumulative erosion depth on the downstream face from the
+overtopping depth and duration and the erosion resistance of the grass cover and the embankment soil. This captures the most common and observable
+mechanism of overtopping degradation while keeping the calculation efficient enough for screening. Headcut erosion is recognized as a breach
+mechanism but is not simulated; modeling it requires hydraulic and geometric feedback and a characterization of soil behavior beyond the scope and
+resolution of a screening model. Detailed software such as WinDAM C (USDA NRCS) models the headcut mechanism; this screening model does not, and its
+breach timing can therefore differ from that of a headcut model. Where site conditions warrant, the headcut mechanism should be evaluated with such
+higher-fidelity models.
 
 The screening results have been compared with Quantitative Risk Assessment (QRA) response functions from USACE dam safety studies to confirm that they
 are reasonable relative to detailed assessments ([Chapter 8](./08-output-and-interpretation.mdx) lists the studies).
@@ -147,12 +180,6 @@ The comparison of screening results with QRA response functions from USACE dam s
 Priest, Keystone, Kinzua, Lookout Point, Mojave, Painted Rock, Stillhouse Hollow, W. Kerr Scott and Wister Dams) is stated without a citable source.
 Provide the report or study that documents the comparison (author, title, year, report number), or the attribution wording to print, and state how
 closely the screening curves matched.
-:::
-
-:::warning[INPUT NEEDED IN-22 — Bibliography]
-The statement that overtopping erosion of embankment dams often proceeds by headcut formation and migration has no citation. The Overtopping Erosion
-Toolbox Notes page on the WinDAM C evaluation process mentions headcut breach of the upstream crest only in passing and does not describe the
-mechanism, so it does not support the statement. Provide a literature source with full bibliographic details for `bib.json`.
 :::
 
 ## Scope Exclusions
@@ -166,5 +193,9 @@ The following are outside the scope of the screening model:
 - **Zoned embankments** — internal zoning, filters and drains are not represented (Assumption 1).
 - **Non-erodible elements** — cutoff walls, sheet pile, concrete caps and other features that would stop erosion are not represented
   (Assumption 10).
+- **Flood-fighting intervention** — raising the crest or armoring the crest and downstream face requires advance warning and mobilization of personnel
+  and equipment, and must be completed before overtopping and the onset of erosion. The model does not credit such intervention. A successful crest
+  raise changes the overtopping depth reached for a given flood rather than the erosion response at a given depth, so it is a matter for the hazard
+  loading rather than for the system response curve.
 
 <CitationFootnote />
