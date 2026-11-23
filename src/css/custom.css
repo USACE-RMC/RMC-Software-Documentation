@@ -1102,3 +1102,105 @@ figure + .table-container,
     border-width: 1.5px;
   }
 }
+
+/* ── Hover tooltip (src/clientModules/tooltip.js), same look as the DST app ── */
+/* Dark in both site themes. position: fixed and pointer-events: none, so it never moves the page. */
+.site-tooltip {
+  --tooltip-bg: hsl(220 14% 14% / 0.92);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  width: max-content;
+  max-width: 280px;
+  margin: 0;
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: var(--tooltip-bg);
+  color: hsl(210 20% 92%);
+  font-family: var(--ifm-font-family-base);
+  font-size: 0.75rem;
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1.4;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: break-word;
+  box-shadow:
+    0 2px 8px hsl(0 0% 0% / 0.25),
+    0 0 0 1px hsl(0 0% 100% / 0.06);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+  cursor: default;
+}
+/* On the dark site theme the box sits close to the page colour; a slightly brighter ring keeps its edge. */
+[data-theme='dark'] .site-tooltip {
+  box-shadow:
+    0 2px 10px hsl(0 0% 0% / 0.5),
+    0 0 0 1px hsl(0 0% 100% / 0.14);
+}
+.site-tooltip--multiline {
+  text-align: left;
+}
+.site-tooltip__arrow {
+  position: absolute;
+  border: 4px solid transparent;
+}
+.site-tooltip[data-position='top'] .site-tooltip__arrow {
+  top: 100%;
+  transform: translateX(-50%);
+  border-top-color: var(--tooltip-bg);
+}
+.site-tooltip[data-position='bottom'] .site-tooltip__arrow {
+  bottom: 100%;
+  transform: translateX(-50%);
+  border-bottom-color: var(--tooltip-bg);
+}
+.site-tooltip[data-position='left'] .site-tooltip__arrow {
+  left: 100%;
+  transform: translateY(-50%);
+  border-left-color: var(--tooltip-bg);
+}
+.site-tooltip[data-position='right'] .site-tooltip__arrow {
+  right: 100%;
+  transform: translateY(-50%);
+  border-right-color: var(--tooltip-bg);
+}
+.site-tooltip--enter {
+  animation: site-tooltip-enter 200ms ease-out forwards;
+}
+.site-tooltip--exit {
+  animation: site-tooltip-exit 150ms ease-in forwards;
+}
+@keyframes site-tooltip-enter {
+  from {
+    opacity: 0;
+    translate: var(--slide-from);
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes site-tooltip-exit {
+  from {
+    opacity: 1;
+    translate: 0 0;
+  }
+  to {
+    opacity: 0;
+    translate: var(--slide-from);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-tooltip--enter,
+  .site-tooltip--exit {
+    animation: none;
+  }
+}
+@media print {
+  .site-tooltip {
+    display: none !important;
+  }
+}
