@@ -8,13 +8,13 @@ admonition in the document.
 
 ## IN-01 — Definition — `03-input-parameters.mdx`
 
-**Regarding:** The geometric definitions of the wall or cliff height Hw, the bench width Wb,
-and the abutment slope below the wall or cliff β1.
+**Regarding:** The geometric definitions of the wall or cliff height hw, the bench width Wb,
+and the abutment slope below the wall or cliff βa.
 
-**Needed:** (1) Whether Hw is the full height of the wall or cliff or only the part in contact
-with the embankment fill, and whether it may exceed the dam height H; (2) where Wb is measured
+**Needed:** (1) Whether hw is the full height of the wall or cliff or only the part in contact
+with the embankment fill, and whether it may exceed the dam height Hd; (2) where Wb is measured
 (horizontally from the base of the wall or cliff to the edge of the bench?) and whether along or
-across the dam axis; (3) which surface β1 describes (the abutment foundation surface between the
+across the dam axis; (3) which surface βa describes (the abutment foundation surface between the
 bench and the valley floor?) and how it is measured where that surface is not planar; (4)
 whether the top of the wall or cliff is assumed to be at or near crest level, since the crack
 depth is measured down from the crest elevation and the model takes no top-of-wall or
@@ -28,17 +28,16 @@ Note (Oct 2025 methodology document): the document describes the flaw inputs as 
 
 ## IN-02 — Definition — `03-input-parameters.mdx`
 
-**Regarding:** The dam height H and the maximum post-construction settlement s that form the
-normalized settlement s/H.
+**Regarding:** The dam height Hd and the maximum post-construction settlement s that form the
+normalized settlement s/Hd.
 
-**Needed:** (1) Whether H is the maximum dam height or the embankment height at the wall or
-cliff section; (2) whether s is the crest settlement at the wall or cliff section or the maximum
-along the crest, and over what period it is taken (end of construction to the assessment, or
-expected long-term settlement).
+**Needed:** The dam height $H_d$ and the maximum post-construction settlement $s$, which form the normalized settlement $s/H_d$, are not defined beyond their names. State (1) how $H_d$ is measured — for example, whether it is the maximum height of the embankment at the deepest section of the valley or the height of the embankment at the section being evaluated, and whether it is measured from the crest to the lowest foundation contact or to the original ground surface; and (2) how $s$ is measured — whether it is the largest crest settlement along the crest or the settlement at the section being evaluated, over what period it is taken (for example, from the end of construction to the time of the assessment, or the expected long-term settlement), and whether it includes settlement of the foundation.
+
+**Proposed (unconfirmed):** $H_d$ is the maximum embankment height at the deepest section, and $s$ is the largest crest settlement observed since the end of construction, both from survey records. Confirm or replace.
 
 **Answer:**
 
-Note (Oct 2025 methodology document): the document defines $s$ only as the maximum post-construction settlement, and forms $s/H$ with the single dam height entered for the dam as a whole rather than a height specific to the section analyzed. It gives no measurement definition for either quantity (the reference surface for $H$, the location along the crest or the time period for $s$, or the treatment of foundation settlement). Left open; the same note is recorded in both settlement manuals.
+Note (Oct 2025 methodology document): the document defines $s$ only as the maximum post-construction settlement, and forms $s/H_d$ with the single dam height entered for the dam as a whole rather than a height specific to the section analyzed. It gives no measurement definition for either quantity (the reference surface for $H_d$, the location along the crest or the time period for $s$, or the treatment of foundation settlement). Left open; the same note is recorded in both settlement manuals.
 
 ---
 
@@ -58,17 +57,11 @@ geometry and abutment slope, and the run giving the largest SRP governs the mech
 
 ## IN-04 — Engineering Basis — `04-flaw-assessment.mdx`
 
-**Regarding:** The default normalized settlement used when no settlement is supplied: 0.5
-percent of the dam height for dams completed before 1950, 0.25 percent for dams completed in
-1950 or later (the year 1950 itself classed with the later dams).
+**Regarding:** Default normalized settlement from the year of construction (0.5% before 1950; 0.25% in 1950 or later).
 
-**Needed:** Literature source for the two values and the 1950 boundary (full bibliographic
-details if not Fell et al. (2024); the table or section if it is), or the engineering-judgment
-attribution.
+**Needed:** The default normalized settlement used when no settlement is supplied (<EquationReference equationKey="cle-wall-cliff-settlement-screening-eq-3" />: 0.5 percent of the dam height for a dam completed before 1950, and 0.25 percent for a dam completed in 1950 or later) requires an engineering basis. Provide the literature source for the two values and for the 1950 boundary (with full bibliographic details if it is not Fell et al. (2024), and the table or section if it is), or the engineering-judgment attribution to state here.
 
-**Proposed (unconfirmed):** The two values represent typical post-construction crest
-settlements of embankments built before and after the general adoption of controlled compaction
-of earthfill, with older, less well compacted embankments settling more.
+**Proposed (unconfirmed):** dams built before about 1950 were generally compacted less thoroughly than later dams and settled more after construction, so the older dams take the larger default. Confirm or replace.
 
 **Answer:**
 
@@ -78,14 +71,14 @@ Note (Oct 2025 methodology document): the document states the same two defaults 
 
 ## IN-05 — Engineering Basis — `04-flaw-assessment.mdx`
 
-**Regarding:** The likelihood-factor bands (cross-valley profile on Wb/Hw: > 2.5 / > 1 to 2.5 /
-0.25 to 1 / < 0.25; settlement on s/H: ≤ 0.25 / > 0.25 to 0.75 / > 0.75 to 2 / > 2 percent;
+**Regarding:** The likelihood-factor bands (cross-valley profile on Wb/hw: > 2.5 / > 1 to 2.5 /
+0.25 to 1 / < 0.25; settlement on s/Hd: ≤ 0.25 / > 0.25 to 0.75 / > 0.75 to 2 / > 2 percent;
 abutment slope: ≤ 25 / > 25 to 45 / > 45 to 60 / > 60 degrees, scoring 1 to 4) and the risk
 factors (3, 2, 1), attributed to Fell et al. (2024).
 
 **Needed:** The table or section of Fell et al. (2024) that gives them, and confirmation of the
 factor names and band limits as printed, including that the source's cross-valley profile
-bands for likelihood factors of 2 and 3 both include Wb/Hw = 1 (the model scores 1 as 3).
+bands for likelihood factors of 2 and 3 both include Wb/hw = 1 (the model scores 1 as 3).
 
 **Answer:**
 
@@ -93,8 +86,8 @@ bands for likelihood factors of 2 and 3 both include Wb/Hw = 1 (the model scores
 
 ## IN-06 — Engineering Basis — `04-flaw-assessment.mdx`
 
-**Regarding:** The rule that a cross-valley profile score of 1 (Wb/Hw > 2.5) or an abutment
-slope score of 1 (β1 ≤ 25°) forces the flaw probability to zero, while a settlement score of 1
+**Regarding:** The rule that a cross-valley profile score of 1 (Wb/hw > 2.5) or an abutment
+slope score of 1 (βa ≤ 25°) forces the flaw probability to zero, while a settlement score of 1
 does not.
 
 **Needed:** Literature source (table or section of Fell et al. (2024), if it is the source) or
@@ -131,8 +124,8 @@ settlement, desiccation, and frost-cracking models each accept an observation of
 transverse cracking that sets the flaw probability to 1.0.
 
 **Needed:** The engineering basis or documentation decision: why an observed crack adjacent to
-the wall or cliff is not used to override the scored probability, and what a user who has
-observed such a crack should do.
+the wall or cliff is not used to override the scored probability, and what is to be done where such a crack
+has been observed.
 
 **Answer:**
 
@@ -142,7 +135,7 @@ Note (Oct 2025 methodology document): the document gives an observation override
 
 ## IN-09 — Engineering Basis — `04-flaw-assessment.mdx`
 
-**Regarding:** The crack width relationships: the 6 × 6 table of crack width w45 at an abutment
+**Regarding:** The crack width relationships: the 6 × 6 table of crack width wc,45 at an abutment
 slope of 45° (mm), printed in two parts split by bench-width ratio, by normalized settlement (0, 0.1, 0.25, 0.5, 1, 2 percent) and bench-width
 ratio (0, 0.25, 0.5, 1, 2, 2.5), and the adjustment factor by abutment slope (15°, 30°, 45°,
 60° → 0.25, 0.75, 1.0, 1.0), attributed to Fell et al. (2024).
@@ -159,7 +152,7 @@ factor's slope axis is 15°, 30°, 45°, 60°, where the effective wall height t
 
 ## IN-10 — Engineering Basis — `04-flaw-assessment.mdx`
 
-**Regarding:** The effective wall height ratio He/Hw (4 × 5 table by abutment slope 15°, 25°,
+**Regarding:** The effective wall height ratio He/hw (4 × 5 table by abutment slope 15°, 25°,
 45°, 60° and bench-width ratio 0, 0.25, 0.5, 1, 2) and the normalized crack depth rd = dc/He (0, 0.1,
 0.25, 0.5, 1, 2 percent settlement → 15, 50, 65, 90, 100, 100 percent), attributed to Fell et
 al. (2024).

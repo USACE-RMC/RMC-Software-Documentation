@@ -14,65 +14,83 @@ import TableVertical from '@site/src/components/TableVertical';
 
 # Input Parameters
 
-This chapter documents the inputs specific to the wall or cliff settlement model: the dam geometry, the geometry of the wall or cliff, and the
-settlement information. These inputs drive the flaw assessment of [Flaw Assessment](./04-flaw-assessment.mdx). The model's remaining inputs —
+This chapter documents the inputs specific to the wall or cliff settlement model: the unit system, the dam geometry, the geometry of the wall or
+cliff, and the settlement. These inputs drive the flaw assessment of [Flaw Assessment](./04-flaw-assessment.mdx). The model's remaining inputs —
 hydraulic loading, the embankment type, the failure-pathway inputs, the upstream seepage-limiting elements, and the intervention and breach
-probabilities — are shared with the other crest-crack CLE models and documented in the
-[Common Input Parameters](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters) chapter of the common
-methods manual; [Shared Inputs](#shared-inputs) below lists them and notes how this model uses each.
+probabilities — are shared with the other concentrated leak erosion (CLE) crest-crack models and documented in the
+[Common Input Parameters](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters)
+chapter of the CLE Common Methods manual; [Shared Inputs](#shared-inputs) below lists them and notes how this model uses each.
 
-All elevations are on one common datum, and every length is in the same unit as the elevations. Every relationship in the flaw assessment is
-written in dimensionless ratios — the bench width to the wall or cliff height, and the settlement to the dam height — and the crack depth is a
-fraction of the wall or cliff height, so the model gives the same result in any consistent length unit and needs no unit conversion. The one
-quantity with a fixed unit is the crack width, reported in millimeters whatever the length unit
-(see [Flaw Assessment](./04-flaw-assessment.mdx#crack-width)).
+## Unit System
+
+The model takes a unit system input, US customary (the default) or SI. All elevations and lengths are entered in the length unit of that system
+(feet or meters) and share one vertical datum. No formula changes with the unit system: every relationship in the flaw assessment is written in
+dimensionless ratios — the bench width to the wall or cliff height, and the settlement to the dam height — and the crack depth is a fraction of the
+wall or cliff height, so the crack depth, the effective wall height, and the bottom-of-crack elevation are reported in the length unit of the
+selected system. Quantities with fixed units are stated in those units regardless of the unit system: the crack width is in millimeters (see
+[Flaw Assessment](./04-flaw-assessment.mdx#crack-width)). The datum convention shared by the CLE models is described in the
+[Unit System](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#unit-system)
+section of the CLE Common Methods manual.
 
 ## Dam and Wall or Cliff Geometry
 
+<TableReference tableKey="cle-wall-cliff-settlement-screening-table-2" /> lists the dam and wall or cliff geometry inputs.
+
 <TableVertical
   tableKey="cle-wall-cliff-settlement-screening-table-2"
-  alt="Dam and wall or cliff geometry parameters"
-  caption="Dam and wall or cliff geometry parameters."
-  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  alt="Dam and wall or cliff geometry inputs"
+  caption="Dam and wall or cliff geometry inputs."
+  headers={[[{ value: 'Input' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Default' }, { value: 'Description' }]]}
   columns={[
     ['Crest elevation', 'Dam height', 'Wall or cliff height', 'Bench width', 'Abutment slope below the wall or cliff'],
-    ['z<sub>c</sub>', 'H', 'H<sub>w</sub>', 'W<sub>b</sub>', 'β<sub>1</sub>'],
-    ['elevation', 'length', 'length', 'length', 'degrees'],
-    ['Any elevation', '> 0', '> 0', '≥ 0', 'Greater than 0 and less than 90'],
+    ['<i>z</i><sub>c</sub>', '<i>H</i><sub>d</sub>', '<i>h</i><sub>w</sub>', '<i>W</i><sub>b</sub>', '<i>β</i><sub>a</sub>'],
+    ['ft or m', 'ft or m', 'ft or m', 'ft or m', 'degrees'],
     ['Required', 'Required', 'Required', 'Required', 'Required'],
+    [
+      'Top of the embankment, from which the crack depth is measured',
+      'Height of the embankment; greater than zero',
+      'Height of the steep wall or cliff against which the fill is placed; greater than zero',
+      'Width of the bench at the base of the wall or cliff; zero or greater',
+      'Inclination of the abutment below the wall or cliff; greater than 0 and less than 90',
+    ],
   ]}
 />
 
 - **Crest elevation** $z_c$ — the top of the embankment. The crack depth is measured down from it to give the bottom-of-crack elevation (see
-  [Flaw Assessment](./04-flaw-assessment.mdx#bottom-of-the-crack)).
-- **Dam height** $H$ — the height of the embankment. It enters the model only as the denominator of the normalized settlement, and only when a measured
-  settlement is supplied; under the era default it has no effect.
-- **Wall or cliff height** $H_w$ — the height of the steep wall or cliff against which the embankment fill is placed. It is the denominator of
+  [Flaw Assessment](./04-flaw-assessment.mdx#bottom-of-crack-elevation)).
+- **Dam height** $H_d$ — the height of the embankment. It enters the model only as the denominator of the normalized settlement, and only when a
+  measured settlement is supplied; under the era default it has no effect.
+- **Wall or cliff height** $h_w$ — the height of the steep wall or cliff against which the embankment fill is placed. It is the denominator of
   the bench-width ratio and the height of which the effective wall height, and so the crack depth, is a fraction.
 - **Bench width** $W_b$ — the width of the bench at the base of the wall or cliff. A bench width of zero states that there is no bench: the fill
   rests directly against the full height of the wall or cliff.
-- **Abutment slope below the wall or cliff** $\beta_1$ — the inclination, in degrees from horizontal, of the abutment below the wall or cliff. It
+- **Abutment slope below the wall or cliff** $\beta_a$ — the inclination, in degrees from horizontal, of the abutment below the wall or cliff. It
   is scored as one of the three flaw factors, and it also enters the crack width and effective wall height relationships. Where an embankment has
   walls or cliffs on both abutments, the slope supplied is the one below the wall or cliff being evaluated.
 
-The model checks each geometric input against its own range and does not compare the geometric inputs with one another. In particular, it does not require the wall or
-cliff height to be less than the dam height, or the bottom of the crack to lie above the base of the embankment.
+The model checks each geometric input against its own range and does not compare the geometric inputs with one another. In particular, it does
+not require the wall or cliff height to be less than the dam height, or the bottom of the crack to lie above the base of the embankment.
 
 :::warning[INPUT NEEDED IN-01 — Definition]
-The geometric definitions of the wall or cliff height $H_w$, the bench width $W_b$, and the abutment slope below the wall or cliff $\beta_1$
-require confirmation, ideally with a reference to the defining sketch. State (1) whether $H_w$ is the full height of the wall or cliff or only the
-part in contact with the embankment fill, and whether it may exceed the dam height $H$; (2) where the bench width $W_b$ is measured — horizontally
-from the base of the wall or cliff to the edge of the bench — and whether it is measured along or across the dam axis; and (3) which surface
-$\beta_1$ describes — the abutment foundation surface between the bench and the valley floor — and how it is measured where that surface is not
-planar; and (4) whether the top of the wall or cliff is assumed to be at or near crest level, since the crack depth is measured down from the
-crest elevation and the model takes no top-of-wall or top-of-cliff elevation.
+The geometric definitions of the wall or cliff height $h_w$, the bench width $W_b$, and the abutment slope below the wall or cliff $\beta_a$
+require confirmation, ideally with a reference to the defining sketch. State (1) whether $h_w$ is the full height of the wall or cliff or only the
+part in contact with the embankment fill, and whether it may exceed the dam height $H_d$; (2) where the bench width $W_b$ is measured —
+horizontally from the base of the wall or cliff to the edge of the bench — and whether it is measured along or across the dam axis; (3) which
+surface $\beta_a$ describes — the abutment foundation surface between the bench and the valley floor — and how it is measured where that surface
+is not planar; and (4) whether the top of the wall or cliff is assumed to be at or near crest level, since the crack depth is measured down from
+the crest elevation and the model takes no top-of-wall or top-of-cliff elevation.
 :::
 
 :::warning[INPUT NEEDED IN-02 — Definition]
-The physical meaning of the dam height $H$ and the maximum post-construction settlement $s$ requires confirmation. State (1) whether $H$ is the
-maximum height of the dam or the height of the embankment at the wall or cliff section; and (2) whether $s$ is the settlement of the crest, at the
-wall or cliff section or the maximum along the crest, and over what period it is taken (for example, from the end of construction to the time of
-the assessment, or the expected long-term settlement).
+The dam height $H_d$ and the maximum post-construction settlement $s$, which form the normalized settlement $s/H_d$, are not defined beyond their
+names. State (1) how $H_d$ is measured — for example, whether it is the maximum height of the embankment at the deepest section of the valley or
+the height of the embankment at the section being evaluated, and whether it is measured from the crest to the lowest foundation contact or to the
+original ground surface; and (2) how $s$ is measured — whether it is the largest crest settlement along the crest or the settlement at the section
+being evaluated, over what period it is taken (for example, from the end of construction to the time of the assessment, or the expected long-term
+settlement), and whether it includes settlement of the foundation.
+
+Proposed (unconfirmed): $H_d$ is the maximum embankment height at the deepest section, and $s$ is the largest crest settlement observed since the
+end of construction, both from survey records. Confirm or replace.
 :::
 
 :::warning[INPUT NEEDED IN-03 — Applicability]
@@ -83,30 +101,30 @@ Proposed (unconfirmed): each wall or cliff is evaluated in its own run with its 
 SRP governs the mechanism. Confirm or replace.
 :::
 
-## Settlement Information
+## Settlement
 
-The normalized settlement is formed from a measured post-construction settlement when one is supplied, or from a default ratio selected by the
-year of construction when it is not (<TableReference tableKey="cle-wall-cliff-settlement-screening-table-3" />). At least one of the two inputs
-must be supplied.
+The normalized settlement is formed from a measured post-construction settlement when one is supplied, or from a default selected by the year of
+construction when it is not (<TableReference tableKey="cle-wall-cliff-settlement-screening-table-3" />). At least one of the two inputs must be
+supplied.
 
 <TableVertical
   tableKey="cle-wall-cliff-settlement-screening-table-3"
-  alt="Settlement parameters"
-  caption="Settlement parameters."
-  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  alt="Settlement inputs"
+  caption="Settlement inputs."
+  headers={[[{ value: 'Input' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Default' }, { value: 'Description' }]]}
   columns={[
     ['Maximum post-construction settlement', 'Year of construction'],
-    ['s', 'Y'],
-    ['length', 'year'],
-    ['≥ 0', 'Any year'],
-    ['Not supplied', 'Not supplied'],
+    ['<i>s</i>', '<i>Y</i>'],
+    ['ft or m', 'year'],
+    ['From the year of construction', 'Not supplied'],
+    ['Settlement of the crest after construction; zero or greater', 'Year the dam was completed'],
   ]}
 />
 
 - **Maximum post-construction settlement** $s$ — the settlement of the embankment after the end of construction, in the same length unit as the
   dam height. When it is supplied, the normalized settlement is computed from it and the year of construction is not used by the flaw assessment.
-- **Year of construction** $Y$ — the year the dam was completed. It is used only when no settlement is supplied, to select the default normalized
-  settlement for the era of construction: 0.5 percent for a dam completed before 1950, and 0.25 percent for a dam completed in 1950 or later (see
+- **Year of construction** $Y$ — the year the dam was completed. It is used only when no settlement is supplied, to select the default
+  normalized settlement: 0.5 percent of the dam height for a dam completed before 1950, and 0.25 percent for a dam completed in 1950 or later (see
   [Flaw Assessment](./04-flaw-assessment.mdx#normalized-settlement)).
 
 The continuation method takes its own year of construction among the continuation inputs, for the filter evaluation (see
@@ -114,11 +132,11 @@ The continuation method takes its own year of construction among the continuatio
 
 ## Shared Inputs
 
-The following inputs are documented in full in the common methods manual. The notes give how this model uses each.
+The following inputs are documented in full in the CLE Common Methods manual. The notes give how this model uses each.
 
 - **Hydraulic loading** — the headwater series and the optional tailwater series (see
-  [Hydraulic Loading](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#hydraulic-loading)). The
-  tailwater is reported with the results but does not enter any node of this model.
+  [Hydraulic Loading](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#hydraulic-loading)).
+  The tailwater is reported with the results but does not enter any node of this model.
 - **Embankment type** — homogeneous earthfill, zoned earthfill, or central-core earth and rockfill, which sets the crack-filling node (see
   [Embankment Description](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#embankment-description)).
   The model takes no slope-segment description of the embankment section; its flaw assessment uses only the inputs of this chapter.
@@ -126,15 +144,15 @@ The following inputs are documented in full in the common methods manual. The no
   continuation inputs, in the crest-crack form (see
   [Failure-Pathway Inputs](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#failure-pathway-inputs)).
   The below-filter materials are taken at the bottom-of-crack elevation that the flaw assessment computes, so they are listed after that
-  elevation is known (see [Flaw Assessment](./04-flaw-assessment.mdx#bottom-of-the-crack)). The continuation inputs themselves are documented in
-  the
-  [Input Parameters](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/input-parameters) chapter of the Continuation (Filter
-  Evaluation) Screening Technical Reference Manual.
+  elevation is known (see [Flaw Assessment](./04-flaw-assessment.mdx#bottom-of-crack-elevation)). The continuation inputs themselves are
+  documented in the
+  [Input Parameters](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/input-parameters)
+  chapter of the Continuation (Filter Evaluation) Screening manual.
 - **Upstream seepage-limiting elements** — the elements present and, when one is a wall, the top-of-wall elevation (see
   [Upstream Seepage-Limiting Elements](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#upstream-seepage-limiting-elements)).
-- **Intervention and breach** — the probabilities of unsuccessful intervention and of breach, each defaulting to 1.0 (see
+- **Intervention and breach** — the probabilities of unsuccessful intervention and of breach (see
   [Intervention and Breach](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#intervention-and-breach)).
 
-The model takes none of the initiation material inputs of the compaction models — no initiation soil classification, critical shear stress, initial
-pipe diameter, or seepage path length — because its initiation node is the headwater gate, and it takes no observation of cracking (see
-[Flaw Assessment](./04-flaw-assessment.mdx#no-observation-override)).
+The model takes none of the initiation material inputs of the compaction models — no initiation soil classification, critical shear stress,
+initial pipe diameter, or seepage path length — because its initiation node is the headwater gate, and it takes no observation of cracking (see
+[Flaw Assessment](./04-flaw-assessment.mdx#observation-override)).
