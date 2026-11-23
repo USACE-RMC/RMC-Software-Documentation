@@ -21,7 +21,11 @@ erosion into a defective conduit is outside the model's scope.
 **Proposed (unconfirmed):** The model screens poor compaction adjacent to the conduit only;
 low-stress zones and erosion into the conduit are separate failure modes it does not address.
 
-**Answer:**
+**Answer:** The model screens poor compaction adjacent to the conduit only. A low-stress zone or
+hydraulic fracture along the conduit is not evaluated at the screening level (embankment placed
+against a conduit is screened only for poor compaction), and erosion into a defective conduit is
+a separate failure mode, internal migration into the conduit, outside this model's scope. (from
+Oct 2025 methodology document)
 
 ---
 
@@ -58,6 +62,13 @@ narrow, deep trench is one backfilled with soil.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the category names given there are "round pipe not
+encased in concrete including corrugated metal pipe" and "no formal compaction or poor
+compaction", which confirm the proposed answer to items (1) for corrugated metal pipe and (2);
+these wordings are now in the manual. The wall or cliff model's equivalent category adds "very
+thick lifts, no moisture control". The document gives no rule for unlisted conduit shapes and no
+trench dimensions for item (3), and names no defining table.
+
 ---
 
 ## IN-04 — Definition — `03-input-parameters.mdx`
@@ -70,6 +81,11 @@ the conduit at its outlet, wet areas over the conduit alignment on the downstrea
 carrying fines), and whether leakage into the conduit through its joints qualifies.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): leakage observed adjacent to the conduit and leakage
+into the conduit (or known open defects in it) are treated as separate observations; leakage into
+the conduit is evidence for internal migration into the conduit, not for this model's override.
+The document does not list the qualifying observations of leakage adjacent to the conduit.
 
 ---
 
@@ -96,6 +112,12 @@ range is larger. Same question as CLE Common Methods IN-11.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the document gives the same ranges (core 2-3-5 mm,
+conduit 5-10-12.5 mm, wall or cliff 5-5-10 mm, foundation or abutment 2-3-5 mm) and says the
+initial pipe diameter "is also informed by Fell et al. (2024) depending on the CLE mechanism"
+(this attribution was added to 06-initiation.mdx of the CLE Common Methods manual), but it does
+not explain the differences between the ranges.
+
 ---
 
 ## IN-07 — Bibliography — `04-flaw-assessment.mdx`
@@ -110,6 +132,11 @@ applying no flaw-continuity stage, where the core, wall or cliff, and foundation
 compaction models apply one.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the four factors (conduit type, seepage collars,
+compaction adjacent to the conduit, trench size during construction) are stated to follow Fell et
+al. (2024) for poor compaction adjacent to a conduit; no table number, risk factors, or reason
+for omitting a flaw-continuity stage is given.
 
 ---
 
@@ -127,7 +154,11 @@ increase the likelihood of a poorly compacted zone; Unknown takes the unfavorabl
 missing record does not lower the screening result. The scores may not hold where the fill
 around the collars is known to have been compacted to the standard of the rest of the fill.
 
-**Answer:**
+**Answer:** All cutoff collars present are assumed to be poorly detailed, which Fell et al. (2024)
+scores as more likely (LF = 3), so no intermediate value is used; when their presence is unknown,
+collars are assumed to exist, so Unknown scores the same as Present. The scores overstate the
+likelihood where the collars are known to be well detailed and the fill around them well
+compacted. (from Oct 2025 methodology document)
 
 ---
 
@@ -143,6 +174,13 @@ scored 1.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the Unknown assumptions are stated as LF = 3 for the
+conduit type, "more likely" (LF = 3) for compaction adjacent to the conduit, and a trench of
+medium width, depth, and slope (LF = 3) for the trench; the trench assumption is now in the
+manual. The document's general screening policy is that an Unknown selection assumes
+conservative conditions. It gives no source table and does not explain why the trench factor has
+no choice scored 1.
+
 ---
 
 ## IN-10 — Engineering Basis — `04-flaw-assessment.mdx`
@@ -157,6 +195,11 @@ that one loading condition's curve at every pool level when the source may tabul
 (below the pool of record, first filling).
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the document states that the above-pool-of-record
+probabilities of Fell et al. (2024) are used for every CLE mechanism, regardless of headwater,
+as a conservative choice; this supports item (3). It gives no table or figure for the six
+points and does not define "pool of record plus 20 percent".
 
 ---
 
@@ -175,6 +218,12 @@ follows the conduit, so its emergence point does not locate the flaw better than
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the document places the base of the flaw at the
+bottom elevation of the conduit, confirming item (1) without a basis. It also states, for all
+compaction mechanisms, that observed leakage sets the base of the flaw to the leakage exit
+elevation; the model does not do this for the conduit (base of flaw unchanged under the
+override), so that statement was not adopted.
+
 ---
 
 ## IN-12 — Engineering Basis — `05-event-tree.mdx`
@@ -189,5 +238,10 @@ Methods IN-14 item (3).
 around a conduit that passes through or beneath it, so no credit is taken (conservative).
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the document identifies Table 13.3 of Fell et al. (2024)
+as the source of the flow-limitation probabilities. It predates the combination and gating
+conventions (it describes a single selected element), so it gives no basis for items (1) to (3).
+(Same note as CLE Common Methods IN-14.)
 
 ---
