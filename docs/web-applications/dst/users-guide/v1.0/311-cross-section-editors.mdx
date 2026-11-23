@@ -2,8 +2,10 @@
 title: 'Cross-Section Editors'
 ---
 
+import CollectionList from '@site/src/components/CollectionList';
 import Figure from '@site/src/components/Figure';
 import FigReference from '@site/src/components/FigureReference';
+import Link from '@docusaurus/Link';
 import NavContainer from '@site/src/components/NavContainer';
 import ProcessList from '@site/src/components/ProcessList';
 import TableReference from '@site/src/components/TableReference';
@@ -1061,72 +1063,164 @@ nothing.
 
 ## Common Problems
 
-### The tools, panels and Save are unavailable
-
-The user cannot edit the screening, or its inputs are locked (see [Input Lock](./040-working-in-dst.mdx#input-lock)). The editor opens read-only.
-
-### "Drawing tools are disabled until the visible reference image is calibrated."
-
-A reference image is shown but not calibrated, and clicks on the canvas place calibration marks. The full message reads "Drawing tools are disabled
-until the visible reference image is calibrated. Finish calibration on the Image tab, or hide or remove the image." The user completes the
-calibration steps (see [Calibrating by scale and datum](#calibrating-by-scale-and-datum)), or turns **Show** off, or removes the image.
-
-### "Calibration failed — check for coincident marks or a zero-length dimension."
-
-The marks cannot define a scale, for example because two marks sit on the same spot or a dimension has a length of zero. The drawing tools stay
-unavailable while the image is shown. The user selects **Move** on the mark at fault, or corrects the **Length**. The guidance line also reports
-when the two marks of D1 sit almost directly above one another, or the two marks of D2 at almost the same height; the user moves one mark of that
-dimension further along it.
-
-### An image is refused
-
-DST refuses an image with a notice:
-- "Only PNG or JPEG images can be used as a digitizing reference." The user saves the drawing as a PNG or JPEG file.
-- "That image is larger than 10 MB — downscale it and try again." The user reduces the image size.
-- "The clipboard has no image. Copy a screenshot first." The user copies the screenshot again, then selects **Paste screenshot**.
-- "This browser cannot read images from the clipboard here. Press Ctrl+V instead." or "Could not read the clipboard. Allow clipboard access, or
-  press Ctrl+V." The user presses Ctrl+V in the editor, or allows clipboard access when the browser asks.
-
-### An edit is refused
-
-DST refuses an edit that would break the drawing and gives the reason in a note at the top of the canvas, for example "This edit would delete
-'Zone 2'. Delete the component itself if that is the intent." The outline being drawn stays in place, so the user can continue with another click,
-Backspace or Escape. The reasons include:
-
-- **Draw zone.** "Draw a simple zone with at least three unique points.", "This outline matches zones that already exist — nothing new would be
-  created.", "A zone fully inside another zone would create a hole. Connect the new zone to an existing boundary.", "This outline would leave an
-  enclosed zone as a hole. Connect it to the new zone’s boundary, or delete it first." and "Outline clicks landed on the same point. Zoom in or turn
-  off Snap to place distinct points."
-- **Split.** "Draw one non-self-crossing split from one body boundary to another without following a boundary.", "A split may cross each zone only
-  once." and "The path does not cut a body zone."
-- **Merge.** "Select a zone before starting a merge.", "Zones must share a full edge to merge.", "A shared merge edge may belong to only two
-  zones.", "The merge would create multiple cycles or a hole." and "The merged zone would overlap another body zone."
-- **Draw zone** and **Draw berm**, at the limit of 20 zones and berms: "A drawing may contain at most 20 rings."
-
-### The generator does not create a drawing
-
-**Generate drawing** reports what is missing:
-- "Complete the crest and each slope chain before generating the drawing." (or, for Zoned, "Complete the crest, the core and each slope chain on
-  the Embankment and Core tabs before generating the drawing."). The user completes the crest and the last Bottom and Slope of each face table.
-- "The core does not fit inside the embankment. Keep its top at or below the crest, and run both core faces down to the base or neither."
-- At Save, a slope table of more than 50 rows is refused with "A slope chain can hold at most 50 segments."
-
-### Import is unavailable
-
-The dialog lists each line it cannot read under "[n] issues found", for example "Line 4: expected two values (X and Y), found 3.", and **Import**
-stays unavailable until every line reads. In the concrete editor, "Too many points" means the import would take the section past 200 points; the
-user removes rows or selects **Replace all existing points**.
-
-### "A cross section can hold at most 200 points."
-
-DST refuses to save a section with more than 200 points. The user deletes points that do not change the shape, such as extra points along a
-straight edge, then saves again.
-
-### Another user changed or deleted the section
-
-When another user saves Dam Information while the editor is open, the status reads "Dam Information changed in another session. Your drawing is
-kept — Save applies it to the latest version; Cancel discards it." The **Unsaved changes** dialog then says that Save applies the drawing to the
-latest version and Discard drops it.
-
-If another user deletes the section, the editor closes with "The cross section you were editing was deleted, so its editor closed.", or, with
-unsaved changes, "The cross section you were editing was deleted, so its editor closed and its unsaved changes were discarded."
+<CollectionList
+  defaultOpen="none"
+  items={[
+    {
+      title: 'The tools, panels and Save are unavailable',
+      child: (
+        <>
+          <p>
+            The user cannot edit the screening, or its inputs are locked (see <Link
+            to="/docs/web-applications/dst/users-guide/v1.0/working-in-dst#input-lock">Input Lock</Link>). The editor opens read-only.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"Drawing tools are disabled until the visible reference image is calibrated."',
+      child: (
+        <>
+          <p>
+            A reference image is shown but not calibrated, and clicks on the canvas place calibration marks. The full message reads "Drawing tools are
+            disabled until the visible reference image is calibrated. Finish calibration on the Image tab, or hide or remove the image." The user
+            completes the calibration steps (see <a href="#calibrating-by-scale-and-datum">Calibrating by scale and datum</a>), or turns <strong>Show</strong> off,
+            or removes the image.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"Calibration failed — check for coincident marks or a zero-length dimension."',
+      child: (
+        <>
+          <p>
+            The marks cannot define a scale, for example because two marks sit on the same spot or a dimension has a length of zero. The drawing tools
+            stay unavailable while the image is shown. The user selects <strong>Move</strong> on the mark at fault, or corrects the <strong>Length</strong>.
+            The guidance line also reports when the two marks of D1 sit almost directly above one another, or the two marks of D2 at almost the same
+            height; the user moves one mark of that dimension further along it.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'An image is refused',
+      child: (
+        <>
+          <p>
+            DST refuses an image with a notice:
+          </p>
+          <ul>
+            <li>
+              "Only PNG or JPEG images can be used as a digitizing reference." The user saves the drawing as a PNG or JPEG file.
+            </li>
+            <li>
+              "That image is larger than 10 MB — downscale it and try again." The user reduces the image size.
+            </li>
+            <li>
+              "The clipboard has no image. Copy a screenshot first." The user copies the screenshot again, then selects <strong>Paste
+              screenshot</strong>.
+            </li>
+            <li>
+              "This browser cannot read images from the clipboard here. Press Ctrl+V instead." or "Could not read the clipboard. Allow clipboard
+              access, or press Ctrl+V." The user presses Ctrl+V in the editor, or allows clipboard access when the browser asks.
+            </li>
+          </ul>
+        </>
+      ),
+    },
+    {
+      title: 'An edit is refused',
+      child: (
+        <>
+          <p>
+            DST refuses an edit that would break the drawing and gives the reason in a note at the top of the canvas, for example "This edit would
+            delete 'Zone 2'. Delete the component itself if that is the intent." The outline being drawn stays in place, so the user can continue with
+            another click, Backspace or Escape. The reasons include:
+          </p>
+          <ul>
+            <li>
+              <strong>Draw zone.</strong> "Draw a simple zone with at least three unique points.", "This outline matches zones that already exist —
+              nothing new would be created.", "A zone fully inside another zone would create a hole. Connect the new zone to an existing boundary.",
+              "This outline would leave an enclosed zone as a hole. Connect it to the new zone’s boundary, or delete it first." and "Outline clicks
+              landed on the same point. Zoom in or turn off Snap to place distinct points."
+            </li>
+            <li>
+              <strong>Split.</strong> "Draw one non-self-crossing split from one body boundary to another without following a boundary.", "A split may
+              cross each zone only once." and "The path does not cut a body zone."
+            </li>
+            <li>
+              <strong>Merge.</strong> "Select a zone before starting a merge.", "Zones must share a full edge to merge.", "A shared merge edge may
+              belong to only two zones.", "The merge would create multiple cycles or a hole." and "The merged zone would overlap another body zone."
+            </li>
+            <li>
+              <strong>Draw zone</strong> and <strong>Draw berm</strong>, at the limit of 20 zones and berms: "A drawing may contain at most 20 rings."
+            </li>
+          </ul>
+        </>
+      ),
+    },
+    {
+      title: 'The generator does not create a drawing',
+      child: (
+        <>
+          <p>
+            <strong>Generate drawing</strong> reports what is missing:
+          </p>
+          <ul>
+            <li>
+              "Complete the crest and each slope chain before generating the drawing." (or, for Zoned, "Complete the crest, the core and each slope
+              chain on the Embankment and Core tabs before generating the drawing."). The user completes the crest and the last Bottom and Slope of
+              each face table.
+            </li>
+            <li>
+              "The core does not fit inside the embankment. Keep its top at or below the crest, and run both core faces down to the base or neither."
+            </li>
+            <li>
+              At Save, a slope table of more than 50 rows is refused with "A slope chain can hold at most 50 segments."
+            </li>
+          </ul>
+        </>
+      ),
+    },
+    {
+      title: 'Import is unavailable',
+      child: (
+        <>
+          <p>
+            The dialog lists each line it cannot read under "[n] issues found", for example "Line 4: expected two values (X and Y), found 3.", and <strong>Import</strong> stays
+            unavailable until every line reads. In the concrete editor, "Too many points" means the import would take the section past 200 points; the
+            user removes rows or selects <strong>Replace all existing points</strong>.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"A cross section can hold at most 200 points."',
+      child: (
+        <>
+          <p>
+            DST refuses to save a section with more than 200 points. The user deletes points that do not change the shape, such as extra points along
+            a straight edge, then saves again.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'Another user changed or deleted the section',
+      child: (
+        <>
+          <p>
+            When another user saves Dam Information while the editor is open, the status reads "Dam Information changed in another session. Your
+            drawing is kept — Save applies it to the latest version; Cancel discards it." The <strong>Unsaved changes</strong> dialog then says that
+            Save applies the drawing to the latest version and Discard drops it.
+          </p>
+          <p>
+            If another user deletes the section, the editor closes with "The cross section you were editing was deleted, so its editor closed.", or,
+            with unsaved changes, "The cross section you were editing was deleted, so its editor closed and its unsaved changes were discarded."
+          </p>
+        </>
+      ),
+    },
+  ]}
+/>

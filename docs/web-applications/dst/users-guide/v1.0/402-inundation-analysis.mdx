@@ -2,6 +2,7 @@
 title: 'Inundation Analysis'
 ---
 
+import CollectionList from '@site/src/components/CollectionList';
 import Figure from '@site/src/components/Figure';
 import FigReference from '@site/src/components/FigureReference';
 import NavContainer from '@site/src/components/NavContainer';
@@ -537,37 +538,120 @@ dam. Run the analysis again for its water levels."
 
 ## Common problems
 
-**The run button is unavailable.** Its tooltip gives the reason: "Add a loading level to run the analysis", or a message that simulations are not
-available, such as "Simulations are not available in this environment."
-
-**The run refuses to start.** DST shows the first reason in an error message (with "(+[N] more in Details)" when there are more), marks the tile
-red ("This analysis could not be simulated. See the simulation details."), and lists every reason in **Simulation details**. The common reasons and their corrections are:
-
-- "Add a model area with a drawn boundary in Inundation Geometry before running the analysis."
-- "Compute the mesh in Inundation Geometry before running the analysis."
-- "Add a terrain in Inundation Geometry before running the analysis." or "Add a land cover in Inundation Geometry before running the analysis."
-- "The terrain is not ready yet. Wait for it to finish processing, then run the analysis." (or the same for the land cover).
-- "Part of the model area is outside the terrain, …": the user adds a terrain that covers the model area, or moves the model area inside it.
-- "No inflow is defined. Give the dam a hydrograph or reservoir boundary condition, give a river an upstream hydrograph, or give a coastline a stage
-  hydrograph."
-- "The dam has no top of dam elevation. …": the user enters the dam crest elevation on the Dam Data page, or a top of dam elevation for the dam
-  centerline.
-- "The reservoir has no elevation-storage curve. Enter a stage-storage curve on the Operational Data page to run."
-- "[level]: breach settings are required when the breach is enabled." The user completes the Breach tab.
-- "[level]: the model area has an initial water surface elevation, but the simulation service cannot start a 2D area wet yet. Clear it to run."
-- A trapezoidal Peak Time longer than the Base Time, marked "Peak Time must be less than or equal to Base Time.", or a tabular hydrograph with fewer
-  than two points or with negative times or flows.
-- A metric screening: "Simulations for this unit system are not available yet."
-
-**The run waits.** **Waiting for a model server** and **Queued** mean the run is waiting its turn for a model server. It starts automatically; leaving
-the page does not stop it.
-
-**The run fails, times out or is lost.** The tile's dot turns red, with "The last simulation did not complete. See the simulation details." The user opens
-**Simulation details** for the errors and the console output, corrects the inputs if they are the cause, and runs the analysis again. A loading level
-that reads **Did not compute** failed in HEC-RAS; its errors are in the same dialog.
-
-**The dam does not breach.** The run warns that the reservoir "never rises that far and the dam does not breach in this simulation." The user adds or enlarges
-the inflow hydrograph, or lowers the breach trigger.
-
-**Results are out of date.** An amber tile dot and the band's warning mean an input changed after the run. The old results stay on the map, but
-the Consequence Analysis page blocks those loading levels ("Inundation out of date") until the analysis runs again.
+<CollectionList
+  defaultOpen="none"
+  items={[
+    {
+      title: 'The run button is unavailable.',
+      child: (
+        <>
+          <p>
+            Its tooltip gives the reason: "Add a loading level to run the analysis", or a message that simulations are not available, such as
+            "Simulations are not available in this environment."
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'The run refuses to start.',
+      child: (
+        <>
+          <p>
+            DST shows the first reason in an error message (with "(+[N] more in Details)" when there are more), marks the tile red ("This analysis
+            could not be simulated. See the simulation details."), and lists every reason in <strong>Simulation details</strong>. The common reasons
+            and their corrections are:
+          </p>
+          <ul>
+            <li>
+              "Add a model area with a drawn boundary in Inundation Geometry before running the analysis."
+            </li>
+            <li>
+              "Compute the mesh in Inundation Geometry before running the analysis."
+            </li>
+            <li>
+              "Add a terrain in Inundation Geometry before running the analysis." or "Add a land cover in Inundation Geometry before running the
+              analysis."
+            </li>
+            <li>
+              "The terrain is not ready yet. Wait for it to finish processing, then run the analysis." (or the same for the land cover).
+            </li>
+            <li>
+              "Part of the model area is outside the terrain, …": the user adds a terrain that covers the model area, or moves the model area inside
+              it.
+            </li>
+            <li>
+              "No inflow is defined. Give the dam a hydrograph or reservoir boundary condition, give a river an upstream hydrograph, or give a
+              coastline a stage hydrograph."
+            </li>
+            <li>
+              "The dam has no top of dam elevation. …": the user enters the dam crest elevation on the Dam Data page, or a top of dam elevation for
+              the dam centerline.
+            </li>
+            <li>
+              "The reservoir has no elevation-storage curve. Enter a stage-storage curve on the Operational Data page to run."
+            </li>
+            <li>
+              "[level]: breach settings are required when the breach is enabled." The user completes the Breach tab.
+            </li>
+            <li>
+              "[level]: the model area has an initial water surface elevation, but the simulation service cannot start a 2D area wet yet. Clear it to
+              run."
+            </li>
+            <li>
+              A trapezoidal Peak Time longer than the Base Time, marked "Peak Time must be less than or equal to Base Time.", or a tabular hydrograph
+              with fewer than two points or with negative times or flows.
+            </li>
+            <li>
+              A metric screening: "Simulations for this unit system are not available yet."
+            </li>
+          </ul>
+        </>
+      ),
+    },
+    {
+      title: 'The run waits.',
+      child: (
+        <>
+          <p>
+            <strong>Waiting for a model server</strong> and <strong>Queued</strong> mean the run is waiting its turn for a model server. It starts
+            automatically; leaving the page does not stop it.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'The run fails, times out or is lost.',
+      child: (
+        <>
+          <p>
+            The tile's dot turns red, with "The last simulation did not complete. See the simulation details." The user opens <strong>Simulation
+            details</strong> for the errors and the console output, corrects the inputs if they are the cause, and runs the analysis again. A loading
+            level that reads <strong>Did not compute</strong> failed in HEC-RAS; its errors are in the same dialog.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'The dam does not breach.',
+      child: (
+        <>
+          <p>
+            The run warns that the reservoir "never rises that far and the dam does not breach in this simulation." The user adds or enlarges the
+            inflow hydrograph, or lowers the breach trigger.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'Results are out of date.',
+      child: (
+        <>
+          <p>
+            An amber tile dot and the band's warning mean an input changed after the run. The old results stay on the map, but the Consequence
+            Analysis page blocks those loading levels ("Inundation out of date") until the analysis runs again.
+          </p>
+        </>
+      ),
+    },
+  ]}
+/>

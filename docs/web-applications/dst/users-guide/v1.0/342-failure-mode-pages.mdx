@@ -2,6 +2,7 @@
 title: 'Failure Mode Pages'
 ---
 
+import CollectionList from '@site/src/components/CollectionList';
 import Link from '@docusaurus/Link';
 import Figure from '@site/src/components/Figure';
 import FigReference from '@site/src/components/FigureReference';
@@ -211,7 +212,7 @@ Response chart shows a placeholder curve, and the results fill the table and cha
 calculates again with the new inputs. Each user runs one calculation at a time, so with two failure mode pages open, the second waits for the first.
 
 A calculation that cannot run, or runs into trouble, reports it in the page messages (see
-[A calculation fails or waits](#a-calculation-fails-or-waits)).
+[A calculation fails or waits](#common-problems)).
 
 ## Verifying a location
 
@@ -244,87 +245,173 @@ response rationale leaves the location Incomplete.
 
 These problems apply to every failure mode page. Each failure mode's page in this guide lists its own messages.
 
-### The system response does not calculate
-
-When the inputs are incomplete, DST does not calculate, and the System Response section has no results. The page messages button lists each
-missing input as a required input, for example "Select a cross section for this location." or "Select the downstream slope protection cover on the
-Dam Information page." Many of these inputs live on other pages: the message names the page, such as Dam Information, Dam Data or Failure Mode
-Screening, and the user completes the input there. When the last required input is complete, DST calculates on its own.
-
-An error message, such as a value outside its range, also stops the calculation until the value is corrected.
-
-### No usable cross sections
-
-The **Cross Section** drop-down reads **No usable cross sections** when the Dam Information page has no cross section of the type the failure mode
-needs, such as an embankment (earth) or a concrete section. The user adds one on the Dam Information page (see
-[Cross Sections](./310-dam-information.mdx#cross-sections)), then chooses it in the toolbar. **Where?**, when shown, explains which part of the dam
-the cross section should represent.
-
-When the chosen cross section is incomplete, the page messages name what it lacks, for example "The selected cross section '[name]' has no crest
-elevation. Complete it on the Dam Information page." The user completes the section in its editor on the Dam Information page.
-
-### The cross section was deleted
-
-When the location's cross section is deleted on the Dam Information page, DST removes it from the location and clears the location's results and
-verification. The page messages then report "Select a cross section for this location." on a location that had one. The user chooses another
-section in **Cross Section** and verifies the location again. On an event-tree page, a default stage taken from the cross section reads Source
-missing or moves to its fallback elevation until another section is chosen.
-
-### A material has no USCS classification
-
-Failure modes that read the cross section's zones need every material to have a classification. Messages such as "The following materials have no
-USCS classification and are invisible to the roof lookup, so the failure pathway cannot be evaluated until their material types are assigned on the
-Dam Information page: [materials]." name the materials. The user assigns each material a type on the Dam Information page (see
-[Materials](./310-dam-information.mdx#materials)). A message that the cross section "has no material-assigned zones" or no "resolvable embankment
-type" means a zone of its drawing has no material; the user assigns one in the embankment editor (see
-[Assigning materials](./311-cross-section-editors.mdx#assigning-materials)).
-
-### A calculation fails or waits
-
-A calculation that cannot start because another of the user's calculations is still running waits for it. If it still cannot start, a notice
-reads "Too many requests. Please wait and try again." The inputs are unaffected; closing other failure mode pages lets the next calculation run.
-
-A calculation that fails reports an error in the page messages:
-
-- "Calculation produced invalid (non-finite) values and could not be completed. If this persists, contact support with the screening identifier."
-- "The calculation service could not run this failure mode with the current inputs. This is a problem in the DST, not in your entries. Contact
-  support with the screening identifier."
-
-A warning "[n] degenerate values or confidence-bound substitutions were encountered. Results may be less reliable than usual." still shows the
-results. When the calculation service cannot be reached, or stored results are out of date, the System Response section shows a notice in place of
-the results (see [Calculation currency](./343-system-response.mdx#calculation-currency)).
-
-### Verification is refused
-
-DST refuses to verify a location in DST Based SRP or Event tree mode without a current system response:
-
-- "There are no calculated results to verify yet." The inputs are incomplete or the calculation has not finished; the user completes the required
-  inputs and waits for the results.
-- "The event tree has no system response yet. Complete every node's probabilities and resolve the errors on this page, then verify." (event-tree
-  pages; see [Event Trees](./344-event-trees.mdx#common-problems)).
-- "The SRP cannot be verified because the stored results were produced by an older System-Response model version. Recalculate the results before
-  verifying them." The System Response section shows a notice about the results (see
-  [Calculation currency](./343-system-response.mdx#calculation-currency)); the user verifies once DST has recalculated them.
-- "The SRP cannot be verified right now because DST cannot confirm which System-Response model version is current. Try again once the calculation
-  service is reachable." The user tries again later.
-
-### Verification was cleared
-
-Any saved change on the page clears the location's verification, including a justification or the system response rationale. A change on another
-page that the location reads also clears it, together with the results and any nodal revisions; when the page next opens, a notice gives the
-reason, for example "Dam Information, Operational Data or Failure Mode Screening inputs changed since these results were calculated. The results,
-nodal adjustments, and SRP verification were cleared; the analysis will recalculate automatically." The first sentence differs between failure
-modes. Once the results recalculate, the team reviews them and verifies the location again.
-
-### A justification is missing
-
-The **Failure mode summary** status shows, for example, "1 needs justification", and the overrides section's title shows **1 needs justification**.
-Every parameter override, **Manual** value with a justification chip and nodal revision needs a justification. The user selects **Add
-justification** beside the value, or enters it in the tray (see [Justifications](#justifications)).
-
-### The location is Incomplete on Submission Readiness
-
-The location's tile lists each reason. Besides the page's required inputs and errors, a location stays Incomplete while a justification or the
-system response rationale is missing, or while its system response is not current, for example "PFM-01 — Left Abutment: the System Response has
-not been calculated." or "the stored System Response was produced by an older System-Response model version and must be recalculated." The user
-opens the location from the tile, completes what is listed, and verifies the location (see [Submission readiness](#submission-readiness)).
+<CollectionList
+  defaultOpen="none"
+  items={[
+    {
+      title: 'The system response does not calculate',
+      child: (
+        <>
+          <p>
+            When the inputs are incomplete, DST does not calculate, and the System Response section has no results. The page messages button lists
+            each missing input as a required input, for example "Select a cross section for this location." or "Select the downstream slope protection
+            cover on the Dam Information page." Many of these inputs live on other pages: the message names the page, such as Dam Information, Dam
+            Data or Failure Mode Screening, and the user completes the input there. When the last required input is complete, DST calculates on its
+            own.
+          </p>
+          <p>
+            An error message, such as a value outside its range, also stops the calculation until the value is corrected.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'No usable cross sections',
+      child: (
+        <>
+          <p>
+            The <strong>Cross Section</strong> drop-down reads <strong>No usable cross sections</strong> when the Dam Information page has no cross
+            section of the type the failure mode needs, such as an embankment (earth) or a concrete section. The user adds one on the Dam Information
+            page (see <Link to="/docs/web-applications/dst/users-guide/v1.0/dam-information#cross-sections">Cross Sections</Link>), then chooses it in
+            the toolbar. <strong>Where?</strong>, when shown, explains which part of the dam the cross section should represent.
+          </p>
+          <p>
+            When the chosen cross section is incomplete, the page messages name what it lacks, for example "The selected cross section '[name]' has no
+            crest elevation. Complete it on the Dam Information page." The user completes the section in its editor on the Dam Information page.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'The cross section was deleted',
+      child: (
+        <>
+          <p>
+            When the location's cross section is deleted on the Dam Information page, DST removes it from the location and clears the location's
+            results and verification. The page messages then report "Select a cross section for this location." on a location that had one. The user
+            chooses another section in <strong>Cross Section</strong> and verifies the location again. On an event-tree page, a default stage taken
+            from the cross section reads Source missing or moves to its fallback elevation until another section is chosen.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'A material has no USCS classification',
+      child: (
+        <>
+          <p>
+            Failure modes that read the cross section's zones need every material to have a classification. Messages such as "The following materials
+            have no USCS classification and are invisible to the roof lookup, so the failure pathway cannot be evaluated until their material types
+            are assigned on the Dam Information page: [materials]." name the materials. The user assigns each material a type on the Dam Information
+            page (see <Link to="/docs/web-applications/dst/users-guide/v1.0/dam-information#materials">Materials</Link>). A message that the cross
+            section "has no material-assigned zones" or no "resolvable embankment type" means a zone of its drawing has no material; the user assigns
+            one in the embankment editor (see <Link
+            to="/docs/web-applications/dst/users-guide/v1.0/cross-section-editors#assigning-materials">Assigning materials</Link>).
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'A calculation fails or waits',
+      child: (
+        <>
+          <p>
+            A calculation that cannot start because another of the user's calculations is still running waits for it. If it still cannot start, a
+            notice reads "Too many requests. Please wait and try again." The inputs are unaffected; closing other failure mode pages lets the next
+            calculation run.
+          </p>
+          <p>
+            A calculation that fails reports an error in the page messages:
+          </p>
+          <ul>
+            <li>
+              "Calculation produced invalid (non-finite) values and could not be completed. If this persists, contact support with the screening
+              identifier."
+            </li>
+            <li>
+              "The calculation service could not run this failure mode with the current inputs. This is a problem in the DST, not in your entries.
+              Contact support with the screening identifier."
+            </li>
+          </ul>
+          <p>
+            A warning "[n] degenerate values or confidence-bound substitutions were encountered. Results may be less reliable than usual." still shows
+            the results. When the calculation service cannot be reached, or stored results are out of date, the System Response section shows a notice
+            in place of the results (see <Link to="/docs/web-applications/dst/users-guide/v1.0/system-response#calculation-currency">Calculation
+            currency</Link>).
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'Verification is refused',
+      child: (
+        <>
+          <p>
+            DST refuses to verify a location in DST Based SRP or Event tree mode without a current system response:
+          </p>
+          <ul>
+            <li>
+              "There are no calculated results to verify yet." The inputs are incomplete or the calculation has not finished; the user completes the
+              required inputs and waits for the results.
+            </li>
+            <li>
+              "The event tree has no system response yet. Complete every node's probabilities and resolve the errors on this page, then verify."
+              (event-tree pages; see <Link to="/docs/web-applications/dst/users-guide/v1.0/event-trees#common-problems">Event Trees</Link>).
+            </li>
+            <li>
+              "The SRP cannot be verified because the stored results were produced by an older System-Response model version. Recalculate the results
+              before verifying them." The System Response section shows a notice about the results (see <Link
+              to="/docs/web-applications/dst/users-guide/v1.0/system-response#calculation-currency">Calculation currency</Link>); the user verifies
+              once DST has recalculated them.
+            </li>
+            <li>
+              "The SRP cannot be verified right now because DST cannot confirm which System-Response model version is current. Try again once the
+              calculation service is reachable." The user tries again later.
+            </li>
+          </ul>
+        </>
+      ),
+    },
+    {
+      title: 'Verification was cleared',
+      child: (
+        <>
+          <p>
+            Any saved change on the page clears the location's verification, including a justification or the system response rationale. A change on
+            another page that the location reads also clears it, together with the results and any nodal revisions; when the page next opens, a notice
+            gives the reason, for example "Dam Information, Operational Data or Failure Mode Screening inputs changed since these results were
+            calculated. The results, nodal adjustments, and SRP verification were cleared; the analysis will recalculate automatically." The first
+            sentence differs between failure modes. Once the results recalculate, the team reviews them and verifies the location again.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'A justification is missing',
+      child: (
+        <>
+          <p>
+            The <strong>Failure mode summary</strong> status shows, for example, "1 needs justification", and the overrides section's title shows <strong>1
+            needs justification</strong>. Every parameter override, <strong>Manual</strong> value with a justification chip and nodal revision needs a
+            justification. The user selects <strong>Add justification</strong> beside the value, or enters it in the tray (see <a
+            href="#justifications">Justifications</a>).
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'The location is Incomplete on Submission Readiness',
+      child: (
+        <>
+          <p>
+            The location's tile lists each reason. Besides the page's required inputs and errors, a location stays Incomplete while a justification or
+            the system response rationale is missing, or while its system response is not current, for example "PFM-01 — Left Abutment: the System
+            Response has not been calculated." or "the stored System Response was produced by an older System-Response model version and must be
+            recalculated." The user opens the location from the tile, completes what is listed, and verifies the location (see <a
+            href="#submission-readiness">Submission readiness</a>).
+          </p>
+        </>
+      ),
+    },
+  ]}
+/>
