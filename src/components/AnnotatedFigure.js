@@ -30,9 +30,11 @@ import '../css/tables.css';
  *   - a capture script's "<image>.callouts.json", passed as positions={...} (import the JSON);
  *     entries in `callouts` then only need n, region and text, and are matched by n.
  *
- * Hovering or focusing a marker highlights its table row and the reverse; selecting one scrolls
- * to the other. Screen readers get each marker as a button named "Callout n: region" that is
- * described by its table row, and the figure is described by the table.
+ * The markers and the table are not linked: the screenshot and its table are often not on screen
+ * together. Hovering or focusing a marker shows its region name in a tooltip drawn inside the
+ * figure (it opens away from the nearest edge); nothing else moves. The table's numbers are plain
+ * badges. Screen readers get each marker as a focusable button named "Callout n: region", and the
+ * figure is described by the table.
  */
 const AnnotatedFigure = ({
   figKey,
@@ -57,13 +59,11 @@ const AnnotatedFigure = ({
   const imgUrl = useBaseUrl(src);
   const [figNumber, setFigNumber] = useState(null);
   const [tableNumber, setTableNumber] = useState(null);
-  const [active, setActive] = useState(null);
   const frameRef = useRef(null);
 
   const figureId = id || figKey;
   const tableId = tableKey || `${figureId}-regions`;
   const rowId = (n) => `${figureId}-callout-${n}`;
-  const markerId = (n) => `${figureId}-marker-${n}`;
 
   const brokenLinks = useBrokenLinks();
   brokenLinks.collectAnchor(figureId);
@@ -121,9 +121,45 @@ const AnnotatedFigure = ({
   }, []);
   const pickJson = `[\n${picks.map((p) => `  { n: ${p.n}, x: ${p.x}, y: ${p.y} },`).join('\n')}\n]`;
 
-  const jumpTo = (elementId) => {
-    const el = typeof document !== 'undefined' ? document.getElementById(elementId) : null;
-    el?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  // Tooltip text is the region name without markup. The classes are the placement before the first hover (no JS yet).
+  const plain = (v) => (typeof v === 'string' ? v.replace(/<[^>]*>/g, '').trim() : '');
+  const tipClass = (c) => {
+    const h = c.x < 33 ? 'callout-marker--tip-right' : c.x > 67 ? 'callout-marker--tip-left' : '';
+    const v = c.y < 20 ? 'callout-marker--tip-below' : '';
+    return [h, v].filter(Boolean).join(' ');
+  };
+  // On hover or focus, place the tooltip inside the image frame (above the marker if it fits, else below; shifted sideways
+  // to stay clear of the edges). Only CSS variables on the marker change, before the tooltip is painted, so nothing moves.
+  const placeTip = (e) => {
+    const m = e.currentTarget;
+    const frame = m.parentElement;
+    if (!frame || typeof window === 'undefined') return;
+    const fr = frame.getBoundingClientRect();
+    const pad = 4;
+    const gap = 6;
+    m.style.setProperty('--tip-max', `${Math.max(80, fr.width - 2 * pad)}px`);
+    const tip = window.getComputedStyle(m, '::after');
+    const w = parseFloat(tip.width) + parseFloat(tip.paddingLeft) + parseFloat(tip.paddingRight);
+    const h = parseFloat(tip.height) + parseFloat(tip.paddingTop) + parseFloat(tip.paddingBottom);
+    if (!w || !h) return;
+    const mr = m.getBoundingClientRect();
+    const ms = window.getComputedStyle(m);
+    const ox = mr.left + parseFloat(ms.borderLeftWidth);
+    const oy = mr.top + parseFloat(ms.borderTopWidth);
+    const x = Math.min(Math.max(mr.left + mr.width / 2 - w / 2, fr.left + pad), fr.right - pad - w);
+    const above = mr.top - gap - h;
+    const below = mr.bottom + gap;
+    // Above if it fits, else below if that fits, else the side that overflows less (then clamped into the frame).
+    let y = above;
+    if (above < fr.top + pad) {
+      const overAbove = fr.top + pad - above;
+      const overBelow = below + h - (fr.bottom - pad);
+      y = overBelow <= 0 || overBelow < overAbove ? below : above;
+    }
+    y = Math.min(Math.max(y, fr.top + pad), fr.bottom - pad - h);
+    m.style.setProperty('--tip-left', `${x - ox}px`);
+    m.style.setProperty('--tip-top', `${y - oy}px`);
+    m.dataset.tipPlaced = '';
   };
 
   const markers = (inDialog) =>
@@ -132,21 +168,13 @@ const AnnotatedFigure = ({
       .map((c) => (
         <button
           key={`${inDialog ? 'z' : 'm'}-${c.n}`}
-          id={inDialog ? undefined : markerId(c.n)}
           type="button"
-          className={`callout-marker${active === c.n ? 'is-active' : ''}`}
+          className={`callout-marker ${tipClass(c)}`.trim()}
           style={{ left: `${c.x}%`, top: `${c.y}%` }}
-          aria-label={`Callout ${c.n}: ${typeof c.region === 'string' ? c.region : ''}`}
-          aria-describedby={rowId(c.n)}
-          onMouseEnter={() => setActive(c.n)}
-          onMouseLeave={() => setActive(null)}
-          onFocus={() => setActive(c.n)}
-          onBlur={() => setActive(null)}
-          onClick={(e) => {
-            e.stopPropagation();
-            setActive(c.n);
-            if (!inDialog) jumpTo(rowId(c.n));
-          }}
+          aria-label={`Callout ${c.n}: ${plain(c.region)}`}
+          data-tip={plain(c.region) || undefined}
+          onPointerEnter={placeTip}
+          onFocus={placeTip}
         >
           {c.n}
         </button>
@@ -233,27 +261,9 @@ const AnnotatedFigure = ({
               </thead>
               <tbody>
                 {items.map((c) => (
-                  <tr
-                    key={c.n}
-                    id={rowId(c.n)}
-                    className={active === c.n ? 'is-active' : undefined}
-                    onMouseEnter={() => setActive(c.n)}
-                    onMouseLeave={() => setActive(null)}
-                  >
+                  <tr key={c.n} id={rowId(c.n)}>
                     <td className="table-body-cell" style={{ textAlign: 'center', verticalAlign: 'top' }}>
-                      <button
-                        type="button"
-                        className={`callout-marker callout-marker--inline${active === c.n ? 'is-active' : ''}`}
-                        aria-label={`Show callout ${c.n} on the figure`}
-                        onFocus={() => setActive(c.n)}
-                        onBlur={() => setActive(null)}
-                        onClick={() => {
-                          setActive(c.n);
-                          jumpTo(figureId);
-                        }}
-                      >
-                        {c.n}
-                      </button>
+                      <span className="callout-marker callout-marker--inline">{c.n}</span>
                     </td>
                     <td className="table-body-cell" style={{ verticalAlign: 'top' }} {...cell(c.region)} />
                     <td className="table-body-cell" style={{ verticalAlign: 'top' }} {...cell(c.text)} />

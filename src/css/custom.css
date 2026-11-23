@@ -1007,32 +1007,76 @@ figure + .table-container,
   color: #fff;
   font: 700 12px/1 var(--ifm-font-family-base);
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.45);
-  cursor: pointer;
-  transition:
-    transform 0.12s ease,
-    background-color 0.12s ease;
+  cursor: default;
 }
-.callout-marker.is-active,
-.callout-marker:focus-visible {
-  transform: translate(-50%, -50%) scale(1.3);
+/* Hover and focus never move or resize a marker: only its colour, an outline and the tooltip change. */
+.callout-marker:not(.callout-marker--inline):not(.callout-marker--pick):hover,
+.callout-marker:not(.callout-marker--inline):focus {
+  z-index: 3;
   background: var(--ifm-color-primary);
+}
+.callout-marker:focus-visible {
   outline: 3px solid #f59e0b;
   outline-offset: 1px;
+}
+/* Tooltip: the region name, drawn by the marker itself so nothing else reflows.
+   Centred above by default; --tip-right / --tip-left / --tip-below open it away from a near edge. */
+.callout-marker[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  width: max-content;
+  max-width: min(28ch, 60vw, var(--tip-max, 28ch));
+  padding: 4px 8px;
+  transform: translateX(-50%);
+  border-radius: 4px;
+  background: #111827;
+  color: #fff;
+  font: 600 12px/1.35 var(--ifm-font-family-base);
+  text-align: left;
+  white-space: normal;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.35);
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+}
+/* :focus (not only :focus-visible) so a tap on a phone shows it too. */
+.callout-marker[data-tip]:hover::after,
+.callout-marker[data-tip]:focus::after {
+  visibility: visible;
+  opacity: 1;
+}
+.callout-marker--tip-right[data-tip]::after {
+  left: -4px;
+  transform: none;
+}
+.callout-marker--tip-left[data-tip]::after {
+  left: auto;
+  right: -4px;
+  transform: none;
+}
+.callout-marker--tip-below[data-tip]::after {
+  bottom: auto;
+  top: calc(100% + 6px);
+}
+/* Placed by AnnotatedFigure on hover/focus to fit inside the image frame (the classes above are the fallback). */
+.callout-marker[data-tip][data-tip-placed]::after {
+  top: var(--tip-top);
+  right: auto;
+  bottom: auto;
+  left: var(--tip-left);
+  transform: none;
 }
 .callout-marker--inline {
   position: static;
   transform: none;
-}
-.callout-marker--inline.is-active,
-.callout-marker--inline:focus-visible {
-  transform: scale(1.15);
+  box-shadow: none;
+  vertical-align: middle;
 }
 .callout-marker--pick {
   background: #c2410c;
   pointer-events: none;
-}
-.callout-table tr.is-active > td {
-  background-color: rgb(245 158 11 / 0.18);
 }
 .callout-pick-layer {
   position: absolute;

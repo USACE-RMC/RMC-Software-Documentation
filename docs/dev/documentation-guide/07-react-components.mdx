@@ -356,10 +356,12 @@ import Figure from '@site/src/components/Figure';
   ]}
 />
 
-**Click to enlarge:** when the page shows an image smaller than its real size (a wide screenshot at 80%, or any image on a
-phone), readers can select it to see it full screen. The pointer becomes a magnifier, and the image can also be opened with
-Enter or Space. Escape, the close button or a click closes the view. Images already shown at full size are not clickable.
-This needs nothing from authors; use `zoom={false}` only for an image where enlarging makes no sense.
+**Click to enlarge:** readers can select any Figure, FigureNoRef or AnnotatedFigure image to open an enlarged view. The
+pointer becomes a magnifier, and the image can also be opened with Enter or Space. The enlarged view shows the image at its
+real size, or scaled down to fit the window if it is larger; it is never scaled up, so a small crop stays sharp. Escape, the
+close button or a click closes the view. While the view is open the page behind it doesn't scroll, and closing it leaves the
+page where it was. This needs nothing from authors; use `zoom={false}` only for an image where enlarging makes no sense.
+Inline images (FigureInline) are not enlarged.
 
 **Tips:**
 
@@ -509,9 +511,14 @@ import FigureNoRef from '@site/src/components/FigureNoRef';
 built from the same list. Use it instead of a Figure with numbers burned into the image followed by a separate regions table.
 
 **Why:** the screenshot stays clean, so a re-capture doesn't mean redrawing numbers. Markers stay on target at any width.
-Hovering or focusing a marker highlights its table row and the reverse, and selecting one scrolls to the other. Screen readers
-get each marker as a button named after its region and described by its row, so the alt text can describe the screen instead
-of listing callouts.
+Screen readers get each marker as a button named after its region, and the figure is described by its table, so the alt text
+can describe the screen instead of listing callouts.
+
+**Behavior:** the numbered markers on the screenshot and the numbered table are independent; nothing in one responds to the
+other, because the two are often not on screen together. Hovering a marker, focusing it with the keyboard or tapping it on a
+phone shows its region name in a small tooltip inside the figure. The tooltip opens away from the nearest edge of the image, and
+nothing moves or resizes. The table's numbers are plain badges. Selecting the image opens the enlarged view, which has the same
+markers and tooltips; the page behind it doesn't scroll, and closing it leaves the page where it was.
 
 **Import:**
 
@@ -581,7 +588,7 @@ can overlap, as burned-in numbers do. Readers can select the image to enlarge it
     ['As Figure', 'Yes', 'No', 'Yes', 'Yes', 'No', 'No'],
     [
       'Same as Figure',
-      'One entry per callout: <code>{ n, x, y, region, text }</code>. <code>region</code> and <code>text</code> may be strings (HTML allowed) or JSX.',
+      'One entry per callout: <code>{ n, x, y, region, text }</code>. <code>region</code> and <code>text</code> may be strings (HTML allowed) or JSX. The marker&#x27;s tooltip and accessible name use <code>region</code> without its HTML tags, so give <code>region</code> as a string.',
       'Positions from a capture script&#x27;s <code>.callouts.json</code>, merged into <code>callouts</code> by <code>n</code>',
       'Key of the regions table, for numbering and <code>TableReference</code>',
       'Caption of the regions table',
