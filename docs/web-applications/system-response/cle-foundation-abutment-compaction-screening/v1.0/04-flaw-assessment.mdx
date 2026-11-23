@@ -1,0 +1,328 @@
+---
+title: Flaw Assessment
+---
+
+import Citation from '@site/src/components/Citation';
+import CitationFootnote from '@site/src/components/CitationFootnote';
+import DocLink from '@site/src/components/DocLink';
+import Equation from '@site/src/components/Equation';
+import EquationReference from '@site/src/components/EquationReference';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-foundation-abutment-compaction-screening" />
+
+# Flaw Assessment
+
+The flaw assessment populates Node 1 of the concentrated leak erosion (CLE) event tree with the probability $P_{flaw}$ that a continuous zone of
+poorly compacted fill exists along the foundation or abutment contact, and passes the base-of-flaw elevation $z_f$ to the downstream nodes. It
+follows the conventions shared by the CLE family (see the
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="flaw-conventions">Flaw Conventions</DocLink>
+chapter of the CLE Common Methods manual): risk-factor and likelihood-factor scoring of three factors, conversion of the weighted sum to a raw flaw
+probability, and a flaw-continuity stage. This chapter documents the factors, tables, and rules specific to the mechanism. The assessment is
+deterministic and the same at every pool level.
+
+## Base-of-Flaw Elevation
+
+The flaw is idealized for initiation as a cylindrical pipe whose invert is the base of the flaw $z_f$. Its elevation follows the contact location
+(see [Flaw Location](./03-input-parameters.mdx#flaw-location)):
+
+- **Foundation contact** — $z_f$ is the embankment–foundation contact elevation $z_{fc}$. A foundation flaw sits on the contact itself, where the
+  fill was placed on the foundation.
+- **Abutment contact** — an abutment contact spans a range of elevations up the valley wall, and the model places the flaw on it by the
+  normal-pool heuristic documented in
+  <DocLink doc="web-applications/system-response/cle-common-methods-screening" page="flaw-conventions" anchor="compaction-models-base-of-the-flaw">Compaction Models: Base of the Flaw</DocLink>
+  in the CLE Common Methods manual: one third of the way from the normal pool elevation $z_{np}$ to the crest elevation $z_c$. The crest must lie
+  above the normal pool.
+
+The base of the flaw sets the pool level above which initiation can occur, the elevation of the seepage path through the section, and the level
+against which the top of an upstream wall is checked (see [Event Tree](./05-event-tree.mdx)).
+
+:::warning[INPUT NEEDED IN-05 — Engineering Basis]
+The placement of an abutment-contact flaw at one third of the way from the normal pool to the crest requires an engineering basis specific to the
+abutment case: why a single elevation on the abutment contact is representative of a flaw that can lie anywhere up the valley wall, and why the
+normal-pool heuristic, rather than for example the lowest abutment elevation below normal pool or a user-supplied elevation, is used. The basis
+should also address that the placement is unconservative for a flaw lower on the abutment, because it gives a negligible SRP up to the heuristic
+elevation above normal pool (see Assumption 2 in
+[Assumptions and Limitations](./06-assumptions-and-limitations.mdx#flaw-location)).
+:::
+
+## Factor Scores
+
+Three factors are scored. Each factor $j$ carries a risk factor $RF_j$ and a likelihood factor $LF_j$ on the scale of 1 (least likely condition
+for a flaw) to 4 (most likely), following the risk-factor and likelihood-factor scheme of <Citation citationKey="Fell2024" form="narrative" />
+(<TableReference tableKey="cle-foundation-abutment-compaction-screening-table-5" />).
+
+<TableVertical
+  tableKey="cle-foundation-abutment-compaction-screening-table-5"
+  alt="Factors of the foundation or abutment compaction flaw assessment"
+  caption="Factors of the foundation or abutment compaction flaw assessment."
+  widthMode="auto"
+  colAlign={['left', 'center', 'left']}
+  headers={[[{ value: 'Factor' }, { value: 'Risk Factor' }, { value: 'Likelihood Factor From' }]]}
+  columns={[
+    ['Foundation preparation', 'Contact-zone compaction method', 'Section geometry'],
+    ['3', '2', '1'],
+    [
+      'Foundation material and preparation selections',
+      'Contact-zone compaction method selection',
+      'Banding of the section base width and width-to-height ratio',
+    ],
+  ]}
+/>
+
+:::warning[INPUT NEEDED IN-06 — Engineering Basis]
+The risk factors of <TableReference tableKey="cle-foundation-abutment-compaction-screening-table-5" /> — 3 for foundation preparation, 2 for the
+contact-zone compaction method, and 1 for the section geometry — require an engineering basis. Cite the table in Fell et al. (2024) that assigns
+these weights to the factors of a flaw along the foundation or abutment contact, or provide the engineering-judgment attribution.
+:::
+
+### Foundation Preparation
+
+The likelihood factor $LF_{fdn}$ of the foundation preparation factor is read from the material and preparation selections
+(<TableReference tableKey="cle-foundation-abutment-compaction-screening-table-6" />). The two materials have separate columns, which differ only in
+the well-prepared choice each allows.
+
+<TableVertical
+  tableKey="cle-foundation-abutment-compaction-screening-table-6"
+  alt="Likelihood factor of the foundation preparation factor"
+  caption="Likelihood factor of the foundation preparation factor."
+  widthMode="auto"
+  colAlign={['left', 'center', 'center']}
+  headers={[[{ value: 'Foundation Preparation' }, { value: 'Soil' }, { value: 'Rock' }]]}
+  columns={[
+    ['Compacted soil', 'Regular or treated rock surface', 'Irregular or poorly prepared', 'Unknown'],
+    ['1', 'Not accepted', '3.5', '3.5'],
+    ['Not accepted', '1', '3.5', '3.5'],
+  ]}
+/>
+
+No preparation choice scores 2, 3, or 4: the factor takes the value 1 for a well-prepared surface and 3.5 otherwise, and an Unknown preparation is
+scored as an irregular or poorly prepared one. A likelihood factor of 1 on this factor forces the flaw probability to a negligible value (see
+[Well-Prepared Surface](#well-prepared-surface)).
+
+:::warning[INPUT NEEDED IN-07 — Engineering Basis]
+The likelihood factors of <TableReference tableKey="cle-foundation-abutment-compaction-screening-table-6" /> require an engineering basis: 1 for
+compacted soil and for a regular or treated rock surface, 3.5 for an irregular or poorly prepared surface, and 3.5 for an Unknown preparation
+(scored the same as irregular or poorly prepared, rather than at an intermediate value). Cite the source table in Fell et al. (2024), or provide the
+engineering-judgment attribution, including why the factor has no intermediate categories between 1 and 3.5.
+:::
+
+### Contact-Zone Compaction Method
+
+The likelihood factor $LF_{comp}$ of the contact-zone compaction method is read from the selection
+(<TableReference tableKey="cle-foundation-abutment-compaction-screening-table-7" />). It enters the assessment twice: in the weighted sum, and as
+the key of the flaw-continuity stage (see [Flaw-Continuity Stage](#flaw-continuity-stage)).
+
+<TableVertical
+  tableKey="cle-foundation-abutment-compaction-screening-table-7"
+  alt="Likelihood factor of the contact-zone compaction method"
+  caption="Likelihood factor of the contact-zone compaction method."
+  widthMode="auto"
+  colAlign={['left', 'center']}
+  headers={[[{ value: 'Contact-Zone Compaction Method' }, { value: 'LF<sub>comp</sub>' }]]}
+  columns={[
+    [
+      'Special methods with good documentation',
+      'Special methods',
+      'Bulldozer, layer at the limit of compaction',
+      'Poor compaction, thick layers',
+      'Unknown',
+    ],
+    ['1', '2', '3', '4', '3'],
+  ]}
+/>
+
+:::warning[INPUT NEEDED IN-08 — Engineering Basis]
+The likelihood factors of <TableReference tableKey="cle-foundation-abutment-compaction-screening-table-7" /> require an engineering basis: 1, 2, 3,
+and 4 for the four compaction methods, and 3 for an Unknown method (scored the same as bulldozer compaction at the limit of compaction). Cite the
+source table in Fell et al. (2024), or provide the engineering-judgment attribution, including the reason for the Unknown value.
+:::
+
+### Section Geometry Factor
+
+The section geometry factor scores the dimensions of the embankment section through which a poorly compacted zone would have to run.
+
+The likelihood factor $LF_{geom}$ of the section geometry factor is the larger of two banded scores, one of the base width $W$ and one of the
+width-to-height ratio $W/H_s$:
+
+<Equation
+  equationKey="cle-foundation-abutment-compaction-screening-eq-1"
+  equation="LF_W = \begin{cases} 1 & W > 50 \\ 2 & 30 < W \le 50 \\ 3 & 15 < W \le 30 \\ 4 & W \le 15 \end{cases} \qquad LF_{W/H} = \begin{cases} 1 & W/H_s > 2 \\ 2 & 0.75 < W/H_s \le 2 \\ 3 & 0.25 < W/H_s \le 0.75 \\ 4 & W/H_s \le 0.25 \end{cases}"
+/>
+
+<Equation equationKey="cle-foundation-abutment-compaction-screening-eq-2" equation="LF_{geom} = \max\left(LF_W,\ LF_{W/H}\right)" />
+
+where $LF_W$ is the base-width score, $LF_{W/H}$ is the width-to-height score, $W$ is the base width of the embankment section, and $H_s$ is the
+height of the section, both in the length unit of the elevations. $W$ and $H_s$ are derived from the core section when one is supplied, otherwise
+from the shell section, as described in
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="flaw-conventions" anchor="section-geometry-used-in-scoring">Section Geometry Used in Scoring</DocLink>
+in the CLE Common Methods manual, unless the flaw base width and flaw height are supplied in their place (see
+[Input Parameters](./03-input-parameters.mdx#flaw-factor-selections)). <TableReference tableKey="cle-foundation-abutment-compaction-screening-table-8" /> lists
+the bands.
+
+<TableVertical
+  tableKey="cle-foundation-abutment-compaction-screening-table-8"
+  alt="Section geometry likelihood factor bands"
+  caption="Section geometry likelihood factor bands; the larger of the two scores governs."
+  colAlign={['center', 'center', 'center']}
+  headers={[[{ value: 'Likelihood Factor' }, { value: 'Base Width W' }, { value: 'Width-to-Height Ratio W/H<sub>s</sub>' }]]}
+  columns={[
+    ['1', '2', '3', '4'],
+    ['Greater than 50', 'Greater than 30, up to 50', 'Greater than 15, up to 30', '15 or less'],
+    ['Greater than 2', 'Greater than 0.75, up to 2', 'Greater than 0.25, up to 0.75', '0.25 or less'],
+  ]}
+/>
+
+Taking the larger of the two scores means that either a narrow section or a slender one is enough to make a continuous flaw more likely: a section
+scores 1 only when it is both wider than 50 and more than twice as wide as it is high. A value exactly on a band boundary takes the higher
+likelihood factor of the narrower band; for example, a base width of exactly 50 scores 2, and a ratio of exactly 2 scores 2. The base-width
+boundaries are applied to the base width as entered, with no unit conversion (see [Unit System](./03-input-parameters.mdx#unit-system)).
+
+:::warning[INPUT NEEDED IN-09 — Engineering Basis]
+The section geometry bands of <TableReference tableKey="cle-foundation-abutment-compaction-screening-table-8" /> (base width boundaries 50, 30, and 15;
+width-to-height ratio boundaries 2, 0.75, and 0.25) and the rule that the larger of the two scores governs require an engineering basis. Provide
+the source table of Fell et al. (2024) or the engineering-judgment attribution.
+:::
+
+Because a derived base width is the top width of the section plus the horizontal spans of both faces, a section whose faces each run in a single
+segment over the full height, and whose two face slopes (horizontal per vertical) sum to more than 2, always scores 1 on the ratio; its section
+geometry factor is then set by the base width alone. The ratio band governs when its likelihood factor exceeds that of the base width, as it can
+for steep-sided sections such as a narrow central core. This holds only for dimensions derived from the section; where the base width, the height,
+or both are supplied in their place, the ratio is the ratio of the values used and need not follow the face slopes.
+
+:::warning[INPUT NEEDED IN-10 — Applicability]
+The section geometry factor scores the embankment section supplied for the analysis, which also sets the seepage path length of initiation.
+For an abutment contact, the section through the flaw lies toward the side of the valley and is lower and narrower than the maximum section. State
+whether the user should supply the section at the flaw location, or supply the maximum section and enter the base width and height at the flaw
+location in the optional flaw base width and flaw height inputs.
+:::
+
+## Weighted Sum
+
+The three likelihood factors combine into the weighted sum described in
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="flaw-conventions" anchor="weighted-sum">Weighted Sum</DocLink>
+in the CLE Common Methods manual, which for this model is:
+
+<Equation
+  equationKey="cle-foundation-abutment-compaction-screening-eq-3"
+  equation="\Sigma = 3\,LF_{fdn} + 2\,LF_{comp} + LF_{geom}"
+/>
+
+where $\Sigma$ is the weighted sum, $LF_{fdn}$ is the likelihood factor of the foundation preparation, $LF_{comp}$ is the likelihood factor of the
+contact-zone compaction method, and $LF_{geom}$ is the likelihood factor of the section geometry, all dimensionless.
+
+## Raw Flaw Probability
+
+The weighted sum is converted to the raw flaw probability $P_{raw}$ by interpolating the logarithm of the probability linearly between the points
+of <TableReference tableKey="cle-foundation-abutment-compaction-screening-table-9" />, as described in
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="flaw-conventions" anchor="flaw-probability-from-the-weighted-sum">Flaw Probability from the Weighted Sum</DocLink>
+in the CLE Common Methods manual. The model has no lower threshold on the weighted sum.
+
+<TableVertical
+  tableKey="cle-foundation-abutment-compaction-screening-table-9"
+  alt="Raw flaw probability by weighted sum"
+  caption="Raw flaw probability by weighted sum."
+  colAlign={['center', 'center']}
+  headers={[[{ value: 'Weighted Sum' }, { value: 'Raw Flaw Probability' }]]}
+  columns={[
+    ['9', '11', '13', '18', '24'],
+    ['Negligible', '1 × 10<sup>-4</sup>', '7 × 10<sup>-4</sup>', '1 × 10<sup>-2</sup>', '1 × 10<sup>-1</sup>'],
+  ]}
+/>
+
+Unless the surface is well prepared, the foundation preparation factor scores 3.5, so the weighted sum lies between 13.5 (every other factor at 1)
+and 22.5 (every other factor at 4). Only the part of the curve between 13 and 24 is therefore used, and the raw flaw probability ranges from about
+9.1 × 10<sup>-4</sup> to about 5.6 × 10<sup>-2</sup>. A well-prepared surface does not consult the curve.
+
+The curve is the one <Citation citationKey="Fell2024" form="narrative" /> assign to pool levels above the pool of record. The model applies it
+at every pool level, whatever the headwater, and takes no pool-of-record input; the companion curve for pool levels at or below the pool of record
+is not used. The flaw probability therefore takes no credit for the embankment's past performance up to its pool of record. This is a conservative
+screening simplification; past performance can be credited in a detailed analysis.
+
+:::warning[INPUT NEEDED IN-11 — Engineering Basis]
+The weighted-sum curve of <TableReference tableKey="cle-foundation-abutment-compaction-screening-table-9" /> (weighted sums 9, 11, 13, 18, 24 →
+negligible, 1 × 10<sup>-4</sup>, 7 × 10<sup>-4</sup>, 1 × 10<sup>-2</sup>, 1 × 10<sup>-1</sup>) requires an engineering basis. Cite the figure or
+table in Fell et al. (2024) from which it is read for a flaw along the foundation or abutment contact, or provide the engineering-judgment
+attribution, including the value of 7 × 10<sup>-4</sup> at a weighted sum of 13.
+:::
+
+## Well-Prepared Surface
+
+The foundation preparation factor is an incompatible-condition factor in the sense of
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="flaw-conventions" anchor="flaw-probability-from-the-weighted-sum">Flaw Probability from the Weighted Sum</DocLink>
+in the CLE Common Methods manual: when it scores 1 — compacted soil on a soil foundation, or a regular or treated rock surface on a rock foundation —
+the raw flaw probability is zero whatever the other two factors score, and the final flaw probability is negligible. Such a surface is taken as
+incompatible with a continuous zone of poor compaction along the contact. This is an engineering-judgment screening rule: where the foundation
+or abutment was prepared for the first lift of fill by compacting the soil surface, or by regularizing or treating the rock surface, poor
+compaction along the contact is not considered further at the screening level. The well-prepared-surface rule is the only rule that sets the flaw
+probability without scoring it.
+
+## Flaw-Continuity Stage
+
+The raw flaw probability is multiplied by the flaw-continuity probability $P_{cf}$, read from the shared flaw-continuity curve (see
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="flaw-conventions" anchor="flaw-continuity-stage">Flaw-Continuity Stage</DocLink>
+in the CLE Common Methods manual, where the basis of the curve is addressed). In this model the curve is keyed to the likelihood factor of the
+contact-zone compaction method, the factor with a risk factor of 2, and not to the foundation preparation factor, which carries the highest risk
+factor. The final flaw probability is never reported as exactly zero:
+
+<Equation
+  equationKey="cle-foundation-abutment-compaction-screening-eq-4"
+  equation="P_{flaw} = \max\bigl(P_{raw}(\Sigma) \times P_{cf}(LF_{comp}),\; \text{negligible}\bigr)"
+/>
+
+where $P_{raw}(\Sigma)$ is the raw flaw probability at the weighted sum, $P_{cf}(LF_{comp})$ is the flaw-continuity probability at the compaction
+likelihood factor, and "negligible" is the negligibly small value at which the SRP is also floored (see
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="event-tree" anchor="srp-computation">SRP Computation</DocLink>
+in the CLE Common Methods manual). The flaw-continuity probability is negligible for special methods with good documentation,
+1 × 10<sup>-4</sup> for special methods, 1 × 10<sup>-3</sup> for bulldozer compaction or an Unknown method, and 1 × 10<sup>-1</sup> for poor
+compaction in thick layers.
+
+## Observation Override
+
+The model has no observation override: no observation of leakage or wet spots sets the flaw probability to 1.0 (see
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="flaw-conventions" anchor="observation-overrides">Observation Overrides</DocLink>
+in the CLE Common Methods manual). Observed leakage through the embankment exiting the downstream face is attributed to poor compaction within the
+core, where it demonstrates the flaw; it is not applied to the foundation or abutment contact as well, to avoid counting the same observed leakage
+twice.
+
+## Range of the Relationships
+
+Because every factor takes one of a few values, the flaw probability takes one of a small set of values.
+<TableReference tableKey="cle-foundation-abutment-compaction-screening-table-10" /> lists them for a surface that is not well prepared
+($LF_{fdn} = 3.5$); a well-prepared surface gives a negligible flaw probability throughout.
+
+<TableVertical
+  tableKey="cle-foundation-abutment-compaction-screening-table-10"
+  alt="Flaw probability by compaction and section geometry likelihood factors"
+  caption="Flaw probability by compaction and section geometry likelihood factors, for a surface that is not well prepared."
+  colAlign={['center', 'center', 'center', 'center', 'center']}
+  headers={[[{ value: 'LF<sub>comp</sub>' }, { value: 'LF<sub>geom</sub> = 1' }, { value: 'LF<sub>geom</sub> = 2' }, { value: 'LF<sub>geom</sub> = 3' }, { value: 'LF<sub>geom</sub> = 4' }]]}
+  columns={[
+    ['1', '2', '3', '4'],
+    ['Negligible', '2.6 × 10<sup>-7</sup>', '7.7 × 10<sup>-6</sup>', '1.8 × 10<sup>-3</sup>'],
+    ['Negligible', '4.5 × 10<sup>-7</sup>', '1.2 × 10<sup>-5</sup>', '2.6 × 10<sup>-3</sup>'],
+    ['Negligible', '7.7 × 10<sup>-7</sup>', '1.8 × 10<sup>-5</sup>', '3.8 × 10<sup>-3</sup>'],
+    ['Negligible', '1.2 × 10<sup>-6</sup>', '2.6 × 10<sup>-5</sup>', '5.6 × 10<sup>-3</sup>'],
+  ]}
+/>
+
+Across the table, the compaction method moves the flaw probability far more than the section geometry does: each step from one compaction method
+to the next poorer one raises it by more than an order of magnitude, through both the weighted sum and the flaw-continuity probability, while the
+section geometry moves it by a factor of about 3 to 5 across its full range. The largest flaw probability any combination of inputs can produce is
+about 5.6 × 10<sup>-3</sup>, for poor compaction in thick layers on a section that scores 4 on section geometry, so the SRP of the model never
+exceeds that value.
+
+## Worked Example
+
+For a soil foundation of Unknown preparation ($LF_{fdn} = 3.5$), an Unknown compaction method ($LF_{comp} = 3$), and a section with a base width
+greater than 50 ft and a width-to-height ratio greater than 2 ($LF_{geom} = 1$):
+
+- The weighted sum is $\Sigma = 3 \times 3.5 + 2 \times 3 + 1 = 17.5$ (<EquationReference equationKey="cle-foundation-abutment-compaction-screening-eq-3" />).
+- Interpolating the logarithm of the probability nine tenths of the way from 7 × 10<sup>-4</sup> at 13 to 1 × 10<sup>-2</sup> at 18 gives
+  $P_{raw} \approx 7.7 \times 10^{-3}$.
+- The flaw-continuity probability for $LF_{comp} = 3$ is 1 × 10<sup>-3</sup>, so
+  $P_{flaw} \approx 7.7 \times 10^{-6}$ (<EquationReference equationKey="cle-foundation-abutment-compaction-screening-eq-4" />).
+
+<CitationFootnote />
