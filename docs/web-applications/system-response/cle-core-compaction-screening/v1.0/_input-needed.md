@@ -21,7 +21,14 @@ compaction equipment, lift thickness, moisture control, and density testing), or
 Fell et al. (2024) that defines them; and when Unknown should be selected rather than a judged
 category, given that Unknown scores between Poorly compacted and Very poorly compacted.
 
-**Answer:**
+**Answer:** Each category describes the compaction equipment and effort used to place the core. Well
+compacted: soil compacted by suitable rollers, with discing and a layer thickness appropriate to
+the equipment. Poorly compacted: soil placed and compacted by bulldozer without compaction by
+rollers, or rolled in thick layers. Very poorly compacted: no formal compaction (for example,
+material pushed into place by excavator or bulldozer in very thick layers). Unknown: selected
+whenever the records do not support one of the three judged categories; it is scored
+conservatively so that missing documentation does not lower the screening result. (from Oct 2025
+methodology document)
 
 ---
 
@@ -39,6 +46,11 @@ is none), and H is the height from the crest to the lower of the two toes.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the geometry inputs listed for this mechanism are the
+width at the top of the core and the core height, which suggests the continuity factor describes
+the core rather than the whole embankment; the document does not define the base width W or say
+when a user-supplied W or H should replace the section-derived values.
+
 ---
 
 ## IN-03 — Engineering Basis — `04-flaw-assessment.mdx`
@@ -50,6 +62,11 @@ continuity 2, borrow variability 1).
 engineering-judgment attribution.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the method is stated to be adapted from Fell et al.
+(2024), with the flaw probability a function of core compaction (equipment, layer thickness,
+moisture content), core geometry, borrow area variability, and site supervision (the last two
+combined in the fixed factor). The risk factors 3, 2, 1 and the source table are not given.
 
 ---
 
@@ -67,6 +84,14 @@ conservative screening posture, so that a core whose compaction cannot be judged
 credited as better compacted than the evidence supports.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the document describes the continuity of the flaw as
+taken from the Compaction Method categories of Fell et al. (2024) Table 6.4, with "the first
+two categories ... combined into a single category and assigned probability of 0.1 for the
+continuity of the flaw"; the mapping onto the model's curve is unclear (left open as CLE Common
+Methods IN-04). For the likelihood factors it gives only the general screening policy that an
+Unknown selection assumes conservative conditions, which supports the proposed rationale; it
+does not explain the values 1, 3, and 4, the absence of a category scored 2, or the value 3.5.
 
 ---
 
@@ -93,7 +118,11 @@ should convert the section before running the model.
 **Needed:** What the factor represents physically, why it is fixed rather than selected by the
 user, and the basis for the value of 2.5.
 
-**Answer:**
+**Answer:** The factor represents borrow area variability and site supervision, the two conditions of
+the Fell et al. (2024) poor-compaction method that the user is not asked to describe. The model
+assumes borrow area variability between minor and variable and site supervision between good and
+moderate, and scores the combined factor at 2.5, midway between neutral (2) and more likely (3),
+as a fixed screening assumption. (from Oct 2025 methodology document)
 
 ---
 
@@ -108,6 +137,11 @@ probability at a weighted sum of 6, below the lowest attainable sum of 7.5.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the document states only that the flaw probabilities
+are adapted from Fell et al. (2024) and that the above-pool-of-record probabilities are used at
+every headwater; it gives no table or figure number for this curve and does not address the
+anchor at a weighted sum of 6.
+
 ---
 
 ## IN-08 — Definition — `04-flaw-assessment.mdx`
@@ -119,6 +153,8 @@ of a horizontal pipe through the core) under the observation override.
 seepage exit on the downstream face, or the lowest wet spot when several are observed), and the
 basis for taking it as the invert of a horizontal pipe through the core.
 
-**Answer:**
+**Answer:** The elevation at which the observed leakage through the embankment exits the downstream
+face; the base of the flaw is set equal to this exit elevation. (from Oct 2025 methodology
+document)
 
 ---

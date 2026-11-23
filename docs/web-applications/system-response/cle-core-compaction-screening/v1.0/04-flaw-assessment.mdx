@@ -133,13 +133,13 @@ Confirm or replace.
 
 ### Borrow variability factor
 
-The borrow variability factor has a fixed likelihood factor $LF_{var} = 2.5$. It is not a user selection and does not vary between sites.
-
-:::warning[INPUT NEEDED IN-06 — Engineering Basis]
-The borrow variability factor and its fixed likelihood factor of 2.5 require a definition and an engineering basis. State what the factor represents
-physically (for example, the variability of the borrow material placed in the core, which can leave zones of more erodible or less compactable
-soil), why it is fixed rather than selected by the user, and the basis for the value of 2.5, between likelihood factors 2 and 3.
-:::
+The borrow variability factor represents the two construction conditions of the poor-compaction method of Fell et al. (2024)
+<Citation citationKey="Fell2024" /> that the model does not ask the user to describe: the variability of the borrow area material placed in the
+core and the quality of site supervision during placement. A variable borrow source can leave zones of soil that is more erodible or harder to
+compact, and weak supervision allows such zones and poorly compacted layers to go uncorrected. Rather than require the user to judge either
+condition, the model assumes borrow area variability between minor and variable and site supervision between good and moderate, and assigns the
+factor a fixed likelihood factor $LF_{var} = 2.5$, midway between the neutral score of 2 and the more-likely score of 3. It is not a user selection
+and does not vary between sites.
 
 ## Weighted Sum and Raw Flaw Probability
 
@@ -234,26 +234,23 @@ compaction, and a normal pool at elevation 235 scores as follows:
 
 ## Observation Override
 
-When embankment leakage or wet spots are reported as observed, the flaw is taken as demonstrated:
+When leakage through the embankment, or wet spots, are reported as observed exiting the downstream face, the flaw is taken as demonstrated:
 
 <Equation
   equationKey="cle-core-compaction-screening-eq-5"
   equation="P_{flaw} = 1.0, \qquad z_f = z_{lk}"
 />
 
-where $z_{lk}$ is the observed leakage or wet-spot elevation. The override replaces the scored probability and the normal-pool heuristic together.
+where $z_{lk}$ is the elevation at which the observed leakage exits the downstream face. The base of the flaw is set equal to this exit elevation,
+so the pipe of the initiation analysis is placed horizontally at the exit from the upstream face to the downstream face. Where the flaw reaches
+the exit by a sloping path, the pipe therefore lies at the exit elevation rather than at the elevation of the flaw within the core (see
+[Assumptions and Limitations](./06-assumptions-and-limitations.mdx#flaw-assessment)). The override replaces the scored probability and the
+normal-pool heuristic together.
 It is the only CLE compaction override that also moves the flaw elevation (see
 [Observation Overrides](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#observation-overrides) in the CLE
 Common Methods manual). If a compaction category is supplied with the observation, the factors are still scored and reported, but they do not
 affect the result; without a category, no scores are reported. The override sets only Node 1 and the flaw elevation: every downstream node is
 evaluated as usual at the observed elevation.
-
-:::warning[INPUT NEEDED IN-08 — Definition]
-State which elevation the user should enter as the leakage or wet-spot elevation $z_{lk}$ — for example, the elevation of the observed seepage exit
-on the downstream face, or the lowest observed wet spot when several are observed — and the basis for taking it as the invert of a horizontal pipe
-through the core. The pipe is analyzed at this elevation from the upstream face to the downstream face, so an exit that the flaw reaches by a
-sloping path would place the pipe at the exit elevation rather than at the elevation of the flaw within the core.
-:::
 
 ## Base of the Flaw
 
