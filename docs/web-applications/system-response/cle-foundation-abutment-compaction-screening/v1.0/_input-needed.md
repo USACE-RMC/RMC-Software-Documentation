@@ -138,13 +138,16 @@ limit of compaction equipment", which matches the model's score of 3. No source 
 
 ## IN-09 — Engineering Basis — `04-flaw-assessment.mdx`
 
-**Regarding:** Section geometry banding: base width thresholds 50, 30, 15; width-to-height ratio
-thresholds 2, 0.75, 0.25; the larger of the two likelihood factors governs.
+**Regarding:** The section geometry bands (base width boundaries 50, 30, and 15; width-to-height
+ratio boundaries 2, 0.75, and 0.25) and the rule that the larger of the two scores governs.
 
-**Needed:** The length unit the base width thresholds assume (applied without unit conversion),
-and the source table in Fell et al. (2024) or the engineering-judgment attribution.
+**Needed:** The source table of Fell et al. (2024) or the engineering-judgment attribution.
 
 **Answer:**
+
+Note: the length-unit part of this question (the base-width boundaries are applied with no unit
+conversion) is consolidated into CLE Common Methods IN-01 (intended length unit) and has been
+removed from the admonition.
 
 ---
 
@@ -166,8 +169,7 @@ inputs.
 **Regarding:** Weighted-sum curve 9, 11, 13, 18, 24 → negligible, 1E-4, 7E-4, 1E-2, 1E-1.
 
 **Needed:** The figure or table in Fell et al. (2024) for a flaw along the foundation or abutment
-contact, or the engineering-judgment attribution, including the 7E-4 value at 13 (the wall or
-cliff compaction model uses 1E-3 on the same weighted sums).
+contact, or the engineering-judgment attribution, including the 7E-4 value at 13.
 
 **Answer:**
 
@@ -183,7 +185,7 @@ does not explain the value of 7E-4 at a weighted sum of 13.
 **Regarding:** (1) A well-prepared surface (foundation preparation likelihood factor of 1) forces
 the flaw probability to a negligible value regardless of the other factors; (2) the model accepts
 no observation (seepage, wet spots, sinkholes along the contact) that sets the flaw probability to
-1.0, unlike the core, conduit, and wall or cliff compaction models.
+1.0.
 
 **Needed:** Literature source or engineering-judgment attribution for each.
 

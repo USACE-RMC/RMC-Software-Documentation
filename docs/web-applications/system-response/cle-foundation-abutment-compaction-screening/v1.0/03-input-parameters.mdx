@@ -10,46 +10,56 @@ import TableVertical from '@site/src/components/TableVertical';
 
 # Input Parameters
 
-This chapter documents the inputs specific to the foundation or abutment compaction model: the flaw location and the elevations it requires, the
-three flaw-factor selections, the optional section dimensions used in scoring, the default initial pipe diameter, and the filter-presence
-selection. The model also takes the inputs shared by the CLE family, documented in the
-[Common Input Parameters](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters) chapter of the common
-methods manual and listed under [Inputs Shared with the Family](#inputs-shared-with-the-family) below. Each group gives the short facts for its
-quantities in a table, followed by a description of each input and, for selections, a list of the choices and what each implies.
+This chapter documents the inputs specific to the concentrated leak erosion (CLE) foundation or abutment compaction model: the unit system, the
+flaw location and the elevations it requires, the three flaw-factor selections, the optional section dimensions used in scoring, and the
+filter-presence selection. The model also takes the inputs shared by the CLE family, documented in the
+[Input Parameters](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters)
+chapter of the CLE Common Methods manual and listed under [Shared Inputs](#shared-inputs) below. Each group gives the short facts for its inputs in
+a table, followed by a description of each input.
+
+## Unit System
+
+The model takes a unit system input, US customary (the default) or SI. All elevations and lengths are entered in the length unit of that system
+(feet or meters) and share one vertical datum. The input changes no formula in this model, and quantities with fixed units (critical shear stress
+in lb/ft², initial pipe diameter in millimeters) are stated in those units regardless of the unit system. The base-width bands of the section
+geometry factor are applied to the base width as entered, with no unit conversion (see
+[Flaw Assessment](./04-flaw-assessment.mdx#section-geometry-factor)). The datum convention shared by the CLE family is documented in
+[Unit System](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#unit-system)
+in the CLE Common Methods manual.
 
 ## Flaw Location
 
-The user states whether the flaw lies along the foundation contact or along an abutment contact. The choice decides how the base-of-flaw
-elevation $z_f$ is resolved (<TableReference tableKey="cle-foundation-abutment-screening-table-2" />).
+The flaw lies along the foundation contact or along an abutment contact. The contact location decides how the base-of-flaw elevation $z_f$ is
+resolved (<TableReference tableKey="cle-foundation-abutment-compaction-screening-table-2" />).
 
 <TableVertical
-  tableKey="cle-foundation-abutment-screening-table-2"
-  alt="Flaw location parameters"
-  caption="Flaw location parameters."
-  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  tableKey="cle-foundation-abutment-compaction-screening-table-2"
+  alt="Flaw location inputs"
+  caption="Flaw location inputs."
+  headers={[[{ value: 'Input' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Default' }, { value: 'Description' }]]}
   columns={[
     ['Contact location', 'Embankment–foundation contact elevation', 'Normal pool elevation'],
     ['—', 'z<sub>fc</sub>', 'z<sub>np</sub>'],
-    ['selection', 'elevation', 'elevation'],
-    ['Foundation or abutment', 'Positive; within the section used for initiation', 'Below the crest'],
-    ['Required', 'Required for a foundation contact', 'Required for an abutment contact'],
+    ['—', 'ft or m', 'ft or m'],
+    ['—', '—', '—'],
+    [
+      'Required; foundation or abutment.',
+      'Required for a foundation contact; positive and within the section used for initiation. Ignored for an abutment contact.',
+      'Required for an abutment contact; below the crest. Ignored for a foundation contact.',
+    ],
   ]}
 />
 
-- **Contact location** — the contact along which the poorly compacted zone lies:
-  - **Foundation** — the fill placed on the foundation along the valley floor. The base of the flaw is the embankment–foundation contact
-    elevation $z_{fc}$.
-  - **Abutment** — the fill placed against an abutment along the valley wall. The base of the flaw is placed one third of the way from the
-    normal pool elevation $z_{np}$ to the crest (see [Flaw Assessment](./04-flaw-assessment.mdx#base-of-flaw-elevation)).
-- **Embankment–foundation contact elevation** — the elevation of the base of the embankment on the foundation at the section analyzed. It is
-  used only for a foundation contact and is ignored for an abutment contact.
-- **Normal pool elevation** — the normal operating pool. It is used only for an abutment contact, where the crest must lie above it, and is
-  ignored for a foundation contact.
+The contact location is one of two values. For a foundation contact — fill placed on the foundation along the valley floor — the base of the flaw
+is the embankment–foundation contact elevation $z_{fc}$, the elevation of the base of the embankment on the foundation at the section analyzed. For
+an abutment contact — fill placed against an abutment along the valley wall — the base of the flaw is placed one third of the way from the normal
+pool elevation $z_{np}$ to the crest (see [Flaw Assessment](./04-flaw-assessment.mdx#base-of-flaw-elevation)); the normal pool elevation is the
+normal operating pool, and the crest must lie above it.
 
 In either case the resolved base of the flaw must satisfy the conditions common to the compaction models: it must be a positive elevation, no
 higher than the top of the embankment section used for initiation and no lower than the lowest segment bottom of either face of that section (see
-[Compaction models: base of the flaw](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#compaction-models-base-of-the-flaw)
-in the common methods manual).
+[Compaction Models: Base of the Flaw](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#compaction-models-base-of-the-flaw)
+in the CLE Common Methods manual).
 
 :::warning[INPUT NEEDED IN-01 — Applicability]
 The model treats the foundation and abutment contacts as two alternative locations of one flaw, selected by the user, and evaluates one of them
@@ -61,49 +71,47 @@ evaluated once for each location, with the larger result or both results carried
 ## Flaw-Factor Selections
 
 Three selections describe the contact, and two optional dimensions replace the section width and height in scoring
-(<TableReference tableKey="cle-foundation-abutment-screening-table-3" />). How each selection is scored is documented in
+(<TableReference tableKey="cle-foundation-abutment-compaction-screening-table-3" />). How each selection is scored is documented in
 [Flaw Assessment](./04-flaw-assessment.mdx).
 
 <TableVertical
-  tableKey="cle-foundation-abutment-screening-table-3"
-  alt="Flaw-factor parameters"
-  caption="Flaw-factor parameters."
-  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  tableKey="cle-foundation-abutment-compaction-screening-table-3"
+  alt="Flaw-factor selections of the foundation or abutment compaction model"
+  caption="Flaw-factor selections of the foundation or abutment compaction model."
+  headers={[[{ value: 'Input' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Default' }, { value: 'Description' }]]}
   columns={[
     ['Foundation material', 'Foundation preparation', 'Contact-zone compaction method', 'Flaw base width', 'Flaw height'],
     ['—', '—', '—', 'W', 'H<sub>s</sub>'],
-    ['selection', 'selection', 'selection', 'length', 'length'],
-    ['Soil or rock', 'One of four, consistent with the material', 'One of five', '> 0', '> 0'],
-    ['Required', 'Required', 'Required', 'Derived from the section', 'Derived from the section'],
+    ['—', '—', '—', 'ft or m', 'ft or m'],
+    ['—', '—', '—', 'Derived from the section', 'Derived from the section'],
+    [
+      'Required; soil or rock.',
+      'Required; one of four choices, consistent with the material.',
+      'Required; one of five choices.',
+      'Optional; > 0. Replaces the derived base width in the flaw scoring only.',
+      'Optional; > 0. Replaces the derived section height in the flaw scoring only.',
+    ],
   ]}
 />
 
-- **Foundation material** — the material the embankment is placed against at the contact:
-  - **Soil** — a soil foundation or abutment.
-  - **Rock** — a rock foundation or abutment.
+The foundation material is the material the embankment is placed against at the contact, soil or rock. No combined soil-and-rock choice is
+offered: a contact that is partly soil and partly rock, such as a valley floor of alluvium against rock abutments, is evaluated by separate
+analyses, one with the soil material for the part of the contact on soil and one with the rock material for the part on rock.
 
-  No combined soil-and-rock choice is offered. The preparation choices that score a likelihood factor above 1 — Irregular or poorly prepared, and
-  Unknown — score the same for both materials, so the material selection decides only which well-prepared choice is available.
+The foundation preparation is the condition of the foundation or abutment surface on which the fill was placed: compacted soil (soil only), a
+regular or treated rock surface (rock only), irregular or poorly prepared (soil or rock), or Unknown (soil or rock), with the likelihood factors of
+<TableReference tableKey="cle-foundation-abutment-compaction-screening-table-6" />. The well-prepared choice depends on the material, and the
+well-prepared choice of the other material is not accepted. A compacted soil surface, or a regular rock surface or one treated to make it so,
+forces the flaw probability to a negligible value (see [Well-Prepared Surface](./04-flaw-assessment.mdx#well-prepared-surface)). The choices that
+score above 1 — irregular or poorly prepared, and Unknown — score the same for both materials, so the material decides only which well-prepared
+choice is available. Unknown is scored as irregular or poorly prepared.
 
-  A contact that is partly soil and partly rock, such as a valley floor of alluvium against rock abutments, is evaluated by separate analyses: one
-  with the soil material for the part of the contact on soil, and one with the rock material for the part on rock.
-
-- **Foundation preparation** — the condition of the foundation or abutment surface on which the fill was placed. The well-prepared choice depends
-  on the material, and selecting the well-prepared choice of the other material is not accepted:
-  - **Compacted soil** (soil only) — the soil surface on which the fill was placed was compacted. Forces the flaw probability to a negligible value
-    (see [Well-prepared surface](./04-flaw-assessment.mdx#well-prepared-surface)).
-  - **Regular or treated rock surface** (rock only) — a rock surface that is regular, or has been treated to make it so. Forces the flaw
-    probability to a negligible value.
-  - **Irregular or poorly prepared** (soil or rock) — a surface that is irregular or was not well prepared.
-  - **Unknown** (soil or rock) — the preparation is not known; scored as irregular or poorly prepared.
-- **Contact-zone compaction method** — how the embankment fill in the zone against the foundation or abutment was compacted:
-  - **Special methods with good documentation** — special compaction methods were used in the contact zone, and their use is well documented.
-  - **Special methods** — special compaction methods were used, without good documentation.
-  - **Bulldozer, layer at the limit of compaction** — the fill was placed and compacted by bulldozer, without compaction by rollers, in layers at
-    the limit of the compaction equipment.
-  - **Poor compaction, thick layers** — poor compaction methods were used in thick layers, leaving the soil poorly compacted or allowing it to
-    segregate against the foundation surface.
-  - **Unknown** — the compaction method is not known; scored as bulldozer compaction.
+The contact-zone compaction method is how the embankment fill in the zone against the foundation or abutment was compacted, with the likelihood
+factors of <TableReference tableKey="cle-foundation-abutment-compaction-screening-table-7" />: special methods with good documentation (special
+compaction methods were used in the contact zone, and their use is well documented); special methods (without good documentation); bulldozer, layer
+at the limit of compaction (the fill was placed and compacted by bulldozer, without compaction by rollers, in layers at the limit of the compaction
+equipment); poor compaction, thick layers (poor compaction methods were used in thick layers, leaving the soil poorly compacted or allowing it to
+segregate against the foundation surface); or Unknown, scored as bulldozer compaction.
 
 :::warning[INPUT NEEDED IN-03 — Definition]
 The foundation preparation choices (Compacted soil; Regular or treated rock surface; Irregular or poorly prepared) and the contact-zone
@@ -114,75 +122,38 @@ what treatment makes a rock surface "regular or treated" (dental concrete, slush
 fill), and what layer thickness separates the bulldozer and poor-compaction choices — or cite the table in Fell et al. (2024) that defines them.
 :::
 
-- **Flaw base width and flaw height** — optional replacements for the base width $W$ and height $H_s$ of the embankment section, which the model
-  otherwise derives from the section geometry (see
-  [Section geometry used in scoring](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#section-geometry-used-in-scoring)
-  in the common methods manual). Each may be supplied alone. A supplied value replaces the derived value in the scoring of the geometry factor
-  only; the initiation analysis keeps the section geometry.
-
-## Initiation Default
-
-The model takes the initiation material inputs of the compaction models — the core soil classification, and optional critical shear stress,
-initial pipe diameter, and seepage path length — as documented in
-[Initiation Material Inputs](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#initiation-material-inputs)
-in the common methods manual. Only the default of the initial pipe diameter is specific to the model
-(<TableReference tableKey="cle-foundation-abutment-screening-table-4" />).
-
-<TableVertical
-  tableKey="cle-foundation-abutment-screening-table-4"
-  alt="Initial pipe diameter default"
-  caption="Initial pipe diameter default."
-  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
-  columns={[
-    ['Initial pipe diameter'],
-    ['D'],
-    ['mm'],
-    ['Any distribution whose samples are all > 0'],
-    ['Triangular: low 2, most likely 3, high 5'],
-  ]}
-/>
-
-- **Initial pipe diameter** — the diameter of the cylindrical pipe idealizing the poorly compacted contact zone. Left blank, it is a triangular
-  distribution with a low value of 2 mm, a most likely value of 3 mm, and a high value of 5 mm, the same range as the core compaction model. A
-  site-specific distribution replaces the default. The basis of the default ranges of the four compaction models is addressed in
-  [Initial pipe diameter](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#initial-pipe-diameter) in the
-  common methods manual.
-
-The model assigns one critical shear stress to the wall of the pipe, from the core soil classification or the user's distribution (see
-[Critical shear stress](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#critical-shear-stress) in the
-common methods manual). Only one soil is classified, although the pipe lies against both the contact-zone fill and the foundation or
-abutment surface. The clean and nearly clean sand and gravel classes — SP-SM, SW, SP, GP-GM, GW, and GP — are not accepted as the
-classification, even when the user supplies a critical shear stress distribution in place of the default range, so a contact whose erodible material is a clean sand or gravel, such as fill placed on a clean sand foundation, cannot be
-represented by its own classification.
-
-:::warning[INPUT NEEDED IN-14 — Applicability]
-State which soil the core soil classification (and any user-supplied critical shear stress distribution) should describe for a flaw along the
-foundation or abutment contact: the contact-zone fill, an erodible soil foundation forming the floor of the pipe, or the more erodible of the
-two. State also how the user should proceed where the erodible material at the contact is a clean or nearly clean sand or gravel, which the model
-does not accept as the classification.
-:::
+The flaw base width and flaw height are optional replacements for the base width $W$ and height $H_s$ of the embankment section, which the model
+otherwise derives from the section geometry (see
+[Section Geometry Used in Scoring](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/flaw-conventions#section-geometry-used-in-scoring)
+in the CLE Common Methods manual). Each may be supplied alone. A supplied value replaces the derived value in the scoring of the section geometry
+factor only; the initiation analysis keeps the section geometry.
 
 ## Filter Presence and Continuation
 
+<TableReference tableKey="cle-foundation-abutment-compaction-screening-table-4" /> lists the inputs that describe a filter on the failure pathway.
+
 <TableVertical
-  tableKey="cle-foundation-abutment-screening-table-5"
-  alt="Filter presence parameters"
-  caption="Filter presence parameters."
-  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  tableKey="cle-foundation-abutment-compaction-screening-table-4"
+  alt="Filter presence and continuation inputs"
+  caption="Filter presence and continuation inputs."
+  headers={[[{ value: 'Input' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Default' }, { value: 'Description' }]]}
   columns={[
     ['Filter presence at the contact', 'Continuation inputs'],
     ['—', '—'],
-    ['selection', '—'],
-    ['Present or absent', 'Required when a filter is present'],
+    ['—', '—'],
     ['Absent', 'Omitted'],
+    [
+      'Present or absent; whether a filter intercepts the failure pathway along the contact at the base of the flaw.',
+      'Filter and base-soil description; required when a filter is present.',
+    ],
   ]}
 />
 
-- **Filter presence at the contact** — whether a filter intercepts the failure pathway along the contact at the base of the flaw:
-  - **Present** — the continuation inputs are required, and the continuation node is evaluated by the shared continuation method.
-  - **Absent** — the exit is unfiltered and continuation is certain. The continuation inputs are not used.
-- **Continuation inputs** — the filter description and the base soils it must protect, as documented in the
-  [Input Parameters](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/input-parameters) chapter of the continuation manual.
+When a filter is present, the continuation inputs are required, and the continuation node is evaluated by the shared continuation method. When it
+is absent, the exit is unfiltered, continuation is certain, and the continuation inputs are not used. The continuation inputs — the filter
+description and the base soils it must protect — are documented in the
+[Input Parameters](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/input-parameters)
+chapter of the Continuation (Filter Evaluation) Screening manual.
 
 :::warning[INPUT NEEDED IN-04 — Definition]
 State what counts as a filter intercepting the pathway along a foundation or abutment contact — for example, a filter or drain zone placed on the
@@ -190,13 +161,12 @@ foundation downstream of the core, a chimney filter reaching the foundation, or 
 supply as the base soils to the continuation method: the contact-zone fill, the core soil, the foundation soil, or each of them.
 :::
 
-## Inputs Shared with the Family
+## Shared Inputs
 
-The model also takes the following inputs, each documented in the common methods manual:
+The model also takes the following inputs, each documented in the CLE Common Methods manual:
 
 - **Hydraulic loading** — the headwater series and optional tailwater series (see
-  [Hydraulic Loading](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#hydraulic-loading)), on the
-  common datum and in the units of [Units and Datum](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#units-and-datum).
+  [Hydraulic Loading](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#hydraulic-loading)).
 - **Embankment description** — the crest elevation, the embankment type, the shell section, and the optional core section (see
   [Embankment Description](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#embankment-description)).
   The crest also serves as the top of dam in the abutment heuristic.
@@ -205,5 +175,25 @@ The model also takes the following inputs, each documented in the common methods
 - **Upstream seepage-limiting elements** — the elements present and the optional top-of-wall elevation, which is checked against the base of the
   flaw (see
   [Upstream Seepage-Limiting Elements](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#upstream-seepage-limiting-elements)).
+- **Initiation material inputs** — the core soil classification, and the optional critical shear stress, initial pipe diameter, and seepage path
+  length (see
+  [Initiation Material Inputs](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#initiation-material-inputs)).
+  Left blank, the initial pipe diameter takes this model's default distribution, listed in
+  [Initial Pipe Diameter](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#initial-pipe-diameter)
+  in the CLE Common Methods manual (see [Event Tree](./05-event-tree.mdx#node-2-initiation)); a site-specific distribution replaces the default.
 - **Intervention and breach** — the probabilities of unsuccessful intervention and of breach (see
   [Intervention and Breach](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/input-parameters#intervention-and-breach)).
+
+The model assigns one critical shear stress to the wall of the pipe, from the core soil classification or the supplied distribution (see
+[Critical Shear Stress](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#critical-shear-stress)
+in the CLE Common Methods manual). Only one soil is classified, although the pipe lies against both the contact-zone fill and the foundation or
+abutment surface. The clean and nearly clean sand and gravel classes — SP-SM, SW, SP, GP-GM, GW, and GP — are not accepted as the classification,
+even when a critical shear stress distribution is supplied in place of the default range, so a contact whose erodible material is a clean sand or
+gravel, such as fill placed on a clean sand foundation, cannot be represented by its own classification.
+
+:::warning[INPUT NEEDED IN-14 — Applicability]
+State which soil the core soil classification (and any user-supplied critical shear stress distribution) should describe for a flaw along the
+foundation or abutment contact: the contact-zone fill, an erodible soil foundation forming the floor of the pipe, or the more erodible of the
+two. State also how the user should proceed where the erodible material at the contact is a clean or nearly clean sand or gravel, which the model
+does not accept as the classification.
+:::
