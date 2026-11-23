@@ -1,5 +1,5 @@
 ---
-title: Common Input Parameters
+title: Input Parameters
 ---
 
 import Citation from '@site/src/components/Citation';
@@ -10,11 +10,11 @@ import TableVertical from '@site/src/components/TableVertical';
 
 <NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-common-methods-screening" />
 
-# Common Input Parameters
+# Input Parameters
 
-This chapter documents the inputs that the CLE screening models share. Each model also takes the mechanism-specific flaw inputs documented in its
+This chapter documents the inputs that the concentrated leak erosion (CLE) screening models share. Each model also takes the mechanism-specific flaw inputs documented in its
 own manual — compaction categories, settlement and geometry measures, conduit and wall descriptions, climate and surface-cover selections, and the
-observation that overrides its flaw probability. The shared inputs fall into seven groups: hydraulic loading, the units and datum convention, the
+observation that overrides its flaw probability. The shared inputs fall into seven groups: the unit system and datum convention, hydraulic loading, the
 embankment description, the failure-pathway inputs, the upstream seepage-limiting elements, the initiation material inputs of the compaction models,
 and the intervention and breach probabilities. Each group gives the short facts for its quantities in a table, followed by a description of each
 input and, for selections, a list of the available choices and what each implies. Where an input applies to only one of the two model groups
@@ -34,22 +34,58 @@ renormalized between the limits, and no other treatment of the limits is offered
 must be positive, so a normal distribution needs a positive lower limit. The Monte Carlo initiation analysis described in
 [Initiation](./06-initiation.mdx#delegated-method-cylindrical-pipe-initiation) samples these distributions.
 
+## Unit System
+
+Each CLE screening model takes a unit system input, US customary (the default) or SI. All elevations and lengths are entered in the length unit
+of that system (feet or meters) and share one vertical datum: the headwater, tailwater, crest, flaw, filter, and wall elevations, and the
+slope-segment elevations. Of the eight models, only the cross-valley settlement model branches a formula on the input: its crack-depth
+relationship is evaluated in the selected unit. In the other seven models the input changes no formula, and quantities with fixed units are
+stated in those units regardless of the unit system: the critical shear stress in lb/ft², the initial pipe diameter in millimeters, and the crack
+width in millimeters. The hydraulic gradient that the initiation analysis forms from the elevations and the seepage path length is
+dimensionless, so the initiation result does not depend on the length unit.
+
+The cylindrical-pipe initiation analysis of the compaction models accepts only positive elevations for the base of the flaw and for the top of the
+embankment section it uses (the crest for the shell section, or the core top), and rejects zero or negative values. The datum chosen for a
+compaction model must therefore place the embankment above zero elevation. The crest-crack models carry no such restriction.
+
+:::warning[INPUT NEEDED IN-01 — Applicability]
+State the unit system the CLE family is intended to be used in, and the instruction to give a user working in SI units. Every model accepts a unit
+system input, but only the cross-valley settlement model converts a relationship with it. The other seven models apply dimensional values with
+no unit conversion:
+
+- The desiccation model's tabulated crack depths are in feet and are subtracted from the crest elevation, so elevations entered in meters give a
+  bottom-of-crack elevation that is wrong by the ratio of the two units.
+- The frost-cracking model's crack depths by climate category (6, 4, 2, and 1 ft) are subtracted from the crest elevation in the same way, so
+  elevations entered in meters place the bottom of the crack about 3.3 times too deep.
+- The core compaction and the foundation or abutment compaction models band the section base width at fixed thresholds (50, 30, and 15) in
+  whatever length unit the elevations use; state the unit those thresholds assume.
+
+This marker holds the unit question for the whole family, including the desiccation, frost-cracking, core compaction, and foundation or abutment
+compaction models. State also whether the answer is to be stated here only or repeated in each model's manual.
+
+Proposed (unconfirmed): the family is intended for US customary units (elevations and lengths in feet); a user working in SI units converts the
+elevations and lengths to feet before running any model other than the cross-valley settlement model. Confirm or replace.
+:::
+
 ## Hydraulic Loading
 
 The hydraulic loading is defined by a headwater series and an optional companion tailwater series
-(<TableReference tableKey="cle-common-screening-table-3" />).
+(<TableReference tableKey="cle-common-methods-screening-table-3" />).
 
 <TableVertical
-  tableKey="cle-common-screening-table-3"
+  tableKey="cle-common-methods-screening-table-3"
   alt="Hydraulic loading parameters"
   caption="Hydraulic loading parameters."
-  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  headers={[[{ value: 'Input' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Default' }, { value: 'Description' }]]}
   columns={[
     ['Headwater elevation series', 'Tailwater elevation series'],
     ['h', 'h<sub>t</sub>'],
-    ['elevation', 'elevation'],
-    ['At least two distinct finite values', 'Empty, or one entry per headwater value'],
+    ['ft or m', 'ft or m'],
     ['Required', 'No tailwater'],
+    [
+      'Pool levels at which the event tree is evaluated; at least two distinct finite values',
+      'Tailwater paired with each headwater value; empty, or one entry per headwater value',
+    ],
   ]}
 />
 
@@ -62,39 +98,17 @@ The hydraulic loading is defined by a headwater series and an optional companion
   reduces the net head across the flaw (see [Initiation](./06-initiation.mdx#delegated-method-cylindrical-pipe-initiation)); the crest-crack models
   report it with the results but do not use it.
 
-## Units and Datum
-
-All elevations — headwater, tailwater, crest, flaw, filter, and wall elevations, and the slope-segment elevations — are on one common datum, and
-every length is in the same unit as the elevations. Two quantities carry fixed units regardless of the length unit: the critical shear stress in
-pounds per square foot and the initial pipe diameter in millimeters. The hydraulic gradient that the initiation analysis forms from the elevations
-and the seepage path length is dimensionless, so the initiation result does not depend on the length unit chosen.
-
-The cylindrical-pipe initiation analysis of the compaction models accepts only positive elevations for the base of the flaw and for the top of the
-embankment section it uses (the crest for the shell section, or the core top), and rejects zero or negative values. The datum chosen for a
-compaction model must therefore place the embankment above zero elevation. The crest-crack models carry no such restriction.
-
-:::warning[INPUT NEEDED IN-01 — Applicability]
-State the length unit the CLE family is intended to be used in. Several mechanism-specific relationships carry dimensional values with no unit
-conversion — for example the tabulated crest-crack depths of the desiccation and frost-cracking models are in feet, and the compaction models band
-the flaw base width at fixed numerical thresholds — and only the cross-valley settlement model converts its crack-depth relationship between feet
-and meters. The shear stress relationship also uses the unit weight of water in pounds per cubic foot.
-
-Proposed (unconfirmed): the family is intended for US customary units (elevations and lengths in feet); a user working in SI units should convert
-before running any model other than the cross-valley settlement model. Confirm or replace, and state whether this belongs here or in each model's
-manual.
-:::
-
 ## Embankment Description
 
-Every model takes the crest elevation and the embankment type (<TableReference tableKey="cle-common-screening-table-4" />). The compaction models
+Every model takes the crest elevation and the embankment type (<TableReference tableKey="cle-common-methods-screening-table-4" />). The compaction models
 also describe the embankment cross-section with slope-segment tables, from which they derive the seepage path length through the flaw and, where
 a model scores it, the base width and height of the embankment section.
 
 <TableVertical
-  tableKey="cle-common-screening-table-4"
+  tableKey="cle-common-methods-screening-table-4"
   alt="Embankment description parameters"
   caption="Embankment description parameters."
-  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  headers={[[{ value: 'Input' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Default' }, { value: 'Description' }]]}
   columns={[
     [
       'Crest elevation',
@@ -112,16 +126,16 @@ a model scores it, the base width and height of the embankment section.
       'z<sub>t,c</sub>, W<sub>t,c</sub>',
       'z<sub>b,k</sub><sup>c</sup>, m<sub>k</sub><sup>c</sup>',
     ],
-    ['elevation', 'selection', 'length', 'elevation; horizontal per vertical', 'elevation; length', 'elevation; horizontal per vertical'],
-    [
-      'Finite; > 0 for the compaction models',
-      'One of three types',
-      '> 0',
-      'At least one segment per face',
-      'Elevation > 0; width > 0',
-      'At least one segment per face',
-    ],
+    ['ft or m', '—', 'ft or m', 'ft or m; horizontal per vertical', 'ft or m', 'ft or m; horizontal per vertical'],
     ['Required', 'Required', 'Required', 'Required', 'Omitted', 'Omitted'],
+    [
+      'Top of the embankment; finite, and > 0 for the compaction models',
+      'Cross-section archetype; one of three types',
+      'Top width of the shell section; > 0',
+      'Bottom elevation and slope of each shell face segment; at least one segment per face',
+      'Top of the optional core section; elevation > 0, width > 0',
+      'Bottom elevation and slope of each core face segment; at least one segment per face',
+    ],
   ]}
 />
 
@@ -152,13 +166,13 @@ The failure-pathway inputs describe what the seepage path through the flaw meets
 soils must hold a roof over the enlarging pipe. The two model groups take them in different forms because their flaws differ — a crest crack spans
 a range of elevations, while a compaction flaw sits at one elevation
 (see [Failure Pathway and Progression](./07-failure-pathway-and-progression.mdx)). Each soil is identified by its class in the Unified Soil
-Classification System (USCS).
+Classification System (USCS). <TableReference tableKey="cle-common-methods-screening-table-5" /> lists them.
 
 <TableVertical
-  tableKey="cle-common-screening-table-5"
+  tableKey="cle-common-methods-screening-table-5"
   alt="Failure-pathway parameters"
   caption="Failure-pathway parameters."
-  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  headers={[[{ value: 'Input' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Default' }, { value: 'Description' }]]}
   columns={[
     [
       'Top-of-filter elevation (crest-crack models)',
@@ -169,16 +183,16 @@ Classification System (USCS).
       'Continuation inputs (all models)',
     ],
     ['z<sub>tf</sub>', '—', '—', '—', '—', '—'],
-    ['elevation', 'USCS classes', 'USCS classes', 'selection', 'USCS classes', 'filter and base soils'],
-    [
-      'Finite',
-      'At least one, unless the filter top reaches the crest',
-      'At least one when a filter is present',
-      'Present or absent',
-      'At least one',
-      'Required when a filter is present',
-    ],
+    ['ft or m', '—', '—', '—', '—', '—'],
     ['No filter', 'Required', 'Omitted', 'Absent', 'Required', 'Omitted'],
+    [
+      'Top of the first filter on the pathway; finite',
+      'USCS classes along the whole pathway; at least one, unless the filter top reaches the crest',
+      'USCS classes from the upstream face to the filter; at least one when a filter is present',
+      'Present or absent',
+      'USCS classes the pipe passes through; at least one',
+      'Filter and base-soil description; required when a filter is present',
+    ],
   ]}
 />
 
@@ -207,7 +221,7 @@ crack, the top of the filter, or the whole depth of the crack above the filter's
 - **Embankment materials** (compaction models) — the soil classifications of the materials the pipe passes through, which govern roof support at
   every pool.
 - **Continuation inputs** — the filter description and the base soils upstream of it, evaluated by the shared continuation method documented in
-  the Continuation (Filter Evaluation) Screening Technical Reference Manual. They are required when a filter is present and used only then. The
+  the Continuation (Filter Evaluation) Screening manual. They are required when a filter is present and used only then. The
   crest-crack models reject them when no top-of-filter elevation is given; the conduit, wall or cliff, and foundation or abutment compaction models
   ignore them when no filter is stated; and in the core compaction model, supplying them is what states that a filter is present.
 
@@ -217,21 +231,21 @@ Each soil classification is one of the fifteen USCS classes listed with their ro
 ## Upstream Seepage-Limiting Elements
 
 Every model except the conduit compaction model takes the upstream seepage-limiting elements present and, when one of them is a wall, the
-elevation of the wall's top (<TableReference tableKey="cle-common-screening-table-6" />). The conduit compaction model carries no flow-limitation
+elevation of the wall's top (<TableReference tableKey="cle-common-methods-screening-table-6" />). The conduit compaction model carries no flow-limitation
 node input; its Node 6 is fixed at 1.0
 (see [Failure Pathway and Progression](./07-failure-pathway-and-progression.mdx#node-6-progression--no-flow-limitation)).
 
 <TableVertical
-  tableKey="cle-common-screening-table-6"
+  tableKey="cle-common-methods-screening-table-6"
   alt="Upstream seepage-limiting element parameters"
   caption="Upstream seepage-limiting element parameters."
-  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  headers={[[{ value: 'Input' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Default' }, { value: 'Description' }]]}
   columns={[
     ['Upstream elements present', 'Top-of-wall elevation'],
     ['—', 'z<sub>tw</sub>'],
-    ['selections', 'elevation'],
-    ['Any number of the six element types', 'Finite; only when a wall is present'],
+    ['—', 'ft or m'],
     ['None', 'Wall reaches the crest'],
+    ['Any number of the six element types', 'Top of the cutoff or seepage-barrier wall; finite, and only when a wall is present'],
   ]}
 />
 
@@ -251,26 +265,31 @@ node input; its Node 6 is fixed at 1.0
 
 :::warning[INPUT NEEDED IN-02 — Definition]
 The wall categories "modern cutoff wall" and "non-cementitious wall" are used without a definition. State what each covers (construction type,
-era, or material) so the user can select between them and the soil-cement-bentonite and column-wall categories, or cite the table in Fell et al.
+era, or material) so that each can be distinguished from the other and from the soil-cement-bentonite and column-wall categories, or cite the table in Fell et al.
 (2024) that defines them.
 :::
 
 ## Initiation Material Inputs
 
 The compaction models take the classification of the flaw material and three optional overrides of the initiation analysis
-(<TableReference tableKey="cle-common-screening-table-7" />). The crest-crack models take none of these inputs.
+(<TableReference tableKey="cle-common-methods-screening-table-7" />). The crest-crack models take none of these inputs.
 
 <TableVertical
-  tableKey="cle-common-screening-table-7"
+  tableKey="cle-common-methods-screening-table-7"
   alt="Initiation material parameters of the compaction models"
   caption="Initiation material parameters of the compaction models."
-  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  headers={[[{ value: 'Input' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Default' }, { value: 'Description' }]]}
   columns={[
     ['Core soil classification', 'Critical shear stress', 'Initial pipe diameter', 'Seepage path length'],
     ['—', 'τ<sub>c</sub>', 'D', 'L'],
-    ['USCS class', 'lb/ft²', 'mm', 'length'],
-    ['One of nine classes', 'Positive distribution', 'Positive distribution', '> 0'],
+    ['—', 'lb/ft²', 'mm', 'ft or m'],
     ['Required', 'Range by soil class', 'Range by model', 'Derived from the section'],
+    [
+      'Soil in which the flaw erodes; one of nine USCS classes',
+      'Positive distribution',
+      'Positive distribution',
+      'Length over which the net head is lost; > 0',
+    ],
   ]}
 />
 
@@ -289,17 +308,19 @@ The compaction models take the classification of the flaw material and three opt
 
 ## Intervention and Breach
 
+The last two nodes of the event tree take user-specified probabilities (<TableReference tableKey="cle-common-methods-screening-table-8" />).
+
 <TableVertical
-  tableKey="cle-common-screening-table-8"
+  tableKey="cle-common-methods-screening-table-8"
   alt="Intervention and breach parameters"
   caption="Intervention and breach parameters."
-  headers={[[{ value: 'Parameter' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Valid Range' }, { value: 'Default' }]]}
+  headers={[[{ value: 'Input' }, { value: 'Symbol' }, { value: 'Units' }, { value: 'Default' }, { value: 'Description' }]]}
   columns={[
     ['Probability of unsuccessful intervention', 'Probability of breach'],
     ['P<sub>int</sub>', 'P<sub>br</sub>'],
     ['—', '—'],
-    ['0 to 1', '0 to 1'],
     ['1.0', '1.0'],
+    ['Node 7; 0 to 1', 'Node 8; 0 to 1'],
   ]}
 />
 

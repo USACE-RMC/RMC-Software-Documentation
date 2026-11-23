@@ -13,7 +13,7 @@ import TableVertical from '@site/src/components/TableVertical';
 
 # Event Tree
 
-Every CLE screening model computes the system response probability at each headwater level by multiplying the probabilities of the same eight-node
+Every concentrated leak erosion (CLE) screening model computes the system response probability (SRP) at each headwater level by multiplying the probabilities of the same eight-node
 event tree. The tree follows the sequence of the concentrated leak erosion trees in the
 [Typical Event Tree Database](/docs/toolbox-technical-manuals/risk-calculations-suite/typical-event-tree-database/v1.5/Concentrated-Leak-Erosion)
 — flaw, initiation, continuation, progression, unsuccessful intervention, breach — but no database tree is presented here as the screening tree.
@@ -36,44 +36,54 @@ node probabilities, the order of the progression nodes does not affect the resul
 
 ## Node Summary
 
-<TableReference tableKey="cle-common-screening-table-9" /> summarizes the eight nodes and how each model group populates them. The sections that
+<TableReference tableKey="cle-common-methods-screening-table-9" /> summarizes the eight nodes, their probabilities, whether each varies with pool level, and how each model group populates them. The sections that
 follow state the engineering question each node answers and where it is documented in full.
 
 <TableVertical
-  tableKey="cle-common-screening-table-9"
+  tableKey="cle-common-methods-screening-table-9"
   alt="CLE screening event-tree nodes"
   caption="CLE screening event-tree nodes and their sources in each model group."
   colAlign={['center']}
-  headers={[[{ value: 'Node' }, { value: 'Name' }, { value: 'Crest-Crack Models' }, { value: 'Compaction Models' }]]}
+  headers={[[{ value: 'Node' }, { value: 'Event' }, { value: 'Probability' }, { value: 'Pool-Dependent?' }, { value: 'Source' }]]}
   columns={[
     ['1', '2', '3', '4', '5', '6', '7', '8'],
     [
       'Flaw',
       'Initiation',
       'Continuation',
-      'Progression: Roof Support',
-      'Progression: No Crack Filling',
-      'Progression: No Flow Limitation',
+      'Progression — Roof Support',
+      'Progression — No Crack Filling',
+      'Progression — No Flow Limitation',
       'Unsuccessful Intervention',
       'Breach',
     ],
     [
-      'Flaw assessment of the model',
-      'Certain above the bottom of the crack; zero at or below',
-      'Continuation method at or below the filter top; 1.0 above',
-      'Minimum over the material set for the pool level',
-      'By embankment type',
-      'Facing element times the governing wall, where the wall reaches the pool level',
-      'User-specified (default 1.0)',
-      'User-specified (default 1.0)',
+      'P<sub>flaw</sub>',
+      'P<sub>init</sub>(h)',
+      'P<sub>cont</sub>',
+      'P<sub>roof</sub>',
+      'P<sub>nf</sub>',
+      'P<sub>nl</sub>',
+      'P<sub>int</sub>',
+      'P<sub>br</sub>',
+    ],
+    [
+      'No',
+      'Yes',
+      'Crest-crack models: yes; compaction models: no',
+      'Crest-crack models: yes; compaction models: no',
+      'No',
+      'Crest-crack models: yes; compaction models: no',
+      'No',
+      'No',
     ],
     [
       'Flaw assessment of the model',
-      'Cylindrical-pipe Monte Carlo analysis',
-      'Continuation method if a filter is present; else 1.0',
-      'Minimum over the embankment materials',
+      'Crest-crack models: certain above the bottom of the crack, zero at or below; compaction models: cylindrical-pipe Monte Carlo analysis',
+      'Crest-crack models: continuation method at or below the filter top, 1.0 above; compaction models: continuation method if a filter is present, else 1.0',
+      'Crest-crack models: minimum over the material set for the pool level; compaction models: minimum over the embankment materials',
       'By embankment type',
-      'Facing element times the governing wall, where the wall reaches the flaw (fixed 1.0 for conduit)',
+      'Facing element times the governing wall, where the wall reaches the pool level (crest-crack models) or the flaw (compaction models); fixed 1.0 for the conduit compaction model',
       'User-specified (default 1.0)',
       'User-specified (default 1.0)',
     ],
@@ -129,7 +139,7 @@ materials it passes through, and which upstream elements reach it — as documen
 *Questions:* Do detection and intervention fail (Node 7)? Does an uncontrolled release of impounded water occur (Node 8)?
 
 The final two nodes are the user-specified probabilities $P_{int}$ and $P_{br}$ documented in
-[Common Input Parameters](./03-input-parameters.mdx#intervention-and-breach). Each is one value applied at every pool level. Both default to 1.0 —
+[Input Parameters](./03-input-parameters.mdx#intervention-and-breach). Each is one value applied at every pool level. Both default to 1.0 —
 no successful intervention and certain breach — a conservative screening posture. Whether a breach develops depends on the rate of erosion and the
 volume of water stored in the reservoir, but for most embankments in which concentrated leak erosion has initiated, progressed, and gone
 unchecked, breach is almost inevitable.
@@ -139,7 +149,7 @@ unchecked, breach is almost inevitable.
 The system response probability at each pool level is the product of the eight node probabilities:
 
 <Equation
-  equationKey="cle-common-screening-eq-1"
+  equationKey="cle-common-methods-screening-eq-1"
   equation="\mathrm{SRP}(h) = P_{flaw} \times P_{init}(h) \times P_{cont}(h) \times P_{roof}(h) \times P_{nf} \times P_{nl}(h) \times P_{int} \times P_{br}"
 />
 

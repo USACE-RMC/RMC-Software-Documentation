@@ -14,7 +14,7 @@ import TableVertical from '@site/src/components/TableVertical';
 
 # Initiation
 
-Node 2 of every CLE screening model asks whether the hydraulic shear stress exerted on the walls of the flaw by the water flowing through it is
+Node 2 of every concentrated leak erosion (CLE) screening model asks whether the hydraulic shear stress exerted on the walls of the flaw by the water flowing through it is
 large enough to begin eroding them. The two model groups answer it differently. The crest-crack models apply a headwater gate at the bottom of the
 open crack. The compaction models hand the question to the cylindrical-pipe initiation analysis of the Concentrated Leak Erosion Initiation
 toolbox, evaluated by Monte Carlo simulation over the soil's critical shear stress and the initial pipe diameter.
@@ -28,7 +28,7 @@ The flaw is a transverse crack open from the crest down to the bottom-of-crack e
 its bottom, and once it does, initiation is taken as certain:
 
 <Equation
-  equationKey="cle-common-screening-eq-8"
+  equationKey="cle-common-methods-screening-eq-8"
   equation="P_{init}(h) = \begin{cases} 1.0 & h > z_{bc} \\[4pt] 0 & h \le z_{bc} \end{cases}"
 />
 
@@ -50,11 +50,10 @@ for that reduction, which is conservative.
 
 :::warning[INPUT NEEDED IN-06 — Engineering Basis]
 The initiation probability of 1.0 applied once the pool rises above the bottom of an open crest crack
-(<EquationReference equationKey="cle-common-screening-eq-8" />) requires an engineering basis to state here. The model records two different
+(<EquationReference equationKey="cle-common-methods-screening-eq-8" />) requires an engineering basis to state here. The model records two different
 attributions for it: one describes it as a conservative screening-level convention that is not an explicit finding of Pierson (2023), while
-others attribute the certain initiation of a transverse crest crack to Pierson (2023). Resolve which is intended. If Pierson (2023) is to be
-cited, provide its full bibliographic details (authors, title, publisher or journal, and report number) so that it can be added to the
-bibliography.
+others attribute the certain initiation of a transverse crest crack to Pierson (2023). Resolve which is intended. Pierson (2023) has no recorded bibliographic details. Provide the full reference — authors, year, title,
+journal or publisher, and report number — so that it can be added to the bibliography and cited here.
 
 Proposed (unconfirmed): an open transverse crack at the crest is wide enough that the shear stress of any flow through it exceeds the critical
 shear stress of the crack walls, so initiation is taken as certain once water can enter the crack — a conservative screening posture under which a
@@ -73,12 +72,12 @@ and the cylindrical-pipe analysis compares the two stresses over the uncertainty
 of the Concentrated Leak Erosion Initiation manual; this section documents what the screening models supply to it, what they take from it, and
 each screening-level choice.
 
-### Governing relationships
+### Governing Relationships
 
 The hydraulic shear stress on the walls of a crack or pipe follows from a balance between the driving force of the flow and the frictional
 resistance of the walls (Wan and Fell, 2004) <Citation citationKey="WanFell2004" />:
 
-<Equation equationKey="cle-common-screening-eq-16" equation="\tau = \rho_w\, g\, \frac{\Delta H}{L}\, \frac{A}{P_w} = \gamma_w\, i\, \frac{A}{P_w}" />
+<Equation equationKey="cle-common-methods-screening-eq-9" equation="\tau = \rho_w\, g\, \frac{\Delta H}{L}\, \frac{A}{P_w} = \gamma_w\, i\, \frac{A}{P_w}" />
 
 where $\rho_w$ is the density of water, $g$ the acceleration due to gravity, $\Delta H$ the net head across the opening, $L$ the length over which
 that head is lost, $A$ the average cross-sectional area of the flow, and $P_w$ the average wetted perimeter. The relationship assumes a cross
@@ -90,7 +89,7 @@ The pipe invert is the base-of-flaw elevation $z_f$ resolved by the flaw assessm
 and downstream heads above the invert are each limited to be no less than zero:
 
 <Equation
-  equationKey="cle-common-screening-eq-9"
+  equationKey="cle-common-methods-screening-eq-10"
   equation="H_1 = \max(h - z_f,\, 0), \qquad H_2 = \max(h_t - z_f,\, 0), \qquad i = \frac{H_1 - H_2}{L}"
 />
 
@@ -100,7 +99,7 @@ carrying this gradient is therefore, as derived in the toolbox manual's
 [Hydraulic Shear Stress](/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/cylindrical-pipe#hydraulic-shear-stress)
 section,
 
-<Equation equationKey="cle-common-screening-eq-10" equation="\tau = \gamma_w\, i\, \frac{D}{4}" />
+<Equation equationKey="cle-common-methods-screening-eq-11" equation="\tau = \gamma_w\, i\, \frac{D}{4}" />
 
 with $\gamma_w$ the unit weight of water (62.4 lb/ft³) and $D$ converted from millimeters to feet. Erosion initiates in a realization when
 $\tau > \tau_c$. The initiation probability at each pool level is the fraction of Monte Carlo realizations in which it does, as in the toolbox
@@ -108,20 +107,22 @@ manual's
 [Likelihood of Initiation](/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/cylindrical-pipe#likelihood-of-initiation-of-concentrated-leak-erosion)
 section:
 
-<Equation equationKey="cle-common-screening-eq-11" equation="P_{init}(h) = \frac{1}{N} \sum_{n=1}^{N} \mathbf{1}\bigl[\tau_n(h) > \tau_{c,n}\bigr]" />
+<Equation equationKey="cle-common-methods-screening-eq-12" equation="P_{init}(h) = \frac{1}{N} \sum_{n=1}^{N} \mathbf{1}\bigl[\tau_n(h) > \tau_{c,n}\bigr]" />
 
-where each of the $N$ realizations draws one critical shear stress $\tau_{c,n}$ and one initial pipe diameter $D_n$ and holds them at every pool
-level. Because the same draws are carried across pool levels, the initiation probability does not decrease wherever the gradient rises with pool
+where $N$ is the number of realizations; each realization $n$ draws one critical shear stress $\tau_{c,n}$ and one initial pipe diameter $D_n$
+and holds them at every pool level; $\tau_n(h)$ is the hydraulic shear stress of realization $n$ at pool level $h$, from
+<EquationReference equationKey="cle-common-methods-screening-eq-11" /> with $D = D_n$; and $\mathbf{1}[\cdot]$ is 1 when the condition holds and
+0 otherwise. Because the same draws are carried across pool levels, the initiation probability does not decrease wherever the gradient rises with pool
 level: it rises, or stays flat at 0, at 1, or at a plateau between them. It can fall only where a rising tailwater reduces the net head across the
 pipe faster than the pool raises it.
 
-### Seepage path length
+### Seepage Path Length
 
 Unless the user supplies a seepage path length, the model measures the pipe as a horizontal line at the invert elevation across the embankment
 section — the core section when one is supplied, the shell section otherwise (see
-[Common Input Parameters](./03-input-parameters.mdx#embankment-description)):
+[Input Parameters](./03-input-parameters.mdx#embankment-description)):
 
-<Equation equationKey="cle-common-screening-eq-12" equation="L = W_t + S_{us}(z_f) + S_{ds}(z_f)" />
+<Equation equationKey="cle-common-methods-screening-eq-13" equation="L = W_t + S_{us}(z_f) + S_{ds}(z_f)" />
 
 where $W_t$ is the top width of the section ($W_{t,c}$ for the core, $W_{t,s}$ for the shell) and $S_{us}(z_f)$ and $S_{ds}(z_f)$ are the
 horizontal spans of the upstream and downstream faces from the top of the section down to the invert. Each span is the sum, over the face
@@ -132,10 +133,10 @@ and Hydraulic Shear Stress sections: across the embankment slopes for a homogene
 embankment whose outer zones are very permeable. As the manual recommends, a user-supplied length replaces the derivation for a sloping core or a
 pipe that does not run perpendicular to the embankment centerline; a surveyed path length may be supplied the same way. The length is the same at every pool level.
 
-### Critical shear stress
+### Critical Shear Stress
 
 Left blank, the critical shear stress is a triangular distribution whose low, most likely, and high values are taken from
-<TableReference tableKey="cle-common-screening-table-11" /> for the core soil classification. All four compaction models share this table. The
+<TableReference tableKey="cle-common-methods-screening-table-11" /> for the core soil classification. All four compaction models share this table. The
 toolbox manual's
 [Critical Shear Stress and Initial Pipe Diameter](/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/cylindrical-pipe#critical-shear-stress-and-initial-pipe-diameter)
 section directs the estimation of a site-specific critical shear stress to the
@@ -148,7 +149,7 @@ silty gravel (GM) or clayey gravel (GC); their ranges are engineering-judgment e
 classes.
 
 <TableVertical
-  tableKey="cle-common-screening-table-11"
+  tableKey="cle-common-methods-screening-table-11"
   alt="Default critical shear stress range by soil classification"
   caption="Default critical shear stress range by soil classification (lb/ft²)."
   colAlign={['left', 'left', 'center', 'center', 'center']}
@@ -177,7 +178,7 @@ no entry: the compaction models do not accept them as the core soil classificati
 non-plastic, are accepted.
 
 :::warning[INPUT NEEDED IN-08 — Decision]
-Two entries of <TableReference tableKey="cle-common-screening-table-11" /> do not follow the pascal conversion of the rest of the table: the low
+Two entries of <TableReference tableKey="cle-common-methods-screening-table-11" /> do not follow the pascal conversion of the rest of the table: the low
 value for GM is 0.021 lb/ft² where 1 Pa is 0.02089 lb/ft², and the high value for GC is 0.418 lb/ft² where 20 Pa is 0.4177 lb/ft². State whether
 these two values are intended as printed or should match the converted values used elsewhere in the table. The difference does not change any
 result materially but determines what this table should state.
@@ -200,9 +201,9 @@ the critical shear stress and the initial pipe diameter by triangular distributi
 or replace.
 :::
 
-### Initial pipe diameter
+### Initial Pipe Diameter
 
-Left blank, the initial pipe diameter is a triangular distribution set by the model (<TableReference tableKey="cle-common-screening-table-12" />).
+Left blank, the initial pipe diameter is a triangular distribution set by the model (<TableReference tableKey="cle-common-methods-screening-table-12" />).
 The toolbox manual's
 [Critical Shear Stress and Initial Pipe Diameter](/docs/toolbox-technical-manuals/internal-erosion-suite/concentrated-leak-erosion-initiation/v1.0/cylindrical-pipe#critical-shear-stress-and-initial-pipe-diameter)
 section directs the estimation of an initial opening to the
@@ -212,7 +213,7 @@ the user replaces the default. Each model's range is informed by the guidance of
 its mechanism.
 
 <TableVertical
-  tableKey="cle-common-screening-table-12"
+  tableKey="cle-common-methods-screening-table-12"
   alt="Default initial pipe diameter by compaction model"
   caption="Default initial pipe diameter by compaction model (mm, triangular)."
   colAlign={['left', 'center', 'center', 'center']}
@@ -231,12 +232,12 @@ its mechanism.
 />
 
 :::warning[INPUT NEEDED IN-11 — Engineering Basis]
-The default initial pipe diameter ranges of <TableReference tableKey="cle-common-screening-table-12" /> require an engineering basis, including
+The default initial pipe diameter ranges of <TableReference tableKey="cle-common-methods-screening-table-12" /> require an engineering basis, including
 why the conduit model's range is larger than the core model's, and why the wall or cliff model's range has its most likely value at its low
 value. Provide a literature source or the engineering-judgment attribution to state here.
 :::
 
-### Screening-level adjustments
+### Screening-Level Adjustments
 
 Relative to the toolbox method, the compaction models:
 

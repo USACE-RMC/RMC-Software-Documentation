@@ -8,19 +8,25 @@ admonition in the document.
 
 ## IN-01 — Applicability — `03-input-parameters.mdx`
 
-**Regarding:** The length unit the CLE family is intended to be used in. Several
-mechanism-specific relationships carry dimensional values with no unit conversion (the
-desiccation and frost-cracking crack depths are tabulated in feet; the compaction models band
-the flaw base width at fixed numerical thresholds), only the cross-valley settlement model
-converts its crack-depth relationship between feet and meters, and the shear stress
-relationship uses the unit weight of water in pounds per cubic foot.
+**Regarding:** The unit system the CLE family is intended to be used in. Every model accepts a
+unit system input (US customary by default, or SI), but only the cross-valley settlement model
+converts a relationship with it. The other seven models apply dimensional values with no unit
+conversion: the desiccation model's tabulated crack depths are in feet and are subtracted from
+the crest elevation; the frost-cracking model's crack depths by climate category (6, 4, 2, and
+1 ft) are subtracted from the crest elevation in the same way (about 3.3 times too deep if
+elevations are in meters); and the core compaction and foundation or abutment compaction models
+band the section base width at fixed thresholds (50, 30, and 15) in whatever length unit the
+elevations use. This marker consolidates the unit questions of the desiccation (IN-03),
+frost-cracking (IN-06), core compaction (IN-05, unit part), and foundation or abutment
+compaction (IN-09, unit part) manuals.
 
-**Needed:** The intended unit system for the family, and whether the statement belongs in this
-manual or in each model's manual.
+**Needed:** The intended unit system for the family, the instruction to give a user working in
+SI units, the unit the base-width thresholds assume, and whether the statement belongs in this
+manual only or in each model's manual as well.
 
 **Proposed (unconfirmed):** The family is intended for US customary units (elevations and
-lengths in feet); a user working in SI units converts before running any model other than the
-cross-valley settlement model.
+lengths in feet); a user working in SI units converts the elevations and lengths to feet before
+running any model other than the cross-valley settlement model.
 
 **Answer:**
 
@@ -113,9 +119,9 @@ rises above the bottom of an open crest crack (0 at or below it). The model reco
 different attributions: a conservative screening convention that is not an explicit finding of
 Pierson (2023), and an attribution of the certain initiation to Pierson (2023).
 
-**Needed:** Which attribution is intended. If Pierson (2023) is to be cited, its full
-bibliographic details (authors, title, publisher or journal, report number) for the
-bibliography.
+**Needed:** Which attribution is intended. Pierson (2023) has no recorded bibliographic
+details: the full reference — authors, year, title, journal or publisher, and report number —
+so that it can be added to the bibliography and cited here.
 
 **Proposed (unconfirmed):** An open transverse crack at the crest is wide enough that the shear
 stress of any flow through it exceeds the critical shear stress of the crack walls, so
