@@ -53,7 +53,7 @@ intended. If it is not, the model owner should review the erosion-phase equation
 
 ## Hydrograph
 
-4. **Overtopping duration scales with depth from a single reference depth.** The user gives one duration at 0.5 ft (0.15 m), and the model scales it to
+4. **Overtopping duration scales with depth from a single reference depth.** One duration is entered at 0.5 ft (0.15 m), and the model scales it to
    other depths with a fixed exponent of 1/1.8 ([Chapter 4](./04-hydrograph-generation.mdx)).
    - *Engineering basis:* See IN-10 in [Chapter 4](./04-hydrograph-generation.mdx).
    - *Effect on results:* The base duration sets the exposure time at every depth; durations that are too long raise the breach probability and
@@ -75,24 +75,26 @@ intended. If it is not, the model owner should review the erosion-phase equation
 
 ## Materials and Erosion Rate
 
-7. **Material properties come from the erodibility classification unless the user supplies distributions.** The default erodibility coefficient and
-   critical shear stress follow PERT distributions, and the roughness coefficient a Uniform distribution, for the selected classification ([Chapter 3](./03-input-parameters.mdx)).
+7. **Material properties come from the erodibility classification unless site-specific distributions are supplied.** The default erodibility coefficient and
+   critical shear stress follow PERT distributions, and the roughness coefficient a Uniform distribution, for the classification entered ([Chapter 3](./03-input-parameters.mdx)).
    - *Engineering basis:* The soil-type categories and the erodibility coefficient and critical shear stress ranges follow published erodibility
-     charts and soil testing <Citation citationKey="Briaud2019" /> <Citation citationKey="Hanson2011" /> <Citation citationKey="Wibowo2018" />; the
+     charts and soil testing (Briaud et al., 2019; Hanson et al., 2011; Wibowo and Robbins, 2018) <Citation citationKey="Briaud2019" />
+     <Citation citationKey="Hanson2011" /> <Citation citationKey="Wibowo2018" />; the
      roughness ranges are pending (IN-03 in [Chapter 3](./03-input-parameters.mdx)).
    - *Effect on results:* The default distributions span the range of behavior within each category, so the results reflect that whole range rather
      than the site's material.
-   - *When it may not hold:* Sites where jet erosion tests or hole erosion tests <Citation citationKey="Wahl2008" /> give properties that differ
+   - *When it may not hold:* Sites where jet erosion tests or hole erosion tests (Wahl et al., 2008) <Citation citationKey="Wahl2008" /> give properties that differ
      significantly from the category defaults; such results can be supplied as site-specific distributions.
 8. **The erosion rate is linear in the excess shear stress.** The default erosion exponent is 1.0 ([Chapter 5](./05-erosion-model.mdx)).
-   - *Engineering basis:* The linear excess shear stress equation is the standard formulation in the WinDAM C model framework (USDA
-     NRCS) <Citation citationKey="Hanson2011" />.
+   - *Engineering basis:* The linear excess shear stress equation is the standard formulation in the WinDAM C model framework of the
+     USDA NRCS (Hanson et al., 2011) <Citation citationKey="Hanson2011" />.
    - *Effect on results:* With a linear relationship, the erosion rate grows in direct proportion to the shear stress in excess of the critical
      shear stress.
-   - *When it may not hold:* Soils whose tested erosion rate does not grow linearly with the excess shear stress; the user can change the exponent,
+   - *When it may not hold:* Soils whose tested erosion rate does not grow linearly with the excess shear stress; the exponent can be changed,
      but the erodibility coefficient distributions must then be consistent with that exponent, because the default $k_d$ ranges and their units assume
      $\alpha = 1$ ([Chapter 3](./03-input-parameters.mdx)).
-9. **Grass cover is the only protection modeled.** The model represents grass cover removal by the CIRIA-based method <Citation citationKey="Hughes2015" /> <Citation citationKey="Thornton2014" />,
+9. **Grass cover is the only protection modeled.** The model represents grass cover removal by the CIRIA-based method (Hughes and Thornton, 2015; Thornton et al., 2014)
+   <Citation citationKey="Hughes2015" /> <Citation citationKey="Thornton2014" />,
    but not riprap stability or removal, or other armoring.
    - *Engineering basis:* Engineering judgment adopted for screening-level use (attribution pending, IN-16).
    - *Effect on results:* The protective effect of riprap or other armoring, which can delay or prevent erosion at significant overtopping depths, is
@@ -145,20 +147,20 @@ plausible for the reservoir and adjust the base duration if they are not.
 The uniform erosion assumption (Assumption 2) is a fundamental simplification. Overtopping erosion of an embankment proceeds by two primary
 processes (Hanson et al., 2005) <Citation citationKey="Hanson2005" />. In progressive surface erosion, soil particles are removed and transported along
 the downstream face, typically forming a broad, flattening zone that advances upstream and may ultimately breach the crest
-(<FigReference figKey="overtopping-screening-fig-breach-cohesionless" />). In headcut erosion, a localized overfall, or headcut, forms on the
+(<FigReference figKey="overtopping-erosion-screening-fig-1" />). In headcut erosion, a localized overfall, or headcut, forms on the
 downstream face and migrates upstream, and it can deepen rapidly and advance toward the crest
-(<FigReference figKey="overtopping-screening-fig-breach-cohesive" />). Both breach sequences are from the Natural Resources Conservation Service
+(<FigReference figKey="overtopping-erosion-screening-fig-2" />). Both breach sequences are from the Natural Resources Conservation Service
 (NRCS, 2011) <Citation citationKey="NRCS2011" />.
 
 <Figure
-  figKey="overtopping-screening-fig-breach-cohesionless"
+  figKey="overtopping-erosion-screening-fig-1"
   src="/figures/web-applications/system-response/overtopping-erosion-screening/v1.0/figures/overtopping-breach-cohesionless-surface-erosion.png"
   alt="Embankment cross section with numbered successive erosion surfaces 1 through 7 that flatten the downstream face and advance upstream through the crest."
   caption="Overtopping erosion and breaching of a cohesionless soil embankment by progressive surface erosion (NRCS, 2011)."
 />
 
 <Figure
-  figKey="overtopping-screening-fig-breach-cohesive"
+  figKey="overtopping-erosion-screening-fig-2"
   src="/figures/web-applications/system-response/overtopping-erosion-screening/v1.0/figures/overtopping-breach-cohesive-headcut-erosion.png"
   alt="Embankment cross section with numbered successive near-vertical headcut faces 1 through 7 that migrate upstream from the downstream toe through the crest."
   caption="Overtopping erosion and breaching of a cohesive soil embankment by headcut erosion (NRCS, 2011)."
@@ -182,7 +184,7 @@ Provide the report or study that documents the comparison (author, title, year, 
 closely the screening curves matched.
 :::
 
-## Scope Exclusions
+## Limitations
 
 The following are outside the scope of the screening model:
 

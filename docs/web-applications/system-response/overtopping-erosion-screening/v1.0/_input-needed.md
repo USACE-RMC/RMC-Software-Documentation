@@ -87,13 +87,13 @@ Note (Oct 2025 methodology document): The document calls the reference duration 
 
 ## IN-06 — Engineering Basis — `03-input-parameters.mdx`
 
-**Regarding:** Default broad-crested weir coefficient Cd = 3.0 (US Customary units). The weir
+**Regarding:** Default broad-crested weir coefficient Cd = 3.0 (US customary units). The weir
 equation is cited to Fell et al. (2015); the coefficient value is not.
 
 **Needed:** Source or engineering-judgment attribution for the coefficient value.
 
 **Proposed (unconfirmed):** A typical broad-crested weir coefficient for flow over an embankment
-crest in US Customary units.
+crest in US customary units.
 
 **Answer:**
 
@@ -277,13 +277,13 @@ name, the default of 0.015 (IN-07) and the equations agree.
 ## IN-19 — Definition — `05-erosion-model.mdx`
 
 **Regarding:** The erosional limit G_f, tabulated as lb·s/ft³. Those units do not combine with f and
-g (m/s²) to give a volume per unit crest length for VET_c. As evaluated, the US Customary result
+g (m/s²) to give a volume per unit crest length for VET_c. As evaluated, the US customary result
 (tabulated G_f, result divided by 0.3048²) and the SI result (G_f multiplied by 0.3048, no further
 conversion) differ by 1/0.3048³, whereas a m²-to-ft² conversion requires 1/0.3048². The model owner
 should check whether both unit systems give the same grass cover threshold.
 
 **Needed:** The physical quantity G_f represents (with reference to Hughes and Thornton, 2015), its
-consistent units, and confirmation of the US Customary and SI conversions.
+consistent units, and confirmation of the US customary and SI conversions.
 
 **Answer:**
 
@@ -303,7 +303,7 @@ Note (Oct 2025 methodology document): The document describes G_F only as the "er
 
 ## IN-21 — Engineering Basis — `03-input-parameters.mdx`
 
-**Regarding:** The default overtopping depth range of 0.0 to 5.0 (ft in US Customary units; the
+**Regarding:** The default overtopping depth range of 0.0 to 5.0 (ft in US customary units; the
 5.0 is not converted when SI is selected). The previous edition said only that it "covers most
 screening scenarios."
 
