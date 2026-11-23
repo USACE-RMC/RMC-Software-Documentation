@@ -1,0 +1,216 @@
+---
+title: Event Tree
+---
+
+import DocLink from '@site/src/components/DocLink';
+import EquationReference from '@site/src/components/EquationReference';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+
+<NavContainer link="/web-applications/system-response" linkTitle="System Response Library" document="web-applications/system-response/cle-cross-valley-settlement-screening" />
+
+# Event Tree
+
+The model evaluates the eight-node event tree shared by the concentrated leak erosion (CLE) screening models at each pool level and multiplies
+the node probabilities to give the system response probability (SRP). The tree, its node questions, and the reasons for its structure are
+documented in the
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="event-tree">Event Tree</DocLink>
+chapter of the CLE Common Methods manual. This chapter states how each node is populated for cross-valley settlement. Every node follows the
+common treatment of the crest-crack models; the model adds no node and changes no node rule. A measured crack depth, when entered, changes only
+how the flaw assessment sets the bottom of the crack (see [Measured Crack Depth](./04-flaw-assessment.mdx#measured-crack-depth)).
+
+## Node Summary
+
+<TableReference tableKey="cle-cross-valley-settlement-screening-table-14" /> lists the eight nodes, the probability each contributes, whether it
+varies with the pool level, and where its method is documented.
+
+<TableVertical
+  tableKey="cle-cross-valley-settlement-screening-table-14"
+  widthMode="auto"
+  alt="Event-tree nodes of the cross-valley settlement model"
+  caption="Event-tree nodes of the cross-valley settlement model."
+  colAlign={['center', 'left', 'center', 'center', 'left']}
+  headers={[[{ value: 'Node' }, { value: 'Event' }, { value: 'Probability' }, { value: 'Pool-Dependent?' }, { value: 'Source' }]]}
+  columns={[
+    ['1', '2', '3', '4', '5', '6', '7', '8'],
+    [
+      'Flaw',
+      'Initiation',
+      'Continuation',
+      'Progression — Roof Support',
+      'Progression — No Crack Filling',
+      'Progression — No Flow Limitation',
+      'Unsuccessful Intervention',
+      'Breach',
+    ],
+    [
+      '<i>P</i><sub>flaw</sub>',
+      '<i>P</i><sub>init</sub>(<i>h</i>)',
+      '<i>P</i><sub>cont</sub>(<i>h</i>)',
+      '<i>P</i><sub>roof</sub>(<i>h</i>)',
+      '<i>P</i><sub>nf</sub>',
+      '<i>P</i><sub>nl</sub>(<i>h</i>)',
+      '<i>P</i><sub>int</sub>',
+      '<i>P</i><sub>br</sub>',
+    ],
+    ['No', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'No', 'No'],
+    [
+      'Flaw assessment of this manual: settlement-based flaw probability, or 1.0 when cracking is observed',
+      'CLE Common Methods: headwater gate at the bottom of the crack',
+      'CLE Common Methods: crest-crack pathway convention, with the continuation method at or below the filter top',
+      'CLE Common Methods: minimum over the below-filter or full-pathway materials',
+      'CLE Common Methods: by embankment type',
+      'CLE Common Methods: facing element times the governing wall, with walls only at or below their top',
+      'Input (default 1.0)',
+      'Input (default 1.0)',
+    ],
+  ]}
+/>
+
+## Node 1: Flaw
+
+*Question:* Does a continuous transverse crack caused by cross-valley differential settlement exist through the embankment?
+
+$P_{flaw}$ is the result of the flaw assessment, $P_{raw}$ from the localized tensile strain or 1.0 when continuous transverse cracking has
+been observed, whether or not its depth was measured (see [Flaw Assessment](./04-flaw-assessment.mdx#flaw-probability)). It is the same at every
+pool level.
+
+## Node 2: Initiation
+
+*Question:* Is the hydraulic shear stress on the walls of the crack large enough to initiate concentrated leak erosion?
+
+The model applies the headwater gate of the crest-crack models (<EquationReference doc="web-applications/system-response/cle-common-methods-screening" page="initiation" equationKey="cle-common-methods-screening-eq-8" fallback="Equation 8" /> in the
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="initiation" anchor="crest-crack-models-headwater-gate">Crest-Crack Models: Headwater Gate</DocLink>
+section of the CLE Common Methods manual) at the bottom-of-crack elevation $z_{bc}$ from the flaw assessment. Tailwater takes no part. Because
+$z_{bc}$ is the crest elevation less the crack depth, the crack depth sets the pool level at which the SRP rises from negligible. When a measured
+crack depth is entered, $z_{bc}$ is the crest elevation less the measured depth (see
+[Measured Crack Depth](./04-flaw-assessment.mdx#measured-crack-depth)), and the gate is otherwise unchanged. Otherwise the settlement and
+abutment inputs set the crack depth: between strains of 0.0005 and 0.025 (0.05 and 2.5 percent), a larger strain gives a wider and deeper crack
+and so a lower pool level at which the SRP rises; at or below 0.0005 the crack width is negligible and the bottom of the crack stays at the crest;
+above 0.025 the crack width holds at 75 mm, and the crack depth and that pool level no longer change (see
+[Crack Width](./04-flaw-assessment.mdx#crack-width)).
+
+## Node 3: Continuation
+
+*Question:* Does an unfiltered seepage exit exist that allows erosion to continue?
+
+Continuation follows the crest-crack pathway convention (<EquationReference doc="web-applications/system-response/cle-common-methods-screening" page="failure-pathway-and-progression" equationKey="cle-common-methods-screening-eq-14" fallback="Equation 14" /> in the
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="failure-pathway-and-progression" anchor="node-3-continuation">Node 3: Continuation</DocLink>
+section of the CLE Common Methods manual). Where a filter intersects the pathway along the crack, the node takes the probability of continuing erosion
+$P_{ce}$, the node result of the Continuation (Filter Evaluation) Screening model (written $P_{cont}$ in that manual; see its
+<DocLink doc="web-applications/system-response/continuation-screening" page="output-and-interpretation" anchor="node-result">Node Result</DocLink>
+section), evaluated from the filter and base-soil description (see
+<DocLink doc="web-applications/system-response/continuation-screening" page="method-selection-and-governing-base-soil">Method Selection and Governing Base Soil</DocLink>
+in the Continuation (Filter Evaluation) Screening manual). It applies at pool levels at or below the top-of-filter elevation $z_{tf}$, and at
+every pool level when the filter caps the pathway; above the filter's top, and at every pool level when no filter intersects the pathway,
+continuation is 1.0.
+
+## Node 4: Progression — Roof Support
+
+*Question:* Does a continuous stable roof form over the enlarging pipe, so that it stays open?
+
+Roof support is the minimum roof-support probability over the below-filter materials at pool levels at or below $z_{tf}$, and over the
+full-pathway materials above it or with no filter (see
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="failure-pathway-and-progression" anchor="node-4-progression--roof-support">Node 4: Progression — Roof Support</DocLink>
+in the CLE Common Methods manual). The below-filter materials are those on the pathway from the upstream face to the filter at the
+bottom-of-crack elevation computed in [Flaw Assessment](./04-flaw-assessment.mdx#bottom-of-crack-elevation), or set by a
+measured crack depth (see [Measured Crack Depth](./04-flaw-assessment.mdx#measured-crack-depth)).
+
+## Node 5: Progression — No Crack Filling
+
+*Question:* Does the enlarging pipe remain unfilled, rather than being filled and healed by material carried in from upstream?
+
+The probability of no crack filling is set by the embankment type and is the same at every pool level (see
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="failure-pathway-and-progression" anchor="node-5-progression--no-crack-filling">Node 5: Progression — No Crack Filling</DocLink>
+in the CLE Common Methods manual).
+
+## Node 6: Progression — No Flow Limitation
+
+*Question:* Does the flow into the enlarging pipe remain unrestricted by upstream seepage-limiting elements?
+
+The probability of no flow limitation is the probability of the upstream facing element times that of the governing wall, the most effective of
+the walls listed; an element that is absent contributes 1.0. When a top-of-wall elevation $z_{tw}$ is given, the walls apply only at pool levels
+at or below it, and only the upstream facing element applies above it (see
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="failure-pathway-and-progression" anchor="walls-that-stop-below-the-crest">Walls That Stop Below the Crest</DocLink>
+in the CLE Common Methods manual).
+
+## Nodes 7 and 8: Unsuccessful Intervention and Breach
+
+*Questions:* Do detection and intervention fail (Node 7)? Does an uncontrolled release of impounded water occur (Node 8)?
+
+Both nodes are the shared intervention and breach inputs, documented with their defaults in the
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="event-tree" anchor="nodes-7-and-8-unsuccessful-intervention-and-breach">Nodes 7 and 8</DocLink>
+section of the CLE Common Methods manual. The model applies them without change.
+
+## SRP Computation
+
+The SRP at each headwater (pool) elevation $h$ is the product of the eight node probabilities, by <EquationReference doc="web-applications/system-response/cle-common-methods-screening" page="event-tree" equationKey="cle-common-methods-screening-eq-1" fallback="Equation 1" /> in the
+<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="event-tree" anchor="srp-computation">SRP Computation</DocLink>
+section of the CLE Common Methods manual. The headwater elevation $h$ is not to be confused with the abutment step height $h_1$. In this model
+$P_{init}$, $P_{cont}$, $P_{roof}$, and $P_{nl}$ vary with $h$, and the other nodes are the same at every pool level.
+
+Where the product is zero — for example at and below the bottom of the crack, or wherever an intervention or breach probability or the
+continuation probability is zero — the SRP is reported as a negligibly small value. The tree is evaluated on the headwater grid of the CLE Common Methods manual
+(<DocLink doc="web-applications/system-response/cle-common-methods-screening" page="event-tree" anchor="headwater-grid">Headwater Grid</DocLink>):
+every supplied headwater value and additional levels between them. The bottom of the crack is not inserted into the grid, so the rise of the
+curve is located to within one grid interval; supplying headwater values at $z_{bc}$ and just above it places the rise exactly.
+
+## Elevations Where the Curve Changes
+
+Three elevations decide where the curve can change: the bottom of the crack $z_{bc}$, the top of the filter $z_{tf}$, and the top of a wall
+$z_{tw}$. Because initiation is zero at and below $z_{bc}$, a filter or wall top matters only where it lies above the bottom of the crack:
+
+- **A filter top at or below $z_{bc}$** — unless the filter caps the pathway, every pool level at which initiation is non-zero is above the
+  filter's top, so continuation is 1.0 and the full-pathway roof materials govern there. The filter then has no effect on the SRP.
+- **A filter top above $z_{bc}$** — between $z_{bc}$ and $z_{tf}$ the below-filter pathway governs, with continuation $P_{ce}$; above $z_{tf}$ the
+  full pathway governs. The curve can jump up or down at $z_{tf}$, depending on $P_{ce}$ and the two roof-support minimums (see
+  <DocLink doc="web-applications/system-response/cle-common-methods-screening" page="failure-pathway-and-progression" anchor="node-3-continuation">Node 3: Continuation</DocLink>
+  in the CLE Common Methods manual).
+- **A wall top at or below $z_{bc}$** — the walls never apply at a pool level where initiation is non-zero, so only the upstream facing element,
+  if present, limits flow.
+- **A wall top above $z_{bc}$** — between $z_{bc}$ and $z_{tw}$ the governing wall multiplies the upstream facing element's probability, if a
+  facing element is present; above $z_{tw}$ the wall credit drops out and only the upstream facing element, if present, limits flow. The curve
+  rises at $z_{tw}$ by the inverse of the governing wall's probability.
+
+Because the crack depth comes from the flaw assessment, a change in the settlement or abutment inputs, or in a measured crack depth, can move
+$z_{bc}$ across a filter or wall top and so change which of these cases applies.
+
+## Worked Example
+
+The dam of the flaw-assessment [worked example](./04-flaw-assessment.mdx#worked-example) has a flaw probability of 0.00614 and a bottom of the
+crack at elevation 240.0 ft. Take it as a homogeneous earthfill embankment of silty sand (SM) with no filter on the pathway, no upstream
+seepage-limiting element, and the default intervention and breach probabilities
+(<TableReference tableKey="cle-cross-valley-settlement-screening-table-15" />).
+
+<TableVertical
+  tableKey="cle-cross-valley-settlement-screening-table-15"
+  alt="Worked example of the event tree"
+  caption="Worked example of the event tree, for pools above and at or below the bottom of the crack."
+  colAlign={['left', 'center', 'center']}
+  headers={[[{ value: 'Node' }, { value: 'Pool Above 240.0 ft' }, { value: 'Pool At or Below 240.0 ft' }]]}
+  columns={[
+    [
+      'Flaw',
+      'Initiation',
+      'Continuation (no filter)',
+      'Roof support (SM)',
+      'No crack filling (homogeneous earthfill)',
+      'No flow limitation (no element)',
+      'Unsuccessful intervention',
+      'Breach',
+      'SRP',
+    ],
+    ['0.00614', '1.0', '1.0', '0.85', '1.0', '1.0', '1.0', '1.0', '0.00522'],
+    ['0.00614', '0', '1.0', '0.85', '1.0', '1.0', '1.0', '1.0', 'Negligible'],
+  ]}
+/>
+
+The system response curve is negligible up to elevation 240.0 ft and constant at 0.00522 above it. Adding a modern cutoff wall that reaches the
+crest would multiply the SRP above the bottom of the crack by its probability of no flow limitation, 0.001, giving $5.2 \times 10^{-6}$. An
+upstream facing element and a sheet pile wall whose top is at elevation 240 ft, each with a probability of no flow limitation of 0.5, would give a
+flow-limitation probability of $0.5 \times 0.5 = 0.25$ at pool levels at or below 240 ft and 0.5 above it; because the wall's top is at the
+bottom of the crack, only the facing element applies where initiation is possible, and the SRP above 240.0 ft would be 0.00261. An
+observation of continuous transverse cracking would raise the flaw probability to 1.0 and the SRP above the bottom of the crack to 0.85. If the
+observed crack were also measured at 12.5 ft deep, the bottom of the crack would move up to elevation 252.5 ft (see the
+[flaw-assessment worked example](./04-flaw-assessment.mdx#worked-example)): the curve would be negligible up to 252.5 ft and 0.85 above it.
