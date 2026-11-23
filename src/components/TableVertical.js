@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useReportId } from '../contexts/ReportIdContext';
 import '../css/custom.css';
 import '../css/tables.css';
+import { severityLevel } from './SeverityChip';
 import { autoColumnMins, buildWidthVars, widthModeVars } from './tableLayout';
 
 const TableVertical = ({
@@ -20,6 +21,7 @@ const TableVertical = ({
   widthMode = 'full', // "full" | "intrinsic" | "auto"
   minWidth, // optional table minimum width before it scrolls (number => px)
   footnotes, // Array<string | React.ReactNode>
+  colFormat, // e.g. ['severity', 'message'] — optional per-column cell styling for app message tables
   id,
 }) => {
   const [tableInfo, setTableInfo] = useState(null);
@@ -50,6 +52,17 @@ const TableVertical = ({
   }, [reportId, tableKey, countersBase]);
 
   const renderHTML = (content) => ({ __html: content });
+
+  // Optional per-column formatting of plain-string cells.
+  //   'severity' -> colored chip (Error, Warning, Required input, ...)
+  //   'message'  -> literal app text in a monospace style
+  const formatCell = (raw, colIndex) => {
+    const fmt = Array.isArray(colFormat) ? colFormat[colIndex] : undefined;
+    if (!fmt || typeof raw !== 'string' || raw.trim() === '') return raw;
+    if (fmt === 'severity') return `<span class="ui-severity ui-severity--${severityLevel(raw.replace(/<[^>]*>/g, ''))}">${raw}</span>`;
+    if (fmt === 'message') return `<span class="ui-message">${raw}</span>`;
+    return raw;
+  };
 
   const colCount = columns?.length ?? 0;
   const rowCount = colCount > 0 ? (columns[0]?.length ?? 0) : 0;
@@ -141,7 +154,7 @@ const TableVertical = ({
                   const cellKey = `${colIndex}-${rowIndex}`;
                   if (skipBodyCells.has(cellKey)) return null;
 
-                  const raw = col?.[rowIndex];
+                  const raw = formatCell(col?.[rowIndex], colIndex);
 
                   if (raw && typeof raw === 'object' && 'value' in raw) {
                     const { value, rowSpan = 1, colSpan = 1 } = raw;
