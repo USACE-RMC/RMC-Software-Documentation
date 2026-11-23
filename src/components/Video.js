@@ -1,6 +1,8 @@
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import useBrokenLinks from '@docusaurus/useBrokenLinks';
 import { useEffect, useRef, useState } from 'react';
 import { useReportId } from '../contexts/ReportIdContext';
+import imageDimensions from '../imageDimensions';
 import '../css/custom.css';
 
 const Video = ({
@@ -10,6 +12,7 @@ const Video = ({
   src, // optional single source
   sources = [], // optional [{ src, type }]
   width = '80%',
+  maxHeight = '75vh', // tallest the player may be; portrait and square clips shrink to fit
   id,
   controls, // Show/hide browser video controls, default: true (on)
   autoPlay, // Auto-start when scrolled into view (muted); paused when scrolled away. Honors prefers-reduced-motion. Default: off
@@ -30,7 +33,35 @@ const Video = ({
 
   const figureId = id || videoKey;
 
+  // Register the anchor so Docusaurus's broken-anchor check (and VideoReference links) can see it.
+  useBrokenLinks().collectAnchor(figureId);
+
   const resolveAsset = (p) => (p ? `${assetsBase}${String(p).replace(/^\//, '')}` : undefined);
+  const stripSlash = (p) => String(p || '').replace(/^\//, '');
+
+  // Poster: an explicit `poster` prop wins. Otherwise use "<clip>-poster.jpg" (or .png) next to the
+  // clip when it exists (npm run video-posters creates these). The image-dimensions manifest lists
+  // every image under static/figures and static/videos, so it doubles as the existence check.
+  const primarySrc = src || sources[0]?.src;
+  const autoPoster = (() => {
+    if (poster || !primarySrc) return undefined;
+    const base = stripSlash(primarySrc).replace(/\.[^./]+$/, '');
+    return [`${base}-poster.jpg`, `${base}-poster.png`].find((p) => imageDimensions[p]);
+  })();
+  const posterPath = poster || autoPoster;
+  const posterDims = posterPath ? imageDimensions[stripSlash(posterPath)] : undefined;
+
+  // With no poster, ask the browser for the frame at 0.1 s so the box is not blank.
+  const withFrame = (p) => (posterPath || !p || String(p).includes('#') ? p : `${p}#t=0.1`);
+
+  // Size: when the poster's size is known, the player keeps the clip's aspect ratio and is limited
+  // by width, by maxHeight, and by the clip's own pixel width, so it never stretches or letterboxes.
+  const widthCss = typeof width === 'number' ? `${width}px` : width;
+  const maxHeightCss = typeof maxHeight === 'number' ? `${maxHeight}px` : maxHeight;
+  const ratio = posterDims ? posterDims.width / posterDims.height : null;
+  const sizeStyle = ratio
+    ? { width: `min(100%, ${widthCss}, ${posterDims.width}px, calc(${maxHeightCss} * ${ratio.toFixed(4)}))`, aspectRatio: `${posterDims.width} / ${posterDims.height}` }
+    : { maxWidth: widthCss, maxHeight: maxHeightCss };
 
   const resolvedAutoPlay = autoPlay ?? false;
   const resolvedLoop = loop ?? false;
@@ -101,8 +132,6 @@ const Video = ({
     return () => observer.disconnect();
   }, [resolvedAutoPlay, videoInfo]);
 
-  if (!videoInfo) return <span>Loading...</span>;
-
   return (
     <figure
       id={figureId}
@@ -111,8 +140,8 @@ const Video = ({
       <video
         ref={videoRef}
         className="block h-auto"
-        style={{ maxWidth: width }}
-        poster={resolveAsset(poster)}
+        style={sizeStyle}
+        poster={resolveAsset(posterPath)}
         autoPlay={false} // playback is managed by the IntersectionObserver above
         loop={resolvedLoop}
         controls={resolvedControls}
@@ -122,9 +151,9 @@ const Video = ({
       >
         {sources.length > 0
           ? sources.map((s, i) => (
-              <source key={i} src={resolveAsset(s.src)} type={s.type} />
+              <source key={i} src={withFrame(resolveAsset(s.src))} type={s.type} />
             ))
-          : src && <source src={resolveAsset(src)} />}
+          : src && <source src={withFrame(resolveAsset(src))} />}
         {trackSrc && (
           <track
             src={resolveAsset(trackSrc)}
@@ -138,7 +167,7 @@ const Video = ({
       </video>
 
       <figcaption className="mt-[1em] max-w-full text-left font-usace text-caption italic text-gray-500 dark:text-gray-400">
-        Video {videoInfo.videoNumber}: {caption}
+        {videoInfo ? `Video ${videoInfo.videoNumber}` : 'Video'}: {caption}
         {credit ? (
           <span className="block not-italic text-gray-500 dark:text-gray-400">{credit}</span>
         ) : null}
