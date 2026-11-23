@@ -1,6 +1,6 @@
 import { useLocation } from '@docusaurus/router';
 import useBrokenLinks from '@docusaurus/useBrokenLinks';
-import { useEffect, useId, useMemo, useState } from 'react';
+import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 /**
  * CollectionList
@@ -222,21 +222,14 @@ export default function CollectionList({
                   )}
 
                   {hasDetails && (
-                    <div
-                      id={panelId}
-                      role="region"
-                      aria-labelledby={headerId}
-                      className={`overflow-hidden transition-[max-height] duration-300 ease-in-out ${
-                        isOpen ? 'max-h-[9999px]' : 'max-h-0'
-                      }`}
-                    >
+                    <CollapsePanel id={panelId} labelledBy={headerId} isOpen={isOpen}>
                       <div
                         className={panelClass}
                         style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
                       >
                         {renderChild(it)}
                       </div>
-                    </div>
+                    </CollapsePanel>
                   )}
                 </div>
               </div>
@@ -301,21 +294,14 @@ export default function CollectionList({
                   )}
 
                   {hasDetails && (
-                    <div
-                      id={panelId}
-                      role="region"
-                      aria-labelledby={headerId}
-                      className={`overflow-hidden transition-[max-height] duration-300 ease-in-out ${
-                        isOpen ? 'max-h-[9999px]' : 'max-h-0'
-                      }`}
-                    >
+                    <CollapsePanel id={panelId} labelledBy={headerId} isOpen={isOpen}>
                       <div
                         className={panelClass}
                         style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
                       >
                         {renderChild(it)}
                       </div>
-                    </div>
+                    </CollapsePanel>
                   )}
                 </div>
               </li>
@@ -328,6 +314,62 @@ export default function CollectionList({
 }
 
 /* UI bits */
+const PANEL_MS = 300;
+const useIsoLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
+// Expandable body. At rest it is height 0 (closed) or auto (open) from its class, so the
+// server-rendered page is right without JavaScript. On a toggle it animates its real height
+// from where it is now to the new target, then returns to the resting class. A closed panel is
+// hidden so its links are not tabbable. Reduced motion skips the animation.
+function CollapsePanel({ id, labelledBy, isOpen, children }) {
+  const ref = useRef(null);
+  const mounted = useRef(false);
+  const timer = useRef(null);
+
+  useIsoLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
+    clearTimeout(timer.current);
+    const reset = () => {
+      el.style.transition = '';
+      el.style.height = '';
+      el.style.visibility = '';
+    };
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      reset();
+      return;
+    }
+    // Start from the current height, even mid-animation, so a quick re-toggle reverses smoothly.
+    const from = el.style.height ? el.getBoundingClientRect().height : isOpen ? 0 : el.scrollHeight;
+    const to = isOpen ? el.scrollHeight : 0;
+    el.style.transition = 'none';
+    el.style.height = `${from}px`;
+    el.style.visibility = 'visible';
+    void el.offsetHeight; // commit the start height before transitioning
+    el.style.transition = `height ${PANEL_MS}ms ease-in-out`;
+    el.style.height = `${to}px`;
+    timer.current = setTimeout(reset, PANEL_MS + 20);
+  }, [isOpen]);
+
+  useEffect(() => () => clearTimeout(timer.current), []);
+
+  return (
+    <div
+      ref={ref}
+      id={id}
+      role="region"
+      aria-labelledby={labelledBy}
+      className={`collection-panel${isOpen ? ' collection-panel--open' : ''}`}
+    >
+      {children}
+    </div>
+  );
+}
+
 function Badge({ className, label }) {
   return (
     <span
@@ -342,7 +384,7 @@ function Badge({ className, label }) {
 function Chevron({ isOpen, className = 'text-ifm-primary' }) {
   return (
     <svg
-      className={`ml-1 h-5 w-5 shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : 'rotate-0'} ${className}`}
+      className={`ml-1 h-5 w-5 shrink-0 transition-transform duration-300 ease-in-out motion-reduce:transition-none ${isOpen ? 'rotate-180' : 'rotate-0'} ${className}`}
       viewBox="0 0 20 20"
       fill="currentColor"
       aria-hidden="true"

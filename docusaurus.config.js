@@ -73,6 +73,7 @@ export default {
     normalizeDriveLetter(require.resolve('./src/clientModules/analyticsEvents.js')),
     normalizeDriveLetter(require.resolve('./src/clientModules/scrollToAnchor.js')),
     normalizeDriveLetter(require.resolve('./src/clientModules/tableScrollCue.js')),
+    normalizeDriveLetter(require.resolve('./src/clientModules/tooltip.js')),
   ],
 
   presets: [
