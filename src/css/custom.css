@@ -898,3 +898,163 @@ figure + .table-container,
   white-space: nowrap;
   border: 0;
 }
+
+/* ── Figure click-to-enlarge (src/components/ZoomableImage.js) ── */
+.figure-zoom-dialog {
+  max-width: 100vw;
+  max-height: 100vh;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 2.5rem 1rem 1rem;
+  border: 0;
+  background: transparent;
+  display: none;
+  cursor: zoom-out;
+}
+.figure-zoom-dialog[open] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+.figure-zoom-dialog::backdrop {
+  background: rgb(0 0 0 / 0.85);
+}
+.figure-zoom-img {
+  max-width: 100%;
+  max-height: calc(100vh - 6rem);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  background: #fff;
+}
+.figure-zoom-caption {
+  @apply max-w-[90ch] text-center font-usace text-caption italic text-gray-200;
+}
+.figure-zoom-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 1rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0;
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 0.15);
+  color: #fff;
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.figure-zoom-close:hover,
+.figure-zoom-close:focus-visible {
+  background: rgb(255 255 255 / 0.3);
+}
+
+/* ── App message styles (SeverityChip, TableVertical colFormat) ── */
+.ui-severity {
+  @apply inline-block whitespace-nowrap rounded-full border px-2 py-px font-usace text-[0.8em] font-semibold leading-[1.5];
+}
+.ui-severity--error {
+  @apply border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200;
+}
+.ui-severity--required {
+  @apply border-red-300 bg-transparent text-red-800 dark:border-red-700 dark:text-red-200;
+}
+.ui-severity--warning {
+  @apply border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-200;
+}
+.ui-severity--info {
+  @apply border-sky-200 bg-sky-50 text-sky-900 dark:border-sky-700 dark:bg-sky-950 dark:text-sky-200;
+}
+/* Exact text the app shows (a message, a label value), so readers can match it to the screen. */
+.ui-message {
+  @apply rounded bg-black/5 px-1 font-mono text-[0.88em] dark:bg-white/10;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.figure-zoom-frame {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  cursor: default;
+}
+.figure-zoom-frame .figure-zoom-img {
+  display: block;
+}
+
+/* ── AnnotatedFigure (src/components/AnnotatedFigure.js) ── */
+.callout-frame {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  line-height: 0;
+}
+.callout-marker {
+  position: absolute;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  transform: translate(-50%, -50%);
+  border: 2px solid #fff;
+  border-radius: 9999px;
+  background: #1f3b57;
+  color: #fff;
+  font: 700 12px/1 var(--ifm-font-family-base);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.45);
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    background-color 0.12s ease;
+}
+.callout-marker.is-active,
+.callout-marker:focus-visible {
+  transform: translate(-50%, -50%) scale(1.3);
+  background: var(--ifm-color-primary);
+  outline: 3px solid #f59e0b;
+  outline-offset: 1px;
+}
+.callout-marker--inline {
+  position: static;
+  transform: none;
+}
+.callout-marker--inline.is-active,
+.callout-marker--inline:focus-visible {
+  transform: scale(1.15);
+}
+.callout-marker--pick {
+  background: #c2410c;
+  pointer-events: none;
+}
+.callout-table tr.is-active > td {
+  background-color: rgb(245 158 11 / 0.18);
+}
+.callout-pick-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  cursor: crosshair;
+  outline: 2px dashed #c2410c;
+}
+.callout-pick-panel {
+  @apply mt-2 rounded border border-border-color p-2 font-usace text-sm;
+}
+.callout-pick-panel pre {
+  @apply my-2 max-h-48 overflow-auto text-xs;
+}
+.callout-pick-panel button {
+  @apply rounded border border-border-color px-2 py-0.5;
+}
+@media (max-width: 600px) {
+  .callout-marker {
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
+    border-width: 1.5px;
+  }
+}
