@@ -30,7 +30,9 @@ is partly soil and partly rock.
 **Needed:** How the user selects the material for a mixed contact (for example, an alluvial valley
 floor against rock abutments, or weathered rock grading to soil).
 
-**Answer:**
+**Answer:** A contact that is founded on soil in one part and rock in another is evaluated by separate
+analyses, one with the soil material for the soil part and one with the rock material for the
+rock part. (from Oct 2025 methodology document)
 
 ---
 
@@ -44,6 +46,13 @@ thick layers), described in the document only by their names.
 **Needed:** A definition of each choice, or the table in Fell et al. (2024) that defines them.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the fuller wording of two contact-zone choices is
+"soil placed and compacted by bulldozer, no compaction by rollers, layer thickness at the limit
+of compaction equipment" and "poor compaction methods used, soil poorly compacted or allowing
+segregation against foundation surface, thick layers" (now in the manual). The document gives
+no further definitions of the preparation choices or the special methods and no defining
+table.
 
 ---
 
@@ -74,6 +83,10 @@ source or engineering-judgment attribution.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the document applies the same convention (base of flaw
+one third of the height between normal pool and the crest, for core compaction and for the
+abutment case) but gives no basis for it. (Same note as CLE Common Methods IN-05.)
+
 ---
 
 ## IN-06 — Engineering Basis — `04-flaw-assessment.mdx`
@@ -99,6 +112,12 @@ intermediate categories between 1 and 3.5.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): compacted soil and a regular or treated rock surface
+rule out the mechanism at the screening level (see IN-12), while an irregular or poorly
+prepared surface and Unknown are treated alike, consistent with the general screening policy
+that an Unknown selection assumes conservative conditions. No source table is given, and the
+3.5 score is not explained.
+
 ---
 
 ## IN-08 — Engineering Basis — `04-flaw-assessment.mdx`
@@ -110,6 +129,10 @@ and 3 for Unknown.
 including the reason Unknown scores the same as bulldozer compaction.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): an Unknown contact-zone compaction method is assumed to
+be "soil placed and compacted by bulldozer, no compaction by rollers, layer thickness at the
+limit of compaction equipment", which matches the model's score of 3. No source table is given.
 
 ---
 
@@ -148,6 +171,11 @@ cliff compaction model uses 1E-3 on the same weighted sums).
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the document states only that the flaw probabilities
+are adapted from Fell et al. (2024) and that the above-pool-of-record probabilities are used at
+every headwater (now stated in the manual); it gives no table or figure number for this curve and
+does not explain the value of 7E-4 at a weighted sum of 13.
+
 ---
 
 ## IN-12 — Engineering Basis — `04-flaw-assessment.mdx`
@@ -159,7 +187,12 @@ no observation (seepage, wet spots, sinkholes along the contact) that sets the f
 
 **Needed:** Literature source or engineering-judgment attribution for each.
 
-**Answer:**
+**Answer:** (1) Engineering judgment: a contact prepared for the first lift by compacting the soil
+surface, or by regularizing or treating the rock surface, is not considered further at the
+screening level. (2) Observed leakage through the embankment exiting the downstream face is
+attributed to poor compaction within the core, which sets that flaw probability to 1.0; it is
+not also applied to the foundation or abutment contact, to avoid double counting. (from Oct 2025
+methodology document)
 
 ---
 
