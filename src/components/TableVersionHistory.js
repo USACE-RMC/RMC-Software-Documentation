@@ -3,17 +3,32 @@ import { useLocation } from '@docusaurus/router';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import '../css/custom.css';
 import '../css/tables.css';
+import { buildWidthVars, widthModeVars } from './tableLayout';
 
-const TableVersionHistory = ({ versions = [], dates = [], descriptions = [], modifiedBy = [], reviewedBy = [], approvedBy = [] }) => {
+// Default column widths. Version and Date get fixed character widths so "Version" and dates such as
+// "September 2026" stay on one line; Description takes the remaining space.
+const DEFAULT_COL_WIDTHS = ['10ch', '15ch', 'auto', '14%', '14%', '14%'];
+
+const TableVersionHistory = ({
+  versions = [],
+  dates = [],
+  descriptions = [],
+  modifiedBy = [],
+  reviewedBy = [],
+  approvedBy = [],
+  colWidths = DEFAULT_COL_WIDTHS, // optional override, same syntax as TableVertical
+  minWidth = 720, // table minimum width before it scrolls (number => px)
+  widthMode = 'full', // "full" | "auto"
+}) => {
   const rowCount = Math.max(versions.length, dates.length, descriptions.length, modifiedBy.length, reviewedBy.length, approvedBy.length);
   const location = useLocation();
+  const docsBase = useBaseUrl('/docs/');
   const pathname = location?.pathname || '';
   const docMatch = pathname.match(/\/docs\/(.+?)\/v\d+\.\d+\//);
   const documentPath = docMatch ? docMatch[1] : '';
 
-  // Hard-coded headers, widths, and alignments
+  // Hard-coded headers and alignments
   const HEADERS = ['Version', 'Date', 'Description', 'Modified By', 'Reviewed By', 'Approved By'];
-  const COL_WIDTHS = ['8%', '13%', '37%', '14%', '14%', '14%'];
   const HEADERS_ALIGN = ['left', 'left', 'left', 'left', 'left', 'left'];
   const CELL = { textAlign: 'left', verticalAlign: 'top' };
 
@@ -25,17 +40,21 @@ const TableVersionHistory = ({ versions = [], dates = [], descriptions = [], mod
   const buildVersionHistoryHref = (value) => {
     if (!documentPath || !value) return '';
     const version = normalizeVersion(value);
-    return `/docs/${documentPath}/${version}/version-history`;
+    return `${docsBase}${documentPath}/${version}/version-history`;
   };
 
   return (
     <div className="table-container">
       <div className="table-scroller">
-        <table className="table-base table-zebra" aria-label="Version History" style={{ tableLayout: 'fixed', '--table-min-width': '720px' }}>
+        <table
+          className="table-base table-zebra"
+          aria-label="Version History"
+          style={{ ...buildWidthVars({ colWidths, colCount: HEADERS.length, minWidth, widthMode }), ...widthModeVars(widthMode) }}
+        >
           {/* Column sizing */}
           <colgroup>
-            {COL_WIDTHS.map((w, i) => (
-              <col key={i} style={{ width: w }} />
+            {HEADERS.map((_, i) => (
+              <col key={i} style={{ width: `var(--c${i + 1}, auto)` }} />
             ))}
           </colgroup>
 
@@ -64,7 +83,7 @@ const TableVersionHistory = ({ versions = [], dates = [], descriptions = [], mod
                   {/* Version (col 0) */}
                   <td className="table-body-cell table-cell-nowrap border" style={CELL} title={v}>
                     {versionHref ? (
-                      <Link to={useBaseUrl(versionHref)} className="text-ifm-link no-underline hover:text-ifm-link-hover hover:underline">
+                      <Link to={versionHref} className="text-ifm-link no-underline hover:text-ifm-link-hover hover:underline">
                         {v}
                       </Link>
                     ) : (

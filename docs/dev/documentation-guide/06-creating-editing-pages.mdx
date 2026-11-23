@@ -306,6 +306,25 @@ The chemical formula for water is H<sub>2</sub>O.
 Einstein's famous equation is E=mc<sup>2</sup>.
 ```
 
+#### Keys, On-Screen Names and App Messages
+
+User guides describe software, so readers need to tell at a glance what they press, what they look for on screen, and
+what is ordinary text.
+
+- **Keys** go in `<kbd>` tags, which render as keycaps. Join a combination with `+` outside the tags:
+
+  ```md
+  Press <kbd>Ctrl</kbd>+<kbd>V</kbd> to paste. <kbd>Esc</kbd> closes the tray. <kbd>Shift</kbd>+drag selects a range.
+  ```
+
+  Renders as: Press <kbd>Ctrl</kbd>+<kbd>V</kbd> to paste. <kbd>Esc</kbd> closes the tray. <kbd>Shift</kbd>+drag selects a range.
+
+- **On-screen names** (buttons, menus, tabs, fields, page names) are **bold**, spelled exactly as the software shows them:
+  select **Send Request**; open **Consequences > Results Map**. Reserve bold for these names. Don't use bold for emphasis or for
+  terms in a user guide; use _italics_ for emphasis instead, so bold always means "look for this on the screen".
+- **Messages the software shows** go in quotation marks, word for word: DST confirms "Access request sent." In message tables,
+  `TableVertical`'s `colFormat` can style a whole column (see [React Components](./07-react-components.mdx)).
+
 ---
 
 ### Paragraphs and Line Breaks
@@ -492,6 +511,12 @@ Link to other pages in your documentation:
 [Parent folder page](../users-guide/v1.0/01-preface.mdx)
 ```
 
+#### Links to Another Document
+
+To link to another document on this site, especially one that is still on another branch, use the `DocLink` component
+rather than a full `https://` address. It is checked by the build once the other document is merged, and falls back to the
+published site until then. See [DocLink](./07-react-components.mdx#doclink).
+
 #### Anchor Links (Within Same Page)
 
 Link to headings on the same page:
@@ -602,6 +627,16 @@ npm run compress-video -- static/figures/<path>/your-video.mp4
 ```
 
 This re-encodes the file in place (so your `<Video src>` path stays the same) and preserves the untouched original beside it as `your-video-raw.mp4`. The `*-raw.*` originals are gitignored — kept locally as a backup, never committed or deployed. Add `--audio` to keep an audio track (dropped by default) or `--crf <n>` to adjust quality.
+:::
+
+:::tip Add a poster frame
+Then create a poster, the still image readers see before pressing play:
+
+```bash
+npm run video-posters -- static/figures/<path>/your-video.mp4
+```
+
+This saves `your-video-poster.jpg` next to the clip, and the `Video` component uses it automatically. Commit it with the clip.
 :::
 
 See [React Components](./07-react-components.mdx) for full props documentation.
@@ -922,6 +957,29 @@ Always test your changes locally before committing!
 :::tip Best Practice
 Always test your changes locally before committing!
 :::
+
+#### Conditions and Availability
+
+When a paragraph states who can use a feature or when it is available ("Only the Facilitator sees this", "Locked during
+review"), put the condition in a titled note so readers can spot it. Use the title **Availability** for who and when, and
+**Requires** for what must be done first:
+
+```md
+:::note[Availability]
+Facilitator and administrators only. Hidden while the screening is under review.
+:::
+
+:::note[Requires]
+A saved Stage-Storage curve on the Operational Data page.
+:::
+```
+
+:::note[Availability]
+Facilitator and administrators only. Hidden while the screening is under review.
+:::
+
+Keep the note to the condition itself, one or two sentences, and leave the explanation in the paragraph. The same pattern
+suits other recurring labels, such as `:::note[Example]` for a short worked example in a technical manual.
 
 #### Nested Content
 
