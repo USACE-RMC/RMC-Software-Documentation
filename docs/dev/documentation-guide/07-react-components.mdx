@@ -247,10 +247,23 @@ import TableVersionHistory from '@site/src/components/TableVersionHistory';
       '<code>modifiedBy</code>',
       '<code>reviewedBy</code>',
       '<code>approvedBy</code>',
+      '<code>colWidths</code>',
+      '<code>minWidth</code>',
+      '<code>widthMode</code>',
     ],
-    ['Array', 'Array', 'Array', 'Array', 'Array', 'Array'],
-    ['No', 'No', 'No', 'No', 'No', 'No'],
-    ['<code>[]</code>', '<code>[]</code>', '<code>[]</code>', '<code>[]</code>', '<code>[]</code>', '<code>[]</code>'],
+    ['Array', 'Array', 'Array', 'Array', 'Array', 'Array', 'Array', 'Number or String', 'String'],
+    ['No', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'No'],
+    [
+      '<code>[]</code>',
+      '<code>[]</code>',
+      '<code>[]</code>',
+      '<code>[]</code>',
+      '<code>[]</code>',
+      '<code>[]</code>',
+      '<code>[&quot;10ch&quot;, &quot;15ch&quot;, &quot;auto&quot;, &quot;14%&quot;, &quot;14%&quot;, &quot;14%&quot;]</code>',
+      '<code>720</code>',
+      '<code>&quot;full&quot;</code>',
+    ],
     [
       'Version numbers (e.g., &quot;1.0&quot;)',
       'Release dates',
@@ -258,6 +271,9 @@ import TableVersionHistory from '@site/src/components/TableVersionHistory';
       'Document authors',
       'Technical reviewers',
       'Approving authorities',
+      'Six column widths, same syntax as TableVertical. Only needed when the defaults don&#x27;t fit.',
+      'Width below which the table scrolls sideways (number = px)',
+      '<code>&quot;full&quot;</code> or <code>&quot;auto&quot;</code> (size columns from their content)',
     ],
   ]}
 />
@@ -322,10 +338,11 @@ import Figure from '@site/src/components/Figure';
       '<code>width</code>',
       '<code>background</code>',
       '<code>id</code>',
+      '<code>zoom</code>',
     ],
-    ['String', 'String', 'String', 'String', 'String', 'String', 'String'],
-    ['Yes', 'Yes', 'Yes', 'Yes', 'No', 'No', 'No'],
-    ['-', '-', '-', '-', '<code>&quot;80%&quot;</code>', '<code>&quot;filled&quot;</code>', '-'],
+    ['String', 'String', 'String', 'String', 'String', 'String', 'String', 'Boolean'],
+    ['Yes', 'Yes', 'Yes', 'Yes', 'No', 'No', 'No', 'No'],
+    ['-', '-', '-', '-', '<code>&quot;80%&quot;</code>', '<code>&quot;filled&quot;</code>', '-', '<code>true</code>'],
     [
       'Unique identifier for numbering and cross-refs',
       'Image path (relative to static folder)',
@@ -334,9 +351,15 @@ import Figure from '@site/src/components/Figure';
       'Display width',
       '<code>&quot;filled&quot;</code> or <code>&quot;transparent&quot;</code> background',
       'Custom HTML id (defaults to figKey)',
+      'Allow click-to-enlarge (see below). Set <code>{false}</code> to turn it off for one figure.',
     ],
   ]}
 />
+
+**Click to enlarge:** when the page shows an image smaller than its real size (a wide screenshot at 80%, or any image on a
+phone), readers can select it to see it full screen. The pointer becomes a magnifier, and the image can also be opened with
+Enter or Space. Escape, the close button or a click closes the view. Images already shown at full size are not clickable.
+This needs nothing from authors; use `zoom={false}` only for an image where enlarging makes no sense.
 
 **Tips:**
 
@@ -415,7 +438,7 @@ import FigureInline from '@site/src/components/FigureInline';
 **Usage:**
 
 ```jsx
-Click the <FigureInline src="/figures/icons/settings-icon.png" /> icon to open settings.
+Select <FigureInline src="/figures/icons/settings-icon.png" alt="Settings" /> to open settings.
 ```
 
 **Props:**
@@ -423,7 +446,15 @@ Click the <FigureInline src="/figures/icons/settings-icon.png" /> icon to open s
 <TableVerticalNoRef
   alt="Table: Prop, Type, Required, Description"
   headers={[[{ value: 'Prop' }, { value: 'Type' }, { value: 'Required' }, { value: 'Description' }]]}
-  columns={[['<code>src</code>'], ['String'], ['Yes'], ['Image path (relative to static folder)']]}
+  columns={[
+    ['<code>src</code>', '<code>alt</code>'],
+    ['String', 'String'],
+    ['Yes', 'No'],
+    [
+      'Image path (relative to static folder)',
+      'What the icon means, such as &quot;Settings&quot;. Leave it out only when the sentence already names the icon (&quot;the Settings icon&quot;); the image is then marked decorative so screen readers skip it.',
+    ],
+  ]}
 />
 
 ---
@@ -456,11 +487,107 @@ import FigureNoRef from '@site/src/components/FigureNoRef';
   alt="Table: Prop, Type, Required, Default, Description"
   headers={[[{ value: 'Prop' }, { value: 'Type' }, { value: 'Required' }, { value: 'Default' }, { value: 'Description' }]]}
   columns={[
-    ['<code>src</code>', '<code>alt</code>', '<code>width</code>', '<code>background</code>'],
-    ['String', 'String', 'String', 'String'],
-    ['Yes', 'Yes', 'No', 'No'],
-    ['-', '-', '<code>&quot;80%&quot;</code>', '<code>&quot;filled&quot;</code>'],
-    ['Image path', 'Accessibility description', 'Display width', '<code>&quot;filled&quot;</code> or <code>&quot;transparent&quot;</code>'],
+    ['<code>src</code>', '<code>alt</code>', '<code>width</code>', '<code>background</code>', '<code>zoom</code>'],
+    ['String', 'String', 'String', 'String', 'Boolean'],
+    ['Yes', 'Yes', 'No', 'No', 'No'],
+    ['-', '-', '<code>&quot;80%&quot;</code>', '<code>&quot;filled&quot;</code>', '<code>true</code>'],
+    [
+      'Image path',
+      'Accessibility description',
+      'Display width',
+      '<code>&quot;filled&quot;</code> or <code>&quot;transparent&quot;</code>',
+      'Allow click-to-enlarge, as for Figure',
+    ],
+  ]}
+/>
+
+---
+
+### AnnotatedFigure
+
+**Purpose:** A numbered screenshot with numbered callouts drawn by the site, plus the numbered "#, Region, Description" table
+built from the same list. Use it instead of a Figure with numbers burned into the image followed by a separate regions table.
+
+**Why:** the screenshot stays clean, so a re-capture doesn't mean redrawing numbers. Markers stay on target at any width.
+Hovering or focusing a marker highlights its table row and the reverse, and selecting one scrolls to the other. Screen readers
+get each marker as a button named after its region and described by its row, so the alt text can describe the screen instead
+of listing callouts.
+
+**Import:**
+
+```jsx
+import AnnotatedFigure from '@site/src/components/AnnotatedFigure';
+```
+
+**Usage:**
+
+```jsx
+<AnnotatedFigure
+  figKey="dst-users-guide-fig-results-map-page"
+  src="/figures/web-applications/dst/users-guide/v1.0/figures/results-map-page.png"
+  alt="The Results Map page with the Overtopping function at 817 ft and Structure #70 selected."
+  caption="The Results Map page with a structure selected."
+  width="100%"
+  tableKey="dst-users-guide-table-consequences-results-map-regions"
+  tableCaption="Results Map page regions"
+  callouts={[
+    { n: 1, x: 32.66, y: 23.61, region: 'Function cards', text: 'One card per consequence function, marked Failure or Non-fail.' },
+    { n: 2, x: 32.66, y: 31.94, region: 'Loading level selector', text: "The function's loading levels, with each level's life loss." },
+  ]}
+/>
+```
+
+Put `figKey`, `src`, `alt` and `caption` before `callouts`, as above; the numbering script reads them from the start of the tag.
+`FigureReference` and `TableReference` work with `figKey` and `tableKey` as usual.
+
+**Callout positions.** `x` and `y` are the centre of the marker, as a percentage of the image's width and height measured
+from its top-left corner (x = 50, y = 50 is the middle). Get them in one of two ways:
+
+- **Picker (any figure):** run `npm start`, open the page with `?pick-callouts` added to its address, for example
+  `.../results-map?pick-callouts`, and click the centre of each callout in order. The panel under the image lists the positions;
+  select **Copy** and paste them into `callouts`. The picker exists only on the dev server.
+- **Capture script:** a script that takes the screenshot can save the positions next to the image as
+  `<image name>.callouts.json`, an array of `{ "n": 1, "x": 32.66, "y": 23.61 }`. Import it and pass it as `positions`; the entries
+  in `callouts` then need only `n`, `region` and `text`, and are matched by `n`:
+
+```jsx
+import resultsMapCallouts from '@site/static/figures/web-applications/dst/users-guide/v1.0/figures/results-map-page.callouts.json';
+
+<AnnotatedFigure ... positions={resultsMapCallouts} callouts={[{ n: 1, region: 'Function cards', text: '...' }]} />
+```
+
+When a re-capture keeps the same layout and crop, the positions still fit. When the app's layout or the crop changes, pick
+them again (or re-run the capture script).
+
+**Phones:** markers keep a readable size (20 px) while the image shrinks, so callouts closer together than about 6% of the image
+can overlap, as burned-in numbers do. Readers can select the image to enlarge it; the enlarged view shows the markers too.
+
+**Props:**
+
+<TableVerticalNoRef
+  alt="Table: AnnotatedFigure props"
+  headers={[[{ value: 'Prop' }, { value: 'Type' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    [
+      '<code>figKey</code>, <code>src</code>, <code>alt</code>, <code>caption</code>, <code>width</code>, <code>background</code>, <code>zoom</code>, <code>id</code>',
+      '<code>callouts</code>',
+      '<code>positions</code>',
+      '<code>tableKey</code>',
+      '<code>tableCaption</code>',
+      '<code>tableAlt</code>',
+      '<code>numberHeader</code>, <code>regionHeader</code>, <code>descriptionHeader</code>',
+    ],
+    ['As Figure', 'Array', 'Array', 'String', 'String', 'String', 'String'],
+    ['As Figure', 'Yes', 'No', 'Yes', 'Yes', 'No', 'No'],
+    [
+      'Same as Figure',
+      'One entry per callout: <code>{ n, x, y, region, text }</code>. <code>region</code> and <code>text</code> may be strings (HTML allowed) or JSX.',
+      'Positions from a capture script&#x27;s <code>.callouts.json</code>, merged into <code>callouts</code> by <code>n</code>',
+      'Key of the regions table, for numbering and <code>TableReference</code>',
+      'Caption of the regions table',
+      'Accessible name of the table (default: the caption)',
+      'Column headings; default <code>#</code>, <code>Region</code>, <code>Description</code>',
+    ],
   ]}
 />
 
@@ -521,29 +648,110 @@ import TableVertical from '@site/src/components/TableVertical';
       '<code>colVAlign</code>',
       '<code>headerVAlign</code>',
       '<code>widthMode</code>',
+      '<code>minWidth</code>',
       '<code>footnotes</code>',
       '<code>id</code>',
     ],
-    ['String', 'String', 'Array', 'Array', 'String', 'Array', 'Array', 'Array', 'Array', 'Array', 'String', 'Array', 'String'],
-    ['Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'No'],
-    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '<code>&quot;full&quot;</code>', '-', '-'],
+    ['String', 'String', 'Array', 'Array', 'String', 'Array', 'Array', 'Array', 'Array', 'Array', 'String', 'Number or String', 'Array', 'String'],
+    ['Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'No'],
+    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '<code>&quot;full&quot;</code>', 'see <a href="#column-widths">Column widths</a>', '-', '-'],
     [
       'Unique identifier',
       'Accessibility description',
       'Array of header row arrays',
       'Array of column arrays',
       'Table caption',
-      'Column widths (e.g., <code>[14, &quot;20ch&quot;, &quot;minmax(16ch, 1fr)&quot;]</code>)',
+      'Column widths (e.g., <code>[14, &quot;20ch&quot;, &quot;minmax(16ch, 1fr)&quot;]</code>). See <a href="#column-widths">Column widths</a>.',
       'Column horizontal alignment (e.g., <code>[&quot;left&quot;, &quot;center&quot;, &quot;right&quot;]</code>)',
       'Header horizontal alignment (e.g., <code>[&quot;center&quot;, &quot;center&quot;, &quot;right&quot;]</code>)',
       'Column vertical alignment (e.g., <code>[&quot;top&quot;, &quot;middle&quot;, &quot;bottom&quot;]</code>)',
       'Header vertical alignment (e.g., <code>[&quot;middle&quot;, &quot;bottom&quot;, &quot;middle&quot;]</code>)',
-      '<code>&quot;full&quot;</code> or <code>&quot;intrinsic&quot;</code>',
+      '<code>&quot;full&quot;</code>, <code>&quot;intrinsic&quot;</code> or <code>&quot;auto&quot;</code>. See <a href="#column-widths">Column widths</a>.',
+      'Width below which the table scrolls sideways instead of squeezing (number = px)',
       'Array of footnote strings or ReactNodes',
       'Custom HTML id (defaults to tableKey)',
     ],
   ]}
 />
+
+**Message tables (`colFormat`):** in tables that list what the software reports, show a column of severities as colored
+chips and a column of messages as literal app text. Give one entry per column; use `null` for columns to leave alone:
+
+```jsx
+<TableVertical
+  tableKey="..."
+  colFormat={['severity', 'message']}
+  headers={[[{ value: 'Severity' }, { value: 'Message' }]]}
+  columns={[
+    ['Required input', 'Warning', 'Error'],
+    ['Dam height is required.', 'Crest elevation is below the normal pool.', 'The curve could not be saved.'],
+  ]}
+  caption="..."
+/>
+```
+
+<TableVerticalNoRef
+  alt="Example of severity chips and message text"
+  widthMode="auto"
+  headers={[[{ value: 'Severity' }, { value: 'Message' }]]}
+  columns={[
+    [
+      '<span class="ui-severity ui-severity--required">Required input</span>',
+      '<span class="ui-severity ui-severity--warning">Warning</span>',
+      '<span class="ui-severity ui-severity--error">Error</span>',
+    ],
+    [
+      '<span class="ui-message">Dam height is required.</span>',
+      '<span class="ui-message">Crest elevation is below the normal pool.</span>',
+      '<span class="ui-message">The curve could not be saved.</span>',
+    ],
+  ]}
+/>
+
+The chip color follows the text: Error, Warning and Required input each have their own; anything else is blue. In prose, use
+`<SeverityChip>Warning</SeverityChip>` (import it from `@site/src/components/SeverityChip`).
+
+#### Column widths
+
+These rules apply to TableVertical, TableVerticalNoRef, TableHorizontal and TableVersionHistory.
+
+**Let the browser size the columns.** For most tables, `widthMode="auto"` is the simplest choice: give no `colWidths`,
+and each column is sized from its content. Short columns (#, Units, Severity) shrink to fit, long text columns take the rest,
+and no column gets narrower than its longest word.
+
+```jsx
+<TableVertical tableKey="..." widthMode="auto" headers={...} columns={...} caption="..." />
+```
+
+**Set widths yourself** with `colWidths`, one entry per column:
+
+<TableVerticalNoRef
+  alt="Table: colWidths value forms and their meaning"
+  widthMode="auto"
+  headers={[[{ value: 'Value' }, { value: 'Meaning' }]]}
+  columns={[
+    [
+      '<code>14</code>',
+      '<code>&quot;20ch&quot;</code>, <code>&quot;120px&quot;</code>, <code>&quot;15%&quot;</code>',
+      '<code>&quot;auto&quot;</code>',
+      '<code>&quot;2fr&quot;</code>',
+      '<code>&quot;minmax(30ch, 1fr)&quot;</code>',
+      '<code>&quot;minmax(12ch, 20ch)&quot;</code>',
+    ],
+    [
+      '14 characters wide (a number means <code>ch</code>)',
+      'Exactly that width',
+      'An equal share of the space the other columns leave',
+      'A share of the free space. When every column is <code>fr</code>, the shares follow the numbers (1fr : 2fr); mixed with fixed columns, each <code>fr</code> column takes an equal share.',
+      'A share of the free space, but never narrower than 30 characters: on a phone the table scrolls sideways instead of squeezing the column',
+      '20 characters wide, and the table never squeezes it below 12',
+    ],
+  ]}
+/>
+
+**Phones.** A table never shrinks below its minimum width: 120px per column (at least 300px), or the sum of the column
+minimums when larger. Below that it scrolls sideways, the hidden edge fades out, and on narrow screens a "Scroll sideways for
+more" hint follows the caption. Use `minWidth` to set the minimum yourself, for example `minWidth={480}`.
 
 **Advanced Usage with Merged Cells:**
 
@@ -666,12 +874,12 @@ import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
       'Accessibility description',
       'Array of header row arrays',
       'Array of column arrays',
-      'Column widths (e.g., <code>[14, &quot;20ch&quot;, &quot;minmax(16ch, 1fr)&quot;]</code>)',
+      'Column widths (e.g., <code>[14, &quot;20ch&quot;, &quot;minmax(16ch, 1fr)&quot;]</code>). See <a href="#column-widths">Column widths</a>.',
       'Column horizontal alignment (e.g., <code>[&quot;left&quot;, &quot;center&quot;, &quot;right&quot;]</code>)',
       'Header horizontal alignment (e.g., <code>[&quot;center&quot;, &quot;center&quot;, &quot;right&quot;]</code>)',
       'Column vertical alignment (e.g., <code>[&quot;top&quot;, &quot;middle&quot;, &quot;bottom&quot;]</code>)',
       'Header vertical alignment (e.g., <code>[&quot;middle&quot;, &quot;bottom&quot;, &quot;middle&quot;]</code>)',
-      '<code>&quot;full&quot;</code> or <code>&quot;intrinsic&quot;</code>',
+      '<code>&quot;full&quot;</code>, <code>&quot;intrinsic&quot;</code> or <code>&quot;auto&quot;</code>. See <a href="#column-widths">Column widths</a>.',
       'Array of footnote strings or ReactNodes',
     ],
   ]}
@@ -703,12 +911,12 @@ import TableVerticalNoRef from '@site/src/components/TableVerticalNoRef';
       'Accessibility description',
       'Array of header row arrays',
       'Array of column arrays',
-      'Column widths (e.g., <code>[14, &quot;20ch&quot;, &quot;minmax(16ch, 1fr)&quot;]</code>)',
+      'Column widths (e.g., <code>[14, &quot;20ch&quot;, &quot;minmax(16ch, 1fr)&quot;]</code>). See <a href="#column-widths">Column widths</a>.',
       'Column horizontal alignment (e.g., <code>[&quot;left&quot;, &quot;center&quot;, &quot;right&quot;]</code>)',
       'Header horizontal alignment (e.g., <code>[&quot;center&quot;, &quot;center&quot;, &quot;right&quot;]</code>)',
       'Column vertical alignment (e.g., <code>[&quot;top&quot;, &quot;middle&quot;, &quot;bottom&quot;]</code>)',
       'Header vertical alignment (e.g., <code>[&quot;middle&quot;, &quot;bottom&quot;, &quot;middle&quot;]</code>)',
-      '<code>&quot;full&quot;</code> or <code>&quot;intrinsic&quot;</code>',
+      '<code>&quot;full&quot;</code>, <code>&quot;intrinsic&quot;</code> or <code>&quot;auto&quot;</code>. See <a href="#column-widths">Column widths</a>.',
       'Array of footnote strings or ReactNodes',
     ],
   ]}
@@ -801,7 +1009,7 @@ import TableHorizontal from '@site/src/components/TableHorizontal';
     ['<code>tableKey</code>', '<code>alt</code>', '<code>headers</code>', '<code>rows</code>', '<code>caption</code>', '<code>colWidths</code>', '<code>colAlign</code>', '<code>headerAlign</code>', '<code>widthMode</code>', '<code>footnotes</code>'],
     ['String', 'String', 'Array', 'Array', 'String/Node', 'Array', 'Array', 'Array', 'String', 'Array'],
     ['Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'No', 'No', 'No', 'No', 'No'],
-    ['Unique identifier', 'Accessibility description', 'Array of row header labels (first column)', 'Array of arrays — each inner array is one row of data cells', 'Table caption', 'Column widths (e.g., <code>["30%", "70%"]</code>)', 'Column text alignment', 'Header text alignment', '<code>"full"</code> (default) or <code>"auto"</code>', 'Array of footnote strings'],
+    ['Unique identifier', 'Accessibility description', 'Array of row header labels (first column)', 'Array of arrays — each inner array is one row of data cells', 'Table caption', 'Column widths (e.g., <code>["30%", "70%"]</code>). See <a href="#column-widths">Column widths</a>.', 'Column text alignment', 'Header text alignment', '<code>"full"</code> (default), <code>"intrinsic"</code> or <code>"auto"</code>', 'Array of footnote strings'],
   ]}
 />
 
@@ -1056,8 +1264,51 @@ Using <EquationReference equationKey="equation-2" />, we calculate total risk.
 <TableVerticalNoRef
   alt="Table: Prop, Type, Required, Description"
   headers={[[{ value: 'Prop' }, { value: 'Type' }, { value: 'Required' }, { value: 'Description' }]]}
-  columns={[['<code>equationKey</code>'], ['String'], ['Yes'], ['Must match an Equation&#x27;s equationKey']]}
+  columns={[
+    ['<code>equationKey</code>', '<code>doc</code>', '<code>page</code>', '<code>fallback</code>', '<code>version</code>'],
+    ['String', 'String', 'String', 'String', 'String'],
+    ['Yes', 'No', 'No', 'No', 'No'],
+    [
+      'Must match an Equation&#x27;s equationKey',
+      'Another document&#x27;s folder under <code>docs/</code>, without the version (see below)',
+      'Page of that document that holds the equation, e.g. <code>&quot;initiation&quot;</code>. Makes the link a checked site link.',
+      'Text shown while the other document is not in the build, e.g. <code>&quot;Equation 8&quot;</code>',
+      'Version of the other document; default: the newest in the build',
+    ],
+  ]}
 />
+
+**Equations in another document.** Add `doc` (and `page`) to refer to an equation in another manual. The number is read
+from that manual's own numbering, so it stays right when that manual adds or removes equations:
+
+```jsx
+The headwater gate (<EquationReference
+  doc="web-applications/system-response/cle-common-methods-screening"
+  page="initiation"
+  equationKey="cle-common-methods-screening-eq-8"
+  fallback="Equation 8"
+/> in the CLE Common Methods manual) ...
+```
+
+How it behaves depends on whether the other document is in the same build:
+
+<TableVerticalNoRef
+  alt="Table: cross-document reference behavior by build state"
+  widthMode="auto"
+  headers={[[{ value: 'Other document' }, { value: 'Shows' }, { value: 'Links to' }, { value: 'Checked by the build' }]]}
+  columns={[
+    ['On main and active (both documents merged)', 'On another, unmerged branch; or inactive in a production build'],
+    ['&quot;Equation 8&quot;, read from its numbering', 'The <code>fallback</code> text'],
+    ['The equation on this site (this preview or this deployment)', 'The published site, as a full https:// link'],
+    [
+      'Yes: a missing page fails the build; a missing equation id is a warning',
+      'No. The build log shows a <code>[cross-doc]</code> warning naming the document',
+    ],
+  ]}
+/>
+
+Nothing needs to change when the other document merges: the next build of your branch (after it is updated from main)
+switches to the checked link and the live number.
 
 ---
 
@@ -1171,6 +1422,47 @@ The methodology was developed by <Citation citationKey="Smith2020" />.
 ```
 
 :::
+
+**Letting the citation write the author and year (`form`):**
+
+Instead of typing the author and year, set `form` and the citation writes them from the document's `bib.json`, so the text is
+never missing and always matches the bibliography:
+
+```jsx
+Erosion stops at a filter <Citation citationKey="vanBeek2011" form="parenthetical" />.
+<Citation citationKey="vanBeek2011" form="narrative" /> showed that ...
+```
+
+<TableVerticalNoRef
+  alt="Table: Citation form values"
+  widthMode="auto"
+  headers={[[{ value: 'form' }, { value: 'Renders as' }]]}
+  columns={[
+    ['(not set)', '<code>&quot;parenthetical&quot;</code>', '<code>&quot;narrative&quot;</code>'],
+    ['[3], with the author and year typed before it, as before', '(van Beek et al., 2011) [3]', 'van Beek et al. (2011) [3]'],
+  ]}
+/>
+
+The author part follows the usual rules: one author by surname, two as "A and B", three or more as "A et al.". An
+organization is cited by its full name, or by the abbreviation in parentheses at the end of its name ("Federal Emergency
+Management Agency (FEMA)" gives "FEMA"). To cite an organization by a short name, add `"citeAs"` to its bib.json entry, for
+example `"citeAs": "USACE"`. Existing citations without `form` are unchanged. For two sources in one parenthesis, keep typing
+the text yourself.
+
+**Checking author-year text against the bibliography:**
+
+```bash
+npm run check-citations -- docs/<category>/<app>/<type>/v1.0
+```
+
+This lists, per page and line:
+
+- **missing:** a citation with no author-year text before it (and no `form`). Standards cited by designation
+  ("ASTM D2487") are skipped.
+- **mismatch:** the text before a citation names a different year, or not the source's author.
+- **no entry:** an author-year in the text, such as "Pierson (2023)", that matches nothing in bib.json.
+
+It is a report and never fails the build. Run it with `--summary` for one line per document.
 
 **Best Practices:**
 
@@ -1688,10 +1980,23 @@ Control the starting number and indentation levels:
       '<code>bubbleSizePx</code>',
       '<code>bubbleGapPx</code>',
       '<code>nowrap</code>',
+      '<code>variant</code>',
+      '<code>resultLabel</code>',
     ],
-    ['Array', 'String', 'Number', 'Number', 'Number', 'Number', 'Number', 'Boolean'],
-    ['Yes', 'No', 'No', 'No', 'No', 'No', 'No', 'No'],
-    ['-', '<code>"bubble"</code>', '<code>1</code>', '<code>0</code>', 'Auto', '<code>28</code>', '<code>10</code>', '<code>false</code>'],
+    ['Array', 'String', 'Number', 'Number', 'Number', 'Number', 'Number', 'Boolean', 'String', 'String'],
+    ['Yes', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'No'],
+    [
+      '-',
+      '<code>"bubble"</code>',
+      '<code>1</code>',
+      '<code>0</code>',
+      'Auto',
+      '<code>28</code> (<code>24</code> for <code>"steps"</code>)',
+      '<code>10</code>',
+      '<code>false</code>',
+      '<code>"default"</code>',
+      '<code>"Result:"</code>',
+    ],
     [
       'Array of step objects (see Item Object Structure below)',
       'Number display style: <code>"bubble"</code>, <code>"plain"</code>, or <code>"chevron"</code>',
@@ -1701,9 +2006,34 @@ Control the starting number and indentation levels:
       'Size of numbered circle bubbles in pixels',
       'Gap between bubble and text in pixels',
       'Prevent title text from wrapping',
+      '<code>"steps"</code>: compact layout for short imperative instructions (see below)',
+      'Label in front of each step&#x27;s <code>result</code> line',
     ],
   ]}
 />
+
+**Compact steps with results (`variant="steps"`):** for how-to procedures in user guides. Each step is one short instruction,
+and the optional `result` says what the reader then sees:
+
+```jsx
+<ProcessList
+  variant="steps"
+  items={[
+    { title: <>Select the key icon at the end of the screening's row.</>, result: <>The <strong>Request Access</strong> dialog opens.</> },
+    { title: <>Optionally enter a <strong>Reason for request</strong>, then select <strong>Send Request</strong>.</>, result: <>DST confirms "Access request sent."</> },
+  ]}
+/>
+```
+
+<ProcessList
+  variant="steps"
+  items={[
+    { title: <>Select the key icon at the end of the screening&#x27;s row.</>, result: <>The <strong>Request Access</strong> dialog opens.</> },
+    { title: <>Optionally enter a <strong>Reason for request</strong>, then select <strong>Send Request</strong>.</>, result: <>DST confirms &quot;Access request sent.&quot;</> },
+  ]}
+/>
+
+`result` also works in the default layout, and the other item fields (`child`, `details`, `freeform`) work in both.
 
 **Child Layout Props:**
 
@@ -1725,13 +2055,14 @@ Control the starting number and indentation levels:
   alt="Table: Field, Type, Description"
   headers={[[{ value: 'Field' }, { value: 'Type' }, { value: 'Description' }]]}
   columns={[
-    ['<code>title</code>', '<code>child</code>', '<code>details</code>', '<code>freeform</code>'],
-    ['String/ReactNode', 'Array', 'ReactNode', 'ReactNode'],
+    ['<code>title</code>', '<code>child</code>', '<code>details</code>', '<code>freeform</code>', '<code>result</code>'],
+    ['String/ReactNode', 'Array', 'ReactNode', 'ReactNode', 'String/ReactNode'],
     [
       'Step text or JSX content',
       'Array of sub-step objects (renders as a, b, c, etc.)',
       'Expandable details panel with additional content',
       'Un-numbered content block inserted between steps',
+      'What the reader sees after the step, shown as &quot;Result: ...&quot; under it',
     ],
   ]}
 />
@@ -2927,9 +3258,10 @@ Control exactly which items are expanded using index array:
       '<code>showExpandAll</code>',
       '<code>layout</code>',
       '<code>columns</code>',
+      '<code>anchorPrefix</code>',
     ],
-    ['String', 'Array', 'Number', 'Boolean', 'String', 'String/Array', 'Boolean', 'String', 'Object'],
-    ['No', 'Yes', 'No', 'No', 'No', 'No', 'No', 'No', 'No'],
+    ['String', 'Array', 'Number', 'Boolean', 'String', 'String/Array', 'Boolean', 'String', 'Object', 'String'],
+    ['No', 'Yes', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'No'],
     [
       '-',
       '-',
@@ -2939,6 +3271,7 @@ Control exactly which items are expanded using index array:
       '<code>&quot;none&quot;</code>',
       '<code>false</code>',
       '<code>&quot;stack&quot;</code>',
+      '-',
       '-',
     ],
     [
@@ -2951,6 +3284,7 @@ Control exactly which items are expanded using index array:
       'Show expand all / collapse all buttons',
       'Layout mode: <code>&quot;stack&quot;</code> (vertical) or <code>&quot;grid&quot;</code> (cards)',
       'Grid columns for different breakpoints: <code>{ base: 1, sm: 2, md: 3, xl: 4 }</code>',
+      'Gives every item with a text title a link target, <code>&lt;prefix&gt;-&lt;title&gt;</code> (see below)',
     ],
   ]}
 />
@@ -2961,11 +3295,33 @@ Control exactly which items are expanded using index array:
   alt="Table: Field, Type, Description"
   headers={[[{ value: 'Field' }, { value: 'Type' }, { value: 'Description' }]]}
   columns={[
-    ['<code>title</code>', '<code>child</code>'],
-    ['String/ReactNode', 'String/ReactNode'],
-    ['Item title/heading (always visible)', 'Item content (shown when expanded or if defaultOpen includes this item)'],
+    ['<code>title</code>', '<code>child</code>', '<code>id</code>'],
+    ['String/ReactNode', 'String/ReactNode', 'String'],
+    [
+      'Item title/heading (always visible)',
+      'Item content (shown when expanded or if defaultOpen includes this item)',
+      'Link target for this item (overrides <code>anchorPrefix</code>)',
+    ],
   ]}
 />
+
+**Linking to one item.** Give the list an `anchorPrefix`, or give an item an `id`. A link to that id scrolls to the item and
+opens it, so a page can point at one troubleshooting entry instead of the whole list:
+
+```jsx
+<CollectionList
+  anchorPrefix="problem"
+  items={[{ title: 'This analysis has no loading levels yet.', child: <>...</> }]}
+/>
+
+See [the loading-levels problem](#problem-this-analysis-has-no-loading-levels-yet).
+```
+
+The id is the prefix, a hyphen, then the title in lower case with every run of other characters replaced by one hyphen (cut at
+80 characters). Ids must be unique on the page, so pick a prefix no heading uses. Titles written as JSX need an explicit `id`.
+
+**Items without content.** In a list where some items expand and others don't, the ones without content keep the same
+accent bar, so the list looks even. Lists where no item expands look as before.
 
 **Best Practices:**
 
@@ -3003,10 +3359,24 @@ import Video from '@site/src/components/Video';
   videoKey="video-tutorial"
   caption="Software installation tutorial"
   src="/videos/installation-tutorial.mp4"
-  poster="/videos/installation-poster.jpg"
   width="90%"
 />
 ```
+
+**Posters:** a poster is the still image shown before the video plays. Without one the player is an empty box. Save the
+poster next to the clip as `<clip name>-poster.jpg` (here `installation-tutorial-poster.jpg`) and the component finds it;
+no `poster` prop is needed. To create posters for every clip in a folder that lacks one:
+
+```bash
+npm run video-posters -- static/videos/<category>/<app>/<type>/v1.0
+```
+
+The script captures the frame at 0.5 seconds (`--at 2` picks another time; `--force` replaces existing posters). Commit the
+posters with the clips. Use the `poster` prop only for a poster with a different name. If a clip has no poster at all, the
+player shows its first frame.
+
+**Size:** the player keeps the clip's shape. It is never wider than `width` or the clip's own pixel width, and never taller
+than `maxHeight` (75% of the screen height by default), so portrait and very tall clips shrink instead of filling the screen.
 
 **Multiple Sources:**
 
@@ -3049,6 +3419,7 @@ import Video from '@site/src/components/Video';
       '<code>src</code>',
       '<code>sources</code>',
       '<code>width</code>',
+      '<code>maxHeight</code>',
       '<code>controls</code>',
       '<code>autoPlay</code>',
       '<code>loop</code>',
@@ -3067,6 +3438,7 @@ import Video from '@site/src/components/Video';
       'String',
       'Array',
       'String',
+      'String',
       'Boolean',
       'Boolean',
       'Boolean',
@@ -3078,7 +3450,7 @@ import Video from '@site/src/components/Video';
       'String',
       'String',
     ],
-    ['Yes', 'Yes', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'No'],
+    ['Yes', 'Yes', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'No'],
     [
       '-',
       '-',
@@ -3086,6 +3458,7 @@ import Video from '@site/src/components/Video';
       '-',
       '<code>[]</code>',
       '<code>&quot;80%&quot;</code>',
+      '<code>&quot;75vh&quot;</code>',
       '<code>true</code>',
       '<code>false</code>',
       '<code>false</code>',
@@ -3100,10 +3473,11 @@ import Video from '@site/src/components/Video';
     [
       'Unique identifier',
       'Video caption',
-      'Poster image path',
+      'Poster image path. Optional when <code>&lt;clip&gt;-poster.jpg</code> sits next to the clip.',
       'Single video source',
       'Multiple sources <code>[{src, type}]</code>',
       'Display width',
+      'Tallest the player may be (CSS length, number = px)',
       'Show video controls',
       'Auto-play when scrolled into view (muted); pauses off-screen; off for reduced-motion users',
       'Loop playback',
@@ -3161,17 +3535,73 @@ import VideoReference from '@site/src/components/VideoReference';
 See <VideoReference videoKey="video-tutorial" /> for installation instructions.
 ```
 
+**Output:** a link, "Video 1", to the video on the same page or another page of the document, like FigureReference.
+
 **Props:**
 
 <TableVerticalNoRef
   alt="Table: Prop, Type, Required, Description"
   headers={[[{ value: 'Prop' }, { value: 'Type' }, { value: 'Required' }, { value: 'Description' }]]}
-  columns={[['<code>videoKey</code>'], ['String'], ['Yes'], ['Must match a Video&#x27;s videoKey']]}
+  columns={[
+    ['<code>videoKey</code>', '<code>suffix</code>'],
+    ['String', 'String'],
+    ['Yes', 'No'],
+    ['Must match a Video&#x27;s videoKey', 'Text appended after the number (e.g., <code>"a"</code> renders "Video 1a")'],
+  ]}
 />
 
 ---
 
 ## Navigation
+
+### DocLink
+
+**Purpose:** Link to a page, or a heading on a page, in another document on this site.
+
+**When to use:** instead of a full `https://usace-rmc.github.io/...` address, which the build never checks, especially while
+the other document is still on its own branch.
+
+**Import:**
+
+```jsx
+import DocLink from '@site/src/components/DocLink';
+```
+
+**Usage:**
+
+```jsx
+See the <DocLink
+  doc="web-applications/system-response/cle-common-methods-screening"
+  page="initiation"
+  anchor="crest-crack-models-headwater-gate"
+>headwater gate</DocLink> in the Common Methods manual.
+```
+
+**Props:**
+
+<TableVerticalNoRef
+  alt="Table: DocLink props"
+  headers={[[{ value: 'Prop' }, { value: 'Type' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['<code>doc</code>', '<code>page</code>', '<code>anchor</code>', '<code>version</code>', '<code>children</code>'],
+    ['String', 'String', 'String', 'String', 'ReactNode'],
+    ['Yes', 'No', 'No', 'No', 'Yes'],
+    [
+      'The document&#x27;s folder under <code>docs/</code>, without the version',
+      'Page name as in its URL (<code>&quot;initiation&quot;</code>) or its file name (<code>&quot;04-initiation.mdx&quot;</code>); omit for the document&#x27;s first page',
+      'Heading id on that page',
+      'e.g. <code>&quot;v1.1&quot;</code>; default: the newest version in the build (<code>v1.0</code> if not in the build)',
+      'Link text',
+    ],
+  ]}
+/>
+
+While the other document is in the same build, DocLink is an ordinary site link: the build fails if the page doesn&#x27;t exist
+and warns if the heading doesn&#x27;t. While it is not (its branch is unmerged, or it is inactive in a production build), DocLink
+links to the published site and the build log shows a `[cross-doc]` warning. It switches by itself once the other document
+is merged. To cite an equation in another document by number, use EquationReference with `doc`.
+
+---
 
 ### Button
 
