@@ -27,7 +27,7 @@ soils are the most susceptible, and a surface cover kept clear of snow, such as 
 changes the insulation of the crest and so the cracking. In particular, confirm the direction of
 the surface-cover factor.
 
-**Answer:**
+**Answer:** Freezing draws water into the crest soils by capillary action, where it forms ice lenses that heave the soil and open cracks. The flaw probability is scored from the climate (freeze duration, most heavily weighted, longer duration more likely), the crest soil classification, and the surface cover over the core; the crest or surface-cover selections of Fell et al. (2024) are adapted to Paved (concrete or sealed pathway, LF = 2), Gravel road (LF = 3), and No road or pathway (LF = 4), so a paved crest is the least likely condition, as the model implements (from Oct 2025 methodology document)
 
 ---
 
@@ -43,6 +43,8 @@ cumulative; typical or severe winter), and the source of the categories in Fell 
 they are defined there.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the document uses the same four freeze-duration categories (below freezing for 3 months or more; 1 to 3 months; up to a month; above freezing except possibly overnight for a couple of days) but does not define the temperature measure, how the duration is counted, or the source of the categories. Left open.
 
 ---
 
