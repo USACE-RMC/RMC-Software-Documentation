@@ -100,6 +100,10 @@ soils (50 percent fines or more).
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the document tabulates the same base soil D85 and fines
+content ranges for each class (as "representative ranges") but gives no source or basis for
+them, and does not explain why the clean and slightly silty sands and gravels carry no ranges.
+
 ---
 
 ## IN-07 — Engineering Basis — `06-soil-classification-method.mdx`
@@ -111,6 +115,12 @@ Gravel with sand 3.0–10.0 mm, Gravel 10.0–50.0 mm.
 the overlap between the Sand and Sand with gravel ranges.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the document gives no source for the filter D15 ranges,
+and its values differ from the model for one category: it lists gravelly sand as 1.0 to 3.0 mm
+(no overlap with sand, 0.1 to 1.0 mm), while the model uses 0.5 to 3.0 mm for sand with gravel
+(UscsPairData.cs:58). The overlap was therefore introduced after October 2025; the document's
+value was not adopted.
 
 ---
 
@@ -127,6 +137,10 @@ and for independent sampling of D85 and fines content.
 distribution takes no position on where within the range the soil lies.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the document states that a uniform distribution is
+applied to each range-resolved quantity (base soil D85, base soil fines content, filter D15)
+but gives no basis and does not address independence.
 
 ---
 
@@ -159,6 +173,10 @@ boundaries cannot be evaluated, so the screening method resolves the uncertainty
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the document describes the same treatment (the
+probability of continuation is the fraction of 10,000 iterations that fail the no-erosion
+particle retention criterion) without stating a basis.
+
 ---
 
 ## IN-11 — Engineering Basis — `07-gradation-method.mdx`
@@ -171,6 +189,10 @@ a gravelly band with less than 15 percent fines, this skips regrading on the No.
 confirmation that the opposite default (broadly graded, therefore regraded) is intended.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the document expects the analyst to extrapolate the
+gradation curve manually when Cu and Cc cannot be calculated and then to answer the
+broad-grading question; it states no default for an unanswered assessment.
 
 ---
 
@@ -196,6 +218,11 @@ Fell probabilities of continuing and excessive erosion.
 erosion as continuing erosion at the screening level.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the document states the same convention (the probability
+of continuation is the sum of the excessive and continuing erosion probabilities of the Foster
+and Fell (2001) evaluation, and zero for a filter that passes the no-erosion check) but gives
+no basis for counting excessive erosion as continuing erosion.
 
 ---
 
