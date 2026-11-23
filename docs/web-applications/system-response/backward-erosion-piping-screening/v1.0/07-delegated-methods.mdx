@@ -6,6 +6,8 @@ import Citation from '@site/src/components/Citation';
 import CitationFootnote from '@site/src/components/CitationFootnote';
 import Equation from '@site/src/components/Equation';
 import EquationReference from '@site/src/components/EquationReference';
+import FigReference from '@site/src/components/FigureReference';
+import Figure from '@site/src/components/Figure';
 import NavContainer from '@site/src/components/NavContainer';
 import TableReference from '@site/src/components/TableReference';
 import TableVertical from '@site/src/components/TableVertical';
@@ -140,8 +142,38 @@ uniformity (see
 
 <Equation equationKey="bep-screening-eq-19" equation="i_{pmt}(\xi) = m(\xi)\,C_u + b(\xi)" />
 
-where $i_{pmt}(\xi)$ is the laboratory critical gradient at cumulative probability $\xi$, and $m(\xi)$ and $b(\xi)$ are the quantile regression
-coefficients from the BEP Progression manual. The screening model uses these laboratory relationships without modification.
+where $i_{pmt}(\xi)$ is the laboratory critical gradient at cumulative probability $\xi$, $C_u$ is the sampled coefficient of uniformity of
+the foundation sand, and $m(\xi)$ and $b(\xi)$ are the quantile regression coefficients listed in
+<TableReference tableKey="bep-screening-table-23" />. The screening model uses these laboratory relationships without modification.
+
+<TableVertical
+  tableKey="bep-screening-table-23"
+  alt="Quantile regression coefficients for the laboratory critical gradient"
+  caption="Quantile regression coefficients for the laboratory critical gradient (Robbins and Sharp 2016; Robbins and O'Leary 2020)."
+  colAlign={['center', 'center', 'center']}
+  headers={[[{ value: 'Cumulative Probability ξ' }, { value: 'Slope m(ξ)' }, { value: 'Intercept b(ξ)' }]]}
+  columns={[
+    ['0.0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '1.0'],
+    ['0.0561', '0.0739', '0.0917', '0.1043', '0.1150', '0.1358', '0.1459', '0.1540', '0.1869', '0.2092', '0.2315'],
+    ['0.0000', '0.0328', '0.0265', '0.0325', '0.0243', '0.0020', '0.0198', '0.0391', '0.0043', '0.0279', '0.1500'],
+  ]}
+/>
+
+The quantile family represents the uncertainty in the laboratory critical gradient. Schmertmann (2000) <Citation citationKey="Schmertmann2000" />
+corrected the results of more than 100 laboratory flume tests to common reference conditions and proposed a single default line for use when no
+flume tests are available, but because many of the plotted points are averages of several tests, the spread of the underlying data is not
+evident from that line. Robbins and Sharp (2016) <Citation citationKey="Robbins2016" /> compiled the corrected data and fit quantile regression
+lines from the 10% to the 90% quantile, and Robbins and O'Leary (2020) <Citation citationKey="Robbins2020" /> added 0% and 100% bounding lines
+by linear extrapolation of the slopes and intercepts of the regression lines. The screening model uses the complete family, from the 0% to the
+100% line (<FigReference figKey="bep-screening-fig-4" />).
+
+<Figure
+  figKey="bep-screening-fig-4"
+  src="/figures/web-applications/system-response/backward-erosion-piping-screening/v1.0/figures/schmertmann-gradient-probability-curves.png"
+  alt="Laboratory critical gradient versus coefficient of uniformity, with quantile lines from 0% to 100% fitted to Schmertmann's corrected flume-test data."
+  caption="Schmertmann laboratory critical gradients with the Robbins and Sharp (2016) quantile lines and the Robbins and O'Leary (2020) 0% and 100% bounding lines."
+  width="60%"
+/>
 
 ### Field critical gradient and correction factors
 
@@ -153,8 +185,8 @@ The field critical gradient scales the laboratory gradient by the correction fac
   equation="i_{ch}(\xi) = i_{pmt}(\xi) \cdot \frac{C_D \, C_L \, C_S \, C_K \, C_\gamma \, C_Z}{C_R} \cdot C_\alpha \cdot C_{OF}"
 />
 
-In the screening configuration, five factors remain active and four are fixed at unity
-(<TableReference tableKey="bep-screening-table-22" />).
+where $i_{ch}(\xi)$ is the field critical gradient at cumulative probability $\xi$ and the remaining symbols are the correction factors of
+<TableReference tableKey="bep-screening-table-22" />. In the screening configuration, five factors remain active and four are fixed at unity.
 
 <TableVertical
   tableKey="bep-screening-table-22"
@@ -188,10 +220,34 @@ The active factors take their values from the screening inputs:
   [Input Parameters](./03-input-parameters.mdx))
 - $C_{OF}$ — the product of the fines-content correction and the exit-geometry factor, given below
 
+The four geometric and material factors follow the Schmertmann (2000) <Citation citationKey="Schmertmann2000" /> relationships, which
+normalize each field condition to the reference test conditions (seepage path length 5 ft, piping-layer depth to length ratio 0.2, $D_{10}$ of
+0.20 mm, and relative density of 60%):
+
+<Equation
+  equationKey="bep-screening-eq-28"
+  equation="C_D = \frac{\left(d/L\right)^{0.2/\left[(d/L)^2 - 1\right]}}{0.2^{\,0.2/\left(0.2^2 - 1\right)}}"
+/>
+
+<Equation equationKey="bep-screening-eq-29" equation="C_L = \left(\frac{5}{L}\right)^{0.2}" />
+
+<Equation equationKey="bep-screening-eq-30" equation="C_S = \left(\frac{D_{10}}{0.2}\right)^{0.2}" />
+
+<Equation equationKey="bep-screening-eq-31" equation="C_\gamma = 1 + 0.4\left(\frac{D_r}{100} - 0.6\right)" />
+
+where:
+
+> $d$ = sampled foundation sand thickness (ft)  
+> $L$ = seepage path length of the pathway under evaluation, $L_{prog,toe}$ or $L_{prog,day}$ (ft); because the anisotropy correction is not  
+> applied, the path length is used without transformation  
+> $D_{10}$ = sampled effective grain size (mm)  
+> $D_r$ = sampled relative density (%)
+
 The fixed factors reflect information that is rarely available at the screening stage:
 
-- $C_K$ — taken as 1.0, which the BEP Progression manual's anisotropy relationship, $C_K = (1.5/R_{kf})^{0.5}$, gives for a reference
-  conductivity ratio $R_{kf} = k_h/k_v$ of 1.5; the seepage path length is not transformed for anisotropy (assumption 12 in
+- $C_K$ — taken as 1.0, because the effect of anisotropy on the critical gradient is not well understood. This is the value the BEP
+  Progression manual's anisotropy relationship, $C_K = (1.5/R_{kf})^{0.5}$, gives for the Schmertmann reference conductivity ratio
+  $R_{kf} = k_h/k_v$ of 1.5; the seepage path length is not transformed for anisotropy (assumption 12 in
   [Assumptions and Limitations](./08-assumptions-and-limitations.mdx))
 - $C_Z$ — taken as 1.0, the value for no higher-permeability underlayer; no stratum beneath the aquifer is characterized (assumption 13)
 - $C_\alpha$ — the pipe path is fixed horizontal (inclination 0°), so no inclination correction applies (see
@@ -217,6 +273,9 @@ plane-type exit $C_{3d} = 1.0$. The screening model assigns the exit type as fol
   [Assumptions and Limitations](./08-assumptions-and-limitations.mdx)).
 - **Daylight pathway** — always plane-type ($C_{3d} = 1.0$); the exit is an exposed sand surface.
 
+The hole-type factor for a confined toe exit is conservative. It represents seepage converging on a single defect in the layer; where many boils
+form, the flow converging on any one pipe head is reduced, and so is the reduction in the critical gradient.
+
 The fines-content correction is a step function of the foundation sand's fines content:
 
 <Equation
@@ -238,6 +297,17 @@ At each pool level, the applied gradient is the net head over the pathway's seep
 [Likelihood of Backward Erosion Piping Progression](/docs/toolbox-technical-manuals/internal-erosion-suite/backward-erosion-piping-progression/v1.0/schmertmann#likelihood-of-backward-erosion-piping-progression)):
 
 <Equation equationKey="bep-screening-eq-23" equation="i_{adv}(h) = \frac{H(h)}{L_{prog}}" />
+
+This is the global, or average, horizontal gradient in the foundation sand along the potential pipe path: the net head across the path divided
+by its length, evaluated for the ambient seepage conditions before a pipe forms (<FigReference figKey="bep-screening-fig-5" />). The Schmertmann
+method compares the field critical gradient with this pre-pipe gradient rather than with the gradient near an advancing pipe tip.
+
+<Figure
+  figKey="bep-screening-fig-5"
+  src="/figures/web-applications/system-response/backward-erosion-piping-screening/v1.0/figures/average-horizontal-gradient-geometry.png"
+  alt="Seepage model cross-section of an embankment on a sand foundation with a landside ditch exit, showing the net head difference and the horizontal path length between the riverside entrance and the exit."
+  caption="Geometry of the average horizontal gradient: the net head difference divided by the horizontal seepage path length to the exit."
+/>
 
 where $L_{prog}$ is the toe or daylight progression path length from
 [Hydraulic Loading and Seepage Paths](./05-hydraulic-loading-and-seepage-paths.mdx) (sampled per realization on the daylight pathway when no berm is

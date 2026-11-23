@@ -22,6 +22,10 @@ spanning 0–10 ft.
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the document had the analyst enter the confining-layer
+thickness as a distribution; it has no qualitative thickness categories and gives no basis
+for these ranges.
+
 ---
 
 ## IN-02 — Engineering Basis — `03-input-parameters.mdx`
@@ -34,7 +38,12 @@ spanning 0–10 ft.
 **Proposed (unconfirmed):** Representative of the poorly graded, uniform fine to medium sands
 susceptible to backward erosion piping.
 
-**Answer:**
+**Answer:** Literature and experience basis: USCS classes sands with Cu < 6 as poorly graded
+(ASTM D2487-17); backward erosion piping occurs mostly in sands with Cu between 1 and about
+4; the triangular distribution (1.1, 2.0, 4.0) spans that range with a slightly conservative
+skew toward more uniform sands, consistent with the range of the Schmertmann (2000)
+laboratory data, and excludes well-graded soils subject to suffusion. (from Oct 2025
+methodology document)
 
 ---
 
@@ -46,7 +55,11 @@ susceptible to backward erosion piping.
 **Needed:** Literature citation or engineering-judgment attribution for both the distribution
 parameters and the 0.1 mm lower limit.
 
-**Answer:**
+**Answer:** Hazen's permeability experiments used uniform clean sands with 0.1 mm < D10 < 0.3
+mm and Cu < 5 (USACE EM 1110-2-1901), and Schmertmann (2000) reports D10 of 0.15–0.28 mm
+(average about 0.20 mm) in the range applicable to BEP; the normal distribution (mean 0.25
+mm, SD 0.085 mm) gives a 95% range of about 0.1–0.4 mm, and the 0.1 mm lower limit coincides
+with the lower bound of Hazen's range. (from Oct 2025 methodology document)
 
 ---
 
@@ -64,7 +77,16 @@ a most-likely value within the category; Unknown spans loose to medium-dense as 
 conservative screening posture. If confirmed, supply the classification source for the
 bibliography.
 
-**Answer:**
+**Answer:** Category boundaries follow the qualitative relative-density descriptors of
+Terzaghi and Peck (1967) (very loose 0–15%, loose 15–35%, medium dense 35–65%, dense 65–85%,
+very dense 85–100%); the Unknown band spans 15–65% because natural sands are most often loose
+to medium dense (Holtz and Kovacs 1981; Terzaghi, Peck, and Mesri 1996). (from Oct 2025
+methodology document)
+
+Note (Oct 2025 methodology document): the document modeled each category as a triangular
+distribution with the mode at the band midpoint (Unknown as Triangular 15, 40, 65); the model
+now uses uniform bands (BEPScreeningModel.cs:645–659), so no basis for the uniform shape is
+recorded.
 
 ---
 
@@ -77,7 +99,10 @@ standard deviation 3.0 pcf).
 
 **Proposed (unconfirmed):** Typical of loose to medium-dense saturated alluvial sand.
 
-**Answer:**
+**Answer:** Lambe and Whitman (1969) give about 111–130 pcf for clean sands, Budhu (2011)
+115–127 pcf, Das (2010) about 112–125 pcf, and EM 1110-1-1905 design examples 120–130 pcf; a
+normal distribution with mean 122 pcf and SD 3 pcf (95% range about 117–127 pcf) represents
+fine to medium uniform sands in loose to dense states. (from Oct 2025 methodology document)
 
 ---
 
@@ -88,7 +113,12 @@ standard deviation 3.0 pcf).
 
 **Needed:** Literature citation or engineering-judgment attribution.
 
-**Answer:**
+**Answer:** Lambe and Whitman (1969) and Das (2010) give about 95–125 pcf for clays, Budhu
+(2011) 100–125 pcf for fine-grained soils, EM 1110-2-2504 implies about 97–128 pcf and EM
+1110-1-1905 examples use 100–120 pcf; values below about 100–105 pcf were avoided as
+unrealistically low, and a normal distribution with mean 118 pcf and SD 3 pcf (95% range
+about 113–123 pcf) covers fine-grained confining layers at the screening level. (from Oct
+2025 methodology document)
 
 ---
 
@@ -105,6 +135,11 @@ ranges derive from a published compilation of depositional-environment character
 from elicited expert judgment.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the document predates the Bayesian assessment. It had
+the analyst select a five-level verbal likelihood (Very Likely 0.99, Likely 0.9, Neutral 0.5,
+Unlikely 0.1, Very Unlikely 0.01) and gives no basis for the geologic priors (now
+BEPFlawData.cs:18 onward).
 
 ---
 
@@ -158,6 +193,12 @@ presence) is unknown: uniform between 1 and 5 embankment heights.
 for scaling the range to embankment height.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): with no known daylighting exit, the document assumed
+the full reservoir head beneath the confining layer (the infinite-blanket limit). The model
+replaced that with the 1–5 embankment-height range (BEPScreeningModel.cs:590–595; BTCase4
+UseFullHead = false at BEPScreeningModel.cs:796), so the document gives no basis for the
+range.
 
 ---
 
@@ -221,6 +262,11 @@ and the 1.4 value, and an addition to the Schmertmann chapter of the BEP Progres
 
 **Answer:**
 
+Note (Oct 2025 methodology document): the document cites Lucker and Robbins as the research
+basis for a fines correction, but its values differ from the model: 1.0 at 0% fines, 2.0 at
+5%, and 4.0 at 10% or more (capped at 10%). The model applies 1.0 below 5% and 1.4 at or
+above 5% (SchmertmannData.cs:98–109). The conflict needs resolution before either is cited.
+
 ---
 
 ## IN-18 — Bibliography — `04-flaw-assessment.mdx`
@@ -261,5 +307,11 @@ hole-type factor (0.5) applied to a confirmed layer whose exit stays beneath it.
 whether a possibly present layer should take the hole-type factor.
 
 **Answer:**
+
+Note (Oct 2025 methodology document): the document treated layer presence as Yes/No only and
+assigned the hole-type factor (0.5) to any confined toe exit without a daylighting sand
+layer, calling it conservative because many boils lessen flow convergence. It has no
+Unknown-presence case, so it does not answer this marker; if anything it leans toward the
+hole-type factor for a possibly present layer.
 
 ---
