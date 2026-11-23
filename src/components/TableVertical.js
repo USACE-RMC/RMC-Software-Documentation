@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useReportId } from '../contexts/ReportIdContext';
 import '../css/custom.css';
 import '../css/tables.css';
+import { autoColumnMins, buildWidthVars, widthModeVars } from './tableLayout';
 
 const TableVertical = ({
   tableKey,
@@ -16,7 +17,8 @@ const TableVertical = ({
   headerAlign, // e.g., ["center","center","right"] (optional)
   colVAlign, // e.g., ["top","middle","bottom"] for body cells
   headerVAlign, // e.g., ["middle","bottom","middle"] (optional)
-  widthMode = 'full', // "full" | "intrinsic"
+  widthMode = 'full', // "full" | "intrinsic" | "auto"
+  minWidth, // optional table minimum width before it scrolls (number => px)
   footnotes, // Array<string | React.ReactNode>
   id,
 }) => {
@@ -53,13 +55,8 @@ const TableVertical = ({
   const rowCount = colCount > 0 ? (columns[0]?.length ?? 0) : 0;
 
   // Build CSS variables for widths & alignments
-  const styleVars = {};
-  if (Array.isArray(colWidths)) {
-    for (let i = 0; i < Math.min(colWidths.length, colCount); i++) {
-      const v = colWidths[i];
-      styleVars[`--c${i + 1}`] = typeof v === 'number' ? `${v}ch` : v;
-    }
-  }
+  const styleVars = { ...buildWidthVars({ colWidths, colCount, minWidth, widthMode }), ...widthModeVars(widthMode) };
+  const autoMins = widthMode === 'auto' ? autoColumnMins(columns) : [];
   if (Array.isArray(colAlign)) {
     for (let i = 0; i < Math.min(colAlign.length, colCount); i++) {
       styleVars[`--a${i + 1}`] = colAlign[i]; // body horizontal
@@ -79,13 +76,6 @@ const TableVertical = ({
     for (let i = 0; i < Math.min(headerVAlign.length, colCount); i++) {
       styleVars[`--hv${i + 1}`] = headerVAlign[i]; // header vertical
     }
-  }
-  // Compute per-table min-width from column count
-  styleVars['--table-min-width'] = `${Math.max(colCount * 120, 300)}px`;
-
-  if (widthMode === 'intrinsic') {
-    styleVars['--table-width'] = 'max-content';
-    styleVars['--table-display'] = 'inline-table';
   }
 
   // Header alignment helpers for colSpan
@@ -171,6 +161,7 @@ const TableVertical = ({
                         style={{
                           textAlign: `var(--a${colIndex + 1}, left)`,
                           verticalAlign: `var(--v${colIndex + 1}, middle)`,
+                          minWidth: autoMins[colIndex],
                         }}
                       >
                         {value}
@@ -185,6 +176,7 @@ const TableVertical = ({
                       style={{
                         textAlign: `var(--a${colIndex + 1}, left)`,
                         verticalAlign: `var(--v${colIndex + 1}, middle)`,
+                        minWidth: autoMins[colIndex],
                       }}
                       dangerouslySetInnerHTML={
                         typeof raw === 'string' ? renderHTML(raw) : undefined

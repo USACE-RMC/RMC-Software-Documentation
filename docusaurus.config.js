@@ -72,6 +72,7 @@ export default {
     normalizeDriveLetter(require.resolve('./src/clientModules/gtagPolyfill.js')),
     normalizeDriveLetter(require.resolve('./src/clientModules/analyticsEvents.js')),
     normalizeDriveLetter(require.resolve('./src/clientModules/scrollToAnchor.js')),
+    normalizeDriveLetter(require.resolve('./src/clientModules/tableScrollCue.js')),
   ],
 
   presets: [
