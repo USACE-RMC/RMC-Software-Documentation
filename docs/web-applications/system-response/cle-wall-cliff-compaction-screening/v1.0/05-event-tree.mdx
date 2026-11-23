@@ -2,7 +2,6 @@
 title: Event Tree
 ---
 
-import Equation from '@site/src/components/Equation';
 import EquationNoRef from '@site/src/components/EquationNoRef';
 import NavContainer from '@site/src/components/NavContainer';
 import TableReference from '@site/src/components/TableReference';
@@ -12,7 +11,7 @@ import TableVertical from '@site/src/components/TableVertical';
 
 # Event Tree
 
-The model evaluates the eight-node event tree shared by every CLE screening model, documented in
+The concentrated leak erosion (CLE) wall or cliff compaction model evaluates the eight-node event tree shared by every CLE screening model, documented in
 [Event Tree](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree) in the CLE Common Methods manual, at every pool
 level of the headwater grid described there. This chapter documents how the wall or cliff compaction model populates each node. Because the flaw
 sits at one elevation, the base of the flaw $z_f$, only the initiation node varies with pool level; the other seven nodes are the same at every pool
@@ -20,24 +19,37 @@ level (see [Pool Dependence](https://usace-rmc.github.io/RMC-Software-Documentat
 
 ## Node Summary
 
+<TableReference tableKey="cle-wall-cliff-compaction-screening-table-8" /> summarizes how the model populates each node.
+
 <TableVertical
-  tableKey="cle-wall-cliff-compaction-screening-table-7"
+  tableKey="cle-wall-cliff-compaction-screening-table-8"
   alt="Event-tree nodes of the wall or cliff compaction model"
   caption="Event-tree nodes of the wall or cliff compaction model."
-  colAlign={['center']}
-  headers={[[{ value: 'Node' }, { value: 'Name' }, { value: 'Source in This Model' }, { value: 'Varies with Pool' }]]}
+  colAlign={['center', 'left', 'center', 'center', 'left']}
+  headers={[[{ value: 'Node' }, { value: 'Event' }, { value: 'Probability' }, { value: 'Pool-Dependent' }, { value: 'Source' }]]}
   columns={[
     ['1', '2', '3', '4', '5', '6', '7', '8'],
     [
       'Flaw',
       'Initiation',
       'Continuation',
-      'Progression: Roof Support',
-      'Progression: No Crack Filling',
-      'Progression: No Flow Limitation',
-      'Unsuccessful Intervention',
+      'Progression — roof support',
+      'Progression — no crack filling',
+      'Progression — no flow limitation',
+      'Unsuccessful intervention',
       'Breach',
     ],
+    [
+      'P<sub>flaw</sub>',
+      'P<sub>init</sub>(h)',
+      'P<sub>cont</sub>',
+      'P<sub>roof</sub>',
+      'P<sub>nf</sub>',
+      'P<sub>nl</sub>',
+      'P<sub>int</sub>',
+      'P<sub>br</sub>',
+    ],
+    ['No', 'Yes', 'No', 'No', 'No', 'No', 'No', 'No'],
     [
       'Three-factor scoring and flaw continuity, or 1.0 when leakage is observed',
       'Cylindrical-pipe Monte Carlo analysis at the base of the flaw',
@@ -48,7 +60,6 @@ level (see [Pool Dependence](https://usace-rmc.github.io/RMC-Software-Documentat
       'User-specified (default 1.0)',
       'User-specified (default 1.0)',
     ],
-    ['No', 'Yes', 'No', 'No', 'No', 'No', 'No', 'No'],
   ]}
 />
 
@@ -72,18 +83,18 @@ in the CLE Common Methods manual, whose theory is in the
 of the Concentrated Leak Erosion Initiation manual. The initiation probability $P_{init}(h)$ at each pool level is the fraction of Monte Carlo
 realizations in which the shear stress exceeds the critical shear stress. The model supplies the analysis with:
 
-- **Pipe invert** — the base of the flaw, $z_f = z_c - h_w$ (see [Flaw Assessment](./04-flaw-assessment.mdx#base-of-the-flaw)). At pool levels at
+- **Pipe invert** — the base of the flaw, $z_f = z_c - h_w$ (see [Flaw Assessment](./04-flaw-assessment.mdx#base-of-flaw-elevation)). At pool levels at
   or below it, initiation is zero.
 - **Hydraulic loading** — each pool level and its tailwater, which together set the net head across the pipe.
-- **Seepage path length** — the user-supplied length, or else the length of a horizontal line at $z_f$ across the core section when one is
+- **Seepage path length** — the supplied length, or else the length of a horizontal line at $z_f$ across the core section when one is
   supplied and across the shell section otherwise, as documented in
   [Seepage Path Length](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#seepage-path-length). The same length
   applies at every pool level.
-- **Critical shear stress** — the user-supplied distribution, or else the triangular distribution for the core soil classification documented in
+- **Critical shear stress** — the supplied distribution, or else the triangular distribution for the core soil classification documented in
   [Critical Shear Stress](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#critical-shear-stress). Whether or
   not a critical shear stress distribution is supplied, the clean and nearly clean sands and gravels are not accepted as the soil of the fill
   against the wall.
-- **Initial pipe diameter** — the user-supplied distribution, or else this model's default triangular distribution, described below.
+- **Initial pipe diameter** — the supplied distribution, or else this model's default triangular distribution, described below.
 
 The default initial pipe diameter is a triangular distribution with a low value of 5 mm, a most likely value of 5 mm, and a high value of 10 mm.
 Because its most likely value equals its low value, the probability density is greatest at 5 mm and falls linearly to zero at 10 mm, and the mean
@@ -91,9 +102,9 @@ diameter is
 
 <EquationNoRef equation="\bar{D} = \frac{5 + 5 + 10}{3} \approx 6.7\ \text{mm}" />
 
-The range lies above the 2 to 5 mm default of the core compaction model and within the 5 to 12.5 mm default of the conduit compaction model (see
-[Initial Pipe Diameter](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#initial-pipe-diameter) in the CLE
-Common Methods manual, where the engineering basis of every model's default range is requested).
+The default is listed with the defaults of the other compaction models in
+[Initial Pipe Diameter](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/initiation#initial-pipe-diameter)
+in the CLE Common Methods manual, where the engineering basis of every default range is requested.
 The shape of the distribution places most realizations near 5 mm. Because the shear stress is proportional to the diameter, those smaller pipes
 need a higher pool to initiate than pipes near 10 mm. A site-specific distribution replaces the default.
 
@@ -105,20 +116,16 @@ always, and the default distributions and derived seepage path length — apply 
 
 *Question:* Where a filter intersects the failure pathway at the base of the flaw, does erosion continue past it?
 
-When the user states that a filter intersects the flaw, the continuation probability $P_{cont}$ is the probability of continuing erosion
-$P_{ce}$ computed by the shared continuation method from the filter and base-soil description, as documented in the
-[Continuation (Filter Evaluation) Screening](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/method-selection-and-governing-base-soil)
-manual, which selects the evaluation method the supplied information supports and the governing base soil. When no filter is stated, the exit is
-unfiltered, $P_{cont} = 1.0$, and the continuation method is not evaluated:
-
-<Equation
-  equationKey="cle-wall-cliff-compaction-screening-eq-4"
-  equation="P_{cont} = \begin{cases} P_{ce} & \text{a filter intersects the flaw} \\[4pt] 1.0 & \text{no filter is stated} \end{cases}"
-/>
-
-The value is the same at every pool level (see
+When a filter is stated to intersect the flaw, the continuation probability $P_{cont}$ is the probability of continuing erosion $P_{ce}$, the node
+result of the Continuation (Filter Evaluation) Screening model (written $P_{cont}$ in that manual), computed from the filter and base-soil
+description (see
+[Node Result](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/output-and-interpretation#node-result)
+in that manual). The continuation method selects the evaluation method the supplied information supports and the governing base soil, as documented
+in [Method Selection and Governing Base Soil](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/continuation-screening/v1.0/method-selection-and-governing-base-soil)
+in that manual. When no filter is stated, the exit is unfiltered, $P_{cont} = 1.0$, and the continuation method is not evaluated. The value is the
+same at every pool level; this is the compaction-model form of the node documented in
 [Node 3: Continuation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/failure-pathway-and-progression#node-3-continuation)
-in the CLE Common Methods manual). The model applies the continuation method's result without adjustment.
+in the CLE Common Methods manual. The model applies the continuation method's result without adjustment.
 
 ## Node 4: Progression — Roof Support
 
@@ -164,18 +171,11 @@ each applied at every pool level.
 
 ## SRP Computation
 
-The system response probability at each pool level $h$ is the product of the eight node probabilities, as documented in
-[SRP Computation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#srp-computation). For this model, every
-node except initiation is the same at every pool level:
-
-<Equation
-  equationKey="cle-wall-cliff-compaction-screening-eq-5"
-  equation="\mathrm{SRP}(h) = P_{flaw} \times P_{init}(h) \times P_{cont} \times P_{roof} \times P_{nf} \times P_{nl} \times P_{int} \times P_{br}"
-/>
-
-where the symbols are those of <TableReference tableKey="cle-wall-cliff-compaction-screening-table-7" /> and the sections above. The SRP is never
-reported below a negligibly small floor: wherever the product falls below that floor — including where it is zero, at pool levels at or below the
-base of the flaw — the SRP is reported at the floor instead (see
-[SRP Computation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#srp-computation)). Mechanically compacted fill
-slightly wet of optimum always gives a product below the floor, because its negligible flaw-continuity probability sits at that floor before the
-other nodes multiply it (see [Flaw-Continuity Stage](./04-flaw-assessment.mdx#flaw-continuity-stage)), so its SRP is the floor at every pool level.
+The system response probability (SRP) at each pool level $h$ is the product of the eight node probabilities of
+<TableReference tableKey="cle-wall-cliff-compaction-screening-table-8" />, as documented in
+[SRP Computation](https://usace-rmc.github.io/RMC-Software-Documentation/docs/web-applications/system-response/cle-common-methods-screening/v1.0/event-tree#srp-computation)
+in the CLE Common Methods manual. For this model, every node except initiation is the same at every pool level. The SRP is never reported below a
+negligibly small floor: wherever the product falls below that floor — including where it is zero, at pool levels at or below the base of the flaw —
+the SRP is reported at the floor instead. Mechanically compacted fill slightly wet of optimum always gives a product below the floor, because its
+negligible flaw-continuity probability sits at that floor before the other nodes multiply it (see
+[Flaw-Continuity Stage](./04-flaw-assessment.mdx#flaw-continuity-stage)), so its SRP is the floor at every pool level.
