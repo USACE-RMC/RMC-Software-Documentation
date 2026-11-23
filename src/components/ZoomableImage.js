@@ -6,8 +6,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
  * like a plain image: no zoom cursor, not focusable, nothing happens on click.
  *
  * The enlarged view is a native <dialog>: Escape, the close button, or a click anywhere closes it.
+ * `overlay` (optional) is drawn over the enlarged image, e.g. AnnotatedFigure's numbered markers.
  */
-const ZoomableImage = ({ src, alt, className = '', style, width, height, caption, enabled = true }) => {
+const ZoomableImage = ({ src, alt, className = '', style, width, height, caption, enabled = true, overlay }) => {
   const imgRef = useRef(null);
   const dialogRef = useRef(null);
   const [zoomable, setZoomable] = useState(false);
@@ -66,7 +67,14 @@ const ZoomableImage = ({ src, alt, className = '', style, width, height, caption
           <button type="button" className="figure-zoom-close" onClick={close} aria-label="Close enlarged image">
             ×
           </button>
-          <img src={src} alt={alt} className="figure-zoom-img" />
+          {overlay ? (
+            <div className="figure-zoom-frame" onClick={(e) => e.stopPropagation()}>
+              <img src={src} alt={alt} className="figure-zoom-img" />
+              {overlay}
+            </div>
+          ) : (
+            <img src={src} alt={alt} className="figure-zoom-img" />
+          )}
           {caption ? <div className="figure-zoom-caption">{caption}</div> : null}
         </dialog>
       )}
