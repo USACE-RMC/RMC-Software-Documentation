@@ -325,7 +325,7 @@ const docs = [
     software: 'system-response',
     doc_location: 'web-applications/system-response/overtopping-erosion-screening',
     doc_name: 'Overtopping Erosion Screening Technical Reference Manual',
-    active: false,
+    active: true,
     draft: true,
   },
   {
