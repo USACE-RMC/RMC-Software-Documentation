@@ -1,0 +1,253 @@
+---
+title: 'Consequence Analysis'
+---
+
+import CollectionList from '@site/src/components/CollectionList';
+import FigReference from '@site/src/components/FigureReference';
+import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+import AnnotatedFigure from '@site/src/components/AnnotatedFigure';
+import consequenceAnalysisPageCallouts from '@site/static/figures/web-applications/dst/users-guide/v1.0/figures/consequence-analysis-page.callouts.json';
+
+<NavContainer link="/web-applications/dst" linkTitle="Dam Screening Tool" document="web-applications/dst/users-guide" />
+
+# Consequence Analysis
+
+LifeSim simulates the life loss and damages of each loading level of each inundation analysis on the Consequence Analysis page (**Consequences >
+Consequence Analysis**). The page also sets when the hazard occurs and how much notice people have at each loading level. The page lists every
+analysis from the Inundation Analysis page; with none, it reads "Nothing to run yet" and links to **Open Inundation Analysis**.
+
+<FigReference figKey="dst-users-guide-fig-consequence-analysis-page" /> shows the page with one analysis expanded, and
+<TableReference tableKey="dst-users-guide-table-consequences-consequence-analysis-regions" /> describes each numbered region.
+
+<AnnotatedFigure
+  figKey="dst-users-guide-fig-consequence-analysis-page"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/consequence-analysis-page.png"
+  alt="The Consequence Analysis page. Step 1, Confirm when the hazard occurs, lists the analyses Non-Failure (7 loading levels, First structure wet), Prior to Overtopping (6, Breach start, non-failure on) and Overtopping, expanded to its All levels row and the levels 812 (Top of dam), 814, 817 and 822, each with Breach start, the non-failure switch on and First structure wet, and the Plot boxes of 814 and 817 ticked. The Dam outflow plot shows the two levels' outflow, peaking at 399.5K and 444.7K cfs, with lines at their breach starts and non-failure first structure wet times. A map shows the non-failure hazard zone. Step 3, Run, reads 'Ready to run 17 loading levels · Every ready loading level has a current result.' with Run all unavailable, and a Mean life loss list for each analysis and loading level."
+  caption="The Consequence Analysis page."
+  width="100%"
+  tableKey="dst-users-guide-table-consequences-consequence-analysis-regions"
+  tableCaption="Consequence Analysis page regions"
+  tableAlt="Description of each numbered region of the Consequence Analysis page"
+  positions={consequenceAnalysisPageCallouts}
+  callouts={[
+    { n: 1, region: 'Hazard table', text: 'Step 1: the hazard occurrence of each analysis and loading level, and the non-failure settings.' },
+    { n: 2, region: 'Dam outflow plot', text: 'The dam outflow of the ticked loading levels, with their hazard occurrences.' },
+    { n: 3, region: 'Run list', text: 'Each analysis and loading level with its mean life loss or status, and its run and cancel controls.' },
+    { n: 4, region: 'Run all', text: 'Runs every ready loading level without a current result.' },
+  ]}
+/>
+
+Settings save as they are chosen; typed times and text save when the user leaves the field (see [Saving](./040-working-in-dst.mdx#saving)).
+
+## Running the Consequence Simulations
+
+The page's three steps follow the order of the work:
+
+<ProcessList
+  variant="steps"
+  items={[
+    { title: <>In <strong>Confirm when the hazard occurs</strong>, check the hazard occurrence of each analysis and loading level.</> },
+    { title: <>In <strong>Set the advanced notice</strong>, choose the advanced notice of each analysis. No analysis runs without one.</> },
+    { title: <>In <strong>Run</strong>, select <strong>Run all</strong>, or run one analysis or loading level, and follow the status of each level.</> },
+  ]}
+/>
+
+## Confirm When the Hazard Occurs
+
+Each analysis is a card that opens to list its loading levels, with an **All levels** row that sets every level at once.
+<TableReference tableKey="dst-users-guide-table-consequences-hazard" /> lists the columns.
+
+<TableVertical
+  tableKey="dst-users-guide-table-consequences-hazard"
+  colWidths={['19ch', '8ch', '13ch', '49ch']}
+  alt="Columns of the hazard occurrence table on Consequence Analysis"
+  caption="Hazard occurrence inputs"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Hazard occurrence', 'Set by hand time', 'Non-failure', 'Non-failure hazard occurrence', 'Plot'],
+    ['—', 'h, min', '—', '—', '—'],
+    ['Required', 'Conditional: Set by hand', 'Conditional: a zone exists', 'Conditional: Non-failure on', 'Optional'],
+    [
+      'Breach start, Overtopping start, First structure wet or Set by hand. Defaults to Breach start, or First structure wet when no level has a breach. A choice the run cannot support is unavailable, with the reason.',
+      'T+ hours (0 to 8760) and minutes (0 to 59) after the inundation simulation starts.',
+      'Turns the non-failure hazard zone on at the loading levels where it exists.',
+      'When the hazard occurs in the zone. Starts on First structure wet.',
+      "Shows the level's dam outflow on the plot, up to eight levels. Not saved.",
+    ],
+  ]}
+/>
+
+The **Dam outflow** plot draws the outflow of each ticked level, with a solid line at its hazard occurrence and a dashed line at its non-failure
+hazard occurrence.
+
+:::tip
+
+A time set by hand can be dragged along the **Dam outflow** plot instead of typed.
+
+:::
+
+## Set the Advanced Notice
+
+The advanced notice is how long before the hazard occurs the threat is identified
+(<TableReference tableKey="dst-users-guide-table-consequence-analysis-advanced-notice" />). It has no default. It is set for each analysis, and **Set by loading
+level** sets a level differently. **Add the basis** records why the notice was chosen, up to 2000 characters.
+
+<TableVertical
+  tableKey="dst-users-guide-table-consequence-analysis-advanced-notice"
+  widthMode="auto"
+  alt="The advanced notice choices and the time before the hazard each represents"
+  caption="Advanced notice choices"
+  headers={[[{ value: 'Advanced notice' }, { value: 'Time before the hazard' }]]}
+  columns={[
+    ['Delayed', 'Very short', 'Short', 'Moderate', 'Long', 'Very long'],
+    ['−2 to 0 h', '0–2 h', '2–4 h', '4–8 h', '8–24 h', '24–48 h'],
+  ]}
+/>
+
+Beside each choice, a sentence says what the notice means, for example "Identified 4 to 8 hours before the breach starts." A loading level set on
+its own reads "Set for this level:"; the others read "Same as the analysis".
+
+When the screening has a non-failure hazard zone, the zone has its own row, marked **Every analysis**. Its notice is optional:
+
+- Until one is chosen, the zone takes each analysis's notice: "Not chosen: the zone takes each analysis's notice below until it is."
+- Once one is chosen, it applies in the zone for every analysis and loading level, and each analysis's notice covers only the rest of the model
+  area. **Use each analysis's notice** clears the zone's choice.
+- When no loading level has the zone turned on, the row reads "Not in use: no loading level has the zone turned on."
+
+## Run
+
+The **Run** panel states how many loading levels are ready to run, or, under "Cannot run yet", what is missing, with a link such as **Open
+Consequence Data** to the page that resolves it. The consequence simulations start only when the user starts them, and none of the controls asks for
+confirmation:
+
+- **Run all** (**Run all [N]** when some levels are ready) runs every ready loading level that has no current result.
+- **Run**, **Run 1 level** or **Run [N] levels**, beside each analysis, runs that analysis's ready levels.
+- The play button beside a loading level runs that level again, whatever its status.
+- **Cancel** or **Cancel [N]** cancels the runs in progress, at the top or beside an analysis, and the stop button beside a level cancels that
+  level.
+
+Each level shows its mean life loss, with warning and evacuation, or its status. In the order a run goes through them, the statuses are:
+
+- **Not run**, or **Waiting on inputs** while an input is missing.
+- **Starting**, **Waiting for a model server**, then **Queued**, while the run waits for a model server.
+- **Preparing**, **Simulating** (with a percentage) and **Writing results**, while LifeSim runs.
+- **Cancelling**, after a cancel, for a few seconds.
+- **Reading results**, then the mean life loss.
+- **Result not read**, **Failed**, **Cancelled** or **Could not start** when the run did not produce a result.
+
+A result marked **Out of date** was simulated with inputs that have since changed; it stays until the level runs again. Selecting a level's status
+opens its details: the run's status and timing, any errors and warnings, the result over its 1,000 iterations (mean, median, 5th to 95th
+percentile and range of life loss, the mean population at risk and the mean damages), and the hazard and notice it ran with.
+
+## Common Problems
+
+<CollectionList
+  anchorPrefix="problem"
+  defaultOpen="none"
+  items={[
+    {
+      title: 'The panel reads "Cannot run yet"',
+      child: (
+        <>
+          <p>
+            The panel lists each missing input, with a link to the page that resolves it:
+          </p>
+          <ul>
+            <li>
+              "No analysis has a loading level yet.", or "[N] of [M] loading levels computed." followed by a sentence for each gap, such as
+              "[analysis] has not been run.", "[analysis] is out of date." or "[analysis] did not complete." The user runs those analyses on the
+              Inundation Analysis page.
+            </li>
+            <li>
+              "No structure inventory yet.", "The structure inventory is still importing.", "The structure inventory didn't import, and needs
+              replacing." or "The structure inventory has no structures." The user corrects the inventory on the Consequence Data page.
+            </li>
+            <li>
+              "It has no area: its area is the model area, which has not been drawn." The user draws the model area on the Inundation Geometry page.
+            </li>
+            <li>
+              "Its warning and evacuation ratings are not all chosen, or marked Unknown." The user rates the Emergency Response on the Consequence
+              Data page.
+            </li>
+            <li>
+              "It has no outline yet." for the non-failure hazard zone. The user draws or replaces the zone on the Consequence Data page.
+            </li>
+          </ul>
+        </>
+      ),
+    },
+    {
+      title: 'A loading level cannot run',
+      child: (
+        <>
+          <p>
+            In the hazard table, a blocked level reads "Blocked:" with the reason: "Inundation not run", "Inundation running", "Inundation out of
+            date", "Inundation failed" or "Inundation cancelled". The user runs the inundation analysis again. A level that needs a setting reads
+            "Advanced notice not set", "Hazard time not set" or "Overtopping time not known"; the user chooses the notice, enters the time set by
+            hand, or chooses another hazard occurrence.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'A hazard occurrence choice is unavailable',
+      child: (
+        <>
+          <p>
+            Resting the pointer on it gives the reason, for example "No loading level of this analysis has a breach turned on." or "The dam did not
+            overtop at any loading level of this analysis." A level's <strong>Plot</strong> box is unavailable with "No dam outflow was kept with the
+            inundation run of this loading level. Run it again to keep one.", or "Up to 8 loading levels can be plotted at once."
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'Run all is unavailable',
+      child: (
+        <>
+          <p>
+            Its tooltip reads "No loading level is ready to run." or "Every ready loading level is being simulated or has a current result. Use a
+            loading level's own Run to simulate it again."
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'A run waits',
+      child: (
+        <>
+          <p>
+            <strong>Waiting for a model server</strong> and <strong>Queued</strong> mean the run is waiting its turn in the model queue; it starts
+            automatically.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'A run fails or could not start',
+      child: (
+        <>
+          <p>
+            The level's details give the reason; the user then runs the level again. Common reasons include "The inundation results for this loading
+            level are still being saved. Try again in a few minutes.", "This loading level's inundation result files are no longer kept. Run the
+            inundation analysis again." and "The simulation took longer than the simulation service allows."
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'A result reads Out of date',
+      child: (
+        <>
+          <p>
+            Its tooltip reads "Something this simulation ran with has changed since. Run the loading level again." The user runs it again with its
+            play button or <strong>Run all</strong>.
+          </p>
+        </>
+      ),
+    },
+  ]}
+/>

@@ -18,6 +18,7 @@ import { useLocation } from '@docusaurus/router';
 import { useCollapsible, Collapsible } from '@docusaurus/theme-common';
 import { useFilteredAndTreeifiedTOC } from '@docusaurus/theme-common/internal';
 import { useScrollPosition } from '@docusaurus/theme-common/internal';
+import useScrollLock from './scrollLock';
 import { useLocationChange } from '@docusaurus/theme-common/internal';
 import Link from '@docusaurus/Link';
 import '../css/floating-nav.css';
@@ -240,6 +241,8 @@ export default function FloatingNav() {
   const triggerRef = useRef(null);
 
   const [open, setOpen] = useState(false);
+  // The drawer is modal: keep the page behind it still (links in it still move the page).
+  useScrollLock(open, { restoreScroll: false });
   const [tab, setTab] = useState('page');
   const [visible, setVisible] = useState(false);
   const [narrow, setNarrow] = useState(false);

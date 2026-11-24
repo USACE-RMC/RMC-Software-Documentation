@@ -1,0 +1,182 @@
+---
+title: 'Flood Hazard'
+---
+
+import CollectionList from '@site/src/components/CollectionList';
+import FigReference from '@site/src/components/FigureReference';
+import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+import AnnotatedFigure from '@site/src/components/AnnotatedFigure';
+import floodHazardUserDefinedCallouts from '@site/static/figures/web-applications/dst/users-guide/v1.0/figures/flood-hazard-user-defined.callouts.json';
+
+<NavContainer link="/web-applications/dst" linkTitle="Dam Screening Tool" document="web-applications/dst/users-guide" />
+
+# Flood Hazard
+
+The flood hazard curve relates the reservoir stage to its annual exceedance probability (AEP) and serves as the loading of the flood-loaded
+failure modes. The Flood Hazard page (**Hazards > Flood Hazard**) holds the curve.
+
+<FigReference figKey="dst-users-guide-fig-flood-hazard-user-defined" /> shows the page, and
+<TableReference tableKey="dst-users-guide-table-hazards-flood-hazard-regions" /> describes each numbered region.
+
+<AnnotatedFigure
+  figKey="dst-users-guide-fig-flood-hazard-user-defined"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/flood-hazard-user-defined.png"
+  alt="The Flood Hazard page of Thistlewood Dam Screening with User Defined selected and DST Based unavailable. The curve table, with the columns Annual Exceedance Probability and Stage (ft-NAVD88), lists 15 rows from 5.00E-01 at 790.60 to 1.00E-09 at 822.00. The chart plots the curve rising from about 790.6 to 822.0 ft, crossing the Top of dam line near 1.00E-06, with dotted reference lines for Top of dam, Normal pool and Spillway crest. The summary tray, Flood hazard summary, reads Justification on file."
+  caption="The Flood Hazard page with a user-defined curve."
+  width="100%"
+  tableKey="dst-users-guide-table-hazards-flood-hazard-regions"
+  tableCaption="Flood Hazard page regions"
+  tableAlt="Description of each numbered region of the Flood Hazard page"
+  positions={floodHazardUserDefinedCallouts}
+  callouts={[
+    { n: 1, region: 'Source', text: 'DST Based or User Defined.' },
+    { n: 2, region: 'Curve table', text: 'The flood hazard curve, one row per point.' },
+    { n: 3, region: 'Chart', text: 'The curve and the Dam Data reference elevations.' },
+    { n: 4, region: 'Summary tray', text: 'The basis of the curve and its supporting documents.' },
+  ]}
+/>
+
+## Source
+
+The source control at the top of the page chooses where the curve comes from. **DST Based** is not yet available; resting the pointer on it shows
+"DST Based flood hazard is not available yet. Enter the curve using User Defined." The user enters the curve with **User Defined**.
+
+## Entering the Curve
+
+The user enters the curve in the table, one point per row, from the most frequent flood to the rarest.
+<TableReference tableKey="dst-users-guide-table-hazards-flood-hazard-inputs" /> describes the columns.
+
+<ProcessList
+  variant="steps"
+  items={[
+    { title: <>Select <strong>User Defined</strong>.</> },
+    { title: <>Enter or paste each point's AEP and stage.</>, result: <>DST saves each change and redraws the chart.</> },
+    { title: <>Check the chart and correct any cell the page messages identify.</> },
+    { title: <>Record the basis of the curve in the summary tray and verify the page.</> },
+  ]}
+/>
+
+:::tip
+A curve kept in a spreadsheet can be copied as a block and pasted into the table; the table adds the rows it needs. Pressing <kbd>Tab</kbd> in the
+last cell also adds a row (see [Tables](./040-working-in-dst.mdx#tables)).
+:::
+
+<TableVertical
+  tableKey="dst-users-guide-table-hazards-flood-hazard-inputs"
+  colWidths={['19ch', '7ch', '11ch', '52ch']}
+  alt="Columns of the flood hazard curve table with their units, whether each is required, and a description"
+  caption="Flood hazard curve inputs"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Annual Exceedance Probability', 'Stage'],
+    ['—', 'ft'],
+    ['Required', 'Required'],
+    [
+      'Between 0 and 1, entered in scientific notation such as 1E-4, and decreasing down the table. At least two complete rows. Used as the loading of the flood failure modes.',
+      'The reservoir stage reached at that AEP, increasing down the table. The column heading carries the units and vertical datum of the screening, for example Stage (ft-NAVD88).',
+    ],
+  ]}
+/>
+
+## Reading the Chart
+
+The chart plots stage against AEP on a probability scale, with the rarest floods at the right. Horizontal lines mark the **Normal pool**, **Spillway
+crest** and **Top of dam** elevations entered on the Dam Data page, showing where the curve crosses each one. The chart zooms and pans (see
+[Charts](./040-working-in-dst.mdx#charts)).
+
+Until the table holds a point to plot, the chart reads "Enter exceedance probabilities and stages in the table to plot the hazard curve." On a
+read-only page with no curve, it reads "No flood hazard curve has been entered."
+
+## Flood Hazard Summary
+
+The summary tray, **Flood hazard summary**, holds one required section, **Basis of the flood hazard curve**: "The source study or analysis, how the
+upper tail was extended, and any judgment applied." The tray status reads "No justification yet" until the user enters it, and "Justification on
+file" afterwards. The tray also holds the page's supporting documents (see [Supporting Documents](./150-documents.mdx#supporting-documents)).
+
+## Common Problems
+
+The page messages button lists the curve's problems, and the table highlights the cell that causes an error (see
+[Page Messages](./040-working-in-dst.mdx#page-messages)). <TableReference tableKey="dst-users-guide-table-hazards-flood-hazard-messages" /> lists
+the messages.
+
+<CollectionList
+  anchorPrefix="problem"
+  defaultOpen="none"
+  items={[
+    {
+      title: 'DST Based cannot be selected',
+      child: (
+        <>
+          <p>
+            It is not yet available. The user enters the curve with <strong>User Defined</strong>.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"Invalid AEP"',
+      child: (
+        <>
+          <p>
+            The value is outside 0 to 1, for example a return period in years or a percent. The user enters the probability, such as 1E-3 for a
+            1,000-year flood.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"AEP must be in decreasing order" or "Stage must be in increasing order"',
+      child: (
+        <>
+          <p>
+            The rows are out of order, or two rows repeat a value. The message names the row; the user reorders the rows or removes the duplicate.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"At least two complete data points" or "Each data point must include both"',
+      child: (
+        <>
+          <p>
+            A row is missing one of its values. The user completes or deletes the row.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'A reference line is missing from the chart',
+      child: (
+        <>
+          <p>
+            The elevation is not entered on the Dam Data page, and the user enters it there. Two levels at the same elevation share one line, labeled
+            with both names, for example "Normal pool / Spillway crest".
+          </p>
+        </>
+      ),
+    },
+  ]}
+/>
+
+<TableVertical
+  tableKey="dst-users-guide-table-hazards-flood-hazard-messages"
+  colFormat={['severity', 'message']}
+  colWidths={['16ch', '73ch']}
+  alt="Page messages of the Flood Hazard page and the severity of each"
+  caption="Flood Hazard page messages"
+  headers={[[{ value: 'Severity' }, { value: 'Message' }]]}
+  columns={[
+    ['Required input', 'Required input', 'Error', 'Error', 'Error', 'Warning'],
+    [
+      'At least two complete data points (AEP and Stage) are required.',
+      'Each data point must include both an AEP and a Stage value.',
+      'Invalid AEP: [value]. Value must be between 0 and 1.',
+      'AEP must be in decreasing order. AEP at row [n] ([value]) is not less than the previous row ([value]).',
+      'Stage must be in increasing order. Stage at row [n] ([value]) is not greater than the previous row ([value]).',
+      "AEP value [value] is below the chart's minimum display threshold. The point will snap to 1.00E-16 on the chart.",
+    ],
+  ]}
+/>

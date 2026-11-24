@@ -1,0 +1,179 @@
+---
+title: 'Results'
+---
+
+import CollectionList from '@site/src/components/CollectionList';
+import FigReference from '@site/src/components/FigureReference';
+import Link from '@docusaurus/Link';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+import Video from '@site/src/components/Video';
+import VideoReference from '@site/src/components/VideoReference';
+import { MEDIA_WIDTH } from './_media-width.js';
+import AnnotatedFigure from '@site/src/components/AnnotatedFigure';
+import riskResultsPageCallouts from '@site/static/figures/web-applications/dst/users-guide/v1.0/figures/risk-results-page.callouts.json';
+
+<NavContainer link="/web-applications/dst" linkTitle="Dam Screening Tool" document="web-applications/dst/users-guide" />
+
+# Results
+
+The Results page (**Risk Analysis > Results**) reports the risk of the screening: the summary values, the life safety and economic risk of each
+failure mode, and the total risk including the background risk. The page has no inputs; its toggles change only the view. While the risk
+computes, the page reads "Computing risk results…", and values not yet computed show "—".
+
+<FigReference figKey="dst-users-guide-fig-risk-results-page" /> shows the page, and
+<TableReference tableKey="dst-users-guide-table-risk-results-regions" /> describes each numbered region.
+
+<AnnotatedFigure
+  figKey="dst-users-guide-fig-risk-results-page"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/risk-results-page.png"
+  alt="The Risk Analysis Results page. Four tiles read Total APF 2.66E-04, Total EALL 7.21E-05, Total EAD $9.71E+02 and Individual Risk 8.03E-05. Below, the Societal Excess Life Safety Risk section has the toggles TRG line (on) and Adjusted PFM values (off), the Mean Risk Plot for Excess Societal Risk, the Loss Exceedance Curve for Expected Annual Life Loss, and a Risk Contribution panel listing each failure mode's share of APF and EALL, led by PFM 10 at 50.9% and 48.1%."
+  caption="The Risk Analysis Results page."
+  width="100%"
+  tableKey="dst-users-guide-table-risk-results-regions"
+  tableCaption="Risk Analysis Results page regions"
+  tableAlt="Description of each numbered region of the Risk Analysis Results page"
+  positions={riskResultsPageCallouts}
+  callouts={[
+    { n: 1, region: 'Excess Risk Summary', text: 'Total APF, Total EALL, Total EAD and Individual Risk.' },
+    { n: 2, region: 'Mean Risk Plot', text: 'APF against expected life loss given failure, for each failure mode and the total.' },
+    { n: 3, region: 'Toggles', text: 'TRG line and Adjusted PFM values.' },
+    { n: 4, region: 'Loss Exceedance Curve', text: 'The annual exceedance probability of each excess life loss.' },
+    { n: 5, region: 'Risk Contribution', text: "Each failure mode's share of the adjusted total APF and EALL." },
+  ]}
+/>
+
+## Excess Risk Summary
+
+Four tiles summarize the excess risk: **Total APF** (the adjusted annual probability of failure), **Total EALL** (the expected annual life loss),
+**Total EAD** (the expected annual damages) and **Individual Risk**, the total APF times a fatality rate.
+
+The info button on the **Individual Risk** tile shows the calculation with the screening's values, "[total APF] × [fatality rate] = [individual
+risk]", and where the fatality rate comes from. The rate is the highest fatality rate among the failure functions assigned on the Setup page: for each
+loading level, the highest mean fatality rate of any structure in its LifeSim results, and any rate entered on the Results Data page. When none of
+those functions has a rate, DST uses 71%, the LifeSim average fatality rate for a high hazard individual.
+
+## Societal Excess Life Safety Risk
+
+This section shows the life safety risk of failure, above the background risk:
+
+- **Mean Risk Plot for Excess Societal Risk** plots each failure mode and the **Total (adjusted)** as APF against expected life loss given failure.
+  A failure mode with locations is one point, named with its number followed by "(composite)".
+- **Loss Exceedance Curve for Expected Annual Life Loss** plots the annual exceedance probability of each excess life loss.
+- **Risk Contribution** lists each failure mode's share of the adjusted total APF and EALL, the top eight and then "All others". Below the rows,
+  notes list the failure modes that are not plotted, with the reason.
+
+The two toggles above the plots change the view only:
+
+- **TRG line** (on by default) draws the tolerable risk guideline, labeled "EALL = 1E-03", on both life safety plots.
+- **Adjusted PFM values** (off by default) plots the failure modes' combination-adjusted values in place of their marginal values, on every plot of
+  the page. The **Total (adjusted)** and the **Risk Contribution** panels always show adjusted values.
+
+:::tip
+
+Resting the pointer on a failure mode's point, curve or **Risk Contribution** row highlights that failure mode on every plot of the page.
+
+:::
+
+<VideoReference videoKey="dst-users-guide-video-risk-results-toggles" /> shows **Adjusted PFM values** and **TRG line** switched, and the pointer
+resting on Risk Contribution rows, which highlights that failure mode on the plots.
+
+<Video
+  videoKey="dst-users-guide-video-risk-results-toggles"
+  src="/videos/web-applications/dst/users-guide/v1.0/risk-results-toggles.mp4"
+  caption="Switching the plot options and highlighting a failure mode on the Results page."
+  width={MEDIA_WIDTH}
+/>
+
+## Societal Excess Economic Risk
+
+This section shows the same views for damages: the **Mean Risk Plot for Excess Economic Risk**, with expected damages given failure, the **Loss
+Exceedance Curve for Expected Annual Damages**, and the failure modes' **Risk Contribution** to EAD. The economic plots have no guideline line.
+
+## Total Risk
+
+This section adds the background risk from the non-failure function to the excess risk. The **Loss Exceedance Curves for Annual Life Loss** and
+**Loss Exceedance Curves for Annual Damages** plot the **Excess**, **Background** and **Total** curves.
+<TableReference tableKey="dst-users-guide-table-risk-components" /> lists the rows of the risk components table, which gives each as life (EALL) and
+economic (EAD) risk. **Risk Contribution** bars show the excess and background risk as shares of the total.
+
+<TableVertical
+  tableKey="dst-users-guide-table-risk-components"
+  widthMode="auto"
+  alt="Rows of the Total Risk components table"
+  caption="Risk components"
+  headers={[[{ value: 'Risk Type' }, { value: 'Meaning' }]]}
+  columns={[
+    ['Excess Risk', 'Background Risk', 'Total Risk'],
+    [
+      'Risk attributable to failure, above background.',
+      'Non-failure risk, from the designated non-failure consequence function.',
+      'Excess plus background.',
+    ],
+  ]}
+/>
+
+## Common Problems
+
+<CollectionList
+  anchorPrefix="problem"
+  defaultOpen="none"
+  items={[
+    {
+      title: 'Values show "—"',
+      child: (
+        <>
+          <p>
+            The risk is not computed yet, usually because a failure mode needs input. The Setup page's status and the page messages list what is
+            missing (see <Link to="/docs/web-applications/dst/users-guide/v1.0/risk-analysis-setup#common-problems">Setup</Link>). Until the total is
+            computed, the Individual Risk info reads "Individual risk is calculated once the total risk is computed."
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'Individual Risk is not shown yet',
+      child: (
+        <>
+          <p>
+            The info reads "Fatality rates are still being read from the consequence results. Reload the page shortly."
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'A failure mode is missing from the plots',
+      child: (
+        <>
+          <p>
+            Failure modes with an APF below 1E-07 are not plotted, and failure modes that could not be computed are listed under the <strong>Risk
+            Contribution</strong> rows with the reason, such as "no active system response curve".
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'Risk Contribution reads "Adjusted contributions unavailable or total is zero."',
+      child: (
+        <>
+          <p>
+            The adjusted total is not available or is zero. When the panel reads "Adjusted PFM values do not sum to the adjusted Total.", the adjusted
+            failure mode values do not add up to the adjusted total.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'Background risk is zero',
+      child: (
+        <>
+          <p>
+            No non-failure function is chosen, or it has nothing to send yet. The user chooses one on the Results Data page (see <Link
+            to="/docs/web-applications/dst/users-guide/v1.0/results-data#choosing-the-non-failure-function">Choosing the non-failure function</Link>).
+          </p>
+        </>
+      ),
+    },
+  ]}
+/>

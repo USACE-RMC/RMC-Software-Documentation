@@ -1,0 +1,464 @@
+---
+title: 'Stage Duration'
+---
+
+import CollectionList from '@site/src/components/CollectionList';
+import Figure from '@site/src/components/Figure';
+import FigReference from '@site/src/components/FigureReference';
+import Link from '@docusaurus/Link';
+import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+import Video from '@site/src/components/Video';
+import VideoReference from '@site/src/components/VideoReference';
+import { MEDIA_WIDTH } from './_media-width.js';
+import AnnotatedFigure from '@site/src/components/AnnotatedFigure';
+import stageDurationDstBasedCallouts from '@site/static/figures/web-applications/dst/users-guide/v1.0/figures/stage-duration-dst-based.callouts.json';
+
+<NavContainer link="/web-applications/dst" linkTitle="Dam Screening Tool" document="web-applications/dst/users-guide" />
+
+# Stage Duration
+
+The Stage Duration page (**Hazards > Stage Duration**) defines the stage–duration relationship of the reservoir: the percent of time each stage
+is equaled or exceeded. DST derives the relationship from the reservoir record it retrieves (**DST Based**), or the user enters it (**User
+Defined**). DST takes the normal pool elevation as the stage exceeded 50% of the time. The seismic failure modes use the relationship to
+represent the reservoir level at the time of an earthquake, and the event-tree failure modes use the normal pool.
+
+<FigReference figKey="dst-users-guide-fig-stage-duration-dst-based" /> shows the page with a DST-based curve, and
+<TableReference tableKey="dst-users-guide-table-hazards-stage-duration-regions" /> describes each numbered region.
+
+<AnnotatedFigure
+  figKey="dst-users-guide-fig-stage-duration-dst-based"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/stage-duration-dst-based.png"
+  alt="The Stage Duration page of the Blue Marsh Dam User's Guide Example screening with DST Based selected. The status line reads 'Last fetched: Nov 19, 2026' and 'Datum matches: NAVD88', with a Re-fetch button. The Stage time series chart plots daily stage from 2013 to 2026, mostly between 284 and 292 ft-NAVD88. The Stage–duration curve chart plots stage against Exceedance %, holding near 290 ft to about 45% and then dropping to about 285 ft. Trimmed periods reads 'No trimmed periods.' with an Add range button, and the line under the curve reads 'Not extrapolated: no Flood Hazard curve has been entered.' The summary tray, Stage duration summary, reads No justification needed."
+  caption="The Stage Duration page with a DST-based curve from CWMS."
+  width="100%"
+  tableKey="dst-users-guide-table-hazards-stage-duration-regions"
+  tableCaption="Stage Duration page regions"
+  tableAlt="Description of each numbered region of the Stage Duration page"
+  positions={stageDurationDstBasedCallouts}
+  callouts={[
+    { n: 1, region: 'Source', text: 'DST Based or User Defined.' },
+    { n: 2, region: 'Fetch status', text: 'The date of the last fetch, the data source details and the datum status.' },
+    { n: 3, region: 'Re-fetch', text: 'Fetches the reservoir record again.' },
+    { n: 4, region: 'Stage time series', text: 'The reservoir stage over the period of record, with any trimmed periods shaded.' },
+    { n: 5, region: 'Stage–duration curve', text: 'The relationship DST derives from the record.' },
+    { n: 6, region: 'Trimmed periods', text: 'The date ranges left out of the record.' },
+    { n: 7, region: 'Summary tray', text: 'The justifications and supporting documents of the page.' },
+  ]}
+/>
+
+## Choosing the Source
+
+**DST Based** and **User Defined** at the top of the page choose where the relationship comes from. Each mode keeps its own data, so switching
+between them loses nothing; the selected mode is the one the rest of the screening uses.
+
+:::note[Availability]
+**DST Based** is available only when DST holds a reservoir data source, CWMS or RISE, for the dam's NID ID on the Dam Data page.
+:::
+
+A new screening of a dam with a reservoir data source opens in DST Based mode; any other opens in User Defined mode. When no source is held, **DST
+Based** is unavailable, and resting the pointer on it shows the reason
+(<FigReference figKey="dst-users-guide-fig-stage-duration-source-unavailable" />).
+
+<Figure
+  figKey="dst-users-guide-fig-stage-duration-source-unavailable"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/stage-duration-source-unavailable.png"
+  alt="The Stage Duration source control of Thistlewood Dam Screening, with DST Based unavailable and User Defined selected. The tooltip on DST Based reads 'This option is only available for Corps of Engineers and Bureau of Reclamation facilities. Please enter data using the User Defined Stage Duration method.'"
+  caption="The DST Based option unavailable, with its tooltip."
+  width="60%"
+/>
+
+## Fetching Reservoir Data (DST Based)
+
+In DST Based mode, DST fetches the dam's reservoir stage record from its data source and derives the stage–duration curve from it.
+
+<ProcessList
+  variant="steps"
+  items={[
+    {
+      title: (
+        <>
+          Select <strong>Fetch reservoir data</strong> under "No reservoir data fetched yet".
+        </>
+      ),
+      result: (
+        <>
+          While the fetch runs, the page shows "Fetching reservoir data…" with its progress. When the fetch finishes, the page shows
+          the charts and the status line.
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          Resolve the vertical datum if the page asks (see <a href="#resolving-the-vertical-datum">Resolving the Vertical Datum</a>).
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          Trim any periods that do not represent normal operations (see <a href="#trimming-periods-from-the-record">Trimming Periods From the
+          Record</a>) and justify them in the summary tray.
+        </>
+      ),
+    },
+  ]}
+/>
+
+:::note[Availability]
+The page cannot be verified, and its justifications cannot be edited, while a fetch runs.
+:::
+
+If the page shows another state instead of the charts, see [Common Problems](#common-problems).
+
+The status line reads **Last fetched:** and the date. Its information icon, **CWMS data source** (or **RISE data source**), lists the source's
+office, location, series, sampling interval, period of record and datum, with a map of the dam and the source location.
+
+To fetch the record again, the user selects **Re-fetch** and then **Continue and re-fetch** in the **Re-fetch from CWMS?** dialog. The new record
+replaces the current one and the curve is recomputed when the fetch finishes; trimmed periods are kept.
+
+## Resolving the Vertical Datum
+
+DST compares the vertical datum of the fetched record with the screening's datum. When they match, the status line says so, for example "Datum
+matches: NAVD88". When they do not, a card above the charts asks the user to resolve it, and the curve is not used for the normal pool until the
+user does:
+
+- **Specify the source datum**, when the source published no datum: the user chooses **NAVD88**, **NGVD29** or **Other** (with a name such as "USGS
+  1912") and selects **Apply**.
+- **Convert to the screening datum**, when the datums differ: the user chooses **ADD** or **SUBTRACT**, enters the offset as a positive number in the
+  screening's units, and selects **Apply**.
+- **Re-resolve the datum**, when the screening's datum or units changed after the record was reconciled: the user resolves it again for the new
+  datum.
+
+**Apply** names anything missing: "Select the datum these elevations are referenced to.", "Choose whether to add or subtract the offset." or "Enter
+the offset as a positive number of feet." (or meters). A converted record shows the conversion on the status line, for example "NGVD29 → NAVD88
+(−0.8 ft)", with **Edit** to change it.
+
+## Reading the Charts
+
+The **Stage time series** chart plots the record's stage against **Date**, and the **Stage–duration curve** chart plots stage against **Exceedance
+%**. Each chart has a download button that saves its data as a CSV file. When Dam Data holds a normal pool elevation, the curve chart draws it as a
+labeled line.
+
+DST builds the curve from the daily mean stage, leaving out values inside trimmed periods. The normal pool is the stage at 50% exceedance.
+
+When the Flood Hazard curve reaches above the highest observed stage, DST extends the curve with a dashed line to the Flood Hazard curve's highest
+stage. The extension follows changes to the Flood Hazard curve. The line under the
+curve chart says which applies, for example "Extrapolated above 1,250.00 ft-NAVD88 to 1,262.40 ft-NAVD88 using the Flood Hazard curve (dashed).",
+"Not extrapolated: the observed curve already reaches the top of the Flood Hazard curve." or "Not extrapolated: no Flood Hazard curve has been
+entered."
+
+The Stage time series chart zooms and pans (see [Charts](./040-working-in-dst.mdx#charts)); the curve chart does not.
+<VideoReference videoKey="dst-users-guide-video-stage-duration-zoom" /> shows the time series zoomed into a few years, panned and reset, with the
+pointer reading a day's stage.
+
+<Video
+  videoKey="dst-users-guide-video-stage-duration-zoom"
+  src="/videos/web-applications/dst/users-guide/v1.0/stage-duration-zoom.mp4"
+  caption="Zooming and panning the stage time series."
+  width={MEDIA_WIDTH}
+/>
+
+## Trimming Periods from the Record
+
+A trimmed period is a date range left out of the record, such as a construction period or a gage outage. DST derives the curve without it. There are
+two ways to add one:
+
+- **On the chart:** the user selects **Draw trim range on chart** (the scissors) on the Stage time series chart and drags across the period (see
+  [Drawing Trimmed Periods on the Chart](#drawing-trimmed-periods-on-the-chart)).
+- **In the list:** the user selects **Add range** under **Trimmed periods** and enters the **From** and **To** dates.
+
+Each period in the list has **Edit period** and **Delete period**, and resting the pointer on a period highlights it on the chart. A period that
+removes records needs a justification, entered in the list (**Add justification**) or in the summary tray.
+
+When periods are trimmed, the **Untrimmed** check box on the curve chart overlays the curve without trimming as a dashed line, for comparison.
+Clearing it hides the overlay until the page is next opened.
+
+### Drawing Trimmed Periods on the Chart
+
+**Draw trim range on chart** turns draw mode on; selecting it again ("Exit draw mode") turns it off. While draw mode is on, the chart does not pan or
+zoom. What a drag does depends on where it starts:
+
+- **On an open part of the plot**, the drag draws a new period. A drag shorter than a day adds nothing.
+- **On the edge of a shaded band** (a two-headed arrow pointer), the drag resizes the period. A period is never shorter than one day.
+- **Inside a shaded band** (a four-headed arrow pointer), the drag moves the whole period and keeps its length.
+
+Periods snap to whole days and stay within the dates of the record. Each band carries a number that matches its row in **Trimmed periods**. A period
+saves when the user releases the pointer. <kbd>Esc</kbd> cancels a drag in progress; a second <kbd>Esc</kbd> exits draw mode. Periods are deleted from
+the list, not on the chart.
+
+:::tip
+A short period on a long record is easiest to trim after zooming into it and then turning on draw mode. Exact dates are easiest to enter in the
+list.
+:::
+
+<VideoReference videoKey="dst-users-guide-video-stage-duration-trim" /> shows a period drawn on the time series, widened by dragging its edge and
+moved by dragging from inside, with the list and the curve following each change.
+
+<Video
+  videoKey="dst-users-guide-video-stage-duration-trim"
+  src="/videos/web-applications/dst/users-guide/v1.0/stage-duration-trim.mp4"
+  caption="Drawing, resizing and moving a trimmed period."
+  width={MEDIA_WIDTH}
+/>
+
+## User Defined
+
+In User Defined mode, the user chooses one of three methods:
+
+- **Normal pool elevation** ("Single elevation"): one elevation stands for the whole relationship. The seismic evaluations treat the reservoir as at
+  this elevation across the full range of seismic hazard.
+- **Stage time series** ("Paste a stage time series; the DST derives the curve."): the user pastes a stage record, and DST derives the curve from it.
+- **Stage–duration relationship** ("Enter the stage / exceedance-% rows directly."): the user enters the curve in a table.
+
+<TableReference tableKey="dst-users-guide-table-hazards-stage-duration-inputs" /> lists the inputs of the three methods.
+
+<TableVertical
+  tableKey="dst-users-guide-table-hazards-stage-duration-inputs"
+  colWidths={['20ch', '8ch', '15ch', '46ch']}
+  alt="Inputs of the User Defined stage duration methods with their units, whether each is required, and a description"
+  caption="User Defined stage duration inputs"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Normal pool elevation', 'Override justification', 'Pasted data', 'Stage', 'Exceedance %'],
+    ['ft', '—', 'date, ft', 'ft', '%'],
+    [
+      'Conditional: Normal pool elevation',
+      'Conditional: when the user enters an elevation',
+      'Conditional: Stage time series',
+      'Conditional: Stage–duration relationship',
+      'Conditional: Stage–duration relationship',
+    ],
+    [
+      'Follows the Dam Data normal pool unless the user enters another value. A badge shows whether the value is from Dam Data or entered here; its reset button returns it to Dam Data.',
+      'Required whenever the user enters an elevation, even one equal to Dam Data: "Explain why the normal pool differs from Dam Data ([elevation] ft-[datum])."',
+      'A date and a stage on each line, pasted in the Paste stage time series dialog. Up to 500,000 values.',
+      'The stage, decreasing down the table. At least two complete rows.',
+      'The percent of time the stage is equaled or exceeded, between 0 and 100 and increasing down the table.',
+    ],
+  ]}
+/>
+
+### Pasting a Stage Time Series
+
+With no record, the panel reads "No stage time-series data yet" with a **Paste data** button.
+
+<ProcessList
+  variant="steps"
+  items={[
+    {
+      title: (
+        <>
+          Select <strong>Paste data</strong> and paste two columns, date and stage, into <strong>Pasted data</strong>, separated by a comma or tab.
+          ISO (YYYY-MM-DD) and US (M/D/YYYY) dates are accepted, with an optional time of day. A header row is skipped, and lines starting with #
+          are ignored.
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          Check the <strong>Summary</strong>: the number of ordinates, the time range and what happens on import. Days with several readings are
+          averaged to one value per day ("Aggregated to daily mean").
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          Select <strong>Import</strong>.
+        </>
+      ),
+      result: <>DST saves the record and derives the curve.</>,
+    },
+  ]}
+/>
+
+Once a record is in place, the panel shows **Data uploaded on:** and the date. **Replace data** opens the paste dialog again, and **Clear data**
+removes the pasted record and its trimmed periods after confirmation. The charts, the extrapolation and the trimmed periods work as in DST Based mode.
+
+:::tip
+A record copied directly from the date and stage columns of a spreadsheet pastes as tab-separated text and requires no reformatting.
+:::
+
+### Entering a Stage–Duration Table
+
+The user enters **Stage** and **Exceedance %** rows in the table, from the highest stage to the lowest. The table works like the other tables in DST,
+including pasting a block of rows (see [Tables](./040-working-in-dst.mdx#tables)).
+
+## Stage Duration Summary
+
+The summary tray, **Stage duration summary**, holds the justification for the method in use:
+
+- **Basis of the DST based stage duration** (optional) in DST Based mode. Before any reservoir data is fetched, the tray reads "No justification is
+  needed until reservoir data has been fetched."
+- **User time series**, **User duration curve** or **Single normal pool elevation** (required) for the User Defined method in use.
+- **Trimmed periods**: one required justification for each trimmed period that removes records.
+
+The tray status reads, for example, "1 trimmed period needs justification", "No justification yet", "Justification on file" or "No justification
+needed". The Submission Readiness page lists a missing required justification, for example "Stage Duration: write a justification for the user time
+series (on the Stage Duration page)."
+
+## Common Problems
+
+<CollectionList
+  anchorPrefix="problem"
+  defaultOpen="none"
+  items={[
+    {
+      title: '"The normal pool can\'t be taken from the stage-duration curve ([reason]), so the Dam Data normal pool ([elevation]) is used instead."',
+      child: (
+        <>
+          <p>
+            The pages that use the normal pool show this warning. The reason identifies the corrective action:
+          </p>
+          <ul>
+            <li>
+              "its vertical datum is unresolved": the user resolves the datum card on this page.
+            </li>
+            <li>
+              "it has no usable data yet": the user fetches, pastes or enters the relationship.
+            </li>
+            <li>
+              "it doesn't reach 50% exceedance": the user extends the stage–duration table past 50%.
+            </li>
+          </ul>
+        </>
+      ),
+    },
+    {
+      title: 'DST Based cannot be selected',
+      child: (
+        <>
+          <p>
+            "This option is only available for Corps of Engineers and Bureau of Reclamation facilities. Please enter data using the User Defined Stage
+            Duration method." DST holds no reservoir data source for the dam's NID ID. The user enters the data with <strong>User Defined</strong>.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"CWMS fetch failed" (or "RISE fetch failed")',
+      child: (
+        <>
+          <p>
+            "The last fetch did not complete. Re-fetch to try again or switch to User Defined to load data." The user selects <strong>Re-fetch</strong>.
+            If the fetch cannot start, DST shows "Failed to start reservoir-data re-fetch."
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"No reservoir data available"',
+      child: (
+        <>
+          <p>
+            The source has no stage record for the dam. The message suggests asking the dam owner for stage data; <strong>User Defined Stage
+            Duration</strong> in the message switches the page to User Defined mode.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"No DST Based data available" or "Reservoir data source under administrator review"',
+      child: (
+        <>
+          <p>
+            The dam has no reservoir data source assigned, or the assigned source is unavailable. An administrator review requires no action; the user
+            may switch to User Defined to continue.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"The retained period of record is [n] years — shorter than the 15-year minimum recommended for screening-level analysis."',
+      child: (
+        <>
+          <p>
+            The record, after trimming, covers less than 15 years. The message names the district to contact about more data. A pasted record shows
+            the same warning with "pasted period of record"; the curve is still derived.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'Verification refused',
+      child: (
+        <>
+          <p>
+            "Wait for the reservoir-data fetch to finish before verifying Stage Duration." means a fetch is still running. "Finish or remove the
+            incomplete trim range before verifying Stage Duration." means a period in <strong>Trimmed periods</strong> lacks a date ("Pick both dates
+            to apply this period.") or ends before it starts ("End date must be on or after the start date.").
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"A trimmed period justification can\'t be saved while reservoir data is being fetched. Try again when the fetch finishes."',
+      child: (
+        <>
+          <p>
+            The user waits for the fetch to finish.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'Import unavailable in the paste dialog',
+      child: (
+        <>
+          <p>
+            The dialog lists each line it cannot read, such as "Line 3: "13/45/2001" is not a recognized date.", a stage that "is not a number" or a
+            line that "expected a date and a value". The user corrects or removes those lines. "Dataset too large to import" means the paste has more
+            values than the maximum the notice names; the user shortens it, or processes it outside DST and enters the finished curve with <strong>Stage–duration
+            relationship</strong>.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'A missing justification on Submission Readiness',
+      child: (
+        <>
+          <p>
+            An entered normal pool elevation needs its override justification: "Stage Duration: write a justification for the manual normal pool
+            elevation (on the Stage Duration page)." Selecting the reset button returns the elevation to Dam Data and removes the need for one.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'Errors in the stage–duration table',
+      child: (
+        <>
+          <p>
+            <TableReference tableKey="dst-users-guide-table-hazards-stage-duration-messages" /> lists them. The table highlights the cell at fault
+            (see <Link to="/docs/web-applications/dst/users-guide/v1.0/working-in-dst#page-messages">Page Messages</Link>).
+          </p>
+        </>
+      ),
+    },
+  ]}
+/>
+
+<TableVertical
+  tableKey="dst-users-guide-table-hazards-stage-duration-messages"
+  colFormat={['severity', 'message']}
+  colWidths={['16ch', '73ch']}
+  alt="Page messages of the stage–duration relationship table and the severity of each"
+  caption="Stage–duration relationship messages"
+  headers={[[{ value: 'Severity' }, { value: 'Message' }]]}
+  columns={[
+    ['Required input', 'Required input', 'Error', 'Error', 'Error'],
+    [
+      'At least two complete rows (Stage and Exceedance %) are required.',
+      'Each row must include both a Stage and an Exceedance % value.',
+      'Invalid Exceedance %: [value]. Value must be between 0 and 100.',
+      'Stage must be in decreasing order. Stage at row [n] ([value]) is not less than the previous row ([value]).',
+      'Exceedance % must be in increasing order. Exceedance % at row [n] ([value]) is not greater than the previous row ([value]).',
+    ],
+  ]}
+/>

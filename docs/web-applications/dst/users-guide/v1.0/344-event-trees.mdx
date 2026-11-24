@@ -1,0 +1,381 @@
+---
+title: 'Event Trees'
+---
+
+import CollectionList from '@site/src/components/CollectionList';
+import Figure from '@site/src/components/Figure';
+import FigReference from '@site/src/components/FigureReference';
+import Link from '@docusaurus/Link';
+import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+import Video from '@site/src/components/Video';
+import VideoReference from '@site/src/components/VideoReference';
+import { MEDIA_WIDTH } from './_media-width.js';
+
+<NavContainer link="/web-applications/dst" linkTitle="Dam Screening Tool" document="web-applications/dst/users-guide" />
+
+# Event Trees
+
+An event tree evaluates a failure mode as a sequence of nodes: the team chooses the reservoir stages, assigns each node a probability at each stage
+with a rationale, and DST reports the resulting system response. PFM-11, PFM-12, PFM-13, PFM-17, PFM-18, PFM-20, PFM-22 and PFM-23 use an event tree,
+as does PFM-21 when the dam has a concrete type but no Gravity or Roller-Compacted Concrete type (see [PFM-21: Concrete Dam
+Instability](./367-pfm-21.mdx)). DST multiplies the node probabilities along each pathway to breach. [Common Problems](#common-problems) at the end of
+this page explains why the curve does not appear or is not passed to the Risk Analysis module.
+
+An event-tree page has the sections **1 Stages to evaluate**, **2 Event tree evaluation** and **System Response**. Each failure mode's page in this
+guide lists its own stages, nodes, questions and branches. The SRP mode control reads **Event tree** and **User defined** (see
+[Active SRP](./343-system-response.mdx#active-srp)).
+
+Every entry on an event-tree page saves automatically and clears the location's verification. A change to a source of a default stage, such as the
+normal pool on the Stage Duration page, also clears it.
+
+## Stages
+
+The **Stages to evaluate** section sets the reservoir stages at which the tree is evaluated, lowest first. At and below the zero point, the
+system response is fixed at 1.00E-16 and nodes take no probability.
+
+<FigReference figKey="dst-users-guide-fig-failure-mode-evaluation-event-tree-stages" /> shows the section, and
+<TableReference tableKey="dst-users-guide-table-failure-mode-evaluation-event-tree-stages" /> describes its columns.
+
+<Figure
+  figKey="dst-users-guide-fig-failure-mode-evaluation-event-tree-stages"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/failure-mode-evaluation-event-tree-stages.png"
+  alt="The Stages to evaluate section of a PFM-11 location. A table has the columns ZERO POINT, ELEVATION (ft-NAVD88), STAGE and SOURCE. The rows are 777.00 Spillway Crest, selected as the zero point, from 'Spillway crest, Dam Data'; 790.00 Normal Pool, from 'Normal pool, Stage Duration'; an added stage with editable boxes reading 800.00 and Mid pool, the source 'Added, every node' and a trash icon; and 812.00 Top of Dam, from 'Top of dam, cross section or Dam Data'. An Add stage button follows the table."
+  caption="The Stages to evaluate section."
+  width="100%"
+/>
+
+<TableVertical
+  tableKey="dst-users-guide-table-failure-mode-evaluation-event-tree-stages"
+  colWidths={['11ch', '7ch', '21ch', '50ch']}
+  alt="The columns of the Stages to evaluate table"
+  caption="Stages to evaluate columns"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Zero point', 'Elevation', 'Stage', 'Source'],
+    ['—', 'ft', '—', '—'],
+    ['Required', 'Read-only or Required', 'Read-only or Optional', 'Read-only'],
+    [
+      'The stage at and below which the system response is fixed at 1.00E-16. Default: the lowest stage. Stages at or below it are grayed.',
+      'Default stages: taken from their source, or Source missing until the source is complete. Added stages: entered by the user.',
+      'The stage name. Added stages: a description of up to 200 characters; a blank description becomes Added stage.',
+      'Where a default stage comes from, for example "Spillway crest, Dam Data", or "Added, every node" or "Added, Node 3 only" for an added stage.',
+    ],
+  ]}
+/>
+
+Default stages come from the failure mode and cannot be edited or deleted. To add a stage for every node:
+
+<ProcessList
+  variant="steps"
+  items={[
+    {
+      title: (
+        <>
+          Select <strong>Add stage</strong>.
+        </>
+      ),
+      result: (
+        <>
+          A new row opens with an elevation box and a <strong>Description</strong> box.
+        </>
+      ),
+    },
+    { title: <>Enter the elevation and, optionally, a description.</> },
+    {
+      title: <>Press <kbd>Enter</kbd>, or leave the row, to add the stage. <kbd>Esc</kbd> or the × button cancels it.</>,
+      result: <>DST adds the stage in elevation order.</>,
+    },
+  ]}
+/>
+
+An added stage's elevation and description stay editable in place. The trash icon deletes the stage with its entered values. A stage added from a
+node's panel applies to that node only (see [Nodes](#nodes)).
+
+The **Zero point** column chooses one stage. When the lowest stage is chosen, the zero point follows whichever stage is lowest, so adding a stage
+below it moves the zero point down to the new stage. Choosing any other stage fixes the zero point there. Deleting the added stage that holds the
+zero point returns the zero point to the lowest stage.
+
+## Event Tree Diagram
+
+The diagram in the **Event tree evaluation** section shows which nodes are complete and opens each node for entry. The section's heading counts the
+complete nodes, for example "3 of 5 nodes complete".
+
+<FigReference figKey="dst-users-guide-fig-failure-mode-evaluation-event-tree" /> shows the diagram with a node selected, and
+<TableReference tableKey="dst-users-guide-table-failure-mode-evaluation-event-tree-regions" /> describes each numbered region.
+
+<Figure
+  figKey="dst-users-guide-fig-failure-mode-evaluation-event-tree"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/failure-mode-evaluation-event-tree.png"
+  alt="The Event tree evaluation section of a PFM-11 location with the count '3 of 6 nodes complete'. The diagram runs from Flood through six nodes to breach: Open Defects, Continuation and Clogging are complete with checks; Initiation (node 2, selected), Unsuccessful Intervention (5) and Breach (6) are started. The panel 'Node 2 – Initiation' shows its question and a grid of Stage (ft-NAVD88) and Probability with a slider scale from Virtually Impossible to Virtually Certain: 777.00 Spillway Crest is grayed with a dash; 790.00 Normal Pool reads 0.020; 800.00 Mid pool is empty with no slider handle; and 812.00 Top of Dam reads 0.080. Below are Add stage to this node, the Estimate rationale with a Required badge, and Previous node and Next node. Callouts 1 through 6 mark the diagram, the selected node, the empty Probability box, its slider, the Estimate rationale and the Previous node and Next node buttons."
+  caption="The Event tree evaluation section with a node selected."
+  width="100%"
+/>
+
+<TableVertical
+  tableKey="dst-users-guide-table-failure-mode-evaluation-event-tree-regions"
+  colWidths={['4ch', '23ch', '62ch']}
+  alt="Description of each numbered region of the Event tree evaluation section"
+  caption="Event tree evaluation regions"
+  headers={[[{ value: '#' }, { value: 'Region' }, { value: 'Description' }]]}
+  columns={[
+    ['1', '2', '3', '4', '5', '6'],
+    ['Diagram', 'Selected node', 'Probability', 'Slider', 'Estimate rationale', 'Previous node, Next node'],
+    [
+      'The tree from the flood loading to breach. Selecting a node opens its panel.',
+      'The node whose panel is open.',
+      'The node probability at one stage, from 0 to 1.',
+      'Sets the same probability on a scale of verbal descriptors.',
+      "The case for the node's estimates, across all of its stages.",
+      'Move to the previous or next node.',
+    ],
+  ]}
+/>
+
+Each node's circle shows its state:
+
+- **Its number**: not started.
+- **An amber ring**: started; some values or the rationale are entered.
+- **A check**: complete; it has a probability at every stage above the zero point and an estimate rationale.
+
+In a tree with more than one pathway, the line splits after the branching node into a **Yes** row and a **No** row. A node that mirrors another is
+tagged **Mirrors** or **Partly mirrors** beneath its title (see [Mirrored Nodes](#mirrored-nodes)).
+
+## Nodes
+
+Each node's probability at each stage, and the rationale for its estimates, are entered in the node panel. The panel is headed with the node's number,
+title and question. It has one row per stage of the node: the default stages, the stages added for every node and the stages added for this node
+only. A node that does not depend on the stage has a single row, **All stages**, marked **Pool independent**.
+<TableReference tableKey="dst-users-guide-table-failure-mode-evaluation-node-inputs" /> describes its inputs.
+
+<TableVertical
+  tableKey="dst-users-guide-table-failure-mode-evaluation-node-inputs"
+  colWidths={['17ch', '7ch', '14ch', '51ch']}
+  alt="The inputs of the event tree node panel"
+  caption="Node panel inputs"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Probability', 'Slider', 'Estimate rationale'],
+    ['—', '—', '—'],
+    ['Required: every stage above the zero point', 'Optional', 'Required'],
+    [
+      "The probability of the node's Yes outcome at the stage, from 0 to 1. Saves when the user leaves the box; a 0 is stored as 1.00E-16. Stages at or below the zero point show a dash and take no value.",
+      'Sets the probability by dragging, on a scale marked Virtually Impossible (0.001), Very Unlikely (0.01), Unlikely (0.1), Neutral (0.5), Likely (0.9), Very Likely (0.99) and Virtually Certain (0.999). A value set with it saves at once.',
+      "A rich-text case for the node's estimates across all of its stages. Saves shortly after the user pauses typing.",
+    ],
+  ]}
+/>
+
+The slider and the **Probability** box set the same value. The slider moves between its seven stops only; the box takes any value from 0 to 1, and
+a typed value between two stops places the slider's handle between them. An empty box leaves the slider without a handle. A node's probabilities
+should stay the same or increase from one stage to the next.
+
+**Add stage to this node** adds a stage that only this node uses; the user enters it in the same way as an added stage (see [Stages](#stages)), and
+it appears in the Stages table as **Added, Node N only**. Its trash icon deletes it with its value. Pool-independent nodes have no such button.
+
+**Previous node** and **Next node** step through the nodes, starting with those shared by every pathway and then following each pathway.
+
+:::tip
+
+<kbd>Tab</kbd> moves between the nodes of the diagram, and <kbd>Enter</kbd> or <kbd>Space</kbd> opens one, so a tree can be worked through from the
+keyboard. **Next node** moves to the next node without returning to the diagram.
+
+:::
+
+<VideoReference videoKey="dst-users-guide-video-event-tree-slider" /> shows a node selected in the diagram, its probability at one stage dragged from
+Neutral to Likely, and the total system response at that stage updating below.
+
+<Video
+  videoKey="dst-users-guide-video-event-tree-slider"
+  src="/videos/web-applications/dst/users-guide/v1.0/event-tree-slider.mp4"
+  caption="Setting a node probability with the slider."
+  width={MEDIA_WIDTH}
+/>
+
+## Mirrored Nodes
+
+In trees whose pathways repeat a node, the repeated node can mirror its source node, so the team enters the values once. Mirroring is off by
+default. The node panel of such a node has a check box, for example **Mirror Node 2a**:
+
+- **Turning it on.** The node follows its source's values and rationale. Mirrored values show a link icon ("Mirrored from Node 2a"), and the
+  rationale shows "Shared with Node 2a until you edit it here."
+- **Overriding one stage.** Entering a value at a stage overrides it for that stage only, and the node becomes **Partly mirrors**. The re-link icon
+  beside the overridden value discards it and follows the source again. **Re-link all** discards every override of the node.
+- **Editing the rationale** on the mirroring node replaces the shared rationale with its own.
+
+## Event Tree System Response
+
+The **System Response** section of an event-tree page shows a table and a chart once every node has a probability at every stage above the zero
+point and the stages and probabilities have no errors.
+
+<FigReference figKey="dst-users-guide-fig-failure-mode-evaluation-event-tree-results" /> shows the results of a tree with two branches.
+
+<Figure
+  figKey="dst-users-guide-fig-failure-mode-evaluation-event-tree-results"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/failure-mode-evaluation-event-tree-results.png"
+  alt="The System Response section of a PFM-18 location. A table has the columns Stage (ft-NAVD88), Branch a, Branch b and Total SRP. The row 777.00, at the zero point, is grayed with 1.00E-16 in every column; 788.67 shows 3.00E-08, 9.90E-08 and a total of 1.29E-07; 812.00 shows 1.62E-04, 3.08E-04 and a total of 4.70E-04. A chart plots Branch a, Branch b and Total SRP on a logarithmic System Response Probability axis against Pool Elevation (ft-NAVD88) from 777 to 812, with a legend and a download button."
+  caption="The system response of an event tree with two branches."
+  width="100%"
+/>
+
+- **Table.** One row per stage, with one column per branch (**Branch a**, **Branch b**) when the tree has more than one pathway, and **Total
+  SRP**. The information icon on a branch header names the pathway's nodes; the icon on **Total SRP** explains how the branches combine. Resting
+  the pointer on a branch value shows its share of the total, such as "62.5% of the total". Stages at or below the zero point are grayed.
+- **Chart.** The curves plotted against **Pool Elevation (ft)** on a logarithmic probability axis, with the same zoom, reset and download controls
+  as the other SRP charts (see [SRP Charts](./343-system-response.mdx#srp-charts)).
+
+The total becomes the location's active SRP in **Event tree** mode. Event-tree pages have no nodal revisions; the team enters the node
+probabilities directly.
+
+### How the Total Is Calculated
+
+At each stage above the zero point, each branch is the product, along its pathway, of P for each step that takes a node's Yes outcome and 1 − P for
+each step that takes its No outcome, where P is the node's probability at the stage. The **Total SRP** is the sum of the branches. A branch or total
+below 1E-16 is raised to 1E-16.
+
+For example, take a tree with two pathways through Nodes 1, 2 and 3, one taking Node 3's Yes outcome and the other its No outcome. With Node 1 at
+0.1, Node 2 at 0.5 and Node 3 at 0.2 at a stage, Branch a is 0.1 × 0.5 × 0.2 = 0.01, Branch b is 0.1 × 0.5 × 0.8 = 0.04, and the total is 0.05.
+
+At a stage added for another node only, DST interpolates a node's probability between its own stages, linearly in elevation and in the logarithm
+of the probability, starting from 1E-16 at the zero point, and holds it above the node's highest stage.
+
+## Event Tree Messages
+
+The event-tree pages report the messages in <TableReference tableKey="dst-users-guide-table-failure-mode-evaluation-event-tree-messages" /> in
+the page messages; DST fills in the bracketed names, stages and values. Each failure mode's page in this guide lists the messages about its own
+default stage sources.
+
+<TableVertical
+  tableKey="dst-users-guide-table-failure-mode-evaluation-event-tree-messages"
+  colFormat={['severity', 'message']}
+  colWidths={['16ch', '73ch']}
+  alt="The messages shared by every event-tree page, with their severity"
+  caption="Event tree messages"
+  headers={[[{ value: 'Severity' }, { value: 'Message' }]]}
+  columns={[
+    ['Required input', 'Error', 'Error', 'Error', 'Error', 'Error', 'Error', 'Error', 'Error'],
+    [
+      'Enter an elevation for the added stage "[label]".',
+      '[Stage] and [stage] share the elevation [x]. Each stage needs its own elevation.',
+      'The normal pool ([x]) must be below the top of dam ([y]).',
+      'The spillway crest ([x]) must be below the top of dam ([y]).',
+      'The added stage "[label]" ([x]) must lie between the lowest and highest stages ([low] to [high]).',
+      'Node [n] – [title]: the probability must be between 0 and 1.',
+      'Node [n] – [title]: the probability at [stage] must be between 0 and 1.',
+      "Node [n] – [title] decreases from [stage] to [stage]. A node's probability must stay the same or increase with stage.",
+      'The total system response decreases from [stage] to [stage], so it is not published to risk. It must stay the same or increase with stage.',
+    ],
+  ]}
+/>
+
+## Common Problems
+
+These problems apply to every event-tree page. For problems shared with the other failure mode pages, such as verification being cleared, see
+[Common Problems](./342-failure-mode-pages.mdx#common-problems) on the Failure Mode Pages page.
+
+<CollectionList
+  anchorPrefix="problem"
+  defaultOpen="none"
+  items={[
+    {
+      title: 'No system response curve yet',
+      child: (
+        <>
+          <p>
+            The System Response section reads "No system response curve yet" and "The curve appears once every node has a probability at every stage
+            above the zero point and the stages and probabilities have no errors." The diagram shows which nodes are not complete, and the page
+            messages list the errors. The user enters the missing probabilities, including at any added stage, and corrects the errors; the curve then
+            appears.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'The curve is not passed to the Risk Analysis module',
+      child: (
+        <>
+          <p>
+            The message "The total system response decreases from [stage] to [stage], so it is not published to risk." means the results show on the
+            page, but the location has no active SRP for the Risk Analysis module. A node's probability that drops between stages is the usual cause,
+            reported as "Node [n] – [title] decreases from [stage] to [stage]." The user raises the lower value, or lowers the higher one, so that
+            each node stays the same or increases with stage.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'A default stage reads Source missing',
+      child: (
+        <>
+          <p>
+            The page the stage comes from does not yet provide it, for example the normal pool on the Stage Duration page or the spillway crest on the
+            Dam Data page. The <strong>Source</strong> column names the page; the user completes the value there.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'A default stage cannot be edited',
+      child: (
+        <>
+          <p>
+            Default stages come from other pages and cannot be edited or deleted on the event-tree page. The user changes the value on the page named
+            in the stage's <strong>Source</strong> column and then moves the stage from the notice (see <a
+            href="#problem-a-notice-says-a-stage-source-changed">A notice says a stage source changed</a>), or adds a stage at the needed
+            elevation (see <a href="#stages">Stages</a>).
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'A notice says a stage source changed',
+      child: (
+        <>
+          <p>
+            When the source of a default stage changes, a notice above the stages table reads, for example, "The Normal Pool source changed. It now
+            resolves to 1,021.50 ft. The stage stays at 1,018.00 ft until you move it." <strong>Move stage to</strong> (with the new elevation) moves
+            the stage; <strong>Dismiss</strong> keeps it where it is.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'Two stages share an elevation, or an added stage is out of range',
+      child: (
+        <>
+          <p>
+            Each stage needs its own elevation, and an added stage must lie between the lowest and highest stages. The user changes the added stage's
+            elevation or deletes it with its trash icon.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'The cross section is refused',
+      child: (
+        <>
+          <p>
+            On the event-tree pages that read a cross section, DST refuses a <strong>Cross Section</strong> that does not suit the failure mode:
+            "Choose an earth embankment cross section for this failure mode.", "Choose a concrete cross section for this failure mode." or "Choose a
+            gated concrete cross section for this failure mode." A section deleted in another session reads "The selected cross section no longer
+            exists. Reload the page and choose another." The user chooses a suitable section, adding one on the Dam Information page if needed (see <Link
+            to="/docs/web-applications/dst/users-guide/v1.0/failure-mode-pages#problem-no-usable-cross-sections">No usable cross sections</Link>).
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'Verification is refused',
+      child: (
+        <>
+          <p>
+            DST refuses with "The event tree has no system response yet. Complete every node's probabilities and resolve the errors on this page, then
+            verify." until the curve appears (see <a href="#problem-no-system-response-curve-yet">No system response curve yet</a>).
+          </p>
+        </>
+      ),
+    },
+  ]}
+/>

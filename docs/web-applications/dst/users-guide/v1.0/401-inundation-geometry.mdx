@@ -1,0 +1,402 @@
+---
+title: 'Inundation Geometry'
+---
+
+import CollectionList from '@site/src/components/CollectionList';
+import FigReference from '@site/src/components/FigureReference';
+import Link from '@docusaurus/Link';
+import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+import AnnotatedFigure from '@site/src/components/AnnotatedFigure';
+import inundationGeometryPageCallouts from '@site/static/figures/web-applications/dst/users-guide/v1.0/figures/inundation-geometry-page.callouts.json';
+
+<NavContainer link="/web-applications/dst" linkTitle="Dam Screening Tool" document="web-applications/dst/users-guide" />
+
+# Inundation Geometry
+
+The flood simulations of the Inundation Analysis page run on the hydraulic model defined on the Inundation Geometry page (**Consequences >
+Inundation Geometry**). The model consists of the area it covers, the dam, the rivers and other lines that shape the mesh, the terrain and land
+cover, and the computational mesh built from them.
+
+<FigReference figKey="dst-users-guide-fig-inundation-geometry-page" /> shows the page with the dam centerline selected, and
+<TableReference tableKey="dst-users-guide-table-consequences-inundation-geometry-regions" /> describes each numbered region.
+
+<AnnotatedFigure
+  figKey="dst-users-guide-fig-inundation-geometry-page"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/inundation-geometry-page.png"
+  alt="The Inundation Geometry page with the dam centerline Thistlewood Dam selected. The Model Geometry tree reads 10,367 cells and lists the dam, the model area, one river centerline, one terrain and one land cover. The map shows the computational mesh at the dam. The Dam Centerline Properties panel shows Top of Dam Elevation 812.0 tagged Manual with its justification, and the Mesh near the dam summary reports 98% rectangular cells and the square cell rows Built."
+  caption="The Inundation Geometry page with the dam centerline selected."
+  width="100%"
+  tableKey="dst-users-guide-table-consequences-inundation-geometry-regions"
+  tableCaption="Inundation Geometry page regions"
+  tableAlt="Description of each numbered region of the Inundation Geometry page"
+  positions={inundationGeometryPageCallouts}
+  callouts={[
+    {
+      n: 1,
+      region: 'Add buttons',
+      text: 'Add a feature of each type, or replace the model area, dam centerline, terrain or land cover. Mesh computes the mesh.',
+    },
+    { n: 2, region: 'Search', text: 'Filters the tree by feature name.' },
+    { n: 3, region: 'Tree', text: 'The mesh status and cell count, then the features by type. Selecting a feature selects it on the map.' },
+    { n: 4, region: 'Map toolbar', text: 'The map tools (see The map).' },
+    { n: 5, region: 'Properties panel', text: "The selected feature's fields and summaries." },
+    { n: 6, region: 'Status strip', text: 'The pointer position and a hint for the current tool or selection.' },
+  ]}
+/>
+
+The **Model Configuration** panel holds the add buttons, a **Search features…** box and a tree of the model's features. Resting the pointer on an
+add button gives the feature's full name. A screening has one model area, one dam centerline, one terrain and one land cover; once one exists, its
+button replaces it ("Replace the …"). A warning icon in the tree marks a feature whose settings are incomplete or invalid; resting the pointer
+on it gives the reason. Selecting a feature opens its **[Feature] Properties** panel.
+
+## Building the Model
+
+The steps below build a model that is ready to simulate:
+
+<ProcessList
+  variant="steps"
+  items={[
+    { title: <>Add the <strong>Model Area</strong>, the polygon the mesh covers (see <a href="#model-area">Model Area</a>).</> },
+    { title: <>Add the <strong>Dam</strong> centerline along the dam crest (see <a href="#dam-centerline">Dam Centerline</a>).</> },
+    {
+      title: (
+        <>
+          Optionally, add <strong>River</strong> centerlines, <strong>Coastline</strong>s, <strong>Breakline</strong>s and{' '}
+          <strong>Refinement</strong> regions to shape the mesh.
+        </>
+      ),
+    },
+    { title: <>Add the <strong>Terrain</strong> and the <strong>Land Cover</strong>, and wait for each to finish processing.</> },
+    { title: <>Select <strong>Mesh</strong> and review any mesh warnings (see <a href="#computational-mesh">Computational Mesh</a>).</> },
+  ]}
+/>
+
+The Inundation Analysis page refuses to run until the model has a drawn model area, a computed mesh, a terrain and a land cover (see
+[Common Problems](#common-problems)).
+
+## The Map
+
+Every page of the Consequences module except Consequence Analysis and Results Data is a map. The map toolbar changes the map style, identifies the
+features under the pointer (**Identify features**), measures distances, zooms in, out and to all layers, resets the bearing to north and exaggerates
+the terrain. When an editable feature is selected, the toolbar adds **Edit selected feature**, and while editing, **Save edits**, **Cancel edits
+(Escape)** and **Add points**. The status strip gives the pointer's longitude, latitude and zoom, and a hint for the current tool, such as "Click a
+feature to select".
+
+The layers button opens the legend, which turns the layers on and off in the groups **Inundation Geometry**, **Consequence Data**, **Inundation
+Results** and **Reference Layers** (USGS rivers and lakes, and the levees of the National Levee Database). DST remembers which layers are on for
+each page during the session. Below zoom 13 the map shows only a sample of the structures; zooming in shows every one.
+
+### Identifying Features
+
+With **Identify features** on, selecting a point on the map lists every feature under it, grouped by type, such as the model area, the rivers and
+the **Structures**. Selecting a structure's row opens its attributes; selecting any other row selects that feature. Resting the pointer on a row
+highlights its feature on the map, which tells overlapping features apart. Large groups list 50 rows at a time, with **Show [N] more**.
+
+Below zoom 13 the list holds only the sampled structures, and notes "Below zoom 13 the map shows a sample of the structures. Zoom in to list every
+one here."
+
+### Structure Symbology
+
+The structure layer's style editor in the legend sets how the structures are drawn on every page of the module. **Color by** chooses what colors
+them: **Damage category** (the default), **Occupancy class**, **Building type**, **Foundation type**, **Foundation height**, **Stories**,
+**Structure value**, **Total value**, **Day population**, **Night population**, **LifeSim data checks** or **Single color**. The legend lists the
+classes with the number of structures in each.
+
+- From zoom 13, **Damage category** draws each category as its own shape: a house for Residential, a square for Commercial, a triangle for
+  Industrial and a diamond for Public.
+- Total value is the structure, content and vehicle values together; the populations are the under-65 and 65-and-over counts together.
+- **LifeSim data checks** colors each structure by its most serious problem: **Outside the Emergency Response area**, **Missing population**,
+  **Missing building data**, **Missing values** or **Unusual population**, or **No problems found** (see
+  [Structure Inventory](./403-consequence-data.mdx#structure-inventory)).
+
+The style editor also sets the symbol size, outline, opacity and marker, and each class can be edited on its own. DST keeps these choices across the
+pages of the module until the page is reloaded.
+
+## Adding a Line or Area
+
+The model area, dam centerline, river centerlines, coastlines, breaklines and refinement regions are added through one dialog, titled with the
+feature's name:
+
+<ProcessList
+  variant="steps"
+  items={[
+    { title: <>Select the feature's add button and enter its fields (listed in the sections below).</> },
+    {
+      title: (
+        <>
+          Optionally, select <strong>Import Geometry from File</strong> to read the outline from a GeoJSON (.geojson, .json) or KML (.kml)
+          file. A river can instead be selected with <strong>Pick a River on the Map</strong>, and a breakline with{' '}
+          <strong>Pick a Levee on the Map</strong> or <strong>Pick a Road on the Map</strong>.
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          Select <strong>Create</strong> (or <strong>Replace</strong>).
+        </>
+      ),
+      result: <>When no geometry was given, DST creates the feature and starts the map's drawing tool for it at once.</>,
+    },
+  ]}
+/>
+
+:::note[Requires]
+
+A model area, before a line can be selected from the map.
+
+:::
+
+A river selected from the map comes from USGS NHDPlus V2, a levee from the USACE National Levee Database and a road from OpenStreetMap; only the
+stretch inside the model area is kept. Before the line is added, a preview shows its length and any
+notes, such as "It was trimmed at the dam: only the stretch downstream of the dam is kept.", with **Pick Again** and **Use This River**, **Use This
+Levee** or **Use This Road**. With the reference layers on, selecting a river or levee on the map also offers **Import as River Centerline** or
+**Import as Breakline**.
+
+## Model Area
+
+The model area is the polygon the mesh covers. <TableReference tableKey="dst-users-guide-table-consequences-model-area" /> lists its fields.
+
+<TableVertical
+  tableKey="dst-users-guide-table-consequences-model-area"
+  colWidths={['14ch', '8ch', '11ch', '56ch']}
+  alt="Model area fields"
+  caption="Model area fields"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Name', 'Cell Size', 'Area summary'],
+    ['—', 'ft or m', '—'],
+    ['Required', 'Required', 'Read-only'],
+    [
+      'A descriptive name for the model area.',
+      'The computational mesh cell size, from 30 to 2000. Defaults to 2,000 when left blank in the add dialog.',
+      'The Area, the estimated number of cells (Est. Cells) and a recommended cell size (Rec. Cell Size) scaled from the area.',
+    ],
+  ]}
+/>
+
+## Dam Centerline
+
+The dam centerline is the line along the crest of the dam where the breach or dam hydrograph enters the mesh.
+<TableReference tableKey="dst-users-guide-table-consequences-dam-centerline" /> lists its fields.
+
+<TableVertical
+  tableKey="dst-users-guide-table-consequences-dam-centerline"
+  colWidths={['21ch', '11ch', '15ch', '42ch']}
+  alt="Dam centerline fields"
+  caption="Dam centerline fields"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    [
+      'Name',
+      'Top of Dam Elevation',
+      'Top of dam justification',
+      'Cell Size near Dam',
+      'Cells Away from Dam',
+      'Centerline summary',
+      'Mesh near the dam',
+    ],
+    ['—', 'ft or m, screening datum', '—', 'ft', '—', '—', '—'],
+    ['Required', 'Required', 'Conditional: when the top of dam is entered here', 'Optional', 'Optional', 'Read-only', 'Read-only'],
+    [
+      'A descriptive name for the dam centerline.',
+      'Follows the dam crest elevation on the Dam Data page (tagged Auto) until a different value is entered (tagged Manual). The reset button returns it to Dam Data. Must be greater than zero.',
+      'Explains why the top of dam differs from the Dam Data dam crest. A Manual value without it leaves the page Incomplete on Submission Readiness.',
+      'The side of the square cells built along the dam. Blank applies no refinement near the dam.',
+      'How many rows of square cells the mesh builds out from the dam, from 1 to 200. Defaults to 2.',
+      'Length, estimated square cells and vertices.',
+      'After a mesh is computed: the share of rectangular cells, the smallest cell, the 95th percentile face angle and whether the square cell rows were built.',
+    ],
+  ]}
+/>
+
+## River Centerlines
+
+A river centerline is meshed as one row of rectangular cells along the river. A river that enters the model area from outside can take an inflow on
+the Inundation Analysis page. <TableReference tableKey="dst-users-guide-table-consequences-river" /> lists its fields.
+
+<TableVertical
+  tableKey="dst-users-guide-table-consequences-river"
+  colWidths={['19ch', '7ch', '11ch', '52ch']}
+  alt="River centerline fields"
+  caption="River centerline fields"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Name', 'Bankfull Width', "Manning's n", 'River Cell Size', 'Centerline summary'],
+    ['—', 'ft', '—', 'ft', '—'],
+    ['Required', 'Required', 'Required', 'Optional', 'Read-only'],
+    [
+      'A descriptive name for the river centerline.',
+      'The width of the river at its bankfull stage. Defaults to 50. Must be greater than zero.',
+      'The roughness of the river channel. Defaults to 0.035. Must be greater than zero; values above 1 are flagged as atypical.',
+      'The cell length along the river. Blank uses three times the bankfull width.',
+      'Length, estimated cells and vertices.',
+    ],
+  ]}
+/>
+
+## Coastlines, Breaklines and Refinement Regions
+
+A coastline is a line along the model area's edge where a stage boundary can be applied. A breakline aligns the mesh with a sharp change in
+elevation, such as a levee, embankment or road. A refinement region is a polygon meshed at a smaller cell size.
+<TableReference tableKey="dst-users-guide-table-consequences-refinement" /> lists their fields.
+
+<TableVertical
+  tableKey="dst-users-guide-table-consequences-refinement"
+  colWidths={['29ch', '7ch', '11ch', '42ch']}
+  alt="Coastline, breakline and refinement region fields"
+  caption="Coastline, breakline and refinement region fields"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Name', 'Cell Size near Coastline, Cell Size near Breakline', 'Cell Size (refinement region)', 'Summary'],
+    ['—', 'ft', 'ft', '—'],
+    ['Required', 'Optional', 'Optional', 'Read-only'],
+    [
+      'A descriptive name for the feature.',
+      'The mesh cell size next to the line. Blank applies no refinement.',
+      'The mesh cell size inside the region. Blank uses the model area cell size.',
+      'Length or area, estimated cells and vertices.',
+    ],
+  ]}
+/>
+
+## Terrain
+
+The terrain supplies the ground elevations of the mesh. **Terrain** opens the **Add Terrain** dialog, with two tabs:
+
+- **OpenTopography** downloads a terrain over the model geometry with a 660 ft (200 m) buffer. The **Dataset** is Copernicus 30m (COP30, the
+  default) or 90m (COP90), SRTM 30m (SRTMGL1) or 90m (SRTMGL3), or USGS 1m, 10m or 30m (3DEP, United States only). A **Download Area** preview shows
+  the area to be requested. One download covers at most 4° of latitude or longitude, 1.5 billion cells and 40 requests. **Download** starts it, and
+  it continues after the dialog closes.
+- **Upload File** reads a GeoTIFF (.tif, .tiff) digital elevation model up to 11 GB, chosen with **Select GeoTIFF File**. **Elevation Units**
+  (Meters or Feet) is required; meters are converted to feet.
+
+**Name** is optional; a blank name is generated. While the terrain processes, its row shows a spinner, and DST reports "Terrain "[name]" is
+ready!" when it finishes. Its properties panel shows its source, resolution, units, dataset and bounding box, and warns when the model geometry
+extends past the terrain.
+
+:::caution
+
+Replacing a downloaded terrain deletes the old one when the download starts. If the download fails, the model has no terrain until another is
+added.
+
+:::
+
+## Land Cover
+
+The land cover sets the roughness (Manning's n) of the floodplain. **Land Cover** opens the **Add Land Cover** dialog, with two tabs:
+
+- **NLCD** downloads the National Land Cover Database over the model geometry with a 660 ft buffer. **NLCD Year** is **Latest available** (the
+  default) or a release from 2021 back to 2001.
+- **Upload File** reads a GeoTIFF of whole-number land cover classes. NLCD codes keep their NLCD names and Manning's n; any other code becomes
+  "Class N" with n = 0.06 until it is set.
+
+The properties panel shows the land cover's source, year, resolution and bounding box. **Edit Manning's n…** opens the **Manning's n by Land Cover
+Class** dialog, which lists each class's **Code**, **Land Cover Class**, **Default n** and **Manning's n**. Each Manning's n is greater than 0 and
+at most 1. **Reset to defaults** restores the defaults and **Save** keeps the changes. Changing a value marks existing simulation results as out of
+date. Where the model extends past the land cover, the mesh uses a Manning's n of 0.06.
+
+## Computational Mesh
+
+**Mesh** computes the computational mesh from the model geometry; selecting it again while the mesh computes cancels it. The status under **Model
+Geometry** reads "Queued…", a percentage, "[N] cells", "[N] cells · [K] warnings", "Failed", "Cancelled" or "Not computed".
+
+:::note[Requires]
+
+A model area with a drawn boundary, before the mesh can be computed.
+
+:::
+
+When the mesh fails or has warnings, the **Mesh failed** or **Mesh warnings** card opens over the map. It lists each message from the mesher with
+**Show on Map**, which outlines and zooms to the problem.
+
+:::note
+
+DST does not recompute the mesh when the geometry changes. The user selects **Mesh** again after changing the geometry or the dam's mesh settings.
+
+:::
+
+## Editing, Saving and Downloading Geometry
+
+The fields in a properties panel save when the user leaves the field (see [Saving](./040-working-in-dst.mdx#saving)). Outlines are edited
+explicitly:
+
+- **Edit Geometry** in the properties panel, or **Edit selected feature** in the toolbar, starts an edit, and **Save** or **Cancel** ends it;
+  <kbd>Esc</kbd> cancels.
+- Switching features with unsaved edits asks "Discard Unsaved Changes?" (**Keep Editing** or **Discard Changes**), and leaving the page asks for
+  confirmation (**Stay** or **Leave Page**).
+- The trash icon in the properties panel deletes a feature after confirmation.
+
+Each feature downloads as GeoJSON from its tree row or panel, and the terrain and land cover as their files. The **Model Geometry** download saves
+all the geometry as one GeoJSON file, with the mesh (.h5, .hdf) once it is computed.
+
+Changes to the geometry, terrain, land cover or mesh do not clear later results. DST marks the inundation and consequence results that depend on
+them as out of date until they run again.
+
+## Common Problems
+
+<CollectionList
+  anchorPrefix="problem"
+  defaultOpen="none"
+  items={[
+    {
+      title: 'Terrain or land cover download is unavailable',
+      child: (
+        <>
+          <p>
+            The dialog reads "No download area available." or "No bounding box available." until the model has geometry. The user adds the model area,
+            or another feature with geometry, first.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'A terrain or land cover fails to process',
+      child: (
+        <>
+          <p>
+            DST reports "Terrain failed: [reason]" or "Land cover failed: [reason]". The user adds it again, or uploads a file instead. When a service
+            the dialog depends on is down or degraded, the tab shows the outage's site alert at the top (see <Link
+            to="/docs/web-applications/dst/users-guide/v1.0/working-in-dst#site-alerts">Site alerts</Link>); the download or upload can still be
+            started, but may fail until the service recovers.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'The model geometry extends past the terrain',
+      child: (
+        <>
+          <p>
+            The terrain's properties panel warns that part of the model has no ground elevations, and the Inundation Analysis page refuses to run. The
+            user downloads a terrain again to cover the model, uploads one that covers it, or moves the model area inside the terrain.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'The mesh fails or has warnings',
+      child: (
+        <>
+          <p>
+            <strong>Show on Map</strong> in the <strong>Mesh failed</strong> or <strong>Mesh warnings</strong> card finds each problem. The user
+            adjusts the geometry or cell sizes there and selects <strong>Mesh</strong> again.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'Geometry changes do not show in the simulation',
+      child: (
+        <>
+          <p>
+            DST does not recompute the mesh automatically. The user selects <strong>Mesh</strong> again, then runs the analysis again.
+          </p>
+        </>
+      ),
+    },
+  ]}
+/>

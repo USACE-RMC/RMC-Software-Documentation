@@ -1,0 +1,882 @@
+---
+title: 'Review'
+---
+
+import CollectionList from '@site/src/components/CollectionList';
+import Figure from '@site/src/components/Figure';
+import FigReference from '@site/src/components/FigureReference';
+import Link from '@docusaurus/Link';
+import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+import Video from '@site/src/components/Video';
+import VideoReference from '@site/src/components/VideoReference';
+import { MEDIA_WIDTH } from './_media-width.js';
+import AnnotatedFigure from '@site/src/components/AnnotatedFigure';
+import reviewLevelsPageCallouts from '@site/static/figures/web-applications/dst/users-guide/v1.0/figures/review-levels-page.callouts.json';
+import reviewLevelCommentsCallouts from '@site/static/figures/web-applications/dst/users-guide/v1.0/figures/review-level-comments.callouts.json';
+
+<NavContainer link="/web-applications/dst" linkTitle="Dam Screening Tool" document="web-applications/dst/users-guide" />
+
+# Review
+
+After the Facilitator submits a screening, it passes through its review levels one at a time. At each level, the reviewers comment, the screening
+team responds to each comment, the reviewers close or return each comment, and the review lead approves the level. When the last level is approved,
+the screening is Complete. The review levels and their reviewers are set up in the Review Configuration section of the Screening Management page (see
+[Screening Management](./104-screening-management.mdx)).
+
+## Roles in Review
+
+<TableReference tableKey="dst-users-guide-table-review-roles" /> lists what each role does in review. The screening roles are described in
+[Managing the Screening Team](./030-getting-started.mdx#managing-the-screening-team).
+
+<TableVertical
+  tableKey="dst-users-guide-table-review-roles"
+  colWidths={['14ch', '75ch']}
+  alt="The roles in review and what each role does"
+  caption="Roles in review"
+  headers={[[{ value: 'Role' }, { value: 'In review' }]]}
+  columns={[
+    ['Facilitator', 'Team Member', 'Reviewer', 'Review lead', 'Viewer'],
+    [
+      "Submits the screening for review. Assigns the review lead of each level and adds or removes reviewers. Responds to comments for the screening team, and submits the team's responses for backcheck.",
+      'Responds to comments for the screening team.',
+      "Is assigned to one review level. Adds comments during the level's review period, and imports comments or submits No Comments during its review or resolution period. Edits and deletes the reviewer's own comments during the review period. Closes or returns the reviewer's own comments during backcheck.",
+      "A reviewer marked (Lead) on the level. Does everything a reviewer does, and also ends the review period, adds or removes reviewers, marks reviewers Unresponsive, closes or backchecks other reviewers' comments, and approves or rejects the level.",
+      'Reads the review levels and their comments.',
+    ],
+  ]}
+/>
+
+Everyone assigned to a screening can open the Review module and read every level's comments. Reviewers can read every page of the screening, but
+cannot change its inputs. Selecting **Review** in the module navigation opens:
+
+- the level's page, for a reviewer on a level that is in progress;
+- the **Submission Readiness** page, for the Facilitator, Team Members and administrators before submission;
+- the **Review Levels** page, for everyone else.
+
+## The Review Lifecycle
+
+A review level passes through five phases. Its phase appears as a badge on the Review Levels page and on the Dashboard's My Reviews tab (see
+[My Reviews](./030-getting-started.mdx#my-reviews)). <TableReference tableKey="dst-users-guide-table-review-phases" /> lists the phases in order and
+whether the screening's inputs can be changed in each.
+
+<TableVertical
+  tableKey="dst-users-guide-table-review-phases"
+  colWidths={['14ch', '11ch', '64ch']}
+  alt="The phases of a review level, the state of the screening's inputs in each, and what happens in each"
+  caption="Review level phases"
+  headers={[[{ value: 'Badge' }, { value: 'Inputs' }, { value: 'What happens' }]]}
+  columns={[
+    ['Pending', 'Review Period', 'Resolution', 'Backcheck', 'Approved'],
+    ['As set by the active level', 'Locked', 'Unlocked', 'Locked', 'Locked'],
+    [
+      'The level waits for the screening to be submitted, or for the previous level to be approved.',
+      'Reviewers add comments. The phase ends when the review lead selects End Review Period.',
+      'The screening team responds to every comment and may change inputs. The phase ends when the Facilitator selects Submit for Backcheck.',
+      "Each reviewer closes or returns each of the reviewer's comments. When any comment is returned, the level goes back to Resolution for another round.",
+      'The review lead has approved the level. The next level starts its review period, or, after the last level, the screening is Complete.',
+    ],
+  ]}
+/>
+
+The first level starts its review period as soon as the screening is submitted. Each later level starts its review period as soon as the level
+before it is approved, and its reviewers are notified. While inputs are locked, a strip across the top of every page explains why (see
+[Input Lock](./040-working-in-dst.mdx#input-lock)).
+
+Resolution and backcheck repeat in rounds until every comment is closed, and the level's page shows the round number. A review lead can reject the
+review at any time from the review period through backcheck, which ends the review of the whole screening, not only of that level (see
+[Rejecting a Review](#rejecting-a-review)).
+
+## Submitting for Review
+
+The Facilitator submits the screening from **Review > Submission Readiness** once every page tile reads Ready. Submitting starts the first level's
+review period, notifies its reviewers and locks the screening's inputs. A submission cannot be withdrawn except by a rejection. The steps, the
+readiness statuses and the confirmation dialog are described in [Submitting for Review](./040-working-in-dst.mdx#submitting-for-review). When
+**Submit for Review** stays unavailable, see [Submit for Review is unavailable](#problem-submit-for-review-is-unavailable).
+
+## Review Levels
+
+The Review Levels page (**Review > Review Levels**) lists every review level of the screening in order, with its phase, and opens each one.
+<FigReference figKey="dst-users-guide-fig-review-levels-page" /> shows the page during a level's review period, and
+<TableReference tableKey="dst-users-guide-table-review-levels-regions" /> describes each numbered region.
+
+<AnnotatedFigure
+  figKey="dst-users-guide-fig-review-levels-page"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/review-levels-page.png"
+  alt="The Review Levels page of Thistlewood Dam Screening during the Level 1 review period, signed in as the Level 1 review lead. The inputs-locked strip reads 'Inputs locked for review — Level 1 is in its review period. Inputs unlock when it reaches its resolution period.' Two level cards are listed: Level 1, with a Review Period badge, '2 reviewers' and an End Review Period button; and Level 2, with a Pending badge and '1 reviewer'."
+  caption="The Review Levels page during the Level 1 review period."
+  width="100%"
+  tableKey="dst-users-guide-table-review-levels-regions"
+  tableCaption="Review Levels page regions"
+  tableAlt="Description of each numbered region of the Review Levels page"
+  positions={reviewLevelsPageCallouts}
+  callouts={[
+    {
+      n: 1,
+      region: 'Review pages',
+      text: 'The Review Levels page in the sub-navigation. The Review module also holds the Submission Readiness page.',
+    },
+    { n: 2, region: 'Level card', text: "The level's name. Selecting anywhere on the card opens the level." },
+    { n: 3, region: 'Phase badge', text: 'Pending, Review Period, Resolution, Backcheck or Approved.' },
+    { n: 4, region: 'Reviewer count', text: 'The number of reviewers assigned to the level.' },
+    {
+      n: 5,
+      region: 'End Review Period',
+      text: (
+        <>
+          Shown only to the level's review lead during the review period (see <a href="#ending-the-review-period">Ending the Review Period</a>).
+        </>
+      ),
+    },
+  ]}
+/>
+
+An approved level's card also shows "Approved on [date] by [name]". When no levels are set up, the page reads "No review levels configured. Go to
+Screening Management to add levels."
+
+## Opening a Review Level
+
+Selecting a level on the Review Levels page opens the level's page, which holds its comments and the controls for its current phase. The breadcrumb
+**Review Levels › Level 1** in the sub-navigation returns to the list. <FigReference figKey="dst-users-guide-fig-review-level-comments" /> shows a
+level during its review period, as its review lead sees it, and <TableReference tableKey="dst-users-guide-table-review-level-regions" /> describes
+each numbered region.
+
+<AnnotatedFigure
+  figKey="dst-users-guide-fig-review-level-comments"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/review-level-comments.png"
+  alt="The Level 1 page of Thistlewood Dam Screening during its review period, signed in as the Level 1 review lead, below the inputs-locked strip. The heading Level 1 is followed by the counts 4 total, 4 open, 1 critical and 0 closed, and the buttons End Review Period, Reject, Import, Export and Review Team (2/2). The filters are set to All Statuses, All Categories, All Sub-categories (unavailable), All Reviewers, All and 15 per page. The comment table, with the columns #, Category, Sub-category, Author, Comment and Status, lists four Open comments: two by Dana Whitfield on Hazards, Flood Hazard, the second marked critical; one by Sam Okafor on Response, Dam Information; and one by Sam Okafor on Major Findings, Risk Characterization."
+  caption="A review level during its review period, seen by the review lead."
+  width="100%"
+  tableKey="dst-users-guide-table-review-level-regions"
+  tableCaption="Review level page regions"
+  tableAlt="Description of each numbered region of a review level page"
+  positions={reviewLevelCommentsCallouts}
+  callouts={[
+    { n: 1, region: 'Level heading', text: "The level's name." },
+    {
+      n: 2,
+      region: 'Counts',
+      text: 'Total comments, open comments (awaiting a response or a backcheck), critical comments not yet closed (shown only when there are any) and closed comments.',
+    },
+    {
+      n: 3,
+      region: 'Lead actions',
+      text: (
+        <>
+          <strong>End Review Period</strong> and <strong>Reject</strong>, shown only to the review lead (see{' '}
+          <a href="#approving-or-rejecting-a-level">Approving or Rejecting a Level</a>).
+        </>
+      ),
+    },
+    {
+      n: 4,
+      region: 'Import and Export',
+      text: (
+        <>
+          Bring in comments from a spreadsheet, or download the comments (see{' '}
+          <a href="#importing-and-exporting-comments">Importing and Exporting Comments</a>).
+        </>
+      ),
+    },
+    {
+      n: 5,
+      region: 'Review Team',
+      text: (
+        <>
+          The level's reviewers and their participation (see <a href="#the-review-team">The Review Team</a>).
+        </>
+      ),
+    },
+    { n: 6, region: 'Filters', text: 'Narrow the table by status, category, page, reviewer or criticality, and set the rows per page.' },
+    { n: 7, region: 'Comment table', text: 'One row per comment. Selecting a row opens the comment.' },
+    {
+      n: 8,
+      region: 'Add a review comment',
+      text: (
+        <>
+          Opens the New Comment panel. Shown to the level's reviewers during the review period (see <a href="#adding-comments">Adding Comments</a>).
+        </>
+      ),
+    },
+  ]}
+/>
+
+Before its review period starts, a level's page shows only its name and "This level's review period starts automatically when the screening is
+submitted." or "This level's review period starts automatically when the previous level is approved." When other reviewers add or change comments
+while the page is open, a **New comments available — Refresh** button appears above the table; selecting it updates the list.
+
+### Filtering Comments
+
+The filters narrow the comment table. Each starts at its "All" choice. <TableReference tableKey="dst-users-guide-table-review-level-filters" />
+lists them.
+
+<TableVertical
+  tableKey="dst-users-guide-table-review-level-filters"
+  colWidths={['13ch', '76ch']}
+  alt="The comment filters on a review level page and their choices"
+  caption="Comment filters"
+  headers={[[{ value: 'Filter' }, { value: 'Choices' }]]}
+  columns={[
+    ['Status', 'Category', 'Sub-category', 'Reviewer', 'Criticality', 'Per page'],
+    [
+      'All Statuses, Open, Responded, Closed, Concurrence.',
+      'All Categories, then the modules Screening Information, Documents, Hazards, Response, Consequences, Risk Analysis and Major Findings, and General.',
+      'All Sub-categories, then the pages of the chosen category. Unavailable until a category with pages, that is, not Documents or General, is chosen.',
+      "All Reviewers, then the signed-in user marked (you), then the level's other reviewers. Shown only when the level has reviewers.",
+      'All, Critical only, Non-critical only.',
+      '15 (the default), 25 or 50 rows per page.',
+    ],
+  ]}
+/>
+
+When no comment matches, the table reads "No comments match the current filters."
+
+:::tip
+
+During resolution, the screening team sets **Status** to **Open** to list only the comments that still need a response. During backcheck, a reviewer
+sets **Reviewer** to the entry marked (you) and **Status** to **Responded** to list only the comments awaiting that reviewer's backcheck.
+
+:::
+
+<VideoReference videoKey="dst-users-guide-video-review-comment-filters" /> shows the comment table filtered to critical comments, then to one
+reviewer.
+
+<Video
+  videoKey="dst-users-guide-video-review-comment-filters"
+  src="/videos/web-applications/dst/users-guide/v1.0/review-comment-filters.mp4"
+  caption="Filtering the comments of a review level."
+  width="100%"
+/>
+
+### Reading a Comment
+
+The comment table lists the level's comments for the current review cycle, with the columns **#** (with an icon for a critical comment),
+**Category** and **Sub-category** (the module and page the comment concerns, or "-" when it names no page), **Author**, **Comment** and **Status**.
+Resting the pointer on a long comment shows all of it. <TableReference tableKey="dst-users-guide-table-review-comment-statuses" /> lists the
+statuses.
+
+<TableVertical
+  tableKey="dst-users-guide-table-review-comment-statuses"
+  widthMode="auto"
+  alt="Comment statuses and what each means"
+  caption="Comment statuses"
+  headers={[[{ value: 'Status' }, { value: 'Meaning' }]]}
+  columns={[
+    ['Open', 'Responded', 'Closed', 'Concurrence'],
+    [
+      'Awaiting a response from the screening team, either for the first time or because the reviewer returned it.',
+      "The screening team has responded; the comment awaits the reviewer's backcheck.",
+      'The reviewer, or the review lead, has closed the comment.',
+      'A No Comments entry: the reviewer has no comments for the level.',
+    ],
+  ]}
+/>
+
+Selecting a row opens the comment in a panel headed **Comment #N**. The panel shows the comment's category, sub-category, a **Critical** tag when it
+applies, its status, its text, and its author and date, with "(edited [date and time])" when the author has changed it. Below these, the thread lists
+each **Team Response** with its disposition, each **Backcheck** reply, and a final **Closed** or **Closed without response** entry. The actions
+available below the thread depend on the user's role and the level's phase, as described in the sections that follow. The × button, <kbd>Esc</kbd>
+or a selection outside the panel closes it.
+
+After a rejection, the comments of the earlier review cycle remain on the level as a read-only record, under the collapsed **Archived Comments
+(Prior Cycles)** section below the table.
+
+### The Review Team
+
+:::note[Availability]
+
+The Facilitator, administrators and the level's review lead.
+
+:::
+
+**Review Team** opens a dialog listing the level's reviewers, the review lead marked **(Lead)**. During and after the review period, each reviewer
+has a participation status:
+
+- **Pending**: the reviewer has not yet commented or submitted No Comments.
+- **Participated**: the reviewer has commented or submitted No Comments. The review lead counts as Participated when the review period ends.
+- **Unresponsive**: the reviewer did not participate.
+
+Once the review period starts, the button shows the participation count, for example **Review Team (1/2)**; on a Pending level it shows the number of
+reviewers, such as **Review Team (2)**. In the dialog:
+
+- **Adding and removing reviewers.** While the level is Pending or in its review period, the search box adds a reviewer, and the trash icon beside a
+  reviewer removes the reviewer. A reviewer added during the review period is notified and can comment at once. The review lead cannot be removed
+  here; only the Facilitator or an administrator assigns the review lead, on the Screening Management page. During resolution and backcheck the team
+  cannot be changed.
+- **Marking Unresponsive.** During the active phases the review lead selects **Mark Unresponsive** beside a Pending reviewer, enters a
+  **Justification (required)** and selects **Confirm**. **Remove Unresponsive** reverses it, except during backcheck. When the review lead ends the
+  review period, every reviewer still Pending is marked Unresponsive.
+
+### Importing and Exporting Comments
+
+**Export**, available to everyone who can open the level, downloads comments as an Excel workbook (.xlsx). In the **Export Comments** dialog, the user
+checks the levels to include, or **Select all**, and selects **Export N Levels**. The workbook has one worksheet per level, and one row per comment of
+the current review cycle with the columns **Comment #**, **Category**, **Commenter**, **Comment Text**, **Critical**, **Status**, **Disposition**,
+**Response Text** and **Backcheck Text**. The last three hold only the latest team response and the latest backcheck reply; earlier replies in a
+thread and archived comments are not exported. The file is named for the screening, the level and the date, for example
+`Screening-Name_Level-1_comments_2026-11-20.xlsx`.
+
+**Import** adds many comments at once.
+
+:::note[Availability]
+
+The level's reviewers, during the review and resolution periods.
+
+:::
+
+<ProcessList
+  variant="steps"
+  items={[
+    {
+      title: (
+        <>
+          In the <strong>Import Comments</strong> dialog, choose <strong>Upload file</strong> and select <strong>Select & Upload File</strong> to
+          choose a filled .xlsx template (<strong>Download import template</strong> provides a blank one), or choose <strong>Paste rows</strong>, paste
+          rows copied from a spreadsheet in the column order Category, Sub-category, Comment, Critical, and select <strong>Preview Rows</strong>. A
+          header row is optional.
+        </>
+      ),
+      result: (
+        <>
+          The <strong>Preview Import</strong> step lists each row with its status and a count of valid rows, warnings and errors.
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          Edit or delete rows until no errors remain. <strong>Start Over</strong> returns to the first step.
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          Select <strong>Import N Comments</strong>.
+        </>
+      ),
+      result: (
+        <>
+          The dialog shows "N comments imported successfully", and <strong>Close</strong> closes it.
+        </>
+      ),
+    },
+  ]}
+/>
+
+DST checks every row when the rows are read and again after each edit in the preview:
+
+- **Category** must name one of the seven modules or General, in any capitalization. Otherwise the row has the error 'Invalid category: "[value]".'
+- **Sub-category** is optional. When given, it must name a page of the row's category, or the row has the error '"[page]" is not a sub-category of
+  [category].'
+- **Comment** is required ("Comment text is required.") and holds at most 5,000 characters ("Comment text exceeds the 5000-character limit.").
+- **Critical** takes Yes or No. A blank cell is taken as No with the warning "Critical defaulted to No.", and any other value is taken as No with the
+  warning 'Unrecognized critical value: "[value]". Defaulted to No.'
+
+Rows with warnings are imported; rows with errors must be corrected or deleted first. When the first row has Category and Comment headings, DST reads
+the columns by their headings rather than by their order. Blank rows are skipped, an import holds at most 5,000 rows, and only the first worksheet of
+an uploaded workbook is read. Imported comments count as the reviewer's participation. A reviewer who has submitted No Comments must revert it before
+importing.
+
+## Adding Comments
+
+:::note[Availability]
+
+The level's reviewers, during its review period.
+
+:::
+
+An **Add a review comment** button at the lower right of every page of the screening opens the **New Comment** panel
+(<FigReference figKey="dst-users-guide-fig-review-new-comment-panel" />). The reviewer can continue reading and navigating the screening while the
+panel is open.
+
+<Figure
+  figKey="dst-users-guide-fig-review-new-comment-panel"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/review-new-comment-panel.png"
+  alt="The New Comment panel, signed in as a Level 1 reviewer on the Flood Hazard page. Category is set to Hazards and Sub-category to Flood Hazard, the Comment box reads 'Check the gage datum used for the stage record near 800 ft.', Mark as critical is unchecked, and the buttons Submit Comment and Clear follow. The expanded Existing Comments (2) section has Scope set to Flood Hazard and Author set to Mine, and lists comments #1 and #2, both Open, the second marked critical."
+  caption="The New Comment panel."
+  width="45%"
+/>
+
+<TableReference tableKey="dst-users-guide-table-review-new-comment-inputs" /> lists the panel's inputs.
+
+<TableVertical
+  tableKey="dst-users-guide-table-review-new-comment-inputs"
+  colWidths={['15ch', '7ch', '11ch', '56ch']}
+  alt="Inputs of the New Comment panel"
+  caption="New Comment panel inputs"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Category', 'Sub-category', 'Comment', 'Mark as critical'],
+    ['—', '—', '—', '—'],
+    ['Required', 'Optional', 'Required', 'Optional'],
+    [
+      'The module the comment concerns: one of the seven modules, or General. Defaults to the module of the page on screen.',
+      'The page the comment concerns. Defaults to the page on screen. Unavailable for Documents and General, which have no pages.',
+      'The comment text. Submit Comment stays unavailable until it holds text.',
+      'Flags the comment as critical. Unchecked by default.',
+    ],
+  ]}
+/>
+
+To add a comment:
+
+<ProcessList
+  variant="steps"
+  items={[
+    {
+      title: (
+        <>
+          Open the page the comment concerns and select <strong>Add a review comment</strong>.
+        </>
+      ),
+      result: <>Category and Sub-category are set from that page.</>,
+    },
+    {
+      title: (
+        <>
+          Enter the comment and check <strong>Mark as critical</strong> if it applies.
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          Select <strong>Submit Comment</strong>.
+        </>
+      ),
+      result: <>DST numbers the comment, shows "Comment #N submitted." and closes the panel.</>,
+    },
+  ]}
+/>
+
+A comment is not saved until it is submitted. While the Comment box is empty, Category and Sub-category follow the page on screen; once it holds
+text they stay fixed, and the draft is kept when the panel is closed and opened again. **Clear** empties the form.
+
+**Existing Comments**, at the bottom of the panel, lists comments already made, so the reviewer can avoid repeating one. **Scope** chooses between the
+page on screen and **Entire screening**, which adds Category and Sub-category filters and shows each comment's level and author. **Author** chooses
+between **Mine** and **All**. Selecting a comment opens it.
+
+<VideoReference videoKey="dst-users-guide-video-review-new-comment" /> shows a reviewer opening the comment panel on the Flood Hazard page, where the
+category and sub-category are already set, writing a comment and submitting it.
+
+<Video
+  videoKey="dst-users-guide-video-review-new-comment"
+  src="/videos/web-applications/dst/users-guide/v1.0/review-new-comment.mp4"
+  caption="Adding a review comment from the page it concerns."
+  width={MEDIA_WIDTH}
+  maxHeight="70vh"
+/>
+
+### No Comments
+
+:::note[Availability]
+
+The level's reviewers, during the review or resolution period. Not offered to a reviewer who already has comments on the level.
+
+:::
+
+A reviewer with nothing to raise selects **No Comments** on the level's page. The "Submit 'No Comments'" dialog explains that the reviewer is
+attesting to having no comments for the level and cannot add regular comments without reverting the entry; **Submit No Comments** confirms. The entry
+appears in the table with the status Concurrence and counts as participation. During the review period, **Revert 'No Comments'** removes the entry.
+
+<VideoReference videoKey="dst-users-guide-video-review-no-comments" /> shows **No Comments** submitted and a Concurrence row added to the comment
+table.
+
+<Video
+  videoKey="dst-users-guide-video-review-no-comments"
+  src="/videos/web-applications/dst/users-guide/v1.0/review-no-comments.mp4"
+  caption="Recording No Comments for a review level."
+  width={MEDIA_WIDTH}
+/>
+
+### Editing and Deleting a Comment
+
+During the review period, the author of a comment sees **Edit** and **Delete** in its panel. **Edit** opens the comment's Category, Sub-category,
+Comment and **Mark as critical** for change; **Save changes** keeps the change and **Cancel** discards it. **Delete** asks for confirmation.
+
+:::caution
+
+Deleting a comment permanently removes it from the review record ("It cannot be undone."). Only the author can delete a comment, and only during the
+review period.
+
+:::
+
+### Ending the Review Period
+
+The review lead ends the review period with **End Review Period**, on the Review Levels page or on the level's page. The confirmation dialog states
+that reviewers can no longer submit or revise comments, that the screening team can begin responding, and which reviewers will be marked Unresponsive
+because they have not participated. Selecting **End Review Period** in the dialog moves the level to its resolution period, unlocks the screening's
+inputs and notifies the screening team.
+
+## Responding to Comments
+
+During the resolution period, the Facilitator and Team Members respond to every comment and may change the screening to address them. A strip above
+the level's heading shows the round, such as "Resolution — round 1", the number of comments awaiting a team response, and the screening's Submission
+Readiness status (<FigReference figKey="dst-users-guide-fig-review-resolution-strip" />).
+
+<Figure
+  figKey="dst-users-guide-fig-review-resolution-strip"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/review-resolution-strip.png"
+  alt="The resolution strip on the Level 1 page, signed in as the Facilitator. It reads 'Resolution — round 1' and '0 comments awaiting a team response', followed by 'Submission Readiness: Ready', a Go to Submission Readiness button and a Submit for Backcheck button."
+  caption="The resolution strip, ready for backcheck."
+  width="100%"
+/>
+
+To respond to a comment:
+
+<ProcessList
+  variant="steps"
+  items={[
+    {
+      title: (
+        <>
+          Open the level and select a comment with the status Open.
+        </>
+      ),
+      result: (
+        <>
+          The panel shows a response form below the comment, as <FigReference figKey="dst-users-guide-fig-review-comment-team-response" /> shows.
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          Choose a <strong>Disposition</strong> and enter a <strong>Response</strong>, as listed in{' '}
+          <TableReference tableKey="dst-users-guide-table-review-response-inputs" />.
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          Select <strong>Submit Response</strong>.
+        </>
+      ),
+      result: <>DST shows "Response submitted.", closes the panel and changes the comment's status to Responded.</>,
+    },
+  ]}
+/>
+
+<Figure
+  figKey="dst-users-guide-fig-review-comment-team-response"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/review-comment-team-response.png"
+  alt="The comment panel for Comment #2 during the first resolution round, signed in as the Facilitator. The tags read Hazards, Flood Hazard, Critical and Open, above the comment text, which says the flood hazard curve ends below the higher loading levels, and the line 'By Dana Whitfield on 11/20/2026, 8:18:24 AM'. The response form has Disposition set to Concur, a Response reading 'We will extend the flood hazard curve to 822 ft using the most remote floods and update the hazard page.', and a Submit Response button."
+  caption="Responding to a comment."
+  width="50%"
+/>
+
+<TableVertical
+  tableKey="dst-users-guide-table-review-response-inputs"
+  colWidths={['12ch', '7ch', '11ch', '59ch']}
+  alt="Inputs of the team response form"
+  caption="Team response inputs"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Disposition', 'Response'],
+    ['—', '—'],
+    ['Required', 'Required'],
+    [
+      "The team's position on the comment: Concur (the default), Non-Concur or Information Only. Shown on the response as a Concur, Non-Concur or Info Only tag.",
+      "The team's reply. Submit Response stays unavailable until it holds text.",
+    ],
+  ]}
+/>
+
+A further response can be added to a Responded comment during the same resolution period. Changes to the screening clear the verification of the
+pages they touch, and those pages must be verified again before backcheck (see [Human Verification](./040-working-in-dst.mdx#human-verification)).
+**Go to Submission Readiness** in the strip opens the Submission Readiness page to find them.
+
+<VideoReference videoKey="dst-users-guide-video-review-team-response" /> shows a team response: the comment opened from the table, a disposition
+chosen, the response submitted, and the comment changing to Responded.
+
+<Video
+  videoKey="dst-users-guide-video-review-team-response"
+  src="/videos/web-applications/dst/users-guide/v1.0/review-team-response.mp4"
+  caption="Responding to a review comment with a disposition."
+  width={MEDIA_WIDTH}
+/>
+
+### Submitting for Backcheck
+
+:::note[Requires]
+
+A response to every comment, and a screening that passes Submission Readiness.
+
+:::
+
+The Facilitator selects **Submit for Backcheck** in the strip. The confirmation dialog states that screening inputs lock until the reviewers finish,
+that the level's reviewers are notified to close or return each of their comments, and that inputs unlock for another resolution round if any comment
+is returned. Selecting **Submit for Backcheck** in the dialog starts the backcheck period. When the button is unavailable, resting the pointer on it
+shows why (see [Submit for Backcheck is unavailable](#problem-submit-for-backcheck-is-unavailable)).
+
+<VideoReference videoKey="dst-users-guide-video-review-submit-backcheck" /> shows **Submit for Backcheck** confirmed: the level moves to Backcheck
+and the input lock returns.
+
+<Video
+  videoKey="dst-users-guide-video-review-submit-backcheck"
+  src="/videos/web-applications/dst/users-guide/v1.0/review-submit-backcheck.mp4"
+  caption="Submitting the team's responses for backcheck."
+  width={MEDIA_WIDTH}
+/>
+
+## Backchecking Responses
+
+During the backcheck period, each reviewer checks the team's responses to the reviewer's own comments. The strip above the level reads, for example,
+"Backcheck — round 1" and "2 comments awaiting backcheck". The author of a Responded comment sees a reply form below the thread
+(<FigReference figKey="dst-users-guide-fig-review-comment-backcheck" />).
+
+<Figure
+  figKey="dst-users-guide-fig-review-comment-backcheck"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/review-comment-backcheck.png"
+  alt="The comment panel for Comment #2 during the first backcheck round, signed in as the reviewer who wrote it. The tags read Hazards, Flood Hazard, Critical and Responded, above the comment text and its byline. The Team Response shows a Concur tag, 'by Jordan Hale 11/20/2026, 8:20:03 AM' and the response 'We will extend the flood hazard curve to 822 ft using the most remote floods and update the hazard page.'. Below it, the empty reply box 'Your response (optional to close, required to return the comment to the team)' is followed by Return to team and Close with response, both unavailable, and Close without response."
+  caption="Backchecking a team response."
+  width="50%"
+/>
+
+The reviewer opens each Responded comment and chooses one of three actions:
+
+- **Close without response** closes the comment. The thread ends with a **Closed without response** entry.
+- **Close with response** records the text in the reply box as a Backcheck reply and closes the comment.
+- **Return to team** records the reply and returns the comment to the team with the status Open.
+
+The two actions that record a reply stay unavailable until the reply box holds text. New comments cannot be added during backcheck; to raise a further
+request, the reviewer returns the original comment with a reply. When no comment is left awaiting backcheck, DST ends the round:
+
+- If any comment was returned, the level goes back to its resolution period for the next round, the inputs unlock and the screening team is
+  notified.
+- If every comment is closed, the strip reads "All comments closed — awaiting the review lead's approval" and the review lead is notified.
+
+**Reopen** reopens a closed comment. Reopening returns the comment to Responded when the team has responded, and to Open otherwise.
+
+:::note[Availability]
+
+The comment's author or the review lead, and only during the phase in which the comment was closed.
+
+:::
+
+<VideoReference videoKey="dst-users-guide-video-review-backcheck" /> shows a reviewer closing one comment with a reply, then returning another to the
+team with a required reply, which starts a new resolution round.
+
+<Video
+  videoKey="dst-users-guide-video-review-backcheck"
+  src="/videos/web-applications/dst/users-guide/v1.0/review-backcheck.mp4"
+  caption="Closing and returning comments in backcheck."
+  width={MEDIA_WIDTH}
+/>
+
+### Review Lead Actions
+
+:::note[Availability]
+
+The review lead, on another reviewer's comment.
+
+:::
+
+The **Review Lead Actions** box is used when a reviewer cannot act:
+
+- **Force Close**, while the comment is Open or Responded, closes it. The lead enters a **Force close justification (required for the record)** and
+  selects **Confirm Force Close**. The justification appears in the comment's Closed entry.
+- **Backcheck on Behalf**, during backcheck, replies for the author. The lead enters a **Backcheck comment** and a **Lead justification (required for
+  the record)** and selects **Submit Backcheck**, which returns the comment to the team.
+
+## Approving or Rejecting a Level
+
+:::note[Availability]
+
+The review lead, during the level's backcheck period.
+
+:::
+
+The **Official Review Decision** panel appears above the level's heading (<FigReference figKey="dst-users-guide-fig-review-decision-panel" />). It
+summarizes the reviewers accounted for and the comments closed, and lists the **Approval Criteria**, each marked met or not met.
+
+<Figure
+  figKey="dst-users-guide-fig-review-decision-panel"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/review-decision-panel.png"
+  alt="The Official Review Decision panel for Level 1, signed in as the Level 1 review lead. The summary reads Reviewers, '2 / 2 accounted for', and Comments, '4 / 4 closed'. The Approval Criteria list shows three met criteria: 'All reviewers accounted for (2 participated or marked unresponsive)', 'All 4 comments closed' and 'Screening passes Submission Readiness'. The Approve and Reject buttons follow."
+  caption="The Official Review Decision panel."
+  width="100%"
+/>
+
+**Approve** is available only when all three criteria are met:
+
+- "All reviewers accounted for (N participated or marked unresponsive)". While a reviewer is still Pending it reads "N of M reviewers have not
+  participated".
+- "All N comments closed", or "No comments were submitted". While comments are open it reads "N comments remain open or awaiting backcheck".
+- "Screening passes Submission Readiness". If it does not, the panel reads "The screening no longer passes Submission Readiness — the facilitator must
+  re-verify the affected pages". Until the readiness check loads, it reads "Submission Readiness not yet confirmed".
+
+To approve, the review lead selects **Approve**, reads the attestation in the **Approve Review** dialog, "I affirm that I have reviewed all submitted
+comments and their responses, and that this review has met its criteria.", and selects **Approve Review**. For a level other than the last, the next
+level's review period starts at once and its reviewers are notified. The approved level shows "Approved on [date] by [name]", and its comments can no
+longer be changed.
+
+:::caution
+
+The approval of a level cannot be retracted. Approving the final level permanently marks the screening as Complete, and its inputs and results stay
+locked.
+
+:::
+
+<VideoReference videoKey="dst-users-guide-video-review-approve" /> shows the decision panel with every criterion met, **Approve**, the **Approve
+Review** attestation, and the level marked approved.
+
+<Video
+  videoKey="dst-users-guide-video-review-approve"
+  src="/videos/web-applications/dst/users-guide/v1.0/review-approve.mp4"
+  caption="Approving a review level."
+  width={MEDIA_WIDTH}
+/>
+
+### Rejecting a Review
+
+The review lead rejects the review with **Reject**, in the level's header during the review and resolution periods or in the decision panel during
+backcheck. The **Reject Review** dialog requires a **Justification (required)**; **Reject Review** confirms.
+
+:::caution
+
+Rejecting resets all review progress. The screening returns to In Progress, its inputs unlock, and it must pass through every review level again after
+it is resubmitted. The comments of the rejected cycle are kept as a read-only record. A rejection cannot be undone.
+
+:::
+
+## Common Problems
+
+<CollectionList
+  anchorPrefix="problem"
+  defaultOpen="none"
+  items={[
+    {
+      title: 'Submit for Review is unavailable',
+      child: (
+        <>
+          <p>
+            The button stays unavailable until every tile on the Submission Readiness page reads Ready. Selecting a tile opens its page. An <strong>Incomplete</strong> page
+            lists what it needs in its page messages (see <Link to="/docs/web-applications/dst/users-guide/v1.0/working-in-dst#page-messages">Page
+            Messages</Link>); a <strong>Not verified</strong> page needs its verification badge selected; a <strong>Blocked</strong> page waits on
+            another page, and resting the pointer on its tile highlights the pages it waits on, which must be resolved first. The Screening Management
+            tile stays Incomplete until the screening has at least two review levels, each with a review lead ("Set up at least two review levels in
+            Screening Management." and "Assign a review lead to [level]."). A Testing screening can never be submitted ("Testing screenings cannot be
+            submitted for review.").
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"The screening isn\'t ready yet. Submission Readiness shows the pages that still need work."',
+      child: (
+        <>
+          <p>
+            This page message appears when a page stopped being ready after the Submission Readiness page loaded, for example because another team
+            member changed it. The user reloads the Submission Readiness page, resolves the tiles that are no longer Ready and submits again.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'Inputs are read-only',
+      child: (
+        <>
+          <p>
+            The screening's inputs stay locked during the review period, backcheck and after completion, and while the screening has no Facilitator;
+            the strip across the top of each page names the reason. They unlock only while the active level is in its resolution period. While inputs
+            are locked, calculations do not run and pages cannot be verified (see <Link
+            to="/docs/web-applications/dst/users-guide/v1.0/working-in-dst#input-lock">Input Lock</Link>).
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'The Add a review comment button is missing',
+      child: (
+        <>
+          <p>
+            The button appears only to the reviewers of the active level, and only during its review period. A reviewer on a later level waits until
+            the previous level is approved. During the resolution period a reviewer can still import comments or submit No Comments from the level's
+            page. During backcheck DST refuses new comments with "New comments can't be added during a backcheck period. To raise a further request,
+            return the original comment to the team with your response." A reviewer who has submitted No Comments sees "You have already submitted 'No
+            Comments' for this level. Revert that entry before adding comments." and, during the review period, selects <strong>Revert 'No
+            Comments'</strong> first.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'No response form on a comment',
+      child: (
+        <>
+          <p>
+            Only the Facilitator and Team Members respond, and only while the level is in its resolution period. During the review period the team
+            waits for the review lead to end it; during backcheck the team waits for the reviewers to return or close the comments.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'Submit for Backcheck is unavailable',
+      child: (
+        <>
+          <p>
+            Resting the pointer on the button shows the reason. "Every open comment needs a team response before backcheck." means at least one
+            comment is still Open; setting the <strong>Status</strong> filter to <strong>Open</strong> lists them. "The screening must pass Submission
+            Readiness before backcheck. Re-verify any page your changes affected." means a change during resolution cleared a page's verification or
+            left a page incomplete; <strong>Go to Submission Readiness</strong> shows which pages to correct and verify.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'Approve is unavailable',
+      child: (
+        <>
+          <p>
+            One of the Approval Criteria is not met. A reviewer still Pending participates, or the review lead marks the reviewer Unresponsive in <strong>Review
+            Team</strong>. Comments still open are closed by their authors, or by the review lead with <strong>Force Close</strong> or <strong>Backcheck
+            on Behalf</strong>. When the screening no longer passes Submission Readiness, the Facilitator verifies the affected pages again.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'A reviewer cannot be removed',
+      child: (
+        <>
+          <p>
+            A reviewer who has commented in the current cycle has an unavailable trash icon with the reason "This reviewer has comments in this review
+            cycle and can't be removed." The review lead can mark a Pending reviewer Unresponsive instead.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'Review actions are missing',
+      child: (
+        <>
+          <p>
+            While a screening needs a Facilitator, <strong>End Review Period</strong>, <strong>Reject</strong>, <strong>Submit for Backcheck</strong> and
+            the Official Review Decision panel are hidden, and the review team cannot be changed ("This screening needs a facilitator. Its review team
+            can't be changed until one is assigned."). An administrator assigns a Facilitator, or an eligible user selects <strong>Become
+            Facilitator</strong> on the input-lock strip, and the actions return.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"This comment was modified by another user. Your view has been refreshed."',
+      child: (
+        <>
+          <p>
+            Another user changed the comment, for example by responding to it or closing it, before this user's action was saved. DST does not apply
+            the action and reloads the comment. The user reads the updated comment and repeats the action if it is still needed. "This review level
+            was modified by another user. Your view has been refreshed." means the same for a level action, such as approving the level or submitting
+            for backcheck.
+          </p>
+        </>
+      ),
+    },
+  ]}
+/>

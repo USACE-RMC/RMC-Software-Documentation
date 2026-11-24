@@ -1,0 +1,219 @@
+---
+title: 'Setup'
+---
+
+import CollectionList from '@site/src/components/CollectionList';
+import FigReference from '@site/src/components/FigureReference';
+import Link from '@docusaurus/Link';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+import AnnotatedFigure from '@site/src/components/AnnotatedFigure';
+import riskSetupPageCallouts from '@site/static/figures/web-applications/dst/users-guide/v1.0/figures/risk-setup-page.callouts.json';
+
+<NavContainer link="/web-applications/dst" linkTitle="Dam Screening Tool" document="web-applications/dst/users-guide" />
+
+# Setup
+
+Before the risk can be computed, each failure mode requires a consequence function. The Setup page (**Risk Analysis > Setup**) assigns these
+functions and identifies the failure modes that still need input. Selecting **Risk Analysis** in the module navigation opens it.
+
+<FigReference figKey="dst-users-guide-fig-risk-setup-page" /> shows the page, and
+<TableReference tableKey="dst-users-guide-table-risk-setup-regions" /> describes each numbered region.
+
+<AnnotatedFigure
+  figKey="dst-users-guide-fig-risk-setup-page"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/risk-setup-page.png"
+  alt="The Risk Analysis Setup page. The Non-failure consequences row reads Non-Failure with a Change on Results Data link. The setup table has the columns Failure Mode / Location, Hazard, Response, Consequence Function, APF, EALL and EAD, with rows for PFM 01 (Overtopping function, APF 4.29E-07), PFM 03 (Composite response, Prior to Overtopping function, APF 4.91E-06) with its two location rows beneath, PFM 10, PFM 21 and PFM 22. The Total row reads an APF of 2.66E-04, an EALL of 7.21E-05 and an EAD of $9.71E+02. Below the table, the status reads Computed 2:11 PM beside an Export to TotalRisk button. The Mean Risk Plot for Excess Societal Risk shows a point for each failure mode and the Total (adjusted)."
+  caption="The Risk Analysis Setup page."
+  width="100%"
+  tableKey="dst-users-guide-table-risk-setup-regions"
+  tableCaption="Risk Analysis Setup page regions"
+  tableAlt="Description of each numbered region of the Risk Analysis Setup page"
+  positions={riskSetupPageCallouts}
+  callouts={[
+    { n: 1, region: 'Non-failure consequences', text: 'The non-failure function from Results Data, and the link to change it.' },
+    { n: 2, region: 'Setup table', text: 'Each failure mode and location with its hazard, response, consequence function and marginal risk.' },
+    { n: 3, region: 'Consequence Function', text: 'The failure function assigned to the failure mode.' },
+    { n: 4, region: 'Total', text: 'The system-combined (adjusted) risk, computed once every row is complete.' },
+    { n: 5, region: 'Compute status', text: 'Whether the risk is computed, or how many failure modes need input. Export to TotalRisk is beside it.' },
+    { n: 6, region: 'Risk preview', text: 'The Mean Risk Plot for Excess Societal Risk of the complete failure modes and the total.' },
+  ]}
+/>
+
+## Assigning Consequence Functions
+
+The setup table has one row per failure mode, with a row beneath it for each of its locations, and a **Total** row.
+<TableReference tableKey="dst-users-guide-table-risk-setup-columns" /> lists its columns. The one input on the page is the **Consequence Function**
+of each failure mode; it saves when chosen (see [Saving](./040-working-in-dst.mdx#saving)). The locations share their failure mode's function.
+
+<TableVertical
+  tableKey="dst-users-guide-table-risk-setup-columns"
+  colWidths={['15ch', '13ch', '11ch', '50ch']}
+  alt="Columns of the Risk Analysis setup table"
+  caption="Setup table columns"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Failure Mode / Location', 'Hazard', 'Response', 'Consequence Function', 'APF', 'EALL', 'EAD'],
+    ['—', '—', '—', '—', 'per year', 'lives per year', '$ per year'],
+    ['Read-only', 'Read-only', 'Read-only', 'Required', 'Read-only', 'Read-only', 'Read-only'],
+    [
+      'The failure mode, and its locations beneath it.',
+      'Flood (the stage–AEP hazard function) or Seismic, from the failure mode type.',
+      'Defined, Composite for a failure mode with locations, or Evaluate → when no system response curve is defined yet.',
+      'One of the failure functions from Results Data. A function with nothing to send yet is unavailable. One selection drives both EALL and EAD.',
+      'The annual probability of failure (marginal).',
+      'The expected annual life loss (marginal).',
+      'The expected annual damages (marginal).',
+    ],
+  ]}
+/>
+
+The **Response** column shows the state of each row's system response curve:
+
+- **Defined** means the row has an active system response curve. Selecting it opens a **System Response Preview** of the curve, from the "DST
+  curve" or a "User-defined curve", with **Linear** and **Log** buttons for the probability axis. Selecting **Defined** again, selecting outside the
+  preview, or pressing <kbd>Esc</kbd> closes it.
+- **Composite** appears on a failure mode with locations. Its response combines its locations, which share the failure mode's consequence function.
+- **Evaluate →** appears when no system response curve is defined yet, and opens the Failure Mode Evaluation page (see
+  [Failure Mode Evaluation](./340-failure-mode-evaluation.mdx)).
+
+The **Consequence Function** drop-down lists the failure functions from the Results Data page. A function with nothing to send yet is listed but
+cannot be chosen, and a row still assigned such a function shows its name grayed out. A location row shows its failure mode's function, with the
+tooltip "Shared by all locations; select the consequence function on the failure-mode row".
+
+The failure mode rows show marginal risk. The **Total** row is the system-combined (adjusted) result, computed once every row is complete. An
+incomplete row has an amber edge, and the page messages give the reason.
+
+## Non-Failure Consequences
+
+The **Non-failure consequences** row names the non-failure function chosen on the Results Data page. It applies to every failure mode: it gives the
+background risk, and DST compares it with each failure function to find the excess life loss and damages. It is read-only here; **Change on Results
+Data** (or **Select one on Results Data** when none is chosen) opens that page. The info button explains how the non-failure consequences are used.
+
+With no non-failure function, the row reads "None selected: taken as zero", and with one that has no results yet, "[name]: nothing to send yet,
+taken as zero". In both cases the background consequences are taken as zero.
+
+## Compute Status and Export
+
+The status beside the table reads "Computing…", "Computed [time]", "[K] of [N] failure modes need input" or "Not computed". The risk recomputes
+whenever an input upstream changes.
+
+**Export to TotalRisk** downloads an RMC-TotalRisk project (.tra) with the system diagram and one diagram for each failure mode location, for life
+loss and economic cost. It does not need a computed result.
+
+## Risk Preview
+
+The **Mean Risk Plot for Excess Societal Risk** plots each failure mode, once its inputs are complete, and the **Total (adjusted)**, as annual
+probability of failure against expected life loss given failure, with the tolerable risk guideline line for EALL = 1E-03. Failure modes with an
+APF below 1E-07 are not plotted and are listed in a footnote. The full results are on the Results page (see
+[Results](./502-risk-analysis-results.mdx)).
+
+## Common Problems
+
+When the status reads "[K] of [N] failure modes need input", the page messages list each missing input (see
+[Page Messages](./040-working-in-dst.mdx#page-messages)). The common messages and their resolutions are:
+
+<CollectionList
+  anchorPrefix="problem"
+  defaultOpen="none"
+  items={[
+    {
+      title: '"[failure mode] has no consequence function. Choose one on Risk Setup."',
+      child: (
+        <>
+          <p>
+            The user chooses a function in the row's <strong>Consequence Function</strong> drop-down.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"[failure mode]\'s consequence function, [name], has nothing to send yet. See Results Data."',
+      child: (
+        <>
+          <p>
+            The user runs the function's loading levels on the Consequence Analysis page, or enters its rows on the Results Data page.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"[failure mode]\'s consequence function, [name], is now a non-failure function. Choose a failure function on Risk Setup." or "[failure mode]\'s consequence function no longer exists. Choose another on Risk Setup."',
+    },
+    {
+      title: '"[location] has no active system response curve."',
+      child: (
+        <>
+          <p>
+            The user selects <strong>Evaluate →</strong> and completes the location's system response.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"The flood hazard curve needs at least two stage–AEP rows." or "The flood hazard curve must have strictly increasing stages and strictly decreasing AEPs between 0 and 1."',
+      child: (
+        <>
+          <p>
+            The user corrects the curve on the Flood Hazard page (see <Link to="/docs/web-applications/dst/users-guide/v1.0/flood-hazard">Flood
+            Hazard</Link>).
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"No failure modes are selected for evaluation."',
+      child: (
+        <>
+          <p>
+            The user selects failure modes on the Failure Mode Selection page.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"The DST recommendation for PFM-[NN] changed. Confirm your decision on the Failure Mode Selection page; until then PFM-[NN] is left out of the risk analysis."',
+    },
+  ]}
+/>
+
+Other cases:
+
+<CollectionList
+  defaultOpen="none"
+  items={[
+    {
+      title: 'The Consequence Function drop-down reads None available',
+      child: (
+        <>
+          <p>
+            Its tooltip reads "No consequence functions yet: set them up on Results Data". The user runs the consequence simulations, or adds a
+            function on the Results Data page.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'The row or column reads "Consequences module required"',
+      child: (
+        <>
+          <p>
+            The Consequences module is not available to the screening.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'The risk is not updated',
+      child: (
+        <>
+          <p>
+            When the risk calculation service is down, the page reports "The risk calculation service could not be reached. Existing results are
+            unchanged; the analysis will recompute when the service recovers."
+          </p>
+        </>
+      ),
+    },
+  ]}
+/>

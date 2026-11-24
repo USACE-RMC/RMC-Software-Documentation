@@ -1,0 +1,159 @@
+---
+title: 'Results Map'
+---
+
+import CollectionList from '@site/src/components/CollectionList';
+import FigReference from '@site/src/components/FigureReference';
+import NavContainer from '@site/src/components/NavContainer';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+import Video from '@site/src/components/Video';
+import VideoReference from '@site/src/components/VideoReference';
+import { MEDIA_WIDTH } from './_media-width.js';
+import AnnotatedFigure from '@site/src/components/AnnotatedFigure';
+import resultsMapPageCallouts from '@site/static/figures/web-applications/dst/users-guide/v1.0/figures/results-map-page.callouts.json';
+
+<NavContainer link="/web-applications/dst" linkTitle="Dam Screening Tool" document="web-applications/dst/users-guide" />
+
+# Results Map
+
+The Results Map page (**Consequences > Results Map**) shows where the consequences of one loading level fall and which structures drive them. The
+page is view-only. Its choices are shared with the Results Data page and reset when the page is reloaded.
+
+<FigReference figKey="dst-users-guide-fig-results-map-page" /> shows the page with a structure selected, and
+<TableReference tableKey="dst-users-guide-table-consequences-results-map-regions" /> describes each numbered region.
+
+<AnnotatedFigure
+  figKey="dst-users-guide-fig-results-map-page"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/results-map-page.png"
+  alt="The Results Map page. The Consequence Results panel shows the function cards Non-Failure (Non-fail), Prior to Overtopping (Failure) and Overtopping (Failure, selected), a Loading level selector with 812 ft 0.57 lives, 814 ft 0.66, 817 ft 0.90 (selected) and 822 ft 1.22, the Colour structures by choices with Mean life loss selected, and Wet structures only on, 34 of 152. The legend, 'Mean life loss at 817 ft · structures', counts the structures in each class. The map shows the 817 ft depth grid and the colored structures. The Structure #70 panel shows a single family dwelling with a mean life loss of 0.16, a population of 4, collapse in 65% of iterations, a maximum depth of 7.7 ft, water arriving 14 min after the breach and a mean damage of $439k, above a table of its results across the Overtopping levels. The closed Structures tray reads Structures · Overtopping, 817 ft, with Order by Mean life loss and All structures (.csv)."
+  caption="The Results Map page with a structure selected."
+  width="100%"
+  tableKey="dst-users-guide-table-consequences-results-map-regions"
+  tableCaption="Results Map page regions"
+  tableAlt="Description of each numbered region of the Results Map page"
+  positions={resultsMapPageCallouts}
+  callouts={[
+    { n: 1, region: 'Function cards', text: 'One card per consequence function, marked Failure or Non-fail.' },
+    { n: 2, region: 'Loading level selector', text: "The function's loading levels, with each level's life loss or status." },
+    { n: 3, region: 'Colour structures by', text: 'The measure that colors the structures, and Wet structures only.' },
+    { n: 4, region: 'Legend', text: 'The classes of the chosen measure and the number of structures in each.' },
+    { n: 5, region: 'Structure panel', text: "The selected structure's results at the level and across the function's levels." },
+    { n: 6, region: 'Structures tray', text: 'The 20 wet structures ranked by the Order by measure, and the CSV download.' },
+  ]}
+/>
+
+## Viewing a Loading Level
+
+To view the consequences of a loading level, the user selects a function card, then a level in the **Loading level** selector. The map draws that
+level's maximum depth grid and colors the structures.
+
+- **Colour structures by** colors the structures by **Mean life loss** (the default), **Arrival after the breach**, **Population at risk**,
+  **Depth × velocity**, **Maximum depth**, **Mean damage** or **Collapse share**. **Wet structures only** (on by default) hides the structures that
+  stay dry.
+- Selecting a structure opens its panel: its occupancy and construction; its life loss, population, fatality rate, collapse share, depth, depth ×
+  velocity, arrival time and damage at the level; and a table of its results across the function's levels.
+- Selecting the dam opens the dam panel, with the outflow plot, peak outflow and hazard occurrence.
+
+<VideoReference videoKey="dst-users-guide-video-results-map-levels" /> shows the loading level changed, then **Colour structures by** switched between
+Maximum depth, Arrival after the breach and Mean life loss.
+
+<Video
+  videoKey="dst-users-guide-video-results-map-levels"
+  src="/videos/web-applications/dst/users-guide/v1.0/results-map-levels.mp4"
+  caption="Changing the loading level and the structure coloring on the Results Map."
+  width={MEDIA_WIDTH}
+/>
+
+## Structure Classes
+
+Each **Colour structures by** measure has fixed classes, so a color means the same at every loading level. The legend lists them worst first, with
+the number of structures in each (<TableReference tableKey="dst-users-guide-table-results-map-structure-classes" />).
+
+<TableVertical
+  tableKey="dst-users-guide-table-results-map-structure-classes"
+  widthMode="auto"
+  alt="The fixed classes of each Colour structures by measure on the Results Map, worst first"
+  caption="Structure classes, worst first"
+  headers={[[{ value: 'Measure' }, { value: 'Classes' }]]}
+  columns={[
+    ['Mean life loss', 'Arrival after the breach', 'Population at risk', 'Depth × velocity', 'Maximum depth', 'Mean damage', 'Collapse share'],
+    [
+      '1 or more lives, 0.1 to 1, 0.01 to 0.1, and Under 0.01.',
+      'Before the breach, Within 30 min, 30 min to 1 h, 1 to 2 h, 2 to 4 h, and After 4 h.',
+      '10 or more people, 5 to 10, 2 to 5, and Under 2.',
+      '50 ft²/s or more, 20 to 50, 7 to 20, and Under 7.',
+      '15 ft or more, 6 to 15 ft, 2 to 6 ft, and Under 2 ft.',
+      '$1M or more, $250k to $1M, $50k to $250k, and Under $50k.',
+      'In half the iterations or more, 10% to 50%, Under 10%, and Never.',
+    ],
+  ]}
+/>
+
+Each class runs from its lower bound up to the next class's, so a mean life loss of exactly 1 is in "1 or more lives". The legend adds a row for
+structures with nothing to class ("No arrival time" or "No value"), and, when **Wet structures only** is off, a "Stayed dry" row.
+
+## Arrival Times
+
+Arrival times count from the breach start of the loading level. At a level without a breach start, they count from when the first structure became
+wet, and the legend notes "Times after the first structure wet: this level has no breach start."
+
+A structure the water reached before the breach started, for example from the inflow or from overtopping, falls in the **Before the breach** class.
+The structure panel gives its time as, for example, "51 min before the breach", and the tray as a negative time such as "−51 min".
+
+## Structures Tray
+
+The **Structures** tray identifies the structures with the worst consequences. Headed with the function and loading level, for example
+"Structures · Overtopping, 817 ft", it lists the 20 wet structures ranked by **Order by**, which also changes **Colour structures by** to match. The
+line beside it says what the list holds, for example "The 20 of 34 wet structures with the highest mean life loss, as the map colours them." The
+columns are **Structure**, **Occupancy**, **Mean life loss**, **Fatality rate**, **Population**, **Maximum depth**, **Depth × velocity**, **Water
+arrives**, **Collapsed** and **Mean damage**.
+
+Selecting a row closes the tray and shows the structure on the map. **All structures (.csv)** downloads every wet structure.
+
+## Common Problems
+
+When a level's structures cannot be shown, the tray or legend says why:
+
+<CollectionList
+  anchorPrefix="problem"
+  defaultOpen="none"
+  items={[
+    {
+      title: '"Entered as tables, so it has no structures to list."',
+      child: (
+        <>
+          <p>
+            The function was entered by hand on the Results Data page, so it has no map results.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"This analysis has no loading levels yet."',
+    },
+    {
+      title: '"This loading level has no result yet, so it has no structures to list."',
+      child: (
+        <>
+          <p>
+            The user runs the level on the Consequence Analysis page.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"No structure got wet at this level."',
+    },
+    {
+      title: 'When the structure inventory has changed since the level ran, the dry structures cannot be drawn, and the legend says so',
+      child: (
+        <>
+          <p>
+            Running the level again matches it to the current inventory.
+          </p>
+        </>
+      ),
+    },
+  ]}
+/>

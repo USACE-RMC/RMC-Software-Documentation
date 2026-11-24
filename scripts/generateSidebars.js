@@ -276,6 +276,74 @@ function generateSidebarForRmcTotalRiskApplicationsGuide(versionPath, relativePa
   return customStructure;
 }
 
+/* --- Custom Logic: DST User's Guide Sidebar --- */
+
+// The guide follows the screening's module tabs. Files stay flat in the version folder with three-digit prefixes, so file order is reading order
+// (which keeps figure and table numbering sequential). Prefix ranges map to sidebar groups:
+//   x00 file          -> the module's landing page (category link), x01-x99 -> its sub-pages
+//   310 + 311         -> Dam Information category with Cross-Section Editors beneath it (under Response)
+//   340-349           -> Failure Mode Evaluation category (under Response)
+//   350-399           -> Potential Failure Modes group (under Response)
+//   9x0-appendix-*    -> Appendices
+function generateSidebarForDstUsersGuide(versionPath, relativePath) {
+  const files = fs
+    .readdirSync(versionPath)
+    .filter((f) => f.endsWith('.mdx'))
+    .sort();
+
+  const item = (file) => {
+    const base = file.replace(/\.mdx$/, '').replace(/^\d+-/, '');
+    const label = getFrontmatterTitle(path.join(versionPath, file)) || getFallbackLabel(file);
+    return { type: 'doc', id: `${relativePath}/${base}`, label };
+  };
+  const category = (file, items, collapsed = true) => {
+    const doc = item(file);
+    return { type: 'category', label: doc.label, link: { type: 'doc', id: doc.id }, collapsible: true, collapsed, items };
+  };
+  const num = (f) => Number(/^(\d{3})-/.exec(f)?.[1] ?? NaN);
+  const inRange = (lo, hi) => files.filter((f) => num(f) >= lo && num(f) <= hi);
+
+  const sidebar = [];
+  const info = files.filter((f) => f.startsWith('00-'));
+  if (info.length) {
+    sidebar.push({ type: 'category', label: 'Document Information', collapsible: true, collapsed: true, items: info.map(item) });
+  }
+  // Two-digit front matter (01-preface) and three-digit pages below 100 stay top level.
+  files.filter((f) => /^0[1-9]-/.test(f) || (num(f) >= 1 && num(f) < 100)).forEach((f) => sidebar.push(item(f)));
+
+  for (let tab = 100; tab < 900; tab += 50) {
+    const landing = files.find((f) => num(f) === tab);
+    if (!landing) continue;
+    const children = inRange(tab + 1, tab + 49);
+
+    if (tab === 300) {
+      const items = [];
+      const damInfo = files.find((f) => num(f) === 310);
+      if (damInfo) items.push(category(damInfo, inRange(311, 319).map(item)));
+      inRange(320, 339).forEach((f) => items.push(item(f)));
+      const fme = files.find((f) => num(f) === 340);
+      if (fme) items.push(category(fme, inRange(341, 349).map(item)));
+      const pfms = inRange(350, 399);
+      if (pfms.length) {
+        items.push({ type: 'category', label: 'Potential Failure Modes', collapsible: true, collapsed: true, items: pfms.map(item) });
+      }
+      sidebar.push(category(landing, items));
+      tab = 350; // 350-399 belong to Response
+      continue;
+    }
+
+    sidebar.push(children.length ? category(landing, children.map(item)) : item(landing));
+  }
+
+  files.filter((f) => num(f) >= 900 && !f.includes('-appendix-')).forEach((f) => sidebar.push(item(f)));
+  const appendices = files.filter((f) => num(f) >= 900 && f.includes('-appendix-'));
+  if (appendices.length) {
+    sidebar.push({ type: 'category', label: 'Appendices', collapsible: true, collapsed: true, items: appendices.map(item) });
+  }
+
+  return sidebar;
+}
+
 /* --- Standard Logic: Default Sidebar for Most Documents --- */
 
 function generateSidebarForVersion(versionPath, relativePath, docGroup, folderName) {
@@ -292,6 +360,11 @@ function generateSidebarForVersion(versionPath, relativePath, docGroup, folderNa
   // CUSTOM LOGIC: LifeSim Validation Studies
   if (docGroup === 'lifesim' && folderName === 'validation-studies') {
     return generateSidebarForLifeSimValidationStudies(versionPath, relativePath);
+  }
+
+  // CUSTOM LOGIC: DST User's Guide
+  if (docGroup === 'dst' && folderName === 'users-guide') {
+    return generateSidebarForDstUsersGuide(versionPath, relativePath);
   }
 
   // STANDARD LOGIC: All other documents

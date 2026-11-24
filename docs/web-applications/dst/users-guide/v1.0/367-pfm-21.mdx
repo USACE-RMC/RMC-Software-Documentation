@@ -1,0 +1,539 @@
+---
+title: 'PFM-21: Concrete Dam Instability'
+---
+
+import CollectionList from '@site/src/components/CollectionList';
+import FigReference from '@site/src/components/FigureReference';
+import Link from '@docusaurus/Link';
+import NavContainer from '@site/src/components/NavContainer';
+import ProcessList from '@site/src/components/ProcessList';
+import TableReference from '@site/src/components/TableReference';
+import TableVertical from '@site/src/components/TableVertical';
+import AnnotatedFigure from '@site/src/components/AnnotatedFigure';
+import pfm21PageCallouts from '@site/static/figures/web-applications/dst/users-guide/v1.0/figures/pfm-21-page.callouts.json';
+
+<NavContainer link="/web-applications/dst" linkTitle="Dam Screening Tool" document="web-applications/dst/users-guide" />
+
+# PFM-21: Concrete Dam Instability
+
+DST calculates the SRP curve of PFM-21, Concrete Dam Instability, for one concrete
+monolith at each location. PFM-21 is sliding instability of a concrete gravity monolith along a preferential sliding plane in or at the top of its
+foundation. The loading is the reservoir (headwater) from normal pool up to the top of dam. [Failure Mode Pages](./342-failure-mode-pages.mdx) and
+[System Response](./343-system-response.mdx) describe the parts that every failure mode page shares.
+
+The user opens a PFM-21 location from **Response > Failure Mode Evaluation** (see [Opening a Location](./341-locations.mdx#opening-a-location)). The
+page heading reads **21 - Concrete Dam Instability**. This page applies when the dam types on the Dam Data page include **Gravity** or
+**Roller-Compacted Concrete**.
+
+:::note
+
+For a concrete dam whose dam types include neither **Gravity** nor **Roller-Compacted Concrete**, for example an arch or buttress dam, the PFM-21
+page is an event tree instead, with no **Cross Section** drop-down. Its default stages are Normal Pool, Spillway Crest and Top of Dam, and it has three
+nodes: **1 Shear Failure** ("Shear resistance along the preferential sliding plane is exceeded?"), **2 Unsuccessful Intervention** ("Intervention to
+arrest monolith movement is unsuccessful?") and **3 Breach** ("Additional resistance within the foundation and shear resistance along vertical
+monolith joints is exceeded resulting in a moveable block sliding downstream?"). [Event Trees](./344-event-trees.mdx) describes that page.
+
+:::
+
+To calculate the SRP for a location:
+
+<ProcessList
+  variant="steps"
+  items={[
+    {
+      title: (
+        <>
+          Choose the monolith's concrete cross section in <strong>Cross Section</strong> and check it in the section figure (see{' '}
+          <a href="#location-and-cross-section">Location and Cross Section</a>).
+        </>
+      ),
+    },
+    { title: <>Set the <a href="#loading">Loading</a> inputs and check the readings from the Dam Information page.</> },
+    {
+      title: (
+        <>
+          Choose the <strong>Friction angle, φ</strong> and <strong>Cohesion, c</strong> distributions (see{' '}
+          <a href="#foundation-and-sliding-plane">Foundation and Sliding Plane</a>), and override the drain and bearing defaults if site data
+          support it.
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          Review the <a href="#system-response">System Response</a>, clear any page messages, and verify the location with the verification
+          badge.
+        </>
+      ),
+    },
+  ]}
+/>
+
+<FigReference figKey="dst-users-guide-fig-pfm-21-page" /> shows the page, and <TableReference tableKey="dst-users-guide-table-pfm-21-regions" />
+describes each numbered region.
+
+<AnnotatedFigure
+  figKey="dst-users-guide-fig-pfm-21-page"
+  src="figures/web-applications/dst/users-guide/v1.0/figures/pfm-21-page.png"
+  alt="The PFM-21 page for the location Spillway Monolith, with the cross section Spillway Section, DST Based SRP selected and an Unverified badge. Loading shows Design pool elevation blank, Gate opening elevation 791.0 and Include tailwater weight on structure set to No, with the readings Structural height 65.0 ft, Concrete unit weight 'Triangular · 142.0 · 147.0 · 152.0 pcf', Drain gallery 'El 722.0 · vertical · 10.0 ft apart', Applied forces '2 from Dam Information' and Gate operation 'Open 0.1 ft at and above 791.0 ft-NAVD88'. Foundation and sliding plane shows Friction angle, φ Triangular 38.0, 45.0, 52.0 and Cohesion, c Triangular 2000.0, 5000.0, 10000.0 with distribution previews. The Advanced drain and bearing overrides bar reads '1 overridden'. The section figure draws the gated spillway monolith with Top of dam El 812, Top of gate El 791, Spillway crest El 777, Base El 712 and an 80 ft base."
+  caption="The PFM-21 page for a gated spillway monolith."
+  width="100%"
+  tableKey="dst-users-guide-table-pfm-21-regions"
+  tableCaption="PFM-21 page regions"
+  tableAlt="Description of each numbered region of the PFM-21 page"
+  positions={pfm21PageCallouts}
+  callouts={[
+    { n: 1, region: 'Page heading', text: 'The failure mode number and name.' },
+    { n: 2, region: 'Location', text: 'The location name.' },
+    { n: 3, region: 'Cross Section', text: 'The concrete cross section the location evaluates.' },
+    {
+      n: 4,
+      region: 'SRP mode',
+      text: (
+        <>
+          <strong>DST Based SRP</strong> or <strong>User Defined SRP</strong> (see <a href="#user-defined-srp">User-Defined SRP</a>).
+        </>
+      ),
+    },
+    {
+      n: 5,
+      region: 'Loading',
+      text: (
+        <>
+          The loading inputs and the monolith readings (see <a href="#loading">Loading</a>).
+        </>
+      ),
+    },
+    {
+      n: 6,
+      region: 'Foundation and sliding plane',
+      text: (
+        <>
+          The strength of the sliding plane (see <a href="#foundation-and-sliding-plane">Foundation and Sliding Plane</a>).
+        </>
+      ),
+    },
+    {
+      n: 7,
+      region: 'Advanced drain and bearing overrides',
+      text: (
+        <>
+          Site-specific drain and bearing distributions (see <a href="#advanced-drain-and-bearing-overrides">Advanced Drain and Bearing Overrides</a>).
+        </>
+      ),
+    },
+    {
+      n: 8,
+      region: 'Section figure',
+      text: (
+        <>
+          The evaluated monolith with its key elevations (see <a href="#section-figure">Section Figure</a>).
+        </>
+      ),
+    },
+  ]}
+/>
+
+Inputs on this page save automatically (see [Saving](./040-working-in-dst.mdx#saving)). Results recalculate automatically when an input changes (see
+[Automatic Calculation](./040-working-in-dst.mdx#automatic-calculation)). Changing an input clears the location's verification (see
+[Verifying a Location](./342-failure-mode-pages.mdx#verifying-a-location)).
+
+## Location and Cross Section
+
+Each PFM-21 location evaluates one concrete monolith on one cross section. The user adds, copies, renames and deletes locations as described in
+[Locations](./341-locations.mdx); a copy keeps every input of the original. <TableReference tableKey="dst-users-guide-table-pfm-21-toolbar-inputs" />
+lists the toolbar inputs (see also [The Page Toolbar](./342-failure-mode-pages.mdx#the-page-toolbar)).
+
+<TableVertical
+  tableKey="dst-users-guide-table-pfm-21-toolbar-inputs"
+  colWidths={['14ch', '7ch', '11ch', '57ch']}
+  alt="Toolbar inputs of the PFM-21 page"
+  caption="PFM-21 toolbar inputs"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Location', 'Cross Section', 'SRP mode'],
+    ['—', '—', '—'],
+    ['Required', 'Required', 'Required'],
+    [
+      'The location name. Saves when the user leaves the box. A blank name is rejected with "Name cannot be empty."',
+      'The concrete cross section of the monolith, from the Dam Information page. Its outline, section type (non-overflow, overflow weir or gated), drain, gate and applied forces feed the page.',
+      <>
+        <strong>DST Based SRP</strong> (default) calculates the SRP from the inputs below; <strong>User Defined SRP</strong> replaces them with an
+        entered SRP curve.
+      </>,
+    ],
+  ]}
+/>
+
+## Section Figure
+
+The section figure draws the selected monolith to scale, so the user can confirm DST reads the intended section. It labels the **Crest** (or
+**Spillway crest** for an overflow or gated section), the **Top of dam** when it differs from the section crest, the **Top of gate** of a gated
+section, the **Design pool** when entered, and the **Base**. With no section selected, it reads "Select a concrete cross section to see the evaluated
+monolith."
+
+## Loading
+
+The **Loading** section sets how the reservoir and tailwater load the monolith, and shows the values DST reads from the Dam Information page.
+<TableReference tableKey="dst-users-guide-table-pfm-21-loading" /> lists the inputs.
+
+<TableVertical
+  tableKey="dst-users-guide-table-pfm-21-loading"
+  colWidths={['22ch', '7ch', '11ch', '49ch']}
+  alt="Loading inputs of the PFM-21 page"
+  caption="PFM-21 loading inputs"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Design pool elevation', 'Gate opening elevation', 'Include tailwater weight on structure'],
+    ['ft', 'ft', '—'],
+    ['Optional', 'Optional; gated sections only', 'Required'],
+    [
+      'When entered, DST computes instability only up to this elevation and assigns a 2D instability probability of 1 to every pool above it. Blank computes every pool up to the top of dam. Must be above normal pool. One decimal.',
+      'The pool elevation at which the gates open. Below it the gates are closed; at and above it they are open 0.1 ft, starting at the first evaluated pool at or above it. Blank keeps the gates closed at every pool. Must not be below the gate sill. One decimal.',
+      <>
+        <strong>Yes</strong> adds the weight of tailwater standing on the downstream face to the stabilizing forces. Default <strong>No</strong>.
+      </>,
+    ],
+  ]}
+/>
+
+The readings in <TableReference tableKey="dst-users-guide-table-pfm-21-readings" /> show values from the selected cross section and the Dam
+Information page. A reading shows "—" until it is available; to change one, the user edits the cross section or the Materials section on the Dam
+Information page.
+
+<TableVertical
+  tableKey="dst-users-guide-table-pfm-21-readings"
+  colWidths={['19ch', '7ch', '12ch', '51ch']}
+  alt="Loading readings of the PFM-21 page"
+  caption="PFM-21 loading readings"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Structural height', 'Concrete unit weight', 'Drain gallery', 'Applied forces', 'Gate operation'],
+    ['ft', 'pcf', '—', '—', '—'],
+    ['Read-only', 'Read-only', 'Read-only', 'Read-only', 'Read-only; gated sections only'],
+    [
+      'The height of the monolith from the cross section.',
+      'The concrete unit weight distribution from the Materials section of the Dam Information page, for example "Normal · 150.0 · 3.0 pcf". The pointer resting on it names each parameter.',
+      'The drain of the cross section: gallery elevation, lean ("vertical", or the angle from vertical and direction) and spacing, for example "El 520.0 · vertical · 10.0 ft apart"; "None" without a drain.',
+      'The number of applied forces drawn on the cross section, for example "2 from Dam Information", or "None".',
+      '"Open 0.1 ft at and above" the gate opening elevation, or "Closed at every pool" when that elevation is blank.',
+    ],
+  ]}
+/>
+
+## Foundation and Sliding Plane
+
+The **Foundation and sliding plane** section sets the shear strength of the sliding plane with the two distribution cards in
+<TableReference tableKey="dst-users-guide-table-pfm-21-foundation" />. Each card starts at "Select distribution"; choosing **Deterministic**,
+**Uniform**, **Triangular**, **PERT** or **Normal** shows its parameter boxes and a preview of the distribution (see
+[Parameter Overrides](./342-failure-mode-pages.mdx#parameter-overrides)).
+
+<TableVertical
+  tableKey="dst-users-guide-table-pfm-21-foundation"
+  colWidths={['16ch', '7ch', '11ch', '55ch']}
+  alt="Foundation and sliding plane inputs of the PFM-21 page"
+  caption="PFM-21 foundation and sliding plane inputs"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Friction angle, φ', 'Cohesion, c'],
+    ['deg', 'psf'],
+    ['Required', 'Required'],
+    ['The friction angle of the sliding plane, 0 to less than 90, one decimal. No default.', 'The cohesion of the sliding plane, zero or more, one decimal. No default.'],
+  ]}
+/>
+
+### Advanced Drain and Bearing Overrides
+
+The **Advanced drain and bearing overrides** bar opens the two parameters in
+<TableReference tableKey="dst-users-guide-table-pfm-21-overrides" />. Each starts at **Default (Deterministic)**, which stays locked until the user
+chooses **Deterministic**, **Uniform**, **Triangular**, **PERT** or **Normal**. The bar counts the overridden parameters, for example "1 overridden"
+(see [Parameter Overrides](./342-failure-mode-pages.mdx#parameter-overrides)).
+
+<TableVertical
+  tableKey="dst-users-guide-table-pfm-21-overrides"
+  colWidths={['23ch', '7ch', '11ch', '48ch']}
+  alt="Advanced drain and bearing overrides of the PFM-21 page"
+  caption="PFM-21 advanced drain and bearing overrides"
+  headers={[[{ value: 'Field' }, { value: 'Units' }, { value: 'Required' }, { value: 'Description' }]]}
+  columns={[
+    ['Uncracked drain effectiveness', 'Foundation allowable bearing capacity'],
+    ['ratio', 'psf'],
+    ['Optional', 'Optional'],
+    [
+      'The fraction of the uplift reduction the drains achieve while the base is uncracked, from 0 (no relief) to 1 (full relief). Default: Deterministic 0. Unavailable, with "No drain on this section", when the cross section has no drain.',
+      'The allowable bearing pressure at the toe, which the bearing factor of safety compares with the computed toe pressure; greater than zero. Default: Deterministic 1,000,000, high enough that bearing does not govern.',
+    ],
+  ]}
+/>
+
+## System Response
+
+The **System Response** section shows the PFM-21 SRP curve, its table and the three nodal tables (see [SRP Charts](./343-system-response.mdx#srp-charts)
+and [Nodal Tables](./343-system-response.mdx#nodal-tables)). The chart plots **System Response Probability** on a logarithmic axis from 1E-6 against
+**Headwater Elevation (ft)**, and **Download SRP curves as a CSV file** exports the curves. <TableReference tableKey="dst-users-guide-table-pfm-21-nodes" />
+lists the nodes. [Nodal Revisions](./343-system-response.mdx#nodal-revisions) describes revising a node, and
+[Calculation Currency](./343-system-response.mdx#calculation-currency) describes the notice about out-of-date results.
+
+<TableVertical
+  tableKey="dst-users-guide-table-pfm-21-nodes"
+  widthMode="auto"
+  alt="Nodes of the PFM-21 system response"
+  caption="PFM-21 nodes"
+  headers={[[{ value: 'Node' }, { value: 'Name' }, { value: 'Varies with headwater' }]]}
+  columns={[
+    ['Node 1', 'Node 2', 'Node 3'],
+    ['2D Instability', 'Intervention', '3D Effects'],
+    ['Yes', 'Yes', 'Yes'],
+  ]}
+/>
+
+The location's verification appears as "PFM-21 SRP —" followed by the location name (see [Verifying a Location](./342-failure-mode-pages.mdx#verifying-a-location)).
+
+## User-Defined SRP
+
+With **User Defined SRP** selected, the user enters the SRP curve as headwater elevations and probabilities in place of the section figure and the
+input and system response sections; the chart plots **Headwater Elevation (ft)**. [User-Defined SRP](./343-system-response.mdx#user-defined-srp) and
+[Active SRP](./343-system-response.mdx#active-srp) describe the grid and the switch between modes.
+
+## Failure Mode Summary
+
+The **Failure mode summary** tray (see [Failure Mode Summary](./342-failure-mode-pages.mdx#failure-mode-summary)) lists the uncracked drain
+effectiveness and the foundation allowable bearing capacity in its **Parameter overrides** section when they are overridden.
+
+## Page Messages
+
+The page messages button lists what keeps DST from calculating the PFM-21 SRP (see [Page Messages](./040-working-in-dst.mdx#page-messages)).
+<TableReference tableKey="dst-users-guide-table-pfm-21-messages" /> lists the messages specific to this page and where to correct each. Text in square
+brackets stands for the value shown; [Parameter] is "Friction angle", "Cohesion", "Uncracked drain effectiveness", "Foundation allowable bearing
+capacity" or "Concrete unit weight". DST raises the cross-section messages in the order listed.
+
+<TableVertical
+  tableKey="dst-users-guide-table-pfm-21-messages"
+  colFormat={['severity', 'message', null]}
+  colWidths={['16ch', '56ch', '17ch']}
+  alt="Page messages specific to the PFM-21 page, with their severity and where to correct each"
+  caption="PFM-21 page messages"
+  headers={[[{ value: 'Severity' }, { value: 'Message' }, { value: 'Where to correct' }]]}
+  columns={[
+    [
+      'Required input',
+      'Required input',
+      'Required input',
+      'Required input',
+      'Required input',
+      'Required input',
+      'Required input',
+      'Required input',
+      'Required input',
+      'Required input',
+      'Required input',
+      'Required input',
+      'Required input',
+      'Required input',
+      'Required input',
+      'Required input',
+      'Required input',
+      'Required input',
+      'Required input',
+      'Required input',
+      'Required input',
+      'Required input',
+      'Required input',
+      'Required input',
+      'Error',
+      'Error',
+      'Error',
+      'Error',
+      'Error',
+      'Error',
+      'Error',
+      'Error',
+      'Error',
+      'Error',
+      'Error',
+      'Error',
+      'Error',
+      'Error',
+      'Error',
+      'Error',
+      'Warning',
+      'Warning',
+    ],
+    [
+      'Select a cross section for this location.',
+      'Draw the monolith region of the selected cross section on the Dam Information page. (weir region for a gated section)',
+      "Complete every point of the selected cross section's outline on the Dam Information page.",
+      "The selected cross section's heel and toe could not be resolved. Check that its base is flat on the Dam Information page.",
+      'Select the upstream and downstream crest points of the selected cross section on the Dam Information page.',
+      'The upstream and downstream crest points of the selected cross section must be different points.',
+      'Enter the width of the monolith region on the Dam Information page. (weir region for a gated section)',
+      'Draw the pier region of the selected gated cross section on the Dam Information page.',
+      "Complete every point of the selected cross section's pier outline on the Dam Information page.",
+      'Enter the width of the pier region on the Dam Information page.',
+      "Complete the drain's gallery point, base point, and spacing on the Dam Information page, or remove the drain.",
+      'The drain must rise from the base toward its gallery point on the Dam Information page.',
+      "Complete the selected cross section's outline on the Dam Information page.",
+      'Enter the Friction angle distribution.',
+      'Enter the Cohesion distribution.',
+      '[Parameter]: enter the deterministic value.',
+      '[Parameter]: enter the minimum and maximum.',
+      '[Parameter]: enter the mean and standard deviation.',
+      '[Parameter]: enter the minimum, most likely, and maximum.',
+      'Complete the Stage Duration page so the normal pool elevation can be derived.',
+      'Provide the Dam Crest elevation on the Dam Data page.',
+      'Define the tailwater relationship on the Operational Data page. It is required to evaluate sliding stability.',
+      'Define the concrete unit weight in the Materials section of the Dam Information page.',
+      'This model currently supports US customary screening units only.',
+      'The selected cross section is not a concrete section.',
+      'Normal pool elevation must be finite.',
+      'The Dam Crest elevation from Dam Data must be above the normal pool elevation.',
+      'Design pool elevation must be finite.',
+      'Design pool elevation must be above the normal pool elevation.',
+      'Gate opening elevation must be finite.',
+      'Gate opening elevation must not be below the gate sill elevation.',
+      "The gate opens 0.1 ft above the sill, but that elevation lies off the drawn gate arc. Check the Tainter gate's trunnion, radius, and sill elevation on the Dam Information page.",
+      "[Parameter]: distribution type '[type]' is not supported for this analysis.",
+      '[Parameter]: the [parameter] must be finite.',
+      'Friction angle: the minimum must be at least 0. (also the maximum must be less than 90)',
+      'Foundation allowable bearing capacity: the value must be greater than 0. (also Concrete unit weight)',
+      'Uncracked drain effectiveness: the maximum must not exceed 1.',
+      '[Parameter]: the standard deviation must be greater than zero.',
+      '[Parameter]: the minimum must be less than the maximum.',
+      '[Parameter]: parameters must satisfy minimum ≤ most likely ≤ maximum with minimum &lt; maximum.',
+      'The Operational Data tailwater relationship covers pools [low] to [high], but this evaluation runs from [normal pool] to [top]. Outside that range the model holds the end-row tailwater, which is not guaranteed conservative.',
+      "The normal pool can't be taken from the stage-duration curve ([reason]), so the Dam Data normal pool ([elevation]) is used instead.",
+    ],
+    [
+      'This page: Cross Section',
+      'Dam Information',
+      'Dam Information',
+      'Dam Information',
+      'Dam Information',
+      'Dam Information',
+      'Dam Information',
+      'Dam Information',
+      'Dam Information',
+      'Dam Information',
+      'Dam Information',
+      'Dam Information',
+      'Dam Information',
+      'This page',
+      'This page',
+      'This page or Dam Information',
+      'This page or Dam Information',
+      'This page or Dam Information',
+      'This page or Dam Information',
+      'Stage Duration',
+      'Dam Data',
+      'Operational Data',
+      'Dam Information',
+      'User Defined SRP',
+      'This page: Cross Section',
+      'Stage Duration or Dam Data',
+      'Dam Data',
+      'This page',
+      'This page',
+      'This page',
+      'This page',
+      'Dam Information',
+      'This page',
+      'This page or Dam Information',
+      'This page',
+      'This page or Dam Information',
+      'This page',
+      'This page or Dam Information',
+      'This page or Dam Information',
+      'This page or Dam Information',
+      'Operational Data',
+      'Stage Duration',
+    ],
+  ]}
+/>
+
+## Common Problems
+
+Problems every failure mode page shares, such as a system response that does not calculate, no usable cross sections, a deleted cross
+section or a refused verification, are described in [Common Problems](./342-failure-mode-pages.mdx#common-problems) on the Failure Mode
+Pages page. This page adds its own.
+
+<CollectionList
+  anchorPrefix="problem"
+  defaultOpen="none"
+  items={[
+    {
+      title: 'No SRP curve appears',
+      child: (
+        <>
+          <p>
+            The page messages list at least one required input or error (see <Link
+            to="/docs/web-applications/dst/users-guide/v1.0/failure-mode-pages#problem-the-system-response-does-not-calculate">The system response does not
+            calculate</Link>). For PFM-21 the usual causes are the cross-section drawing on the Dam Information page, the two foundation
+            distributions, the tailwater relationship on the Operational Data page and the concrete unit weight in the Materials section; <TableReference
+            tableKey="dst-users-guide-table-pfm-21-messages" /> gives where to correct each.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"This model currently supports US customary screening units only."',
+      child: (
+        <>
+          <p>
+            The screening uses metric units, so DST cannot calculate PFM-21. The user selects <strong>User Defined SRP</strong> and enters the curve.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"The selected cross section is not a concrete section."',
+      child: (
+        <>
+          <p>
+            The location reads an earth embankment section. The user chooses a concrete section in <strong>Cross Section</strong>.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"Gate opening elevation must not be below the gate sill elevation."',
+      child: (
+        <>
+          <p>
+            The user raises <strong>Gate opening elevation</strong> to the sill or above.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: '"The gate opens 0.1 ft above the sill, but that elevation lies off the drawn gate arc."',
+      child: (
+        <>
+          <p>
+            The drawn Tainter gate cannot open 0.1 ft. The user corrects the gate's trunnion, radius or sill elevation on the Dam Information page.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'The tailwater warning appears',
+      child: (
+        <>
+          <p>
+            The Operational Data tailwater relationship does not span normal pool to top of dam, so DST holds the end-row tailwater outside it. The
+            user extends the relationship on the Operational Data page to clear the warning.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'Uncracked drain effectiveness is unavailable with "No drain on this section"',
+      child: (
+        <>
+          <p>
+            The cross section has no drain. The user draws the drain on the Dam Information page to override its effectiveness.
+          </p>
+        </>
+      ),
+    },
+  ]}
+/>
